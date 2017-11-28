@@ -1,0 +1,146 @@
+{
+  "70261": {
+    "stop_id": "RASH",
+    "enabled?": false,
+    "display_type": ["one_line", 1],
+    "zones": {
+      "0": "mezzanine",
+      "1": "mezzanine"
+    }
+  },
+  "70262": {
+    "stop_id": "RASH",
+    "enabled?": false,
+    "display_type": ["one_line", 1],
+    "zones": {
+      "0": "mezzanine",
+      "1": "mezzanine"
+    }
+  },
+  "70263": {
+    "stop_id": "MCED",
+    "enabled?": true,
+    "display_type": "separate",
+    "zones": {
+      "0": "southbound",
+      "1": "northbound"
+    }
+  },
+  "70264": {
+    "stop_id": "MCED",
+    "enabled?": true,
+    "display_type": "separate",
+    "zones": {
+      "0": "southbound",
+      "1": "northbound"
+    }
+  },
+  "70265": {
+    "stop_id": "MBUT",
+    "enabled?": false,
+    "display_type": "combined",
+    "zones": {
+      "0": "center",
+      "1": "center"
+    }
+  },
+  "70266": {
+    "stop_id": "MBUT",
+    "enabled?": false,
+    "display_type": "combined",
+    "zones": {
+      "0": "center",
+      "1": "center"
+    }
+  },
+  "70267": {
+    "stop_id": "MMIL",
+    "enabled?": true,
+    "display_type": "separate",
+    "zones": {
+      "0": "southbound",
+      "1": "northbound"
+    }
+  },
+  "70268": {
+    "stop_id": "MMIL",
+    "enabled?": true,
+    "display_type": "separate",
+    "zones": {
+      "0": "southbound",
+      "1": "northbound"
+    }
+  },
+  "70269": {
+    "stop_id": "MCEN",
+    "enabled?": true,
+    "display_type": "separate",
+    "zones": {
+      "0": "southbound",
+      "1": "northbound"
+    }
+  },
+  "70270": {
+    "stop_id": "MCEN",
+    "enabled?": true,
+    "display_type": "separate",
+    "zones": {
+      "0": "southbound",
+      "1": "northbound"
+    }
+  },
+  "70271": {
+    "stop_id": "MVAL",
+    "enabled?": true,
+    "display_type": "separate",
+    "zones": {
+      "0": "southbound",
+      "1": "northbound"
+    }
+  },
+  "70272": {
+    "stop_id": "MVAL",
+    "enabled?": true,
+    "display_type": "separate",
+    "zones": {
+      "0": "southbound",
+      "1": "northbound"
+    }
+  },
+  "70273": {
+    "stop_id": "MCAP",
+    "enabled?": false,
+    "display_type": "combined",
+    "zones": {
+      "0": "northbound",
+      "1": "northbound"
+    }
+  },
+  "70274": {
+    "stop_id": "MCAP",
+    "enabled?": true,
+    "display_type": "combined",
+    "zones": {
+      "0": "northbound",
+      "1": "northbound"
+    }
+  },
+  "70275": {
+    "stop_id": "MMAT",
+    "enabled?": false,
+    "display_type": "separate",
+    "zones": {
+      "0": "southbound",
+      "1": "northbound"
+    }
+  },
+  "70276": {
+    "stop_id": "MMAT",
+    "enabled?": false,
+    "display_type": "separate",
+    "zones": {
+      "0": "southbound",
+      "1": "northbound"
+    }
+  }
+}

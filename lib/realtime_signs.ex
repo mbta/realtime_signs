@@ -1,17 +1,20 @@
 defmodule RealtimeSigns do
-  @moduledoc """
-  Documentation for RealtimeSigns.
-  """
 
-  @doc """
-  Hello world.
+  @env Mix.env
+  def env, do: @env
 
-  ## Examples
+  def start(_type, _args) do
+    import Supervisor.Spec, warn: false
 
-      iex> RealtimeSigns.hello
-      :world
+    children = [
+      supervisor(Sign.Supervisor, []),
+    ]
 
-  """
+    opts = [strategy: :one_for_one, name: __MODULE__]
+    #:ok = :error_logger.add_report_handler(Sentry.Logger)
+    Supervisor.start_link(children, opts)
+  end
+
   def hello do
     :world
   end
