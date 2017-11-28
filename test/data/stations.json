@@ -1,0 +1,29 @@
+{
+  "11111": {
+    "stop_id": "STOP",
+    "enabled?": false,
+    "display_type": "combined",
+    "zones": {
+      "0": "center",
+      "1": "center"
+    }
+  },
+  "70262": {
+    "stop_id": "RASH",
+    "enabled?": true,
+    "display_type": ["one_line", 1],
+    "zones": {
+      "0": "mezzanine",
+      "1": "mezzanine"
+    }
+  },
+  "70268": {
+    "stop_id": "MMIL",
+    "enabled?": true,
+    "display_type": "separate",
+    "zones": {
+      "0": "southbound",
+      "1": "northbound"
+    }
+  }
+}

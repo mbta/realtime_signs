@@ -21,10 +21,18 @@ use Mix.Config
 #     config :logger, level: :info
 #
 
+config :realtime_signs,
+  http_client: HTTPoison,
+  posts_log_dir: "log/posts/",
+  sign_head_end_host: System.get_env("SIGN_HEAD_END_HOST") || "127.0.0.1",
+  sign_updater: Sign.Updater,
+  stations_config: System.get_env("STATIONS_CONFIG") || "config/stations.json",
+  time_zone: "America/New_York"
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.
 # Configuration from the imported file will override the ones defined
 # here (which is why it is important to import them last).
 #
-#     import_config "#{Mix.env}.exs"
+import_config "#{Mix.env}.exs"

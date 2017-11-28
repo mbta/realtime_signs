@@ -14,15 +14,24 @@ defmodule RealtimeSigns.Mixfile do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [
+        :httpoison,
+        :logger,
+        :exprotobuf,
+        :poison,
+        :timex
+      ],
+      mod: {RealtimeSigns, []}
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
+      {:exprotobuf, github: "paulswartz/exprotobuf", ref: "ps-dialyzer", override: true},
+      {:httpoison, "~> 0.11.0"},
+      {:poison, "~> 2.0"},
+      {:timex, "~> 3.1.0"}
     ]
   end
 end
