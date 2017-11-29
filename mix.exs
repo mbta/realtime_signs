@@ -28,6 +28,7 @@ defmodule RealtimeSigns.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:dialyxir, "~> 0.5"},
       {:exprotobuf, github: "paulswartz/exprotobuf", ref: "ps-dialyzer", override: true},
       {:httpoison, "~> 0.11.0"},
       {:poison, "~> 2.0"},
