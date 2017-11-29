@@ -15,8 +15,9 @@ defmodule Sign.Predictions do
     raw_trip_updates = HTTPoison.get!("https://s3.amazonaws.com/mbta-gtfs-s3/TripUpdates.pb")
     vehicle_positions = GTFS.Realtime.FeedMessage.decode(raw_vehicle_positions)
     trip_updates = GTFS.Realtime.FeedMessage.decode(raw_trip_updates)
+    current_time = Timex.now
 
-    Sign.State.update(trip_updates, vehicle_positions)
+    Sign.State.update(trip_updates, vehicle_positions, current_time)
 
     schedule_download()
     {:noreoly, state}
