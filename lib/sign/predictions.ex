@@ -13,8 +13,8 @@ defmodule Sign.Predictions do
   def handle_info(:download, state) do
     raw_vehicle_positions = HTTPoison.get!("https://s3.amazonaws.com/mbta-gtfs-s3/VehiclePositions.pb")
     raw_trip_updates = HTTPoison.get!("https://s3.amazonaws.com/mbta-gtfs-s3/TripUpdates.pb")
-    vehicle_positions = GTFS.Realtime.FeedMessage.decode(raw_vehicle_positions)
-    trip_updates = GTFS.Realtime.FeedMessage.decode(raw_trip_updates)
+    vehicle_positions = GTFS.Realtime.FeedMessage.decode(raw_vehicle_positions.body)
+    trip_updates = GTFS.Realtime.FeedMessage.decode(raw_trip_updates.body)
     current_time = Timex.now
 
     Sign.State.update(trip_updates, vehicle_positions, current_time)
