@@ -20,7 +20,7 @@ defmodule Sign.Predictions do
     Sign.State.update(trip_updates, vehicle_positions, current_time)
 
     schedule_download()
-    {:noreoly, state}
+    {:noreply, state}
   end
 
   defp schedule_download() do
