@@ -30,6 +30,7 @@ defmodule RealtimeSigns.Mixfile do
     [
       {:dialyxir, "~> 0.5"},
       {:exprotobuf, github: "paulswartz/exprotobuf", ref: "ps-dialyzer", override: true},
+      {:hackney, "== 1.8.2", override: true},
       {:httpoison, "~> 0.11.0"},
       {:poison, "~> 2.0"},
       {:timex, "~> 3.1.0"}
