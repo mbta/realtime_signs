@@ -1,7 +1,7 @@
 %{"certifi": {:hex, :certifi, "1.1.0", "c9b71a547016c2528a590ccfc28de786c7edb74aafa17446b84f54e04efc00ee", [:rebar3], [], "hexpm"},
   "combine": {:hex, :combine, "0.10.0", "eff8224eeb56498a2af13011d142c5e7997a80c8f5b97c499f84c841032e429f", [:mix], [], "hexpm"},
   "dialyxir": {:hex, :dialyxir, "0.5.1", "b331b091720fd93e878137add264bac4f644e1ddae07a70bf7062c7862c4b952", [], [], "hexpm"},
-  "exprotobuf": {:git, "https://github.com/paulswartz/exprotobuf.git", "e136bed252a1fc0d9f88882470c0aa7981017f7a", [ref: "ps-dialyzer"]},
+  "exprotobuf": {:hex, :exprotobuf, "1.2.9", "f3cac1b0d0444da3c72cdfe80e394d721275dc80b1d7703ead9dad9267e93822", [:mix], [{:gpb, "~> 3.24", [hex: :gpb, repo: "hexpm", optional: false]}], "hexpm"},
   "gettext": {:hex, :gettext, "0.13.1", "5e0daf4e7636d771c4c71ad5f3f53ba09a9ae5c250e1ab9c42ba9edccc476263", [:mix], [], "hexpm"},
   "gpb": {:hex, :gpb, "3.28.1", "6849b2f0004dc4e7644f4f67e7cdd18e893f0ab87eb7ad82b9cb1483ce60eed0", [:make, :rebar], [], "hexpm"},
   "hackney": {:hex, :hackney, "1.8.0", "8388a22f4e7eb04d171f2cf0285b217410f266d6c13a4c397a6c22ab823a486c", [:rebar3], [{:certifi, "1.1.0", [hex: :certifi, repo: "hexpm", optional: false]}, {:idna, "4.0.0", [hex: :idna, repo: "hexpm", optional: false]}, {:metrics, "1.0.1", [hex: :metrics, repo: "hexpm", optional: false]}, {:mimerl, "1.0.2", [hex: :mimerl, repo: "hexpm", optional: false]}, {:ssl_verify_fun, "1.1.1", [hex: :ssl_verify_fun, repo: "hexpm", optional: false]}], "hexpm"},
