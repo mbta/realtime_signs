@@ -24,6 +24,6 @@ defmodule Sign.Predictions do
   end
 
   defp schedule_download() do
-    Process.send_after(self(), :download, 5 * 1000)
+    Process.send_after(self(), :download, 1 * 1000)
   end
 end
