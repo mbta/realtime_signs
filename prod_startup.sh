@@ -1,2 +1,2 @@
 source ~/.realtime_signs.settings
-mix run --no-halt
+elixir --erl "-heart" -S mix run --no-halt
