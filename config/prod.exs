@@ -10,3 +10,10 @@ config :sentry,
   },
   included_environments: [:prod]
 
+config :logger, :splunk,
+  connector: Logger.Backend.Splunk.Output.SslKeepOpen,
+  host: 'mbta.splunkcloud.com',
+  port: 9997,
+  token: {:system, "SPLUNK_TOKEN"},
+  format: "$dateT$time [$level]$levelpad node=$node $metadata$message\n",
+  metadata: [:request_id]

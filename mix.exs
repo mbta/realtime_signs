@@ -18,6 +18,7 @@ defmodule RealtimeSigns.Mixfile do
         :exprotobuf,
         :httpoison,
         :logger,
+        :logger_splunk_backend,
         :poison,
         :sentry,
         :timex
@@ -33,6 +34,7 @@ defmodule RealtimeSigns.Mixfile do
       {:exprotobuf, "~> 1.0"},
       {:hackney, "== 1.8.0", override: true},
       {:httpoison, "~> 0.11.0"},
+      {:logger_splunk_backend, github: "sghiaa/logger_splunk_backend"},
       {:poison, "~> 2.0"},
       {:sentry, "~> 6.0.0"},
       {:timex, "~> 3.1.0"}
