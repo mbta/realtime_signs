@@ -23,6 +23,7 @@ defmodule Sign.State do
   end
 
   def init(:ok) do
+    heartbeat()
     {:ok, %{}}
   end
 
@@ -38,6 +39,15 @@ defmodule Sign.State do
   """
   def update(pid \\ __MODULE__, trip_updates, vehicle_positions, current_time) do
     GenServer.call(pid, {:update, trip_updates, vehicle_positions, current_time})
+  end
+
+  def heartbeat(pid \\ __MODULE__) do
+    Process.send_after(self(), :heartbeat, 30_000)
+  end
+
+  def handle_call({:heartbeat}, _from, _sign_state) do
+    Logger.error("heart beat message")
+    Process.send_after(self(), :heartbeat, 30_000)
   end
 
   def handle_call({:update, %GTFS.Realtime.FeedMessage{entity: trip_updates}, %GTFS.Realtime.FeedMessage{entity: vehicle_positions}, current_time}, _from, sign_state) do
