@@ -23,6 +23,7 @@ defmodule Sign.State do
   end
 
   def init(:ok) do
+    Logger.info "Started Sign.State"
     {:ok, %{}}
   end
 
