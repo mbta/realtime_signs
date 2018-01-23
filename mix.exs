@@ -31,11 +31,12 @@ defmodule RealtimeSigns.Mixfile do
   defp deps do
     [
       {:dialyxir, "~> 0.5"},
+      {:ehmon, git: "https://github.com/heroku/ehmon.git", tag: "v4"},
       {:exprotobuf, "~> 1.0"},
       {:hackney, "== 1.8.0", override: true},
       {:httpoison, "~> 1.0"},
       {:logger_splunk_backend, path: "../logger_splunk_backend"},
-      {:poison, "~> 2.0"},
+      {:poison, "~> 3.1"},
       {:sentry, "~> 6.0.0"},
       {:timex, "~> 3.1.0"}
     ]
