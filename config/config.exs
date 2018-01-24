@@ -29,6 +29,16 @@ config :realtime_signs,
   stations_config: System.get_env("STATIONS_CONFIG") || "config/stations.json",
   time_zone: "America/New_York"
 
+config :logger,
+  backends: [{Logger.Backend.Splunk, :splunk}, :console]
+
+config :logger, :splunk,
+  connector: Logger.Backend.Splunk.Output.Http,
+  host: 'https://http-inputs-mbta.splunkcloud.com/services/collector/event',
+  token: {:system, "STAGING_SIGNS_SPLUNK_TOKEN"},
+  format: "$dateT$time [$level]$levelpad $metadata$message\n",
+  metadata: [:request_id]
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.
