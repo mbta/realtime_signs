@@ -13,6 +13,6 @@ config :sentry,
 config :logger, :splunk,
   connector: Logger.Backend.Splunk.Output.Http,
   host: 'https://http-inputs-mbta.splunkcloud.com/services/collector/event',
-  token: {:system, "SPLUNK_TOKEN"},
+  token: {:system, "PROD_SIGNS_SPLUNK_TOKEN"},
   format: "$dateT$time [$level]$levelpad node=$node $metadata$message\n",
   metadata: [:request_id]
