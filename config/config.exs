@@ -39,6 +39,8 @@ config :logger, :splunk,
   format: "$dateT$time [$level]$levelpad $metadata$message\n",
   metadata: [:request_id]
 
+config :ehmon, :report_mf, {:ehmon, :info_report}
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.
