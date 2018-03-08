@@ -7,7 +7,8 @@ defmodule RealtimeSigns.Mixfile do
       version: "0.1.0",
       elixir: "~> 1.5",
       start_permanent: Mix.env == :prod,
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
@@ -32,6 +33,7 @@ defmodule RealtimeSigns.Mixfile do
     [
       {:dialyxir, "~> 0.5"},
       {:ehmon, git: "https://github.com/heroku/ehmon.git", tag: "v4"},
+      {:excoveralls, "~> 0.5", only: :test},
       {:exprotobuf, "~> 1.0"},
       {:hackney, "== 1.8.0", override: true},
       {:httpoison, "~> 1.0"},
