@@ -112,5 +112,5 @@ defmodule Sign.Message do
   def headsign(1, "Mattapan", @ashmont_gtfs_id), do: "Mattapan" # Special case for Ashmont since it's a terminal
   def headsign(1, "Mattapan", _), do: "Ashmont"
   def headsign(0, "SLG", _), do: "Chelsea"
-  def headsign(1, "SLG", _), do: "South Sta"
+  def headsign(1, "SLG", _), do: "South Station"
 end
