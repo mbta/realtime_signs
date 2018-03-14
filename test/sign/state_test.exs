@@ -2,9 +2,9 @@ defmodule Sign.StateTest do
   use ExUnit.Case
 
   alias GTFS.Realtime.{FeedMessage, FeedEntity, TripUpdate, TripDescriptor, VehiclePosition}
-  alias Sign.Canned, as: C
-  alias Sign.Message, as: M
-  alias Sign.Content, as: SC
+  alias Sign.Canned
+  alias Sign.Message
+  alias Sign.Content
 
   @fake_updater Fake.Sign.Updater
   @trip_id "32569007"
@@ -53,14 +53,14 @@ defmodule Sign.StateTest do
     Sign.State.update(trip_updates, %FeedMessage{entity: []}, now)
 
     assert @fake_updater.all_calls == [
-      %SC{
+      %Content{
         messages: [
-          %M{
+          %Message{
             duration: 180,
             message: [{"Mattapan     3 min", nil}],
             placement: ["s1"],
             when: nil},
-          %M{
+          %Message{
             duration: nil,
             message: [{"                  ", nil}],
             placement: ["s2"],
@@ -95,21 +95,21 @@ defmodule Sign.StateTest do
     Sign.State.update(trip_updates, %FeedMessage{entity: []}, now)
 
     assert @fake_updater.all_calls == [
-      %SC{
+      %Content{
         messages: [
-          %M{
+          %Message{
             duration: 30,
             message: [{"Mattapan       ARR", nil}],
             placement: ["s1"],
             when: nil},
-          %M{
+          %Message{
             duration: nil,
             message: [{"                  ", nil}],
             placement: ["s2"],
             when: nil}
         ],
         station: "MMIL"},
-      %C{
+      %Canned{
         mid: 90128,
         platforms: %Sign.Platforms{sb: true},
         priority: 5,
@@ -139,21 +139,21 @@ defmodule Sign.StateTest do
     Sign.State.update(trip_updates_2, %FeedMessage{entity: []}, now)
 
     assert @fake_updater.all_calls == [
-      %SC{
+      %Content{
         messages: [
-          %M{
+          %Message{
             duration: 30,
             message: [{"Mattapan       ARR", nil}],
             placement: ["s1"],
             when: nil},
-          %M{
+          %Message{
             duration: nil,
             message: [{"                  ", nil}],
             placement: ["s2"],
             when: nil}
         ],
         station: "MMIL"},
-      %C{
+      %Canned{
         mid: 90128,
         platforms: %Sign.Platforms{sb: true},
         priority: 5,
@@ -178,14 +178,14 @@ defmodule Sign.StateTest do
     Sign.State.update(trip_updates, %FeedMessage{entity: []}, Timex.shift(now, seconds: 10))
 
     assert @fake_updater.all_calls == [
-      %SC{
+      %Content{
         messages: [
-          %M{
+          %Message{
             duration: 180,
             message: [{"Mattapan     3 min", nil}],
             placement: ["s1"],
             when: nil},
-          %M{
+          %Message{
             duration: nil,
             message: [{"                  ", nil}],
             placement: ["s2"],
@@ -215,28 +215,28 @@ defmodule Sign.StateTest do
     Sign.State.update(trip_updates_2, %FeedMessage{entity: []}, Timex.shift(now, minutes: 4))
 
     assert @fake_updater.all_calls == [
-      %SC{
+      %Content{
         messages: [
-          %M{
+          %Message{
             duration: 180,
             message: [{"Mattapan     3 min", nil}],
             placement: ["s1"],
             when: nil},
-          %M{
+          %Message{
             duration: nil,
             message: [{"                  ", nil}],
             placement: ["s2"],
             when: nil}
         ],
         station: "MMIL"},
-      %SC{
+      %Content{
         messages: [
-          %M{
+          %Message{
             duration: 180,
             message: [{"Mattapan     3 min", nil}],
             placement: ["s1"],
             when: nil},
-          %M{
+          %Message{
             duration: nil,
             message: [{"                  ", nil}],
             placement: ["s2"],
@@ -270,13 +270,13 @@ defmodule Sign.StateTest do
     Sign.State.update(trip_updates, vehicle_positions, now)
 
     assert @fake_updater.all_calls == [
-      %SC{
+      %Content{
         messages: [
-          %M{
+          %Message{
             duration: 10,
             message: [{"Mattapan       BRD", nil}],
             placement: ["s1"]},
-          %M{
+          %Message{
             duration: nil,
             message: [{"                  ", nil}],
             placement: ["s2"],
@@ -299,9 +299,9 @@ defmodule Sign.StateTest do
     Sign.State.update(trip_updates, %FeedMessage{entity: []}, now)
 
     assert @fake_updater.all_calls == [
-      %SC{
+      %Content{
         messages: [
-          %M{
+          %Message{
             duration: 180,
             message: [{"Mattapan  3 min", nil}], placement: ["m1"], when: nil}
         ],
@@ -320,16 +320,16 @@ defmodule Sign.StateTest do
     Sign.State.update(trip_updates, %FeedMessage{entity: []}, now)
 
     assert @fake_updater.all_calls == [
-      %SC{
+      %Content{
         messages: [
-          %M{
+          %Message{
             duration: 30,
             message: [{"Mattapan    ARR", nil}],
             placement: ["m1"],
             when: nil}
         ],
         station: "RASH"},
-      %C{
+      %Canned{
         mid: 90128,
         platforms: %Sign.Platforms{mz: true},
         priority: 5,
@@ -337,6 +337,43 @@ defmodule Sign.StateTest do
         timeout: 60,
         type: 1,
         variables: []}
+    ]
+  end
+
+  test "announces countdown message" do
+    now = ~N[2017-06-05 12:00:00]
+    trip_updates = %FeedMessage{
+      entity: [
+        trip_update_entity(Timex.shift(now, seconds: 250), "70268", 1)
+      ]
+    }
+
+    Sign.State.update(trip_updates, %FeedMessage{entity: []}, now)
+
+    assert @fake_updater.all_calls == [
+      %Content{
+        messages: [
+          %Message{
+            duration: 180,
+            message: [{"Ashmont      4 min", nil}],
+            placement: ["n1"],
+            when: nil},
+          %Message{
+            duration: nil,
+            message: [{"                  ", nil}],
+            placement: ["n2"],
+            when: nil,
+          }
+        ],
+        station: "MMIL"},
+      %Canned{
+        mid: 90,
+        platforms: %Sign.Platforms{nb: true},
+        priority: 5,
+        station: "MMIL",
+        timeout: 60,
+        type: 1,
+        variables: [4016, 503, 5004]}
     ]
   end
 end
