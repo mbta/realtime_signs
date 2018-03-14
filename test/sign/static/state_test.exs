@@ -4,11 +4,6 @@ defmodule Sign.Static.StateTest do
   import ExUnit.CaptureLog
   alias Sign.Station
 
-  @stations [
-    %Station{route_id: "Mattapan", stop_id: "MMIL"},
-    %Station{route_id: "Mattapan", stop_id: "RASH"}
-  ]
-
   describe "static_station_codes/1" do
     test "returns station codes for current static_stations" do
       {:ok, static_signs} = start_supervised({Sign.Static.State, [refresh_time: 1, name: :test, stations: ["70262", "70268"]]})
