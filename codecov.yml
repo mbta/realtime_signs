@@ -9,12 +9,14 @@ comment:
 coverage:
   precision: 2
   range:
-    - 70.0
-    - 100.0
+  - 70.0
+  - 100.0
   round: down
   status:
     changes: false
-    patch: true
+    patch:
+      default:
+        target: 100%
     project: true
 parsers:
   gcov:
@@ -23,5 +25,5 @@ parsers:
       loop: true
       macro: false
       method: false
-      javascript:
-        enable_partials: false
+  javascript:
+    enable_partials: false
