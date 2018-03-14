@@ -30,7 +30,7 @@ config :realtime_signs,
   time_zone: "America/New_York"
 
 config :logger,
-  backends: [{Logger.Backend.Splunk, :splunk}, :console]
+  backends: [:console]
 
 config :logger, :splunk,
   connector: Logger.Backend.Splunk.Output.Http,
