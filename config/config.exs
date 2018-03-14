@@ -32,13 +32,6 @@ config :realtime_signs,
 config :logger,
   backends: [:console]
 
-config :logger, :splunk,
-  connector: Logger.Backend.Splunk.Output.Http,
-  host: 'https://http-inputs-mbta.splunkcloud.com/services/collector/event',
-  token: {:system, "STAGING_SIGNS_SPLUNK_TOKEN"},
-  format: "$dateT$time [$level]$levelpad $metadata$message\n",
-  metadata: [:request_id]
-
 config :ehmon, :report_mf, {:ehmon, :info_report}
 
 # It is also possible to import configuration files, relative to this
