@@ -19,8 +19,7 @@ defmodule Sign.Static.Messages do
     headsign = Message.headsign(direction, "Mattapan", station.stop_id)
     message_text = Sign.Message.format_message(headsign, text)
     message = %Message{placement: placement(station, direction), message: [{message_text, nil}], duration: @static_duration}
-    nil_message = %Message{placement: placement_hack(station, direction), message: [{"                  ", nil}]}
-    %Content{station: station.stop_id, messages: [message, nil_message]}
+    %Content{station: station.stop_id, messages: [message]}
   end
 
   defp placement(station, direction) do
@@ -28,12 +27,7 @@ defmodule Sign.Static.Messages do
     [Message.sign_code(sign_label) <> "1"]
   end
 
-  defp placement_hack(station, direction) do
-    sign_label = Map.get(station.zones, direction)
-    [Message.sign_code(sign_label) <> "2"]
-  end
-
   defp text_for_station_code(_code, _direction) do
-    "Soon"
+    "Welcome!"
   end
 end

@@ -17,6 +17,15 @@ defmodule Sign.Static.State do
     {:ok, static_stations}
   end
 
+  @doc "Returns a list of stations that are displaying static text"
+  def static_station_codes(pid \\ __MODULE__) do
+    GenServer.call(pid, :static_station_codes)
+  end
+
+  def handle_call(:static_station_codes, _from, stations) do
+    {:reply, Enum.map(stations, & &1.stop_id), stations}
+  end
+
   def handle_info({:refresh, refresh_time}, stations) do
     schedule_refresh(refresh_time)
     content_list = Static.Messages.update_signs(stations)
