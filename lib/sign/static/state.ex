@@ -27,10 +27,10 @@ defmodule Sign.Static.State do
 
   def handle_info({:refresh, refresh_time}, stations) do
     schedule_refresh(refresh_time)
-    content_list = Static.Messages.update_signs(stations)
-    for content <- content_list do
-      Logger.info("#{content.station} :: #{inspect content.messages}")
-      Sign.State.request(content, Timex.now())
+    station_messages = Static.Messages.station_messages(stations)
+    for station_message <- station_messages do
+      Logger.info("#{station_message.station} :: #{inspect station_message.messages}")
+      Sign.State.request(station_message, Timex.now())
     end
     {:noreply, stations}
   end
