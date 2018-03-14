@@ -2,7 +2,6 @@ defmodule Sign.Static.StateTest do
   use ExUnit.Case
   import Sign.Static.State
   import ExUnit.CaptureLog
-  alias Sign.Station
 
   describe "static_station_codes/1" do
     test "returns station codes for current static_stations" do
