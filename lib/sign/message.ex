@@ -1,4 +1,8 @@
 defmodule Sign.Message do
+  alias Sign.Content
+
+  @ashmont_gtfs_id "70262"
+
   defstruct message: [],
     placement: [],
     when: nil,
@@ -44,12 +48,12 @@ defmodule Sign.Message do
     %{state | duration: seconds}
   end
 
-  defp sign_code(:eastbound), do: "e"
-  defp sign_code(:westbound), do: "w"
-  defp sign_code(:northbound), do: "n"
-  defp sign_code(:southbound), do: "s"
-  defp sign_code(:mezzanine), do: "m"
-  defp sign_code(:center), do: "c"
+  def sign_code(:eastbound), do: "e"
+  def sign_code(:westbound), do: "w"
+  def sign_code(:northbound), do: "n"
+  def sign_code(:southbound), do: "s"
+  def sign_code(:mezzanine), do: "m"
+  def sign_code(:center), do: "c"
 
   defp line_code(line) when is_integer(line), do: Integer.to_string(line)
   defp line_code(:top), do: "1"
@@ -94,4 +98,19 @@ defmodule Sign.Message do
 
     "#{time}#{duration}#{placements}#{messages}"
   end
+
+  @doc "Formats a message with the correct padding between headsign and text"
+  @spec format_message(String.t, String.t) :: String.t
+  def format_message(headsign_msg, text) do
+    padding = Content.sign_width() - (String.length(headsign_msg) + String.length(text))
+    "#{headsign_msg}#{String.duplicate(" ", padding)}#{text}"
+  end
+
+  @doc "Provides the headsign to be used in a message"
+  @spec headsign(integer, String.t, String.t) :: String.t
+  def headsign(0, "Mattapan", _), do: "Mattapan"
+  def headsign(1, "Mattapan", @ashmont_gtfs_id), do: "Mattapan" # Special case for Ashmont since it's a terminal
+  def headsign(1, "Mattapan", _), do: "Ashmont"
+  def headsign(0, "SLG", _), do: "Chelsea"
+  def headsign(1, "SLG", _), do: "South Sta"
 end

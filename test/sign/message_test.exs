@@ -2,6 +2,30 @@ defmodule Sign.MessageTest do
   use ExUnit.Case, async: true
   import Sign.Message
 
+  describe "headsign/1" do
+    test "returns correct headsign for Mattapan trips" do
+      assert headsign(0, "Mattapan", "stop1") == "Mattapan"
+      assert headsign(1, "Mattapan", "stop1") == "Ashmont"
+    end
+
+    test "returns correct headsign at Ashmont" do
+      assert headsign(1, "Mattapan", "70262") == "Mattapan"
+    end
+
+    test "returns correct headsign for Silver Line Gateway trips" do
+      assert headsign(0, "SLG", "stop1") == "Chelsea"
+      assert headsign(1, "SLG", "stop1") == "South Station"
+    end
+  end
+
+  describe "format_message/2" do
+    test "formats message with correct padding between headsign and message" do
+      formatted = format_message("Mattapan", "3 min")
+      assert String.length(formatted) == 18
+      assert formatted == "Mattapan     3 min"
+    end
+  end
+
   test "creates a message that can be turned into a command" do
     command = new()
               |> message("Alewife  1 min", duration: 10)

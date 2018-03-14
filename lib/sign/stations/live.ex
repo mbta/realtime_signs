@@ -22,10 +22,17 @@ defmodule Sign.Stations.Live do
     GenServer.call(pid, {:for_gtfs_id, gtfs_stop_id})
   end
 
+  def get_stations(pid \\ __MODULE__, stop_ids) do
+    GenServer.call(pid, {:get_stations, stop_ids})
+  end
+
   def state(pid \\ __MODULE__) do
     GenServer.call(pid, :state)
   end
 
+  def handle_call({:get_stations, stop_ids}, _from, state) do
+    {:reply, Enum.map(stop_ids, &Map.get(state.stations, &1)), state}
+  end
   def handle_call({:for_gtfs_id, gtfs_stop_id}, _from, state) do
     mtime = File.stat!(state.path).mtime
     state = if mtime > state.last_updated_at do
@@ -34,9 +41,6 @@ defmodule Sign.Stations.Live do
       state
     end
     {:reply, state.stations[gtfs_stop_id], state}
-  end
-  def handle_call(:state, _from, state) do
-    {:reply, state, state}
   end
 
   defp parse_file!(path) do
