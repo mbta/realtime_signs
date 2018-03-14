@@ -142,49 +142,5 @@
       "0": "southbound",
       "1": "northbound"
     }
-  },
-  "SLG1": {
-    "stop_id": "SMYS",
-    "enabled?": false,
-    "display_type": "separate",
-    "zones": {
-      "0": "eastbound",
-      "1": "westbound"
-    }
-  },
-  "SLG2": {
-    "stop_id": "SEAV",
-    "enabled?": false,
-    "display_type": "separate",
-    "zones": {
-      "0": "eastbound",
-      "1": "westbound"
-    }
-  },
-  "SLG3": {
-    "stop_id": "SBQS",
-    "enabled?": false,
-    "display_type": "separate",
-    "zones": {
-      "0": "eastbound",
-      "1": "westbound"
-    }
-  },
-  "SLG4": {
-    "stop_id": "SBOX",
-    "enabled?": false,
-    "display_type": "separate",
-    "zones": {
-      "0": "eastbound",
-      "1": "westbound"
-    }
-  },
-  "test": {
-    "stop_id": "MMIL",
-    "enabled?": false,
-    "display_type": "separate",
-    "zones": {
-      "0": "southbound"
-    }
   }
 }

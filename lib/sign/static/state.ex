@@ -3,8 +3,7 @@ defmodule Sign.Static.State do
   alias Sign.Static
   require Logger
 
-  #@default_opts [refresh_time: 15_000, stations: ["SLG1", "SLG2", "SLG3", "SLG4"]]
-  @default_opts [refresh_time: 30_000, stations: ["70267"]]
+  @default_opts [refresh_time: 250_000, stations: []]
 
   def start_link(user_opts \\ []) do
     opts = Keyword.merge(@default_opts, user_opts)
