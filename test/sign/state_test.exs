@@ -8,6 +8,7 @@ defmodule Sign.StateTest do
 
   @fake_updater Fake.Sign.Updater
   @trip_id "32569007"
+  @route_id "Mattapan"
 
   # Use a fake sign updater that stores the calls we make
   setup_all do
@@ -31,7 +32,9 @@ defmodule Sign.StateTest do
       trip_update: %TripUpdate {
         trip: %TripDescriptor{
           direction_id: direction_id,
-          trip_id: @trip_id},
+          trip_id: @trip_id,
+          route_id: @route_id
+        },
         stop_time_update: [
           %TripUpdate.StopTimeUpdate{
             arrival: %GTFS.Realtime.TripUpdate.StopTimeEvent{time: Timex.to_unix(arrival_time)},
@@ -252,7 +255,7 @@ defmodule Sign.StateTest do
           vehicle: %VehiclePosition{
             stop_id: stop_id,
             current_status: :STOPPED_AT,
-            trip: %TripDescriptor{direction_id: 0, trip_id: @trip_id},
+            trip: %TripDescriptor{direction_id: 0, trip_id: @trip_id, route_id: @route_id},
           }
         }
       ]
