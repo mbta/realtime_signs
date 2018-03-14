@@ -209,13 +209,13 @@ defmodule Sign.State do
       Content.new
       |> Content.station(pa_stop_id)
       |> Content.messages(messages)
-      |> request(current_time)
+      |> prediction_request(current_time)
 
       cond do
         arriving_announcement != nil and current_sign_state.last_arrival != previous_sign_state.last_arrival ->
-          request(arriving_announcement, current_time)
+          prediction_request(arriving_announcement, current_time)
         countdown_announcement != nil and current_sign_state.last_countdown != previous_sign_state.last_countdown ->
-          request(countdown_announcement, current_time)
+          prediction_request(countdown_announcement, current_time)
         true -> nil
       end
 
@@ -281,10 +281,14 @@ defmodule Sign.State do
   end
   defp announce_countdown?(_), do: false
 
-  def request(payload, current_time) do
-    unless Map.get(payload, :station) == "MMIL" do
-      sign_updater().request(payload, current_time)
+  defp prediction_request(payload, current_time) do
+    unless payload.station in Sign.Static.State.static_station_codes() do
+      request(payload, current_time)
     end
+  end
+
+  def request(payload, current_time) do
+    sign_updater().request(payload, current_time)
   end
 
   defp sign_updater() do
