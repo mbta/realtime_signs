@@ -11,11 +11,6 @@ defmodule Sign.MessageTest do
     test "returns correct headsign at Ashmont" do
       assert headsign(1, "Mattapan", "70262") == "Mattapan"
     end
-
-    test "returns correct headsign for Silver Line Gateway trips" do
-      assert headsign(0, "SLG", "stop1") == "Chelsea"
-      assert headsign(1, "SLG", "stop1") == "South Station"
-    end
   end
 
   describe "format_message/2" do

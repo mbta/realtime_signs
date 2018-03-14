@@ -3,6 +3,7 @@
     "stop_id": "RASH",
     "enabled?": false,
     "display_type": ["one_line", 1],
+    "route_id": "Mattapan",
     "zones": {
       "0": "mezzanine",
       "1": "mezzanine"
@@ -12,6 +13,7 @@
     "stop_id": "RASH",
     "enabled?": false,
     "display_type": ["one_line", 1],
+    "route_id": "Mattapan",
     "zones": {
       "0": "mezzanine",
       "1": "mezzanine"
@@ -21,6 +23,7 @@
     "stop_id": "MCED",
     "enabled?": true,
     "display_type": "separate",
+    "route_id": "Mattapan",
     "zones": {
       "0": "southbound",
       "1": "northbound"
@@ -30,6 +33,7 @@
     "stop_id": "MCED",
     "enabled?": true,
     "display_type": "separate",
+    "route_id": "Mattapan",
     "zones": {
       "0": "southbound",
       "1": "northbound"
@@ -39,6 +43,7 @@
     "stop_id": "MBUT",
     "enabled?": false,
     "display_type": "combined",
+    "route_id": "Mattapan",
     "zones": {
       "0": "center",
       "1": "center"
@@ -48,6 +53,7 @@
     "stop_id": "MBUT",
     "enabled?": false,
     "display_type": "combined",
+    "route_id": "Mattapan",
     "zones": {
       "0": "center",
       "1": "center"
@@ -57,6 +63,7 @@
     "stop_id": "MMIL",
     "enabled?": true,
     "display_type": "separate",
+    "route_id": "Mattapan",
     "zones": {
       "0": "southbound",
       "1": "northbound"
@@ -66,6 +73,7 @@
     "stop_id": "MMIL",
     "enabled?": true,
     "display_type": "separate",
+    "route_id": "Mattapan",
     "zones": {
       "0": "southbound",
       "1": "northbound"
@@ -75,6 +83,7 @@
     "stop_id": "MCEN",
     "enabled?": true,
     "display_type": "separate",
+    "route_id": "Mattapan",
     "zones": {
       "0": "southbound",
       "1": "northbound"
@@ -84,6 +93,7 @@
     "stop_id": "MCEN",
     "enabled?": true,
     "display_type": "separate",
+    "route_id": "Mattapan",
     "zones": {
       "0": "southbound",
       "1": "northbound"
@@ -93,6 +103,7 @@
     "stop_id": "MVAL",
     "enabled?": true,
     "display_type": "separate",
+    "route_id": "Mattapan",
     "zones": {
       "0": "southbound",
       "1": "northbound"
@@ -102,6 +113,7 @@
     "stop_id": "MVAL",
     "enabled?": true,
     "display_type": "separate",
+    "route_id": "Mattapan",
     "zones": {
       "0": "southbound",
       "1": "northbound"
@@ -111,6 +123,7 @@
     "stop_id": "MCAP",
     "enabled?": false,
     "display_type": "combined",
+    "route_id": "Mattapan",
     "zones": {
       "0": "northbound",
       "1": "northbound"
@@ -120,6 +133,7 @@
     "stop_id": "MCAP",
     "enabled?": true,
     "display_type": "combined",
+    "route_id": "Mattapan",
     "zones": {
       "0": "northbound",
       "1": "northbound"
@@ -129,6 +143,7 @@
     "stop_id": "MMAT",
     "enabled?": false,
     "display_type": "separate",
+    "route_id": "Mattapan",
     "zones": {
       "0": "southbound",
       "1": "northbound"
@@ -138,6 +153,7 @@
     "stop_id": "MMAT",
     "enabled?": false,
     "display_type": "separate",
+    "route_id": "Mattapan",
     "zones": {
       "0": "southbound",
       "1": "northbound"

@@ -56,6 +56,7 @@ defmodule Sign.Stations.Live do
       enabled?: station["enabled?"],
       stop_id: station["stop_id"],
       display_type: parse_display_type(station["display_type"]),
+      route_id: station["route_id"],
       zones: parse_zones(station["zones"])
     }}
   end
