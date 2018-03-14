@@ -8,7 +8,12 @@ defmodule RealtimeSigns.Mixfile do
       elixir: "~> 1.5",
       start_permanent: Mix.env == :prod,
       deps: deps(),
-      test_coverage: [tool: ExCoveralls]
+      test_coverage: [tool: ExCoveralls],
+      dialyzer: [
+        plt_add_apps: [:mix],
+        plt_add_deps: true,
+        ignore_warnings: ".dialyzer.ignore-warnings"
+      ]
     ]
   end
 

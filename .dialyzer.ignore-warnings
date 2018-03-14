@@ -1,0 +1,11 @@
+Unknown function 'Elixir.Sign.Command.Atom':'__impl__'/1
+Unknown function 'Elixir.Sign.Command.BitString':'__impl__'/1
+Unknown function 'Elixir.Sign.Command.Float':'__impl__'/1
+Unknown function 'Elixir.Sign.Command.Function':'__impl__'/1
+Unknown function 'Elixir.Sign.Command.Integer':'__impl__'/1
+Unknown function 'Elixir.Sign.Command.List':'__impl__'/1
+Unknown function 'Elixir.Sign.Command.Map':'__impl__'/1
+Unknown function 'Elixir.Sign.Command.PID':'__impl__'/1
+Unknown function 'Elixir.Sign.Command.Port':'__impl__'/1
+Unknown function 'Elixir.Sign.Command.Reference':'__impl__'/1
+Unknown function 'Elixir.Sign.Command.Tuple':'__impl__'/1
