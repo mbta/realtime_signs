@@ -1,5 +1,4 @@
 defmodule Sign.Message do
-  alias Sign.Content
 
   @ashmont_gtfs_id "70262"
 
@@ -97,13 +96,6 @@ defmodule Sign.Message do
     messages = messages_string(state.message)
 
     "#{time}#{duration}#{placements}#{messages}"
-  end
-
-  @doc "Formats a message with the correct padding after the text"
-  @spec format_static_message(String.t) :: String.t
-  def format_static_message(text) do
-    padding = Content.sign_width() - String.length(text)
-    "#{text}#{String.duplicate(" ", padding)}"
   end
 
   @doc "Provides the headsign to be used in a message"
