@@ -7,9 +7,11 @@ defmodule Sign.Static.MessagesTest do
     %Sign.Station{stop_id: "test2", zones: %{0 => :westbound, 1 => :eastbound}, route_id: "Mattapan"}
   ]
 
-  describe "station_messages/1" do
+  @refresh_rate 1
+
+  describe "station_messages/2" do
     test "messages have correct placement" do
-      sign_content_payloads = station_messages(@stations)
+      sign_content_payloads = station_messages(@stations, @refresh_rate)
       station1_placement = Enum.filter(sign_content_payloads, & &1.station == "test")
                            |> Enum.flat_map(& &1.messages)
                            |> Enum.flat_map(& &1.placement)
@@ -22,13 +24,13 @@ defmodule Sign.Static.MessagesTest do
     end
 
     test "all stations are included in static_messages" do
-      sign_content_payloads = station_messages(@stations)
+      sign_content_payloads = station_messages(@stations, @refresh_rate)
       station_codes = Enum.map(sign_content_payloads, & &1.station) |> Enum.uniq
       assert station_codes == ["test", "test2"]
     end
 
     test "message includes headsigns for direction" do
-      sign_content_payloads = station_messages(@stations)
+      sign_content_payloads = station_messages(@stations, @refresh_rate)
       [{test_msg_text, nil}] = Enum.map(sign_content_payloads, & &1.messages) |> List.first |> List.first |> Map.get(:message)
       [{test2_msg_text, nil}] = Enum.map(sign_content_payloads, & &1.messages) |> Enum.at(1) |> List.first |> Map.get(:message)
       assert test_msg_text =~ "Mattapan"

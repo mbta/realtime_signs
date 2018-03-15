@@ -17,7 +17,7 @@ defmodule Sign.Static.StateTest do
         start_supervised({Sign.Static.State, [refresh_time: 1, name: :refresh_test, stations: ["70268"]]})
         Process.sleep(40)
       end
-      assert log =~ "MMIL :: [%Sign.Message{duration: 180, message: [{\"Mattapan  Welcome!\", nil}], placement: [\"s1\"], when: nil}]"
+      assert log =~ "MMIL :: [%Sign.Message{duration: 0, message: [{\"Mattapan  Welcome!\", nil}], placement: [\"s1\"], when: nil}]"
     end
   end
 end
