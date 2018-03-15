@@ -99,11 +99,11 @@ defmodule Sign.Message do
     "#{time}#{duration}#{placements}#{messages}"
   end
 
-  @doc "Formats a message with the correct padding between headsign and text"
-  @spec format_message(String.t, String.t) :: String.t
-  def format_message(headsign_msg, text) do
-    padding = Content.sign_width() - (String.length(headsign_msg) + String.length(text))
-    "#{headsign_msg}#{String.duplicate(" ", padding)}#{text}"
+  @doc "Formats a message with the correct padding after the text"
+  @spec format_static_message(String.t) :: String.t
+  def format_static_message(text) do
+    padding = Content.sign_width() - String.length(text)
+    "#{text}#{String.duplicate(" ", padding)}"
   end
 
   @doc "Provides the headsign to be used in a message"

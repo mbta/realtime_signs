@@ -19,22 +19,14 @@ defmodule Sign.Static.MessagesTest do
                            |> Enum.flat_map(& &1.messages)
                            |> Enum.flat_map(& &1.placement)
 
-      assert station1_placement == ["s1", "n1"]
-      assert station2_placement == ["w1", "e1"]
+      assert station1_placement == ["s1", "s2", "n1", "n2"]
+      assert station2_placement == ["w1", "w2", "e1", "e2"]
     end
 
     test "all stations are included in static_messages" do
       sign_content_payloads = station_messages(@stations, @refresh_rate)
       station_codes = Enum.map(sign_content_payloads, & &1.station) |> Enum.uniq
       assert station_codes == ["test", "test2"]
-    end
-
-    test "message includes headsigns for direction" do
-      sign_content_payloads = station_messages(@stations, @refresh_rate)
-      [{test_msg_text, nil}] = Enum.map(sign_content_payloads, & &1.messages) |> List.first |> List.first |> Map.get(:message)
-      [{test2_msg_text, nil}] = Enum.map(sign_content_payloads, & &1.messages) |> Enum.at(1) |> List.first |> Map.get(:message)
-      assert test_msg_text =~ "Mattapan"
-      assert test2_msg_text =~ "Ashmont"
     end
   end
 end

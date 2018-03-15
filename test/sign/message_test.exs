@@ -13,14 +13,6 @@ defmodule Sign.MessageTest do
     end
   end
 
-  describe "format_message/2" do
-    test "formats message with correct padding between headsign and message" do
-      formatted = format_message("Mattapan", "3 min")
-      assert String.length(formatted) == 18
-      assert formatted == "Mattapan     3 min"
-    end
-  end
-
   test "creates a message that can be turned into a command" do
     command = new()
               |> message("Alewife  1 min", duration: 10)
