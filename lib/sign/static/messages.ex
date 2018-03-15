@@ -9,24 +9,25 @@ defmodule Sign.Static.Messages do
   def station_messages(stations, refresh_rate) do
     stations
     |> Enum.flat_map(&station_with_zones/1)
-    |> Enum.map(&station_message(&1, refresh_rate))
+    |> Enum.map(&build_content(&1, refresh_rate))
   end
 
-  defp station_message({station, direction}, refresh_rate) do
-    text = text_for_station_code(station.stop_id, direction)
-    build_content(station, direction, text, refresh_rate)
+  defp build_content({station, direction}, refresh_rate) do
+    %Content{station: station.stop_id, messages: build_messages(station, direction, refresh_rate)}
   end
 
-  defp station_with_zones(station) do
-    Enum.map(Station.zone_ids(station), &{station, &1})
-  end
-
-  defp build_content(station, direction, text, refresh_rate) do
-    headsign = Message.headsign(direction, station.route_id, station.stop_id)
-    message_text = Sign.Message.format_message(headsign, text)
+  defp build_messages(station, direction, refresh_rate) do
     duration = message_duration(refresh_rate)
-    message = %Message{placement: placement(station, direction), message: [{message_text, nil}], duration: duration}
-    %Content{station: station.stop_id, messages: [message]}
+    {text_top, text_bottom} = text_for_station_code(station.stop_id, direction)
+    message_line_top = build_message(station, direction, text_top, duration, :top)
+    message_line_bottom = build_message(station, direction, text_bottom, duration, :bottom)
+    [message_line_top, message_line_bottom]
+  end
+
+  defp build_message(station, direction, text, duration, line_value) do
+    line_placement = if line_value == :top, do: "1", else: "2"
+    placement = placement_code(station, direction, line_placement)
+    %Message{placement: placement, message: [{text, nil}], duration: duration}
   end
 
   defp message_duration(refresh_rate_milliseconds) do
@@ -34,16 +35,20 @@ defmodule Sign.Static.Messages do
     refresh_rate_seconds + additional_duration()
   end
 
-  defp placement(station, direction) do
+  defp placement_code(station, direction, line_placement) do
     sign_label = Map.get(station.zones, direction)
-    [Message.sign_code(sign_label) <> "1"]
+    [Message.sign_code(sign_label) <> line_placement]
   end
 
   defp additional_duration() do
     if Mix.env == :test, do: 0, else: @additional_duration
   end
 
+  defp station_with_zones(station) do
+    Enum.map(Station.zone_ids(station), &{station, &1})
+  end
+
   defp text_for_station_code(_code, _direction) do
-    "Welcome!"
+    {"Trolley to Ashmont", "Every 4 to 8 min"}
   end
 end
