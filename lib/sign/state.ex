@@ -12,9 +12,9 @@ defmodule Sign.State do
 
   require Logger
 
-  alias Sign.Canned, as: C
-  alias Sign.Message, as: M
-  alias Sign.Content, as: SC
+  alias Sign.Canned
+  alias Sign.Message
+  alias Sign.Content
   alias Sign.Stations
   alias Sign.Station
 
@@ -206,16 +206,16 @@ defmodule Sign.State do
     if needs_refresh?(current_sign_state, previous_sign_state) do
       Logger.info("#{pa_stop_id} :: #{inspect messages}")
 
-      SC.new
-      |> SC.station(pa_stop_id)
-      |> SC.messages(messages)
-      |> request(current_time)
+      Content.new
+      |> Content.station(pa_stop_id)
+      |> Content.messages(messages)
+      |> prediction_request(current_time)
 
       cond do
         arriving_announcement != nil and current_sign_state.last_arrival != previous_sign_state.last_arrival ->
-          request(arriving_announcement, current_time)
+          prediction_request(arriving_announcement, current_time)
         countdown_announcement != nil and current_sign_state.last_countdown != previous_sign_state.last_countdown ->
-          request(countdown_announcement, current_time)
+          prediction_request(countdown_announcement, current_time)
         true -> nil
       end
 
@@ -248,10 +248,10 @@ defmodule Sign.State do
       time(stop_time_update, current_time)
     end
 
-    message = M.new
-    |> M.placement(platform, line)
-    |> M.erase_after(expiration_time(prediction_time))
-    |> M.message(message(headsign(trip.direction_id, stop_id), prediction_time, stop_id))
+    message = Message.new
+    |> Message.placement(platform, line)
+    |> Message.erase_after(expiration_time(prediction_time))
+    |> Message.message(message(Message.headsign(trip.direction_id, trip.route_id, stop_id), prediction_time, stop_id))
 
     arriving_announcement = if announce_arriving?(prediction_time) do
       {arriving_announcement(pa_stop_id, stop_id, trip.direction_id, platform), trip.trip_id}
@@ -281,7 +281,13 @@ defmodule Sign.State do
   end
   defp announce_countdown?(_), do: false
 
-  defp request(payload, current_time) do
+  defp prediction_request(payload, current_time) do
+    unless payload.station in Sign.Static.State.static_station_codes() do
+      request(payload, current_time)
+    end
+  end
+
+  def request(payload, current_time) do
     sign_updater().request(payload, current_time)
   end
 
@@ -303,7 +309,7 @@ defmodule Sign.State do
   end
 
   defp do_message(headsign_msg, time_msg, stop_id) do
-    padding = SC.sign_width() - (String.length(headsign_msg) + String.length(time_msg))
+    padding = Content.sign_width() - (String.length(headsign_msg) + String.length(time_msg))
     # Hack to correctly align Ashmont sign with HRRT's message
     padding = if stop_id == @ashmont_gtfs_id do
       padding - 3
@@ -314,29 +320,25 @@ defmodule Sign.State do
   end
 
   defp arriving_announcement(pa_stop_id, gtfs_stop_id, direction_id, platform) do
-    announcement = C.new
-    |> C.mid(arriving_message_id(direction_id, gtfs_stop_id))
-    |> C.station(pa_stop_id)
-    |> C.type(:audio)
-    |> C.platforms(platform)
+    announcement = Canned.new
+    |> Canned.mid(arriving_message_id(direction_id, gtfs_stop_id))
+    |> Canned.station(pa_stop_id)
+    |> Canned.type(:audio)
+    |> Canned.platforms(platform)
 
     announcement
   end
 
   defp countdown_announcement(pa_stop_id, gtfs_stop_id, direction_id, platform, time) do
-    announcement = C.new
-    |> C.mid(countdown_message_id())
-    |> C.station(pa_stop_id)
-    |> C.platforms(platform)
-    |> C.type(:audio)
-    |> C.variables([destination_var(direction_id, gtfs_stop_id), arrival_var(), time_var(time)])
+    announcement = Canned.new
+    |> Canned.mid(countdown_message_id())
+    |> Canned.station(pa_stop_id)
+    |> Canned.platforms(platform)
+    |> Canned.type(:audio)
+    |> Canned.variables([destination_var(direction_id, gtfs_stop_id), arrival_var(), time_var(time)])
 
     announcement
   end
-
-  defp headsign(0, _), do: "Mattapan"
-  defp headsign(1, @ashmont_gtfs_id), do: "Mattapan" # Special case for Ashmont since it's a terminal
-  defp headsign(1, _), do: "Ashmont"
 
   defp arriving_message_id(0, _), do: 90128
   defp arriving_message_id(1, @ashmont_gtfs_id), do: 90128 # Special case for Ashmont since it's a terminal
@@ -363,8 +365,8 @@ defmodule Sign.State do
   end
 
   defp clear_line(platform, line) do
-    M.new
-    |> M.placement(platform, line)
-    |> M.message(:blank)
+    Message.new
+    |> Message.placement(platform, line)
+    |> Message.message(:blank)
   end
 end

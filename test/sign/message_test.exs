@@ -2,6 +2,29 @@ defmodule Sign.MessageTest do
   use ExUnit.Case, async: true
   import Sign.Message
 
+  describe "headsign/1" do
+    test "returns correct headsign for Mattapan trips" do
+      assert headsign(0, "Mattapan", "stop1") == "Mattapan"
+      assert headsign(1, "Mattapan", "stop1") == "Ashmont"
+    end
+
+    test "returns correct headsign at Ashmont" do
+      assert headsign(1, "Mattapan", "70262") == "Mattapan"
+    end
+  end
+
+  describe "line_code/1" do
+    test "returns correct code when given integer" do
+      assert line_code(1) == "1"
+      assert line_code(2) == "2"
+    end
+
+    test "returns code when given atom value" do
+      assert line_code(:top) == "1"
+      assert line_code(:bottom) == "2"
+    end
+  end
+
   test "creates a message that can be turned into a command" do
     command = new()
               |> message("Alewife  1 min", duration: 10)
