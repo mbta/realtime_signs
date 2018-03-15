@@ -25,8 +25,7 @@ defmodule Sign.Static.Messages do
   end
 
   defp build_message(station, direction, text, duration, line_value) do
-    line_placement = if line_value == :top, do: "1", else: "2"
-    placement = placement_code(station, direction, line_placement)
+    placement = placement_code(station, direction, Sign.Message.line_code(line_value))
     %Message{placement: placement, message: [{text, nil}], duration: duration}
   end
 

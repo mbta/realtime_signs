@@ -54,9 +54,9 @@ defmodule Sign.Message do
   def sign_code(:mezzanine), do: "m"
   def sign_code(:center), do: "c"
 
-  defp line_code(line) when is_integer(line), do: Integer.to_string(line)
-  defp line_code(:top), do: "1"
-  defp line_code(:bottom), do: "2"
+  def line_code(line) when is_integer(line), do: Integer.to_string(line)
+  def line_code(:top), do: "1"
+  def line_code(:bottom), do: "2"
 
   defp time_string(nil), do: ""
   defp time_string(seconds_since_midnight), do: "t#{seconds_since_midnight}"

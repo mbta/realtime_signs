@@ -13,6 +13,18 @@ defmodule Sign.MessageTest do
     end
   end
 
+  describe "line_code/1" do
+    test "returns correct code when given integer" do
+      assert line_code(1) == "1"
+      assert line_code(2) == "2"
+    end
+
+    test "returns code when given atom value" do
+      assert line_code(:top) == "1"
+      assert line_code(:bottom) == "2"
+    end
+  end
+
   test "creates a message that can be turned into a command" do
     command = new()
               |> message("Alewife  1 min", duration: 10)
