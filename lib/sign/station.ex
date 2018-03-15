@@ -14,4 +14,9 @@ defmodule Sign.Station do
     route_id: String.t,
     enabled?: boolean
   }
+
+  @doc "Returns the zone ids associated with the given station"
+  def zone_ids(station) do
+    Map.keys(station.zones)
+  end
 end
