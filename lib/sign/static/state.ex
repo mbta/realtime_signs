@@ -3,7 +3,7 @@ defmodule Sign.Static.State do
   alias Sign.Static
   require Logger
 
-  @default_opts [refresh_time: 250_000, stations: []]
+  @default_opts [refresh_time: 300_000, stations: []]
 
   def start_link(user_opts \\ []) do
     opts = Keyword.merge(@default_opts, user_opts)
@@ -27,7 +27,7 @@ defmodule Sign.Static.State do
 
   def handle_info({:refresh, refresh_time}, stations) do
     schedule_refresh(refresh_time)
-    station_messages = Static.Messages.station_messages(stations)
+    station_messages = Static.Messages.station_messages(stations, refresh_time)
     for station_message <- station_messages do
       Logger.info("#{station_message.station} :: #{inspect station_message.messages}")
       Sign.State.request(station_message, Timex.now())
