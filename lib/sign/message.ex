@@ -1,4 +1,7 @@
 defmodule Sign.Message do
+
+  @ashmont_gtfs_id "70262"
+
   defstruct message: [],
     placement: [],
     when: nil,
@@ -44,16 +47,16 @@ defmodule Sign.Message do
     %{state | duration: seconds}
   end
 
-  defp sign_code(:eastbound), do: "e"
-  defp sign_code(:westbound), do: "w"
-  defp sign_code(:northbound), do: "n"
-  defp sign_code(:southbound), do: "s"
-  defp sign_code(:mezzanine), do: "m"
-  defp sign_code(:center), do: "c"
+  def sign_code(:eastbound), do: "e"
+  def sign_code(:westbound), do: "w"
+  def sign_code(:northbound), do: "n"
+  def sign_code(:southbound), do: "s"
+  def sign_code(:mezzanine), do: "m"
+  def sign_code(:center), do: "c"
 
-  defp line_code(line) when is_integer(line), do: Integer.to_string(line)
-  defp line_code(:top), do: "1"
-  defp line_code(:bottom), do: "2"
+  def line_code(line) when is_integer(line), do: Integer.to_string(line)
+  def line_code(:top), do: "1"
+  def line_code(:bottom), do: "2"
 
   defp time_string(nil), do: ""
   defp time_string(seconds_since_midnight), do: "t#{seconds_since_midnight}"
@@ -94,4 +97,10 @@ defmodule Sign.Message do
 
     "#{time}#{duration}#{placements}#{messages}"
   end
+
+  @doc "Provides the headsign to be used in a message"
+  @spec headsign(integer, String.t, String.t) :: String.t
+  def headsign(0, "Mattapan", _), do: "Mattapan"
+  def headsign(1, "Mattapan", @ashmont_gtfs_id), do: "Mattapan" # Special case for Ashmont since it's a terminal
+  def headsign(1, "Mattapan", _), do: "Ashmont"
 end
