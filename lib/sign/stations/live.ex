@@ -54,7 +54,8 @@ defmodule Sign.Stations.Live do
   defp parse_station({gtfs_stop_id, station}) do
     {gtfs_stop_id, %Sign.Station{
       enabled?: station["enabled?"],
-      stop_id: station["stop_id"],
+      id: gtfs_stop_id,
+      sign_id: station["sign_id"],
       display_type: parse_display_type(station["display_type"]),
       route_id: station["route_id"],
       zones: parse_zones(station["zones"])
