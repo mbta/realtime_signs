@@ -1,6 +1,6 @@
 {
   "70261": {
-    "stop_id": "RASH",
+    "sign_id": "RASH",
     "enabled?": false,
     "display_type": ["one_line", 1],
     "route_id": "Mattapan",
@@ -10,7 +10,7 @@
     }
   },
   "70262": {
-    "stop_id": "RASH",
+    "sign_id": "RASH",
     "enabled?": false,
     "display_type": ["one_line", 1],
     "route_id": "Mattapan",
@@ -20,7 +20,7 @@
     }
   },
   "70263": {
-    "stop_id": "MCED",
+    "sign_id": "MCED",
     "enabled?": true,
     "display_type": "separate",
     "route_id": "Mattapan",
@@ -30,7 +30,7 @@
     }
   },
   "70264": {
-    "stop_id": "MCED",
+    "sign_id": "MCED",
     "enabled?": true,
     "display_type": "separate",
     "route_id": "Mattapan",
@@ -40,7 +40,7 @@
     }
   },
   "70265": {
-    "stop_id": "MBUT",
+    "sign_id": "MBUT",
     "enabled?": false,
     "display_type": "combined",
     "route_id": "Mattapan",
@@ -50,7 +50,7 @@
     }
   },
   "70266": {
-    "stop_id": "MBUT",
+    "sign_id": "MBUT",
     "enabled?": false,
     "display_type": "combined",
     "route_id": "Mattapan",
@@ -60,7 +60,7 @@
     }
   },
   "70267": {
-    "stop_id": "MMIL",
+    "sign_id": "MMIL",
     "enabled?": true,
     "display_type": "separate",
     "route_id": "Mattapan",
@@ -70,7 +70,7 @@
     }
   },
   "70268": {
-    "stop_id": "MMIL",
+    "sign_id": "MMIL",
     "enabled?": true,
     "display_type": "separate",
     "route_id": "Mattapan",
@@ -80,7 +80,7 @@
     }
   },
   "70269": {
-    "stop_id": "MCEN",
+    "sign_id": "MCEN",
     "enabled?": true,
     "display_type": "separate",
     "route_id": "Mattapan",
@@ -90,7 +90,7 @@
     }
   },
   "70270": {
-    "stop_id": "MCEN",
+    "sign_id": "MCEN",
     "enabled?": true,
     "display_type": "separate",
     "route_id": "Mattapan",
@@ -100,7 +100,7 @@
     }
   },
   "70271": {
-    "stop_id": "MVAL",
+    "sign_id": "MVAL",
     "enabled?": true,
     "display_type": "separate",
     "route_id": "Mattapan",
@@ -110,7 +110,7 @@
     }
   },
   "70272": {
-    "stop_id": "MVAL",
+    "sign_id": "MVAL",
     "enabled?": true,
     "display_type": "separate",
     "route_id": "Mattapan",
@@ -120,7 +120,7 @@
     }
   },
   "70273": {
-    "stop_id": "MCAP",
+    "sign_id": "MCAP",
     "enabled?": false,
     "display_type": "combined",
     "route_id": "Mattapan",
@@ -130,7 +130,7 @@
     }
   },
   "70274": {
-    "stop_id": "MCAP",
+    "sign_id": "MCAP",
     "enabled?": true,
     "display_type": "combined",
     "route_id": "Mattapan",
@@ -140,7 +140,7 @@
     }
   },
   "70275": {
-    "stop_id": "MMAT",
+    "sign_id": "MMAT",
     "enabled?": false,
     "display_type": "separate",
     "route_id": "Mattapan",
@@ -150,7 +150,7 @@
     }
   },
   "70276": {
-    "stop_id": "MMAT",
+    "sign_id": "MMAT",
     "enabled?": false,
     "display_type": "separate",
     "route_id": "Mattapan",

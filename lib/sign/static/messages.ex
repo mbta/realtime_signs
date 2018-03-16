@@ -2,23 +2,24 @@ defmodule Sign.Static.Messages do
   alias Sign.Message
   alias Sign.Content
   alias Sign.Station
+  alias Headway.ScheduleHeadway
 
   @additional_duration 60
 
   @doc "Returns a Content struct representing the static messages that will be displayed for given stations"
-  def station_messages(stations, refresh_rate) do
+  def station_messages(stations, refresh_rate, headways) do
     stations
     |> Enum.flat_map(&station_with_zones/1)
-    |> Enum.map(&build_content(&1, refresh_rate))
+    |> Enum.map(&build_content(&1, refresh_rate, headways))
   end
 
-  defp build_content({station, direction}, refresh_rate) do
-    %Content{station: station.stop_id, messages: build_messages(station, direction, refresh_rate)}
+  defp build_content({station, direction}, refresh_rate, headways) do
+    %Content{station: station.sign_id, messages: build_messages(station, direction, refresh_rate, headways)}
   end
 
-  defp build_messages(station, direction, refresh_rate) do
+  defp build_messages(station, direction, refresh_rate, headways) do
     duration = message_duration(refresh_rate)
-    {text_top, text_bottom} = text_for_station_code(station.stop_id, direction)
+    {text_top, text_bottom} = text_for_station_code(station.sign_id, direction, Map.get(headways, station.id))
     message_line_top = build_message(station, direction, text_top, duration, :top)
     message_line_bottom = build_message(station, direction, text_bottom, duration, :bottom)
     [message_line_top, message_line_bottom]
@@ -47,7 +48,10 @@ defmodule Sign.Static.Messages do
     Enum.map(Station.zone_ids(station), &{station, &1})
   end
 
-  defp text_for_station_code(_code, _direction) do
-    {"Trolley to Ashmont", "Every 4 to 8 min"}
+  defp text_for_station_code(_code, _direction, nil) do
+    {"Trolley to Ashmont", ""}
+  end
+  defp text_for_station_code(_code, _direction, headway) do
+    {"Trolley to Ashmont", ScheduleHeadway.format_headway(headway)}
   end
 end
