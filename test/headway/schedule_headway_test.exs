@@ -1,5 +1,6 @@
 defmodule Headway.ScheduleHeadwayTest do
   use ExUnit.Case, async: true
+  import ExUnit.CaptureLog
   import Headway.ScheduleHeadway
 
   describe "build_request/1" do
@@ -44,6 +45,17 @@ defmodule Headway.ScheduleHeadwayTest do
       headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(~N[2017-07-04 09:15:00], "America/New_York"))
 
       assert headways == %{"111" => {15, nil}}
+    end
+
+    test "gracefully handles bad time string and logs warning" do
+      schedules = [%{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+         "attributes" => %{"departure_time" => "This is a bad time string"}}]
+      log = capture_log [level: :warn], fn ->
+        headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(~N[2017-07-04 09:15:00], "America/New_York"))
+        assert headways == %{"111" => {nil, nil}}
+      end
+
+      assert log =~ "Could not parse time"
     end
 
     test "groups all stations by headway" do

@@ -1,4 +1,5 @@
 defmodule Headway.ScheduleHeadway do
+  require Logger
 
   @schedule_api_url "https://api-v3.mbta.com/schedules"
 
@@ -39,7 +40,17 @@ defmodule Headway.ScheduleHeadway do
     time = departure_time || get_in(schedule, ["attributes", "arrival_time"])
     case time do
       nil -> []
-      time -> [Timex.parse!(time, "{ISO:Extended}")]
+      time -> parse_schedule_time(time)
+    end
+  end
+
+  defp parse_schedule_time(time) do
+    case Timex.parse(time, "{ISO:Extended}") do
+      {:ok, parsed_time} ->
+        [parsed_time]
+      {:error, reason} ->
+        Logger.warn("Could not parse time: #{inspect reason}")
+        []
     end
   end
 
