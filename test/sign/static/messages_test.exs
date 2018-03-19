@@ -29,5 +29,31 @@ defmodule Sign.Static.MessagesTest do
       station_codes = Enum.map(sign_content_payloads, & &1.station) |> Enum.uniq
       assert station_codes == ["test", "test2"]
     end
+
+    test "returns headway in message if one exists" do
+      headway = %{@headway | "station_1" => {15, 11}}
+      sign_content_payloads = station_messages(@stations, @refresh_rate, headway)
+      messages = sign_content_payloads
+                 |> Enum.filter(& &1.station == "test")
+                 |> List.first()
+                 |> Map.get(:messages)
+                 |> Enum.map(&List.first(&1.message))
+                 |> Enum.map(fn {txt, _} -> txt end)
+
+      assert "Trolley to Ashmont" in messages
+      assert "Every 11 to 15 min" in messages
+    end
+
+    test "Returns blank message if no headways are found" do
+      sign_content_payloads = station_messages(@stations, @refresh_rate, @headway)
+      messages = sign_content_payloads
+                 |> Enum.filter(& &1.station == "test")
+                 |> List.first()
+                 |> Map.get(:messages)
+                 |> Enum.map(&List.first(&1.message))
+                 |> Enum.map(fn {txt, _} -> txt end)
+
+      assert messages == ["", ""]
+    end
   end
 end

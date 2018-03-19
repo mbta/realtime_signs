@@ -11,13 +11,19 @@ defmodule Headway.ScheduleHeadway do
   end
 
   defp headway_for_station(schedules, station_id, current_time) do
-    relevant_schedules = schedules
-                         |> Enum.filter(fn schedule -> get_in(schedule, ["relationships", "stop", "data", "id"]) == station_id end)
-                         |> Enum.map(&schedule_time/1)
-                         |> Enum.sort(&Timex.compare(&1, &2) <= 0)
-    {previous_times, later_times} = Enum.split_with(relevant_schedules, fn schedule_time -> DateTime.compare(schedule_time, current_time) == :lt end)
-    headway_times = [List.last(previous_times) | Enum.take(later_times, 2)]
-    calculate_headway(headway_times)
+    schedules
+    |> Enum.filter(fn schedule -> get_in(schedule, ["relationships", "stop", "data", "id"]) == station_id end)
+    |> Enum.map(&schedule_time/1)
+    |> Enum.sort(&Timex.compare(&1, &2) <= 0)
+    |> Enum.split_with(fn schedule_time -> DateTime.compare(schedule_time, current_time) == :lt end)
+    |> do_headway_for_station
+  end
+
+  defp do_headway_for_station({previous_times, later_times}) when previous_times == [] or later_times == [] do
+    {nil, nil}
+  end
+  defp do_headway_for_station({previous_times, later_times}) do
+    calculate_headway([List.last(previous_times) | Enum.take(later_times, 2)])
   end
 
   defp calculate_headway([previous_time, next_time]) do
@@ -26,7 +32,6 @@ defmodule Headway.ScheduleHeadway do
   defp calculate_headway([previous_time, current_time, next_time]) do
     {Timex.diff(current_time, previous_time, :minutes), Timex.diff(next_time, current_time, :minutes)}
   end
-  defp calculate_headway(_), do: {nil, nil}
 
   defp schedule_time(schedule) do
     departure_time = get_in(schedule, ["attributes", "departure_time"])
