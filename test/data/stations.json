@@ -1,6 +1,6 @@
 {
   "11111": {
-    "stop_id": "STOP",
+    "sign_id": "STOP",
     "enabled?": false,
     "display_type": "combined",
     "route_id": "Mattapan",
@@ -9,8 +9,18 @@
       "1": "center"
     }
   },
+  "22222": {
+    "sign_id": "SCDE",
+    "enabled?": true,
+    "display_type": "combined",
+    "route_id": "Mattapan",
+    "zones": {
+      "0": "center",
+      "1": "center"
+    }
+  },
   "70262": {
-    "stop_id": "RASH",
+    "sign_id": "RASH",
     "enabled?": true,
     "display_type": ["one_line", 1],
     "route_id": "Mattapan",
@@ -20,7 +30,7 @@
     }
   },
   "70268": {
-    "stop_id": "MMIL",
+    "sign_id": "MMIL",
     "enabled?": true,
     "display_type": "separate",
     "route_id": "Mattapan",

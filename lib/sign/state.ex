@@ -87,9 +87,9 @@ defmodule Sign.State do
         direction_id = trip.direction_id
         case Stations.pa_info(stop_time_update.stop_id) do
           nil -> nil
-          %Station{display_type: :combined, stop_id: stop_id, zones: zones} -> {stop_id, zones[direction_id], display_line(direction_id)}
-          %Station{display_type: {:one_line, line}, stop_id: stop_id, zones: zones} -> {stop_id, zones[direction_id], line}
-          %Station{display_type: :separate, stop_id: stop_id, zones: zones} -> {stop_id, zones[direction_id]}
+          %Station{display_type: :combined, sign_id: sign_id, zones: zones} -> {sign_id, zones[direction_id], display_line(direction_id)}
+          %Station{display_type: {:one_line, line}, sign_id: sign_id, zones: zones} -> {sign_id, zones[direction_id], line}
+          %Station{display_type: :separate, sign_id: sign_id, zones: zones} -> {sign_id, zones[direction_id]}
         end
       end
     )
@@ -117,7 +117,7 @@ defmodule Sign.State do
       predictions,
       fn {sign_info, predictions} ->
         case sign_info do
-          {_stop_id, _zone} -> {sign_info, Enum.take(predictions, 2)} # separate predictions, display two per sign
+          {_sign_id, _zone} -> {sign_info, Enum.take(predictions, 2)} # separate predictions, display two per sign
           _ -> {sign_info, Enum.take(predictions, 1)}
         end
       end
