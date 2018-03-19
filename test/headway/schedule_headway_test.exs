@@ -27,6 +27,15 @@ defmodule Headway.ScheduleHeadwayTest do
       assert headways == %{"111" => {10, 15}}
     end
 
+    test "filters out attributes that don't have times" do
+      schedules = Enum.map(@times, fn _time ->
+        %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+          "attributes" => %{}}
+      end)
+      headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(@current_time, "America/New_York"))
+      assert headways == %{"111" => {nil, nil}}
+    end
+
     test "groups all stations by headway" do
       times2 = [
         ~N[2017-07-04 08:59:00],
