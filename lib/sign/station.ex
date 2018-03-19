@@ -1,6 +1,7 @@
 defmodule Sign.Station do
   defstruct [
-    :stop_id,
+    :id,
+    :sign_id,
     :zones,
     :display_type,
     :route_id,
@@ -8,7 +9,8 @@ defmodule Sign.Station do
   ]
 
   @type t :: %__MODULE__{
-    stop_id: String.t,
+    id: String.t,
+    sign_id: String.t,
     zones: %{required(0 | 1) => atom},
     display_type: :separate | :combined | {:one_line, 0 | 1},
     route_id: String.t,

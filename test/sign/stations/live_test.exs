@@ -17,7 +17,7 @@ defmodule Sign.Stations.LiveTest do
     {:ok, pid} = L.start_link(path: @stations_path)
     data = L.for_gtfs_id(pid, "11111")
 
-    assert data.stop_id == "STOP"
+    assert data.sign_id == "STOP"
     refute data.enabled?
     assert data.zones[0] == :center
   end

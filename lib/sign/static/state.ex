@@ -1,6 +1,7 @@
 defmodule Sign.Static.State do
   use GenServer
   alias Sign.Static
+  alias Headway.ScheduleHeadway
   require Logger
 
   @default_opts [refresh_time: 300_000, stations: []]
@@ -22,12 +23,17 @@ defmodule Sign.Static.State do
   end
 
   def handle_call(:static_station_codes, _from, stations) do
-    {:reply, Enum.map(stations, & &1.stop_id), stations}
+    {:reply, Enum.map(stations, & &1.sign_id), stations}
   end
 
   def handle_info({:refresh, refresh_time}, stations) do
     schedule_refresh(refresh_time)
-    station_messages = Static.Messages.station_messages(stations, refresh_time)
+    station_ids = Enum.map(stations, & &1.id)
+    station_headways = station_ids
+                       |> Headway.Request.get_schedules
+                       |> ScheduleHeadway.group_headways_for_stations(station_ids, Timex.now())
+
+    station_messages = Static.Messages.station_messages(stations, refresh_time, station_headways)
     for station_message <- station_messages do
       Logger.info("#{station_message.station} :: #{inspect station_message.messages}")
       Sign.State.request(station_message, Timex.now())
