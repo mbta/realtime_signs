@@ -20,17 +20,17 @@ defmodule Fake.HTTPoison do
     {:error, %HTTPoison.Error{reason: "Bad URL"}}
   end
   def mock_response("https://api-v3.mbta.com/schedules?filter[stop]=parse_error") do
-    {:ok, %HTTPoison.Response{body: "BAD JSON"}}
+    {:ok, %HTTPoison.Response{status_code: 200, body: "BAD JSON"}}
   end
   def mock_response("https://api-v3.mbta.com/schedules?filter[stop]=valid_json") do
     json = %{"data" => [%{"relationships" => "trip"}]}
     encoded = Poison.encode!(json)
-    {:ok, %HTTPoison.Response{body: encoded}}
+    {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
   end
   def mock_response("https://api-v3.mbta.com/schedules" <> _) do
     json = %{"data" => []}
     encoded = Poison.encode!(json)
-    {:ok, %HTTPoison.Response{body: encoded}}
+    {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
   end
-  def mock_response(_), do: {:ok, %HTTPoison.Response{body: ""}}
+  def mock_response(_), do: {:ok, %HTTPoison.Response{status_code: 200, body: ""}}
 end
