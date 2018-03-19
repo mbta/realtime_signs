@@ -4,7 +4,7 @@ defmodule Sign.Static.State do
   alias Headway.ScheduleHeadway
   require Logger
 
-  @default_opts [refresh_time: 120_000, stations: ["70267"]]
+  @default_opts [refresh_time: 300_000, stations: []]
 
   def start_link(user_opts \\ []) do
     opts = Keyword.merge(@default_opts, user_opts)

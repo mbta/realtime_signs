@@ -18,7 +18,6 @@ defmodule Sign.Static.StateTest do
         Process.sleep(40)
       end
       assert log =~ "MMIL"
-      assert log =~ "Trolley to Ashmont"
     end
   end
 end

@@ -48,8 +48,8 @@ defmodule Sign.Static.Messages do
     Enum.map(Station.zone_ids(station), &{station, &1})
   end
 
-  defp text_for_station_code(_code, _direction, nil) do
-    {"Trolley to Ashmont", ""}
+  defp text_for_station_code(_code, _direction, {nil, nil}) do
+    {"", ""}
   end
   defp text_for_station_code(_code, _direction, headway) do
     {"Trolley to Ashmont", ScheduleHeadway.format_headway(headway)}

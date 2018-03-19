@@ -13,9 +13,10 @@ defmodule Headway.Request do
   end
 
   defp do_get_schedules(station_ids) do
+    http_client = Application.get_env(:realtime_signs, :http_client)
     station_ids
     |> ScheduleHeadway.build_request()
-    |> HTTPoison.get()
+    |> http_client.get([], [])
   end
 
   defp parse_body(body) do
