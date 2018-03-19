@@ -14,7 +14,7 @@ defmodule Headway.ScheduleHeadway do
   defp headway_for_station(schedules, station_id, current_time) do
     schedules
     |> Enum.filter(fn schedule -> get_in(schedule, ["relationships", "stop", "data", "id"]) == station_id end)
-    |> Enum.map(&schedule_time/1)
+    |> Enum.flat_map(&schedule_time/1)
     |> Enum.sort(&Timex.compare(&1, &2) <= 0)
     |> Enum.split_with(fn schedule_time -> DateTime.compare(schedule_time, current_time) == :lt end)
     |> do_headway_for_station
@@ -37,7 +37,10 @@ defmodule Headway.ScheduleHeadway do
   defp schedule_time(schedule) do
     departure_time = get_in(schedule, ["attributes", "departure_time"])
     time = departure_time || get_in(schedule, ["attributes", "arrival_time"])
-    Timex.parse!(time, "{ISO:Extended}")
+    case time do
+      nil -> []
+      time -> [Timex.parse!(time, "{ISO:Extended}")]
+    end
   end
 
   def format_headway({nil, nil}), do: ""
