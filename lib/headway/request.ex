@@ -4,11 +4,11 @@ defmodule Headway.Request do
 
   def get_schedules(station_ids) do
     case do_get_schedules(station_ids) do
-      {:ok, %HTTPoison.Response{status_code: 500}} ->
-        Logger.warn("Received 500 status code from API")
-        []
-      {:ok, %HTTPoison.Response{body: body}} ->
+      {:ok, %HTTPoison.Response{status_code: status, body: body}} when status >= 200 and status < 300 ->
         parse_body(body)
+      {:ok, %HTTPoison.Response{status_code: status}} ->
+        Logger.warn("Could not load schedules. Response returned with status code #{inspect status}")
+        []
       {:error, %HTTPoison.Error{reason: reason}} ->
         Logger.warn("Could not load schedules: #{inspect reason}")
         []

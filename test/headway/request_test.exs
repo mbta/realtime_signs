@@ -11,7 +11,7 @@ defmodule Headway.RequestTest do
         assert get_schedules(["unknown_error"]) == []
       end
 
-      assert log =~ "Received 500 status code from API"
+      assert log =~ "Response returned with status code 500"
       assert log =~ "Could not load schedules"
       assert log =~ "Bad URL"
     end
