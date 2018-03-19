@@ -9,6 +9,16 @@
       "1": "center"
     }
   },
+  "22222": {
+    "sign_id": "SCDE",
+    "enabled?": true,
+    "display_type": "combined",
+    "route_id": "Mattapan",
+    "zones": {
+      "0": "center",
+      "1": "center"
+    }
+  },
   "70262": {
     "sign_id": "RASH",
     "enabled?": true,

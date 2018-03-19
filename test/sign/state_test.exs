@@ -309,6 +309,29 @@ defmodule Sign.StateTest do
     ]
   end
 
+  test "for stations configured as combined, shows first trip on sign" do
+    now = ~N[2017-06-05 12:00:00]
+    stop_id = "22222"
+    trip_updates = %FeedMessage{
+      entity: [
+        trip_update_entity(Timex.shift(now, minutes: 5), stop_id, 0),
+        trip_update_entity(Timex.shift(now, minutes: 3), stop_id, 0)
+      ]
+    }
+
+    Sign.State.update(trip_updates, %FeedMessage{entity: []}, now)
+
+    assert @fake_updater.all_calls == [
+      %Content{
+        messages: [
+          %Message{
+            duration: 180,
+            message: [{"Mattapan     3 min", nil}], placement: ["c1"], when: nil}
+        ],
+        station: "SCDE"}
+    ]
+  end
+
   test "when a train is incoming to Ashmont, announces it as next going to Mattapan" do
     now = ~N[2017-06-05 12:00:00]
     trip_updates = %FeedMessage{

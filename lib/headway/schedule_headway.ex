@@ -3,7 +3,8 @@ defmodule Headway.ScheduleHeadway do
   @schedule_api_url "https://api-v3.mbta.com/schedules"
 
   def build_request(station_ids) do
-    @schedule_api_url <> "?filter[stop]=#{Enum.join(station_ids, ",")}"
+    id_filter = station_ids |> Enum.map(&URI.encode/1) |> Enum.join(",")
+    @schedule_api_url <> "?filter[stop]=#{id_filter}"
   end
 
   def group_headways_for_stations(schedules, station_ids, current_time) do
