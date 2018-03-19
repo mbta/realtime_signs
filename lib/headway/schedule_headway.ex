@@ -27,11 +27,11 @@ defmodule Headway.ScheduleHeadway do
     calculate_headway([List.last(previous_times) | Enum.take(later_times, 2)])
   end
 
-  defp calculate_headway([previous_time, next_time]) do
-    {Timex.diff(previous_time, next_time, :minutes), nil}
+  defp calculate_headway([previous_time, upcoming_time]) do
+    {Timex.diff(upcoming_time, previous_time , :minutes), nil}
   end
-  defp calculate_headway([previous_time, current_time, next_time]) do
-    {Timex.diff(current_time, previous_time, :minutes), Timex.diff(next_time, current_time, :minutes)}
+  defp calculate_headway([previous_time, upcoming_time, second_upcoming_time]) do
+    {Timex.diff(upcoming_time, previous_time, :minutes), Timex.diff(second_upcoming_time, upcoming_time, :minutes)}
   end
 
   defp schedule_time(schedule) do
