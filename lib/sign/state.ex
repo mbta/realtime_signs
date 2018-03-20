@@ -250,7 +250,7 @@ defmodule Sign.State do
 
     message = Message.new
     |> Message.placement(platform, line)
-    |> Message.erase_after(expiration_time(prediction_time))
+    |> Message.erase_after(@three_minutes)
     |> Message.message(message(Message.headsign(trip.direction_id, trip.route_id, stop_id), prediction_time, stop_id))
 
     arriving_announcement = if announce_arriving?(prediction_time) do
@@ -267,10 +267,6 @@ defmodule Sign.State do
 
     {message, arriving_announcement, countdown_announcement}
   end
-
-  defp expiration_time(:boarding), do: 10
-  defp expiration_time(0), do: 30
-  defp expiration_time(_), do: @three_minutes
 
   defp announce_arriving?(prediction_time) do
     prediction_time == 0
