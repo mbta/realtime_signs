@@ -245,7 +245,7 @@ defmodule Sign.State do
     prediction_time = if MapSet.member?(stopped_vehicles, key) do
       :boarding
     else
-      time(stop_time_update, current_time)
+      countdown_minutes(stop_time_update, current_time)
     end
 
     message = Message.new
@@ -356,7 +356,8 @@ defmodule Sign.State do
     5000 + time
   end
 
-  defp time(stop_time_update, current_time) do
+  @spec countdown_minutes(%GTFS.Realtime.TripUpdate.StopTimeUpdate{}, DateTime.t) :: integer
+  def countdown_minutes(stop_time_update, current_time) do
     seconds = stop_time_update.arrival.time
     |> Timex.from_unix
     |> Timex.diff(current_time, :seconds)
