@@ -27,16 +27,17 @@ defmodule Sign.Static.State do
   end
 
   def handle_info({:refresh, refresh_time}, stations) do
+    current_time = Timex.now("America/New_York")
     schedule_refresh(refresh_time)
     station_ids = Enum.map(stations, & &1.id)
     station_headways = station_ids
                        |> Headway.Request.get_schedules
-                       |> ScheduleHeadway.group_headways_for_stations(station_ids, Timex.now())
+                       |> ScheduleHeadway.group_headways_for_stations(station_ids, current_time)
 
-    station_messages = Static.Messages.station_messages(stations, refresh_time, station_headways)
+    station_messages = Static.Messages.station_messages(stations, refresh_time, station_headways, current_time)
     for station_message <- station_messages do
       Logger.info("#{station_message.station} :: #{inspect station_message.messages}")
-      Sign.State.request(station_message, Timex.now())
+      Sign.State.request(station_message, current_time)
     end
     {:noreply, stations}
   end

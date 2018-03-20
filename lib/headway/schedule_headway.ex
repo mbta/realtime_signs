@@ -1,6 +1,9 @@
 defmodule Headway.ScheduleHeadway do
   require Logger
 
+  @typep headway_range :: {non_neg_integer | nil, non_neg_integer | nil}
+  @type t :: headway_range | {:first_departure | headway_range, DateTime.t} | {:last_departure, DateTime.t}
+
   @schedule_api_url "https://api-v3.mbta.com/schedules"
 
   def build_request(station_ids) do
@@ -21,8 +24,10 @@ defmodule Headway.ScheduleHeadway do
     |> do_headway_for_station
   end
 
-  defp do_headway_for_station({previous_times, later_times}) when previous_times == [] or later_times == [] do
-    {nil, nil}
+  defp do_headway_for_station({_previous_times, []}), do: {nil, nil}
+  defp do_headway_for_station({_previous_times, [last_time]}), do: {:last_departure, last_time}
+  defp do_headway_for_station({[], [first_time | _rest] = later_times}) do
+    {:first_departure, calculate_headway(Enum.take(later_times, 3)), first_time}
   end
   defp do_headway_for_station({previous_times, later_times}) do
     calculate_headway([List.last(previous_times) | Enum.take(later_times, 2)])
@@ -54,8 +59,12 @@ defmodule Headway.ScheduleHeadway do
     end
   end
 
-  def format_headway({nil, nil}), do: ""
-  def format_headway({x, y}) when x == y or is_nil(y), do: "Every #{x} min"
-  def format_headway({x, y}) when x > y, do: "Every #{y} to #{x} min"
-  def format_headway({x, y}), do: "Every #{x} to #{y} min"
+  def format_headway_range({nil, nil}), do: ""
+  def format_headway_range({x, y}) when x == y or is_nil(y), do: "Every #{x} min"
+  def format_headway_range({x, y}) when x > y, do: "Every #{y} to #{x} min"
+  def format_headway_range({x, y}), do: "Every #{x} to #{y} min"
+
+  def max_headway({nil, y}), do: y
+  def max_headway({x, nil}), do: x
+  def max_headway({x, y}), do: max(x, y)
 end
