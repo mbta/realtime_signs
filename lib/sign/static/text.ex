@@ -26,7 +26,7 @@ defmodule Sign.Static.Text do
   end
 
   defp text_for_last_departure(last_departure) do
-    case Timex.format!(last_departure, "{h12}:{m}{AM}") do
+    case Timex.format(last_departure, "{h12}:{m}{AM}") do
       {:ok, time_string} ->
         {"Last Trolley", "Scheduled for #{time_string}"}
       _ ->
