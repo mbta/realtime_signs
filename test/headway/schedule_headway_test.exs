@@ -37,14 +37,29 @@ defmodule Headway.ScheduleHeadwayTest do
       assert headways == %{"111" => {nil, nil}}
     end
 
-    test "Returns single headway when there is only one scheduled departure left" do
+    test "Returns last departure when there is only one scheduled departure left" do
       schedules = Enum.map(@times, fn time ->
         %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
           "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
       end)
       headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(~N[2017-07-04 09:15:00], "America/New_York"))
 
-      assert headways == %{"111" => {15, nil}}
+      expected_last_time = ~N[2017-07-04 09:20:00] |> Timex.to_datetime("America/New_York") |> Timex.to_unix()
+
+      assert %{"111" => {:last_departure, last_departure_time}} = headways
+      assert Timex.to_unix(last_departure_time) == expected_last_time
+    end
+
+    test "Returns first departure and headway range when no departures have left yet" do
+      schedules = Enum.map(@times, fn time ->
+        %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+          "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
+      end)
+      headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(~N[2017-07-04 07:15:00], "America/New_York"))
+      expected_first_departure = ~N[2017-07-04 08:45:00] |> Timex.to_datetime("America/New_York") |> Timex.to_unix
+
+      assert %{"111" => {:first_departure, {10, 10}, first_departure}} = headways
+      assert Timex.to_unix(first_departure) == expected_first_departure
     end
 
     test "gracefully handles bad time string and logs warning" do
@@ -80,18 +95,18 @@ defmodule Headway.ScheduleHeadwayTest do
     end
   end
 
-  describe "format_headway/1" do
+  describe "format_headway_range/1" do
     test "returns nil string for nil headway" do
-      assert format_headway({nil, nil}) == ""
+      assert format_headway_range({nil, nil}) == ""
     end
 
     test "formats lower headway time first" do
-      assert format_headway({5, 3}) == "Every 3 to 5 min"
-      assert format_headway({3, 5}) == "Every 3 to 5 min"
+      assert format_headway_range({5, 3}) == "Every 3 to 5 min"
+      assert format_headway_range({3, 5}) == "Every 3 to 5 min"
     end
 
     test "formats single headway if both are the same" do
-      assert format_headway({5, 5}) == "Every 5 min"
+      assert format_headway_range({5, 5}) == "Every 5 min"
     end
   end
 end
