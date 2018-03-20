@@ -399,4 +399,16 @@ defmodule Sign.StateTest do
         variables: [4016, 503, 5004]}
     ]
   end
+
+  describe "countdown_minutes/2" do
+    test "returns zero minutes if stop_time_update is in the past" do
+      current_time = ~N[2017-06-05 12:00:00]
+      past_time = ~N[2017-06-05 11:55:55]
+      stop_time_update = %TripUpdate.StopTimeUpdate{
+                           arrival: %GTFS.Realtime.TripUpdate.StopTimeEvent{time: Timex.to_unix(past_time)},
+                           stop_id: "12345"
+                         }
+      assert Sign.State.countdown_minutes(stop_time_update, current_time) == 0
+    end
+  end
 end
