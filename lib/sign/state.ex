@@ -361,7 +361,10 @@ defmodule Sign.State do
     |> Timex.from_unix
     |> Timex.diff(current_time, :seconds)
 
-    round(seconds/60)
+    seconds
+    |> Kernel./(60)
+    |> round
+    |> max(0)
   end
 
   defp clear_line(platform, line) do
