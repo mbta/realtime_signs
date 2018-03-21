@@ -48,6 +48,9 @@ defmodule Sign.State do
 
     {:reply, :ok, new_state}
   end
+  def handle_call({:update, _trip_updates, _vehicle_positions, _current_time}, _from, sign_state) do
+    {:reply, :ok, sign_state}
+  end
   def handle_call(:reset, _from, _state) do
     {:reply, :ok, %{}}
   end
