@@ -27,7 +27,7 @@ defmodule Sign.Static.State do
   end
 
   def handle_info({:refresh, refresh_time}, stations) do
-    current_time = Timex.now("America/New_York")
+    current_time = :realtime_signs |> Application.get_env(:time_zone) |> Timex.now()
     schedule_refresh(refresh_time)
     station_ids = Enum.map(stations, & &1.id)
     station_headways = station_ids
