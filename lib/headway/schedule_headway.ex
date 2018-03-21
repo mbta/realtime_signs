@@ -73,8 +73,8 @@ defmodule Headway.ScheduleHeadway do
   def format_headway_range({x, y}) when x > y, do: "Every #{y} to #{x} min"
   def format_headway_range({x, y}), do: "Every #{x} to #{y} min"
 
-  @spec max_headway(headway_range) :: non_neg_integer
-  def max_headway({nil, nil}), do: 0
+  @spec max_headway(headway_range) :: non_neg_integer | nil
+  def max_headway({nil, nil}), do: nil
   def max_headway({nil, y}), do: y
   def max_headway({x, nil}), do: x
   def max_headway({x, y}), do: max(x, y)
