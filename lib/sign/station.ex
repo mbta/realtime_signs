@@ -8,8 +8,9 @@ defmodule Sign.Station do
     :enabled?
   ]
 
+  @type id :: String.t
   @type t :: %__MODULE__{
-    id: String.t,
+    id: id,
     sign_id: String.t,
     zones: %{required(0 | 1) => atom},
     display_type: :separate | :combined | {:one_line, 0 | 1},
