@@ -109,4 +109,18 @@ defmodule Headway.ScheduleHeadwayTest do
       assert format_headway_range({5, 5}) == "Every 5 min"
     end
   end
+
+  describe "max_headway/1" do
+    test "Returns max headway from range" do
+      assert max_headway({1,5}) == 5
+      assert max_headway({5,5}) == 5
+      assert max_headway({5,1}) == 5
+    end
+
+    test "Returns max headway when nil value is included" do
+      assert max_headway({nil,nil}) == 0
+      assert max_headway({5,nil}) == 5
+      assert max_headway({nil, 5}) == 5
+    end
+  end
 end

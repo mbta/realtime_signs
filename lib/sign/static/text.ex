@@ -1,8 +1,11 @@
 defmodule Sign.Static.Text do
   require Logger
   alias Headway.ScheduleHeadway
+  @type t :: {String.t, String.t}
+
   @empty_message {"", ""}
 
+  @spec text_for_station_code(String.t, 1 | 0, ScheduleHeadway.t, DateTime.t) :: t
   def text_for_station_code(_code, _direction, {nil, nil}, _current_time) do
     @empty_message
   end
@@ -16,6 +19,7 @@ defmodule Sign.Static.Text do
     {"Trolley to Ashmont", ScheduleHeadway.format_headway_range(headway)}
   end
 
+  @spec text_for_first_departure(DateTime.t, DateTime.t, ScheduleHeadway.t) :: t
   defp text_for_first_departure(first_departure, current_time, headway) do
     max_headway = ScheduleHeadway.max_headway(headway)
     if show_first_departure?(first_departure, current_time, max_headway) do
@@ -25,6 +29,7 @@ defmodule Sign.Static.Text do
     end
   end
 
+  @spec text_for_last_departure(DateTime.t) :: t
   defp text_for_last_departure(last_departure) do
     case Timex.format(last_departure, "{h12}:{m}{AM}") do
       {:ok, time_string} ->
@@ -35,6 +40,7 @@ defmodule Sign.Static.Text do
     end
   end
 
+  @spec show_first_departure?(DateTime.t, DateTime.t, non_neg_integer) :: boolean
   defp show_first_departure?(first_departure, current_time, max_headway) do
     earliest_time = Timex.shift(first_departure, minutes: max_headway * -1)
     Time.compare(current_time, earliest_time) != :lt
