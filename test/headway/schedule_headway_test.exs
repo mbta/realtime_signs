@@ -118,9 +118,12 @@ defmodule Headway.ScheduleHeadwayTest do
     end
 
     test "Returns max headway when nil value is included" do
-      assert max_headway({nil,nil}) == 0
       assert max_headway({5,nil}) == 5
       assert max_headway({nil, 5}) == 5
+    end
+
+    test "Returns nil when no headway values available" do
+      assert max_headway({nil,nil}) == nil
     end
   end
 end

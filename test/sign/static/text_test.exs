@@ -24,6 +24,13 @@ defmodule Sign.Static.TextTest do
       assert text_for_station_code(@station_code, 1, headway, @current_time) == expected_message
     end
 
+    test "Returns empty message for first departure at first departure if no headway is available" do
+      first_departure_time = Timex.shift(@current_time, minutes: 15)
+      headway = {:first_departure, {nil, nil}, first_departure_time}
+      expected_message = {"", ""}
+      assert text_for_station_code(@station_code, 1, headway, @current_time) == expected_message
+    end
+
     test "Shows last departure message with last scheduled time" do
       last_departure_time = @current_time |> Timex.shift(hours: 12) |> Timex.to_datetime("America/New_York")
       headway = {:last_departure, last_departure_time}

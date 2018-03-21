@@ -22,7 +22,8 @@ defmodule Sign.Static.Text do
   @spec text_for_first_departure(DateTime.t, DateTime.t, ScheduleHeadway.t) :: t
   defp text_for_first_departure(first_departure, current_time, headway) do
     max_headway = ScheduleHeadway.max_headway(headway)
-    if show_first_departure?(first_departure, current_time, max_headway) do
+    time_buffer = if max_headway, do: max_headway, else: 0
+    if show_first_departure?(first_departure, current_time, time_buffer) do
       {"Trolley to Ashmont", ScheduleHeadway.format_headway_range(headway)}
     else
       @empty_message
