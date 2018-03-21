@@ -1,5 +1,5 @@
 defmodule Fake.HTTPoison do
-  def get(url, headers, options \\ []) do
+  def get(url, headers \\ [], options \\ []) do
     if options[:stream_to] do
       send options[:stream_to], %HTTPoison.AsyncStatus{code: 200}
       send options[:stream_to], %HTTPoison.AsyncChunk{chunk: "lol"}
@@ -26,6 +26,9 @@ defmodule Fake.HTTPoison do
     json = %{"data" => [%{"relationships" => "trip"}]}
     encoded = Poison.encode!(json)
     {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
+  end
+  def mock_response("unknown") do
+    {:error, "unknown response"}
   end
   def mock_response("https://api-v3.mbta.com/schedules" <> _) do
     json = %{"data" => []}
