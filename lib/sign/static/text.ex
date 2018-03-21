@@ -5,22 +5,22 @@ defmodule Sign.Static.Text do
 
   @empty_message {"", ""}
 
-  @spec text_for_station_code(String.t, 1 | 0, ScheduleHeadway.t, DateTime.t) :: t
-  def text_for_station_code(_code, _direction, {nil, nil}, _current_time) do
+  @spec text_for_headway(ScheduleHeadway.t, DateTime.t) :: t
+  def text_for_headway({nil, nil}, _current_time) do
     @empty_message
   end
-  def text_for_station_code(_code, _direction, {:first_departure, headway, first_departure}, current_time) do
-    text_for_first_departure(first_departure, current_time, headway)
+  def text_for_headway({:first_departure, headway, first_departure}, current_time) do
+    text_between_service_days(first_departure, current_time, headway)
   end
-  def text_for_station_code(_code, _direction, {:last_departure, last_departure}, _current_time) do
+  def text_for_headway({:last_departure, last_departure}, _current_time) do
     text_for_last_departure(last_departure)
   end
-  def text_for_station_code(_code, _direction, headway, _current_time) do
+  def text_for_headway(headway, _current_time) do
     {"Trolley to Ashmont", ScheduleHeadway.format_headway_range(headway)}
   end
 
-  @spec text_for_first_departure(DateTime.t, DateTime.t, ScheduleHeadway.t) :: t
-  defp text_for_first_departure(first_departure, current_time, headway) do
+  @spec text_between_service_days(DateTime.t, DateTime.t, ScheduleHeadway.t) :: t
+  defp text_between_service_days(first_departure, current_time, headway) do
     max_headway = ScheduleHeadway.max_headway(headway)
     time_buffer = if max_headway, do: max_headway, else: 0
     if show_first_departure?(first_departure, current_time, time_buffer) do

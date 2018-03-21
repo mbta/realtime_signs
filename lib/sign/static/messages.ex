@@ -17,7 +17,7 @@ defmodule Sign.Static.Messages do
 
   defp build_messages(station, direction, refresh_rate, headways, current_time) do
     duration = message_duration(refresh_rate)
-    {text_top, text_bottom} = Text.text_for_station_code(station.sign_id, direction, Map.get(headways, station.id), current_time)
+    {text_top, text_bottom} = Text.text_for_headway(Map.get(headways, station.id), current_time)
     message_line_top = build_message(station, direction, text_top, duration, :top)
     message_line_bottom = build_message(station, direction, text_bottom, duration, :bottom)
     [message_line_top, message_line_bottom]
