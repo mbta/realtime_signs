@@ -19,7 +19,7 @@ defmodule Sign.Static.TextTest do
     test "Shows headway message for first departure it's within headway range" do
       first_departure_time = Timex.shift(@current_time, minutes: 15)
       headway = {:first_departure, {10, 17}, first_departure_time}
-      expected_message = {"Trolley to Ashmont", "Every 10 to 17 min"}
+      expected_message = {"Busses to Chelsea", "Every 10 to 17 min"}
       assert text_for_headway(headway, @current_time) == expected_message
     end
 
@@ -33,7 +33,7 @@ defmodule Sign.Static.TextTest do
     test "Shows last departure message with last scheduled time" do
       last_departure_time = @current_time |> Timex.shift(hours: 12) |> Timex.to_datetime("America/New_York")
       headway = {:last_departure, last_departure_time}
-      expected_message = {"Last Trolley", "Scheduled for 9:00PM"}
+      expected_message = {"Last Bus", "Scheduled for 9:00PM"}
       assert text_for_headway(headway, @current_time) == expected_message
     end
 

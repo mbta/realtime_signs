@@ -46,7 +46,7 @@ defmodule Sign.Static.MessagesTest do
                  |> Enum.map(&List.first(&1.message))
                  |> Enum.map(fn {txt, _} -> txt end)
 
-      assert "Trolley to Ashmont" in messages
+      assert "Busses to Chelsea" in messages
       assert "Every 11 to 15 min" in messages
     end
 
