@@ -98,7 +98,7 @@ defmodule Sign.StateTest do
       %Content{
         messages: [
           %Message{
-            duration: 30,
+            duration: 180,
             message: [{"Mattapan       ARR", nil}],
             placement: ["s1"],
             when: nil},
@@ -142,7 +142,7 @@ defmodule Sign.StateTest do
       %Content{
         messages: [
           %Message{
-            duration: 30,
+            duration: 180,
             message: [{"Mattapan       ARR", nil}],
             placement: ["s1"],
             when: nil},
@@ -273,7 +273,7 @@ defmodule Sign.StateTest do
       %Content{
         messages: [
           %Message{
-            duration: 10,
+            duration: 180,
             message: [{"Mattapan       BRD", nil}],
             placement: ["s1"]},
           %Message{
@@ -346,7 +346,7 @@ defmodule Sign.StateTest do
       %Content{
         messages: [
           %Message{
-            duration: 30,
+            duration: 180,
             message: [{"Mattapan    ARR", nil}],
             placement: ["m1"],
             when: nil}
