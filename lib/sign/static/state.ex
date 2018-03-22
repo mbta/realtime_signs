@@ -4,6 +4,7 @@ defmodule Sign.Static.State do
   alias Headway.ScheduleHeadway
   require Logger
 
+  @bridge_id 1
   @default_opts [refresh_time: 300_000, stations: []]
 
   def start_link(user_opts \\ []) do
@@ -30,8 +31,10 @@ defmodule Sign.Static.State do
     schedule_refresh(refresh_time)
     station_ids = Enum.map(stations, & &1.id)
     current_time = :realtime_signs |> Application.get_env(:time_zone) |> Timex.now()
-    bridge_status = Bridge.Request.get_status()
-    station_headways = Headway.Request.get_schedules(station_ids)
+    bridge_status = Bridge.Request.get_status(@bridge_id)
+    station_headways = station_ids
+                       |> Headway.Request.get_schedules()
+                       |> ScheduleHeadway.group_headways_for_stations(station_ids, current_time)
 
     stations
     |> Static.Messages.station_messages(refresh_time, station_headways, current_time, bridge_status)

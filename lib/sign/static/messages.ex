@@ -1,18 +1,16 @@
 defmodule Sign.Static.Messages do
   alias Sign.{Message, Content, Station}
   alias Sign.Static.Text
-  alias Headway.ScheduleHeadway
 
   @additional_duration 60
-  @sl3_route_id "Mattapan" #"743"
+  @sl3_route_id "743"
 
   @doc "Returns a Content struct representing the static messages that will be displayed for given stations"
   def station_messages(stations, refresh_rate, headways, current_time, bridge_status) do
     bridge_raised? = Bridge.Chelsea.raised?(bridge_status)
-    grouped_headways = group_headways(stations, headways, current_time)
     stations
     |> Enum.flat_map(&station_with_zones/1)
-    |> Enum.map(&build_content(&1, refresh_rate, grouped_headways, current_time, bridge_raised?))
+    |> Enum.map(&build_content(&1, refresh_rate, headways, current_time, bridge_raised?))
   end
 
   defp build_content({station, direction}, refresh_rate, headways, current_time, bridge_raised?) do
@@ -56,10 +54,5 @@ defmodule Sign.Static.Messages do
     else
       Text.text_for_headway(headway, current_time)
     end
-  end
-
-  defp group_headways(stations, headways, current_time) do
-    station_ids = Enum.map(stations, & &1.id)
-    ScheduleHeadway.group_headways_for_stations(headways, station_ids, current_time)
   end
 end
