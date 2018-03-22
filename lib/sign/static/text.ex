@@ -19,6 +19,7 @@ defmodule Sign.Static.Text do
     {"Trolley to Ashmont", ScheduleHeadway.format_headway_range(headway)}
   end
 
+  @spec text_for_raised_bridge() :: t
   def text_for_raised_bridge() do
     {"Bridge is up", "Expect SL3 delays"}
   end

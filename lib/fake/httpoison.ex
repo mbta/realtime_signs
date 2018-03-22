@@ -30,6 +30,20 @@ defmodule Fake.HTTPoison do
   def mock_response("unknown") do
     {:error, "unknown response"}
   end
+  def mock_response("https://slg.aecomonline.net/api/v1/bridge/1") do
+    json = %{"status" => "Raised"}
+    encoded = Poison.encode!(json)
+    {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
+  end
+  def mock_response("https://slg.aecomonline.net/api/v1/bridge/2") do
+    {:ok, %HTTPoison.Response{status_code: 500}}
+  end
+  def mock_response("https://slg.aecomonline.net/api/v1/bridge/3") do
+    {:error, %HTTPoison.Error{reason: "Unknown error"}}
+  end
+  def mock_response("https://slg.aecomonline.net/api/v1/bridge/4") do
+    {:ok, %HTTPoison.Response{status_code: 200, body: "BAD JSON"}}
+  end
   def mock_response("https://api-v3.mbta.com/schedules" <> _) do
     json = %{"data" => []}
     encoded = Poison.encode!(json)

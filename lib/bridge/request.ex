@@ -1,13 +1,14 @@
 defmodule Bridge.Request do
   require Logger
 
-  @bridge_url "https://slg.aecomonline.net/api/v1/bridge/1"
+  @bridge_url "https://slg.aecomonline.net/api/v1/bridge/"
 
-  def get_status() do
+  def get_status(id) do
     headers = [{"Authorization", get_auth_header()}]
     http_client = Application.get_env(:realtime_signs, :http_client)
 
     @bridge_url
+    |> Kernel.<>("#{id}")
     |> http_client.get(headers)
     |> parse_response()
   end
