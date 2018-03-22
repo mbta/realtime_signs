@@ -1,23 +1,27 @@
 defmodule Sign.Static.Messages do
   alias Sign.{Message, Content, Station}
   alias Sign.Static.Text
+  alias Headway.ScheduleHeadway
 
   @additional_duration 60
+  @sl3_route_id "Mattapan" #"743"
 
   @doc "Returns a Content struct representing the static messages that will be displayed for given stations"
-  def station_messages(stations, refresh_rate, headways, current_time) do
+  def station_messages(stations, refresh_rate, headways, current_time, bridge_status) do
+    bridge_raised? = Bridge.Chelsea.raised?(bridge_status)
+    grouped_headways = group_headways(stations, headways, current_time)
     stations
     |> Enum.flat_map(&station_with_zones/1)
-    |> Enum.map(&build_content(&1, refresh_rate, headways, current_time))
+    |> Enum.map(&build_content(&1, refresh_rate, grouped_headways, current_time, bridge_raised?))
   end
 
-  defp build_content({station, direction}, refresh_rate, headways, current_time) do
-    %Content{station: station.sign_id, messages: build_messages(station, direction, refresh_rate, headways, current_time)}
+  defp build_content({station, direction}, refresh_rate, headways, current_time, bridge_raised?) do
+    message_text = get_text(Map.get(headways, station.id), station.route_id, current_time, bridge_raised?)
+    %Content{station: station.sign_id, messages: build_messages(station, direction, refresh_rate, message_text)}
   end
 
-  defp build_messages(station, direction, refresh_rate, headways, current_time) do
+  defp build_messages(station, direction, refresh_rate, {text_top, text_bottom}) do
     duration = message_duration(refresh_rate)
-    {text_top, text_bottom} = Text.text_for_headway(Map.get(headways, station.id), current_time)
     message_line_top = build_message(station, direction, text_top, duration, :top)
     message_line_bottom = build_message(station, direction, text_bottom, duration, :bottom)
     [message_line_top, message_line_bottom]
@@ -44,5 +48,18 @@ defmodule Sign.Static.Messages do
 
   defp station_with_zones(station) do
     Enum.map(Station.zone_ids(station), &{station, &1})
+  end
+
+  defp get_text(headway, route_id, current_time, bridge_raised?) do
+    if bridge_raised? and route_id == @sl3_route_id do
+      Text.text_for_raised_bridge()
+    else
+      Text.text_for_headway(headway, current_time)
+    end
+  end
+
+  defp group_headways(stations, headways, current_time) do
+    station_ids = Enum.map(stations, & &1.id)
+    ScheduleHeadway.group_headways_for_stations(headways, station_ids, current_time)
   end
 end
