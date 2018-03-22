@@ -16,7 +16,7 @@ defmodule Sign.Static.Text do
     text_for_last_departure(last_departure)
   end
   def text_for_headway(headway, _current_time) do
-    {"Trolley to Ashmont", ScheduleHeadway.format_headway_range(headway)}
+    {"Busses to Chelsea", ScheduleHeadway.format_headway_range(headway)}
   end
 
   @spec text_for_raised_bridge() :: t
@@ -29,7 +29,7 @@ defmodule Sign.Static.Text do
     max_headway = ScheduleHeadway.max_headway(headway)
     time_buffer = if max_headway, do: max_headway, else: 0
     if show_first_departure?(first_departure, current_time, time_buffer) do
-      {"Trolley to Ashmont", ScheduleHeadway.format_headway_range(headway)}
+      {"Busses to Chelsea", ScheduleHeadway.format_headway_range(headway)}
     else
       @empty_message
     end
@@ -39,7 +39,7 @@ defmodule Sign.Static.Text do
   defp text_for_last_departure(last_departure) do
     case Timex.format(last_departure, "{h12}:{m}{AM}") do
       {:ok, time_string} ->
-        {"Last Trolley", "Scheduled for #{time_string}"}
+        {"Last Bus", "Scheduled for #{time_string}"}
       _ ->
         Logger.warn("Could not format departure time #{inspect last_departure}")
         @empty_message
