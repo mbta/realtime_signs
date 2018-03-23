@@ -158,5 +158,85 @@
       "0": "southbound",
       "1": "northbound"
     }
+  },
+  "74631": {
+    "sign_id": "SCHS",
+    "enabled?": false,
+    "display_type": "separate",
+    "route_id": "743",
+    "zones": {
+      "0": "westbound",
+      "1": "eastbound"
+    }
+  },
+  "74630": {
+    "sign_id": "SCHS",
+    "enabled?": false,
+    "display_type": "separate",
+    "route_id": "743",
+    "zones": {
+      "0": "westbound",
+      "1": "eastbound"
+    }
+  },
+  "74636": {
+    "sign_id": "SEAV",
+    "enabled?": false,
+    "display_type": "separate",
+    "route_id": "743",
+    "zones": {
+      "0": "westbound",
+      "1": "eastbound"
+    }
+  },
+  "74637": {
+    "sign_id": "SEAV",
+    "enabled?": false,
+    "display_type": "separate",
+    "route_id": "743",
+    "zones": {
+      "0": "westbound",
+      "1": "eastbound"
+    }
+  },
+  "74632": {
+    "sign_id": "SBQS",
+    "enabled?": false,
+    "display_type": "separate",
+    "route_id": "743",
+    "zones": {
+      "0": "westbound",
+      "1": "eastbound"
+    }
+  },
+  "74633": {
+    "sign_id": "SBQS",
+    "enabled?": false,
+    "display_type": "separate",
+    "route_id": "743",
+    "zones": {
+      "0": "westbound",
+      "1": "eastbound"
+    }
+  },
+  "74635": {
+    "sign_id": "SBOX",
+    "enabled?": false,
+    "display_type": "separate",
+    "route_id": "743",
+    "zones": {
+      "0": "westbound",
+      "1": "eastbound"
+    }
+  },
+  "74634": {
+    "sign_id": "SBOX",
+    "enabled?": false,
+    "display_type": "separate",
+    "route_id": "743",
+    "zones": {
+      "0": "westbound",
+      "1": "eastbound"
+    }
   }
 }
