@@ -4,6 +4,15 @@ defmodule Sign.Static.StateTest do
   import ExUnit.CaptureLog
 
   describe "static_station_codes/1" do
+
+    setup do
+      static_station_config = Application.get_env(:realtime_signs, :static_stations_config)
+      Application.put_env(:realtime_signs, :static_stations_config, "test/data/static_stations.json")
+      on_exit fn ->
+        Application.put_env(:realtime_signs, :static_station_config, static_station_config)
+      end
+    end
+
     test "returns station codes for current static_stations" do
       {:ok, static_signs} = start_supervised({Sign.Static.State, [refresh_time: 1, name: :test, stations: ["70262", "70268"]]})
       static_station_codes = static_station_codes(static_signs)
