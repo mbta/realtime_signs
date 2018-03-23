@@ -17,7 +17,7 @@ defmodule Sign.Static.Parser do
     case Poison.decode(binary) do
       {:ok, station_ids} ->
         station_ids
-      {:error, reason} ->
+      {:error, reason, _} ->
         Logger.warn("Could not parse static station ids: #{inspect reason}")
         []
     end
