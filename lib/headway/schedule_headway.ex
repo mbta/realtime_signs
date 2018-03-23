@@ -10,7 +10,16 @@ defmodule Headway.ScheduleHeadway do
   @spec build_request([Station.id]) :: String.t
   def build_request(station_ids) do
     id_filter = station_ids |> Enum.map(&URI.encode/1) |> Enum.join(",")
-    @schedule_api_url <> "?filter[stop]=#{id_filter}&filter[date]=2018-04-22"
+    @schedule_api_url <> "?filter[stop]=#{id_filter}#{date_filter()}"
+  end
+
+  defp date_filter() do
+    start_date = ~D[2018-04-21]
+    if Mix.env != :test and Timex.compare(Timex.today(), start_date) < 0 do
+      "&filter[date]=2018-04-21"
+    else
+      ""
+    end
   end
 
   @spec group_headways_for_stations([map], [Station.id], DateTime.t) :: %{Station.id => t}
