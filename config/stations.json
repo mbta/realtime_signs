@@ -165,8 +165,8 @@
     "display_type": "separate",
     "route_id": "743",
     "zones": {
-      "0": "eastbound",
-      "1": "westbound"
+      "0": "westbound",
+      "1": "eastbound"
     }
   },
   "74630": {
@@ -175,8 +175,8 @@
     "display_type": "separate",
     "route_id": "743",
     "zones": {
-      "0": "eastbound",
-      "1": "westbound"
+      "0": "westbound",
+      "1": "eastbound"
     }
   },
   "74636": {
@@ -185,8 +185,8 @@
     "display_type": "separate",
     "route_id": "743",
     "zones": {
-      "0": "eastbound",
-      "1": "westbound"
+      "0": "westbound",
+      "1": "eastbound"
     }
   },
   "74637": {
@@ -195,8 +195,8 @@
     "display_type": "separate",
     "route_id": "743",
     "zones": {
-      "0": "eastbound",
-      "1": "westbound"
+      "0": "westbound",
+      "1": "eastbound"
     }
   },
   "74632": {
@@ -205,8 +205,8 @@
     "display_type": "separate",
     "route_id": "743",
     "zones": {
-      "0": "eastbound",
-      "1": "westbound"
+      "0": "westbound",
+      "1": "eastbound"
     }
   },
   "74633": {
@@ -215,8 +215,8 @@
     "display_type": "separate",
     "route_id": "743",
     "zones": {
-      "0": "eastbound",
-      "1": "westbound"
+      "0": "westbound",
+      "1": "eastbound"
     }
   },
   "74635": {
@@ -225,8 +225,8 @@
     "display_type": "separate",
     "route_id": "743",
     "zones": {
-      "0": "eastbound",
-      "1": "westbound"
+      "0": "westbound",
+      "1": "eastbound"
     }
   },
   "74634": {
@@ -235,8 +235,8 @@
     "display_type": "separate",
     "route_id": "743",
     "zones": {
-      "0": "eastbound",
-      "1": "westbound"
+      "0": "westbound",
+      "1": "eastbound"
     }
   }
 }
