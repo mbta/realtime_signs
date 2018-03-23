@@ -82,7 +82,7 @@ defmodule Sign.Static.MessagesTest do
                  |> Enum.map(&List.first(&1.message))
                  |> Enum.map(fn {txt, _} -> txt end)
 
-      assert messages == ["Trolley to Ashmont", "Every 7 to 8 min"]
+      assert messages == ["Buses to Chelsea", "Every 7 to 8 min"]
     end
 
     test "Only SL3 routes change when bridge is raised " do
@@ -103,7 +103,7 @@ defmodule Sign.Static.MessagesTest do
                  |> Enum.map(&List.first(&1.message))
                  |> Enum.map(fn {txt, _} -> txt end)
 
-      assert mattapan_messages == ["Trolley to Ashmont", "Every 1 to 2 min"]
+      assert mattapan_messages == ["Buses to Chelsea", "Every 1 to 2 min"]
       assert sl3_messages == ["Bridge is up", "Expect SL3 delays"]
     end
   end
