@@ -4,6 +4,11 @@ defmodule Sign.Content do
     messages: []
   ]
 
+  @type t :: %__MODULE__{
+    station: Sign.Station.id,
+    messages: [Sign.Message.t]
+  }
+
   def new, do: %__MODULE__{}
 
   @doc """

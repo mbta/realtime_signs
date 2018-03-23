@@ -19,6 +19,11 @@ defmodule Sign.Static.Text do
     {"Trolley to Ashmont", ScheduleHeadway.format_headway_range(headway)}
   end
 
+  @spec text_for_raised_bridge() :: t
+  def text_for_raised_bridge() do
+    {"Bridge is up", "Expect SL3 delays"}
+  end
+
   @spec text_between_service_days(DateTime.t, DateTime.t, ScheduleHeadway.t) :: t
   defp text_between_service_days(first_departure, current_time, headway) do
     max_headway = ScheduleHeadway.max_headway(headway)

@@ -7,6 +7,12 @@ defmodule Sign.Message do
     when: nil,
     duration: nil
 
+  @type t :: %__MODULE__{
+    message: [{String.t, String.t | nil}],
+    when: integer | nil,
+    duration: integer | nil
+  }
+
   def new, do: %__MODULE__{}
 
   @doc """
