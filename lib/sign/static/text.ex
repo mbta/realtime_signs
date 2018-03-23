@@ -16,7 +16,7 @@ defmodule Sign.Static.Text do
     text_for_last_departure(last_departure)
   end
   def text_for_headway(headway, _current_time) do
-    {"Busses to Chelsea", ScheduleHeadway.format_headway_range(headway)}
+    {"Buses to Chelsea", ScheduleHeadway.format_headway_range(headway)}
   end
 
   @spec text_for_raised_bridge() :: t
@@ -29,7 +29,7 @@ defmodule Sign.Static.Text do
     max_headway = ScheduleHeadway.max_headway(headway)
     time_buffer = if max_headway, do: max_headway, else: 0
     if show_first_departure?(first_departure, current_time, time_buffer) do
-      {"Busses to Chelsea", ScheduleHeadway.format_headway_range(headway)}
+      {"Buses to Chelsea", ScheduleHeadway.format_headway_range(headway)}
     else
       @empty_message
     end
