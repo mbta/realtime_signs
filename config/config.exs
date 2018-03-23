@@ -27,6 +27,7 @@ config :realtime_signs,
   sign_head_end_host: System.get_env("SIGN_HEAD_END_HOST") || "127.0.0.1",
   sign_updater: Sign.Updater,
   stations_config: System.get_env("STATIONS_CONFIG") || "config/stations.json",
+  static_stations_config: System.get_env("STATIC_STATIONS_CONFIG") || "config/static_stations.json",
   time_zone: "America/New_York",
   bridge_api_username: System.get_env("BRIDGE_API_USERNAME") || "",
   bridge_api_password: System.get_env("BRIDGE_API_PASSWORD") || ""
