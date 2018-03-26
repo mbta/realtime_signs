@@ -76,6 +76,12 @@ defmodule Headway.ScheduleHeadway do
     end
   end
 
+  @spec show_first_departure?(DateTime.t, DateTime.t, non_neg_integer) :: boolean
+  def show_first_departure?(first_departure, current_time, max_headway) do
+    earliest_time = Timex.shift(first_departure, minutes: max_headway * -1)
+    Time.compare(current_time, earliest_time) != :lt
+  end
+
   @spec format_headway_range(headway_range) :: String.t
   def format_headway_range({nil, nil}), do: ""
   def format_headway_range({x, y}) when x == y or is_nil(y), do: "Every #{x} min"

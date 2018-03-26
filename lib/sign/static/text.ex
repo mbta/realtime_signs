@@ -28,7 +28,7 @@ defmodule Sign.Static.Text do
   defp text_between_service_days(first_departure, current_time, headway, headsign, vehicle_name) do
     max_headway = ScheduleHeadway.max_headway(headway)
     time_buffer = if max_headway, do: max_headway, else: 0
-    if show_first_departure?(first_departure, current_time, time_buffer) do
+    if ScheduleHeadway.show_first_departure?(first_departure, current_time, time_buffer) do
       {"#{pluralize(vehicle_name)} to #{headsign}", ScheduleHeadway.format_headway_range(headway)}
     else
       @empty_message
@@ -44,12 +44,6 @@ defmodule Sign.Static.Text do
         Logger.warn("Could not format departure time #{inspect last_departure}")
         @empty_message
     end
-  end
-
-  @spec show_first_departure?(DateTime.t, DateTime.t, non_neg_integer) :: boolean
-  defp show_first_departure?(first_departure, current_time, max_headway) do
-    earliest_time = Timex.shift(first_departure, minutes: max_headway * -1)
-    Time.compare(current_time, earliest_time) != :lt
   end
 
   @spec pluralize(String.t) :: String.t

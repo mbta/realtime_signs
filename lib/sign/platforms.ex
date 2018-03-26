@@ -11,6 +11,12 @@ defmodule Sign.Platforms do
   def set(state, :eastbound, on), do: %{state | eb: on}
   def set(state, :westbound, on), do: %{state | wb: on}
 
+  def from_zones(zones) do
+    Enum.reduce(zones, new(), &do_for_zones/2)
+  end
+
+  defp do_for_zones(zone, acc), do: set(acc, zone, true)
+
   def to_string(state) do
     [state.mz, state.cp, state.nb, state.sb, state.eb, state.wb]
     |> Enum.map(&platform_to_string/1)
