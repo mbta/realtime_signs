@@ -5,7 +5,7 @@ defmodule Sign.Static.State do
   require Logger
 
   @bridge_id 1
-  @default_opts [refresh_time: 300_000, stations: []]
+  @default_opts [refresh_time: 300_000]
 
   def start_link(user_opts \\ []) do
     opts = Keyword.merge(@default_opts, user_opts)
@@ -14,7 +14,11 @@ defmodule Sign.Static.State do
 
   def init(opts) do
     schedule_refresh(opts[:refresh_time])
-    static_stations = Sign.Stations.Live.get_stations(opts[:stations])
+    static_stations = :realtime_signs
+                      |> Application.get_env(:static_stations_config)
+                      |> Static.Parser.parse_static_station_ids()
+                      |> Sign.Stations.Live.get_stations()
+
     {:ok, static_stations}
   end
 
