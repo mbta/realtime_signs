@@ -53,6 +53,6 @@ defmodule Sign.Static.Text do
   end
 
   @spec pluralize(String.t) :: String.t
-  defp pluralize("Bus"), do: "Buses"
-  defp pluralize(vehicle_name), do: vehicle_name
+  defp pluralize("Trolley"), do: "Trolley" # intentionally singular for character limit
+  defp pluralize(vehicle), do: Inflex.pluralize(vehicle)
 end
