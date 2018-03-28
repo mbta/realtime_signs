@@ -41,7 +41,7 @@ defmodule Sign.Static.TextTest do
       last_departure_time = @current_time |> Timex.shift(hours: 12) |> Timex.to_datetime("America/New_York")
       headway = {:last_departure, last_departure_time}
       expected_message = {"Last Bus", "Scheduled for 9:00PM"}
-      assert text_for_headway(headway, @current_time, "Mattapan", "Buses") == expected_message
+      assert text_for_headway(headway, @current_time, "Chelsea", "Bus") == expected_message
     end
 
     test "Returns empty message if time is invalid and logs error" do
@@ -60,7 +60,7 @@ defmodule Sign.Static.TextTest do
     end
 
     test "Uses vehicle name in response" do
-      assert text_for_headway({5, 5}, @current_time, "Chelsea", "Buses") == {"Buses to Chelsea", "Every 5 min"}
+      assert text_for_headway({5, 5}, @current_time, "Chelsea", "Bus") == {"Buses to Chelsea", "Every 5 min"}
     end
   end
 end

@@ -115,5 +115,5 @@ defmodule Sign.Message do
   @doc "Provides the correct vehicle name for the given route id"
   @spec vehicle_name(String.t) :: String.t
   def vehicle_name("Mattapan"), do: "Trolley"
-  def vehicle_name("743"), do: "Buses"
+  def vehicle_name("743"), do: "Bus"
 end

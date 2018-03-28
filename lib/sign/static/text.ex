@@ -16,7 +16,7 @@ defmodule Sign.Static.Text do
     text_for_last_departure(last_departure, vehicle_name)
   end
   def text_for_headway(headway, _current_time, headsign, vehicle_name) do
-    {"#{vehicle_name} to #{headsign}", ScheduleHeadway.format_headway_range(headway)}
+    {"#{pluralize(vehicle_name)} to #{headsign}", ScheduleHeadway.format_headway_range(headway)}
   end
 
   @spec text_for_raised_bridge() :: t
@@ -29,7 +29,7 @@ defmodule Sign.Static.Text do
     max_headway = ScheduleHeadway.max_headway(headway)
     time_buffer = if max_headway, do: max_headway, else: 0
     if show_first_departure?(first_departure, current_time, time_buffer) do
-      {"#{vehicle_name} to #{headsign}", ScheduleHeadway.format_headway_range(headway)}
+      {"#{pluralize(vehicle_name)} to #{headsign}", ScheduleHeadway.format_headway_range(headway)}
     else
       @empty_message
     end
@@ -39,7 +39,7 @@ defmodule Sign.Static.Text do
   defp text_for_last_departure(last_departure, vehicle_name) do
     case Timex.format(last_departure, "{h12}:{m}{AM}") do
       {:ok, time_string} ->
-        {"Last #{singular_vehicle_name(vehicle_name)}", "Scheduled for #{time_string}"}
+        {"Last #{vehicle_name}", "Scheduled for #{time_string}"}
       _ ->
         Logger.warn("Could not format departure time #{inspect last_departure}")
         @empty_message
@@ -52,7 +52,7 @@ defmodule Sign.Static.Text do
     Time.compare(current_time, earliest_time) != :lt
   end
 
-  @spec singular_vehicle_name(String.t) :: String.t
-  defp singular_vehicle_name("Buses"), do: "Bus"
-  defp singular_vehicle_name(vehicle_name), do: vehicle_name
+  @spec pluralize(String.t) :: String.t
+  defp pluralize("Bus"), do: "Buses"
+  defp pluralize(vehicle_name), do: vehicle_name
 end
