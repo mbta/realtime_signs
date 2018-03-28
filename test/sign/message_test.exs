@@ -11,6 +11,11 @@ defmodule Sign.MessageTest do
     test "returns correct headsign at Ashmont" do
       assert headsign(1, "Mattapan", "70262") == "Mattapan"
     end
+
+    test "returns correct headsign for SL3 trips" do
+      assert headsign(1, "743", "74636") == "Chelsea"
+      assert headsign(0, "743", "74637") == "South Sta."
+    end
   end
 
   describe "line_code/1" do
