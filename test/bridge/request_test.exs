@@ -5,7 +5,7 @@ defmodule Bridge.RequestTest do
 
   describe "get_status/1" do
     test "parses valid response" do
-      assert get_status(1) == "Raised"
+      assert get_status(1) == {"Raised", 5}
     end
 
     test "Logs warning with bad status code" do
