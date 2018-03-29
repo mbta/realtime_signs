@@ -3,7 +3,7 @@ defmodule Bridge.Request do
 
   @bridge_url "https://slg.aecomonline.net/api/v1/lift/findByBridgeId/"
 
-  @spec get_status(non_neg_integer) :: String.t | nil
+  @spec get_status(non_neg_integer) :: {String.t, non_neg_integer | nil} | nil
   def get_status(id) do
     headers = [{"Authorization", get_auth_header()}]
     http_client = Application.get_env(:realtime_signs, :http_client)
