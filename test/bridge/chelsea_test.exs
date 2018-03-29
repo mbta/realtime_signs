@@ -4,11 +4,12 @@ defmodule Bridge.ChelseaTest do
 
   describe "raised/1" do
     test "returns true for raised status" do
-      assert raised?("Raised")
+      assert raised?({"Raised", 5})
     end
 
     test "returns false for lowered or nil status" do
-      refute raised?("Lowered")
+      refute raised?({"Lowered", nil})
+      refute raised?({nil, nil})
       refute raised?(nil)
     end
   end
