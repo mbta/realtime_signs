@@ -1,5 +1,6 @@
 defmodule Sign.Updater do
   use GenServer
+  require Logger
 
   def start_link(opts \\ []) do
     {uid, opts} = Keyword.pop_first(opts, :uid, System.system_time(:second))
@@ -25,7 +26,14 @@ defmodule Sign.Updater do
     |> URI.encode_query
     |> log_sign_update(current_time)
 
-    http_client().post(url(), command, [{"Content-type", "application/x-www-form-urlencoded"}])
+    case http_client().post(url(), command, [{"Content-type", "application/x-www-form-urlencoded"}]) do
+      {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
+        nil
+      {:ok, %HTTPoison.Response{status_code: status}} ->
+        Logger.warn("head_end_post_error: response had status code: #{inspect status}")
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        Logger.warn("head_end_post_error: #{inspect reason}")
+    end
   end
 
   defp http_client, do: Application.get_env(:realtime_signs, :http_client)
