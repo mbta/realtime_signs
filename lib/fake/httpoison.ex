@@ -9,8 +9,15 @@ defmodule Fake.HTTPoison do
     mock_response(url)
   end
 
-  def post(url, body, headers \\ []) do
-    {url, body, headers}
+  def post(_url, body, _headers \\ []) do
+    cond do
+      body =~ "uid=11" ->
+        {:ok, %HTTPoison.Response{status_code: 500}}
+      body =~ "uid=12" ->
+        {:error, %HTTPoison.Error{reason: :timeout}}
+      true ->
+        {:ok, %HTTPoison.Response{status_code: 200}}
+    end
   end
 
   def mock_response("https://api-v3.mbta.com/schedules?filter[stop]=500_error") do

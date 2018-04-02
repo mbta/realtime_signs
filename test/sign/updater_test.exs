@@ -1,19 +1,47 @@
 defmodule Sign.UpdaterTest do
   use ExUnit.Case, async: true
-  alias Sign.Message, as: M
-  alias Sign.Content, as: SC
-  alias Sign.Updater, as: R
+  import Sign.Updater
+  import ExUnit.CaptureLog
+  alias Sign.{Message, Content}
+
+  @time ~N[2016-08-19 05:36:23]
 
   test "makes a request with the right params" do
-    test_time = ~N[2016-08-19 05:36:23]
-    message = M.new |> M.message("Park St  4 min")
-    update = SC.new
-    |> SC.station("GPRK")
-    |> SC.messages([message])
+    message = Message.new |> Message.message("Park St  4 min")
+    update = Content.new
+    |> Content.station("GPRK")
+    |> Content.messages([message])
 
-    {url, body, headers} = R.send_request(update, test_time, 10)
-    assert url == "http://127.0.0.1/mbta/cgi-bin/RemoteMsgsCgi.exe"
-    assert body == "MsgType=SignContent&uid=11&sta=GPRK&c=-%22Park+St++4+min%22"
-    assert headers == [{"Content-type", "application/x-www-form-urlencoded"}]
+    log = capture_log [level: :warn], fn ->
+      refute send_request(update, @time, 9)
+    end
+
+    assert log == ""
+  end
+
+  test "Logs error when unsucessful status code is found in response" do
+    message = Message.new |> Message.message("Park St  4 min")
+    update = Content.new
+    |> Content.station("GPRK")
+    |> Content.messages([message])
+
+    log = capture_log [level: :warn], fn ->
+      send_request(update, @time, 10)
+    end
+
+    assert log =~ "head_end_post_error: response had status code: 500"
+  end
+
+  test "Logs error when head-end server times out" do
+    message = Message.new |> Message.message("Park St  4 min")
+    update = Content.new
+    |> Content.station("GPRK")
+    |> Content.messages([message])
+
+    log = capture_log [level: :warn], fn ->
+      send_request(update, @time, 11)
+    end
+
+    assert log =~ "head_end_post_error: :timeout"
   end
 end
