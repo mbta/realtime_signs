@@ -27,7 +27,7 @@ defmodule Sign.Updater do
     |> log_sign_update(current_time)
 
     case http_client().post(url(), command, [{"Content-type", "application/x-www-form-urlencoded"}]) do
-      {:ok, %HTTPoison.Response{status_code: status}} when status >=200 and status < 300 ->
+      {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
         nil
       {:ok, %HTTPoison.Response{status_code: status}} ->
         Logger.warn("head_end_post_error: response had status code: #{inspect status}")
