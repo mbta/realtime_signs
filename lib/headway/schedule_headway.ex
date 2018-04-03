@@ -50,10 +50,6 @@ defmodule Headway.ScheduleHeadway do
   end
 
   @spec calculate_headway_range([DateTime.t]) :: headway_range
-  defp calculate_headway_range([previous_time, upcoming_time]) do
-    actual_headway = {Timex.diff(upcoming_time, previous_time , :minutes), nil}
-    pad_headway_range(actual_headway)
-  end
   defp calculate_headway_range([previous_time, upcoming_time, second_upcoming_time]) do
     actual_headway = {Timex.diff(upcoming_time, previous_time, :minutes), Timex.diff(second_upcoming_time, upcoming_time, :minutes)}
     pad_headway_range(actual_headway)
@@ -91,9 +87,7 @@ defmodule Headway.ScheduleHeadway do
   defp pad_headway_range({x, y}), do: do_pad_headway_range({y, x})
 
   @spec do_pad_headway_range(headway_range) :: headway_range
-  defp do_pad_headway_range({nil, nil}), do: {nil, nil}
   defp do_pad_headway_range({x, nil}), do: {pad_lower_value(x), nil}
-  defp do_pad_headway_range({nil, y}), do: {nil, pad_upper_value(y)}
   defp do_pad_headway_range({x, y}), do: {pad_lower_value(x), pad_upper_value(y)}
 
   @spec pad_lower_value(integer) :: integer
