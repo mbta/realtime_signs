@@ -128,6 +128,22 @@ defmodule Headway.ScheduleHeadwayTest do
       headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(@current_time, "America/New_York"))
       assert headways == %{"111" => {5, 7}}
     end
+
+    test "Pads headway when only two times are given" do
+      times = [
+        ~N[2017-07-04 09:01:00],
+        ~N[2017-07-04 09:02:00],
+      ]
+
+      schedules = Enum.map(times, fn time ->
+        %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+          "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
+      end)
+
+      headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(@current_time, "America/New_York"))
+      {:first_departure, headway, _first_time} = Map.get(headways, "111")
+      assert headway == {5, nil}
+    end
   end
 
   describe "format_headway_range/1" do
