@@ -5,6 +5,8 @@ defmodule Headway.ScheduleHeadway do
   @type headway_range :: {non_neg_integer | nil, non_neg_integer | nil}
   @type t :: headway_range | {:first_departure, headway_range, DateTime.t}
 
+  @min_headway 5
+  @headway_padding 2
   @schedule_api_url "https://api-v3.mbta.com/schedules"
 
   @spec build_request([Station.id]) :: String.t
@@ -40,7 +42,8 @@ defmodule Headway.ScheduleHeadway do
   @spec do_headway_for_station({[DateTime.t], [DateTime.t]}) :: headway_range
   defp do_headway_for_station({_previous_times, []}), do: {nil, nil}
   defp do_headway_for_station({[], [first_time | _rest] = later_times}) do
-    {:first_departure, calculate_headway_range(Enum.take(later_times, 3)), first_time}
+    headway_range = later_times |> Enum.take(3) |> calculate_headway_range()
+    {:first_departure, headway_range, first_time}
   end
   defp do_headway_for_station({previous_times, later_times}) do
     calculate_headway_range([List.last(previous_times) | Enum.take(later_times, 2)])
@@ -48,10 +51,12 @@ defmodule Headway.ScheduleHeadway do
 
   @spec calculate_headway_range([DateTime.t]) :: headway_range
   defp calculate_headway_range([previous_time, upcoming_time]) do
-    {Timex.diff(upcoming_time, previous_time , :minutes), nil}
+    actual_headway = {Timex.diff(upcoming_time, previous_time , :minutes), nil}
+    pad_headway_range(actual_headway)
   end
   defp calculate_headway_range([previous_time, upcoming_time, second_upcoming_time]) do
-    {Timex.diff(upcoming_time, previous_time, :minutes), Timex.diff(second_upcoming_time, upcoming_time, :minutes)}
+    actual_headway = {Timex.diff(upcoming_time, previous_time, :minutes), Timex.diff(second_upcoming_time, upcoming_time, :minutes)}
+    pad_headway_range(actual_headway)
   end
 
   @spec schedule_time(map) :: [DateTime.t]
@@ -80,6 +85,22 @@ defmodule Headway.ScheduleHeadway do
     earliest_time = Timex.shift(first_departure, minutes: max_headway * -1)
     Time.compare(current_time, earliest_time) != :lt
   end
+
+  @spec pad_headway_range(headway_range) :: headway_range
+  defp pad_headway_range({x, y}) when x < y, do: do_pad_headway_range({x, y})
+  defp pad_headway_range({x, y}), do: do_pad_headway_range({y, x})
+
+  @spec do_pad_headway_range(headway_range) :: headway_range
+  defp do_pad_headway_range({nil, nil}), do: {nil, nil}
+  defp do_pad_headway_range({x, nil}), do: {pad_lower_value(x), nil}
+  defp do_pad_headway_range({nil, y}), do: {nil, pad_upper_value(y)}
+  defp do_pad_headway_range({x, y}), do: {pad_lower_value(x), pad_upper_value(y)}
+
+  @spec pad_lower_value(integer) :: integer
+  defp pad_lower_value(x), do: max(x, @min_headway)
+
+  @spec pad_upper_value(integer) :: integer
+  defp pad_upper_value(y), do: max(y, @min_headway) + @headway_padding
 
   @spec format_headway_range(headway_range) :: String.t
   def format_headway_range({nil, nil}), do: ""
