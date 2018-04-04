@@ -1,4 +1,4 @@
-defmodule Sign.Static.HeadwayStationParserTest do
+defmodule Static.Parser.HeadwayStationTest do
   use ExUnit.Case
   import Sign.Static.Parser.HeadwayStation
   import ExUnit.CaptureLog
