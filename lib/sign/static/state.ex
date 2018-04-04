@@ -6,7 +6,7 @@ defmodule Sign.Static.State do
   require Logger
 
   @bridge_id 1
-  @default_opts [headway_refresh: 300_000, static_refresh: 20_000]
+  @default_opts [headway_refresh: 300_000, static_refresh: 300_000]
 
   def start_link(user_opts \\ []) do
     opts = Keyword.merge(@default_opts, user_opts)

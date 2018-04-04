@@ -15,6 +15,7 @@ defmodule Sign.Static.Message do
     bottom_text: String.t
   }
 
+  @spec from_map({String.t, map}) :: t
   def from_map({gtfs_id, data}) do
     %__MODULE__{
       station_id: gtfs_id,

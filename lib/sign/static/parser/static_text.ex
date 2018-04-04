@@ -2,6 +2,7 @@ defmodule Sign.Static.Parser.StaticText do
   require Logger
   alias Sign.Static
 
+  @spec parse(String.t) :: [Sign.Static.Message.t]
   def parse(filename) do
     case File.read(filename) do
       {:ok, binary } ->
@@ -12,6 +13,7 @@ defmodule Sign.Static.Parser.StaticText do
     end
   end
 
+  @spec parse_json_binary(binary) :: [Sign.Static.Message.t]
   defp parse_json_binary(binary) do
     case Poison.decode(binary) do
       {:ok, static_text_map} ->
