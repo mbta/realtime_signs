@@ -16,9 +16,9 @@ defmodule Sign.Static.MessagesTest do
   @current_time ~N[2017-07-04 09:00:00]
   @refresh_rate 1
 
-  describe "station_messages/2" do
+  describe "station_headway_messages/2" do
     test "messages have correct placement" do
-      sign_content_payloads = station_messages(@mattapan_stations, @refresh_rate, @headway, @current_time, false)
+      sign_content_payloads = station_headway_messages(@mattapan_stations, @refresh_rate, @headway, @current_time, false)
       station1_placement = Enum.filter(sign_content_payloads, & &1.station == "test")
                            |> Enum.flat_map(& &1.messages)
                            |> Enum.flat_map(& &1.placement)
@@ -31,14 +31,14 @@ defmodule Sign.Static.MessagesTest do
     end
 
     test "all stations are included in static_messages" do
-      sign_content_payloads = station_messages(@mattapan_stations, @refresh_rate, @headway, @current_time, {"Lowered", nil})
+      sign_content_payloads = station_headway_messages(@mattapan_stations, @refresh_rate, @headway, @current_time, {"Lowered", nil})
       station_codes = Enum.map(sign_content_payloads, & &1.station) |> Enum.uniq
       assert station_codes == ["test", "test2"]
     end
 
     test "returns headway in message if one exists" do
       headway = %{@headway | "station_1" => {15, 11}}
-      sign_content_payloads = station_messages(@mattapan_stations, @refresh_rate, headway, @current_time, {"Lowered", nil})
+      sign_content_payloads = station_headway_messages(@mattapan_stations, @refresh_rate, headway, @current_time, {"Lowered", nil})
       messages = sign_content_payloads
                  |> Enum.filter(& &1.station == "test")
                  |> List.first()
@@ -51,7 +51,7 @@ defmodule Sign.Static.MessagesTest do
     end
 
     test "Returns blank message if no headways are found" do
-      sign_content_payloads = station_messages(@mattapan_stations, @refresh_rate, @headway, @current_time, {"Lowered", nil})
+      sign_content_payloads = station_headway_messages(@mattapan_stations, @refresh_rate, @headway, @current_time, {"Lowered", nil})
       messages = sign_content_payloads
                  |> Enum.filter(& &1.station == "test")
                  |> List.first()
@@ -63,7 +63,7 @@ defmodule Sign.Static.MessagesTest do
     end
 
     test "SL3 routes show closed message when bridge is raised" do
-      sign_content_payloads = station_messages(@sl3_stations, @refresh_rate, @headway, @current_time, {"Raised", 5})
+      sign_content_payloads = station_headway_messages(@sl3_stations, @refresh_rate, @headway, @current_time, {"Raised", 5})
       messages = sign_content_payloads
                  |> List.first()
                  |> Map.get(:messages)
@@ -75,7 +75,7 @@ defmodule Sign.Static.MessagesTest do
 
     test "SL3 routes behave normally when bridge is lowered" do
       headways = %{@headway | "sl3_station" => {7, 8}}
-      sign_content_payloads = station_messages(@sl3_stations, @refresh_rate, headways, @current_time, {"Lowered", nil})
+      sign_content_payloads = station_headway_messages(@sl3_stations, @refresh_rate, headways, @current_time, {"Lowered", nil})
       messages = sign_content_payloads
                  |> List.first()
                  |> Map.get(:messages)
@@ -88,7 +88,7 @@ defmodule Sign.Static.MessagesTest do
     test "Only SL3 routes change when bridge is raised " do
       headways = %{@headway | "sl3_station" => {7, 8}, "station_1" => {1, 2}}
       stations = @sl3_stations ++ @mattapan_stations
-      sign_content_payloads = station_messages(stations, @refresh_rate, headways, @current_time, {"Raised", 5})
+      sign_content_payloads = station_headway_messages(stations, @refresh_rate, headways, @current_time, {"Raised", 5})
       mattapan_messages = sign_content_payloads
                  |> Enum.filter(& &1.station == "test")
                  |> List.first()

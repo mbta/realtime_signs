@@ -6,13 +6,26 @@ defmodule Sign.Static.Messages do
   @additional_duration 60
   @sl3_route_id "743"
 
-  @doc "Returns a Content struct representing the static messages that will be displayed for given stations"
-  @spec station_messages([Station.t], integer, %{Station.id => ScheduleHeadway.t}, DateTime.t, String.t | nil) :: [Content.t]
-  def station_messages(stations, refresh_rate, headways, current_time, bridge_status) do
+  @doc "Returns a Content struct representing the headway messages that will be displayed for given stations"
+  @spec station_headway_messages([Station.t], integer, %{Station.id => ScheduleHeadway.t}, DateTime.t, String.t | nil) :: [Content.t]
+  def station_headway_messages(stations, refresh_rate, headways, current_time, bridge_status) do
     bridge_raised? = Bridge.Chelsea.raised?(bridge_status)
     stations
     |> Enum.flat_map(&station_with_zones/1)
     |> Enum.map(&build_content(&1, refresh_rate, headways, current_time, bridge_raised?))
+  end
+
+  @doc "Returns a Content struct representing the static messages that will be displayed for given stations"
+  @spec station_static_messages([Sign.Static.Message.t], non_neg_integer) :: [Content.t]
+  def station_static_messages(static_messages, refresh_rate) do
+    Enum.map(static_messages, &do_station_static_message(&1, refresh_rate))
+  end
+
+  @spec do_station_static_message(Sign.Static.Message.t, non_neg_integer) :: Content.t
+  defp do_station_static_message(static_message, refresh_rate) do
+    station = Sign.Stations.Live.for_gtfs_id(static_message.station_id)
+    text = {static_message.top_text, static_message.bottom_text}
+    %Content{station: static_message.sign_id, messages: build_messages(station, static_message.direction, refresh_rate, text)}
   end
 
   @spec build_content({Station.t, 1 | 0}, integer, map, DateTime.t, boolean) :: Content.t

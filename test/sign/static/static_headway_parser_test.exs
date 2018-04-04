@@ -1,6 +1,6 @@
-defmodule Sign.Static.ParserTest do
+defmodule Sign.Static.Parser.HeadwayStationTest do
   use ExUnit.Case
-  import Sign.Static.Parser
+  import Sign.Static.Parser.HeadwayStation
   import ExUnit.CaptureLog
 
   @file_path "test/data/static_test.json"

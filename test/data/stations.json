@@ -38,5 +38,15 @@
       "0": "southbound",
       "1": "northbound"
     }
+  },
+  "74636": {
+    "sign_id": "SEAV",
+    "enabled?": true,
+    "display_type": "separate",
+    "route_id": "Mattapan",
+    "zones": {
+      "0": "eastbound",
+      "1": "westbound"
+    }
   }
 }
