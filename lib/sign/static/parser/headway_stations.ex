@@ -1,4 +1,4 @@
-defmodule Sign.Static.Parser do
+defmodule Sign.Static.Parser.HeadwayStation do
   require Logger
   alias Sign.Station
 
