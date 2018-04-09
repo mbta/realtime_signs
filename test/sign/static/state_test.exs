@@ -28,5 +28,15 @@ defmodule Sign.Static.StateTest do
       end
       assert log =~ "MMIL"
     end
+
+    test "sends PA announcements" do
+      log = capture_log [level: :info], fn ->
+        headways = %{"70268" => {4, 6}}
+        handle_info({:announcements, 5}, {["70268"], headways})
+        Process.sleep(70)
+      end
+      assert log =~ "MMIL"
+      assert log =~ "Canned"
+    end
   end
 end
