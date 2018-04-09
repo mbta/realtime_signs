@@ -20,6 +20,9 @@ defmodule Sign.Static.Announcements do
     Enum.flat_map(headways, &station_announcement(&1, current_time, bridge_status, language))
   end
 
+  defp station_announcement({_station_id, {nil, nil}}, _current_time, _bridge_status, _language) do
+    []
+  end
   defp station_announcement({station_id, _headway}, _current_time, {"Raised", duration}, language) do
     station = Stations.Live.for_gtfs_id(station_id)
     [%Canned{

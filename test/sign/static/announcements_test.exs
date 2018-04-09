@@ -56,12 +56,17 @@ defmodule Sign.Static.AnnoucementsTest do
     end
 
     test "assert headway variables are in correct order" do
-      first_departure_time = Timex.shift(@current_time, minutes: 2)
-      headways = %{"70268" => {:first_departure, {10, 4}, first_departure_time}}
+      headways = %{"70268" => {10, 4}}
       announcements = from_schedule_headways(headways, @current_time, {"Lowered", nil})
       refute Enum.empty?(announcements)
       english_sb = List.first(announcements)
       assert english_sb.variables == [5504, 5510]
+    end
+
+    test "Does not send announcements after last scheduled trip of the day" do
+      headways = %{"70268" => {nil, nil}}
+      announcements = from_schedule_headways(headways, @current_time, {"Lowered", nil})
+      assert Enum.empty?(announcements)
     end
   end
 end
