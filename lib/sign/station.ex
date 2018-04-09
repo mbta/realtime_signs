@@ -23,7 +23,7 @@ defmodule Sign.Station do
     Map.keys(station.zones)
   end
 
-  def zones(station) do
+  def zone_values(station) do
     Map.values(station.zones)
   end
 end

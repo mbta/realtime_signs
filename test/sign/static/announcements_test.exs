@@ -13,7 +13,8 @@ defmodule Sign.Static.AnnoucementsTest do
 
     test "generates bridge is raised announcement with duration when bridge is raised" do
       headways = %{"70268" => {12, 15}}
-      durations = [180, 480, 900, 1140 , 1440, 1940]
+      durations_minutes = [3, 8, 15, 19 , 24, 35]
+      durations = Enum.map(durations_minutes, & &1 * 60)
       expected_english_duration = [5505, 5510, 5515, 5520, 5525, 5530]
       expected_spanish_duration = [37005, 37010, 37015, 37020, 37025, 37030]
       for {duration, idx} <- Enum.with_index(durations) do

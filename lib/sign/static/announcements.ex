@@ -7,6 +7,16 @@ defmodule Sign.Static.Announcements do
 
   @english_headway_modifier 5500
   @spanish_headway_modifier 37000
+  @headway_mids %{
+    {0, :english} => 133,
+    {1, :english} => 134,
+    {0, :spanish} => 150,
+    {1, :spanish} => 151
+  }
+  @english_bridge_base_var 5500
+  @spanish_bridge_base_var 37000
+  @bridge_closing_soon_mid %{:english => 136, :spanish => 153}
+  @bridge_closing_duration %{:english => 135, :spanish => 152}
 
   @spec from_schedule_headways(%{Station.id => ScheduleHeadway.t}, DateTime.t, Chelsea.status) :: [Message.t]
   def from_schedule_headways(headways, current_time, bridge_status) do
@@ -49,7 +59,7 @@ defmodule Sign.Static.Announcements do
   defp headway_announcement(station, headway, {direction, zone_location}, language) do
     platform = Platforms.new() |> Platforms.set(zone_location)
     %Canned{
-      mid: mid_for_headway(headway, direction, language),
+      mid: Map.get(@headway_mids, {direction, language}),
       type: 0,
       platforms: platform,
       station: station.sign_id,
@@ -59,37 +69,28 @@ defmodule Sign.Static.Announcements do
 
   defp get_platforms(station) do
     station
-    |> Station.zones()
+    |> Station.zone_values()
     |> Platforms.from_zones()
   end
 
-  defp mid_for_bridge(nil, :english), do: 136
-  defp mid_for_bridge(_duration, :english), do: 135
-  defp mid_for_bridge(nil, :spanish), do: 153
-  defp mid_for_bridge(_duration, :spanish), do: 152
-
-  defp mid_for_headway(_headway, 0, :english), do: 133
-  defp mid_for_headway(_headway, 1, :english), do: 134
-
-  defp mid_for_headway(_headway, 0, :spanish), do: 150
-  defp mid_for_headway(_headway, 1, :spanish), do: 151
+  defp mid_for_bridge(nil, language), do: Map.get(@bridge_closing_soon_mid, language)
+  defp mid_for_bridge(_duration, language), do: Map.get(@bridge_closing_duration, language)
 
   defp variables_for_bridge(nil, _), do: []
   defp variables_for_bridge(duration, language), do: do_variables_for_bridge(duration / 60, language)
 
-  defp do_variables_for_bridge(minutes, :english) when minutes <= 5, do: [5505]
-  defp do_variables_for_bridge(minutes, :english) when minutes <= 10, do: [5510]
-  defp do_variables_for_bridge(minutes, :english) when minutes <= 15, do: [5515]
-  defp do_variables_for_bridge(minutes, :english) when minutes <= 20, do: [5520]
-  defp do_variables_for_bridge(minutes, :english) when minutes <= 25, do: [5525]
-  defp do_variables_for_bridge(_minutes, :english), do: [5530]
-
-  defp do_variables_for_bridge(minutes, :spanish) when minutes <= 5, do: [37005]
-  defp do_variables_for_bridge(minutes, :spanish) when minutes <= 10, do: [37010]
-  defp do_variables_for_bridge(minutes, :spanish) when minutes <= 15, do: [37015]
-  defp do_variables_for_bridge(minutes, :spanish) when minutes <= 20, do: [37020]
-  defp do_variables_for_bridge(minutes, :spanish) when minutes <= 25, do: [37025]
-  defp do_variables_for_bridge(_minutes, :spanish), do: [37030]
+  defp do_variables_for_bridge(minutes, :english) when minutes <= 5, do: [@english_bridge_base_var + 5]
+  defp do_variables_for_bridge(minutes, :english) when minutes <= 10, do: [@english_bridge_base_var + 10]
+  defp do_variables_for_bridge(minutes, :english) when minutes <= 15, do: [@english_bridge_base_var + 15]
+  defp do_variables_for_bridge(minutes, :english) when minutes <= 20, do: [@english_bridge_base_var + 20]
+  defp do_variables_for_bridge(minutes, :english) when minutes <= 25, do: [@english_bridge_base_var + 25]
+  defp do_variables_for_bridge(_minutes, :english), do: [@english_bridge_base_var  + 30]
+  defp do_variables_for_bridge(minutes, :spanish) when minutes <= 5, do: [@spanish_bridge_base_var + 5]
+  defp do_variables_for_bridge(minutes, :spanish) when minutes <= 10, do: [@spanish_bridge_base_var + 10]
+  defp do_variables_for_bridge(minutes, :spanish) when minutes <= 15, do: [@spanish_bridge_base_var + 15]
+  defp do_variables_for_bridge(minutes, :spanish) when minutes <= 20, do: [@spanish_bridge_base_var + 20]
+  defp do_variables_for_bridge(minutes, :spanish) when minutes <= 25, do: [@spanish_bridge_base_var + 25]
+  defp do_variables_for_bridge(_minutes, :spanish), do: [@spanish_bridge_base_var + 30]
 
   defp variables_for_headway(headway, language) do
     id_modifier = if language == :spanish, do: @spanish_headway_modifier, else: @english_headway_modifier
