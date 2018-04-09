@@ -126,4 +126,20 @@ defmodule Headway.ScheduleHeadwayTest do
       assert max_headway({nil,nil}) == nil
     end
   end
+
+  describe "show_first_departure?/3" do
+    test "Does not show first departure if it is earlier than the max headway" do
+      first_departure = ~N[2017-07-04 09:05:00]
+      current_time = ~N[2017-07-04 08:35:00]
+
+      refute show_first_departure?(first_departure, current_time, 10)
+    end
+
+    test "shows first departure if within max headway window" do
+      first_departure = ~N[2017-07-04 09:05:00]
+      current_time = ~N[2017-07-04 09:10:00]
+
+      assert show_first_departure?(first_departure, current_time, 10)
+    end
+  end
 end
