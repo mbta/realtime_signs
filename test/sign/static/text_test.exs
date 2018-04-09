@@ -1,6 +1,5 @@
 defmodule Sign.Static.TextTest do
   use ExUnit.Case, async: true
-  import ExUnit.CaptureLog
   import Sign.Static.Text
 
   @current_time ~N[2017-07-04 09:00:00]
@@ -28,31 +27,6 @@ defmodule Sign.Static.TextTest do
       headway = {:first_departure, {nil, nil}, first_departure_time}
       expected_message = {"", ""}
       assert text_for_headway(headway, @current_time, "Mattapan", "Trolley") == expected_message
-    end
-
-    test "Shows last departure message with last scheduled time" do
-      last_departure_time = @current_time |> Timex.shift(hours: 12) |> Timex.to_datetime("America/New_York")
-      headway = {:last_departure, last_departure_time}
-      expected_message = {"Last Trolley", "Scheduled for 9:00PM"}
-      assert text_for_headway(headway, @current_time, "Mattapan", "Trolley") == expected_message
-    end
-
-    test "Uses singular vehicle name in last departure" do
-      last_departure_time = @current_time |> Timex.shift(hours: 12) |> Timex.to_datetime("America/New_York")
-      headway = {:last_departure, last_departure_time}
-      expected_message = {"Last Bus", "Scheduled for 9:00PM"}
-      assert text_for_headway(headway, @current_time, "Chelsea", "Bus") == expected_message
-    end
-
-    test "Returns empty message if time is invalid and logs error" do
-      last_departure_time = ~N[2017-07-04 05:00:00] |> Timex.to_datetime("America/New_York")
-      invalid_time = %{last_departure_time | hour: 26}
-      headway = {:last_departure, invalid_time}
-      log = capture_log [level: :warn], fn ->
-        assert text_for_headway(headway, @current_time, "Mattapan", "Trolley") == {"", ""}
-      end
-
-      assert log =~ "Could not format departure time"
     end
 
     test "Uses headsign in response" do

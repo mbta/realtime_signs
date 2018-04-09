@@ -37,19 +37,6 @@ defmodule Headway.ScheduleHeadwayTest do
       assert headways == %{"111" => {nil, nil}}
     end
 
-    test "Returns last departure when there is only one scheduled departure left" do
-      schedules = Enum.map(@times, fn time ->
-        %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-          "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
-      end)
-      headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(~N[2017-07-04 09:15:00], "America/New_York"))
-
-      expected_last_time = ~N[2017-07-04 09:20:00] |> Timex.to_datetime("America/New_York") |> Timex.to_unix()
-
-      assert %{"111" => {:last_departure, last_departure_time}} = headways
-      assert Timex.to_unix(last_departure_time) == expected_last_time
-    end
-
     test "Returns first departure and headway range when no departures have left yet" do
       schedules = Enum.map(@times, fn time ->
         %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},

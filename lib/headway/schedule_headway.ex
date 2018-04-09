@@ -3,7 +3,7 @@ defmodule Headway.ScheduleHeadway do
   alias Sign.Station
 
   @type headway_range :: {non_neg_integer | nil, non_neg_integer | nil}
-  @type t :: headway_range | {:first_departure, headway_range, DateTime.t} | {:last_departure, DateTime.t}
+  @type t :: headway_range | {:first_departure, headway_range, DateTime.t}
 
   @schedule_api_url "https://api-v3.mbta.com/schedules"
 
@@ -39,7 +39,6 @@ defmodule Headway.ScheduleHeadway do
 
   @spec do_headway_for_station({[DateTime.t], [DateTime.t]}) :: headway_range
   defp do_headway_for_station({_previous_times, []}), do: {nil, nil}
-  defp do_headway_for_station({_previous_times, [last_time]}), do: {:last_departure, last_time}
   defp do_headway_for_station({[], [first_time | _rest] = later_times}) do
     {:first_departure, calculate_headway_range(Enum.take(later_times, 3)), first_time}
   end

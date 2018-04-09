@@ -12,9 +12,6 @@ defmodule Sign.Static.Text do
   def text_for_headway({:first_departure, headway, first_departure}, current_time, headsign, vehicle_name) do
     text_between_service_days(first_departure, current_time, headway, headsign, vehicle_name)
   end
-  def text_for_headway({:last_departure, last_departure}, _current_time, _headsign, vehicle_name) do
-    text_for_last_departure(last_departure, vehicle_name)
-  end
   def text_for_headway(headway, _current_time, headsign, vehicle_name) do
     {"#{pluralize(vehicle_name)} to #{headsign}", ScheduleHeadway.format_headway_range(headway)}
   end
@@ -32,17 +29,6 @@ defmodule Sign.Static.Text do
       {"#{pluralize(vehicle_name)} to #{headsign}", ScheduleHeadway.format_headway_range(headway)}
     else
       @empty_message
-    end
-  end
-
-  @spec text_for_last_departure(DateTime.t, String.t) :: t
-  defp text_for_last_departure(last_departure, vehicle_name) do
-    case Timex.format(last_departure, "{h12}:{m}{AM}") do
-      {:ok, time_string} ->
-        {"Last #{vehicle_name}", "Scheduled for #{time_string}"}
-      _ ->
-        Logger.warn("Could not format departure time #{inspect last_departure}")
-        @empty_message
     end
   end
 

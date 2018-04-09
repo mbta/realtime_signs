@@ -1,17 +1,21 @@
 defmodule Sign.Static.Announcements do
   alias Headway.ScheduleHeadway
   alias Sign.{Station, Canned, Platforms, Stations, Message}
+  alias Bridge.Chelsea
+
+  @typep language :: :english | :spanish
 
   @english_headway_modifier 5500
   @spanish_headway_modifier 37000
 
-  @spec from_schedule_headways(%{Station.id => ScheduleHeadway.t}, DateTime.t, Bridge.Chelsea.status) :: [Message.t]
+  @spec from_schedule_headways(%{Station.id => ScheduleHeadway.t}, DateTime.t, Chelsea.status) :: [Message.t]
   def from_schedule_headways(headways, current_time, bridge_status) do
     [:english, :spanish]
     |> Enum.flat_map(&do_from_schedule_headways(headways, current_time, bridge_status, &1))
     |> Enum.filter(& &1)
   end
 
+  @spec do_from_schedule_headways(%{Station.id => ScheduleHeadway.t}, DateTime.t, Chelsea.status, language) :: [Message.t]
   defp do_from_schedule_headways(headways, current_time, bridge_status, language) do
     Enum.flat_map(headways, &station_announcement(&1, current_time, bridge_status, language))
   end
@@ -23,7 +27,8 @@ defmodule Sign.Static.Announcements do
        type: 0,
        platforms: get_platforms(station),
        station: station.sign_id,
-       variables: variables_for_bridge(duration, language)
+       variables: variables_for_bridge(duration, language),
+       timeout: 200
      }]
   end
 
@@ -62,8 +67,6 @@ defmodule Sign.Static.Announcements do
   defp mid_for_bridge(nil, :spanish), do: 153
   defp mid_for_bridge(_duration, :spanish), do: 152
 
-  defp mid_for_headway({:last_departure, _,}, 0, :english), do: 137
-  defp mid_for_headway({:last_departure, _,}, 1, :english), do: 138
   defp mid_for_headway(_headway, 0, :english), do: 133
   defp mid_for_headway(_headway, 1, :english), do: 134
 

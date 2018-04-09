@@ -20,10 +20,6 @@ defmodule Sign.Updater do
   end
 
   def send_request(payload, current_time, uid) do
-    if match?(%Sign.Canned{}, payload) do
-      val = payload |> Sign.Command.to_command |> List.insert_at(1, {:uid, uid + 1}) |> URI.encode_query
-      Logger.info("Canned Message query: #{inspect val}")
-    end
     command = payload
     |> Sign.Command.to_command
     |> List.insert_at(1, {:uid, uid + 1}) # Ensure that UID comes second in the list (after MsgType)

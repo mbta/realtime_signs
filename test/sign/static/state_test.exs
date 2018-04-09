@@ -28,5 +28,14 @@ defmodule Sign.Static.StateTest do
       end
       assert log =~ "MMIL"
     end
+
+    test "makes announcements according to announcement time" do
+      log = capture_log [level: :info], fn ->
+        start_supervised({Sign.Static.State, [refresh_time: 1, announcement_time: 4, name: :refresh_test, stations: ["70268"]]})
+        Process.sleep(40)
+      end
+      assert log =~ "MMIL"
+      assert log =~ "Canned"
+    end
   end
 end
