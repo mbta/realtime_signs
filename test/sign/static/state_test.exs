@@ -24,7 +24,7 @@ defmodule Sign.Static.StateTest do
     test "refreshes sign according to refresh_time" do
       log = capture_log [level: :info], fn ->
         start_supervised({Sign.Static.State, [refresh_time: 1, name: :refresh_test, stations: ["70268"]]})
-        Process.sleep(40)
+        Process.sleep(80)
       end
       assert log =~ "MMIL"
     end
