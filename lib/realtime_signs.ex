@@ -7,15 +7,16 @@ defmodule RealtimeSigns do
     import Supervisor.Spec, warn: false
 
     children = [
-      supervisor(Sign.Supervisor, []),
+      worker(Engine.Predictions, []),
+      worker(Engine.Schedules, []),
+      worker(Engine.Static, []),
+      worker(PaEssUpdater, []),
+      supervisor(Signs.Supervisor, []),
+      worker(Signs.Starter, [], restart: :transient)
     ]
 
     opts = [strategy: :one_for_one, name: __MODULE__]
     :ok = :error_logger.add_report_handler(Sentry.Logger)
     Supervisor.start_link(children, opts)
-  end
-
-  def hello do
-    :world
   end
 end
