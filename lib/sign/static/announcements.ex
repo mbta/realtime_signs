@@ -12,7 +12,6 @@ defmodule Sign.Static.Announcements do
   def from_schedule_headways(headways, current_time, bridge_status) do
     [:english, :spanish]
     |> Enum.flat_map(&do_from_schedule_headways(headways, current_time, bridge_status, &1))
-    |> Enum.filter(& &1)
   end
 
   @spec do_from_schedule_headways(%{Station.id => ScheduleHeadway.t}, DateTime.t, Chelsea.status, language) :: [Message.t]
@@ -22,6 +21,14 @@ defmodule Sign.Static.Announcements do
 
   defp station_announcement({_station_id, {nil, nil}}, _current_time, _bridge_status, _language) do
     []
+  end
+  defp station_announcement({station_id, {:first_departure, headway_range, first_departure}}, current_time, bridge_status, language) do
+    max_headway = ScheduleHeadway.max_headway(headway_range)
+    if ScheduleHeadway.show_first_departure?(first_departure, current_time, max_headway) do
+      station_announcement({station_id, headway_range}, current_time, bridge_status, language)
+    else
+      []
+    end
   end
   defp station_announcement({station_id, _headway}, _current_time, {"Raised", duration}, language) do
     station = Stations.Live.for_gtfs_id(station_id)
@@ -34,28 +41,19 @@ defmodule Sign.Static.Announcements do
        timeout: 200
      }]
   end
-
-  defp station_announcement({station_id, headway}, current_time, _bridge_status, language) do
+  defp station_announcement({station_id, headway}, _current_time ,_bridge_status, language) do
     station = Stations.Live.for_gtfs_id(station_id)
-    Enum.map(station.zones, &headway_announcement(station, headway, current_time, &1, language))
+    Enum.map(station.zones, &headway_announcement(station, headway, &1, language))
   end
 
-  defp headway_announcement(station, {:first_departure, headway_range, first_departure}, current_time, direction, language) do
-    max_headway = ScheduleHeadway.max_headway(headway_range)
-    if ScheduleHeadway.show_first_departure?(first_departure, current_time, max_headway) do
-      headway_announcement(station, headway_range, current_time, direction, language)
-    else
-      nil
-    end
-  end
-  defp headway_announcement(station, headway, current_time, {direction, zone_location}, language) do
+  defp headway_announcement(station, headway, {direction, zone_location}, language) do
     platform = Platforms.new() |> Platforms.set(zone_location)
     %Canned{
       mid: mid_for_headway(headway, direction, language),
       type: 0,
       platforms: platform,
       station: station.sign_id,
-      variables: variables_for_headway(headway, current_time, language)
+      variables: variables_for_headway(headway, language)
     }
   end
 
@@ -93,10 +91,10 @@ defmodule Sign.Static.Announcements do
   defp do_variables_for_bridge(minutes, :spanish) when minutes <= 25, do: [37025]
   defp do_variables_for_bridge(_minutes, :spanish), do: [37030]
 
-  defp variables_for_headway(headway, current_time, language) do
+  defp variables_for_headway(headway, language) do
     id_modifier = if language == :spanish, do: @spanish_headway_modifier, else: @english_headway_modifier
-    do_variables_for_headway(headway, current_time, id_modifier)
+    do_variables_for_headway(headway, id_modifier)
   end
 
-  defp do_variables_for_headway({x, y}, _current_time, id_modifier), do: Enum.sort([x + id_modifier, y + id_modifier])
+  defp do_variables_for_headway({x, y}, id_modifier), do: Enum.sort([x + id_modifier, y + id_modifier])
 end
