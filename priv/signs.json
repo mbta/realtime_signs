@@ -1,18 +1,20 @@
 [
   {
     "id": "MBUT0",
-    "pa_ess_loc": "MBUT",
-    "pa_ess_zone": 0,
+    "pa_ess_loc": "MCED",
+    "pa_ess_zone": "s",
+    "headsign": "Mattapan",
     "gtfs_stop_id": "70266",
     "route_id": "Mattapan",
-    "type": "normal"
+    "type": "countdown"
   },
   {
     "id": "MBUT1",
-    "pa_ess_loc": "MBUT",
-    "pa_ess_zone": 1,
+    "pa_ess_loc": "MCED",
+    "pa_ess_zone": "n",
     "gtfs_stop_id": "70265",
+    "headsign": "Ashmont",
     "route_id": "Mattapan",
-    "type": "normal"
+    "type": "countdown"
   }
 ]

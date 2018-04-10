@@ -9,3 +9,15 @@ Unknown function 'Elixir.Sign.Command.PID':'__impl__'/1
 Unknown function 'Elixir.Sign.Command.Port':'__impl__'/1
 Unknown function 'Elixir.Sign.Command.Reference':'__impl__'/1
 Unknown function 'Elixir.Sign.Command.Tuple':'__impl__'/1
+Unknown function 'Elixir.Content.Message.Any':'__impl__'/1
+Unknown function 'Elixir.Content.Message.Atom':'__impl__'/1
+Unknown function 'Elixir.Content.Message.BitString':'__impl__'/1
+Unknown function 'Elixir.Content.Message.Float':'__impl__'/1
+Unknown function 'Elixir.Content.Message.Function':'__impl__'/1
+Unknown function 'Elixir.Content.Message.Integer':'__impl__'/1
+Unknown function 'Elixir.Content.Message.List':'__impl__'/1
+Unknown function 'Elixir.Content.Message.Map':'__impl__'/1
+Unknown function 'Elixir.Content.Message.PID':'__impl__'/1
+Unknown function 'Elixir.Content.Message.Port':'__impl__'/1
+Unknown function 'Elixir.Content.Message.Reference':'__impl__'/1
+Unknown function 'Elixir.Content.Message.Tuple':'__impl__'/1

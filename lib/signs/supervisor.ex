@@ -20,12 +20,12 @@ defmodule Signs.Supervisor do
   """
 
   def start_link do
-    Supervisor.start_link(children(), strategy: :one_for_one)
+    Supervisor.start_link(children(), name: __MODULE__, strategy: :one_for_one)
   end
 
   defp children() do
     for sign_config <- children_config() do
-      sign_module = Signs.Sign
+      sign_module = Signs.Countdown
       %{
         id: :"sign_#{sign_config["id"]}",
         start: {sign_module, :start_link, [sign_config]}
