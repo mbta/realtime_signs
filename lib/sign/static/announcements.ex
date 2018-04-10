@@ -60,7 +60,7 @@ defmodule Sign.Static.Announcements do
     platform = Platforms.new() |> Platforms.set(zone_location)
     %Canned{
       mid: Map.get(@headway_mids, {direction, language}),
-      type: 0,
+      type: 1,
       platforms: platform,
       station: station.sign_id,
       variables: variables_for_headway(headway, language)
@@ -94,7 +94,7 @@ defmodule Sign.Static.Announcements do
 
   defp variables_for_headway(headway, language) do
     id_modifier = if language == :spanish, do: @spanish_headway_modifier, else: @english_headway_modifier
-    do_variables_for_headway(headway, id_modifier)
+      do_variables_for_headway(headway, id_modifier)
   end
 
   defp do_variables_for_headway({x, y}, id_modifier), do: Enum.sort([x + id_modifier, y + id_modifier])
