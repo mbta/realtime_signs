@@ -9,8 +9,8 @@ defmodule Signs.Starter do
     |> Path.join("signs.json")
     |> File.read!
     |> Poison.Parser.parse!
-    |> Enum.each(fn sign_config ->
-      Signs.Supervisor.start_child(sign_config)
+    |> Enum.each(fn _sign_config ->
+      Signs.Supervisor.start_link
     end)
   end
 end

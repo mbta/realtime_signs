@@ -19,24 +19,18 @@ defmodule Signs.Supervisor do
   weird cases?)
   """
 
-  use DynamicSupervisor
+  use Supervisor
 
   def start_link do
-    DynamicSupervisor.start_link(__MODULE__, [], name: __MODULE__)
+    Supervisor.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
-  def start_child(sign_config) do
-    sign_mod = case sign_config["type"] do
-      "normal" -> Signs.Sign
-    end
-
-    DynamicSupervisor.start_child(__MODULE__, {sign_mod, sign_config})
+  def init(sign_config) do
+    children = make_workers(sign_config)
+    supervise(children, strategy: :one_for_one)
   end
 
-  def init([]) do
-    DynamicSupervisor.init(
-      strategy: :one_for_one,
-      extra_arguments: []
-    )
+  defp make_workers(sign_config) do
+    Enum.map(sign_config, fn _ -> worker(Signs.Sign, []) end)
   end
 end
