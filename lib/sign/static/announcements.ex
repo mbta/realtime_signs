@@ -60,7 +60,7 @@ defmodule Sign.Static.Announcements do
     platform = Platforms.new() |> Platforms.set(zone_location)
     %Canned{
       mid: Map.get(@headway_mids, {direction, language}),
-      type: 0,
+      type: 1,
       platforms: platform,
       station: station.sign_id,
       variables: variables_for_headway(headway, language)

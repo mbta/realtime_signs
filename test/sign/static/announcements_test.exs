@@ -69,5 +69,21 @@ defmodule Sign.Static.AnnoucementsTest do
       announcements = from_schedule_headways(headways, @current_time, {"Lowered", nil})
       assert Enum.empty?(announcements)
     end
+
+    test "headway announcements do not show visual component" do
+      headways = %{"70268" => {10, 4}}
+      announcements = from_schedule_headways(headways, @current_time, {"Lowered", nil})
+      for announcement <- announcements do
+        assert announcement.type == 1
+      end
+    end
+
+    test "Bridge announcements shows audio and visual" do
+      headways = %{"70268" => {10, 4}}
+      announcements = from_schedule_headways(headways, @current_time, {"Raised", 180})
+      for announcement <- announcements do
+        assert announcement.type == 0
+      end
+    end
   end
 end
