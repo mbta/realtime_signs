@@ -12,7 +12,6 @@ defmodule RealtimeSigns do
       worker(Engine.Static, []),
       worker(PaEssUpdater, []),
       supervisor(Signs.Supervisor, []),
-      worker(Signs.Starter, [], restart: :transient)
     ]
 
     opts = [strategy: :one_for_one, name: __MODULE__]

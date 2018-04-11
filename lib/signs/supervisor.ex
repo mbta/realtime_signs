@@ -19,18 +19,25 @@ defmodule Signs.Supervisor do
   weird cases?)
   """
 
-  use Supervisor
-
   def start_link do
-    Supervisor.start_link(__MODULE__, %{}, name: __MODULE__)
+    Supervisor.start_link(children(), strategy: :one_for_one)
   end
 
-  def init(sign_config) do
-    children = make_workers(sign_config)
-    supervise(children, strategy: :one_for_one)
+  defp children() do
+    for sign_config <- children_config() do
+      sign_module = Signs.Sign
+      %{
+        id: sign_config["id"],
+        start: {sign_module, :start_link, [sign_config]}
+      }
+    end
   end
 
-  defp make_workers(sign_config) do
-    Enum.map(sign_config, fn _ -> worker(Signs.Sign, []) end)
+  defp children_config() do
+    :realtime_signs
+    |> :code.priv_dir
+    |> Path.join("signs.json")
+    |> File.read!
+    |> Poison.Parser.parse!
   end
 end
