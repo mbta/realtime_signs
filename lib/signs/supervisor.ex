@@ -27,7 +27,7 @@ defmodule Signs.Supervisor do
     for sign_config <- children_config() do
       sign_module = Signs.Sign
       %{
-        id: sign_config["id"],
+        id: :"sign_#{sign_config["id"]}",
         start: {sign_module, :start_link, [sign_config]}
       }
     end
