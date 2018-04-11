@@ -19,24 +19,25 @@ defmodule Signs.Supervisor do
   weird cases?)
   """
 
-  use DynamicSupervisor
-
   def start_link do
-    DynamicSupervisor.start_link(__MODULE__, [], name: __MODULE__)
+    Supervisor.start_link(children(), strategy: :one_for_one)
   end
 
-  def start_child(sign_config) do
-    sign_mod = case sign_config["type"] do
-      "normal" -> Signs.Sign
+  defp children() do
+    for sign_config <- children_config() do
+      sign_module = Signs.Sign
+      %{
+        id: :"sign_#{sign_config["id"]}",
+        start: {sign_module, :start_link, [sign_config]}
+      }
     end
-
-    DynamicSupervisor.start_child(__MODULE__, {sign_mod, sign_config})
   end
 
-  def init([]) do
-    DynamicSupervisor.init(
-      strategy: :one_for_one,
-      extra_arguments: []
-    )
+  defp children_config() do
+    :realtime_signs
+    |> :code.priv_dir
+    |> Path.join("signs.json")
+    |> File.read!
+    |> Poison.Parser.parse!
   end
 end
