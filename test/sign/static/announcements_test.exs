@@ -12,17 +12,17 @@ defmodule Sign.Static.AnnoucementsTest do
     end
 
     test "generates announcements for inbound direction" do
-      headways = %{"74636" => {12, 15}}
-      [english, spanish] = from_schedule_headways(headways, @current_time, {"Lowered", nil})
-      assert english.mid == 134
-      assert spanish.mid == 151
-    end
-
-    test "generates announcements for outbound direction" do
       headways = %{"74637" => {12, 15}}
       [english, spanish] = from_schedule_headways(headways, @current_time, {"Lowered", nil})
       assert english.mid == 133
       assert spanish.mid == 150
+    end
+
+    test "generates announcements for outbound direction" do
+      headways = %{"74636" => {12, 15}}
+      [english, spanish] = from_schedule_headways(headways, @current_time, {"Lowered", nil})
+      assert english.mid == 134
+      assert spanish.mid == 151
     end
 
     test "generates bridge is raised announcement with duration when bridge is raised" do
