@@ -109,8 +109,8 @@ defmodule Sign.Message do
   def headsign(0, "Mattapan", _), do: "Mattapan"
   def headsign(1, "Mattapan", @ashmont_gtfs_id), do: "Mattapan" # Special case for Ashmont since it's a terminal
   def headsign(1, "Mattapan", _), do: "Ashmont"
-  def headsign(1, "743", _), do: "Chelsea"
-  def headsign(0, "743", _), do: "South Sta."
+  def headsign(0, "743", _), do: "Chelsea"
+  def headsign(1, "743", _), do: "South Sta."
 
   @doc "Provides the correct vehicle name for the given route id"
   @spec vehicle_name(String.t) :: String.t
