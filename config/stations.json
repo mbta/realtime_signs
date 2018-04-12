@@ -200,7 +200,7 @@
     }
   },
   "74632": {
-    "sign_id": "SBQS",
+    "sign_id": "SBSQ",
     "enabled?": false,
     "display_type": "separate",
     "route_id": "743",
@@ -210,7 +210,7 @@
     }
   },
   "74633": {
-    "sign_id": "SBQS",
+    "sign_id": "SBSQ",
     "enabled?": false,
     "display_type": "separate",
     "route_id": "743",
