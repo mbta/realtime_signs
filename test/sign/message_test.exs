@@ -13,8 +13,8 @@ defmodule Sign.MessageTest do
     end
 
     test "returns correct headsign for SL3 trips" do
-      assert headsign(1, "743", "74636") == "Chelsea"
-      assert headsign(0, "743", "74637") == "South Sta."
+      assert headsign(0, "743", "74636") == "Chelsea"
+      assert headsign(1, "743", "74637") == "South Sta."
     end
   end
 
