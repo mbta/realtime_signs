@@ -1,0 +1,18 @@
+[
+  {
+    "id": "MBUT0",
+    "pa_ess_loc": "MBUT",
+    "pa_ess_zone": 0,
+    "gtfs_stop_id": "70266",
+    "route_id": "Mattapan",
+    "type": "normal"
+  },
+  {
+    "id": "MBUT1",
+    "pa_ess_loc": "MBUT",
+    "pa_ess_zone": 1,
+    "gtfs_stop_id": "70265",
+    "route_id": "Mattapan",
+    "type": "normal"
+  }
+]
