@@ -108,8 +108,8 @@ defmodule Sign.Static.MessagesTest do
     end
 
     test "Shows drop off only message for chelsea outbound" do
-      headways = %{"74631" => {7, 9}}
-      stations = [%Sign.Station{id: "74631", sign_id: "SCHS", zones: %{1 => :westbound}, route_id: "743"}]
+      headways = %{"74630" => {7, 9}}
+      stations = [%Sign.Station{id: "74630", sign_id: "SCHS", zones: %{1 => :westbound}, route_id: "743"}]
       sign_content_payloads = station_messages(stations, @refresh_rate, headways, @current_time, {"Lowered", nil})
       [top_line, bottom_line] = sign_content_payloads
                                 |> List.first

@@ -19,7 +19,7 @@ defmodule Sign.Static.Messages do
   defp build_content({station, direction}, refresh_rate, headways, current_time, bridge_raised?) do
     headsign = Sign.Message.headsign(direction, station.route_id, station.id)
     vehicle_name = Sign.Message.vehicle_name(station.route_id)
-    message_text = if station.id == "74631" do
+    message_text = if station.id == "74630" do
       {"Drop off only", "Board opposite side"}
     else
       get_text(Map.get(headways, station.id), station.route_id, current_time, bridge_raised?, headsign, vehicle_name)

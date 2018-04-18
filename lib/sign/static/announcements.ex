@@ -32,6 +32,9 @@ defmodule Sign.Static.Announcements do
   defp station_announcement({_station_id, {nil, nil}}, _current_time, _bridge_status, _language) do
     []
   end
+  defp station_announcement({"74630", _headway}, _current_time, _bridge_status, _language) do
+    []
+  end
   defp station_announcement({station_id, {:first_departure, headway_range, first_departure}}, current_time, bridge_status, language) do
     max_headway = ScheduleHeadway.max_headway(headway_range)
     if ScheduleHeadway.show_first_departure?(first_departure, current_time, max_headway) do
