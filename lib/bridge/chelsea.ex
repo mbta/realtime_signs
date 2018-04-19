@@ -6,4 +6,17 @@ defmodule Bridge.Chelsea do
   @spec raised?(status | nil) :: boolean
   def raised?({"Raised", _}), do: true
   def raised?(_), do: false
+
+  def get_duration(estimate_time_string, current_time) do
+    estimate_time_string
+    |> Timex.parse("{ISO:Extended}")
+    |> do_get_duration(current_time)
+  end
+
+  defp do_get_duration({:ok, estimate_time}, current_time) do
+    Timex.diff(estimate_time, current_time, :seconds)
+  end
+  defp do_get_duration(_, _current_time) do
+    nil
+  end
 end

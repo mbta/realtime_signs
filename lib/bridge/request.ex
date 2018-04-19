@@ -34,7 +34,8 @@ defmodule Bridge.Request do
 
   defp do_parse_response(response) do
     status = get_in(response, ["bridge", "bridgeStatusId", "status"])
-    duration = get_in(response, ["lift_estimate", "duration"])
+    estimate_time_string = get_in(response, ["lift_estimate", "estimate_time"])
+    duration = Bridge.Chelsea.get_duration(estimate_time_string, Timex.now())
     Logger.info("bridge_response status=#{inspect status} duration=#{inspect duration}")
 
     {status, duration}

@@ -38,7 +38,13 @@ defmodule Fake.HTTPoison do
     {:error, "unknown response"}
   end
   def mock_response("https://slg.aecomonline.net/api/v1/lift/findByBridgeId/1") do
-    json = %{"bridge" => %{"bridgeStatusId" => %{"status" => "Raised"}}, "lift_estimate" => %{"duration" => 5}}
+    estimate = "2000-01-23T04:56:07.000+00:00"
+    json = %{"bridge" => %{"bridgeStatusId" => %{"status" => "Raised"}}, "lift_estimate" => %{"estimate_time" => estimate}}
+    encoded = Poison.encode!(json)
+    {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
+  end
+  def mock_response("https://slg.aecomonline.net/api/v1/lift/findByBridgeId/2") do
+    json = %{"bridge" => %{"bridgeStatusId" => %{"status" => "Raised"}}, "lift_estimate" => %{"estimate_time" => "bad_time"}}
     encoded = Poison.encode!(json)
     {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
   end
