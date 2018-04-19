@@ -32,17 +32,6 @@ defmodule Sign.Static.Announcements do
   defp station_announcement({_station_id, {nil, nil}}, _current_time, _bridge_status, _language) do
     []
   end
-  defp station_announcement({"74630", _headway}, _current_time, _bridge_status, _language) do
-    []
-  end
-  defp station_announcement({station_id, {:first_departure, headway_range, first_departure}}, current_time, bridge_status, language) do
-    max_headway = ScheduleHeadway.max_headway(headway_range)
-    if ScheduleHeadway.show_first_departure?(first_departure, current_time, max_headway) do
-      station_announcement({station_id, headway_range}, current_time, bridge_status, language)
-    else
-      []
-    end
-  end
   defp station_announcement({station_id, _headway}, _current_time, {"Raised", duration}, language) do
     station = Stations.Live.for_gtfs_id(station_id)
     [%Canned{
@@ -53,6 +42,17 @@ defmodule Sign.Static.Announcements do
        variables: variables_for_bridge(duration, language),
        timeout: 200
      }]
+  end
+  defp station_announcement({station_id, {:first_departure, headway_range, first_departure}}, current_time, bridge_status, language) do
+    max_headway = ScheduleHeadway.max_headway(headway_range)
+    if ScheduleHeadway.show_first_departure?(first_departure, current_time, max_headway) do
+      station_announcement({station_id, headway_range}, current_time, bridge_status, language)
+    else
+      []
+    end
+  end
+  defp station_announcement({"74630", _headway}, _current_time, _bridge_status, _language) do
+    []
   end
   defp station_announcement({station_id, headway}, _current_time ,_bridge_status, language) do
     station = Stations.Live.for_gtfs_id(station_id)
