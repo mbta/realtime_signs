@@ -19,7 +19,7 @@ defmodule Sign.Static.Messages do
   defp build_content({station, direction}, refresh_rate, headways, current_time, bridge_raised?) do
     headsign = Sign.Message.headsign(direction, station.route_id, station.id)
     vehicle_name = Sign.Message.vehicle_name(station.route_id)
-    message_text = get_text(Map.get(headways, station.id), station.route_id, current_time, bridge_raised?, headsign, vehicle_name)
+    message_text = get_text(Map.get(headways, station.id), station.route_id, current_time, bridge_raised?, headsign, vehicle_name, station.id)
     %Content{station: station.sign_id, messages: build_messages(station, direction, refresh_rate, message_text)}
   end
 
@@ -59,12 +59,12 @@ defmodule Sign.Static.Messages do
     Enum.map(Station.zone_ids(station), &{station, &1})
   end
 
-  @spec get_text(ScheduleHeadway.t, String.t, DateTime.t, boolean, String.t, String.t) :: Text.t
-  defp get_text(headway, route_id, current_time, bridge_raised?, headsign, vehicle_name) do
+  @spec get_text(ScheduleHeadway.t, String.t, DateTime.t, boolean, String.t, String.t, String.t) :: Text.t
+  defp get_text(headway, route_id, current_time, bridge_raised?, headsign, vehicle_name, station_id) do
     if bridge_raised? and route_id == @sl3_route_id do
       Text.text_for_raised_bridge()
     else
-      Text.text_for_headway(headway, current_time, headsign, vehicle_name)
+      Text.text_for_headway(headway, current_time, headsign, vehicle_name, station_id)
     end
   end
 end

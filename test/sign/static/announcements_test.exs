@@ -92,6 +92,12 @@ defmodule Sign.Static.AnnoucementsTest do
       end
     end
 
+    test "does not create announcements for chelsea outbound" do
+      headways = %{"74630" => {12, 15}}
+      announcements = from_schedule_headways(headways, @current_time, {"Lowered", nil})
+      assert announcements == []
+    end
+
     test "Bridge announcements shows audio and visual" do
       headways = %{"70268" => {10, 4}}
       announcements = from_schedule_headways(headways, @current_time, {"Raised", 180})

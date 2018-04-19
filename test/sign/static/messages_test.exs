@@ -106,5 +106,18 @@ defmodule Sign.Static.MessagesTest do
       assert mattapan_messages == ["Trolley to Mattapan", "Every 1 to 2 min"]
       assert sl3_messages == ["Bridge is up", "Expect SL3 delays"]
     end
+
+    test "Shows drop off only message for chelsea outbound" do
+      headways = %{"74630" => {7, 9}}
+      stations = [%Sign.Station{id: "74630", sign_id: "SCHS", zones: %{1 => :westbound}, route_id: "743"}]
+      sign_content_payloads = station_messages(stations, @refresh_rate, headways, @current_time, {"Lowered", nil})
+      [top_line, bottom_line] = sign_content_payloads
+                                |> List.first
+                                |> Map.get(:messages)
+                                |> Enum.map(fn %{message: [{text, _}]} -> text end)
+
+      assert top_line == "Drop off only"
+      assert bottom_line == "Board opposite side"
+    end
   end
 end
