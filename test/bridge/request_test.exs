@@ -5,7 +5,12 @@ defmodule Bridge.RequestTest do
 
   describe "get_status/1" do
     test "parses valid response" do
-      assert get_status(1) == {"Raised", 5}
+      {status, _estimate} = get_status(1)
+      assert status == "Raised"
+    end
+
+    test "Returns nil for duration if given bad time string" do
+      assert get_status(2) == {"Raised", nil}
     end
 
     test "Logs warning with bad status code" do
