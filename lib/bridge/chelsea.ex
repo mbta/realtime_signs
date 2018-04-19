@@ -14,7 +14,9 @@ defmodule Bridge.Chelsea do
   end
 
   defp do_get_duration({:ok, estimate_time}, current_time) do
-    Timex.diff(estimate_time, current_time, :seconds)
+    time_zone = Application.get_env(:realtime_signs, :time_zone)
+    estimate_datetime = Timex.to_datetime(estimate_time, time_zone)
+    Timex.diff(estimate_datetime, current_time, :seconds)
   end
   defp do_get_duration(_, _current_time) do
     nil
