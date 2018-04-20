@@ -58,14 +58,6 @@ defmodule Utilities.TimeTest do
     end
   end
 
-  describe "off_hours?/1" do
-    test "Times between 1:30 and 5:15 are considered off hours" do
-      assert off_hours?(%DateTime{year: 2017, month: 8, day: 29, zone_abbr: "UTC", hour: 2, minute: 30, second: 0, microsecond: {0, 0}, utc_offset: 0, std_offset: 0, time_zone: "Etc/UTC"})
-      assert off_hours?(%DateTime{year: 2017, month: 8, day: 29, zone_abbr: "UTC", hour: 3, minute: 45, second: 0, microsecond: {0, 0}, utc_offset: 0, std_offset: 0, time_zone: "Etc/UTC"})
-      assert off_hours?(%DateTime{year: 2017, month: 8, day: 29, zone_abbr: "UTC", hour: 2, minute: 0, second: 0, microsecond: {0, 0}, utc_offset: 0, std_offset: 0, time_zone: "Etc/UTC"})
-      assert off_hours?(%DateTime{year: 2017, month: 8, day: 29, zone_abbr: "UTC", hour: 4, minute: 0, second: 0, microsecond: {0, 0}, utc_offset: 0, std_offset: 0, time_zone: "Etc/UTC"})
-    end
-
     test "Times not between 2 and 5 are not considered off hours" do
       refute off_hours?(%DateTime{year: 2017, month: 8, day: 29, zone_abbr: "UTC", hour: 5, minute: 30, second: 0, microsecond: {0, 0}, utc_offset: 0, std_offset: 0, time_zone: "Etc/UTC"})
       refute off_hours?(%DateTime{year: 2017, month: 8, day: 29, zone_abbr: "UTC", hour: 13, minute: 45, second: 0, microsecond: {0, 0}, utc_offset: 0, std_offset: 0, time_zone: "Etc/UTC"})
