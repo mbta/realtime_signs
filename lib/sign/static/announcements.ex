@@ -32,6 +32,9 @@ defmodule Sign.Static.Announcements do
   defp station_announcement({_station_id, {nil, nil}}, _current_time, _bridge_status, _language) do
     []
   end
+  defp station_announcement({_station_id, _headway}, _current_time, {"Raised", _duration}, :spanish) do
+    []
+  end
   defp station_announcement({station_id, _headway}, _current_time, {"Raised", duration}, language) do
     station = Stations.Live.for_gtfs_id(station_id)
     [%Canned{

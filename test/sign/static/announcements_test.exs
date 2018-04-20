@@ -30,26 +30,21 @@ defmodule Sign.Static.AnnoucementsTest do
       durations_minutes = [3, 8, 15, 19 , 24, 35]
       durations = Enum.map(durations_minutes, & &1 * 60)
       expected_english_duration = [5505, 5510, 5515, 5520, 5525, 5530]
-      expected_spanish_duration = [37005, 37010, 37015, 37020, 37025, 37030]
       for {duration, idx} <- Enum.with_index(durations) do
         announcements = from_schedule_headways(headways, @current_time, {"Raised", duration})
-        [english, spanish] = announcements
-        assert Enum.count(announcements) == 2
+        [english] = announcements
+        assert Enum.count(announcements) == 1
         assert Enum.all?(announcements, &match?(%Platforms{nb: true, sb: true}, &1.platforms))
         assert english.mid == 135
-        assert spanish.mid == 152
         assert english.variables == [Enum.at(expected_english_duration, idx)]
-        assert spanish.variables == [Enum.at(expected_spanish_duration, idx)]
       end
     end
 
     test "creates \"soon\" announcement when duration is unknown" do
       headways = %{"70268" => {12, 15}}
-      [english, spanish] = from_schedule_headways(headways, @current_time, {"Raised", nil})
+      [english] = from_schedule_headways(headways, @current_time, {"Raised", nil})
       assert english.mid == 136
       assert english.variables == []
-      assert spanish.mid == 153
-      assert spanish.variables == []
     end
 
     test "does not create headway announcement if it is too early" do
@@ -110,6 +105,18 @@ defmodule Sign.Static.AnnoucementsTest do
       for announcement <- announcements do
         assert announcement.type == 0
       end
+    end
+
+    test "Does not create spanish bridge announcements" do
+      headways = %{"70268" => {10, 4}}
+      [english_announcement]= from_schedule_headways(headways, @current_time, {"Raised", 180})
+      assert english_announcement.mid == 135
+    end
+
+    test "Does not create spanish bridge closing soon announcement" do
+      headways = %{"70268" => {10, 4}}
+      [english_announcement]= from_schedule_headways(headways, @current_time, {"Raised", nil})
+      assert english_announcement.mid == 136
     end
   end
 end
