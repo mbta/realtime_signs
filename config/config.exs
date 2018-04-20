@@ -30,7 +30,10 @@ config :realtime_signs,
   static_stations_config: System.get_env("STATIC_STATIONS_CONFIG") || "config/static_stations.json",
   time_zone: "America/New_York",
   bridge_api_username: System.get_env("BRIDGE_API_USERNAME") || "",
-  bridge_api_password: System.get_env("BRIDGE_API_PASSWORD") || ""
+  bridge_api_password: System.get_env("BRIDGE_API_PASSWORD") || "",
+  trip_update_url: "https://s3.amazonaws.com/mbta-gtfs-s3/TripUpdates.pb",
+  sign_updater_mod: PaEss.Logger,
+  http_poster_mod: HTTPoison
 
 config :logger,
   backends: [:console]

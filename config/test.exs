@@ -2,4 +2,5 @@ use Mix.Config
 
 config :realtime_signs,
   http_client: Fake.HTTPoison,
-  stations_config: "test/data/stations.json"
+  stations_config: "test/data/stations.json",
+  trip_update_url: "https://fake_update/mbta-gtfs-s3/fake_trip_update.pb"

@@ -10,7 +10,7 @@ defmodule RealtimeSigns do
       worker(Engine.Predictions, []),
       worker(Engine.Schedules, []),
       worker(Engine.Static, []),
-      worker(PaEssUpdater, []),
+      worker(PaEss.HttpUpdater, []),
       supervisor(Signs.Supervisor, []),
     ]
 
