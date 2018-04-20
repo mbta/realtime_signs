@@ -41,7 +41,7 @@ defmodule Sign.Updater do
   defp log_sign_update(command, current_time) do
     date_str =
       current_time
-      |> RTR.Utilities.Time.get_service_date
+      |> Utilities.Time.get_service_date
       |> Timex.format!("%Y%m%d", :strftime)
     time_str = Timex.format!(current_time, "%H:%M:%S", :strftime)
     log_dir = Application.get_env(:realtime_signs, :posts_log_dir)

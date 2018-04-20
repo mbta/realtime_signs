@@ -1,4 +1,4 @@
-defmodule RTR.Utilities.Time do
+defmodule Utilities.Time do
   @moduledoc """
   Some utility functions for dealing with times
   """
