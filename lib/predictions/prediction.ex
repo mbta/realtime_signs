@@ -1,0 +1,15 @@
+defmodule Predictions.Prediction do
+  defstruct [
+    stop_id: nil,
+    seconds_until_arrival: nil,
+    direction_id: nil,
+    route_id: nil,
+  ]
+
+  @type t :: %__MODULE__{
+    stop_id: String.t(),
+    seconds_until_arrival: integer(),
+    direction_id: 0 | 1,
+    route_id: String.t()
+  }
+end

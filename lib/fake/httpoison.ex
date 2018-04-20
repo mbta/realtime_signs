@@ -9,17 +9,43 @@ defmodule Fake.HTTPoison do
     mock_response(url)
   end
 
-  def post(_url, body, _headers \\ []) do
+  def post(_url, body, _headers \\ [], _params \\ []) do
     cond do
+      body =~ "timeout" ->
+        {:error, %HTTPoison.Error{reason: :timeout}}
+      body =~ "bad_sign" ->
+        {:ok, %HTTPoison.Response{status_code: 404}}
       body =~ "uid=11" ->
         {:ok, %HTTPoison.Response{status_code: 500}}
       body =~ "uid=12" ->
         {:error, %HTTPoison.Error{reason: :timeout}}
-      true ->
+      body =~ "MsgType=SignContent&uid=" ->
         {:ok, %HTTPoison.Response{status_code: 200}}
     end
   end
 
+  def mock_response("https://fake_update/mbta-gtfs-s3/fake_trip_update.pb") do
+    feed_message = %GTFS.Realtime.FeedMessage{entity: [%GTFS.Realtime.FeedEntity{alert: nil,
+       id: "1490783458_32568935", is_deleted: false, trip_update: %GTFS.Realtime.TripUpdate{delay: nil,
+        stop_time_update: [%GTFS.Realtime.TripUpdate.StopTimeUpdate{arrival: %GTFS.Realtime.TripUpdate.StopTimeEvent{delay: nil,
+           time: 1491570120, uncertainty: nil},
+          departure: nil, schedule_relationship: :SCHEDULED,
+          stop_id: "70263", stop_sequence: 1},
+        %GTFS.Realtime.TripUpdate.StopTimeUpdate{arrival: %GTFS.Realtime.TripUpdate.StopTimeEvent{delay: nil,
+           time: 1491570180, uncertainty: nil},
+          departure: nil, schedule_relationship: :SCHEDULED,
+          stop_id: "70261", stop_sequence: 1}], timestamp: nil,
+        trip: %GTFS.Realtime.TripDescriptor{direction_id: 0, route_id: "Mattapan",
+         schedule_relationship: :SCHEDULED, start_date: "20170329", start_time: nil,
+         trip_id: "32568935"},
+        vehicle: %GTFS.Realtime.VehicleDescriptor{id: "G-10040", label: "3260",
+         license_plate: nil}}, vehicle: nil}],
+     header: %GTFS.Realtime.FeedHeader{gtfs_realtime_version: "1.0",
+      incrementality: :FULL_DATASET, timestamp: 1490783458}}
+      |> GTFS.Realtime.FeedMessage.encode()
+
+      {:ok, %HTTPoison.Response{status_code: 200, body: feed_message}}
+  end
   def mock_response("https://api-v3.mbta.com/schedules?filter[stop]=500_error") do
     {:ok, %HTTPoison.Response{status_code: 500, body: ""}}
   end

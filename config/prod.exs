@@ -19,3 +19,6 @@ config :logger, :splunk,
   token: {:system, "PROD_SIGNS_SPLUNK_TOKEN"},
   format: "$dateT$time [$level]$levelpad node=$node $metadata$message\n",
   metadata: [:request_id]
+
+config :realtime_signs,
+  sign_updater_mod: PaEss.HttpUpdater
