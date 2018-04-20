@@ -37,12 +37,6 @@ defmodule Utilities.TimeTest do
     assert ~D[2017-02-01] == service_date
   end
 
-  describe "to_date!/1" do
-    test "raises on error" do
-      assert_raise RuntimeError, fn() -> to_date!("not a date") end
-    end
-  end
-
   describe "dst_safe_shift/2" do
     test "is the same as Timex.shift normally" do
       dt = ~N[2017-08-29T12:00:00]
