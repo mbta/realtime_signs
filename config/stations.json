@@ -219,7 +219,7 @@
     "display_type": "separate",
     "route_id": "743",
     "zones": {
-      "0": "westbound"
+      "0": "eastbound"
     }
   },
   "74634": {
@@ -228,7 +228,7 @@
     "display_type": "separate",
     "route_id": "743",
     "zones": {
-      "1": "eastbound"
+      "1": "westbound"
     }
   }
 }
