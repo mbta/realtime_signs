@@ -1,5 +1,6 @@
 defmodule Predictions.PredictionsTest do
   use ExUnit.Case
+  alias Predictions.Prediction
   import Predictions.Predictions
 
   @current_time Timex.to_datetime(~N[2017-04-07 09:00:00], "America/New_York")
@@ -83,6 +84,17 @@ defmodule Predictions.PredictionsTest do
       assert @feed_message
       |> GTFS.Realtime.FeedMessage.encode
       |> parse_pb_response == @feed_message
+    end
+  end
+
+  describe "sort/1" do
+    test "Sorts predictions in ascending order of seconds_until_arrival" do
+      p1 = %Prediction{seconds_until_arrival: 500}
+      p2 = %Prediction{seconds_until_arrival: 120}
+      p3 = %Prediction{seconds_until_arrival: 45}
+      p4 = %Prediction{seconds_until_arrival: 180}
+
+      assert sort([p1, p2, p3, p4]) == [p3, p2, p4, p1]
     end
   end
 end
