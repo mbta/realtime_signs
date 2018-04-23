@@ -15,7 +15,7 @@ defmodule Sign.Static.Announcements do
   }
   @english_bridge_base_var 5500
   @spanish_bridge_base_var 37000
-  @bridge_closing_soon_mid %{:english => 136, :spanish => 153}
+  @bridge_closing_soon_mid %{:english => 136, :spanish => 157}
   @bridge_closing_duration %{:english => 135, :spanish => 152}
 
   @spec from_schedule_headways(%{Station.id => ScheduleHeadway.t}, DateTime.t, Chelsea.status) :: [Message.t]
