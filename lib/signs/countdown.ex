@@ -101,6 +101,7 @@ defmodule Signs.Countdown do
     messages =
       sign.gtfs_stop_id
       |> sign.prediction_engine.for_stop()
+      |> Predictions.Predictions.sort()
       |> Enum.take(2)
       |> Enum.map(& Content.Message.Predictions.new(&1, sign.headsign))
 
