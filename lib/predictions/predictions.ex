@@ -29,4 +29,9 @@ defmodule Predictions.Predictions do
   def parse_pb_response(body) do
     GTFS.Realtime.FeedMessage.decode(body)
   end
+
+  @spec sort([Predictions.Prediction.t]) :: [Predictions.Prediction.t]
+  def sort(predictions) do
+    Enum.sort(predictions, & &1.seconds_until_arrival < &2.seconds_until_arrival)
+  end
 end

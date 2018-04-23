@@ -25,8 +25,14 @@ defmodule Signs.CountdownTest do
       %Predictions.Prediction{
         stop_id: "many_predictions",
         direction_id: 1,
-        seconds_until_arrival: 200,
+        seconds_until_arrival: 500,
         route_id: "mattapan"
+       },
+      %Predictions.Prediction{
+          stop_id: "many_predictions",
+          direction_id: 1,
+          seconds_until_arrival: 200,
+          route_id: "mattapan"
        }]
     end
     def for_stop(gtfs_stop_id) do
