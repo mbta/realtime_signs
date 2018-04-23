@@ -16,5 +16,15 @@
     "headsign": "Ashmont",
     "route_id": "Mattapan",
     "type": "countdown"
+  },
+  {
+    "id": "RASH0",
+    "pa_ess_loc": "RASH",
+    "pa_ess_zone": "m",
+    "gtfs_stop_id": "70261",
+    "headsign": "Mattapan",
+    "route_id": "Mattapan",
+    "line_number": "2",
+    "type": "ashmont"
   }
 ]

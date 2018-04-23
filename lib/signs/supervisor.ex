@@ -25,13 +25,16 @@ defmodule Signs.Supervisor do
 
   defp children() do
     for sign_config <- children_config() do
-      sign_module = Signs.Countdown
+      sign_module = sign_module(sign_config)
       %{
         id: :"sign_#{sign_config["id"]}",
         start: {sign_module, :start_link, [sign_config]}
       }
     end
   end
+
+  defp sign_module(%{"type" => "countdown"}), do: Signs.Countdown
+  defp sign_module(%{"type" => "ashmont"}), do: Signs.Ashmont
 
   defp children_config() do
     :realtime_signs
