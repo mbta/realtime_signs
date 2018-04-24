@@ -42,11 +42,13 @@ defmodule Engine.Predictions do
     {:ok, modified_since} = last_modified |> Timex.format("{WDshort}, {D} {Mshort} {YYYY} {h24}:{m}:{s} {Zabbr}")
     http_client = Application.get_env(:realtime_signs, :http_client)
     updated_state = case Application.get_env(:realtime_signs, :trip_update_url) |> http_client.get([{"If-Modified-Since", modified_since}]) do
-      {:ok, %HTTPoison.Response{body: body}} ->
+      {:ok, %HTTPoison.Response{body: body, status_code: status}} when status >= 200 and status < 300 ->
         new_predictions = body
         |> Predictions.Predictions.parse_pb_response()
         |> Predictions.Predictions.get_all(current_time)
         {current_time, new_predictions}
+      {:ok, %HTTPoison.Response{}} ->
+        {last_modified, current_predictions}
       {:error, reason} ->
         Logger.warn("Could not fetch pb file: #{inspect reason}")
         {last_modified, current_predictions}
