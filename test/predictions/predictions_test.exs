@@ -24,10 +24,10 @@ defmodule Predictions.PredictionsTest do
 
   describe "get_all/2" do
     test "finds predictions for one trip" do
-      expected = %{"70261" => [
+      expected = %{{"70261", 0} => [
           %Predictions.Prediction{stop_id: "70261", seconds_until_arrival: 180, direction_id: 0, route_id: "Mattapan"},
         ],
-        "70263" => [
+        {"70263", 0} => [
           %Predictions.Prediction{stop_id: "70263", seconds_until_arrival: 120, direction_id: 0, route_id: "Mattapan"}
         ]
       }
@@ -70,10 +70,10 @@ defmodule Predictions.PredictionsTest do
          header: %GTFS.Realtime.FeedHeader{gtfs_realtime_version: "1.0",
           incrementality: :FULL_DATASET, timestamp: 1490783458}}
 
-      expected = %{"70261" => [%Predictions.Prediction{stop_id: "70261", seconds_until_arrival: 180, direction_id: 0, route_id: "Mattapan"} ],
-        "70263" => [%Predictions.Prediction{stop_id: "70263", seconds_until_arrival: 120, direction_id: 0, route_id: "Mattapan"}],
-        "Bowdoin" => [%Predictions.Prediction{stop_id: "Bowdoin", seconds_until_arrival: 200, direction_id: 1, route_id: "Blue"}],
-        "Wonderland" => [%Predictions.Prediction{stop_id: "Wonderland", seconds_until_arrival: 400, direction_id: 1, route_id: "Blue"}]
+      expected = %{{"70261", 0} => [%Predictions.Prediction{stop_id: "70261", seconds_until_arrival: 180, direction_id: 0, route_id: "Mattapan"} ],
+        {"70263", 0} => [%Predictions.Prediction{stop_id: "70263", seconds_until_arrival: 120, direction_id: 0, route_id: "Mattapan"}],
+        {"Bowdoin", 1} => [%Predictions.Prediction{stop_id: "Bowdoin", seconds_until_arrival: 200, direction_id: 1, route_id: "Blue"}],
+        {"Wonderland", 1} => [%Predictions.Prediction{stop_id: "Wonderland", seconds_until_arrival: 400, direction_id: 1, route_id: "Blue"}]
       }
       assert get_all(feed_message,  @current_time) == expected
     end
