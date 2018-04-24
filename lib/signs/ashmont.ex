@@ -72,10 +72,8 @@ defmodule Signs.Ashmont do
   @spec handle_info(:update_content | :expire, t()) :: {:noreply, t()}
   def handle_info(:update_content, sign) do
     schedule_update(self())
-
     message = get_message(sign)
     sign = update(sign, message)
-
     {:noreply, sign}
   end
 
@@ -92,13 +90,11 @@ defmodule Signs.Ashmont do
   end
 
   defp get_message(sign) do
-    messages =
-      sign.gtfs_stop_id
-      |> sign.prediction_engine.for_stop(sign.direction_id)
-      |> Predictions.Predictions.sort()
-      |> Enum.map(& Content.Message.Predictions.new(&1, sign.headsign))
-
-      Enum.at(messages, 0, Content.Message.Empty.new())
+    sign.gtfs_stop_id
+    |> sign.prediction_engine.for_stop(sign.direction_id)
+    |> Predictions.Predictions.sort()
+    |> Enum.map(& Content.Message.Predictions.new(&1, sign.headsign))
+    |> Enum.at(0, Content.Message.Empty.new())
   end
 
   defp update(%{current_content: same} = sign, same) do
