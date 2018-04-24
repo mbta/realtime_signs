@@ -39,6 +39,7 @@ defmodule Sign.Updater do
   defp http_client, do: Application.get_env(:realtime_signs, :http_client)
 
   defp log_sign_update(command, current_time) do
+    Logger.info("Sign.Updater.send_request: #{command}")
     date_str =
       current_time
       |> RTR.Utilities.Time.get_service_date
