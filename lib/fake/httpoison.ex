@@ -21,6 +21,22 @@ defmodule Fake.HTTPoison do
         {:error, %HTTPoison.Error{reason: :timeout}}
       body =~ "MsgType=SignContent&uid=" ->
         {:ok, %HTTPoison.Response{status_code: 200}}
+      body =~ "MsgType=Canned&uid=1000&mid=133&var=5508%2C5512&typ=1&sta=SBOX000010&pri=5&tim=60" ->
+        {:ok, %HTTPoison.Response{status_code: 200}}
+      body =~ "MsgType=Canned&uid=1001&mid=134&var=5508%2C5512&typ=1&sta=SBSQ000001&pri=5&tim=60" ->
+        {:ok, %HTTPoison.Response{status_code: 200}}
+      body =~ "MsgType=Canned&uid=1002&mid=135&var=5510&typ=0&sta=SCHS000001&pri=5&tim=60" ->
+        {:ok, %HTTPoison.Response{status_code: 200}}
+      body =~ "MsgType=Canned&uid=1003&mid=150&var=37008%2C37014&typ=1&sta=SBOX000010&pri=5&tim=60" ->
+        {:ok, %HTTPoison.Response{status_code: 200}}
+      body =~ "MsgType=Canned&uid=1004&mid=90&var=4016%2C503%2C5004&typ=1&sta=MCED001000&pri=5&tim=60" ->
+        {:ok, %HTTPoison.Response{status_code: 200}}
+      body =~ "MsgType=Canned&uid=1005&mid=90128&var=&typ=1&sta=MCED000100&pri=5&tim=60" ->
+        {:ok, %HTTPoison.Response{status_code: 200}}
+      body =~ "MsgType=Canned&uid=1006&mid=90129&var=&typ=1&sta=MCAP001000&pri=5&tim=60" ->
+        {:ok, %HTTPoison.Response{status_code: 200}}
+      true ->
+        IO.puts("=======#{inspect(body)}=======")
     end
   end
 
