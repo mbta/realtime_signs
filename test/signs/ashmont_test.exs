@@ -41,6 +41,7 @@ defmodule  Signs.AshmontTest do
   @sign %Signs.Ashmont{
     id: "Ashmont",
     pa_ess_id: "Ashmont",
+    line_number: "2",
     gtfs_stop_id: "ashmont-stop",
     direction_id: 1,
     route_id: "Mattapan",

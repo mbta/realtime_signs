@@ -11,11 +11,10 @@ defmodule Signs.Ashmont do
   use GenServer
   require Logger
 
-  @line_number "2"
-
   @enforce_keys [
     :id,
     :pa_ess_id,
+    :line_number,
     :gtfs_stop_id,
     :direction_id,
     :route_id,
@@ -32,6 +31,7 @@ defmodule Signs.Ashmont do
   @type t :: %{
     id: String.t(),
     pa_ess_id: PaEss.id(),
+    line_number: String.t(),
     gtfs_stop_id: String.t(),
     direction_id: 0 | 1,
     route_id: String.t(),
@@ -51,6 +51,7 @@ defmodule Signs.Ashmont do
     sign = %__MODULE__{
       id: config["id"],
       pa_ess_id: {config["pa_ess_loc"], config["pa_ess_zone"]},
+      line_number: config["line_number"],
       gtfs_stop_id: config["gtfs_stop_id"],
       direction_id: config["direction_id"],
       route_id: config["route_id"],
@@ -101,7 +102,7 @@ defmodule Signs.Ashmont do
     sign
   end
   defp update(sign, new_text) do
-    sign.sign_updater.update_sign(sign.pa_ess_id, @line_number, new_text, @default_duration, :now)
+    sign.sign_updater.update_sign(sign.pa_ess_id, sign.line_number, new_text, @default_duration, :now)
     if sign.timer, do: Process.cancel_timer(sign.timer)
     timer = Process.send_after(self(), :expire, @default_duration * 1000 - 5000)
     %{sign | current_content: new_text, timer: timer}

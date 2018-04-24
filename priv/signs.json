@@ -23,6 +23,7 @@
     "id": "RASH0",
     "pa_ess_loc": "RASH",
     "pa_ess_zone": "m",
+    "line_number": "2",
     "gtfs_stop_id": "70261",
     "direction_id": 0,
     "headsign": "Mattapan",
