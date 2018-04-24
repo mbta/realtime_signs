@@ -15,7 +15,7 @@ defmodule Signs.CountdownTest do
   end
 
   defmodule FakePredictionsEngine do
-    def for_stop("many_predictions") do
+    def for_stop("many_predictions", 1) do
       [%Predictions.Prediction{
         stop_id: "many_predictions",
         direction_id: 1,
@@ -35,7 +35,7 @@ defmodule Signs.CountdownTest do
           route_id: "mattapan"
        }]
     end
-    def for_stop(gtfs_stop_id) do
+    def for_stop(gtfs_stop_id, 1) do
       [%Predictions.Prediction{
         stop_id: gtfs_stop_id,
         direction_id: 1,
@@ -49,6 +49,7 @@ defmodule Signs.CountdownTest do
     id: "test-sign",
     pa_ess_id: "123",
     gtfs_stop_id: "321",
+    direction_id: 1,
     route_id: "Mattapan",
     headsign: "Mattapan",
     current_content_bottom: "Mattapan 1 minute",
@@ -70,6 +71,7 @@ defmodule Signs.CountdownTest do
         id: "test-sign",
         pa_ess_id: "123",
         gtfs_stop_id: "many_predictions",
+        direction_id: 1,
         route_id: "Mattapan",
         headsign: "Mattapan",
         current_content_bottom: nil,
@@ -94,6 +96,7 @@ defmodule Signs.CountdownTest do
         id: "test-sign",
         pa_ess_id: "notify-me",
         gtfs_stop_id: "321",
+        direction_id: 1,
         route_id: "Mattapan",
         headsign: "Mattapan",
         current_content_bottom: nil,
