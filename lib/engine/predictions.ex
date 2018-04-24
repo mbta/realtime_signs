@@ -19,9 +19,9 @@ defmodule Engine.Predictions do
   end
 
   @doc "The upcoming predicted times a vehicle will be at this stop"
-  @spec for_stop(GenServer.server(), String.t()) :: [Predictions.Prediction.t()]
-  def for_stop(pid \\ __MODULE__, gtfs_stop_id) do
-    GenServer.call(pid, {:for_stop, gtfs_stop_id})
+  @spec for_stop(GenServer.server(), String.t(), 0 | 1) :: [Predictions.Prediction.t()]
+  def for_stop(pid \\ __MODULE__, gtfs_stop_id, direction_id) do
+    GenServer.call(pid, {:for_stop, gtfs_stop_id, direction_id})
   end
 
   @spec init(any()) :: {:ok, any()}
@@ -30,9 +30,9 @@ defmodule Engine.Predictions do
     {:ok, {Timex.now(), %{}}}
   end
 
-  @spec handle_call({:for_stop, String.t()}, GenServer.from(), t()) :: {:reply, [Predictions.Prediction.t()], t()}
-  def handle_call({:for_stop, gtfs_stop_id}, _from, {_last_modified, predictions} = state) do
-    {:reply, Map.get(predictions, gtfs_stop_id, []), state}
+  @spec handle_call({:for_stop, String.t(), 0 | 1}, GenServer.from(), t()) :: {:reply, [Predictions.Prediction.t()], t()}
+  def handle_call({:for_stop, gtfs_stop_id, direction_id}, _from, {_last_modified, predictions} = state) do
+    {:reply, Map.get(predictions, {gtfs_stop_id, direction_id}, []), state}
   end
 
   @spec handle_info(:update, t()) :: {:noreply, t()}

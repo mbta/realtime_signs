@@ -7,7 +7,7 @@ defmodule Predictions.Predictions do
     |> Enum.map(& &1.trip_update)
     |> Enum.flat_map(&group_stop_time_updates/1)
     |> Enum.filter(fn {update, _, _} -> update.arrival || update.departure end)
-    |> Enum.group_by(fn {update, _direction_id, _route_id} -> update.stop_id end, &prediction_from_update(&1, current_time))
+    |> Enum.group_by(fn {update, direction_id, _route_id} -> {update.stop_id, direction_id} end, &prediction_from_update(&1, current_time))
   end
 
   defp group_stop_time_updates(trip_update) do

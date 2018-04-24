@@ -15,6 +15,7 @@ defmodule Signs.Countdown do
     :id,
     :pa_ess_id,
     :gtfs_stop_id,
+    :direction_id,
     :route_id,
     :headsign,
     :prediction_engine,
@@ -32,6 +33,7 @@ defmodule Signs.Countdown do
     id: String.t(),
     pa_ess_id: PaEss.id(),
     gtfs_stop_id: String.t(),
+    direction_id: 0 | 1,
     route_id: String.t(),
     headsign: String.t(),
     prediction_engine: module(),
@@ -52,6 +54,7 @@ defmodule Signs.Countdown do
       id: config["id"],
       pa_ess_id: {config["pa_ess_loc"], config["pa_ess_zone"]},
       gtfs_stop_id: config["gtfs_stop_id"],
+      direction_id: config["direction_id"],
       route_id: config["route_id"],
       headsign: config["headsign"],
       current_content_top: Content.Message.Empty.new(),
@@ -100,7 +103,7 @@ defmodule Signs.Countdown do
   defp get_messages(sign) do
     messages =
       sign.gtfs_stop_id
-      |> sign.prediction_engine.for_stop()
+      |> sign.prediction_engine.for_stop(sign.direction_id)
       |> Predictions.Predictions.sort()
       |> Enum.take(2)
       |> Enum.map(& Content.Message.Predictions.new(&1, sign.headsign))
