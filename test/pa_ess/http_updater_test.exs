@@ -35,7 +35,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1001}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"SBOX", "e"}, audio, 5, :audio, 60}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"SBOX", "c"}, audio, 5, :audio, 60}, self(), state)
     end
 
     test "Buses to South Station" do
@@ -48,7 +48,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1002}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"SBSQ", "w"}, audio, 5, :audio, 60}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"SBSQ", "m"}, audio, 5, :visual, 60}, self(), state)
     end
 
     test "Chelsea bridge raised, expect delays" do
