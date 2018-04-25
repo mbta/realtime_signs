@@ -25,6 +25,18 @@ defmodule PaEss.HttpUpdaterTest do
   end
 
   describe "send_audio/4" do
+    test "Works via the GenServer" do
+      audio = %Content.Audio.BusesToDestination{
+        language: :english,
+        destination: :chelsea,
+        next_bus_mins: 8,
+        later_bus_mins: 12,
+      }
+
+      assert {:ok, :sent} ==
+        PaEss.HttpUpdater.send_audio({"SBOX", "c"}, audio, 5, :audio, 60)
+    end
+
     test "Buses to Chelsea" do
       state = make_state(%{uid: 1000})
       audio = %Content.Audio.BusesToDestination{
