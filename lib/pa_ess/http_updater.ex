@@ -29,13 +29,13 @@ defmodule PaEss.HttpUpdater do
   end
 
   @impl PaEss.Updater
-  def send_audio(pa_ess_id, audio, priority, type) do
-    send_audio(__MODULE__, pa_ess_id, audio, priority, type)
+  def send_audio(pa_ess_id, audio, priority, type, timeout) do
+    send_audio(__MODULE__, pa_ess_id, audio, priority, type, timeout)
   end
 
   # TODO: Elixir 1.6, consolidate into one function with default argument
-  def send_audio(pid, pa_ess_id, audio, priority, type) do
-    GenServer.call(pid, {:send_audio, pa_ess_id, audio, priority, type})
+  def send_audio(pid, pa_ess_id, audio, priority, type, timeout) do
+    GenServer.call(pid, {:send_audio, pa_ess_id, audio, priority, type, timeout})
   end
 
   @impl GenServer
@@ -53,7 +53,7 @@ defmodule PaEss.HttpUpdater do
 
     {:reply, result, %{state | uid: state.uid + 1}}
   end
-  def handle_call({:send_audio, {station, zone}, audio, priority, type}, _from, state) do
+  def handle_call({:send_audio, {station, zone}, audio, priority, type, timeout}, _from, state) do
     {message_id, vars} = Content.Audio.to_params(audio)
 
     encoded = [
@@ -64,7 +64,7 @@ defmodule PaEss.HttpUpdater do
       typ: audio_type(type),
       sta: "#{station}#{zone_bitmap(zone)}",
       pri: priority,
-      tim: 60,
+      tim: timeout,
     ]
     |> URI.encode_query
     Logger.info(["send_audio: ", encoded])
