@@ -4,13 +4,19 @@ defmodule Content.Audio.ChelseaBridgeLoweredSoon do
   soon. SL3 buses may be delayed, detoured, or turned back.
   """
 
-  defstruct []
+  @enforce_keys [:language]
+  defstruct @enforce_keys
 
-  @type t :: %__MODULE__{}
+  @type t :: %__MODULE__{
+    language: :english | :spanish
+  }
 
   defimpl Content.Audio do
-    def to_params(_audio) do
+    def to_params(%{language: :english}) do
       {"136", []}
+    end
+    def to_params(%{language: :spanish}) do
+      {"157", []}
     end
   end
 end
