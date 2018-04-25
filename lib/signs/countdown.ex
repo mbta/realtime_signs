@@ -119,6 +119,7 @@ defmodule Signs.Countdown do
   end
   defp update_top(sign, new_top) do
     sign.sign_updater.update_sign(sign.pa_ess_id, "1", new_top, @default_duration, :now)
+    announce_arrival(new_top, sign)
     if sign.top_timer, do: Process.cancel_timer(sign.top_timer)
     timer = Process.send_after(self(), :expire_top, @default_duration * 1000 - 5000)
     %{sign | current_content_top: new_top, top_timer: timer}
@@ -132,5 +133,14 @@ defmodule Signs.Countdown do
     if sign.bottom_timer, do: Process.cancel_timer(sign.bottom_timer)
     timer = Process.send_after(self(), :expire_bottom, @default_duration * 1000 - 5000)
     %{sign | current_content_bottom: new_bottom, bottom_timer: timer}
+  end
+
+  defp announce_arrival(msg, sign) do
+    case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
+      %Content.Audio.TrainIsArriving{} = audio ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+      nil ->
+        nil
+    end
   end
 end
