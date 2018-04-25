@@ -8,7 +8,7 @@ defmodule RealtimeSigns do
 
     children = [
       worker(Engine.Predictions, []),
-      worker(Engine.Schedules, []),
+      worker(Engine.Headways, []),
       worker(Engine.Static, []),
       worker(PaEss.HttpUpdater, []),
       supervisor(Signs.Supervisor, []),
