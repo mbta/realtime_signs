@@ -35,7 +35,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1001}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"SBOX", "e"}, audio, 5, :audio}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"SBOX", "e"}, audio, 5, :audio, 60}, self(), state)
     end
 
     test "Buses to South Station" do
@@ -48,7 +48,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1002}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"SBSQ", "w"}, audio, 5, :audio}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"SBSQ", "w"}, audio, 5, :audio, 60}, self(), state)
     end
 
     test "Chelsea bridge raised, expect delays" do
@@ -59,7 +59,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1003}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"SCHS", "w"}, audio, 5, :audio_visual}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"SCHS", "w"}, audio, 5, :audio_visual, 200}, self(), state)
     end
 
     test "Buses to Chelsea, in Spanish" do
@@ -72,7 +72,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1004}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"SBOX", "e"}, audio, 5, :audio}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"SBOX", "e"}, audio, 5, :audio, 60}, self(), state)
     end
 
     test "Next train to Ashmont arrives in 4 minutes" do
@@ -83,7 +83,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1005}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"MCED", "n"}, audio, 5, :audio}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"MCED", "n"}, audio, 5, :audio, 60}, self(), state)
     end
 
     test "Train to Mattapan arriving" do
@@ -93,7 +93,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1006}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"MCED", "s"}, audio, 5, :audio}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"MCED", "s"}, audio, 5, :audio, 60}, self(), state)
     end
 
     test "Train to Ashmont arriving" do
@@ -103,7 +103,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1007}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"MCAP", "n"}, audio, 5, :audio}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"MCAP", "n"}, audio, 5, :audio, 60}, self(), state)
     end
   end
 
