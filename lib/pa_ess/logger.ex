@@ -31,7 +31,7 @@ defmodule PaEss.Logger do
   end
 
   @impl true
-  def send_audio(pa_ess_id, msg, priority, type, timeout) do
+  def send_audio(pa_ess_id, msg, priority, timeout) do
     line = [
       now(),
       "send_audio,",
@@ -40,8 +40,6 @@ defmodule PaEss.Logger do
       inspect(Content.Audio.to_params(msg)),
       ",",
       priority,
-      ",",
-      inspect(type),
       ",",
       timeout
     ]

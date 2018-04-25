@@ -1,7 +1,7 @@
 defmodule Content.Audio.ChelseaBridgeRaisedDelays do
   @moduledoc """
   The Chelsea Street bridge is raised. We expect this to last for at least
-  [Number] more minutes. SL3 buses may be delayed, detoured, or turend back.
+  [Number] more minutes. SL3 buses may be delayed, detoured, or turned back.
   """
 
   @enforce_keys [:language, :delay_minutes]
@@ -16,7 +16,7 @@ defmodule Content.Audio.ChelseaBridgeRaisedDelays do
     alias PaEss.Utilities
 
     def to_params(audio) do
-      {message_id(audio), vars(audio)}
+      {message_id(audio), vars(audio), :audio_visual}
     end
 
     defp message_id(%{language: :english}), do: "135"

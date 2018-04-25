@@ -8,7 +8,7 @@ defmodule Content.Audio.BusesToDestinationTest do
       next_bus_mins: 7,
       later_bus_mins: 10
     }
-    assert Content.Audio.to_params(audio) == {"133", ["5507", "5510"]}
+    assert Content.Audio.to_params(audio) == {"133", ["5507", "5510"], :audio}
   end
 
   test "Buses to Chelsea in Spanish" do
@@ -18,7 +18,7 @@ defmodule Content.Audio.BusesToDestinationTest do
       next_bus_mins: 7,
       later_bus_mins: 10
     }
-    assert Content.Audio.to_params(audio) == {"150", ["37007", "37010"]}
+    assert Content.Audio.to_params(audio) == {"150", ["37007", "37010"], :audio}
   end
 
   test "Buses to South Station in English" do
@@ -28,7 +28,7 @@ defmodule Content.Audio.BusesToDestinationTest do
       next_bus_mins: 7,
       later_bus_mins: 10
     }
-    assert Content.Audio.to_params(audio) == {"134", ["5507", "5510"]}
+    assert Content.Audio.to_params(audio) == {"134", ["5507", "5510"], :audio}
   end
 
   test "Buses to South Station in Spanish" do
@@ -38,6 +38,6 @@ defmodule Content.Audio.BusesToDestinationTest do
       next_bus_mins: 7,
       later_bus_mins: 10
     }
-    assert Content.Audio.to_params(audio) == {"151", ["37007", "37010"]}
+    assert Content.Audio.to_params(audio) == {"151", ["37007", "37010"], :audio}
   end
 end
