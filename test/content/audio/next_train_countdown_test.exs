@@ -6,7 +6,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
       destination: :ashmont,
       minutes: 5,
     }
-    assert Content.Audio.to_params(audio) == {"90", ["4016", "503", "5005"]}
+    assert Content.Audio.to_params(audio) == {"90", ["4016", "503", "5005"], :audio}
   end
 
   test "Next train to Mattapan" do
@@ -14,6 +14,6 @@ defmodule Content.Audio.NextTrainCountdownTest do
       destination: :mattapan,
       minutes: 5,
     }
-    assert Content.Audio.to_params(audio) == {"90", ["4100", "503", "5005"]}
+    assert Content.Audio.to_params(audio) == {"90", ["4100", "503", "5005"], :audio}
   end
 end

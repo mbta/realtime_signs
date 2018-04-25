@@ -17,7 +17,7 @@ defmodule Content.Audio.BusesToDestination do
     alias PaEss.Utilities
 
     def to_params(audio) do
-      {message_id(audio), vars(audio)}
+      {message_id(audio), vars(audio), :audio}
     end
 
     defp message_id(%{language: :english, destination: :chelsea}), do: "133"

@@ -3,7 +3,7 @@ defmodule PaEss.Updater do
     {:ok, :sent} | {:error, :bad_status} | {:error, :post_error}
     when line_no: String.t(), duration: integer(), start: integer() | :now
 
-  @callback send_audio(PaEss.id, Content.Audio.t(), priority, type, timeout) ::
+  @callback send_audio(PaEss.id, Content.Audio.t(), priority, timeout) ::
     {:ok, :sent} | {:error, any()}
-    when priority: integer(), type: :audio | :visual | :audio_visual, timeout: integer()
+    when priority: integer(), timeout: integer()
 end

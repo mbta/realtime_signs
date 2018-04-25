@@ -13,10 +13,10 @@ defmodule Content.Audio.ChelseaBridgeLoweredSoon do
 
   defimpl Content.Audio do
     def to_params(%{language: :english}) do
-      {"136", []}
+      {"136", [], :audio_visual}
     end
     def to_params(%{language: :spanish}) do
-      {"157", []}
+      {"157", [], :audio_visual}
     end
   end
 end

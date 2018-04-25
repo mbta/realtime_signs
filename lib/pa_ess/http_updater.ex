@@ -29,13 +29,13 @@ defmodule PaEss.HttpUpdater do
   end
 
   @impl PaEss.Updater
-  def send_audio(pa_ess_id, audio, priority, type, timeout) do
-    send_audio(__MODULE__, pa_ess_id, audio, priority, type, timeout)
+  def send_audio(pa_ess_id, audio, priority, timeout) do
+    send_audio(__MODULE__, pa_ess_id, audio, priority, timeout)
   end
 
   # TODO: Elixir 1.6, consolidate into one function with default argument
-  def send_audio(pid, pa_ess_id, audio, priority, type, timeout) do
-    GenServer.call(pid, {:send_audio, pa_ess_id, audio, priority, type, timeout})
+  def send_audio(pid, pa_ess_id, audio, priority, timeout) do
+    GenServer.call(pid, {:send_audio, pa_ess_id, audio, priority, timeout})
   end
 
   @impl GenServer
@@ -53,8 +53,8 @@ defmodule PaEss.HttpUpdater do
 
     {:reply, result, %{state | uid: state.uid + 1}}
   end
-  def handle_call({:send_audio, {station, zone}, audio, priority, type, timeout}, _from, state) do
-    {message_id, vars} = Content.Audio.to_params(audio)
+  def handle_call({:send_audio, {station, zone}, audio, priority, timeout}, _from, state) do
+    {message_id, vars, type} = Content.Audio.to_params(audio)
 
     encoded = [
       MsgType: "Canned",
