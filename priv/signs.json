@@ -30,5 +30,23 @@
     "route_id": "Mattapan",
     "line_number": "2",
     "type": "ashmont"
+  },
+  {
+    "id": "SEAV0",
+    "pa_ess_loc": "MCED",
+    "pa_ess_zone": "s",
+    "headsign": "South Station",
+    "gtfs_stop_id": "70266",
+    "route_id": "Mattapan",
+    "type": "headway"
+  },
+  {
+    "id": "SEAV1",
+    "pa_ess_loc": "MCED",
+    "pa_ess_zone": "n",
+    "headsign": "Chelsea",
+    "gtfs_stop_id": "70266",
+    "route_id": "Mattapan",
+    "type": "headway"
   }
 ]
