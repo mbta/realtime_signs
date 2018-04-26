@@ -5,6 +5,10 @@ defmodule Fake.Sign.Updater do
     GenServer.start_link(__MODULE__, [], opts)
   end
 
+  def init(args) do
+    {:ok, args}
+  end
+
   def request(pid \\ __MODULE__, payload, current_time) do
     GenServer.cast(pid, {:request, payload, current_time})
   end

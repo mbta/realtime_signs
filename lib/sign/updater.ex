@@ -7,6 +7,10 @@ defmodule Sign.Updater do
     GenServer.start_link(__MODULE__, uid, opts)
   end
 
+  def init(args) do
+    {:ok, args}
+  end
+
   def host, do: Application.get_env(:realtime_signs, :sign_head_end_host)
   def url, do: "http://#{host()}/mbta/cgi-bin/RemoteMsgsCgi.exe"
 
