@@ -33,20 +33,20 @@
   },
   {
     "id": "SEAV0",
-    "pa_ess_loc": "MCED",
-    "pa_ess_zone": "s",
+    "pa_ess_loc": "SEAV",
+    "pa_ess_zone": "w",
     "headsign": "South Station",
-    "gtfs_stop_id": "70266",
-    "route_id": "Mattapan",
+    "gtfs_stop_id": "74636",
+    "route_id": "743",
     "type": "headway"
   },
   {
     "id": "SEAV1",
-    "pa_ess_loc": "MCED",
-    "pa_ess_zone": "n",
+    "pa_ess_loc": "SEAV",
+    "pa_ess_zone": "e",
     "headsign": "Chelsea",
-    "gtfs_stop_id": "70266",
-    "route_id": "Mattapan",
+    "gtfs_stop_id": "74637",
+    "route_id": "743",
     "type": "headway"
   }
 ]
