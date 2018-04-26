@@ -11,6 +11,23 @@ defmodule Content.Audio.NextTrainCountdown do
     minutes: integer()
   }
 
+  require Logger
+
+  @spec from_predictions_message(Content.Message.t()) :: t() | nil
+  def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: "Ashmont"}) when is_integer(n) do
+    %__MODULE__{destination: :ashmont, minutes: n}
+  end
+  def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: "Mattapan"}) when is_integer(n) do
+    %__MODULE__{destination: :mattapan, minutes: n}
+  end
+  def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: headsign}) when is_integer(n) do
+    Logger.warn("Content.Audio.NextTrainCountdown.from_predictions_message: unknown headsign: #{headsign}")
+    nil
+  end
+  def from_predictions_message(_) do
+    nil
+  end
+
   defimpl Content.Audio do
     alias PaEss.Utilities
 
