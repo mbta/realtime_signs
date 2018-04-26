@@ -12,4 +12,11 @@ defmodule Content.Message.Headways.Top do
       "#{type} to #{headsign}"
     end
   end
+
+  defp signify_headsign("South Station") do
+    "South Sta"
+  end
+  defp signify_headsign(headsign) do
+    headsign
+  end
 end
