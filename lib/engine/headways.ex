@@ -45,7 +45,7 @@ defmodule Engine.Headways do
 
   def handle_call({:get_headways, stop_id, current_time}, _from, state) do
     schedules = state[stop_id]
-    Map.get(ScheduleHeadway.group_headways_for_stations(schedules, [stop_id], current_time), stop_id)
+    {:reply, Map.get(ScheduleHeadway.group_headways_for_stations(schedules, [stop_id], current_time), stop_id), state}
   end
 
   def handle_call({:register, gtfs_stop_id}, _from, state) do

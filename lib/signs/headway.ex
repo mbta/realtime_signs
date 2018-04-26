@@ -30,9 +30,11 @@ defmodule Signs.Headway do
     timer: reference() | nil,
   }
 
+  @default_duration 6
+
   def start_link(%{"type" => "headway"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
-    headway_engine = opts[:headway_engine] || Engine.Schedules
+    headway_engine = opts[:headway_engine] || Engine.Headways
 
     sign = %__MODULE__{
       id: config["id"],
@@ -52,20 +54,22 @@ defmodule Signs.Headway do
 
   def init(sign) do
     Engine.Headways.register(sign.gtfs_stop_id)
+    schedule_update(self())
     {:ok, sign}
   end
 
-  def update_sign(sign) do
-    updated = %{
+  def handle_info(:update_content, sign) do
+    updated = %__MODULE__{
       sign |
-      current_content_top: %{headsign: sign.headsign, vehicle_type: vehicle_type(sign.route_id)},
-      current_content_bottom: %{range: sign.headway_engine.get_headways(sign.gtfs_stop_id)}
+      current_content_top: %Content.Message.Headways.Top{headsign: sign.headsign, vehicle_type: vehicle_type(sign.route_id)},
+      current_content_bottom: %Content.Message.Headways.Bottom{range: sign.headway_engine.get_headways(sign.gtfs_stop_id)}
     }
 
     send_update(sign, updated)
+    {:noreply, updated}
   end
 
-  defp send_update(%{current_content_bottom: same} = sign, %{current_content_bottom: same) do
+  defp send_update(%{current_content_bottom: same} = sign, %{current_content_bottom: same}) do
     sign
   end
   defp send_update(sign, %{current_content_top: new_top, current_content_bottom: new_bottom}) do
@@ -73,7 +77,15 @@ defmodule Signs.Headway do
     sign.sign_updater.update_sign(sign.pa_ess_id, "2", new_bottom, @default_duration, :now)
     if sign.timer, do: Process.cancel_timer(sign.timer)
     timer = Process.send_after(self(), :expire, @default_duration * 1000 - 5000)
-    %{sign | current_content_top: new_top, current_content_bottom: new_bottom, bottom_timer: timer}
+    %{sign | current_content_top: new_top, current_content_bottom: new_bottom, timer: timer}
+  end
+
+  defp schedule_update(pid) do
+    Process.send_after(pid, :update_content, @default_duration * 1000)
+  end
+
+  def handle_info(:expire, sign) do
+    {:noreply, %{sign | current_content_top: Content.Message.Empty.new(), current_content_bottom: Content.Message.Empty.new()}}
   end
 
   defp vehicle_type("Mattapan"), do: "Trolley"
