@@ -1,5 +1,25 @@
 [
   {
+    "id": "MCED0",
+    "pa_ess_loc": "MCED",
+    "pa_ess_zone": "s",
+    "headsign": "Mattapan",
+    "gtfs_stop_id": "70263",
+    "direction_id": 0,
+    "route_id": "Mattapan",
+    "type": "countdown"
+  },
+  {
+    "id": "MCED1",
+    "pa_ess_loc": "MCED",
+    "pa_ess_zone": "n",
+    "gtfs_stop_id": "70264",
+    "direction_id": 1,
+    "headsign": "Ashmont",
+    "route_id": "Mattapan",
+    "type": "countdown"
+  },
+  {
     "id": "RASH0",
     "pa_ess_loc": "RASH",
     "pa_ess_zone": "m",
