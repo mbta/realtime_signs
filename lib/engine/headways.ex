@@ -1,5 +1,7 @@
 defmodule Engine.Headways do
   use GenServer
+  require Logger
+  alias Headway.ScheduleHeadway
 
   def start_link do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -16,6 +18,10 @@ defmodule Engine.Headways do
 
   def update_headways(pid \\ __MODULE__) do
     GenServer.call(pid, {:update_headways})
+  end
+
+  def get_headways(pid \\ __MODULE__, stop_id) do
+    GenServer.call(pid, {:get_headways, stop_id, Timex.now()})
   end
 
   def handle_info(:update_headways, state) do
@@ -35,6 +41,11 @@ defmodule Engine.Headways do
         end)
         {:noreply, schedules}
     end
+  end
+
+  def handle_call({:get_headways, stop_id, current_time}, _from, state) do
+    schedules = state[stop_id]
+    Map.get(ScheduleHeadway.group_headways_for_stations(schedules, [stop_id], current_time), stop_id)
   end
 
   def handle_call({:register, gtfs_stop_id}, _from, state) do

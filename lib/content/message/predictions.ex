@@ -32,7 +32,7 @@ defmodule Content.Message.Predictions do
     }
   end
 
-  defimpl Content.Message do
+  defimpl Content.Message, for: Content.Message.Predictions   do
     require Logger
 
     @width 18
