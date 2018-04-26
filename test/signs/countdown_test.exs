@@ -292,4 +292,23 @@ defmodule Signs.CountdownTest do
       assert sign.current_content_bottom == Content.Message.Empty.new()
     end
   end
+
+  describe "start_link/2" do
+    test "initializes state with sign from config" do
+      config = %{
+        "id" => "sign_1",
+        "gtfs_stop_id" => "stop_id",
+        "pa_ess_loc" => "SIGN",
+        "pa_ess_zone" => "m",
+        "direction_id" => 0,
+        "route_id" => "Mattapan",
+        "headsign" => "Mattapan",
+        "type" => "countdown"
+      }
+      opts = [sign_updater: __MODULE__, prediction_engine: __MODULE__]
+      {:ok, pid} = Signs.Countdown.start_link(config, opts)
+      state = :sys.get_state(pid)
+      assert %{id: "sign_1", gtfs_stop_id: "stop_id", pa_ess_id: {"SIGN", "m"}} = state
+    end
+  end
 end
