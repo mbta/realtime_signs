@@ -23,8 +23,19 @@ defmodule PaEss.HttpUpdater do
     update_sign(__MODULE__, pa_ess_id, line_no, msg, duration, start_secs)
   end
 
+  # TODO: Elixir 1.6, consolidate into one function with default argument
   def update_sign(pid, pa_ess_id, line_no, msg, duration, start_secs) do
     GenServer.call(pid, {:update_sign, pa_ess_id, line_no, msg, duration, start_secs})
+  end
+
+  @impl PaEss.Updater
+  def send_audio(pa_ess_id, audio, priority, timeout) do
+    send_audio(__MODULE__, pa_ess_id, audio, priority, timeout)
+  end
+
+  # TODO: Elixir 1.6, consolidate into one function with default argument
+  def send_audio(pid, pa_ess_id, audio, priority, timeout) do
+    GenServer.call(pid, {:send_audio, pa_ess_id, audio, priority, timeout})
   end
 
   @impl GenServer
@@ -38,16 +49,27 @@ defmodule PaEss.HttpUpdater do
     encoded = URI.encode_query([MsgType: "SignContent", uid: state.uid, sta: station, c: cmd])
     Logger.info(["update_sign: ", encoded])
 
-    result = case state.http_poster.post(url(), encoded, [{"Content-type", "application/x-www-form-urlencoded"}]) do
-      {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
-        {:ok, :sent}
-      {:ok, %HTTPoison.Response{status_code: status}} ->
-        Logger.warn("head_end_post_error: response had status code: #{inspect status}")
-        {:error, :bad_status}
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("head_end_post_error: #{inspect reason}")
-        {:error, :post_error}
-    end
+    result = send_post(state.http_poster, encoded)
+
+    {:reply, result, %{state | uid: state.uid + 1}}
+  end
+  def handle_call({:send_audio, {station, zone}, audio, priority, timeout}, _from, state) do
+    {message_id, vars, type} = Content.Audio.to_params(audio)
+
+    encoded = [
+      MsgType: "Canned",
+      uid: state.uid,
+      mid: message_id,
+      var: Enum.join(vars, ","),
+      typ: audio_type(type),
+      sta: "#{station}#{zone_bitmap(zone)}",
+      pri: priority,
+      tim: timeout,
+    ]
+    |> URI.encode_query
+    Logger.info(["send_audio: ", encoded])
+
+    result = send_post(state.http_poster, encoded)
 
     {:reply, result, %{state | uid: state.uid + 1}}
   end
@@ -60,4 +82,29 @@ defmodule PaEss.HttpUpdater do
 
   defp message_display(msg) when is_atom(msg), do: "#{msg}"
   defp message_display(msg) when is_map(msg), do: ~s("#{Content.Message.to_string(msg)}")
+
+  # bitmap representing zone: m c n s e w
+  defp zone_bitmap("m"), do: "100000"
+  defp zone_bitmap("c"), do: "010000"
+  defp zone_bitmap("n"), do: "001000"
+  defp zone_bitmap("s"), do: "000100"
+  defp zone_bitmap("e"), do: "000010"
+  defp zone_bitmap("w"), do: "000001"
+
+  defp audio_type(:audio_visual), do: "0"
+  defp audio_type(:audio), do: "1"
+  defp audio_type(:visual), do: "2"
+
+  defp send_post(http_poster, query) do
+    case http_poster.post(url(), query, [{"Content-type", "application/x-www-form-urlencoded"}]) do
+      {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
+        {:ok, :sent}
+      {:ok, %HTTPoison.Response{status_code: status}} ->
+        Logger.warn("head_end_post_error: response had status code: #{inspect status}")
+        {:error, :bad_status}
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        Logger.warn("head_end_post_error: #{inspect reason}")
+        {:error, :post_error}
+    end
+  end
 end

@@ -11,8 +11,8 @@ defmodule PaEss.Logger do
   @impl true
   def update_sign(pa_ess_id, line_no, msg, duration, start_secs) do
     line = [
-      DateTime.to_iso8601(DateTime.utc_now()),
-      ",",
+      now(),
+      "update_sign,",
       inspect(pa_ess_id),
       ",",
       "#{line_no}",
@@ -28,5 +28,29 @@ defmodule PaEss.Logger do
     File.write!("log/pa_ess_updates.log", line ++ ["\n"], [:append])
     Logger.info(line)
     {:ok, :sent}
+  end
+
+  @impl true
+  def send_audio(pa_ess_id, msg, priority, timeout) do
+    line = [
+      now(),
+      "send_audio,",
+      inspect(pa_ess_id),
+      ",",
+      inspect(Content.Audio.to_params(msg)),
+      ",",
+      priority,
+      ",",
+      timeout
+    ]
+
+    Logger.info(line)
+    File.mkdir("log")
+    File.write!("log/pa_ess_updates.log", line ++ ["\n"], [:append])
+    {:ok, :sent}
+  end
+
+  defp now do
+    DateTime.to_iso8601(DateTime.utc_now())
   end
 end

@@ -1,0 +1,37 @@
+From: Andrew Daniels
+Subject: Re: New Announcements for silver line
+Date: April 4, 2018 at 2:56:04 PM EDT
+
+I have the audio update ready. Attached are the spread sheets with the individual take ID's for each audio file.
+
+For the actual messages:
+
+English Messages:
+
+Buses to Chelsea arrive every  [Number] to  [Number] minutes: MSG ID = 133; Variable range to use = 5501 (1) - 5559 (59)
+
+Buses to South Station arrive every [Number] to  [Number] minutes: MSG ID = 134; Variable range to use = 5501 (1) - 5559 (59)
+
+The Chelsea Street bridge is raised. We expect this to last for at least [Number] more minutes. SL3 buses may be delayed, detoured, or turned back: MSG ID = 135; Variable range to use 5501(1) - 5559 (59)
+
+The Chelsea Street bridge is raised. We expect it to be lowered soon. SL3 buses may be delayed, detoured, or turned back. MSG ID = 136; Complete message no variables.
+
+The last bus to Chelsea departs at [TIME] AM. MSG ID = 137; Variable range to use 9101 (12:01) - 9159 (12:59)
+
+The last bus to South Station departs at [TIME] AM. MSG ID = 138; Variable range to use 9101(12:01) - 9159(12:59)
+
+Spanish Messages:
+
+Buses to Chelsea arrive every  [Number] to  [Number] minutes: MSG ID = 150; Variable range to use = 37001 (1) - 37020 (20)
+
+Buses to South Station arrive every [Number] to  [Number] minutes: MSG ID = 151; Variable range to use = 37001 (1) - 37020 (20)
+
+The Chelsea Street bridge is raised. We expect this to last for at least [Minutes] more minutes. SL3 buses may be delayed, detoured, or turned back. MSG ID = 152;  Variable range to use = 37001 (1) - 37020 (20)
+
+These messages can also be accessed through the GUI under the Canned Special Service announcements and Spanish Announcement categories.
+
+
+
+Let me know if you want me to apply to the test server, production server or both.
+
+-Andrew
