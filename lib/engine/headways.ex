@@ -35,10 +35,10 @@ defmodule Engine.Headways do
         {:noreply, state}
       _ ->
         schedules = Headway.Request.get_schedules(stops)
-        |> Enum.reduce(state, fn  schedule, acc ->
-          id = schedule["relationships"]["stop"]["data"]["id"]
-          Map.put(state, id, state[id] ++ [schedule])
+        |> Enum.group_by(state, fn schedule ->
+          schedule["relationships"]["stop"]["data"]["id"]
         end)
+
         {:noreply, schedules}
     end
   end
@@ -50,6 +50,7 @@ defmodule Engine.Headways do
 
   def handle_call({:register, gtfs_stop_id}, _from, state) do
     state = Map.put(state, gtfs_stop_id, [])
+    schedule_update(self())
     {:reply, state, state}
   end
 
