@@ -34,7 +34,7 @@ defmodule Signs.Supervisor do
   end
 
   defp sign_module(%{"type" => "countdown"}), do: Signs.Countdown
-  defp sign_module(%{"type" => "ashmont"}), do: Signs.Ashmont
+  defp sign_module(%{"type" => "single"}), do: Signs.Single
 
   defp children_config() do
     :realtime_signs

@@ -1,4 +1,4 @@
-defmodule  Signs.AshmontTest do
+defmodule  Signs.SingleTest do
   use ExUnit.Case
 
   defmodule FakeUpdater do
@@ -38,7 +38,7 @@ defmodule  Signs.AshmontTest do
     end
   end
 
-  @sign %Signs.Ashmont{
+  @sign %Signs.Single{
     id: "Ashmont",
     pa_ess_id: "Ashmont",
     line_number: "2",
@@ -54,7 +54,7 @@ defmodule  Signs.AshmontTest do
   describe "update_content callback" do
     test "when content has new predictions, sends an update" do
       content = %Content.Message.Predictions{headsign: "Mattapan", minutes: :arriving}
-      assert {:noreply, %{current_content: ^content}} = Signs.Ashmont.handle_info(:update_content, @sign)
+      assert {:noreply, %{current_content: ^content}} = Signs.Single.handle_info(:update_content, @sign)
     end
   end
 end
