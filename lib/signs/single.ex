@@ -1,4 +1,4 @@
-defmodule Signs.Ashmont do
+defmodule Signs.Single do
   @moduledoc """
   A one-line countdown sign that displays the next train arrival as
   arriving, boarding, or how many minutes away they are.
@@ -44,7 +44,7 @@ defmodule Signs.Ashmont do
 
   @default_duration 60
 
-  def start_link(%{"type" => "ashmont"} = config, opts \\ []) do
+  def start_link(%{"type" => "single"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
 
