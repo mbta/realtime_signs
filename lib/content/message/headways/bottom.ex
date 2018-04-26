@@ -6,7 +6,7 @@ defmodule Content.Message.Headways.Bottom do
     range: {integer, integer}
   }
 
-  defimpl Content.Message, for: Content.Message.Headways.Bottom do
+  defimpl Content.Message do
     def to_string(%Content.Message.Headways.Bottom{range: range}) do
       format_headway_range(range)
     end

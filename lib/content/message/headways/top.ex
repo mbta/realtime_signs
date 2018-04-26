@@ -7,7 +7,7 @@ defmodule Content.Message.Headways.Top do
     vehicle_type: String.t()
   }
 
-  defimpl Content.Message, for: Content.Message.Headways.Top do
+  defimpl Content.Message do
     def to_string(%Content.Message.Headways.Top{headsign: headsign, vehicle_type: type}) do
       "#{type} to #{headsign}"
     end
