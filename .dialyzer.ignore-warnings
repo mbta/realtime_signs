@@ -21,3 +21,14 @@ Unknown function 'Elixir.Content.Message.PID':'__impl__'/1
 Unknown function 'Elixir.Content.Message.Port':'__impl__'/1
 Unknown function 'Elixir.Content.Message.Reference':'__impl__'/1
 Unknown function 'Elixir.Content.Message.Tuple':'__impl__'/1
+Unknown function 'Elixir.Content.Audio.Atom':'__impl__'/1
+Unknown function 'Elixir.Content.Audio.BitString':'__impl__'/1
+Unknown function 'Elixir.Content.Audio.Float':'__impl__'/1
+Unknown function 'Elixir.Content.Audio.Function':'__impl__'/1
+Unknown function 'Elixir.Content.Audio.Integer':'__impl__'/1
+Unknown function 'Elixir.Content.Audio.List':'__impl__'/1
+Unknown function 'Elixir.Content.Audio.Map':'__impl__'/1
+Unknown function 'Elixir.Content.Audio.PID':'__impl__'/1
+Unknown function 'Elixir.Content.Audio.Port':'__impl__'/1
+Unknown function 'Elixir.Content.Audio.Reference':'__impl__'/1
+Unknown function 'Elixir.Content.Audio.Tuple':'__impl__'/1

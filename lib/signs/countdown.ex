@@ -19,7 +19,8 @@ defmodule Signs.Countdown do
     :route_id,
     :headsign,
     :prediction_engine,
-    :sign_updater
+    :sign_updater,
+    :read_sign_period_ms,
   ]
 
   defstruct @enforce_keys ++ [
@@ -42,6 +43,7 @@ defmodule Signs.Countdown do
     current_content_top: Content.Message.t() | nil,
     bottom_timer: reference() | nil,
     top_timer: reference() | nil,
+    read_sign_period_ms: integer(),
   }
 
   @default_duration 60
@@ -63,6 +65,7 @@ defmodule Signs.Countdown do
       bottom_timer: nil,
       sign_updater: sign_updater,
       prediction_engine: prediction_engine,
+      read_sign_period_ms: 4 * 60 * 1000,
     }
 
     GenServer.start_link(__MODULE__, sign)
@@ -70,10 +73,11 @@ defmodule Signs.Countdown do
 
   def init(sign) do
     schedule_update(self())
+    schedule_reading_sign(self(), sign.read_sign_period_ms)
     {:ok, sign}
   end
 
-  @spec handle_info(:update_content | :expire_top | :expire_bottom, t()) :: {:noreply, t()}
+  @spec handle_info(:update_content | :expire_top | :expire_bottom | :read_sign, t()) :: {:noreply, t()}
   def handle_info(:update_content, sign) do
     schedule_update(self())
 
@@ -81,6 +85,12 @@ defmodule Signs.Countdown do
     sign = update_top(sign, top)
     sign = update_bottom(sign, bottom)
 
+    {:noreply, sign}
+  end
+
+  def handle_info(:read_sign, sign) do
+    schedule_reading_sign(self(), sign.read_sign_period_ms)
+    read_countdown(sign)
     {:noreply, sign}
   end
 
@@ -94,10 +104,6 @@ defmodule Signs.Countdown do
 
   def handle_info(_, state) do
     {:noreply, state}
-  end
-
-  defp schedule_update(pid) do
-    Process.send_after(pid, :update_content, 1_000)
   end
 
   defp get_messages(sign) do
@@ -119,6 +125,7 @@ defmodule Signs.Countdown do
   end
   defp update_top(sign, new_top) do
     sign.sign_updater.update_sign(sign.pa_ess_id, "1", new_top, @default_duration, :now)
+    announce_arrival(new_top, sign)
     if sign.top_timer, do: Process.cancel_timer(sign.top_timer)
     timer = Process.send_after(self(), :expire_top, @default_duration * 1000 - 5000)
     %{sign | current_content_top: new_top, top_timer: timer}
@@ -132,5 +139,31 @@ defmodule Signs.Countdown do
     if sign.bottom_timer, do: Process.cancel_timer(sign.bottom_timer)
     timer = Process.send_after(self(), :expire_bottom, @default_duration * 1000 - 5000)
     %{sign | current_content_bottom: new_bottom, bottom_timer: timer}
+  end
+
+  defp announce_arrival(msg, sign) do
+    case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
+      %Content.Audio.TrainIsArriving{} = audio ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+      nil ->
+        nil
+    end
+  end
+
+  defp read_countdown(%{current_content_top: msg} = sign) do
+    case Content.Audio.NextTrainCountdown.from_predictions_message(msg) do
+      %Content.Audio.NextTrainCountdown{} = audio ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+      nil ->
+        nil
+    end
+  end
+
+  defp schedule_update(pid) do
+    Process.send_after(pid, :update_content, 1_000)
+  end
+
+  defp schedule_reading_sign(pid, ms) do
+    Process.send_after(pid, :read_sign, ms)
   end
 end
