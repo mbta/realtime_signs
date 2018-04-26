@@ -59,6 +59,7 @@ defmodule Signs.Headway do
   end
 
   def handle_info(:update_content, sign) do
+    schedule_update(self())
     updated = %__MODULE__{
       sign |
       current_content_top: %Content.Message.Headways.Top{headsign: sign.headsign, vehicle_type: vehicle_type(sign.route_id)},
