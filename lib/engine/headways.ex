@@ -34,14 +34,14 @@ defmodule Engine.Headways do
   @spec handle_info(:quick_update, t) :: {:noreply, t}
   def handle_info(:quick_update, state) do
     state
-    |> Enum.reject(fn {stop, schedule} -> schedule != [] end)
+    |> Enum.reject(fn {_stop, schedule} -> schedule != [] end)
     |> Map.new
     |> Map.keys
     |> update(state)
   end
 
   @spec handle_info(:update_hourly, t) :: {:noreply, t}
-  def handle_info(:quick_update, state) do
+  def handle_info(:update_hourly, state) do
     state
     |> Map.keys
     |> update(state)

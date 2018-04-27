@@ -69,6 +69,9 @@ defmodule Signs.Headway do
     send_update(sign, updated)
     {:noreply, updated}
   end
+  def handle_info(:expire, sign) do
+    {:noreply, %{sign | current_content_top: Content.Message.Empty.new(), current_content_bottom: Content.Message.Empty.new()}}
+  end
 
   defp send_update(%{current_content_bottom: same} = sign, %{current_content_bottom: same}) do
     sign
@@ -83,10 +86,6 @@ defmodule Signs.Headway do
 
   defp schedule_update(pid) do
     Process.send_after(pid, :update_content, @default_duration * 1000)
-  end
-
-  def handle_info(:expire, sign) do
-    {:noreply, %{sign | current_content_top: Content.Message.Empty.new(), current_content_bottom: Content.Message.Empty.new()}}
   end
 
   defp vehicle_type("Mattapan"), do: :trolley

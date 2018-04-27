@@ -22,7 +22,7 @@ defmodule Engine.HeadwaysTest do
           "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
       end)
       state = %{"123" => schedules}
-      assert Engine.Headways.handle_call({:get_headways, "123", current_time}, self(), state) == {10, 17}
+      assert Engine.Headways.handle_call({:get_headways, "123", current_time}, self(), state) == {:reply, {10, 17}, state}
     end
   end
 end

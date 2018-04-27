@@ -15,16 +15,19 @@ defmodule Signs.HeadwayTest do
         timer: nil
       }
 
-      assert update_sign(sign) == %{sign | current_content_top: %{headsign: "Chelsea", vehicle_type: "Buses"}, current_content_bottom: %{range: {1, 2}}}
+      assert handle_info(:update_content, sign) == {:noreply, %{sign | current_content_top: %Content.Message.Headways.Top{headsign: "Chelsea", vehicle_type: :bus}, current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}}}
     end
   end
 end
 
 defmodule FakeHeadwayEngine do
-  def get_headways(stop_id) do
+  def get_headways(_stop_id) do
     {1, 2}
   end
 end
 
 defmodule FakeSignUpdater do
+  def update_sign(id, line, message, duration, start) do
+    {id, line, message, duration, start}
+  end
 end
