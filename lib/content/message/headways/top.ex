@@ -9,21 +9,21 @@ defmodule Content.Message.Headways.Top do
 
   defimpl Content.Message do
     def to_string(%Content.Message.Headways.Top{headsign: headsign, vehicle_type: type}) do
-      "#{signify_vehicle_type(type)} to #{signify_headsign(headsign)}"
+      "#{Content.Message.Headways.Top.signify_vehicle_type(type)} to #{Content.Message.Headways.Top.signify_headsign(headsign)}"
     end
   end
 
-  defp signify_vehicle_type(:bus) do
+  def signify_vehicle_type(:bus) do
     "Buses"
   end
-  defp signify_vehicle_type(:trolley) do
+  def signify_vehicle_type(:trolley) do
     "Trolleys"
   end
 
-  defp signify_headsign("South Station") do
+  def signify_headsign("South Station") do
     "South Sta"
   end
-  defp signify_headsign(headsign) do
+  def signify_headsign(headsign) do
     headsign
   end
 end

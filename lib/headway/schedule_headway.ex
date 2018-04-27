@@ -4,6 +4,7 @@ defmodule Headway.ScheduleHeadway do
 
   @type headway_range :: {non_neg_integer | nil, non_neg_integer | nil}
   @type t :: headway_range | {:first_departure, headway_range, DateTime.t}
+  @type schedule_map :: map
 
   @min_headway 5
   @headway_padding 2

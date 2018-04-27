@@ -30,7 +30,7 @@ defmodule Signs.Headway do
     timer: reference() | nil,
   }
 
-  @default_duration 6
+  @default_duration 60
 
   def start_link(%{"type" => "headway"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
@@ -89,6 +89,6 @@ defmodule Signs.Headway do
     {:noreply, %{sign | current_content_top: Content.Message.Empty.new(), current_content_bottom: Content.Message.Empty.new()}}
   end
 
-  defp vehicle_type("Mattapan"), do: "Trolley"
-  defp vehicle_type("743"), do: "Buses"
+  defp vehicle_type("Mattapan"), do: :trolley
+  defp vehicle_type("743"), do: :bus
 end
