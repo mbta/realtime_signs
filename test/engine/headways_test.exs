@@ -25,4 +25,21 @@ defmodule Engine.HeadwaysTest do
       assert Engine.Headways.handle_call({:get_headways, "123", current_time}, self(), state) == {:reply, {10, 17}, state}
     end
   end
+
+  describe "quick_update callback" do
+    test "does not update fields that have data" do
+      schedules = Enum.map(@times, fn time ->
+        %{"relationships" => %{"stop" => %{"data" => %{"id" => "123"}}},
+          "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
+      end)
+      state = %{"123" => schedules}
+      assert Engine.Headways.handle_info(:quick_update, state) == {:noreply, state}
+    end
+
+    test "updates fields that have no data" do
+      state = %{"123" => []}
+      {:noreply, state} = Engine.Headways.handle_info(:quick_update, state)
+      assert state["123"] != []
+    end
+  end
 end

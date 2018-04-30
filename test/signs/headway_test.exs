@@ -2,7 +2,7 @@ defmodule Signs.HeadwayTest do
   use ExUnit.Case
   import Signs.Headway
 
-  describe "update_sign/1" do
+  describe "callback update_content" do
     test "updates the top and bottom contents" do
       sign = %Signs.Headway{
         id: "SIGN",

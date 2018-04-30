@@ -71,8 +71,9 @@ defmodule Engine.Headways do
     {:noreply, state}
   end
   defp update(stops, state) do
+    headway_updater = Application.get_env(:realtime_signs, :headway_requester)
     schedules = stops
-                |> Headway.Request.get_schedules()
+                |> headway_updater.get_schedules()
                 |> Enum.group_by(state, fn schedule ->
                   schedule["relationships"]["stop"]["data"]["id"]
                 end)

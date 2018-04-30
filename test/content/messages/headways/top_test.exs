@@ -7,4 +7,14 @@ defmodule Content.Message.Headways.TopTest do
         "Buses to Mattapan"
     end
   end
+
+  describe "signify_vehicle_type/1" do
+    test "turns :bus into Buses" do
+      assert Content.Message.Headways.Top.signify_vehicle_type(:bus) == "Buses"
+    end
+
+    test "turns :trolley into Trolleys" do
+      assert Content.Message.Headways.Top.signify_vehicle_type(:trolley) == "Trolleys"
+    end
+  end
 end
