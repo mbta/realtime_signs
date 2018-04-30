@@ -19,22 +19,12 @@ defmodule PaEss.HttpUpdater do
   end
 
   @impl PaEss.Updater
-  def update_sign(pa_ess_id, line_no, msg, duration, start_secs) do
-    update_sign(__MODULE__, pa_ess_id, line_no, msg, duration, start_secs)
-  end
-
-  # TODO: Elixir 1.6, consolidate into one function with default argument
-  def update_sign(pid, pa_ess_id, line_no, msg, duration, start_secs) do
+  def update_sign(pid \\ __MODULE__, pa_ess_id, line_no, msg, duration, start_secs) do
     GenServer.call(pid, {:update_sign, pa_ess_id, line_no, msg, duration, start_secs})
   end
 
   @impl PaEss.Updater
-  def send_audio(pa_ess_id, audio, priority, timeout) do
-    send_audio(__MODULE__, pa_ess_id, audio, priority, timeout)
-  end
-
-  # TODO: Elixir 1.6, consolidate into one function with default argument
-  def send_audio(pid, pa_ess_id, audio, priority, timeout) do
+  def send_audio(pid \\ __MODULE__, pa_ess_id, audio, priority, timeout) do
     GenServer.call(pid, {:send_audio, pa_ess_id, audio, priority, timeout})
   end
 
