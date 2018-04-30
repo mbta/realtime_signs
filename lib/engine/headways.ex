@@ -74,9 +74,10 @@ defmodule Engine.Headways do
     headway_updater = Application.get_env(:realtime_signs, :headway_requester)
     schedules = stops
                 |> headway_updater.get_schedules()
-                |> Enum.group_by(state, fn schedule ->
+                |> Enum.group_by(fn schedule ->
                   schedule["relationships"]["stop"]["data"]["id"]
                 end)
+    schedules = Map.merge(state, schedules)
 
     {:noreply, schedules}
   end

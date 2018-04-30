@@ -42,4 +42,10 @@ defmodule Engine.HeadwaysTest do
       assert state["123"] != []
     end
   end
+
+  describe "register/2" do
+    test "succesfully registers" do
+      assert Engine.Headways.register("123") == :ok
+    end
+  end
 end
