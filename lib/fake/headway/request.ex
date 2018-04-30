@@ -1,5 +1,4 @@
 defmodule Fake.Headway.Request do
-  alias Headway.ScheduleHeadway
 
   @times [
     ~N[2017-07-04 09:05:00],
