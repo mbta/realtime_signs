@@ -21,12 +21,12 @@ defmodule Engine.Headways do
     {:ok, %{}}
   end
 
-  @spec register(GenServer.server(), String.t()) :: t
+  @spec register(GenServer.server(), String.t()) :: :ok
   def register(pid \\ __MODULE__, gtfs_stop_id) do
     GenServer.call(pid, {:register, gtfs_stop_id})
   end
 
-  @spec get_headways(GenServer.server(), String.t()) :: t
+  @spec get_headways(GenServer.server(), String.t()) :: Headway.ScheduleHeadway.headway_range
   def get_headways(pid \\ __MODULE__, stop_id) do
     GenServer.call(pid, {:get_headways, stop_id, Timex.now()})
   end
@@ -47,7 +47,7 @@ defmodule Engine.Headways do
     |> update(state)
   end
 
-  @spec handle_call({:get_headways, String.t(), DateTime.t}, GenServer.from(), t()) :: {:reply, Headway.ScheduleHeadway.schedule_map, t()}
+  @spec handle_call({:get_headways, String.t(), DateTime.t}, GenServer.from(), t()) :: {:reply, Headway.ScheduleHeadway.headway_range, t()}
   def handle_call({:get_headways, stop_id, current_time}, _from, state) do
     schedules = state[stop_id]
     {:reply, Map.get(ScheduleHeadway.group_headways_for_stations(schedules, [stop_id], current_time), stop_id), state}
@@ -56,7 +56,7 @@ defmodule Engine.Headways do
   def handle_call({:register, gtfs_stop_id}, _from, state) do
     state = Map.put(state, gtfs_stop_id, [])
     quick_update(self())
-    {:reply, state, state}
+    {:reply, :ok, state}
   end
 
   defp quick_update(pid) do
