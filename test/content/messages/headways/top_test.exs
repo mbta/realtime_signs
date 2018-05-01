@@ -6,15 +6,15 @@ defmodule Content.Message.Headways.TopTest do
       assert Content.Message.to_string(%Content.Message.Headways.Top{headsign: "Mattapan", vehicle_type: :bus}) ==
         "Buses to Mattapan"
     end
-  end
 
-  describe "signify_vehicle_type/1" do
-    test "turns :bus into Buses" do
-      assert Content.Message.Headways.Top.signify_vehicle_type(:bus) == "Buses"
+    test "correctly makes a message for trolleys" do
+      assert Content.Message.to_string(%Content.Message.Headways.Top{headsign: "Mattapan", vehicle_type: :trolley}) ==
+        "Trolleys to Mattapan"
     end
 
-    test "turns :trolley into Trolleys" do
-      assert Content.Message.Headways.Top.signify_vehicle_type(:trolley) == "Trolleys"
+    test "shortens south station when that is the headsign" do
+      assert Content.Message.to_string(%Content.Message.Headways.Top{headsign: "South Station", vehicle_type: :trolley}) ==
+        "Trolleys to South Sta"
     end
   end
 end
