@@ -7,6 +7,9 @@ defmodule Content.Message.Headways.Bottom do
   }
 
   defimpl Content.Message do
+    def to_string(%Content.Message.Headways.Bottom{range: {:first_departure, range, first_departure}}) do
+      Headway.ScheduleHeadway.format_headway_range(range)
+    end
     def to_string(%Content.Message.Headways.Bottom{range: range}) do
       Headway.ScheduleHeadway.format_headway_range(range)
     end
