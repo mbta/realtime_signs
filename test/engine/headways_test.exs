@@ -1,5 +1,5 @@
 defmodule Engine.HeadwaysTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   import ExUnit.CaptureLog
   describe "register callback" do
     test "adds the stop id to the state" do
@@ -57,15 +57,17 @@ defmodule Engine.HeadwaysTest do
 
   describe "register/2" do
     test "succesfully registers" do
-      assert Engine.Headways.register("123") == :ok
+      {:ok, pid} = GenServer.start_link(Engine.Headways, [])
+      assert Engine.Headways.register(pid, "123") == :ok
     end
   end
 
   describe "get_headways/2" do
     test "defers to the headway calculator" do
-      Engine.Headways.register("123")
+      {:ok, pid} = GenServer.start_link(Engine.Headways, [])
+      Engine.Headways.register(pid, "123")
       log = capture_log [level: :info], fn ->
-        Engine.Headways.get_headways("123")
+        Engine.Headways.get_headways(pid, "123")
       end
       assert log =~ "group_headways_for_stations called"
     end

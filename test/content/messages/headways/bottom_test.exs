@@ -1,5 +1,5 @@
 defmodule Content.Message.Headways.BottomTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   describe "to_string/1" do
     test "displays the range of times" do
