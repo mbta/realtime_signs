@@ -33,7 +33,9 @@ config :realtime_signs,
   bridge_api_password: System.get_env("BRIDGE_API_PASSWORD") || "",
   trip_update_url: "https://s3.amazonaws.com/mbta-gtfs-s3/TripUpdates.pb",
   sign_updater_mod: PaEss.Logger,
-  http_poster_mod: HTTPoison
+  http_poster_mod: HTTPoison,
+  headway_requester: Headway.Request,
+  headway_calculator: Headway.ScheduleHeadway
 
 config :logger,
   backends: [:console]
