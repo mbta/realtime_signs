@@ -3,7 +3,7 @@ defmodule Content.Message.Headways.Bottom do
   defstruct [:range]
 
   @type t :: %__MODULE__{
-    range: ScheduleHeadway.headway_range()
+    range: Headway.ScheduleHeadway.headway_range()
   }
 
   defimpl Content.Message do
