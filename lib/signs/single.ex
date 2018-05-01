@@ -21,6 +21,8 @@ defmodule Signs.Single do
     :headsign,
     :prediction_engine,
     :sign_updater,
+    :read_sign_period_ms,
+    :countdown_verb,
   ]
 
   defstruct @enforce_keys ++ [
@@ -40,6 +42,8 @@ defmodule Signs.Single do
     sign_updater: module(),
     current_content: Content.Message.t() | nil,
     timer: reference() | nil,
+    read_sign_period_ms: integer(),
+    countdown_verb: Content.Audio.NextTrainCountdown.verb(),
   }
 
   @default_duration 60
@@ -60,6 +64,8 @@ defmodule Signs.Single do
       timer: nil,
       sign_updater: sign_updater,
       prediction_engine: prediction_engine,
+      read_sign_period_ms: 4 * 60 * 1000,
+      countdown_verb: config |> Map.fetch!("countdown_verb") |> String.to_atom(),
     }
 
     GenServer.start_link(__MODULE__, sign)
@@ -67,14 +73,21 @@ defmodule Signs.Single do
 
   def init(sign) do
     schedule_update(self())
+    schedule_reading_sign(self(), sign.read_sign_period_ms)
     {:ok, sign}
   end
 
-  @spec handle_info(:update_content | :expire, t()) :: {:noreply, t()}
+  @spec handle_info(:update_content | :expire | :read_sign, t()) :: {:noreply, t()}
   def handle_info(:update_content, sign) do
     schedule_update(self())
     message = get_message(sign)
     sign = update(sign, message)
+    {:noreply, sign}
+  end
+
+  def handle_info(:read_sign, sign) do
+    schedule_reading_sign(self(), sign.read_sign_period_ms)
+    read_countdown(sign)
     {:noreply, sign}
   end
 
@@ -90,6 +103,10 @@ defmodule Signs.Single do
     Process.send_after(pid, :update_content, 1_000)
   end
 
+  defp schedule_reading_sign(pid, ms) do
+    Process.send_after(pid, :read_sign, ms)
+  end
+
   defp get_message(sign) do
     sign.gtfs_stop_id
     |> sign.prediction_engine.for_stop(sign.direction_id)
@@ -98,13 +115,33 @@ defmodule Signs.Single do
     |> Enum.at(0, Content.Message.Empty.new())
   end
 
+  @spec update(Content.Message.t(), t()) :: t()
   defp update(%{current_content: same} = sign, same) do
     sign
   end
   defp update(sign, new_text) do
     sign.sign_updater.update_sign(sign.pa_ess_id, sign.line_number, new_text, @default_duration, :now)
+    announce_arrival(new_text, sign)
     if sign.timer, do: Process.cancel_timer(sign.timer)
     timer = Process.send_after(self(), :expire, @default_duration * 1000 - 5000)
     %{sign | current_content: new_text, timer: timer}
+  end
+
+  defp announce_arrival(msg, sign) do
+    case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
+      %Content.Audio.TrainIsArriving{} = audio ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+      nil ->
+        nil
+    end
+  end
+
+  defp read_countdown(%{current_content: msg} = sign) do
+    case Content.Audio.NextTrainCountdown.from_predictions_message(msg, sign.countdown_verb) do
+      %Content.Audio.NextTrainCountdown{} = audio ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+      nil ->
+        nil
+    end
   end
 end
