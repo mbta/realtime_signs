@@ -63,8 +63,9 @@ defmodule Engine.HeadwaysTest do
 
   describe "get_headways/2" do
     test "defers to the headway calculator" do
+      Engine.Headways.register("123")
       log = capture_log [level: :info], fn ->
-        Engine.Headways.get_headways("123") == {nil, nil}
+        Engine.Headways.get_headways("123")
       end
       assert log =~ "group_headways_for_stations called"
     end
