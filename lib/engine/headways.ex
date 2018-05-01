@@ -6,7 +6,6 @@ defmodule Engine.Headways do
   """
   use GenServer
   require Logger
-  alias Headway.ScheduleHeadway
 
   @type t :: %{
     String.t => [Headway.ScheduleHeadway.schedule_map]

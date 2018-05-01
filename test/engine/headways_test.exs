@@ -44,6 +44,17 @@ defmodule Engine.HeadwaysTest do
     end
   end
 
+  describe "update_hourly callback" do
+    test "updates all gtfs stop id schedule data in the state" do
+      schedules = Enum.map(@times, fn time ->
+        %{"relationships" => %{"stop" => %{"data" => %{"id" => "123"}}},
+          "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
+      end)
+      state = %{"123" => schedules}
+      assert {:noreply, state} = Engine.Headways.handle_info(:update_hourly, state)
+    end
+  end
+
   describe "register/2" do
     test "succesfully registers" do
       assert Engine.Headways.register("123") == :ok
