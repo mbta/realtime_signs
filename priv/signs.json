@@ -154,5 +154,23 @@
     "direction_id": 1,
     "route_id": "Mattapan",
     "type": "countdown"
+  },
+  {
+    "id": "SEAV0",
+    "pa_ess_loc": "SEAV",
+    "pa_ess_zone": "w",
+    "headsign": "South Station",
+    "gtfs_stop_id": "74636",
+    "route_id": "743",
+    "type": "headway"
+  },
+  {
+    "id": "SEAV1",
+    "pa_ess_loc": "SEAV",
+    "pa_ess_zone": "e",
+    "headsign": "Chelsea",
+    "gtfs_stop_id": "74637",
+    "route_id": "743",
+    "type": "headway"
   }
 ]
