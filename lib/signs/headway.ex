@@ -76,7 +76,18 @@ defmodule Signs.Headway do
   defp send_update(%{current_content_bottom: same} = sign, %{current_content_bottom: same}) do
     sign
   end
-  defp send_update(sign, %{current_content_top: new_top, current_content_bottom: new_bottom}) do
+  defp send_update(sign, %{current_content_top: new_top, current_content_bottom: %{range: {:first_departure, range, first_departure}} = new_bottom}) do
+    max_headway = Headway.ScheduleHeadway.max_headway(range)
+    time_buffer = if max_headway, do: max_headway, else: 0
+    current_time = Timex.now()
+    if Headway.ScheduleHeadway.show_first_departure?(first_departure, current_time, time_buffer) do
+      sign.sign_updater.update_sign(sign.pa_ess_id, "1", new_top, @default_duration, :now)
+      sign.sign_updater.update_sign(sign.pa_ess_id, "2", new_bottom, @default_duration, :now)
+      if sign.timer, do: Process.cancel_timer(sign.timer)
+      timer = Process.send_after(self(), :expire, @default_duration * 1000 - 5000)
+    end
+  end
+  defp send_update(sign, %{current_content_top: new_top, current_content_bottom: new_bottom} = new_sign) do
     sign.sign_updater.update_sign(sign.pa_ess_id, "1", new_top, @default_duration, :now)
     sign.sign_updater.update_sign(sign.pa_ess_id, "2", new_bottom, @default_duration, :now)
     if sign.timer, do: Process.cancel_timer(sign.timer)
