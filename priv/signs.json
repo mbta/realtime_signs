@@ -136,26 +136,6 @@
     "type": "countdown"
   },
   {
-    "gtfs_stop_id": "70275",
-    "pa_ess_loc": "MMAT",
-    "pa_ess_zone": "s",
-    "headsign": "Mattapan",
-    "direction_id": 0,
-    "id": "MMAT0",
-    "route_id": "Mattapan",
-    "type": "countdown"
-  },
-  {
-    "gtfs_stop_id": "70276",
-    "pa_ess_loc": "MMAT",
-    "pa_ess_zone": "n",
-    "headsign": "Ashmont",
-    "id": "MMAT1",
-    "direction_id": 1,
-    "route_id": "Mattapan",
-    "type": "countdown"
-  },
-  {
     "id": "SEAV0",
     "pa_ess_loc": "SEAV",
     "pa_ess_zone": "w",
