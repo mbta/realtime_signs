@@ -91,6 +91,7 @@ defmodule PaEss.HttpUpdaterTest do
       state = make_state(%{uid: 1004})
       audio = %Content.Audio.NextTrainCountdown{
         destination: :ashmont,
+        verb: :arrives,
         minutes: 4,
       }
 
