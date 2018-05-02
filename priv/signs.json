@@ -28,6 +28,7 @@
     "direction_id": 0,
     "headsign": "Mattapan",
     "route_id": "Mattapan",
+    "countdown_verb": "departs",
     "type": "single"
   },
   {
@@ -39,6 +40,7 @@
     "direction_id": 0,
     "headsign": "Mattapan",
     "route_id": "Mattapan",
+    "countdown_verb": "arrives",
     "type": "single"
   },
   {
@@ -50,6 +52,7 @@
     "direction_id": 1,
     "headsign": "Ashmont",
     "route_id": "Mattapan",
+    "countdown_verb": "arrives",
     "type": "single"
   },
   {
