@@ -8,7 +8,8 @@ defmodule Signs.Headway do
     :route_id,
     :headsign,
     :headway_engine,
-    :sign_updater
+    :sign_updater,
+    :read_sign_period_ms,
   ]
 
   defstruct @enforce_keys ++ [
@@ -28,6 +29,7 @@ defmodule Signs.Headway do
     current_content_bottom: Content.Message.t() | nil,
     current_content_top: Content.Message.t() | nil,
     timer: reference() | nil,
+    read_sign_period_ms: integer(),
   }
 
   @default_duration 60
@@ -47,6 +49,7 @@ defmodule Signs.Headway do
       timer: nil,
       sign_updater: sign_updater,
       headway_engine: headway_engine,
+      read_sign_period_ms: 5 * 60 * 1000,
     }
 
     GenServer.start_link(__MODULE__, sign)
@@ -55,6 +58,7 @@ defmodule Signs.Headway do
   def init(sign) do
     Engine.Headways.register(sign.gtfs_stop_id)
     schedule_update(self())
+    schedule_reading_sign(self(), sign.read_sign_period_ms)
     {:ok, sign}
   end
 
@@ -68,6 +72,11 @@ defmodule Signs.Headway do
 
     send_update(sign, updated)
     {:noreply, updated}
+  end
+  def handle_info(:read_sign, sign) do
+    schedule_reading_sign(self(), sign.read_sign_period_ms)
+    read_headway(sign)
+    {:noreply, sign}
   end
   def handle_info(:expire, sign) do
     {:noreply, %{sign | current_content_top: Content.Message.Empty.new(), current_content_bottom: Content.Message.Empty.new()}}
@@ -103,6 +112,20 @@ defmodule Signs.Headway do
     Process.send_after(pid, :update_content, @default_duration * 1000)
   end
 
+  defp schedule_reading_sign(pid, ms) do
+    Process.send_after(pid, :read_sign, ms)
+  end
+
   defp vehicle_type("Mattapan"), do: :trolley
   defp vehicle_type("743"), do: :bus
+
+  defp read_headway(%{current_content_bottom: msg} = sign) do
+    case Content.Audio.BusesToDestination.from_headway_message(msg, sign.headsign) do
+      {english, spanish} ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, english, 5, 120)
+        sign.sign_updater.send_audio(sign.pa_ess_id, spanish, 5, 120)
+      nil ->
+        nil
+    end
+  end
 end
