@@ -77,6 +77,65 @@ defmodule Predictions.PredictionsTest do
       }
       assert get_all(feed_message,  @current_time) == expected
     end
+
+    test "does not let seconds_until_arrival be negative" do
+      feed_message = %GTFS.Realtime.FeedMessage{
+        entity: [
+          %GTFS.Realtime.FeedEntity{
+            alert: nil,
+            id: "1490783458_32568935",
+            is_deleted: false,
+            trip_update: %GTFS.Realtime.TripUpdate{
+              delay: nil,
+              stop_time_update: [
+                %GTFS.Realtime.TripUpdate.StopTimeUpdate{
+                  arrival: %GTFS.Realtime.TripUpdate.StopTimeEvent{
+                    delay: nil,
+                    time: Timex.to_unix(@current_time) - 100,
+                    uncertainty: nil
+                  },
+                  departure: nil,
+                  schedule_relationship: :SCHEDULED,
+                  stop_id: "70263",
+                  stop_sequence: 1
+                },
+              ],
+              timestamp: nil,
+              trip: %GTFS.Realtime.TripDescriptor{
+                direction_id: 0,
+                route_id: "Mattapan",
+                schedule_relationship: :SCHEDULED,
+                start_date: "20170329",
+                start_time: nil,
+                trip_id: "32568935"
+              },
+              vehicle: %GTFS.Realtime.VehicleDescriptor{
+                id: "G-10040",
+                label: "3260",
+                license_plate: nil
+              }
+            },
+            vehicle: nil
+          },
+        ],
+        header: %GTFS.Realtime.FeedHeader{
+          gtfs_realtime_version: "1.0",
+          incrementality: :FULL_DATASET,
+          timestamp: 1490783458
+        }
+      }
+
+      assert get_all(feed_message, @current_time) == %{
+        {"70263", 0} => [
+          %Predictions.Prediction{
+            stop_id: "70263",
+            seconds_until_arrival: 0,
+            direction_id: 0,
+            route_id: "Mattapan"
+          }
+        ]
+      }
+    end
   end
 
   describe "parse_pb_response/1" do
