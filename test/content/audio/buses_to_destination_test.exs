@@ -69,6 +69,11 @@ defmodule Content.Audio.BusesToDestinationTest do
       assert from_headway_message(msg, "Chelsea") == nil
     end
 
+    test "returns nil when range is unexpected" do
+      msg = %{@msg | range: {:a, :b, :c}}
+      assert from_headway_message(msg, "Chelsea") == nil
+    end
+
     test "returns a padded range when one value is missing or values are the same" do
       msg1 = %{@msg | range: {10, nil}}
       msg2 = %{@msg | range: {nil, 10}}

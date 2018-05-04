@@ -37,7 +37,7 @@ defmodule Signs.HeadwayTest do
     end
 
     test "when the first departure is in the future, does not send an update" do
-      sign = %{@sign | gtfs_stop_id: "first_departure"}
+      sign = %{@sign | current_content_bottom: Content.Message.Empty.new(), gtfs_stop_id: "first_departure"}
 
       log = capture_log [level: :info], fn ->
         handle_info(:update_content, sign)
@@ -91,7 +91,7 @@ defmodule FakeHeadwayEngine do
     {:first_departure, {8, 10}, future_departure}
   end
   def get_headways("first_departure") do
-    future_departure = Timex.shift(Timex.now(), minutes: 10)
+    future_departure = Timex.shift(Timex.now(), minutes: 20)
     {:first_departure, {1, 2}, future_departure}
   end
   def get_headways(_stop_id) do
