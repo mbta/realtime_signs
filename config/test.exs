@@ -6,4 +6,5 @@ config :realtime_signs,
   trip_update_url: "https://fake_update/mbta-gtfs-s3/fake_trip_update.pb",
   http_poster_mod: Fake.HTTPoison,
   headway_requester: Fake.Headway.Request,
-  headway_calculator: Fake.Headway.ScheduleHeadway
+  headway_calculator: Fake.Headway.ScheduleHeadway,
+  bridge_requester: Fake.Bridge.Request

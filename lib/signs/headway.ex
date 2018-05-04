@@ -13,6 +13,7 @@ defmodule Signs.Headway do
   ]
 
   defstruct @enforce_keys ++ [
+    :bridge_id,
     :current_content_bottom,
     :current_content_top,
     :timer,
@@ -28,6 +29,7 @@ defmodule Signs.Headway do
     sign_updater: module(),
     current_content_bottom: Content.Message.t() | nil,
     current_content_top: Content.Message.t() | nil,
+    bridge_id: String.t(),
     timer: reference() | nil,
     read_sign_period_ms: integer(),
   }
@@ -46,6 +48,7 @@ defmodule Signs.Headway do
       headsign: config["headsign"],
       current_content_top: Content.Message.Empty.new(),
       current_content_bottom: Content.Message.Empty.new(),
+      bridge_id: config["bridge_id"],
       timer: nil,
       sign_updater: sign_updater,
       headway_engine: headway_engine,
@@ -59,6 +62,7 @@ defmodule Signs.Headway do
     Engine.Headways.register(sign.gtfs_stop_id)
     schedule_update(self())
     schedule_reading_sign(self(), sign.read_sign_period_ms)
+    schedule_bridge_check(self())
     {:ok, sign}
   end
 
@@ -82,6 +86,27 @@ defmodule Signs.Headway do
     {:noreply, %{sign | current_content_top: Content.Message.Empty.new(), current_content_bottom: Content.Message.Empty.new()}}
   end
 
+  def handle_info(:check_bridge, sign) do
+    schedule_bridge_check(self())
+    {:noreply, do_check_bridge(sign)}
+  end
+
+  defp do_check_bridge(%{bridge_id: nil} = sign) do
+    sign
+  end
+  defp do_check_bridge(sign) do
+    bridge_request = Application.get_env(:realtime_signs, :bridge_requester)
+    bridge_status = bridge_request.get_status(sign.bridge_id)
+    case bridge_status do
+      {"Raised", _duration} ->
+        top_message = %Content.Message.Static{text: "Bridge is up"}
+        bottom_message = %Content.Message.Static{text: "Expect SL3 delays"}
+        send_update(sign, %{sign | current_content_top: top_message, current_content_bottom: bottom_message})
+      _ ->
+        sign
+    end
+  end
+
   defp send_update(%{current_content_bottom: same} = sign, %{current_content_bottom: same}) do
     sign
   end
@@ -99,6 +124,10 @@ defmodule Signs.Headway do
 
   defp schedule_reading_sign(pid, ms) do
     Process.send_after(pid, :read_sign, ms)
+  end
+
+  def schedule_bridge_check(pid) do
+    Process.send_after(pid, :check_bridge, 60 * 1000)
   end
 
   defp vehicle_type("Mattapan"), do: :trolley
