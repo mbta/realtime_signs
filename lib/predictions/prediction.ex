@@ -8,7 +8,7 @@ defmodule Predictions.Prediction do
 
   @type t :: %__MODULE__{
     stop_id: String.t(),
-    seconds_until_arrival: integer(),
+    seconds_until_arrival: non_neg_integer(),
     direction_id: 0 | 1,
     route_id: String.t()
   }

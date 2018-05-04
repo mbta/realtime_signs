@@ -21,7 +21,7 @@ defmodule Predictions.Predictions do
     %Prediction{
       stop_id: stop_time_update.stop_id,
       direction_id: direction_id,
-      seconds_until_arrival: prediction_time.time - current_time_seconds,
+      seconds_until_arrival: max(0, prediction_time.time - current_time_seconds),
       route_id: route_id
     }
   end
