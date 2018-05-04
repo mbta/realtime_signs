@@ -3,7 +3,8 @@ defmodule Content.Message.StaticTest do
 
   describe "to_string/1" do
     test "displays whatever is on the sign" do
-      assert Content.Message.to_string(%Content.Message.Static{text: "Bridge is up"}) == "Bridge is up"
+      msg = Content.Message.Static.new(text: "Bridge is up")
+      assert Content.Message.Static.to_string(msg) == "Bridge is up"
     end
   end
 end
