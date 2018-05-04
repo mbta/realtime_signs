@@ -46,7 +46,7 @@ defmodule Signs.Countdown do
     read_sign_period_ms: integer(),
   }
 
-  @default_duration 60
+  @default_duration 120
 
   def start_link(%{"type" => "countdown"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)

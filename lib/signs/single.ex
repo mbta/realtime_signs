@@ -46,7 +46,7 @@ defmodule Signs.Single do
     countdown_verb: Content.Audio.NextTrainCountdown.verb(),
   }
 
-  @default_duration 60
+  @default_duration 120
 
   def start_link(%{"type" => "single"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)

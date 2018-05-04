@@ -53,7 +53,6 @@ defmodule Engine.Predictions do
         Logger.warn("Could not fetch pb file: #{inspect reason}")
         {last_modified, current_predictions}
     end
-    Logger.info("Updating Predictions State...")
     {:noreply, updated_state}
   end
 
