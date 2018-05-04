@@ -45,6 +45,7 @@ defmodule Content.Audio.BusesToDestination do
   defp get_mins({x, x}), do: {x, x+2}
   defp get_mins({x, y}) when x < y, do: {x, y}
   defp get_mins({y, x}), do: {x, y}
+  defp get_mins(_), do: :error
 
   defimpl Content.Audio do
     alias PaEss.Utilities

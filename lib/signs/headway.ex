@@ -67,7 +67,7 @@ defmodule Signs.Headway do
     updated = %__MODULE__{
       sign |
       current_content_top: %Content.Message.Headways.Top{headsign: sign.headsign, vehicle_type: vehicle_type(sign.route_id)},
-      current_content_bottom: %Content.Message.Headways.Bottom{range: sign.headway_engine.get_headways(sign.gtfs_stop_id)}
+      current_content_bottom: bottom_content(sign.headway_engine.get_headways(sign.gtfs_stop_id))
     }
 
     send_update(sign, updated)
@@ -84,21 +84,6 @@ defmodule Signs.Headway do
 
   defp send_update(%{current_content_bottom: same} = sign, %{current_content_bottom: same}) do
     sign
-  end
-  defp send_update(sign, %{current_content_top: new_top, current_content_bottom: %{range: {:first_departure, range, first_departure}} = new_bottom} = new_sign) do
-    max_headway = Headway.ScheduleHeadway.max_headway(range)
-    time_buffer = if max_headway, do: max_headway, else: 0
-    current_time = Timex.now()
-    current_sign = if Headway.ScheduleHeadway.show_first_departure?(first_departure, current_time, time_buffer) do
-      sign.sign_updater.update_sign(sign.pa_ess_id, "1", new_top, @default_duration, :now)
-      sign.sign_updater.update_sign(sign.pa_ess_id, "2", new_bottom, @default_duration, :now)
-      if sign.timer, do: Process.cancel_timer(sign.timer)
-      timer = Process.send_after(self(), :expire, @default_duration * 1000 - 5000)
-      %{new_sign | timer: timer}
-    else
-      sign
-    end
-    current_sign
   end
   defp send_update(sign, %{current_content_top: new_top, current_content_bottom: new_bottom}) do
     sign.sign_updater.update_sign(sign.pa_ess_id, "1", new_top, @default_duration, :now)
@@ -118,6 +103,20 @@ defmodule Signs.Headway do
 
   defp vehicle_type("Mattapan"), do: :trolley
   defp vehicle_type("743"), do: :bus
+
+  defp bottom_content({:first_departure, range, first_departure}) do
+    max_headway = Headway.ScheduleHeadway.max_headway(range)
+    time_buffer = if max_headway, do: max_headway, else: 0
+    current_time = Timex.now()
+    if Headway.ScheduleHeadway.show_first_departure?(first_departure, current_time, time_buffer) do
+      %Content.Message.Headways.Bottom{range: range}
+    else
+      Content.Message.Empty.new()
+    end
+  end
+  defp bottom_content(range) do
+    %Content.Message.Headways.Bottom{range: range}
+  end
 
   defp read_headway(%{current_content_bottom: msg} = sign) do
     case Content.Audio.BusesToDestination.from_headway_message(msg, sign.headsign) do
