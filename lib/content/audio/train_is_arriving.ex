@@ -29,7 +29,7 @@ defmodule Content.Audio.TrainIsArriving do
 
   defimpl Content.Audio do
     def to_params(audio) do
-      {message_id(audio), [], :audio}
+      {message_id(audio), [], :audio_visual}
     end
 
     defp message_id(%{destination: :ashmont}), do: "90129"
