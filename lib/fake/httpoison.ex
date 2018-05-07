@@ -33,9 +33,9 @@ defmodule Fake.HTTPoison do
         {:ok, %HTTPoison.Response{status_code: 200}}
       body =~ "MsgType=Canned&uid=1004&mid=90&var=4016%2C503%2C5004&typ=1&sta=MCED001000&pri=5&tim=60" ->
         {:ok, %HTTPoison.Response{status_code: 200}}
-      body =~ "MsgType=Canned&uid=1005&mid=90128&var=&typ=1&sta=MCED000100&pri=5&tim=60" ->
+      body =~ "MsgType=Canned&uid=1005&mid=90128&var=&typ=0&sta=MCED000100&pri=5&tim=60" ->
         {:ok, %HTTPoison.Response{status_code: 200}}
-      body =~ "MsgType=Canned&uid=1006&mid=90129&var=&typ=1&sta=MCAP001000&pri=5&tim=60" ->
+      body =~ "MsgType=Canned&uid=1006&mid=90129&var=&typ=0&sta=MCAP001000&pri=5&tim=60" ->
         {:ok, %HTTPoison.Response{status_code: 200}}
     end
   end
