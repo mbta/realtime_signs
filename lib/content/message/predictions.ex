@@ -11,11 +11,12 @@ defmodule Content.Message.Predictions do
   """
 
   @enforce_keys [:headsign, :minutes]
-  defstruct [:headsign, :minutes]
+  defstruct [:headsign, :minutes, width: 18]
 
   @type t :: %__MODULE__{
     headsign: String.t(),
-    minutes: integer() | :boarding | :arriving
+    minutes: integer() | :boarding | :arriving,
+    width: integer(),
   }
 
   @spec new(Predictions.Prediction.t(), String.t()) :: t()
@@ -35,20 +36,19 @@ defmodule Content.Message.Predictions do
   defimpl Content.Message do
     require Logger
 
-    @width 18
     @boarding "BRD"
     @arriving "ARR"
 
-    def to_string(%{headsign: headsign, minutes: :boarding}) do
-      build_string(headsign, @boarding)
+    def to_string(%{headsign: headsign, minutes: :boarding, width: width}) do
+      build_string(headsign, @boarding, width)
     end
 
-    def to_string(%{headsign: headsign, minutes: :arriving}) do
-      build_string(headsign, @arriving)
+    def to_string(%{headsign: headsign, minutes: :arriving, width: width}) do
+      build_string(headsign, @arriving, width)
     end
 
-    def to_string(%{headsign: headsign, minutes: n}) when n > 0 and n < 1000 do
-      build_string(headsign, "#{n} min")
+    def to_string(%{headsign: headsign, minutes: n, width: width}) when n > 0 and n < 1000 do
+      build_string(headsign, "#{n} min", width)
     end
 
     def to_string(e) do
@@ -56,10 +56,10 @@ defmodule Content.Message.Predictions do
       ""
     end
 
-    defp build_string(left, right) do
-      max_left_length = @width - (String.length(right) + 2)
+    defp build_string(left, right, width) do
+      max_left_length = width - (String.length(right) + 2)
       left = String.slice(left, 0, max_left_length)
-      padding = @width - (String.length(left) + String.length(right))
+      padding = width - (String.length(left) + String.length(right))
       Enum.join([left, String.duplicate(" ", padding), right])
     end
   end
