@@ -73,13 +73,13 @@ defmodule Signs.Headway do
     schedule_update(self())
     updated = case sign.bridge_engine.status(sign.bridge_id) do
       {"Raised", _duration} ->
-        %__MODULE__{
+        %{
           sign |
             current_content_top: %Content.Message.Bridge.Up{},
             current_content_bottom: %Content.Message.Bridge.Delays{}
         }
       _ ->
-        %__MODULE__{
+        %{
           sign |
           current_content_top: %Content.Message.Headways.Top{headsign: sign.headsign, vehicle_type: vehicle_type(sign.route_id)},
           current_content_bottom: bottom_content(sign.headway_engine.get_headways(sign.gtfs_stop_id))
