@@ -91,7 +91,12 @@ defmodule Signs.Headway do
   end
   def handle_info(:read_sign, sign) do
     schedule_reading_sign(self(), sign.read_sign_period_ms)
-    read_headway(sign)
+    case sign.bridge_engine.status(sign.bridge_id) do
+      {"Raised", duration} ->
+        read_bridge_messages(sign, duration)
+      _ ->
+        read_headway(sign)
+      end
     {:noreply, sign}
   end
   def handle_info(:expire, sign) do
@@ -142,5 +147,11 @@ defmodule Signs.Headway do
       nil ->
         nil
     end
+  end
+
+  defp read_bridge_messages(sign, duration) do
+    {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
+    sign.sign_updater.send_audio(sign.pa_ess_id, english, 5, 120)
+    sign.sign_updater.send_audio(sign.pa_ess_id, spanish, 5, 120)
   end
 end
