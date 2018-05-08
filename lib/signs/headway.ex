@@ -66,17 +66,25 @@ defmodule Signs.Headway do
     Engine.Headways.register(sign.gtfs_stop_id)
     schedule_update(self())
     schedule_reading_sign(self(), sign.read_sign_period_ms)
-    schedule_bridge_check(self())
     {:ok, sign}
   end
 
   def handle_info(:update_content, sign) do
     schedule_update(self())
-    updated = %__MODULE__{
-      sign |
-      current_content_top: %Content.Message.Headways.Top{headsign: sign.headsign, vehicle_type: vehicle_type(sign.route_id)},
-      current_content_bottom: bottom_content(sign.headway_engine.get_headways(sign.gtfs_stop_id))
-    }
+    updated = case sign.bridge_engine.status(sign.bridge_id) do
+      {"Raised", duration} ->
+        %__MODULE__{
+          sign |
+            current_content_top: %Content.Message.Bridge.Up{},
+            current_content_bottom: %Content.Message.Bridge.Delays{}
+        }
+      _ ->
+        %__MODULE__{
+          sign |
+          current_content_top: %Content.Message.Headways.Top{headsign: sign.headsign, vehicle_type: vehicle_type(sign.route_id)},
+          current_content_bottom: bottom_content(sign.headway_engine.get_headways(sign.gtfs_stop_id))
+        }
+    end
 
     send_update(sign, updated)
     {:noreply, updated}
@@ -88,26 +96,6 @@ defmodule Signs.Headway do
   end
   def handle_info(:expire, sign) do
     {:noreply, %{sign | current_content_top: Content.Message.Empty.new(), current_content_bottom: Content.Message.Empty.new()}}
-  end
-
-  def handle_info(:check_bridge, sign) do
-    schedule_bridge_check(self())
-    {:noreply, do_check_bridge(sign)}
-  end
-
-  defp do_check_bridge(%{bridge_id: nil} = sign) do
-    sign
-  end
-  defp do_check_bridge(sign) do
-    bridge_status = sign.bridge_engine.status(sign.bridge_id)
-    case bridge_status do
-      {"Raised", _duration} ->
-        top_message = %Content.Message.Bridge.Up{}
-        bottom_message = %Content.Message.Bridge.Delays{}
-        send_update(sign, %{sign | current_content_top: top_message, current_content_bottom: bottom_message})
-      _ ->
-        sign
-    end
   end
 
   defp send_update(%{current_content_bottom: same} = sign, %{current_content_bottom: same}) do
@@ -127,10 +115,6 @@ defmodule Signs.Headway do
 
   defp schedule_reading_sign(pid, ms) do
     Process.send_after(pid, :read_sign, ms)
-  end
-
-  def schedule_bridge_check(pid) do
-    Process.send_after(pid, :check_bridge, 60 * 1000)
   end
 
   defp vehicle_type("Mattapan"), do: :trolley
