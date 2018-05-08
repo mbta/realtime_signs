@@ -140,6 +140,7 @@
     "pa_ess_loc": "SEAV",
     "pa_ess_zone": "w",
     "headsign": "South Station",
+    "bridge_id": 1,
     "gtfs_stop_id": "74636",
     "route_id": "743",
     "type": "headway"
@@ -149,6 +150,7 @@
     "pa_ess_loc": "SEAV",
     "pa_ess_zone": "e",
     "headsign": "Chelsea",
+    "bridge_id": 1,
     "gtfs_stop_id": "74637",
     "route_id": "743",
     "type": "headway"
