@@ -9,6 +9,7 @@ defmodule Content.Message.Bridge.Delays do
 
   @spec new() :: t()
   def new() do
+    %__MODULE__{}
   end
 
   defimpl Content.Message do
