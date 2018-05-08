@@ -110,7 +110,7 @@ defmodule Signs.Headway do
   end
 
   defp schedule_update(pid) do
-    Process.send_after(pid, :update_content, @default_duration * 1000)
+    Process.send_after(pid, :update_content, 1_000)
   end
 
   defp schedule_reading_sign(pid, ms) do
