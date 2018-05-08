@@ -102,8 +102,8 @@ defmodule Signs.Headway do
     bridge_status = sign.bridge_engine.status(sign.bridge_id)
     case bridge_status do
       {"Raised", _duration} ->
-        top_message = %Content.Message.Static{text: "Bridge is up"}
-        bottom_message = %Content.Message.Static{text: "Expect SL3 delays"}
+        top_message = %Content.Message.Bridge.Up{}
+        bottom_message = %Content.Message.Bridge.Delays{}
         send_update(sign, %{sign | current_content_top: top_message, current_content_bottom: bottom_message})
       _ ->
         sign
