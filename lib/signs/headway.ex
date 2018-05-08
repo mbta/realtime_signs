@@ -72,7 +72,7 @@ defmodule Signs.Headway do
   def handle_info(:update_content, sign) do
     schedule_update(self())
     updated = case sign.bridge_engine.status(sign.bridge_id) do
-      {"Raised", duration} ->
+      {"Raised", _duration} ->
         %__MODULE__{
           sign |
             current_content_top: %Content.Message.Bridge.Up{},
