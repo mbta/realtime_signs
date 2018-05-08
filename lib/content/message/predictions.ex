@@ -20,7 +20,7 @@ defmodule Content.Message.Predictions do
   }
 
   @spec new(Predictions.Prediction.t(), String.t()) :: t()
-  def new(%Predictions.Prediction{} = prediction, headsign) do
+  def new(%Predictions.Prediction{} = prediction, headsign, width \\ 18) do
     minutes = case prediction.seconds_until_arrival do
       0 -> :boarding
       x when x in 1..60 -> :arriving
@@ -30,6 +30,7 @@ defmodule Content.Message.Predictions do
     %__MODULE__{
       headsign: headsign,
       minutes: minutes,
+      width: width,
     }
   end
 

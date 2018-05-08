@@ -20,6 +20,12 @@ defmodule Content.Message.PredictionsTest do
       assert Content.Message.to_string(msg) == "Mattapan       ARR"
     end
 
+    test "can use a shorter line length" do
+      prediction = %Predictions.Prediction{seconds_until_arrival: 550}
+      msg = Content.Message.Predictions.new(prediction, "Mattapan", 15)
+      assert Content.Message.to_string(msg) == "Mattapan  9 min"
+    end
+
     test "1 minute (singular) prediction" do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 65
