@@ -8,6 +8,7 @@ defmodule Signs.Headway do
     :route_id,
     :headsign,
     :headway_engine,
+    :bridge_engine,
     :sign_updater,
     :read_sign_period_ms,
   ]
@@ -26,6 +27,7 @@ defmodule Signs.Headway do
     route_id: String.t(),
     headsign: String.t(),
     headway_engine: module(),
+    bridge_engine: module(),
     sign_updater: module(),
     current_content_bottom: Content.Message.t() | nil,
     current_content_top: Content.Message.t() | nil,
@@ -39,6 +41,7 @@ defmodule Signs.Headway do
   def start_link(%{"type" => "headway"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
     headway_engine = opts[:headway_engine] || Engine.Headways
+    bridge_engine = opts[:bridge_engine] || Engine.Bridge
 
     sign = %__MODULE__{
       id: config["id"],
@@ -52,6 +55,7 @@ defmodule Signs.Headway do
       timer: nil,
       sign_updater: sign_updater,
       headway_engine: headway_engine,
+      bridge_engine: bridge_engine,
       read_sign_period_ms: 5 * 60 * 1000,
     }
 
@@ -95,8 +99,7 @@ defmodule Signs.Headway do
     sign
   end
   defp do_check_bridge(sign) do
-    bridge_request = Application.get_env(:realtime_signs, :bridge_requester)
-    bridge_status = bridge_request.get_status(sign.bridge_id)
+    bridge_status = sign.bridge_engine.status(sign.bridge_id)
     case bridge_status do
       {"Raised", _duration} ->
         top_message = %Content.Message.Static{text: "Bridge is up"}

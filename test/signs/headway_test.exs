@@ -11,6 +11,7 @@ defmodule Signs.HeadwayTest do
     route_id: "743",
     headsign: "Chelsea",
     headway_engine: FakeHeadwayEngine,
+    bridge_engine: FakeBridgeEngine,
     sign_updater: FakeSignUpdater,
     timer: nil,
     read_sign_period_ms: 30_000,
@@ -93,6 +94,7 @@ defmodule Signs.HeadwayTest do
         route_id: "743",
         headsign: "Chelsea",
         headway_engine: FakeHeadwayEngine,
+        bridge_engine: FakeBridgeEngine,
         sign_updater: FakeSignUpdater,
         read_sign_period_ms: 30_000,
         bridge_id: "down",
@@ -115,6 +117,7 @@ defmodule Signs.HeadwayTest do
         route_id: "743",
         headsign: "Chelsea",
         headway_engine: FakeHeadwayEngine,
+        bridge_engine: FakeBridgeEngine,
         sign_updater: FakeSignUpdater,
         read_sign_period_ms: 30_000,
         bridge_id: "up",
@@ -137,6 +140,7 @@ defmodule Signs.HeadwayTest do
         route_id: "743",
         headsign: "Chelsea",
         headway_engine: FakeHeadwayEngine,
+        bridge_engine: FakeBridgeEngine,
         sign_updater: FakeSignUpdater,
         read_sign_period_ms: 30_000,
         timer: nil,
@@ -163,6 +167,18 @@ defmodule FakeHeadwayEngine do
   end
   def get_headways(_stop_id) do
     {1, 2}
+  end
+end
+
+defmodule FakeBridgeEngine do
+  def status("down") do
+    {"Lowered", nil}
+  end
+  def status("up") do
+    {"Raised", 4}
+  end
+  def status(_) do
+    nil
   end
 end
 
