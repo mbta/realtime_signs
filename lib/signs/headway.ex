@@ -8,11 +8,13 @@ defmodule Signs.Headway do
     :route_id,
     :headsign,
     :headway_engine,
+    :bridge_engine,
     :sign_updater,
     :read_sign_period_ms,
   ]
 
   defstruct @enforce_keys ++ [
+    :bridge_id,
     :current_content_bottom,
     :current_content_top,
     :timer,
@@ -25,9 +27,11 @@ defmodule Signs.Headway do
     route_id: String.t(),
     headsign: String.t(),
     headway_engine: module(),
+    bridge_engine: module(),
     sign_updater: module(),
     current_content_bottom: Content.Message.t() | nil,
     current_content_top: Content.Message.t() | nil,
+    bridge_id: String.t(),
     timer: reference() | nil,
     read_sign_period_ms: integer(),
   }
@@ -37,6 +41,7 @@ defmodule Signs.Headway do
   def start_link(%{"type" => "headway"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
     headway_engine = opts[:headway_engine] || Engine.Headways
+    bridge_engine = opts[:bridge_engine] || Engine.Bridge
 
     sign = %__MODULE__{
       id: config["id"],
@@ -46,9 +51,11 @@ defmodule Signs.Headway do
       headsign: config["headsign"],
       current_content_top: Content.Message.Empty.new(),
       current_content_bottom: Content.Message.Empty.new(),
+      bridge_id: config["bridge_id"],
       timer: nil,
       sign_updater: sign_updater,
       headway_engine: headway_engine,
+      bridge_engine: bridge_engine,
       read_sign_period_ms: 5 * 60 * 1000,
     }
 
@@ -64,11 +71,20 @@ defmodule Signs.Headway do
 
   def handle_info(:update_content, sign) do
     schedule_update(self())
-    updated = %__MODULE__{
-      sign |
-      current_content_top: %Content.Message.Headways.Top{headsign: sign.headsign, vehicle_type: vehicle_type(sign.route_id)},
-      current_content_bottom: bottom_content(sign.headway_engine.get_headways(sign.gtfs_stop_id))
-    }
+    updated = case sign.bridge_engine.status(sign.bridge_id) do
+      {"Raised", _duration} ->
+        %{
+          sign |
+            current_content_top: %Content.Message.Bridge.Up{},
+            current_content_bottom: %Content.Message.Bridge.Delays{}
+        }
+      _ ->
+        %{
+          sign |
+          current_content_top: %Content.Message.Headways.Top{headsign: sign.headsign, vehicle_type: vehicle_type(sign.route_id)},
+          current_content_bottom: bottom_content(sign.headway_engine.get_headways(sign.gtfs_stop_id))
+        }
+    end
 
     send_update(sign, updated)
     {:noreply, updated}
@@ -94,7 +110,7 @@ defmodule Signs.Headway do
   end
 
   defp schedule_update(pid) do
-    Process.send_after(pid, :update_content, @default_duration * 1000)
+    Process.send_after(pid, :update_content, 1_000)
   end
 
   defp schedule_reading_sign(pid, ms) do

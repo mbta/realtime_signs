@@ -11,6 +11,7 @@ defmodule Signs.HeadwayTest do
     route_id: "743",
     headsign: "Chelsea",
     headway_engine: FakeHeadwayEngine,
+    bridge_engine: FakeBridgeEngine,
     sign_updater: FakeSignUpdater,
     timer: nil,
     read_sign_period_ms: 30_000,
@@ -52,6 +53,74 @@ defmodule Signs.HeadwayTest do
         handle_info(:update_content, sign)
       end
       assert log =~ "update_sign called"
+    end
+
+    test "if the bridge is down, does not update the sign" do
+      sign = %Signs.Headway{
+        id: "SIGN",
+        pa_ess_id: "1",
+        gtfs_stop_id: "123",
+        route_id: "743",
+        headsign: "Chelsea",
+        headway_engine: FakeHeadwayEngine,
+        bridge_engine: FakeBridgeEngine,
+        sign_updater: FakeSignUpdater,
+        read_sign_period_ms: 30_000,
+        bridge_id: "down",
+        timer: nil,
+        current_content_top: %Content.Message.Headways.Top{headsign: "Chelsea", vehicle_type: :bus},
+        current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}
+      }
+
+      log = capture_log [level: :info], fn ->
+        handle_info(:update_content, sign)
+      end
+      assert log != "update_sign called"
+    end
+
+    test "if the bridge is up, updates the sign" do
+      sign = %Signs.Headway{
+        id: "SIGN",
+        pa_ess_id: "1",
+        gtfs_stop_id: "123",
+        route_id: "743",
+        headsign: "Chelsea",
+        headway_engine: FakeHeadwayEngine,
+        bridge_engine: FakeBridgeEngine,
+        sign_updater: FakeSignUpdater,
+        read_sign_period_ms: 30_000,
+        bridge_id: "up",
+        timer: nil,
+        current_content_top: %Content.Message.Headways.Top{headsign: "Chelsea", vehicle_type: :bus},
+        current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}
+      }
+
+      log = capture_log [level: :info], fn ->
+        assert {:noreply, %{current_content_top: %Content.Message.Bridge.Up{}, current_content_bottom: %Content.Message.Bridge.Delays{}}} = handle_info(:update_content, sign)
+      end
+      assert log =~ "update_sign called"
+    end
+
+    test "if there is no bridge id, does not update the sign" do
+      sign = %Signs.Headway{
+        id: "SIGN",
+        pa_ess_id: "1",
+        gtfs_stop_id: "123",
+        route_id: "743",
+        headsign: "Chelsea",
+        headway_engine: FakeHeadwayEngine,
+        bridge_engine: FakeBridgeEngine,
+        sign_updater: FakeSignUpdater,
+        read_sign_period_ms: 30_000,
+        timer: nil,
+        current_content_top: %Content.Message.Headways.Top{headsign: "Chelsea", vehicle_type: :bus},
+        current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}
+      }
+
+      log = capture_log [level: :info], fn ->
+        handle_info(:update_content, sign)
+      end
+      assert log != "update_sign called"
     end
   end
 
@@ -96,6 +165,18 @@ defmodule FakeHeadwayEngine do
   end
   def get_headways(_stop_id) do
     {1, 2}
+  end
+end
+
+defmodule FakeBridgeEngine do
+  def status("down") do
+    {"Lowered", nil}
+  end
+  def status("up") do
+    {"Raised", 4}
+  end
+  def status(_) do
+    nil
   end
 end
 
