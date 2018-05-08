@@ -16,6 +16,16 @@ defmodule Engine.Bridge do
     GenServer.start_link(__MODULE__, [], name: name)
   end
 
+  @spec status(GenServer.server(), bridge_id) :: {status, duration}
+  def status(pid \\ __MODULE__, id) do
+    GenServer.call(pid, {:status, id})
+  end
+
+  @spec update(GenServer.server()) :: t
+  def update(pid \\ __MODULE__) do
+    Kernel.send(pid, :update)
+  end
+
   @spec init(any()) :: {:ok, any()}
   def init(_) do
     schedule_update(self())
@@ -32,14 +42,6 @@ defmodule Engine.Bridge do
 
   def handle_call({:status, id}, _from, state) do
     {:reply, state[id], state}
-  end
-
-  def status(pid \\ __MODULE__, id) do
-    GenServer.call(pid, {:status, id})
-  end
-
-  def update(pid \\ __MODULE__) do
-    Kernel.send(pid, :update)
   end
 
   defp schedule_update(pid) do
