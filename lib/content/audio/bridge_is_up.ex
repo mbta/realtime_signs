@@ -10,10 +10,10 @@ defmodule Content.Audio.BridgeIsUp do
 
   @type t :: %__MODULE__{
     language: :english | :spanish,
-    time_estimate_mins: integer() | :soon
+    time_estimate_mins: integer() | nil
   }
 
-  @spec create_bridge_messages(String.t) :: {t(), t()}
+  @spec create_bridge_messages(integer | nil) :: {t(), t()}
   def create_bridge_messages(minutes) do
     english = %__MODULE__{
       language: :english,
@@ -30,12 +30,12 @@ defmodule Content.Audio.BridgeIsUp do
       {message_id(audio), vars(audio), :audio_visual}
     end
 
-    defp message_id(%{language: :english, time_estimate_mins: :soon}), do: "136"
+    defp message_id(%{language: :english, time_estimate_mins: nil}), do: "136"
     defp message_id(%{language: :english, time_estimate_mins: _mins}), do: "135"
-    defp message_id(%{language: :spanish, time_estimate_mins: :soon}), do: "157"
+    defp message_id(%{language: :spanish, time_estimate_mins: nil}), do: "157"
     defp message_id(%{language: :spanish, time_estimate_mins: _mins}), do: "152"
 
-    defp vars(%{language: _language, time_estimate_mins: :soon}), do: []
+    defp vars(%{language: _language, time_estimate_mins: nil}), do: []
     defp vars(%{language: language, time_estimate_mins: mins}) do
       [Utilities.number_var(mins, language)]
     end

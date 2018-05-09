@@ -34,10 +34,25 @@ defmodule Bridge.Request do
 
   defp do_parse_response(response) do
     status = get_in(response, ["bridge", "bridgeStatusId", "status"])
-    duration = get_in(response, ["lift_estimate", "duration"])
-    Logger.info("bridge_response status=#{inspect status} duration=#{inspect duration}")
-
+    estimate_time_string = get_in(response, ["lift_estimate", "estimate_time"])
+    Logger.info("bridge_response status=#{inspect status} estimate_time=#{estimate_time_string}")
+    duration = get_duration(estimate_time_string, Timex.now())
     {status, duration}
+  end
+
+  def get_duration(estimate_time_string, current_time) do
+    estimate_time_string
+    |> Timex.parse("{ISO:Extended}")
+    |> do_get_duration(current_time)
+  end
+
+  defp do_get_duration({:ok, estimate_time}, current_time) do
+    time_zone = Application.get_env(:realtime_signs, :time_zone)
+    estimate_datetime = Timex.to_datetime(estimate_time, time_zone)
+    round(Timex.diff(estimate_datetime, current_time, :seconds) / 60)
+  end
+  defp do_get_duration(_, _current_time) do
+    nil
   end
 
   defp get_auth_header() do
