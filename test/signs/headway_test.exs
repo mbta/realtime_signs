@@ -134,6 +134,14 @@ defmodule Signs.HeadwayTest do
       assert_received({:send_audio, {{"ABCD", "n"}, %Content.Audio.BusesToDestination{next_bus_mins: 10, later_bus_mins: 12, language: :spanish}, 5, 120}})
     end
 
+    test "sends bridge audio message if bridge is up" do
+      Process.register(self(), :headway_test_fake_updater_listener)
+      sign = %{@sign | bridge_id: "up"}
+      assert {:noreply, %Signs.Headway{}} = Signs.Headway.handle_info(:read_sign, sign)
+      assert_received({:send_audio, {{"ABCD", "n"}, %Content.Audio.BridgeIsUp{language: :english, time_estimate_mins: 15}, 5, 120}})
+      assert_received({:send_audio, {{"ABCD", "n"}, %Content.Audio.BridgeIsUp{language: :spanish, time_estimate_mins: 15}, 5, 120}})
+    end
+
     test "callback is invoked periodically" do
       Process.register(self(), :headway_test_fake_updater_listener)
       sign = %{@sign |
@@ -174,7 +182,7 @@ defmodule FakeBridgeEngine do
     {"Lowered", nil}
   end
   def status("up") do
-    {"Raised", 4}
+    {"Raised", 15}
   end
   def status(_) do
     nil
