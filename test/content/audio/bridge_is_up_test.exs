@@ -6,7 +6,7 @@ defmodule Content.Audio.BridgeIsUpTest do
   test "Bridge is up (no time estimate) in English" do
     audio = %Content.Audio.BridgeIsUp{
       language: :english,
-      time_estimate_mins: :soon
+      time_estimate_mins: nil
     }
     assert Content.Audio.to_params(audio) == {"136", [], :audio_visual}
   end
@@ -22,7 +22,7 @@ defmodule Content.Audio.BridgeIsUpTest do
   test "Bridge is up (no time estimate) in Spanish" do
     audio = %Content.Audio.BridgeIsUp{
       language: :spanish,
-      time_estimate_mins: :soon
+      time_estimate_mins: nil
     }
     assert Content.Audio.to_params(audio) == {"157", [], :audio_visual}
   end
