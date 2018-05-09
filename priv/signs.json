@@ -138,7 +138,7 @@
   {
     "id": "chelsea_inbound",
     "pa_ess_loc": "SCHS",
-    "pa_ess_zone": "e",
+    "pa_ess_zone": "w",
     "headsign": "South Station",
     "bridge_id": 1,
     "gtfs_stop_id": "74630",
@@ -146,19 +146,9 @@
     "type": "headway"
   },
   {
-    "id": "chelsea_outbound",
-    "pa_ess_loc": "SCHS",
-    "pa_ess_zone": "w",
-    "headsign": "Chelsea",
-    "bridge_id": 1,
-    "gtfs_stop_id": "74631",
-    "route_id": "743",
-    "type": "headway"
-  },
-  {
     "id": "bellingham_square_inbound",
-    "pa_ess_loc": "SBQS",
-    "pa_ess_zone": "e",
+    "pa_ess_loc": "SBSQ",
+    "pa_ess_zone": "w",
     "headsign": "South Station",
     "bridge_id": 1,
     "gtfs_stop_id": "74632",
@@ -167,8 +157,8 @@
   },
   {
     "id": "bellingham_square_outbound",
-    "pa_ess_loc": "SBQS",
-    "pa_ess_zone": "w",
+    "pa_ess_loc": "SBSQ",
+    "pa_ess_zone": "e",
     "headsign": "Chelsea",
     "bridge_id": 1,
     "gtfs_stop_id": "74633",
@@ -198,7 +188,7 @@
   {
     "id": "eastern_ave_inbound",
     "pa_ess_loc": "SEAV",
-    "pa_ess_zone": "e",
+    "pa_ess_zone": "w",
     "headsign": "South Station",
     "bridge_id": 1,
     "gtfs_stop_id": "74636",
@@ -208,7 +198,7 @@
   {
     "id": "eastern_ave_outbound",
     "pa_ess_loc": "SEAV",
-    "pa_ess_zone": "w",
+    "pa_ess_zone": "e",
     "headsign": "Chelsea",
     "bridge_id": 1,
     "gtfs_stop_id": "74637",
