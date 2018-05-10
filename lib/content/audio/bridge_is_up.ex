@@ -1,6 +1,10 @@
 defmodule Content.Audio.BridgeIsUp do
   @moduledoc """
-  Buses to Chelsea / S. Station arrive every [Number] to [Number] minutes
+  The Chelsea Street bridge is raised.
+
+  We expect it to be lowered soon. / We expect this to last for at least [Number] more minutes.
+
+  SL3 buses may be delayed, detoured, or turned back.
   """
 
   require Logger
