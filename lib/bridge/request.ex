@@ -47,8 +47,8 @@ defmodule Bridge.Request do
   end
 
   defp do_get_duration({:ok, estimate_time}, current_time) do
-    # time_zone = Application.get_env(:realtime_signs, :time_zone)
-    # estimate_datetime = Timex.to_datetime(estimate_time, time_zone)
+    time_zone = Application.get_env(:realtime_signs, :time_zone)
+    estimate_datetime = Timex.to_datetime(estimate_time, time_zone)
     Timex.diff(estimate_time, current_time, :minutes)
   end
   defp do_get_duration(_, _current_time) do
