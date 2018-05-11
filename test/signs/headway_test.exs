@@ -20,7 +20,8 @@ defmodule Signs.HeadwayTest do
   describe "callback update_content" do
     test "updates the top and bottom contents" do
       log = capture_log [level: :info], fn ->
-        assert handle_info(:update_content, @sign) == {:noreply, %{@sign | current_content_top: %Content.Message.Headways.Top{headsign: "Chelsea", vehicle_type: :bus}, current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}}}
+        {:noreply, %{timer: timer, current_content_top: %Content.Message.Headways.Top{headsign: "Chelsea", vehicle_type: :bus}, current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}}} = handle_info(:update_content, @sign)
+        refute is_nil(timer)
       end
       assert log =~ "update_sign called"
     end

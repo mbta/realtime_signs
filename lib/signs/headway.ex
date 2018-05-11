@@ -86,7 +86,7 @@ defmodule Signs.Headway do
         }
     end
 
-    send_update(sign, updated)
+    updated = send_update(sign, updated)
     {:noreply, updated}
   end
   def handle_info(:read_sign, sign) do
@@ -98,10 +98,10 @@ defmodule Signs.Headway do
     {:noreply, %{sign | current_content_top: Content.Message.Empty.new(), current_content_bottom: Content.Message.Empty.new()}}
   end
 
-  defp send_update(%{current_content_bottom: same} = sign, %{current_content_bottom: same}) do
+  defp send_update(%{current_content_bottom: same}, %{current_content_bottom: same} = sign) do
     sign
   end
-  defp send_update(sign, %{current_content_top: new_top, current_content_bottom: new_bottom}) do
+  defp send_update(_old_sign, %{current_content_top: new_top, current_content_bottom: new_bottom} = sign) do
     sign.sign_updater.update_sign(sign.pa_ess_id, "1", new_top, @default_duration, :now)
     sign.sign_updater.update_sign(sign.pa_ess_id, "2", new_bottom, @default_duration, :now)
     if sign.timer, do: Process.cancel_timer(sign.timer)
