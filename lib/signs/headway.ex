@@ -18,6 +18,7 @@ defmodule Signs.Headway do
     :current_content_bottom,
     :current_content_top,
     :timer,
+    :bridge_delay_duration,
   ]
 
   @type t :: %{
@@ -34,6 +35,7 @@ defmodule Signs.Headway do
     bridge_id: String.t(),
     timer: reference() | nil,
     read_sign_period_ms: integer(),
+    bridge_delay_duration: integer() | nil,
   }
 
   @default_duration 60
@@ -72,17 +74,19 @@ defmodule Signs.Headway do
   def handle_info(:update_content, sign) do
     schedule_update(self())
     updated = case sign.bridge_engine.status(sign.bridge_id) do
-      {"Raised", _duration} ->
+      {"Raised", duration} ->
         %{
           sign |
             current_content_top: %Content.Message.Bridge.Up{},
-            current_content_bottom: %Content.Message.Bridge.Delays{}
+            current_content_bottom: %Content.Message.Bridge.Delays{},
+            bridge_delay_duration: clean_duration(duration),
         }
       _ ->
         %{
           sign |
           current_content_top: %Content.Message.Headways.Top{headsign: sign.headsign, vehicle_type: vehicle_type(sign.route_id)},
-          current_content_bottom: bottom_content(sign.headway_engine.get_headways(sign.gtfs_stop_id))
+          current_content_bottom: bottom_content(sign.headway_engine.get_headways(sign.gtfs_stop_id)),
+          bridge_delay_duration: nil,
         }
     end
 
@@ -91,16 +95,22 @@ defmodule Signs.Headway do
   end
   def handle_info(:read_sign, sign) do
     schedule_reading_sign(self(), sign.read_sign_period_ms)
-    case sign.bridge_engine.status(sign.bridge_id) do
-      {"Raised", duration} ->
-        read_bridge_messages(sign, duration)
-      _ ->
-        read_headway(sign)
-      end
+    read_headway(sign)
     {:noreply, sign}
   end
   def handle_info(:expire, sign) do
     {:noreply, %{sign | current_content_top: Content.Message.Empty.new(), current_content_bottom: Content.Message.Empty.new()}}
+  end
+  def handle_info(:bridge_announcement_update, sign) do
+    if sign.current_content_top == %Content.Message.Bridge.Up{} do
+      read_bridge_messages(sign)
+      schedule_bridge_announcement_update(self())
+    end
+    {:noreply, sign}
+  end
+  def handle_info(msg, sign) do
+    Logger.warn("Signs.Headway #{inspect(sign.id)} unknown message: #{inspect msg}")
+    {:noreply, sign}
   end
 
   defp send_update(%{current_content_bottom: same}, %{current_content_bottom: same} = sign) do
@@ -109,6 +119,12 @@ defmodule Signs.Headway do
   defp send_update(_old_sign, %{current_content_top: new_top, current_content_bottom: new_bottom} = sign) do
     sign.sign_updater.update_sign(sign.pa_ess_id, "1", new_top, @default_duration, :now)
     sign.sign_updater.update_sign(sign.pa_ess_id, "2", new_bottom, @default_duration, :now)
+
+    if new_top == %Content.Message.Bridge.Up{} do
+      read_bridge_messages(sign)
+      schedule_bridge_announcement_update(self())
+    end
+
     if sign.timer, do: Process.cancel_timer(sign.timer)
     timer = Process.send_after(self(), :expire, @default_duration * 1000 - 5000)
     %{sign | current_content_top: new_top, current_content_bottom: new_bottom, timer: timer}
@@ -120,6 +136,10 @@ defmodule Signs.Headway do
 
   defp schedule_reading_sign(pid, ms) do
     Process.send_after(pid, :read_sign, ms)
+  end
+
+  defp schedule_bridge_announcement_update(pid) do
+    Process.send_after(pid, :bridge_announcement_update, 5 * 60 * 1_000)
   end
 
   defp vehicle_type("Mattapan"), do: :trolley
@@ -149,9 +169,12 @@ defmodule Signs.Headway do
     end
   end
 
-  defp read_bridge_messages(sign, duration) do
+  defp read_bridge_messages(%{bridge_delay_duration: duration} = sign) do
     {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
     sign.sign_updater.send_audio(sign.pa_ess_id, english, 5, 120)
     sign.sign_updater.send_audio(sign.pa_ess_id, spanish, 5, 120)
   end
+
+  defp clean_duration(n) when is_integer(n) and n >= 1, do: n
+  defp clean_duration(_), do: nil
 end
