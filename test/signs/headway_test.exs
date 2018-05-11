@@ -162,6 +162,28 @@ defmodule Signs.HeadwayTest do
       assert_received({:send_audio, {{"ABCD", "n"}, %Content.Audio.BusesToDestination{language: :english}, 5, 120}})
     end
   end
+
+  describe "bridge announcement callback" do
+    test "reads bridge message if bridge is up" do
+      Process.register(self(), :headway_test_fake_updater_listener)
+      sign = %{@sign | current_content_top: %Content.Message.Bridge.Up{}}
+      {:noreply, %Signs.Headway{}} = Signs.Headway.handle_info(:bridge_announcement_update, sign)
+      assert_received({:send_audio, {_, %Content.Audio.BridgeIsUp{language: :english}, _, _}})
+      assert_received({:send_audio, {_, %Content.Audio.BridgeIsUp{language: :spanish}, _, _}})
+    end
+
+    test "does not read message is bridge is not up" do
+      Process.register(self(), :headway_test_fake_updater_listener)
+      sign = %{@sign | current_content_top: %Content.Message.Empty{}}
+      {:noreply, %Signs.Headway{}} = Signs.Headway.handle_info(:bridge_announcement_update, sign)
+      refute_received({:send_audio, {_, %Content.Audio.BridgeIsUp{language: :english}, _, _}})
+      refute_received({:send_audio, {_, %Content.Audio.BridgeIsUp{language: :spanish}, _, _}})
+    end
+  end
+
+  test "handles unknown messages" do
+    assert {:noreply, %Signs.Headway{}} = Signs.Headway.handle_info(:unknown, @sign)
+  end
 end
 
 defmodule FakeHeadwayEngine do
