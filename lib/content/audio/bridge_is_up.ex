@@ -19,13 +19,10 @@ defmodule Content.Audio.BridgeIsUp do
 
   @spec create_bridge_messages(integer | nil) :: {t(), t()}
   def create_bridge_messages(minutes) do
-    english = %__MODULE__{
-      language: :english,
-      time_estimate_mins: minutes
-    }
-    spanish = %{english | language: :spanish}
-    {english, spanish}
+    {create(:english, minutes), create(:spanish, minutes)}
   end
+
+  defp create(language, minutes), do: %__MODULE__{language: language, time_estimate_mins: minutes}
 
   defimpl Content.Audio do
     alias PaEss.Utilities
