@@ -3,5 +3,5 @@ defmodule GTFS do
   Module for types or functions related to GTFS
   """
 
-  @type id :: String.t
+  @type station_id :: String.t
 end
