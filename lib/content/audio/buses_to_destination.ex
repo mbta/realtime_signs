@@ -16,9 +16,9 @@ defmodule Content.Audio.BusesToDestination do
   }
 
   @spec from_headway_message(Content.Message.t(), String.t) :: t() | nil
-  def from_headway_message(msg, dest) do
-    with %Content.Message.Headways.Bottom{range: range} <- msg,
-         {:ok, destination} <- convert_destination(dest),
+  def from_headway_message(%Content.Message.Headways.Bottom{range: range} = msg, dest)
+  when range != {nil, nil} do
+    with {:ok, destination} <- convert_destination(dest),
          {x, y} <- get_mins(range) do
       english = %__MODULE__{
         language: :english,
@@ -34,12 +34,14 @@ defmodule Content.Audio.BusesToDestination do
         nil
     end
   end
+  def from_headway_message(_msg, _dest) do
+    nil
+  end
 
   defp convert_destination("Chelsea"), do: {:ok, :chelsea}
   defp convert_destination("South Station"), do: {:ok, :south_station}
   defp convert_destination(_), do: {:error, :unknown_destination}
 
-  defp get_mins({nil, nil}), do: :nil
   defp get_mins({x, nil}), do: {x, x+2}
   defp get_mins({nil, x}), do: {x, x+2}
   defp get_mins({x, x}), do: {x, x+2}
