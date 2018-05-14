@@ -65,9 +65,9 @@ defmodule PaEss.HttpUpdaterTest do
 
     test "Chelsea bridge raised, expect delays" do
       state = make_state(%{uid: 1002})
-      audio = %Content.Audio.ChelseaBridgeRaisedDelays{
+      audio = %Content.Audio.BridgeIsUp{
         language: :english,
-        delay_minutes: 10,
+        time_estimate_mins: 10,
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1003}} ==

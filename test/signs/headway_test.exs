@@ -134,6 +134,14 @@ defmodule Signs.HeadwayTest do
       assert_received({:send_audio, {{"ABCD", "n"}, %Content.Audio.BusesToDestination{next_bus_mins: 10, later_bus_mins: 12, language: :spanish}, 5, 120}})
     end
 
+    test "does not send audio message if bridge is up" do
+      Process.register(self(), :headway_test_fake_updater_listener)
+      sign = %{@sign | current_content_bottom: %Content.Message.Bridge.Delays{}}
+      assert {:noreply, %Signs.Headway{}} = Signs.Headway.handle_info(:read_sign, sign)
+      refute_received({:send_audio, {{"ABCD", "n"}, %Content.Audio.BusesToDestination{next_bus_mins: 10, later_bus_mins: 12, language: :english}, 5, 120}})
+      refute_received({:send_audio, {{"ABCD", "n"}, %Content.Audio.BusesToDestination{next_bus_mins: 10, later_bus_mins: 12, language: :spanish}, 5, 120}})
+    end
+
     test "callback is invoked periodically" do
       Process.register(self(), :headway_test_fake_updater_listener)
       sign = %{@sign |
@@ -152,6 +160,28 @@ defmodule Signs.HeadwayTest do
       :timer.sleep(100)
       assert_received({:send_audio, {{"ABCD", "n"}, %Content.Audio.BusesToDestination{language: :english}, 5, 120}})
     end
+  end
+
+  describe "bridge announcement callback" do
+    test "reads bridge message if bridge is up" do
+      Process.register(self(), :headway_test_fake_updater_listener)
+      sign = %{@sign | current_content_top: %Content.Message.Bridge.Up{}}
+      {:noreply, %Signs.Headway{}} = Signs.Headway.handle_info(:bridge_announcement_update, sign)
+      assert_received({:send_audio, {_, %Content.Audio.BridgeIsUp{language: :english}, _, _}})
+      assert_received({:send_audio, {_, %Content.Audio.BridgeIsUp{language: :spanish}, _, _}})
+    end
+
+    test "does not read message is bridge is not up" do
+      Process.register(self(), :headway_test_fake_updater_listener)
+      sign = %{@sign | current_content_top: %Content.Message.Empty{}}
+      {:noreply, %Signs.Headway{}} = Signs.Headway.handle_info(:bridge_announcement_update, sign)
+      refute_received({:send_audio, {_, %Content.Audio.BridgeIsUp{language: :english}, _, _}})
+      refute_received({:send_audio, {_, %Content.Audio.BridgeIsUp{language: :spanish}, _, _}})
+    end
+  end
+
+  test "handles unknown messages" do
+    assert {:noreply, %Signs.Headway{}} = Signs.Headway.handle_info(:unknown, @sign)
   end
 end
 
@@ -174,7 +204,7 @@ defmodule FakeBridgeEngine do
     {"Lowered", nil}
   end
   def status("up") do
-    {"Raised", 4}
+    {"Raised", 15}
   end
   def status(_) do
     nil

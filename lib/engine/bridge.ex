@@ -35,7 +35,7 @@ defmodule Engine.Bridge do
   def handle_info(:update, _state) do
     schedule_update(self())
     bridge_request = Application.get_env(:realtime_signs, :bridge_requester)
-    bridge_status = bridge_request.get_status("1")
+    bridge_status = bridge_request.get_status("1", Timex.now())
 
     {:noreply, %{"1" => bridge_status}}
   end
