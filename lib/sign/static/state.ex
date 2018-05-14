@@ -35,7 +35,7 @@ defmodule Sign.Static.State do
     schedule_refresh(refresh_time)
     station_ids = Enum.map(stations, & &1.id)
     current_time = :realtime_signs |> Application.get_env(:time_zone) |> Timex.now()
-    bridge_status = Bridge.Request.get_status(@bridge_id)
+    bridge_status = Bridge.Request.get_status(@bridge_id, Timex.now())
     station_headways = station_ids
                        |> Headway.Request.get_schedules()
                        |> ScheduleHeadway.group_headways_for_stations(station_ids, current_time)
