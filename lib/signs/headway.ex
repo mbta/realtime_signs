@@ -38,7 +38,7 @@ defmodule Signs.Headway do
     bridge_delay_duration: integer() | nil,
   }
 
-  @default_duration 60
+  @default_duration 120
 
   def start_link(%{"type" => "headway"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
