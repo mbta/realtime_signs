@@ -204,5 +204,47 @@
     "gtfs_stop_id": "74637",
     "route_id": "743",
     "type": "headway"
+  },
+  {
+    "id": "south_station_silver_line_east",
+    "pa_ess_loc": "SSOU",
+    "pa_ess_zone": "e",
+    "bridge_id": "1",
+    "type": "bridge_only"
+  },
+  {
+    "id": "courtyard_station_east",
+    "pa_ess_loc": "SCOU",
+    "pa_ess_zone": "e",
+    "bridge_id": "1",
+    "type": "bridge_only"
+  },
+  {
+    "id": "world_trade_center_east",
+    "pa_ess_loc": "SWTC",
+    "pa_ess_zone": "e",
+    "bridge_id": "1",
+    "type": "bridge_only"
+  },
+  {
+    "id": "world_trade_center_mezzanine",
+    "pa_ess_loc": "SWTC",
+    "pa_ess_zone": "m",
+    "bridge_id": "1",
+    "type": "bridge_only"
+  },
+  {
+    "id": "courtyard_station_mezzanine",
+    "pa_ess_loc": "SCOU",
+    "pa_ess_zone": "m",
+    "bridge_id": "1",
+    "type": "bridge_only"
+  },
+  {
+    "id": "south_station_red_mezzanine",
+    "pa_ess_loc": "RSOU",
+    "pa_ess_zone": "m",
+    "bridge_id": "1",
+    "type": "bridge_only"
   }
 ]
