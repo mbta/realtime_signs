@@ -9,18 +9,18 @@ defmodule Headway.ScheduleHeadway do
   @headway_padding 2
   @schedule_api_url "https://api-v3.mbta.com/schedules"
 
-  @spec build_request([String.t]) :: String.t
+  @spec build_request([GTFS.id]) :: String.t
   def build_request(station_ids) do
     id_filter = station_ids |> Enum.map(&URI.encode/1) |> Enum.join(",")
     @schedule_api_url <> "?filter[stop]=#{id_filter}"
   end
 
-  @spec group_headways_for_stations([map], [String.t], DateTime.t) :: %{String.t => t}
+  @spec group_headways_for_stations([map], [GTFS.id], DateTime.t) :: %{String.t => t}
   def group_headways_for_stations(schedules, station_ids, current_time) do
     Map.new(station_ids, fn station_id -> {station_id, headway_for_station(schedules, station_id, current_time)} end)
   end
 
-  @spec headway_for_station([map], String.t, DateTime.t) :: t
+  @spec headway_for_station([map], GTFS.id, DateTime.t) :: t
   defp headway_for_station(schedules, station_id, current_time) do
     schedules
     |> Enum.filter(fn schedule -> get_in(schedule, ["relationships", "stop", "data", "id"]) == station_id end)
