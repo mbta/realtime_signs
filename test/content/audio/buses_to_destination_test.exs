@@ -1,5 +1,6 @@
 defmodule Content.Audio.BusesToDestinationTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
+  import ExUnit.CaptureLog
 
   import Content.Audio.BusesToDestination
 
@@ -64,9 +65,14 @@ defmodule Content.Audio.BusesToDestinationTest do
       assert from_headway_message(@msg, "Unknown") == nil
     end
 
-    test "returns nil when range is all nil" do
+    test "returns nil when range is all nil, but doesn't warn" do
       msg = %{@msg | range: {nil, nil}}
-      assert from_headway_message(msg, "Chelsea") == nil
+
+      log = capture_log [level: :warn], fn ->
+        assert from_headway_message(msg, "Chelsea") == nil
+      end
+
+      refute log =~ "from_headway_message"
     end
 
     test "returns nil when range is unexpected" do
