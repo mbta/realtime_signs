@@ -140,7 +140,6 @@ defmodule Signs.HeadwayTest do
       assert {:noreply, %Signs.Headway{}} = Signs.Headway.handle_info(:read_sign, sign)
       refute_received({:send_audio, {{"ABCD", "n"}, %Content.Audio.BusesToDestination{next_bus_mins: 10, later_bus_mins: 12, language: :english}, 5, 120}})
       refute_received({:send_audio, {{"ABCD", "n"}, %Content.Audio.BusesToDestination{next_bus_mins: 10, later_bus_mins: 12, language: :spanish}, 5, 120}})
-
     end
 
     test "callback is invoked periodically" do
