@@ -11,19 +11,15 @@ defmodule PaEss.Utilities do
     n > 0 and n < 21
   end
 
-  @spec number_var(integer(), :english | :spanish) :: {:ok, String.t} | {:error, :invalid}
+  @spec number_var(integer(), :english | :spanish) :: String.t | no_return()
   def number_var(n, :english) do
-    if valid_range?(n, :english) do
-      {:ok, Integer.to_string(5500 + n)}
-    else
-      {:error, :invalid}
+    cond do
+      valid_range?(n, :english) -> Integer.to_string(5500 + n)
     end
   end
   def number_var(n, :spanish) do
-    if valid_range?(n, :spanish) do
-      {:ok, Integer.to_string(37000 + n)}
-    else
-      {:error, :invalid}
+    cond do
+      valid_range?(n, :spanish) -> Integer.to_string(37000 + n)
     end
   end
 
