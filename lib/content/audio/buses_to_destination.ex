@@ -67,9 +67,7 @@ defmodule Content.Audio.BusesToDestination do
     defp message_id(%{language: :spanish, destination: :south_station}), do: "151"
 
     defp vars(%{language: language, next_bus_mins: next, later_bus_mins: later}) do
-      {:ok, next_var} = Utilities.number_var(next, language)
-      {:ok, later_var} = Utilities.number_var(later, language)
-      [next_var, later_var]
+      [Utilities.number_var(next, language), Utilities.number_var(later, language)]
     end
   end
 end
