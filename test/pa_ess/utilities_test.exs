@@ -3,6 +3,13 @@ defmodule Content.Audio.UtilitiesTest do
 
   import PaEss.Utilities
 
+  test "valid_range?" do
+    assert valid_range?(10, :english)
+    assert valid_range?(10, :spanish)
+    refute valid_range?(100, :english)
+    refute valid_range?(100, :spanish)
+  end
+
   test "number_var/2" do
     assert number_var(10, :english) == {:ok, "5510"}
     assert number_var(10, :spanish) == {:ok, "37010"}
