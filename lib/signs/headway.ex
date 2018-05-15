@@ -167,8 +167,8 @@ defmodule Signs.Headway do
 
   defp read_bridge_messages(%{bridge_delay_duration: duration} = sign) do
     {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
-    sign.sign_updater.send_audio(sign.pa_ess_id, english, 5, 120)
-    sign.sign_updater.send_audio(sign.pa_ess_id, spanish, 5, 120)
+    if english, do: sign.sign_updater.send_audio(sign.pa_ess_id, english, 5, 120)
+    if spanish, do: sign.sign_updater.send_audio(sign.pa_ess_id, spanish, 5, 120)
   end
 
   defp clean_duration(n) when is_integer(n) and n >= 1, do: n
