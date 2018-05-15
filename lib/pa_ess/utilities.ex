@@ -3,12 +3,15 @@ defmodule PaEss.Utilities do
   Some simple helpers for working with the PA/ESS system
   """
 
-  @spec number_var(integer(), :english | :spanish) :: String.t
+  @spec number_var(integer(), :english | :spanish) :: {:ok, String.t} | {:error, :invalid}
   def number_var(n, :english) when n > 0 and n < 60 do
-    Integer.to_string(5500 + n)
+    {:ok, Integer.to_string(5500 + n)}
   end
   def number_var(n, :spanish) when n > 0 and n < 21 do
-    Integer.to_string(37000 + n)
+    {:ok, Integer.to_string(37000 + n)}
+  end
+  def number_var(_, _) do
+    {:error, :invalid}
   end
 
   @doc "Recording of the time from 12:01 to 12:59, given the minutes"
