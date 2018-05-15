@@ -7,6 +7,7 @@ defmodule RealtimeSigns do
     import Supervisor.Spec, warn: false
 
     children = [
+      worker(Engine.Config, []),
       worker(Engine.Predictions, []),
       worker(Engine.Headways, []),
       worker(Engine.Bridge, []),

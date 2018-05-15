@@ -1,0 +1,8 @@
+{
+  "chelsea_inbound": {
+    "enabled": true
+  },
+  "chelsea_outbound": {
+    "enabled": false
+  }
+}
