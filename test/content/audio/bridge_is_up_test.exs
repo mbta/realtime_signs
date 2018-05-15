@@ -42,5 +42,12 @@ defmodule Content.Audio.BridgeIsUpTest do
         %Content.Audio.BridgeIsUp{language: :spanish, time_estimate_mins: 5}
       } = create_bridge_messages(5)
     end
+
+    test "returns nil if minutes is out of range for audio" do
+      assert {
+        %Content.Audio.BridgeIsUp{language: :english, time_estimate_mins: 30},
+        nil
+      } = create_bridge_messages(30)
+    end
   end
 end
