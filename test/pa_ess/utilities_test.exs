@@ -4,8 +4,9 @@ defmodule Content.Audio.UtilitiesTest do
   import PaEss.Utilities
 
   test "number_var/2" do
-    assert number_var(10, :english) == "5510"
-    assert number_var(10, :spanish) == "37010"
+    assert number_var(10, :english) == {:ok, "5510"}
+    assert number_var(10, :spanish) == {:ok, "37010"}
+    assert number_var(1000, :english) == {:error, :invalid}
   end
 
   test "time_var/1" do
