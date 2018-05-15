@@ -69,5 +69,6 @@ defmodule Signs.BridgeOnlyTest do
 
     assert {:noreply, %Signs.BridgeOnly{}} = Signs.BridgeOnly.handle_info(:bridge_check, sign)
     refute_received {:send_audio, _}
+    refute_received :update_sign
   end
 end
