@@ -160,13 +160,9 @@ defmodule Signs.Headway do
   end
 
   defp read_headway(%{current_content_bottom: msg} = sign) do
-    case Content.Audio.BusesToDestination.from_headway_message(msg, sign.headsign) do
-      {english, spanish} ->
-        sign.sign_updater.send_audio(sign.pa_ess_id, english, 5, 120)
-        sign.sign_updater.send_audio(sign.pa_ess_id, spanish, 5, 120)
-      nil ->
-        nil
-    end
+    {english, spanish} = Content.Audio.BusesToDestination.from_headway_message(msg, sign.headsign)
+    if english, do: sign.sign_updater.send_audio(sign.pa_ess_id, english, 5, 120)
+    if spanish, do: sign.sign_updater.send_audio(sign.pa_ess_id, spanish, 5, 120)
   end
 
   defp read_bridge_messages(%{bridge_delay_duration: duration} = sign) do
