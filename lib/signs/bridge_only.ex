@@ -57,8 +57,9 @@ defmodule Signs.BridgeOnly do
     case sign.bridge_engine.status(sign.bridge_id) do
       {"Raised", duration} ->
         {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
-        if english, do: sign.sign_updater.send_audio(sign.pa_ess_id, english, 5, 120)
-        if spanish, do: sign.sign_updater.send_audio(sign.pa_ess_id, spanish, 5, 120)
+        for audio <- [english, spanish] do
+          if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120)
+        end
       _ ->
         nil
     end
