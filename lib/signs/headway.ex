@@ -160,19 +160,17 @@ defmodule Signs.Headway do
   end
 
   defp read_headway(%{current_content_bottom: msg} = sign) do
-    case Content.Audio.BusesToDestination.from_headway_message(msg, sign.headsign) do
-      {english, spanish} ->
-        sign.sign_updater.send_audio(sign.pa_ess_id, english, 5, 120)
-        sign.sign_updater.send_audio(sign.pa_ess_id, spanish, 5, 120)
-      nil ->
-        nil
+    {english, spanish} = Content.Audio.BusesToDestination.from_headway_message(msg, sign.headsign)
+    for audio <- [english, spanish] do
+      if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120)
     end
   end
 
   defp read_bridge_messages(%{bridge_delay_duration: duration} = sign) do
     {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
-    sign.sign_updater.send_audio(sign.pa_ess_id, english, 5, 120)
-    sign.sign_updater.send_audio(sign.pa_ess_id, spanish, 5, 120)
+    for audio <- [english, spanish] do
+      if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120)
+    end
   end
 
   defp clean_duration(n) when is_integer(n) and n >= 1, do: n
