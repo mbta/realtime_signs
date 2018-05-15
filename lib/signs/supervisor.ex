@@ -36,6 +36,7 @@ defmodule Signs.Supervisor do
   defp sign_module(%{"type" => "countdown"}), do: Signs.Countdown
   defp sign_module(%{"type" => "single"}), do: Signs.Single
   defp sign_module(%{"type" => "headway"}), do: Signs.Headway
+  defp sign_module(%{"type" => "bridge_only"}), do: Signs.BridgeOnly
 
   defp children_config() do
     :realtime_signs
