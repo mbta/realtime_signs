@@ -61,15 +61,15 @@ defmodule Content.Audio.BusesToDestinationTest do
       } = from_headway_message(@msg, "South Station")
     end
 
-    test "returns nil for an unknown destination" do
-      assert from_headway_message(@msg, "Unknown") == nil
+    test "returns nils for an unknown destination" do
+      assert from_headway_message(@msg, "Unknown") == {nil, nil}
     end
 
-    test "returns nil when range is all nil, but doesn't warn" do
+    test "returns nils when range is all nil, but doesn't warn" do
       msg = %{@msg | range: {nil, nil}}
 
       log = capture_log [level: :warn], fn ->
-        assert from_headway_message(msg, "Chelsea") == nil
+        assert from_headway_message(msg, "Chelsea") == {nil, nil}
       end
 
       refute log =~ "from_headway_message"
@@ -77,7 +77,7 @@ defmodule Content.Audio.BusesToDestinationTest do
 
     test "returns nil when range is unexpected" do
       msg = %{@msg | range: {:a, :b, :c}}
-      assert from_headway_message(msg, "Chelsea") == nil
+      assert from_headway_message(msg, "Chelsea") == {nil, nil}
     end
 
     test "returns a padded range when one value is missing or values are the same" do
@@ -103,6 +103,14 @@ defmodule Content.Audio.BusesToDestinationTest do
           %Content.Audio.BusesToDestination{language: :spanish, next_bus_mins: 10, later_bus_mins: 15}
         } = from_headway_message(msg, "Chelsea")
       end)
+    end
+
+    test "returns an english struct but not a spanish, if number is out of the latter range" do
+      msg = %{@msg | range: {20, 25}}
+      assert {
+        %Content.Audio.BusesToDestination{language: :english, next_bus_mins: 20, later_bus_mins: 25},
+        nil
+      } = from_headway_message(msg, "Chelsea")
     end
   end
 end

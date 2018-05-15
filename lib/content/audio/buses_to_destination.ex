@@ -4,6 +4,7 @@ defmodule Content.Audio.BusesToDestination do
   """
 
   require Logger
+  alias PaEss.Utilities
 
   @enforce_keys [:language, :destination, :next_bus_mins, :later_bus_mins]
   defstruct @enforce_keys
@@ -15,27 +16,33 @@ defmodule Content.Audio.BusesToDestination do
     later_bus_mins: integer(),
   }
 
-  @spec from_headway_message(Content.Message.t(), String.t) :: t() | nil
+  @spec from_headway_message(Content.Message.t(), String.t) :: {t() | nil, t() | nil}
   def from_headway_message(%Content.Message.Headways.Bottom{range: range} = msg, dest)
   when range != {nil, nil} do
     with {:ok, destination} <- convert_destination(dest),
          {x, y} <- get_mins(range) do
-      english = %__MODULE__{
-        language: :english,
-        destination: destination,
-        next_bus_mins: x,
-        later_bus_mins: y,
-      }
-      spanish = %{english | language: :spanish}
-      {english, spanish}
+      {create(:english, destination, x, y), create(:spanish, destination, x, y)}
     else
       _ ->
         Logger.warn("Content.Audio.BusesToDestination.from_headway_message: #{inspect(msg)}, #{dest}")
-        nil
+        {nil, nil}
     end
   end
   def from_headway_message(_msg, _dest) do
-    nil
+    {nil, nil}
+  end
+
+  defp create(language, destination, next_mins, later_mins) do
+    case {Utilities.number_var(next_mins, language), Utilities.number_var(later_mins, language)} do
+      {{:ok, _}, {:ok, _}} ->
+        %__MODULE__{
+          language: language,
+          destination: destination,
+          next_bus_mins: next_mins,
+          later_bus_mins: later_mins,
+        }
+      _ -> nil
+    end
   end
 
   defp convert_destination("Chelsea"), do: {:ok, :chelsea}
