@@ -27,9 +27,8 @@ defmodule Content.Audio.BridgeIsUp do
     %__MODULE__{language: language, time_estimate_mins: nil}
   end
   defp create(language, minutes) do
-    case Utilities.number_var(minutes, language) do
-      {:ok, _} -> %__MODULE__{language: language, time_estimate_mins: minutes}
-      _ -> nil
+    if Utilities.valid_range?(minutes, language) do
+      %__MODULE__{language: language, time_estimate_mins: minutes}
     end
   end
 

@@ -33,15 +33,13 @@ defmodule Content.Audio.BusesToDestination do
   end
 
   defp create(language, destination, next_mins, later_mins) do
-    case {Utilities.number_var(next_mins, language), Utilities.number_var(later_mins, language)} do
-      {{:ok, _}, {:ok, _}} ->
-        %__MODULE__{
-          language: language,
-          destination: destination,
-          next_bus_mins: next_mins,
-          later_bus_mins: later_mins,
-        }
-      _ -> nil
+    if Utilities.valid_range?(next_mins, language) and Utilities.valid_range?(later_mins, language) do
+      %__MODULE__{
+        language: language,
+        destination: destination,
+        next_bus_mins: next_mins,
+        later_bus_mins: later_mins,
+      }
     end
   end
 
