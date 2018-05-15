@@ -3,12 +3,24 @@ defmodule PaEss.Utilities do
   Some simple helpers for working with the PA/ESS system
   """
 
-  @spec number_var(integer(), :english | :spanish) :: String.t
-  def number_var(n, :english) when n > 0 and n < 60 do
-    Integer.to_string(5500 + n)
+  @spec valid_range?(integer(), :english | :spanish) :: boolean()
+  def valid_range?(n, :english) do
+    n > 0 and n < 60
   end
-  def number_var(n, :spanish) when n > 0 and n < 21 do
-    Integer.to_string(37000 + n)
+  def valid_range?(n, :spanish) do
+    n > 0 and n < 21
+  end
+
+  @spec number_var(integer(), :english | :spanish) :: String.t | no_return()
+  def number_var(n, :english) do
+    cond do
+      valid_range?(n, :english) -> Integer.to_string(5500 + n)
+    end
+  end
+  def number_var(n, :spanish) do
+    cond do
+      valid_range?(n, :spanish) -> Integer.to_string(37000 + n)
+    end
   end
 
   @doc "Recording of the time from 12:01 to 12:59, given the minutes"

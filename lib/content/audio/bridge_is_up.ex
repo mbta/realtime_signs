@@ -8,6 +8,7 @@ defmodule Content.Audio.BridgeIsUp do
   """
 
   require Logger
+  alias PaEss.Utilities
 
   @enforce_keys [:language, :time_estimate_mins]
   defstruct @enforce_keys
@@ -17,12 +18,19 @@ defmodule Content.Audio.BridgeIsUp do
     time_estimate_mins: integer() | nil
   }
 
-  @spec create_bridge_messages(integer | nil) :: {t(), t()}
+  @spec create_bridge_messages(integer | nil) :: {t() | nil, t() | nil}
   def create_bridge_messages(minutes) do
     {create(:english, minutes), create(:spanish, minutes)}
   end
 
-  defp create(language, minutes), do: %__MODULE__{language: language, time_estimate_mins: minutes}
+  defp create(language, nil) do
+    %__MODULE__{language: language, time_estimate_mins: nil}
+  end
+  defp create(language, minutes) do
+    if Utilities.valid_range?(minutes, language) do
+      %__MODULE__{language: language, time_estimate_mins: minutes}
+    end
+  end
 
   defimpl Content.Audio do
     alias PaEss.Utilities
