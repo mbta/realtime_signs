@@ -121,7 +121,7 @@ defmodule Signs.Single do
     |> Enum.at(0, Content.Message.Empty.new())
   end
 
-  @spec update(Content.Message.t(), t()) :: t()
+  @spec update(t(), Content.Message.t()) :: t()
   defp update(%{current_content: same} = sign, same) do
     sign
   end
