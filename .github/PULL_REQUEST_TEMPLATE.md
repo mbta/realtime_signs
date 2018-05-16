@@ -11,3 +11,6 @@
   - [ ] `mix compile --force --warnings-as-errors`
   - [ ] `mix test`
   - [ ] `mix dialyzer`
+- [ ] This branch has been deployed to the staging environment
+  - [ ] No increase in warnings/errors
+  - [ ] Any added functionality works properly
