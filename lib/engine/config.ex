@@ -1,5 +1,5 @@
 defmodule Engine.Config do
-  @moduedoc """
+  @moduledoc """
   Manages the dynamic configurable pieces of the signs such as if they are on
   """
 
@@ -10,7 +10,7 @@ defmodule Engine.Config do
     GenServer.start_link(__MODULE__, [], name: name)
   end
 
-  def enabled?(pid \\ __MODULE__, sign_id) do
+  def enabled?(sign_id) do
     case :ets.lookup(:config, sign_id) do
       [{^sign_id, %{"enabled" => false}}] -> false
       _ -> true
@@ -21,7 +21,7 @@ defmodule Engine.Config do
     schedule_update(pid, 0)
   end
 
-  def handle_info(:update, state) do
+  def handle_info(:update, _state) do
     schedule_update(self())
     updater = Application.get_env(:realtime_signs, :external_config_getter)
     config = updater.get()
@@ -34,7 +34,7 @@ defmodule Engine.Config do
   @spec init(any()) :: {:ok, any()}
   def init(_) do
     schedule_update(self())
-    config = :ets.new(:config, [:set, :public, :named_table])
+    :ets.new(:config, [:set, :public, :named_table])
     {:ok, %{}}
   end
 

@@ -81,10 +81,10 @@ defmodule Signs.Countdown do
   def handle_info(:update_content, sign) do
     schedule_update(self())
 
-    if Engine.Config.enabled?(sign.id) do
+    sign = if Engine.Config.enabled?(sign.id) do
       {top, bottom} = get_messages(sign)
-      sign = update_top(sign, top)
-      sign = update_bottom(sign, bottom)
+      new_sign = update_top(sign, top)
+      update_bottom(new_sign, bottom)
     else
       sign
     end
