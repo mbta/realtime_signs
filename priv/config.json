@@ -4,5 +4,8 @@
   },
   "chelsea_outbound": {
     "enabled": false
+  },
+  "MVAL0": {
+    "enabled": false
   }
 }

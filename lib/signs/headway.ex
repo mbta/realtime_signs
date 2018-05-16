@@ -73,25 +73,29 @@ defmodule Signs.Headway do
 
   def handle_info(:update_content, sign) do
     schedule_update(self())
-    updated = case sign.bridge_engine.status(sign.bridge_id) do
-      {"Raised", duration} ->
-        %{
-          sign |
-            current_content_top: %Content.Message.Bridge.Up{},
-            current_content_bottom: %Content.Message.Bridge.Delays{},
-            bridge_delay_duration: clean_duration(duration),
-        }
-      _ ->
-        %{
-          sign |
-          current_content_top: %Content.Message.Headways.Top{headsign: sign.headsign, vehicle_type: vehicle_type(sign.route_id)},
-          current_content_bottom: bottom_content(sign.headway_engine.get_headways(sign.gtfs_stop_id)),
-          bridge_delay_duration: nil,
-        }
-    end
+    updated_sign = if Engine.Config.enabled?(sign.id) do
+      update = case sign.bridge_engine.status(sign.bridge_id) do
+        {"Raised", duration} ->
+          %{
+            sign |
+              current_content_top: %Content.Message.Bridge.Up{},
+              current_content_bottom: %Content.Message.Bridge.Delays{},
+              bridge_delay_duration: clean_duration(duration),
+          }
+        _ ->
+          %{
+            sign |
+            current_content_top: %Content.Message.Headways.Top{headsign: sign.headsign, vehicle_type: vehicle_type(sign.route_id)},
+            current_content_bottom: bottom_content(sign.headway_engine.get_headways(sign.gtfs_stop_id)),
+            bridge_delay_duration: nil,
+          }
+      end
 
-    updated = send_update(sign, updated)
-    {:noreply, updated}
+      send_update(sign, update)
+    else
+      sign
+    end
+    {:noreply, updated_sign}
   end
   def handle_info(:read_sign, sign) do
     schedule_reading_sign(self(), sign.read_sign_period_ms)
