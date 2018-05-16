@@ -3,9 +3,9 @@
     "enabled": true
   },
   "chelsea_outbound": {
-    "enabled": false
+    "enabled": true
   },
   "MVAL0": {
-    "enabled": false
+    "enabled": true
   }
 }
