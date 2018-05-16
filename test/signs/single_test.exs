@@ -88,6 +88,7 @@ defmodule  Signs.SingleTest do
   describe "update_content callback" do
     test "when the sign is disabled, does not send an update" do
       sign = %{@sign | id: "MVAL0"}
+      :timer.sleep(1000)
       assert {:noreply, %{current_content: %Content.Message.Empty{}}} = Signs.Single.handle_info(:update_content, sign)
     end
 

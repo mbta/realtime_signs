@@ -20,6 +20,7 @@ defmodule Signs.HeadwayTest do
   describe "callback update_content" do
     test "when the sign is disabled, does not send an update" do
       sign = %{@sign | id: "MVAL0"}
+      :timer.sleep(1000)
       assert {:noreply, %{
         current_content_top: %Content.Message.Empty{},
         current_content_bottom: %Content.Message.Empty{}}} = Signs.Headway.handle_info(:update_content, sign)
