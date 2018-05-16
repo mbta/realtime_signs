@@ -18,6 +18,11 @@ defmodule Signs.HeadwayTest do
   }
 
   describe "callback update_content" do
+    test "when the sign is disabled, does not send an update" do
+      sign = %{@sign | id: "MVAL0"}
+      assert {:noreply, ^sign} = Signs.Headway.handle_info(:update_content, sign)
+    end
+
     test "updates the top and bottom contents" do
       log = capture_log [level: :info], fn ->
         {:noreply, %{timer: timer, current_content_top: %Content.Message.Headways.Top{headsign: "Chelsea", vehicle_type: :bus}, current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}}} = handle_info(:update_content, @sign)

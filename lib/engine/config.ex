@@ -6,12 +6,14 @@ defmodule Engine.Config do
   use GenServer
   require Logger
 
+  @table __MODULE__
+
   def start_link(name \\ __MODULE__) do
     GenServer.start_link(__MODULE__, [], name: name)
   end
 
   def enabled?(sign_id) do
-    case :ets.lookup(:config, sign_id) do
+    case :ets.lookup(@table, sign_id) do
       [{^sign_id, %{"enabled" => false}}] -> false
       _ -> true
     end
@@ -26,7 +28,7 @@ defmodule Engine.Config do
     updater = Application.get_env(:realtime_signs, :external_config_getter)
     config = updater.get()
     Enum.each(config, fn {key, val} ->
-      :ets.insert(:config, {key, val})
+      :ets.insert(@table, {key, val})
     end)
     {:noreply, %{}}
   end
@@ -34,7 +36,7 @@ defmodule Engine.Config do
   @spec init(any()) :: {:ok, any()}
   def init(_) do
     schedule_update(self())
-    :ets.new(:config, [:set, :public, :named_table])
+    @table = :ets.new(@table, [:set, :protected, :named_table, read_concurrency: true])
     {:ok, %{}}
   end
 
