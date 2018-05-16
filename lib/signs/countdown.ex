@@ -86,7 +86,8 @@ defmodule Signs.Countdown do
       new_sign = update_top(sign, top)
       update_bottom(new_sign, bottom)
     else
-      sign
+      new_sign = update_top(sign, Content.Message.Empty.new())
+      update_bottom(new_sign, Content.Message.Empty.new())
     end
 
     {:noreply, sign}

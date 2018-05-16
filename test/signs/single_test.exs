@@ -88,7 +88,7 @@ defmodule  Signs.SingleTest do
   describe "update_content callback" do
     test "when the sign is disabled, does not send an update" do
       sign = %{@sign | id: "MVAL0"}
-      assert {:noreply, ^sign} = Signs.Single.handle_info(:update_content, sign)
+      assert {:noreply, %{current_content: %Content.Message.Empty{}}} = Signs.Single.handle_info(:update_content, sign)
     end
 
     test "when content has new predictions, sends an update" do

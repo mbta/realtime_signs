@@ -93,7 +93,7 @@ defmodule Signs.Headway do
 
       send_update(sign, update)
     else
-      sign
+      send_update(sign, %{sign | current_content_top: Content.Message.Empty.new(), current_content_bottom: Content.Message.Empty.new()})
     end
     {:noreply, updated_sign}
   end

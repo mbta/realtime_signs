@@ -91,7 +91,9 @@ defmodule Signs.CountdownTest do
 
     test "when the sign is disabled, does not send an update" do
       sign = %{@sign | id: "MVAL0"}
-      assert {:noreply, ^sign} = Signs.Countdown.handle_info(:update_content, sign)
+      assert {:noreply, %{
+        current_content_top: %Content.Message.Empty{},
+        current_content_bottom: %Content.Message.Empty{}}} = Signs.Countdown.handle_info(:update_content, sign)
     end
 
     test "when bottom has new predictions, sends an update" do

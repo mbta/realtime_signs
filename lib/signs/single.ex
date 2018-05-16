@@ -84,7 +84,7 @@ defmodule Signs.Single do
       message = get_message(sign)
       update(sign, message)
     else
-      sign
+      update(sign, Content.Message.Empty.new())
     end
     {:noreply, sign}
   end
