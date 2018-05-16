@@ -24,7 +24,7 @@ defmodule Engine.Config do
     schedule_update(pid, 0)
   end
 
-  @spec handle_info(:update, map()) :: {:ok, %{}}
+  @spec handle_info(:update, map()) :: {:noreply, %{}}
   def handle_info(:update, _state) do
     schedule_update(self())
     updater = Application.get_env(:realtime_signs, :external_config_getter)
