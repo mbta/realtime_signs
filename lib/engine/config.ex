@@ -12,6 +12,7 @@ defmodule Engine.Config do
     GenServer.start_link(__MODULE__, [], name: name)
   end
 
+  @spec enabled?(String.t()) :: boolean
   def enabled?(sign_id) do
     case :ets.lookup(@table, sign_id) do
       [{^sign_id, %{"enabled" => false}}] -> false
@@ -23,6 +24,7 @@ defmodule Engine.Config do
     schedule_update(pid, 0)
   end
 
+  @spec handle_info(:update, map()) :: {:ok, %{}}
   def handle_info(:update, _state) do
     schedule_update(self())
     updater = Application.get_env(:realtime_signs, :external_config_getter)
