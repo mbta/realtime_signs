@@ -4,9 +4,12 @@ defmodule ExternalConfig.S3 do
     aws_client = Application.get_env(:realtime_signs, :aws_client)
     bucket = Application.get_env(:realtime_signs, :s3_bucket)
     path = Application.get_env(:realtime_signs, :s3_path)
-    {:ok, %{body: body}} = s3_client.get_object(bucket, path) |> aws_client.request()
-
-    body
-    |> Poison.Parser.parse!()
+    case s3_client.get_object(bucket, path) |> aws_client.request() do
+      {:ok, %{body: body}} ->
+        body
+        |> Poison.Parser.parse!()
+      {:error, _} ->
+        %{}
+    end
   end
 end

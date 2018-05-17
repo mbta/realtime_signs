@@ -3,6 +3,9 @@ defmodule Fake.ExAws do
     {bucket, path}
   end
 
+  def request({"error", _path}) do
+    {:error, "bad"}
+  end
   def request({_bucket, _path}) do
     {:ok, %{
       body: "{\"chelsea_inbound\":{\"enabled\":true}}",
