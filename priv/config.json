@@ -1,0 +1,11 @@
+{
+  "chelsea_inbound": {
+    "enabled": true
+  },
+  "chelsea_outbound": {
+    "enabled": true
+  },
+  "MVAL0": {
+    "enabled": true
+  }
+}

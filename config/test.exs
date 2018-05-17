@@ -6,4 +6,5 @@ config :realtime_signs,
   http_poster_mod: Fake.HTTPoison,
   headway_requester: Fake.Headway.Request,
   headway_calculator: Fake.Headway.ScheduleHeadway,
-  bridge_requester: Fake.Bridge.Request
+  bridge_requester: Fake.Bridge.Request,
+  external_config_getter: Fake.ExternalConfig.Local
