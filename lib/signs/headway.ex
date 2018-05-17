@@ -74,7 +74,7 @@ defmodule Signs.Headway do
   def handle_info(:update_content, sign) do
     schedule_update(self())
     updated_sign = if Engine.Config.enabled?(sign.id) do
-      update = case sign.bridge_engine.status(sign.bridge_id) do
+      case sign.bridge_engine.status(sign.bridge_id) do
         {"Raised", duration} ->
           %{
             sign |
@@ -90,12 +90,12 @@ defmodule Signs.Headway do
             bridge_delay_duration: nil,
           }
       end
-
-      send_update(sign, update)
     else
-      send_update(sign, %{sign | current_content_top: Content.Message.Empty.new(), current_content_bottom: Content.Message.Empty.new()})
+      %{sign | current_content_top: Content.Message.Empty.new(), current_content_bottom: Content.Message.Empty.new()}
     end
-    {:noreply, updated_sign}
+
+    sign = send_update(sign, updated_sign)
+    {:noreply, sign}
   end
   def handle_info(:read_sign, sign) do
     schedule_reading_sign(self(), sign.read_sign_period_ms)

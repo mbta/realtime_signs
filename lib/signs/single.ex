@@ -80,12 +80,13 @@ defmodule Signs.Single do
   @spec handle_info(:update_content | :expire | :read_sign, t()) :: {:noreply, t()}
   def handle_info(:update_content, sign) do
     schedule_update(self())
-    sign = if Engine.Config.enabled?(sign.id) do
-      message = get_message(sign)
-      update(sign, message)
+    message = if Engine.Config.enabled?(sign.id) do
+      get_message(sign)
     else
-      update(sign, Content.Message.Empty.new())
+      Content.Message.Empty.new()
     end
+
+    sign = update(sign, message)
     {:noreply, sign}
   end
 
