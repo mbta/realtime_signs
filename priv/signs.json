@@ -1,6 +1,6 @@
 [
   {
-    "id": "RASH0",
+    "id": "ashmont_mezzanine",
     "pa_ess_loc": "RASH",
     "pa_ess_zone": "m",
     "line_number": "2",
@@ -12,7 +12,7 @@
     "type": "single"
   },
   {
-    "id": "MCED0",
+    "id": "cedar_grove_outbound",
     "pa_ess_loc": "MCED",
     "pa_ess_zone": "s",
     "headsign": "Mattapan",
@@ -22,7 +22,7 @@
     "type": "countdown"
   },
   {
-    "id": "MCED1",
+    "id": "cedar_grove_inbound",
     "pa_ess_loc": "MCED",
     "pa_ess_zone": "n",
     "gtfs_stop_id": "70264",
@@ -32,7 +32,7 @@
     "type": "countdown"
   },
   {
-    "id": "MBUT0",
+    "id": "butler_outbound",
     "pa_ess_loc": "MBUT",
     "pa_ess_zone": "c",
     "line_number": "2",
@@ -44,7 +44,7 @@
     "type": "single"
   },
   {
-    "id": "MBUT1",
+    "id": "butler_inbound",
     "pa_ess_loc": "MBUT",
     "pa_ess_zone": "c",
     "line_number": "1",
@@ -56,81 +56,81 @@
     "type": "single"
   },
   {
+    "id": "milton_outbound",
     "gtfs_stop_id": "70267",
     "pa_ess_loc": "MMIL",
     "pa_ess_zone": "s",
     "headsign": "Mattapan",
     "direction_id": 0,
-    "id": "MMIL0",
     "route_id": "Mattapan",
     "type": "countdown"
   },
   {
+    "id": "milton_inbound",
     "gtfs_stop_id": "70268",
     "pa_ess_loc": "MMIL",
     "pa_ess_zone": "n",
     "headsign": "Ashmont",
-    "id": "MMIL1",
     "direction_id": 1,
     "route_id": "Mattapan",
     "type": "countdown"
   },
   {
+    "id": "central_avenue_outbound",
     "gtfs_stop_id": "70269",
     "pa_ess_loc": "MCEN",
     "pa_ess_zone": "s",
     "headsign": "Mattapan",
     "direction_id": 0,
-    "id": "MCEN0",
     "route_id": "Mattapan",
     "type": "countdown"
   },
   {
+    "id": "central_avenue_inbound",
     "gtfs_stop_id": "70270",
     "pa_ess_loc": "MCEN",
     "pa_ess_zone": "n",
     "headsign": "Ashmont",
-    "id": "MCEN1",
     "direction_id": 1,
     "route_id": "Mattapan",
     "type": "countdown"
   },
   {
+    "id": "valley_road_outbound",
     "gtfs_stop_id": "70271",
     "pa_ess_loc": "MVAL",
     "pa_ess_zone": "s",
     "headsign": "Mattapan",
     "direction_id": 0,
-    "id": "MVAL0",
     "route_id": "Mattapan",
     "type": "countdown"
   },
   {
+    "id": "valley_road_inbound",
     "gtfs_stop_id": "70272",
     "pa_ess_loc": "MVAL",
     "pa_ess_zone": "n",
     "headsign": "Ashmont",
-    "id": "MVAL1",
     "direction_id": 1,
     "route_id": "Mattapan",
     "type": "countdown"
   },
   {
+    "id": "capen_street_outbound",
     "gtfs_stop_id": "70273",
     "pa_ess_loc": "MCAP",
     "pa_ess_zone": "s",
     "headsign": "Mattapan",
     "direction_id": 0,
-    "id": "MCAP0",
     "route_id": "Mattapan",
     "type": "countdown"
   },
   {
+    "id": "capen_street_inbound",
     "gtfs_stop_id": "70274",
     "pa_ess_loc": "MCAP",
     "pa_ess_zone": "n",
     "headsign": "Ashmont",
-    "id": "MCAP1",
     "direction_id": 1,
     "route_id": "Mattapan",
     "type": "countdown"
