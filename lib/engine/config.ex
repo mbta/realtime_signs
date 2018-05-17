@@ -29,9 +29,11 @@ defmodule Engine.Config do
     schedule_update(self())
     updater = Application.get_env(:realtime_signs, :external_config_getter)
     config = updater.get()
-    Enum.each(config, fn {key, val} ->
-      :ets.insert(@table, {key, val})
-    end)
+
+    config = config
+    |> Enum.into([])
+    :ets.insert(@table, config)
+
     {:noreply, %{}}
   end
 
