@@ -33,7 +33,8 @@ config :realtime_signs,
   sign_updater_mod: PaEss.Logger,
   http_poster_mod: HTTPoison,
   headway_requester: Headway.Request,
-  headway_calculator: Headway.ScheduleHeadway
+  headway_calculator: Headway.ScheduleHeadway,
+  external_config_getter: ExternalConfig.Local
 
 config :logger,
   backends: [:console]
