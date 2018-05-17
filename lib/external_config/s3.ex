@@ -1,4 +1,5 @@
 defmodule ExternalConfig.S3 do
+  @spec get :: map()
   def get() do
     s3_client = Application.get_env(:realtime_signs, :s3_client)
     aws_client = Application.get_env(:realtime_signs, :aws_client)
