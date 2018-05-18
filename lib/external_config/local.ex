@@ -1,5 +1,5 @@
 defmodule ExternalConfig.Local do
-  @spec get(Engine.Config.version_id):: {Engine.Config.version_id, map()}
+  @spec get(Engine.Config.version_id):: {Engine.Config.version_id, map()} | :unchanged
   def get(current_version) do
     file  = "priv/config.json"
     |> File.read!()

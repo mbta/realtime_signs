@@ -1,5 +1,5 @@
 defmodule ExternalConfig.S3 do
-  @spec get(Engine.Config.version_id):: {Engine.Config.version_id, map()}
+  @spec get(Engine.Config.version_id):: {Engine.Config.version_id, map()} | :unchanged
   def get(current_version) do
     s3_client = Application.get_env(:realtime_signs, :s3_client)
     aws_client = Application.get_env(:realtime_signs, :aws_client)
