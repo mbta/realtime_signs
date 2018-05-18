@@ -2,7 +2,6 @@ defmodule Fake.ExternalConfig.Local do
   @behaviour ExternalConfig.Interface
 
   @impl ExternalConfig.Interface
-
  def get("unchanged") do
    :unchanged
  end
