@@ -21,4 +21,5 @@ config :logger, :splunk,
   metadata: [:request_id]
 
 config :realtime_signs,
-  sign_updater_mod: PaEss.HttpUpdater
+  sign_updater_mod: PaEss.HttpUpdater,
+  external_config_getter: ExternalConfig.S3

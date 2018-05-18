@@ -38,6 +38,8 @@ defmodule RealtimeSigns.Mixfile do
     [
       {:dialyxir, "~> 0.5"},
       {:ehmon, git: "https://github.com/heroku/ehmon.git", tag: "v4"},
+      {:ex_aws, "~> 2.0"},
+      {:ex_aws_s3, "~> 2.0"},
       {:excoveralls, "~> 0.5", only: :test},
       {:exprotobuf, "~> 1.0"},
       {:hackney, "== 1.8.0", override: true},
