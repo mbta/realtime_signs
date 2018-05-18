@@ -7,4 +7,6 @@ config :realtime_signs,
   headway_requester: Fake.Headway.Request,
   headway_calculator: Fake.Headway.ScheduleHeadway,
   bridge_requester: Fake.Bridge.Request,
-  external_config_getter: Fake.ExternalConfig.Local
+  external_config_getter: Fake.ExternalConfig.Local,
+  aws_client: Fake.ExAws,
+  s3_client: Fake.ExAws

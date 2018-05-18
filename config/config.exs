@@ -34,7 +34,15 @@ config :realtime_signs,
   http_poster_mod: HTTPoison,
   headway_requester: Headway.Request,
   headway_calculator: Headway.ScheduleHeadway,
-  external_config_getter: ExternalConfig.Local
+  external_config_getter: ExternalConfig.Local,
+  aws_client: ExAws,
+  s3_client: ExAws.S3,
+  s3_bucket: System.get_env("SIGNS_S3_BUCKET"),
+  s3_path: System.get_env("SIGNS_S3_PATH")
+
+config :ex_aws,
+  access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],
+  secret_access_key: [{:system, "SIGNS_S3_CONFIG_SECRET"}, :instance_role]
 
 config :logger,
   backends: [:console]

@@ -23,4 +23,10 @@ defmodule Engine.ConfigTest do
       assert Engine.Config.enabled?("unspecified_sign") == true
     end
   end
+
+  describe "update callback" do
+    test "does not update config when it is unchanged" do
+      assert Engine.Config.handle_info(:update, "unchanged") == {:noreply, "unchanged"}
+    end
+  end
 end
