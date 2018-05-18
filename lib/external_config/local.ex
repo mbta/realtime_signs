@@ -1,9 +1,18 @@
 defmodule ExternalConfig.Local do
   @spec get(Engine.Config.version_id):: {Engine.Config.version_id, map()}
-  def get(_current_version) do
-    config = "priv/config.json"
+  def get(current_version) do
+    file  = "priv/config.json"
     |> File.read!()
-    |> Poison.Parser.parse!()
-    {nil, config}
+
+    etag = file
+           |> :erlang.phash2()
+
+    if etag == current_version do
+      :unchanged
+    else
+      config = file
+      |> Poison.Parser.parse!()
+      {etag, config}
+    end
   end
 end
