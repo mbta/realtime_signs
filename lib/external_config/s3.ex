@@ -1,5 +1,9 @@
 defmodule ExternalConfig.S3 do
-  @spec get(Engine.Config.version_id):: {Engine.Config.version_id, map()} | :unchanged
+  require Logger
+
+  @behaviour ExternalConfig.Interface
+
+  @impl ExternalConfig.Interface
   def get(current_version) do
     s3_client = Application.get_env(:realtime_signs, :s3_client)
     aws_client = Application.get_env(:realtime_signs, :aws_client)
@@ -16,7 +20,8 @@ defmodule ExternalConfig.S3 do
                |> Enum.into(%{})
                |> Map.get("ETag")
         {etag, body}
-      {:error, _} ->
+      {:error, e} ->
+        Logger.error "s3 response error: #{inspect e}"
         {nil, %{}}
     end
   end
