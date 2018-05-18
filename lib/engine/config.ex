@@ -32,9 +32,7 @@ defmodule Engine.Config do
     updater = Application.get_env(:realtime_signs, :external_config_getter)
     latest_version = case updater.get(current_version) do
       {version, config} ->
-        config = config
-        |> Enum.into([])
-        :ets.insert(@table, config)
+        :ets.insert(@table, Enum.into(config, []))
         version
       :unchanged ->
         current_version

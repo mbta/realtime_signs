@@ -13,8 +13,7 @@ defmodule ExternalConfig.S3 do
       {:ok, %{status_code: 304}} ->
         :unchanged
       {:ok, response} ->
-        body = response.body
-        |> Poison.Parser.parse!()
+        body = Poison.Parser.parse!(response.body)
 
         etag = response.headers
                |> Enum.into(%{})

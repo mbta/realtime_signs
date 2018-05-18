@@ -3,8 +3,7 @@ defmodule ExternalConfig.Local do
 
   @impl ExternalConfig.Interface
   def get(current_version) do
-    file  = "priv/config.json"
-    |> File.read!()
+    {:ok, file} = File.read("priv/config.json")
 
     etag = file
            |> :erlang.phash2()
@@ -13,9 +12,7 @@ defmodule ExternalConfig.Local do
     if etag == current_version do
       :unchanged
     else
-      config = file
-      |> Poison.Parser.parse!()
-      {etag, config}
+      {etag, Poison.Parser.parse!(file)}
     end
   end
 end
