@@ -9,7 +9,7 @@ defmodule Content.Audio.TrainIsArriving do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-    destination: :ashmont | :mattapan
+    destination: :ashmont | :mattapan | :wonderland | :bowdoin
   }
 
   @spec from_predictions_message(Content.Message.t()) :: t() | nil
@@ -18,6 +18,12 @@ defmodule Content.Audio.TrainIsArriving do
   end
   def from_predictions_message(%Content.Message.Predictions{headsign: "Mattapan", minutes: :arriving}) do
     %__MODULE__{destination: :mattapan}
+  end
+  def from_predictions_message(%Content.Message.Predictions{headsign: "Bowdoin", minutes: :arriving}) do
+    %__MODULE__{destination: :bowdoin}
+  end
+  def from_predictions_message(%Content.Message.Predictions{headsign: "Wonderland", minutes: :arriving}) do
+    %__MODULE__{destination: :wonderland}
   end
   def from_predictions_message(%Content.Message.Predictions{headsign: headsign, minutes: :arriving}) do
     Logger.warn("Content.Audio.TrainIsArriving.from_predictions_message: unknown headsign: #{headsign}")
@@ -34,5 +40,7 @@ defmodule Content.Audio.TrainIsArriving do
 
     defp message_id(%{destination: :ashmont}), do: "90129"
     defp message_id(%{destination: :mattapan}), do: "90128"
+    defp message_id(%{destination: :wonderland}), do: "90039"
+    defp message_id(%{destination: :bowdoin}), do: "90040"
   end
 end
