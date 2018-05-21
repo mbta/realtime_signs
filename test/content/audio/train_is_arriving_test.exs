@@ -12,6 +12,16 @@ defmodule Content.Audio.TrainIsArrivingTest do
       audio = %Content.Audio.TrainIsArriving{destination: :mattapan}
       assert Content.Audio.to_params(audio) == {"90128", [], :audio_visual}
     end
+
+    test "Next train to Wonderland is now arriving" do
+      audio = %Content.Audio.TrainIsArriving{destination: :wonderland}
+      assert Content.Audio.to_params(audio) == {"90039", [], :audio_visual}
+    end
+
+    test "Next train to Bowdoin is now arriving" do
+      audio = %Content.Audio.TrainIsArriving{destination: :bowdoin}
+      assert Content.Audio.to_params(audio) == {"90040", [], :audio_visual}
+    end
   end
 
   describe "from_predictions_message/1" do
@@ -25,6 +35,18 @@ defmodule Content.Audio.TrainIsArrivingTest do
       message = %Content.Message.Predictions{headsign: "Mattapan", minutes: :arriving}
       assert Content.Audio.TrainIsArriving.from_predictions_message(message) ==
         %Content.Audio.TrainIsArriving{destination: :mattapan}
+    end
+
+    test "Converts Wonderland arriving message to audio" do
+      message = %Content.Message.Predictions{headsign: "Wonderland", minutes: :arriving}
+      assert Content.Audio.TrainIsArriving.from_predictions_message(message) ==
+        %Content.Audio.TrainIsArriving{destination: :wonderland}
+    end
+
+    test "Converts Bowdoin arriving message to audio" do
+      message = %Content.Message.Predictions{headsign: "Bowdoin", minutes: :arriving}
+      assert Content.Audio.TrainIsArriving.from_predictions_message(message) ==
+        %Content.Audio.TrainIsArriving{destination: :bowdoin}
     end
 
     test "Logs unknown headsign arriving message" do
