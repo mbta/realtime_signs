@@ -246,5 +246,69 @@
     "pa_ess_zone": "m",
     "bridge_id": "1",
     "type": "bridge_only"
+  },
+  {
+    "id": "government_center_eastbound",
+    "pa_ess_loc": "BGOV",
+    "pa_ess_zone": "e",
+    "headsign": "Wonderland",
+    "gtfs_stop_id": "70040",
+    "direction_id": 1,
+    "route_id": "Blue",
+    "type": "countdown"
+  },
+  {
+    "id": "government_center_westbound",
+    "pa_ess_loc": "BGOV",
+    "pa_ess_zone": "w",
+    "headsign": "Bowdoin",
+    "gtfs_stop_id": "70039",
+    "direction_id": 0,
+    "route_id": "Blue",
+    "type": "countdown"
+  },
+  {
+    "id": "government_center_mezzanine_eb",
+    "pa_ess_loc": "BGOV",
+    "pa_ess_zone": "m",
+    "line_number": "1",
+    "gtfs_stop_id": "70040",
+    "direction_id": 1,
+    "headsign": "Wonderland",
+    "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "type": "single"
+  },
+  {
+    "id": "government_center_mezzanine_wb",
+    "pa_ess_loc": "BGOV",
+    "pa_ess_zone": "m",
+    "line_number": "2",
+    "gtfs_stop_id": "70039",
+    "direction_id": 0,
+    "headsign": "Bowdoin",
+    "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "type": "single"
+  },
+  {
+    "id": "bowdoin_eastbound",
+    "pa_ess_loc": "BBOW",
+    "pa_ess_zone": "e",
+    "headsign": "Wonderland",
+    "gtfs_stop_id": "70038",
+    "direction_id": 1,
+    "route_id": "Blue",
+    "type": "countdown"
+  },
+  {
+    "id": "bowdoin_mezzanine",
+    "pa_ess_loc": "BBOW",
+    "pa_ess_zone": "m",
+    "headsign": "Wonderland",
+    "gtfs_stop_id": "70038",
+    "direction_id": 1,
+    "route_id": "Blue",
+    "type": "countdown"
   }
 ]
