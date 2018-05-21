@@ -9,7 +9,7 @@ defmodule Content.Audio.NextTrainCountdown do
   @type verb :: :arrives | :departs
 
   @type t :: %__MODULE__{
-    destination: :ashmont | :mattapan,
+    destination: :ashmont | :mattapan | :wonderland | :bowdoin,
     verb: verb(),
     minutes: integer()
   }
