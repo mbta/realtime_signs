@@ -53,6 +53,18 @@ defmodule Content.Audio.NextTrainCountdownTest do
         %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 5}
     end
 
+    test "Converts Wonderland countdown message to audio" do
+      message = %Content.Message.Predictions{headsign: "Wonderland", minutes: 5}
+      assert Content.Audio.NextTrainCountdown.from_predictions_message(message, :arrives) ==
+        %Content.Audio.NextTrainCountdown{destination: :wonderland, verb: :arrives, minutes: 5}
+    end
+
+    test "Converts Bowdoin countdown message to audio" do
+      message = %Content.Message.Predictions{headsign: "Bowdoin", minutes: 5}
+      assert Content.Audio.NextTrainCountdown.from_predictions_message(message, :arrives) ==
+        %Content.Audio.NextTrainCountdown{destination: :bowdoin, verb: :arrives, minutes: 5}
+    end
+
     test "Logs unknown headsign countdown message" do
       message = %Content.Message.Predictions{headsign: "Neverland", minutes: 5}
 
