@@ -52,7 +52,13 @@ defmodule Engine.HeadwaysTest do
           "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
       end)
       state = %{"123" => schedules}
-      assert {:noreply, state} = Engine.Headways.handle_info(:update_hourly, state)
+      {:noreply, updated_state} = Engine.Headways.handle_info(:update_hourly, state)
+      for {state_schedule, index} <- updated_state |> Map.get("123") |> Enum.with_index() do
+        schedule = Enum.at(schedules, index)
+        assert get_in(schedule, ["attributes", "departure_time"]) == get_in(state_schedule, ["attributes", "departure_time"])
+        id_path = ["relationships", "stop", "data", "id"]
+        assert get_in(schedule, id_path) == get_in(state_schedule, id_path)
+      end
     end
   end
 
