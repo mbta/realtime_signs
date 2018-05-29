@@ -57,5 +57,12 @@ defmodule Content.Message.PredictionsTest do
 
       assert Content.Message.to_string(msg) == ""
     end
+
+    test "Rounds to the nearest minute" do
+      prediction = %Predictions.Prediction{seconds_until_arrival: 91}
+      msg = Content.Message.Predictions.new(prediction, "Ashmont")
+
+      assert Content.Message.to_string(msg) == "Ashmont      2 min"
+    end
   end
 end
