@@ -272,7 +272,7 @@ defmodule Signs.CountdownTest do
       :timer.sleep(1000)
 
       assert(receive do
-        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 1}, 5, 60}} -> true
+        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 2}, 5, 60}} -> true
       after
         0 -> false
       end)
@@ -280,7 +280,7 @@ defmodule Signs.CountdownTest do
       :timer.sleep(1000)
 
       assert(receive do
-        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 1}, 5, 60}} -> true
+        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 2}, 5, 60}} -> true
       after
         0 -> false
       end)

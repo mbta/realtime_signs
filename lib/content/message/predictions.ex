@@ -24,7 +24,7 @@ defmodule Content.Message.Predictions do
     minutes = case prediction.seconds_until_arrival do
       0 -> :boarding
       x when x in 1..60 -> :arriving
-      x -> div(x, 60)
+      x -> x |> Kernel./(60) |> round()
     end
 
     %__MODULE__{
