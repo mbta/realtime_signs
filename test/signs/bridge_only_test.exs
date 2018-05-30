@@ -19,8 +19,8 @@ defmodule Signs.BridgeOnlyTest do
 
   defmodule FakeSignUpdater do
     require Logger
-    def update_sign(_id, _line, _message, _duration, _start) do
-      send :bridge_only_test_fake_sign_updater_listener, :update_sign
+    def update_single_line(_id, _line, _message, _duration, _start) do
+      send :bridge_only_test_fake_sign_updater_listener, :update_single_line
       {:ok, :sent}
     end
 
@@ -60,7 +60,7 @@ defmodule Signs.BridgeOnlyTest do
     assert {:noreply, %Signs.BridgeOnly{}} = Signs.BridgeOnly.handle_info(:bridge_check, sign)
     assert_received {:send_audio, %Content.Audio.BridgeIsUp{language: :english}}
     assert_received {:send_audio, %Content.Audio.BridgeIsUp{language: :spanish}}
-    refute_received :update_sign
+    refute_received :update_single_line
   end
 
   test "if bridge is lowered, does not send canned messages" do
@@ -69,6 +69,6 @@ defmodule Signs.BridgeOnlyTest do
 
     assert {:noreply, %Signs.BridgeOnly{}} = Signs.BridgeOnly.handle_info(:bridge_check, sign)
     refute_received {:send_audio, _}
-    refute_received :update_sign
+    refute_received :update_single_line
   end
 end

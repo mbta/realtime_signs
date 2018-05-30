@@ -87,8 +87,7 @@ defmodule Signs.Countdown do
       {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
-    sign = update_top(sign, top)
-    sign = update_bottom(sign, bottom)
+    sign = update_sign(sign, top, bottom)
 
     {:noreply, sign}
   end
@@ -125,11 +124,21 @@ defmodule Signs.Countdown do
     }
   end
 
+  defp update_sign(%{current_content_top: same_top, current_content_bottom: same_bottom} = sign, same_top, same_bottom) do
+    sign
+  end
+  defp update_sign(sign, new_top, new_bottom) do
+    sign = sign
+           |> update_top(new_top)
+           |> update_bottom(new_bottom)
+    sign.sign_updater.update_sign(sign.pa_ess_id, sign.current_content_top, sign.current_content_bottom, @default_duration, :now)
+    sign
+  end
+
   defp update_top(%{current_content_top: same} = sign, same) do
     sign
   end
   defp update_top(sign, new_top) do
-    sign.sign_updater.update_sign(sign.pa_ess_id, "1", new_top, @default_duration, :now)
     announce_arrival(new_top, sign)
     if sign.top_timer, do: Process.cancel_timer(sign.top_timer)
     timer = Process.send_after(self(), :expire_top, @default_duration * 1000 - 5000)
@@ -140,7 +149,6 @@ defmodule Signs.Countdown do
     sign
   end
   defp update_bottom(sign, new_bottom) do
-    sign.sign_updater.update_sign(sign.pa_ess_id, "2", new_bottom, @default_duration, :now)
     if sign.bottom_timer, do: Process.cancel_timer(sign.bottom_timer)
     timer = Process.send_after(self(), :expire_bottom, @default_duration * 1000 - 5000)
     %{sign | current_content_bottom: new_bottom, bottom_timer: timer}

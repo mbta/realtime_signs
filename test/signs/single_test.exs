@@ -2,7 +2,7 @@ defmodule  Signs.SingleTest do
   use ExUnit.Case, async: true
 
   defmodule FakeUpdater do
-    def update_sign(_pa_ess_id, _, _msg, _duration, _start_secs) do
+    def update_single_line(_pa_ess_id, _, _msg, _duration, _start_secs) do
       {:reply, {:ok, :sent}, []}
     end
 
