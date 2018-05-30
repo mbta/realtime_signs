@@ -75,6 +75,12 @@ defmodule Content.Audio.NextTrainCountdownTest do
       assert log =~ "unknown headsign"
     end
 
+    test "Does not announce train one minute away" do
+      message = %Content.Message.Predictions{headsign: "Ashmont", minutes: 1}
+      assert Content.Audio.NextTrainCountdown.from_predictions_message(message, :arrives) == nil
+      assert Content.Audio.NextTrainCountdown.from_predictions_message(message, :departs) == nil
+    end
+
     test "Ignores non-integer messages" do
       message = %Content.Message.Predictions{headsign: "Ashmont", minutes: :arriving}
       assert Content.Audio.NextTrainCountdown.from_predictions_message(message, :arrives) == nil
