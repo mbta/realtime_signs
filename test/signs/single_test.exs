@@ -108,9 +108,9 @@ defmodule  Signs.SingleTest do
   describe "read sign callback" do
     test "sends an audio request when the top line is a minutes-away prediction" do
       Process.register(self(), :single_test_fake_updater_listener)
-      sign = %{@sign | current_content: %Content.Message.Predictions{headsign: "Mattapan", minutes: 1}}
+      sign = %{@sign | current_content: %Content.Message.Predictions{headsign: "Mattapan", minutes: 2}}
       assert {:noreply, %Signs.Single{}} = Signs.Single.handle_info(:read_sign, sign)
-      assert_received({:send_audio, {{"RASH", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :departs, minutes: 1}, 5, 60}})
+      assert_received({:send_audio, {{"RASH", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :departs, minutes: 2}, 5, 60}})
     end
 
     test "does not send an audio request for a boarding prediction" do

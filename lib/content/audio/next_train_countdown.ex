@@ -17,6 +17,9 @@ defmodule Content.Audio.NextTrainCountdown do
   require Logger
 
   @spec from_predictions_message(Content.Message.t(), verb()) :: t() | nil
+  def from_predictions_message(%Content.Message.Predictions{minutes: 1}, _verb) do
+    nil
+  end
   def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: "Ashmont"}, verb) when is_integer(n) do
     %__MODULE__{destination: :ashmont, minutes: n, verb: verb}
   end
