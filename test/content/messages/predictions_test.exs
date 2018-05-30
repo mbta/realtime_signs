@@ -11,13 +11,22 @@ defmodule Content.Message.PredictionsTest do
       assert Content.Message.to_string(msg) == "Ashmont        BRD"
     end
 
-    test "puts arriving on the sign when train is 0-60 seconds away" do
+    test "puts arriving on the sign when train is 0-30 seconds away" do
       prediction = %Predictions.Prediction{
-        seconds_until_arrival: 45
+        seconds_until_arrival: 30
       }
       msg = Content.Message.Predictions.new(prediction, "Mattapan")
 
       assert Content.Message.to_string(msg) == "Mattapan       ARR"
+    end
+
+    test "puts minutes on the sign when train is 31 seconds away" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 31
+      }
+      msg = Content.Message.Predictions.new(prediction, "Mattapan")
+
+      assert Content.Message.to_string(msg) == "Mattapan     1 min"
     end
 
     test "can use a shorter line length" do

@@ -23,7 +23,7 @@ defmodule Content.Message.Predictions do
   def new(%Predictions.Prediction{} = prediction, headsign, width \\ 18) do
     minutes = case prediction.seconds_until_arrival do
       0 -> :boarding
-      x when x in 1..60 -> :arriving
+      x when x > 0 and x <= 30 -> :arriving
       x -> x |> Kernel./(60) |> round()
     end
 
