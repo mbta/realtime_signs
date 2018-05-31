@@ -21,7 +21,9 @@ defmodule Fake.HTTPoison do
         {:error, %HTTPoison.Error{reason: :timeout}}
       body =~ "MsgType=SignContent&uid=" ->
         {:ok, %HTTPoison.Response{status_code: 200}}
-      body =~ "MsgType=Canned&uid=0&mid=133&var=5508%2C5512&typ=1&sta=SBOX010000&pri=5&tim=60" ->
+      body =~ "mid=133&var=5508%2C5512&typ=1&sta=SBOX010000&pri=5&tim=60" ->
+        {:ok, %HTTPoison.Response{status_code: 200}}
+      body =~ "&mid=133&var=5508%2C5512&typ=1&sta=SBOX010000&pri=5&tim=60" ->
         {:ok, %HTTPoison.Response{status_code: 200}}
       body =~ "MsgType=Canned&uid=1000&mid=133&var=5508%2C5512&typ=1&sta=SBOX010000&pri=5&tim=60" ->
         {:ok, %HTTPoison.Response{status_code: 200}}

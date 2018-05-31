@@ -2,6 +2,10 @@ defmodule PaEss.HttpUpdaterTest do
   use ExUnit.Case, async: true
 
   describe "update_single_line/5" do
+    test "replys with {:ok, :sent} when successful" do
+      assert PaEss.HttpUpdater.update_single_line({"SBOX", "c"}, "1", %Content.Message.Empty{}, 60, :now) == {:ok, :sent}
+    end
+
     test "Posts a request to display a message now" do
       state = make_state()
       msg = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: :boarding}
@@ -31,6 +35,10 @@ defmodule PaEss.HttpUpdaterTest do
       bottom = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: 2}
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1}} == PaEss.HttpUpdater.handle_call({:update_sign, {"ABCD", "n"}, top, bottom, 60, :now}, self(), state)
+    end
+
+    test "replys with {:ok, :sent} when successful" do
+      assert PaEss.HttpUpdater.update_sign({"SBOX", "c"}, %Content.Message.Empty{}, %Content.Message.Empty{}, 60, :now) == {:ok, :sent}
     end
   end
 
