@@ -121,8 +121,7 @@ defmodule Signs.Headway do
     sign
   end
   defp send_update(_old_sign, %{current_content_top: new_top, current_content_bottom: new_bottom} = sign) do
-    sign.sign_updater.update_single_line(sign.pa_ess_id, "1", new_top, @default_duration, :now)
-    sign.sign_updater.update_single_line(sign.pa_ess_id, "2", new_bottom, @default_duration, :now)
+    sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_duration, :now)
 
     if new_top == %Content.Message.Bridge.Up{} do
       read_bridge_messages(sign)

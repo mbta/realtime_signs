@@ -31,7 +31,7 @@ defmodule Signs.HeadwayTest do
         {:noreply, %{timer: timer, current_content_top: %Content.Message.Headways.Top{headsign: "Chelsea", vehicle_type: :bus}, current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}}} = handle_info(:update_content, @sign)
         refute is_nil(timer)
       end
-      assert log =~ "update_single_line called"
+      assert log =~ "update_sign called"
     end
 
     test "when the bottom content does not change, it does not send an update" do
@@ -43,7 +43,7 @@ defmodule Signs.HeadwayTest do
       log = capture_log [level: :info], fn ->
         handle_info(:update_content, sign)
       end
-      refute log =~ "update_single_line called"
+      refute log =~ "update_sign called"
     end
 
     test "when the first departure is in the future, does not send an update" do
@@ -52,7 +52,7 @@ defmodule Signs.HeadwayTest do
       log = capture_log [level: :info], fn ->
         handle_info(:update_content, sign)
       end
-      refute log =~ "update_single_line called"
+      refute log =~ "update_sign called"
     end
 
     test "when the first departure is in the future but within the range of the headway, sends an update" do
@@ -61,7 +61,7 @@ defmodule Signs.HeadwayTest do
       log = capture_log [level: :info], fn ->
         handle_info(:update_content, sign)
       end
-      assert log =~ "update_single_line called"
+      assert log =~ "update_sign called"
     end
 
     test "if the bridge is down, does not update the sign" do
@@ -84,7 +84,7 @@ defmodule Signs.HeadwayTest do
       log = capture_log [level: :info], fn ->
         handle_info(:update_content, sign)
       end
-      assert log != "update_single_line called"
+      assert log != "update_sign called"
     end
 
     test "if the bridge is up, updates the sign" do
@@ -107,7 +107,7 @@ defmodule Signs.HeadwayTest do
       log = capture_log [level: :info], fn ->
         assert {:noreply, %{current_content_top: %Content.Message.Bridge.Up{}, current_content_bottom: %Content.Message.Bridge.Delays{}}} = handle_info(:update_content, sign)
       end
-      assert log =~ "update_single_line called"
+      assert log =~ "update_sign called"
     end
 
     test "if there is no bridge id, does not update the sign" do
@@ -129,7 +129,7 @@ defmodule Signs.HeadwayTest do
       log = capture_log [level: :info], fn ->
         handle_info(:update_content, sign)
       end
-      assert log != "update_single_line called"
+      assert log != "update_sign called"
     end
   end
 
@@ -221,8 +221,8 @@ end
 
 defmodule FakeSignUpdater do
   require Logger
-  def update_single_line(id, line, message, duration, start) do
-    Logger.info "update_single_line called"
+  def update_sign(id, line, message, duration, start) do
+    Logger.info "update_sign called"
     {id, line, message, duration, start}
   end
 
