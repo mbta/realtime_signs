@@ -127,7 +127,7 @@ defmodule Signs.Single do
     sign
   end
   defp update(sign, new_text) do
-    sign.sign_updater.update_sign(sign.pa_ess_id, sign.line_number, new_text, @default_duration, :now)
+    sign.sign_updater.update_single_line(sign.pa_ess_id, sign.line_number, new_text, @default_duration, :now)
     announce_arrival(new_text, sign)
     if sign.timer, do: Process.cancel_timer(sign.timer)
     timer = Process.send_after(self(), :expire, @default_duration * 1000 - 5000)

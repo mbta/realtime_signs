@@ -13,7 +13,7 @@ defmodule Engine.BridgeTest do
       log = capture_log [level: :info], fn ->
         Engine.Bridge.handle_info(:update, %{"1" => %{}})
       end
-      assert log != "update_sign called"
+      assert log != "update_single_line called"
     end
   end
 
