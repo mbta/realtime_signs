@@ -9,15 +9,37 @@ defmodule PaEss.Logger do
   require Logger
 
   @impl true
-  def update_sign(pa_ess_id, line_no, msg, duration, start_secs) do
+  def update_single_line(pa_ess_id, line_no, msg, duration, start_secs) do
     line = [
       now(),
-      "update_sign,",
+      "update_single_line,",
       inspect(pa_ess_id),
       ",",
       "#{line_no}",
       ",",
       Content.Message.to_string(msg),
+      ",",
+      "#{duration}",
+      ",",
+      "#{start_secs}"
+    ]
+
+    File.mkdir("log")
+    File.write!("log/pa_ess_updates.log", line ++ ["\n"], [:append])
+    Logger.info(line)
+    {:ok, :sent}
+  end
+
+  @impl true
+  def update_sign(pa_ess_id, top_line, bottom_line, duration, start_secs) do
+    line = [
+      now(),
+      "update_sign,",
+      inspect(pa_ess_id),
+      ",",
+      Content.Message.to_string(top_line),
+      ",",
+      Content.Message.to_string(bottom_line),
       ",",
       "#{duration}",
       ",",
