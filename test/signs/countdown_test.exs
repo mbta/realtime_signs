@@ -17,8 +17,11 @@ defmodule Signs.CountdownTest do
     def update_single_line(_pa_ess_id, "2", _msg, _duration, _start_secs) do
       {:reply, {:ok, :sent}, []}
     end
+    def update_sign(_pa_ess_id, nil, nil, _duration, _start) do
+      {:error, :notsent}
+    end
     def update_sign(_pa_ess_id, _top, _bottom, _duration, _start) do
-      {:reply, {:ok, :sent}, []}
+      {:ok, :sent}
     end
     def send_audio(pa_ess_id, msg, priority, timeout) do
       pid = case Process.whereis(:fake_updater_listener) do
@@ -85,6 +88,32 @@ defmodule Signs.CountdownTest do
   }
 
   describe "update_content callback" do
+    test "when both lines change, sends an update containing both lines" do
+      sign = %Signs.Countdown{
+        id: "test-sign",
+        pa_ess_id: "123",
+        gtfs_stop_id: "many_predictions",
+        direction_id: 1,
+        route_id: "Mattapan",
+        headsign: "Mattapan",
+        current_content_bottom: nil,
+        current_content_top: nil,
+        sign_updater: FakeUpdater,
+        prediction_engine: FakePredictionsEngine,
+        read_sign_period_ms: 10_000,
+      }
+
+      top_content = %Content.Message.Predictions{
+        headsign: "Mattapan", minutes: :arriving
+      }
+
+      bottom_content = %Content.Message.Predictions{
+        headsign: "Mattapan", minutes: 3
+      }
+
+      assert {:noreply, %{current_content_top: ^top_content, current_content_bottom: ^bottom_content}} = Signs.Countdown.handle_info(:update_content, sign)
+    end
+
     test "when top has new predictions, sends an update" do
       top_content = %Content.Message.Predictions{
         headsign: "Mattapan", minutes: :arriving

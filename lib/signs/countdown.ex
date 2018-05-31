@@ -134,7 +134,7 @@ defmodule Signs.Countdown do
     update_bottom(sign, new_bottom)
   end
   defp update_sign(sign, new_top, new_bottom) do
-    sign.sign_updater.update_sign(sign.pa_ess_id, sign.current_content_top, sign.current_content_bottom, @default_duration, :now)
+    {:ok, :sent} = sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_duration, :now)
     announce_arrival(new_top, sign)
     if sign.top_timer, do: Process.cancel_timer(sign.top_timer)
     if sign.bottom_timer, do: Process.cancel_timer(sign.bottom_timer)
