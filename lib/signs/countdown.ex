@@ -65,7 +65,7 @@ defmodule Signs.Countdown do
       current_content_top: Content.Message.Empty.new(),
       current_content_bottom: Content.Message.Empty.new(),
       terminal: config["terminal"],
-      countdown_verb: config["countdown_verb"],
+      countdown_verb: config |> Map.fetch!("countdown_verb") |> String.to_atom(),
       top_timer: nil,
       bottom_timer: nil,
       sign_updater: sign_updater,
