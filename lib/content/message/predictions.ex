@@ -9,6 +9,7 @@ defmodule Content.Message.Predictions do
   The constructor should be used rather than creating a struct
   yourself.
   """
+  require Logger
 
   @enforce_keys [:headsign, :minutes]
   defstruct [:headsign, :minutes, width: 18]
@@ -26,6 +27,21 @@ defmodule Content.Message.Predictions do
       x when x > 0 and x <= 30 -> :arriving
       x -> x |> Kernel./(60) |> round()
     end
+
+    %__MODULE__{
+      headsign: headsign,
+      minutes: minutes,
+      width: width,
+    }
+  end
+
+  @spec new(Predictions.Prediction.t(), String.t()) :: t()
+  def terminal(%Predictions.Prediction{} = prediction, headsign, width \\ 18) do
+    minutes = case prediction.seconds_until_arrival do
+      x when x >= 0 and x <= 30 -> :boarding
+      x -> x |> Kernel./(60) |> round()
+    end
+    Logger.warn "terminal prediction message: #{inspect minutes}, #{headsign}"
 
     %__MODULE__{
       headsign: headsign,
