@@ -2,7 +2,6 @@ defmodule Predictions.Prediction do
   defstruct [
     stop_id: nil,
     seconds_until_arrival: nil,
-    seconds_until_departure: nil,
     direction_id: nil,
     route_id: nil,
   ]
