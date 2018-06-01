@@ -18,6 +18,7 @@ defmodule Signs.Countdown do
     :direction_id,
     :route_id,
     :headsign,
+    :countdown_verb,
     :prediction_engine,
     :sign_updater,
     :read_sign_period_ms,
@@ -64,6 +65,7 @@ defmodule Signs.Countdown do
       current_content_top: Content.Message.Empty.new(),
       current_content_bottom: Content.Message.Empty.new(),
       terminal: config["terminal"],
+      countdown_verb: config["countdown_verb"],
       top_timer: nil,
       bottom_timer: nil,
       sign_updater: sign_updater,
@@ -189,7 +191,7 @@ defmodule Signs.Countdown do
   end
 
   defp read_countdown(%{current_content_top: msg} = sign) do
-    case Content.Audio.NextTrainCountdown.from_predictions_message(msg, :arrives) do
+    case Content.Audio.NextTrainCountdown.from_predictions_message(msg, sign.countdown_verb) do
       %Content.Audio.NextTrainCountdown{} = audio ->
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
       nil ->

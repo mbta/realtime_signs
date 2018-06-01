@@ -20,6 +20,7 @@
     "direction_id": 0,
     "route_id": "Mattapan",
     "terminal": false,
+    "countdown_verb": "arrives",
     "type": "countdown"
   },
   {
@@ -31,6 +32,7 @@
     "headsign": "Ashmont",
     "route_id": "Mattapan",
     "terminal": false,
+    "countdown_verb": "arrives",
     "type": "countdown"
   },
   {
@@ -66,6 +68,7 @@
     "direction_id": 0,
     "route_id": "Mattapan",
     "terminal": false,
+    "countdown_verb": "arrives",
     "type": "countdown"
   },
   {
@@ -77,6 +80,7 @@
     "direction_id": 1,
     "route_id": "Mattapan",
     "terminal": false,
+    "countdown_verb": "arrives",
     "type": "countdown"
   },
   {
@@ -88,6 +92,7 @@
     "direction_id": 0,
     "route_id": "Mattapan",
     "terminal": false,
+    "countdown_verb": "arrives",
     "type": "countdown"
   },
   {
@@ -99,6 +104,7 @@
     "direction_id": 1,
     "route_id": "Mattapan",
     "terminal": false,
+    "countdown_verb": "arrives",
     "type": "countdown"
   },
   {
@@ -110,6 +116,7 @@
     "direction_id": 0,
     "route_id": "Mattapan",
     "terminal": false,
+    "countdown_verb": "arrives",
     "type": "countdown"
   },
   {
@@ -121,6 +128,7 @@
     "direction_id": 1,
     "route_id": "Mattapan",
     "terminal": false,
+    "countdown_verb": "arrives",
     "type": "countdown"
   },
   {
@@ -132,6 +140,7 @@
     "direction_id": 0,
     "route_id": "Mattapan",
     "terminal": false,
+    "countdown_verb": "arrives",
     "type": "countdown"
   },
   {
@@ -143,6 +152,7 @@
     "direction_id": 1,
     "route_id": "Mattapan",
     "terminal": false,
+    "countdown_verb": "arrives",
     "type": "countdown"
   },
   {
