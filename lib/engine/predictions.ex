@@ -10,6 +10,8 @@ defmodule Engine.Predictions do
   use GenServer
   require Logger
 
+  @table __MODULE__
+
   @type t :: {DateTime.t, %{
     String.t() => [Predictions.Prediction.t()]
   }}
@@ -19,41 +21,41 @@ defmodule Engine.Predictions do
   end
 
   @doc "The upcoming predicted times a vehicle will be at this stop"
-  @spec for_stop(GenServer.server(), String.t(), 0 | 1) :: [Predictions.Prediction.t()]
-  def for_stop(pid \\ __MODULE__, gtfs_stop_id, direction_id) do
-    GenServer.call(pid, {:for_stop, gtfs_stop_id, direction_id})
+  @spec for_stop(String.t(), 0 | 1) :: [Predictions.Prediction.t()]
+  def for_stop(gtfs_stop_id, direction_id) do
+    case :ets.lookup(@table, {gtfs_stop_id, direction_id}) do
+      [{{^gtfs_stop_id, ^direction_id}, predictions}] -> predictions
+      _ -> []
+    end
   end
 
   @spec init(any()) :: {:ok, any()}
   def init(_) do
     schedule_update(self())
-    {:ok, {Timex.now(), %{}}}
-  end
-
-  @spec handle_call({:for_stop, String.t(), 0 | 1}, GenServer.from(), t()) :: {:reply, [Predictions.Prediction.t()], t()}
-  def handle_call({:for_stop, gtfs_stop_id, direction_id}, _from, {_last_modified, predictions} = state) do
-    {:reply, Map.get(predictions, {gtfs_stop_id, direction_id}, []), state}
+    @table = :ets.new(__MODULE__, [:set, :protected, :named_table, read_concurrency: true])
+    {:ok, Timex.now()}
   end
 
   @spec handle_info(:update, t()) :: {:noreply, t()}
-  def handle_info(:update, {last_modified, current_predictions}) do
+  def handle_info(:update, last_modified) do
     schedule_update(self())
     current_time = Timex.now()
     {:ok, modified_since} = last_modified |> Timex.format("{WDshort}, {D} {Mshort} {YYYY} {h24}:{m}:{s} {Zabbr}")
     http_client = Application.get_env(:realtime_signs, :http_client)
-    updated_state = case Application.get_env(:realtime_signs, :trip_update_url) |> http_client.get([{"If-Modified-Since", modified_since}]) do
+    last_modified = case Application.get_env(:realtime_signs, :trip_update_url) |> http_client.get([{"If-Modified-Since", modified_since}]) do
       {:ok, %HTTPoison.Response{body: body, status_code: status}} when status >= 200 and status < 300 ->
         new_predictions = body
         |> Predictions.Predictions.parse_pb_response()
         |> Predictions.Predictions.get_all(current_time)
-        {current_time, new_predictions}
+        :ets.insert(@table, Enum.into(new_predictions, []))
+        current_time
       {:ok, %HTTPoison.Response{}} ->
-        {last_modified, current_predictions}
+        last_modified
       {:error, reason} ->
         Logger.warn("Could not fetch pb file: #{inspect reason}")
-        {last_modified, current_predictions}
+        last_modified
     end
-    {:noreply, updated_state}
+    {:noreply, last_modified}
   end
 
   defp schedule_update(pid) do
