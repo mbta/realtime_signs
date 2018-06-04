@@ -18,6 +18,8 @@ defmodule Signs.Countdown do
     :direction_id,
     :route_id,
     :headsign,
+    :countdown_verb,
+    :terminal,
     :prediction_engine,
     :sign_updater,
     :read_sign_period_ms,
@@ -41,6 +43,8 @@ defmodule Signs.Countdown do
     sign_updater: module(),
     current_content_bottom: Content.Message.t() | nil,
     current_content_top: Content.Message.t() | nil,
+    countdown_verb: String.t(),
+    terminal: boolean,
     bottom_timer: reference() | nil,
     top_timer: reference() | nil,
     read_sign_period_ms: integer(),
@@ -53,14 +57,16 @@ defmodule Signs.Countdown do
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
 
     sign = %__MODULE__{
-      id: config["id"],
-      pa_ess_id: {config["pa_ess_loc"], config["pa_ess_zone"]},
-      gtfs_stop_id: config["gtfs_stop_id"],
-      direction_id: config["direction_id"],
-      route_id: config["route_id"],
-      headsign: config["headsign"],
+      id: Map.fetch!(config, "id"),
+      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "pa_ess_zone")},
+      gtfs_stop_id: Map.fetch!(config, "gtfs_stop_id"),
+      direction_id: Map.fetch!(config, "direction_id"),
+      route_id: Map.fetch!(config, "route_id"),
+      headsign: Map.fetch!(config, "headsign"),
       current_content_top: Content.Message.Empty.new(),
       current_content_bottom: Content.Message.Empty.new(),
+      terminal: Map.fetch!(config, "terminal"),
+      countdown_verb: config |> Map.fetch!("countdown_verb") |> String.to_atom(),
       top_timer: nil,
       bottom_timer: nil,
       sign_updater: sign_updater,
@@ -116,7 +122,14 @@ defmodule Signs.Countdown do
       |> sign.prediction_engine.for_stop(sign.direction_id)
       |> Predictions.Predictions.sort()
       |> Enum.take(2)
-      |> Enum.map(& Content.Message.Predictions.new(&1, sign.headsign))
+      |> Enum.map(fn prediction ->
+                    if sign.terminal do
+                      Content.Message.Predictions.terminal(prediction, sign.headsign)
+                    else
+                      Content.Message.Predictions.new(prediction, sign.headsign)
+                    end
+                  end)
+
 
     {
       Enum.at(messages, 0, Content.Message.Empty.new()),
@@ -173,7 +186,7 @@ defmodule Signs.Countdown do
   end
 
   defp read_countdown(%{current_content_top: msg} = sign) do
-    case Content.Audio.NextTrainCountdown.from_predictions_message(msg, :arrives) do
+    case Content.Audio.NextTrainCountdown.from_predictions_message(msg, sign.countdown_verb) do
       %Content.Audio.NextTrainCountdown{} = audio ->
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
       nil ->
