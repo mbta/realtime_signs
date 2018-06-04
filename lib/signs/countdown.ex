@@ -122,15 +122,17 @@ defmodule Signs.Countdown do
       |> sign.prediction_engine.for_stop(sign.direction_id)
       |> Predictions.Predictions.sort()
       |> Enum.take(2)
-      |> Enum.map(& if sign.terminal do
-                    Content.Message.Predictions.terminal(&1, sign.headsign)
-                  else
-                    Content.Message.Predictions.new(&1, sign.headsign)
+      |> Enum.map(fn prediction ->
+                    if sign.terminal do
+                      Content.Message.Predictions.terminal(prediction, sign.headsign)
+                    else
+                      Content.Message.Predictions.new(prediction, sign.headsign)
+                    end
                   end)
 
 
-    {
-      Enum.at(messages, 0, Content.Message.Empty.new()),
+  {
+    Enum.at(messages, 0, Content.Message.Empty.new()),
       Enum.at(messages, 1, Content.Message.Empty.new())
     }
   end
