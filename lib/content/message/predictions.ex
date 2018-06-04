@@ -34,6 +34,20 @@ defmodule Content.Message.Predictions do
     }
   end
 
+  @spec terminal(Predictions.Prediction.t(), String.t()) :: t()
+  def terminal(%Predictions.Prediction{} = prediction, headsign, width \\ 18) do
+    minutes = case prediction.seconds_until_arrival do
+      x when x >= 0 and x <= 30 -> :boarding
+      x -> x |> Kernel./(60) |> round()
+    end
+
+    %__MODULE__{
+      headsign: headsign,
+      minutes: minutes,
+      width: width,
+    }
+  end
+
   defimpl Content.Message do
     require Logger
 
