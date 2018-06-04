@@ -131,8 +131,8 @@ defmodule Signs.Countdown do
                   end)
 
 
-  {
-    Enum.at(messages, 0, Content.Message.Empty.new()),
+    {
+      Enum.at(messages, 0, Content.Message.Empty.new()),
       Enum.at(messages, 1, Content.Message.Empty.new())
     }
   end
