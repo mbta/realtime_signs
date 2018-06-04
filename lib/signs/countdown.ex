@@ -57,15 +57,15 @@ defmodule Signs.Countdown do
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
 
     sign = %__MODULE__{
-      id: config["id"],
-      pa_ess_id: {config["pa_ess_loc"], config["pa_ess_zone"]},
-      gtfs_stop_id: config["gtfs_stop_id"],
-      direction_id: config["direction_id"],
-      route_id: config["route_id"],
-      headsign: config["headsign"],
+      id: Map.fetch!(config, "id"),
+      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "pa_ess_zone")},
+      gtfs_stop_id: Map.fetch!(config, "gtfs_stop_id"),
+      direction_id: Map.fetch!(config, "direction_id"),
+      route_id: Map.fetch!(config, "route_id"),
+      headsign: Map.fetch!(config, "headsign"),
       current_content_top: Content.Message.Empty.new(),
       current_content_bottom: Content.Message.Empty.new(),
-      terminal: config["terminal"],
+      terminal: Map.fetch!(config, "terminal"),
       countdown_verb: config |> Map.fetch!("countdown_verb") |> String.to_atom(),
       top_timer: nil,
       bottom_timer: nil,

@@ -389,6 +389,7 @@ defmodule Signs.CountdownTest do
         "direction_id" => 0,
         "route_id" => "Mattapan",
         "headsign" => "Mattapan",
+        "terminal" => false,
         "countdown_verb" => "arrives",
         "type" => "countdown"
       }
