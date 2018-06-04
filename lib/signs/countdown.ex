@@ -19,13 +19,13 @@ defmodule Signs.Countdown do
     :route_id,
     :headsign,
     :countdown_verb,
+    :terminal,
     :prediction_engine,
     :sign_updater,
     :read_sign_period_ms,
   ]
 
   defstruct @enforce_keys ++ [
-    :terminal,
     :current_content_bottom,
     :current_content_top,
     :bottom_timer,
@@ -43,6 +43,7 @@ defmodule Signs.Countdown do
     sign_updater: module(),
     current_content_bottom: Content.Message.t() | nil,
     current_content_top: Content.Message.t() | nil,
+    countdown_verb: String.t(),
     terminal: boolean,
     bottom_timer: reference() | nil,
     top_timer: reference() | nil,
@@ -115,26 +116,18 @@ defmodule Signs.Countdown do
     {:noreply, state}
   end
 
-  defp get_messages(%{terminal: false} = sign) do
+  defp get_messages(sign) do
     messages =
       sign.gtfs_stop_id
       |> sign.prediction_engine.for_stop(sign.direction_id)
       |> Predictions.Predictions.sort()
       |> Enum.take(2)
-      |> Enum.map(& Content.Message.Predictions.new(&1, sign.headsign))
+      |> Enum.map(& if sign.terminal do
+                    Content.Message.Predictions.terminal(&1, sign.headsign)
+                  else
+                    Content.Message.Predictions.new(&1, sign.headsign)
+                  end)
 
-    {
-      Enum.at(messages, 0, Content.Message.Empty.new()),
-      Enum.at(messages, 1, Content.Message.Empty.new())
-    }
-  end
-  defp get_messages(%{terminal: true} = sign) do
-    messages =
-      sign.gtfs_stop_id
-      |> sign.prediction_engine.for_stop(sign.direction_id)
-      |> Predictions.Predictions.sort()
-      |> Enum.take(2)
-      |> Enum.map(& Content.Message.Predictions.terminal(&1, sign.headsign))
 
     {
       Enum.at(messages, 0, Content.Message.Empty.new()),
