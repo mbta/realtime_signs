@@ -34,7 +34,7 @@ defmodule Content.Message.Predictions do
     }
   end
 
-  @spec new(Predictions.Prediction.t(), String.t()) :: t()
+  @spec terminal(Predictions.Prediction.t(), String.t()) :: t()
   def terminal(%Predictions.Prediction{} = prediction, headsign, width \\ 18) do
     minutes = case prediction.seconds_until_arrival do
       x when x >= 0 and x <= 30 -> :boarding
