@@ -90,6 +90,34 @@ defmodule Signs.CountdownTest do
   }
 
   describe "update_content callback" do
+    test "when the sign is a terminal, shows boarding instead of arriving message" do
+      sign = %Signs.Countdown{
+        id: "test-sign",
+        pa_ess_id: "123",
+        gtfs_stop_id: "many_predictions",
+        direction_id: 1,
+        route_id: "Mattapan",
+        headsign: "Mattapan",
+        current_content_bottom: nil,
+        current_content_top: nil,
+        countdown_verb: :arrives,
+        terminal: true,
+        sign_updater: FakeUpdater,
+        prediction_engine: FakePredictionsEngine,
+        read_sign_period_ms: 10_000,
+      }
+
+      top_content = %Content.Message.Predictions{
+        headsign: "Mattapan", minutes: :boarding
+      }
+
+      bottom_content = %Content.Message.Predictions{
+        headsign: "Mattapan", minutes: 3
+      }
+
+      assert {:noreply, %{current_content_top: ^top_content, current_content_bottom: ^bottom_content}} = Signs.Countdown.handle_info(:update_content, sign)
+    end
+
     test "when both lines change, sends an update containing both lines" do
       sign = %Signs.Countdown{
         id: "test-sign",

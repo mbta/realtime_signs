@@ -1,7 +1,7 @@
 defmodule Content.Message.PredictionsTest do
   use ExUnit.Case, async: true
 
-  describe "new/1" do
+  describe "new/3" do
     test "puts boarding on the sign when train is 0 seconds away" do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 0
@@ -72,6 +72,35 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.new(prediction, "Ashmont")
 
       assert Content.Message.to_string(msg) == "Ashmont      2 min"
+    end
+  end
+
+  describe "terminal/3" do
+    test "puts boarding on the sign when train is 0 seconds away" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 0
+      }
+      msg = Content.Message.Predictions.terminal(prediction, "Ashmont")
+
+      assert Content.Message.to_string(msg) == "Ashmont        BRD"
+    end
+
+    test "puts boarding on the sign when train is 0-30 seconds away" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 30
+      }
+      msg = Content.Message.Predictions.terminal(prediction, "Mattapan")
+
+      assert Content.Message.to_string(msg) == "Mattapan       BRD"
+    end
+
+    test "puts the time on the sign when train is more than 30 seconds away" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 60
+      }
+      msg = Content.Message.Predictions.terminal(prediction, "Mattapan")
+
+      assert Content.Message.to_string(msg) == "Mattapan     1 min"
     end
   end
 end
