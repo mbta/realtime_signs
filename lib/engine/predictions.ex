@@ -12,10 +12,6 @@ defmodule Engine.Predictions do
 
   @table __MODULE__
 
-  @type t :: {DateTime.t, %{
-    String.t() => [Predictions.Prediction.t()]
-  }}
-
   def start_link do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
@@ -36,7 +32,7 @@ defmodule Engine.Predictions do
     {:ok, Timex.now()}
   end
 
-  @spec handle_info(:update, t()) :: {:noreply, t()}
+  @spec handle_info(:update, DateTime.t) :: {:noreply, DateTime.t}
   def handle_info(:update, last_modified) do
     schedule_update(self())
     current_time = Timex.now()
