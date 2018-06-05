@@ -18,8 +18,8 @@ defmodule Engine.Predictions do
 
   @doc "The upcoming predicted times a vehicle will be at this stop"
   @spec for_stop(String.t(), 0 | 1) :: [Predictions.Prediction.t()]
-  def for_stop(gtfs_stop_id, direction_id) do
-    case :ets.lookup(@table, {gtfs_stop_id, direction_id}) do
+  def for_stop(table_id \\ @table, gtfs_stop_id, direction_id) do
+    case :ets.lookup(table_id, {gtfs_stop_id, direction_id}) do
       [{{^gtfs_stop_id, ^direction_id}, predictions}] -> predictions
       _ -> []
     end

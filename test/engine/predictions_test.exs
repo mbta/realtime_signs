@@ -26,4 +26,21 @@ defmodule Engine.PredictionsTest do
       assert log =~ "timeout"
     end
   end
+
+  describe "for_stop/2" do
+    @tag :this_one
+    test "returns correct predictions for stop" do
+      prediction = %Predictions.Prediction{
+        stop_id: "stop_1",
+        seconds_until_arrival: 45,
+        direction_id: 1,
+        route_id: "Blue",
+      }
+      prediction_map = %{{"stop_1", 1} => [prediction]}
+      table_id = :ets.new(:predictions_engine_test, [:set, :protected, read_concurrency: true])
+      :ets.insert(table_id, Enum.into(prediction_map, []))
+      assert for_stop(table_id, "stop_1", 1) == [prediction]
+      assert for_stop(table_id, "no_entry", 0) == []
+    end
+  end
 end
