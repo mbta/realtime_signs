@@ -65,6 +65,9 @@ defmodule Fake.HTTPoison do
   def mock_response("trip_updates_304") do
     {:ok, %HTTPoison.Response{status_code: 304}}
   end
+  def mock_response("trip_updates_error") do
+    {:error, %HTTPoison.Error{reason: :timeout}}
+  end
   def mock_response("https://api-v3.mbta.com/schedules?filter[stop]=500_error") do
     {:ok, %HTTPoison.Response{status_code: 500, body: ""}}
   end
