@@ -48,7 +48,7 @@ defmodule Engine.Predictions do
         current_time
       {:ok, %HTTPoison.Response{}} ->
         last_modified
-      {:error, reason} ->
+      {:error, %HTTPoison.Error{reason: reason}} ->
         Logger.warn("Could not fetch pb file: #{inspect reason}")
         last_modified
     end
