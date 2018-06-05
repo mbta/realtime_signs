@@ -43,6 +43,7 @@ defmodule Engine.Predictions do
         new_predictions = body
         |> Predictions.Predictions.parse_pb_response()
         |> Predictions.Predictions.get_all(current_time)
+        :ets.delete_all_objects(@table)
         :ets.insert(@table, Enum.into(new_predictions, []))
         current_time
       {:ok, %HTTPoison.Response{}} ->
