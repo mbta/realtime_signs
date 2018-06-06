@@ -266,5 +266,29 @@
     "pa_ess_zone": "m",
     "bridge_id": "1",
     "type": "bridge_only"
-  }
+  },
+  {
+    "id": "airport_eastbound",
+    "pa_ess_loc": "BAIR",
+    "pa_ess_zone": "e",
+    "headsign": "Wonderland",
+    "gtfs_stop_id": "70048",
+    "direction_id": "1",
+    "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
+    "type": "countdown"
+  },
+  {
+    "id": "airport_westbound",
+    "pa_ess_loc": "BAIR",
+    "pa_ess_zone": "w",
+    "headsign": "Bowdoin",
+    "gtfs_stop_id": "70047",
+    "direction_id": "0",
+    "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
+    "type": "countdown"
+  },
 ]
