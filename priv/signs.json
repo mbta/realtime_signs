@@ -286,7 +286,7 @@
     "pa_ess_zone": "m",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70059",
-    "direction_id":
+    "direction_id": "0",
     "route_id": "Blue",
     "type": "countdown"
   },
@@ -448,8 +448,9 @@
     "gtfs_stop_id": "70049",
     "direction_id": "1",
     "route_id": "Blue",
+    "countdown_verb": "arrives",
     "line_number": "2",
-    "type": "sigle"
+    "type": "single"
   },
   {
     "id": "wood_island_westbound",
