@@ -276,8 +276,10 @@
     "pa_ess_zone": "w",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70059",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
+    "countdown_verb": "departs",
+    "terminal": true,
     "type": "countdown"
   },
   {
@@ -286,8 +288,10 @@
     "pa_ess_zone": "m",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70059",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
+    "countdown_verb": "departs",
+    "terminal": true,
     "type": "countdown"
   },
   {
@@ -296,8 +300,10 @@
     "pa_ess_zone": "e",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70058",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -306,9 +312,10 @@
     "pa_ess_zone": "m",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70058",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
     "countdown_verb": "arrives",
+    "terminal": false,
     "line_number": "1",
     "type": "single"
   },
@@ -318,9 +325,10 @@
     "pa_ess_zone": "m",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70057",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
     "countdown_verb": "arrives",
+    "terminal": false,
     "line_number": "2",
     "type": "single"
   },
@@ -330,8 +338,10 @@
     "pa_ess_zone": "w",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70057",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -340,8 +350,10 @@
     "pa_ess_zone": "e",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70056",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -350,8 +362,10 @@
     "pa_ess_zone": "w",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70055",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -360,8 +374,10 @@
     "pa_ess_zone": "e",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70054",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -370,8 +386,10 @@
     "pa_ess_zone": "w",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70053",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -380,8 +398,10 @@
     "pa_ess_zone": "e",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70052",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -390,9 +410,10 @@
     "pa_ess_zone": "m",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70052",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
     "countdown_verb": "arrives",
+    "terminal": false,
     "line_number": "1",
     "type": "single"
   },
@@ -402,9 +423,10 @@
     "pa_ess_zone": "m",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70051",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
     "countdown_verb": "arrives",
+    "terminal": false,
     "line_number": "2",
     "type": "single"
   },
@@ -414,8 +436,10 @@
     "pa_ess_zone": "w",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70051",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -424,8 +448,10 @@
     "pa_ess_zone": "e",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70050",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -434,9 +460,10 @@
     "pa_ess_zone": "m",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70050",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
     "countdown_verb": "arrives",
+    "terminal": false,
     "line_number": "1",
     "type": "single"
   },
@@ -446,9 +473,10 @@
     "pa_ess_zone": "m",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70049",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
     "countdown_verb": "arrives",
+    "terminal": false,
     "line_number": "2",
     "type": "single"
   },
@@ -458,8 +486,10 @@
     "pa_ess_zone": "w",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70049",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -468,8 +498,10 @@
     "pa_ess_zone": "e",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70048",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -478,8 +510,10 @@
     "pa_ess_zone": "w",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70047",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -488,8 +522,10 @@
     "pa_ess_zone": "e",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70046",
-    "direction_id": "1",
+    "direction_id": 0,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -498,8 +534,10 @@
     "pa_ess_zone": "w",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70045",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -508,8 +546,10 @@
     "pa_ess_zone": "e",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70044",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -518,9 +558,10 @@
     "pa_ess_zone": "m",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70044",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
     "countdown_verb": "arrives",
+    "terminal": false,
     "line_number": "1",
     "type": "single"
   },
@@ -530,10 +571,12 @@
     "pa_ess_zone": "m",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70043",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "line_number": "2",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "single"
   },
   {
@@ -542,52 +585,61 @@
     "pa_ess_zone": "w",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70043",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
-    "id": "state_eastbound",
+    "id": "state_blue_eastbound",
     "pa_ess_loc": "BSTA",
     "pa_ess_zone": "e",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70042",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
-    "id": "state_mezzanine_eastbound",
+    "id": "state_blue_mezzanine_eastbound",
     "pa_ess_loc": "BSTA",
     "pa_ess_zone": "m",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70042",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "line_number": "1",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "single"
   },
   {
-    "id": "state_mezzanine_westbound",
+    "id": "state_blue_mezzanine_westbound",
     "pa_ess_loc": "BSTA",
     "pa_ess_zone": "m",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70041",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
-    "countdown_verb": "arrives",
     "line_number": "2",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "single"
   },
   {
-    "id": "state_westbound",
+    "id": "state_blue_westbound",
     "pa_ess_loc": "BSTA",
     "pa_ess_zone": "w",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70041",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -596,8 +648,10 @@
     "pa_ess_zone": "e",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70040",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -606,9 +660,10 @@
     "pa_ess_zone": "m",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70040",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
     "countdown_verb": "arrives",
+    "terminal": false,
     "line_number": "1",
     "type": "single"
   },
@@ -618,9 +673,10 @@
     "pa_ess_zone": "m",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70039",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
     "countdown_verb": "arrives",
+    "terminal": false,
     "line_number": "2",
     "type": "single"
   },
@@ -630,8 +686,10 @@
     "pa_ess_zone": "w",
     "headsign": "Bowdoin",
     "gtfs_stop_id": "70039",
-    "direction_id": "0",
+    "direction_id": 0,
     "route_id": "Blue",
+    "countdown_verb": "arrives",
+    "terminal": false,
     "type": "countdown"
   },
   {
@@ -640,8 +698,10 @@
     "pa_ess_zone": "e",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70038",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
+    "countdown_verb": "departs",
+    "terminal": true,
     "type": "countdown"
   },
   {
@@ -650,8 +710,10 @@
     "pa_ess_zone": "m",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70038",
-    "direction_id": "1",
+    "direction_id": 1,
     "route_id": "Blue",
+    "countdown_verb": "departs",
+    "terminal": true,
     "type": "countdown"
   }
 ]
