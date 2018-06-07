@@ -410,7 +410,7 @@
     "pa_ess_zone": "e",
     "headsign": "Wonderland",
     "gtfs_stop_id": "70046",
-    "direction_id": 0,
+    "direction_id": 1,
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
