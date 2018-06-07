@@ -280,6 +280,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -292,6 +293,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "line_number": "1",
     "type": "single"
   },
@@ -305,6 +307,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "line_number": "2",
     "type": "single"
   },
@@ -318,6 +321,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -330,6 +334,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -342,6 +347,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "line_number": "1",
     "type": "single"
   },
@@ -355,6 +361,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "line_number": "2",
     "type": "single"
   },
@@ -368,6 +375,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -380,6 +388,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -392,6 +401,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -404,6 +414,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -416,6 +427,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   }
 ]
