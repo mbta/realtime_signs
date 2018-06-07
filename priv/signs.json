@@ -9,6 +9,7 @@
     "headsign": "Mattapan",
     "route_id": "Mattapan",
     "countdown_verb": "departs",
+    "announce_arriving": true,
     "type": "single"
   },
   {
@@ -45,6 +46,7 @@
     "headsign": "Mattapan",
     "route_id": "Mattapan",
     "countdown_verb": "arrives",
+    "announce_arriving": true,
     "type": "single"
   },
   {
@@ -57,6 +59,7 @@
     "headsign": "Ashmont",
     "route_id": "Mattapan",
     "countdown_verb": "arrives",
+    "announce_arriving": true,
     "type": "single"
   },
   {
