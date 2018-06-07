@@ -240,6 +240,32 @@ defmodule Signs.CountdownTest do
       end)
     end
 
+    test "Does not send arriving audio message if sign is configured to not arriving announcements" do
+      sign = %Signs.Countdown{
+        id: "audio-sign",
+        pa_ess_id: {"ABCD", "n"},
+        gtfs_stop_id: "321",
+        direction_id: 1,
+        route_id: "Mattapan",
+        headsign: "Mattapan",
+        current_content_bottom: nil,
+        current_content_top: %Content.Message.Predictions{headsign: "Mattapan", minutes: 1},
+        countdown_verb: :arrives,
+        terminal: false,
+        sign_updater: FakeUpdater,
+        prediction_engine: FakePredictionsEngine,
+        read_sign_period_ms: 10_000,
+        announce_arriving?: false
+      }
+
+      assert {:noreply, %Signs.Countdown{}} = Signs.Countdown.handle_info(:update_content, sign)
+      refute(receive do
+        {:send_audio, {{"ABCD", "n"}, %Content.Audio.TrainIsArriving{destination: :mattapan}, 5, 60}} -> true
+      after
+        0 -> false
+      end)
+    end
+
     test "when top changes to a different minute, no audio message sent" do
       sign = %Signs.Countdown{
         id: "audio-sign",
