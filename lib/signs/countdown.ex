@@ -30,6 +30,7 @@ defmodule Signs.Countdown do
     :current_content_top,
     :bottom_timer,
     :top_timer,
+    announce_arriving?: true
   ]
 
   @type t :: %{
@@ -48,6 +49,7 @@ defmodule Signs.Countdown do
     bottom_timer: reference() | nil,
     top_timer: reference() | nil,
     read_sign_period_ms: integer(),
+    announce_arriving?: boolean
   }
 
   @default_duration 120
@@ -72,6 +74,7 @@ defmodule Signs.Countdown do
       sign_updater: sign_updater,
       prediction_engine: prediction_engine,
       read_sign_period_ms: 4 * 60 * 1000,
+      announce_arriving?: Map.get(config, "announce_arriving", true)
     }
 
     GenServer.start_link(__MODULE__, sign)
@@ -176,6 +179,7 @@ defmodule Signs.Countdown do
     %{sign | current_content_bottom: new_bottom, bottom_timer: timer}
   end
 
+  defp announce_arrival(_msg, %{announce_arriving?: false}), do: nil
   defp announce_arrival(msg, sign) do
     case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
       %Content.Audio.TrainIsArriving{} = audio ->
