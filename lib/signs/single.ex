@@ -23,6 +23,7 @@ defmodule Signs.Single do
     :sign_updater,
     :read_sign_period_ms,
     :countdown_verb,
+    :announce_arriving?,
   ]
 
   defstruct @enforce_keys ++ [
@@ -44,6 +45,7 @@ defmodule Signs.Single do
     timer: reference() | nil,
     read_sign_period_ms: integer(),
     countdown_verb: Content.Audio.NextTrainCountdown.verb(),
+    announce_arriving?: boolean(),
   }
 
   @default_duration 120
@@ -66,6 +68,7 @@ defmodule Signs.Single do
       prediction_engine: prediction_engine,
       read_sign_period_ms: 4 * 60 * 1000,
       countdown_verb: config |> Map.fetch!("countdown_verb") |> String.to_atom(),
+      announce_arriving?: Map.fetch!(config, "announce_arriving"),
     }
 
     GenServer.start_link(__MODULE__, sign)
@@ -134,6 +137,9 @@ defmodule Signs.Single do
     %{sign | current_content: new_text, timer: timer}
   end
 
+  defp announce_arrival(_msg, %{announce_arriving?: false}) do
+    nil
+  end
   defp announce_arrival(msg, sign) do
     case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
       %Content.Audio.TrainIsArriving{} = audio ->

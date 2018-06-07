@@ -82,7 +82,8 @@ defmodule  Signs.SingleTest do
     sign_updater: FakeUpdater,
     prediction_engine: FakePredictionsEngine,
     read_sign_period_ms: 30_000,
-    countdown_verb: :departs
+    countdown_verb: :departs,
+    announce_arriving?: true,
   }
 
   describe "update_content callback" do
@@ -102,6 +103,13 @@ defmodule  Signs.SingleTest do
       sign = %{@sign | gtfs_stop_id: "audio-arriving"}
       assert {:noreply, %Signs.Single{}} = Signs.Single.handle_info(:update_content, sign)
       assert_received {:send_audio, {{"RASH", "n"}, %Content.Audio.TrainIsArriving{destination: :mattapan}, 5, 60}}
+    end
+
+    test "Does not send arriving audio message if sign is configured to not arriving announcements" do
+      Process.register(self(), :single_test_fake_updater_listener)
+      sign = %{@sign | gtfs_stop_id: "audio-arriving", announce_arriving?: false}
+      assert {:noreply, %Signs.Single{}} = Signs.Single.handle_info(:update_content, sign)
+      refute_received {:send_audio, {{"RASH", "n"}, %Content.Audio.TrainIsArriving{destination: :mattapan}, 5, 60}}
     end
   end
 
