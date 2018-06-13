@@ -280,6 +280,7 @@
     "route_id": "Blue",
     "countdown_verb": "departs",
     "terminal": true,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -292,6 +293,7 @@
     "route_id": "Blue",
     "countdown_verb": "departs",
     "terminal": true,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -304,6 +306,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -344,6 +347,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -356,6 +360,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -368,6 +373,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -380,6 +386,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -392,6 +399,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -564,6 +572,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -605,6 +614,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -617,6 +627,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -658,6 +669,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -670,6 +682,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -710,6 +723,7 @@
     "route_id": "Blue",
     "countdown_verb": "arrives",
     "terminal": false,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -722,6 +736,7 @@
     "route_id": "Blue",
     "countdown_verb": "departs",
     "terminal": true,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
@@ -734,6 +749,7 @@
     "route_id": "Blue",
     "countdown_verb": "departs",
     "terminal": true,
+    "announce_arriving": false,
     "type": "countdown"
   },
   {
