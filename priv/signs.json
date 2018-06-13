@@ -727,7 +727,7 @@
     "countdown_verb": "departs",
     "terminal": true,
     "type": "countdown"
-  }
+  },
   {
     "id": "oak_grove_mezzanine_southbound",
     "pa_ess_loc": "OOAK",
