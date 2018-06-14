@@ -1,12 +1,12 @@
 defmodule Content.Message.PredictionsTest do
   use ExUnit.Case, async: true
 
-  describe "new/3" do
+  describe "non_terminal/3" do
     test "puts ARR on the sign when train is 0 seconds away, but not boarding" do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 0
       }
-      msg = Content.Message.Predictions.new(prediction, "Ashmont", false)
+      msg = Content.Message.Predictions.non_terminal(prediction, "Ashmont", false)
 
       assert Content.Message.to_string(msg) == "Ashmont        ARR"
     end
@@ -15,7 +15,7 @@ defmodule Content.Message.PredictionsTest do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 0
       }
-      msg = Content.Message.Predictions.new(prediction, "Ashmont", true)
+      msg = Content.Message.Predictions.non_terminal(prediction, "Ashmont", true)
 
       assert Content.Message.to_string(msg) == "Ashmont        BRD"
     end
@@ -24,7 +24,7 @@ defmodule Content.Message.PredictionsTest do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 30
       }
-      msg = Content.Message.Predictions.new(prediction, "Mattapan", false)
+      msg = Content.Message.Predictions.non_terminal(prediction, "Mattapan", false)
 
       assert Content.Message.to_string(msg) == "Mattapan       ARR"
     end
@@ -33,14 +33,14 @@ defmodule Content.Message.PredictionsTest do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 31
       }
-      msg = Content.Message.Predictions.new(prediction, "Mattapan", false)
+      msg = Content.Message.Predictions.non_terminal(prediction, "Mattapan", false)
 
       assert Content.Message.to_string(msg) == "Mattapan     1 min"
     end
 
     test "can use a shorter line length" do
       prediction = %Predictions.Prediction{seconds_until_arrival: 550}
-      msg = Content.Message.Predictions.new(prediction, "Mattapan", 15, false)
+      msg = Content.Message.Predictions.non_terminal(prediction, "Mattapan", 15, false)
       assert Content.Message.to_string(msg) == "Mattapan  9 min"
     end
 
@@ -48,7 +48,7 @@ defmodule Content.Message.PredictionsTest do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 65
       }
-      msg = Content.Message.Predictions.new(prediction, "Ashmont", false)
+      msg = Content.Message.Predictions.non_terminal(prediction, "Ashmont", false)
 
       assert Content.Message.to_string(msg) == "Ashmont      1 min"
     end
@@ -57,35 +57,35 @@ defmodule Content.Message.PredictionsTest do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 125
       }
-      msg = Content.Message.Predictions.new(prediction, "Ashmont", false)
+      msg = Content.Message.Predictions.non_terminal(prediction, "Ashmont", false)
 
       assert Content.Message.to_string(msg) == "Ashmont      2 min"
     end
 
     test "truncates very long headsigns to fit" do
       prediction = %Predictions.Prediction{seconds_until_arrival: 125}
-      msg = Content.Message.Predictions.new(prediction, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", false)
+      msg = Content.Message.Predictions.non_terminal(prediction, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", false)
 
       assert Content.Message.to_string(msg) == "ABCDEFGHIJK  2 min"
     end
 
     test "Still shows predictions for negative arrivals" do
       prediction = %Predictions.Prediction{seconds_until_arrival: -5}
-      msg = Content.Message.Predictions.new(prediction, "abc", false)
+      msg = Content.Message.Predictions.non_terminal(prediction, "abc", false)
 
       assert Content.Message.to_string(msg) == "abc            ARR"
     end
 
     test "Shows BRD for negative arrival times if vehicle is STOPPED_AT" do
       prediction = %Predictions.Prediction{seconds_until_arrival: -5}
-      msg = Content.Message.Predictions.new(prediction, "abc", true)
+      msg = Content.Message.Predictions.non_terminal(prediction, "abc", true)
 
       assert Content.Message.to_string(msg) == "abc            BRD"
     end
 
     test "Rounds to the nearest minute" do
       prediction = %Predictions.Prediction{seconds_until_arrival: 91}
-      msg = Content.Message.Predictions.new(prediction, "Ashmont", false)
+      msg = Content.Message.Predictions.non_terminal(prediction, "Ashmont", false)
 
       assert Content.Message.to_string(msg) == "Ashmont      2 min"
     end

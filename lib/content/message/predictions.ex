@@ -19,8 +19,8 @@ defmodule Content.Message.Predictions do
     width: integer(),
   }
 
-  @spec new(Predictions.Prediction.t(), String.t(), boolean) :: t()
-  def new(%Predictions.Prediction{} = prediction, headsign, width \\ 18, stopped_at?) do
+  @spec non_terminal(Predictions.Prediction.t(), String.t(), boolean) :: t()
+  def non_terminal(%Predictions.Prediction{} = prediction, headsign, width \\ 18, stopped_at?) do
     minutes = cond do
       stopped_at? -> :boarding
       prediction.seconds_until_arrival <= 30 -> :arriving

@@ -130,7 +130,7 @@ defmodule Signs.Countdown do
                     if sign.terminal do
                       Content.Message.Predictions.terminal(prediction, sign.headsign, boarding?)
                     else
-                      Content.Message.Predictions.new(prediction, sign.headsign, boarding?)
+                      Content.Message.Predictions.non_terminal(prediction, sign.headsign, boarding?)
                     end
                   end)
 
