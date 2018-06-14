@@ -49,12 +49,12 @@ defmodule Engine.PredictionsTest do
     end
   end
 
-  describe "currently_stopped_at?/1" do
+  describe "stopped_at?/1" do
     test "returns true when vehicle is boarding" do
       table_id = :ets.new(:predictions_engine_positions, [:set, :protected, read_concurrency: true])
       :ets.insert(table_id, [{"stop_1", true}])
-      assert currently_stopped_at?(table_id,"stop_1")
-      refute currently_stopped_at?(table_id, "stop_2")
+      assert stopped_at?(table_id,"stop_1")
+      refute stopped_at?(table_id, "stop_2")
     end
   end
 end

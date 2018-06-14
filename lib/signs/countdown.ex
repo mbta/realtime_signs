@@ -120,7 +120,7 @@ defmodule Signs.Countdown do
   end
 
   defp get_messages(sign) do
-    boarding? = Engine.Predictions.currently_stopped_at?(sign.gtfs_stop_id)
+    boarding? = Engine.Predictions.stopped_at?(sign.gtfs_stop_id)
     messages =
       sign.gtfs_stop_id
       |> sign.prediction_engine.for_stop(sign.direction_id)

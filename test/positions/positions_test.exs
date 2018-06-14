@@ -27,9 +27,9 @@ defmodule Positions.PositionsTest do
     end
   end
 
-  describe "get_all/1" do
+  describe "get_stopped/1" do
     test "gets all stations" do
-      assert get_all(@feed_message) == [{"70106", true}]
+      assert get_stopped(@feed_message) == [{"70106", true}]
     end
   end
 end
