@@ -120,6 +120,7 @@ defmodule Signs.Countdown do
   end
 
   defp get_messages(sign) do
+    boarding? = Engine.Predictions.currently_boarding?(sign.gtfs_stop_id)
     messages =
       sign.gtfs_stop_id
       |> sign.prediction_engine.for_stop(sign.direction_id)
@@ -127,9 +128,9 @@ defmodule Signs.Countdown do
       |> Enum.take(2)
       |> Enum.map(fn prediction ->
                     if sign.terminal do
-                      Content.Message.Predictions.terminal(prediction, sign.headsign)
+                      Content.Message.Predictions.terminal(prediction, sign.headsign, boarding?)
                     else
-                      Content.Message.Predictions.new(prediction, sign.headsign)
+                      Content.Message.Predictions.new(prediction, sign.headsign, boarding?)
                     end
                   end)
 

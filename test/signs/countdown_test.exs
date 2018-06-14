@@ -90,7 +90,7 @@ defmodule Signs.CountdownTest do
   }
 
   describe "update_content callback" do
-    test "when the sign is a terminal, shows boarding instead of arriving message" do
+    test "when the sign is a terminal, shows 1 min instead of arriving message" do
       sign = %Signs.Countdown{
         id: "test-sign",
         pa_ess_id: "123",
@@ -108,7 +108,7 @@ defmodule Signs.CountdownTest do
       }
 
       top_content = %Content.Message.Predictions{
-        headsign: "Mattapan", minutes: :boarding
+        headsign: "Mattapan", minutes: 1
       }
 
       bottom_content = %Content.Message.Predictions{

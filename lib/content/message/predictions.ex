@@ -19,11 +19,18 @@ defmodule Content.Message.Predictions do
     width: integer(),
   }
 
-  @spec new(Predictions.Prediction.t(), String.t()) :: t()
-  def new(%Predictions.Prediction{} = prediction, headsign, width \\ 18) do
+  @spec new(Predictions.Prediction.t(), String.t(), boolean) :: t()
+  def new(prediction, headsign, width \\ 18, boarding?)
+  def new(_prediction, headsign, width, true) do
+    %__MODULE__{
+      headsign: headsign,
+      minutes: :boarding,
+      width: width,
+    }
+  end
+  def new(%Predictions.Prediction{} = prediction, headsign, width, false) do
     minutes = case prediction.seconds_until_arrival do
-      0 -> :boarding
-      x when x > 0 and x <= 30 -> :arriving
+      x when x >= 0 and x <= 30 -> :arriving
       x -> x |> Kernel./(60) |> round()
     end
 
@@ -34,10 +41,18 @@ defmodule Content.Message.Predictions do
     }
   end
 
-  @spec terminal(Predictions.Prediction.t(), String.t()) :: t()
-  def terminal(%Predictions.Prediction{} = prediction, headsign, width \\ 18) do
+  @spec terminal(Predictions.Prediction.t(), String.t(), boolean()) :: t()
+  def terminal(prediction, headsign, width \\ 18, boarding?)
+  def terminal(_prediction, headsign, width, true) do
+    %__MODULE__{
+      headsign: headsign,
+      minutes: :boarding,
+      width: width,
+    }
+  end
+  def terminal(%Predictions.Prediction{} = prediction, headsign, width, false) do
     minutes = case prediction.seconds_until_arrival do
-      x when x >= 0 and x <= 30 -> :boarding
+      x when x >= 0 and x <= 30 -> 1
       x -> x |> Kernel./(60) |> round()
     end
 

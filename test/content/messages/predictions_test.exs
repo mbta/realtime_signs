@@ -2,11 +2,20 @@ defmodule Content.Message.PredictionsTest do
   use ExUnit.Case, async: true
 
   describe "new/3" do
-    test "puts boarding on the sign when train is 0 seconds away" do
+    test "puts ARR on the sign when train is 0 seconds away, but not boarding" do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 0
       }
-      msg = Content.Message.Predictions.new(prediction, "Ashmont")
+      msg = Content.Message.Predictions.new(prediction, "Ashmont", false)
+
+      assert Content.Message.to_string(msg) == "Ashmont        ARR"
+    end
+
+    test "puts BRD on the sign when train is currently boarding" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 0
+      }
+      msg = Content.Message.Predictions.new(prediction, "Ashmont", true)
 
       assert Content.Message.to_string(msg) == "Ashmont        BRD"
     end
@@ -15,7 +24,7 @@ defmodule Content.Message.PredictionsTest do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 30
       }
-      msg = Content.Message.Predictions.new(prediction, "Mattapan")
+      msg = Content.Message.Predictions.new(prediction, "Mattapan", false)
 
       assert Content.Message.to_string(msg) == "Mattapan       ARR"
     end
@@ -24,14 +33,14 @@ defmodule Content.Message.PredictionsTest do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 31
       }
-      msg = Content.Message.Predictions.new(prediction, "Mattapan")
+      msg = Content.Message.Predictions.new(prediction, "Mattapan", false)
 
       assert Content.Message.to_string(msg) == "Mattapan     1 min"
     end
 
     test "can use a shorter line length" do
       prediction = %Predictions.Prediction{seconds_until_arrival: 550}
-      msg = Content.Message.Predictions.new(prediction, "Mattapan", 15)
+      msg = Content.Message.Predictions.new(prediction, "Mattapan", 15, false)
       assert Content.Message.to_string(msg) == "Mattapan  9 min"
     end
 
@@ -39,7 +48,7 @@ defmodule Content.Message.PredictionsTest do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 65
       }
-      msg = Content.Message.Predictions.new(prediction, "Ashmont")
+      msg = Content.Message.Predictions.new(prediction, "Ashmont", false)
 
       assert Content.Message.to_string(msg) == "Ashmont      1 min"
     end
@@ -48,57 +57,57 @@ defmodule Content.Message.PredictionsTest do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 125
       }
-      msg = Content.Message.Predictions.new(prediction, "Ashmont")
+      msg = Content.Message.Predictions.new(prediction, "Ashmont", false)
 
       assert Content.Message.to_string(msg) == "Ashmont      2 min"
     end
 
     test "truncates very long headsigns to fit" do
       prediction = %Predictions.Prediction{seconds_until_arrival: 125}
-      msg = Content.Message.Predictions.new(prediction, "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+      msg = Content.Message.Predictions.new(prediction, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", false)
 
       assert Content.Message.to_string(msg) == "ABCDEFGHIJK  2 min"
     end
 
     test "handles invalid strings" do
       prediction = %Predictions.Prediction{seconds_until_arrival: -5}
-      msg = Content.Message.Predictions.new(prediction, "abc")
+      msg = Content.Message.Predictions.new(prediction, "abc", false)
 
       assert Content.Message.to_string(msg) == ""
     end
 
     test "Rounds to the nearest minute" do
       prediction = %Predictions.Prediction{seconds_until_arrival: 91}
-      msg = Content.Message.Predictions.new(prediction, "Ashmont")
+      msg = Content.Message.Predictions.new(prediction, "Ashmont", false)
 
       assert Content.Message.to_string(msg) == "Ashmont      2 min"
     end
   end
 
   describe "terminal/3" do
-    test "puts boarding on the sign when train is 0 seconds away" do
+    test "puts boarding on the sign when train is currently boarding" do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 0
       }
-      msg = Content.Message.Predictions.terminal(prediction, "Ashmont")
+      msg = Content.Message.Predictions.terminal(prediction, "Ashmont", true)
 
       assert Content.Message.to_string(msg) == "Ashmont        BRD"
     end
 
-    test "puts boarding on the sign when train is 0-30 seconds away" do
+    test "puts 1 min on the sign when train is not boarding, but less than a minute away" do
       prediction = %Predictions.Prediction{
-        seconds_until_arrival: 30
+        seconds_until_arrival: 10
       }
-      msg = Content.Message.Predictions.terminal(prediction, "Mattapan")
+      msg = Content.Message.Predictions.terminal(prediction, "Ashmont", false)
 
-      assert Content.Message.to_string(msg) == "Mattapan       BRD"
+      assert Content.Message.to_string(msg) == "Ashmont      1 min"
     end
 
     test "puts the time on the sign when train is more than 30 seconds away" do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 60
       }
-      msg = Content.Message.Predictions.terminal(prediction, "Mattapan")
+      msg = Content.Message.Predictions.terminal(prediction, "Mattapan", false)
 
       assert Content.Message.to_string(msg) == "Mattapan     1 min"
     end

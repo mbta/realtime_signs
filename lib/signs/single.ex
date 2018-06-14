@@ -117,11 +117,12 @@ defmodule Signs.Single do
 
   defp get_message(sign) do
     sign_width = if sign.pa_ess_id == {"RASH", "m"}, do: 15, else: 18
+    boarding? = Engine.Predictions.currently_boarding?(sign.gtfs_stop_id)
 
     sign.gtfs_stop_id
     |> sign.prediction_engine.for_stop(sign.direction_id)
     |> Predictions.Predictions.sort()
-    |> Enum.map(& Content.Message.Predictions.new(&1, sign.headsign, sign_width))
+    |> Enum.map(& Content.Message.Predictions.new(&1, sign.headsign, sign_width, boarding?))
     |> Enum.at(0, Content.Message.Empty.new())
   end
 
