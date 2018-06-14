@@ -199,7 +199,7 @@ defmodule Signs.Countdown do
   end
 
   defp schedule_update(pid) do
-    Process.send_after(pid, :update_content, 1_000)
+    Process.send_after(pid, :update_content, 3_000)
   end
 
   defp schedule_reading_sign(pid, ms) do
