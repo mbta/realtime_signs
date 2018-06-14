@@ -47,8 +47,8 @@ defmodule Engine.Predictions do
   def handle_info(:update, {last_modified_predictions, last_modified_positions}) do
     schedule_update(self())
     current_time = Timex.now()
-    last_modified_predictions = get_last_modified(last_modified_predictions, current_time, &update_predictions/2, :trip_update_url)
-    last_modified_positions = get_last_modified(last_modified_positions, current_time, &update_positions/2, :vehicle_positions_url)
+    last_modified_predictions = download_and_insert_data(last_modified_predictions, current_time, &update_predictions/2, :trip_update_url)
+    last_modified_positions = download_and_insert_data(last_modified_positions, current_time, &update_positions/2, :vehicle_positions_url)
     {:noreply, {last_modified_predictions, last_modified_positions}}
   end
 
@@ -73,7 +73,7 @@ defmodule Engine.Predictions do
     :ets.insert(@positions_table, new_positions)
   end
 
-  defp get_last_modified(last_modified, current_time, parse_fn, url) do
+  defp download_and_insert_data(last_modified, current_time, parse_fn, url) do
     http_client = Application.get_env(:realtime_signs, :http_client)
     full_url = Application.get_env(:realtime_signs, url)
     case http_client.get(full_url, [{"If-Modified-Since", format_last_modified(last_modified)}]) do

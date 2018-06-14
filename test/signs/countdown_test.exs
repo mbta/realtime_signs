@@ -365,7 +365,7 @@ defmodule Signs.CountdownTest do
 
       {:ok, _pid} = GenServer.start_link(Signs.Countdown, sign)
 
-      :timer.sleep(500)
+      :timer.sleep(1500)
 
       assert(receive do
         {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 1}, 5, 60}} -> false
