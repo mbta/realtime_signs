@@ -27,8 +27,8 @@ defmodule Engine.Predictions do
   end
 
   @doc "determines if this stop is currently boarding"
-  @spec currently_boarding?(String.t()) :: boolean()
-  def currently_boarding?(positions_table_id \\ @positions_table, gtfs_stop_id) do
+  @spec currently_stopped_at?(String.t()) :: boolean()
+  def currently_stopped_at?(positions_table_id \\ @positions_table, gtfs_stop_id) do
     case :ets.lookup(positions_table_id, gtfs_stop_id) do
       [{^gtfs_stop_id, true}] -> true
       _ -> false
