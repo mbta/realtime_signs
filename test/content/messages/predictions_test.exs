@@ -69,11 +69,18 @@ defmodule Content.Message.PredictionsTest do
       assert Content.Message.to_string(msg) == "ABCDEFGHIJK  2 min"
     end
 
-    test "handles invalid strings" do
+    test "Still shows predictions for negative arrivals" do
       prediction = %Predictions.Prediction{seconds_until_arrival: -5}
       msg = Content.Message.Predictions.new(prediction, "abc", false)
 
-      assert Content.Message.to_string(msg) == ""
+      assert Content.Message.to_string(msg) == "abc            ARR"
+    end
+
+    test "Shows BRD for negative arrival times if vehicle is STOPPED_AT" do
+      prediction = %Predictions.Prediction{seconds_until_arrival: -5}
+      msg = Content.Message.Predictions.new(prediction, "abc", true)
+
+      assert Content.Message.to_string(msg) == "abc            BRD"
     end
 
     test "Rounds to the nearest minute" do
