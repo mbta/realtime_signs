@@ -16,18 +16,6 @@ defmodule Engine.PredictionsTest do
       assert updated_state == existing_state
     end
 
-    test "updates vehicle positions in table" do
-      trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
-      position_url = Application.get_env(:realtime_signs, :vehicle_position_url)
-      Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_304")
-      Application.put_env(:realtime_signs, :vehicle_positions_url, "vehicle_positions_url")
-      existing_state = {~N[2017-07-04 09:05:00], ~N[2017-07-04 09:05:00]}
-      {:noreply, updated_state} = handle_info(:update, existing_state)
-      Application.put_env(:realtime_signs, :trip_update_url, trip_update_url)
-      Application.put_env(:realtime_signs, :vehicle_position_url, position_url)
-      assert updated_state == existing_state
-    end
-
     test "logs error when invalid HTTP response returned" do
       trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
       position_url = Application.get_env(:realtime_signs, :vehicle_position_url)
@@ -63,12 +51,6 @@ defmodule Engine.PredictionsTest do
 
   describe "currently_boarding/1" do
     test "returns true when vehicle is boarding" do
-      prediction = %Predictions.Prediction{
-        stop_id: "stop_1",
-        seconds_until_arrival: 15,
-        direction_id: 1,
-        route_id: "Blue",
-      }
       table_id = :ets.new(:predictions_engine_positions, [:set, :protected, read_concurrency: true])
       :ets.insert(table_id, [{"stop_1", true}])
       assert currently_boarding?(table_id,"stop_1")
