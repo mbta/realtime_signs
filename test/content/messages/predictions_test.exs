@@ -94,6 +94,15 @@ defmodule Content.Message.PredictionsTest do
       assert Content.Message.to_string(msg) == "Ashmont        BRD"
     end
 
+    test "does not put boarding if prediction is greater than 30 seconds" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 45
+      }
+      msg = Content.Message.Predictions.terminal(prediction, "Ashmont", true)
+
+      assert Content.Message.to_string(msg) == "Ashmont      1 min"
+    end
+
     test "puts 1 min on the sign when train is not boarding, but less than a minute away" do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 10

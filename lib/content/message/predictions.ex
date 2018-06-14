@@ -42,16 +42,9 @@ defmodule Content.Message.Predictions do
   end
 
   @spec terminal(Predictions.Prediction.t(), String.t(), boolean()) :: t()
-  def terminal(prediction, headsign, width \\ 18, boarding?)
-  def terminal(_prediction, headsign, width, true) do
-    %__MODULE__{
-      headsign: headsign,
-      minutes: :boarding,
-      width: width,
-    }
-  end
-  def terminal(%Predictions.Prediction{} = prediction, headsign, width, false) do
+  def terminal(%Predictions.Prediction{} = prediction, headsign, width \\ 18, boarding?) do
     minutes = case prediction.seconds_until_arrival do
+      x when x >= 0 and x <= 30 and boarding? -> :boarding
       x when x >= 0 and x <= 30 -> 1
       x -> x |> Kernel./(60) |> round()
     end
