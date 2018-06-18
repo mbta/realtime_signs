@@ -40,6 +40,10 @@ defmodule Engine.Config do
 
     {:noreply, latest_version}
   end
+  def handle_info(msg, state) do
+    Logger.warn("#{__MODULE__} unknown message: #{inspect msg}")
+    {:noreply, state}
+  end
 
   @spec init(any()) :: {:ok, version_id}
   def init(_) do

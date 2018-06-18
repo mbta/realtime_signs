@@ -103,7 +103,8 @@ defmodule Signs.Single do
     {:noreply, %{sign | current_content: Content.Message.Empty.new()}}
   end
 
-  def handle_info(_, state) do
+  def handle_info(msg, state) do
+    Logger.warn("#{__MODULE__} #{inspect(state.id)} unknown message: #{inspect msg}")
     {:noreply, state}
   end
 

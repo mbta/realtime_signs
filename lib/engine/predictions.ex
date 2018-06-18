@@ -51,6 +51,10 @@ defmodule Engine.Predictions do
     last_modified_positions = download_and_insert_data(last_modified_positions, current_time, &update_positions/2, :vehicle_positions_url)
     {:noreply, {last_modified_predictions, last_modified_positions}}
   end
+  def handle_info(msg, state) do
+    Logger.warn("#{__MODULE__} unknown message: #{inspect msg}")
+    {:noreply, state}
+  end
 
   defp format_last_modified(time) do
     {:ok, last_modified} = Timex.format(time, "{WDshort}, {D} {Mshort} {YYYY} {h24}:{m}:{s} {Zabbr}")
