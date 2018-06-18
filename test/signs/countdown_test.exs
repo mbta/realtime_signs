@@ -111,7 +111,7 @@ defmodule Signs.CountdownTest do
   }
 
   describe "update_content callback" do
-    test "when the bottom line is boarding, instead show arriving" do
+    test "when the bottom line is boarding, instead show 1 min" do
       top_content = %Content.Message.Predictions{
         headsign: "Mattapan", minutes: :boarding
       }
@@ -137,7 +137,7 @@ defmodule Signs.CountdownTest do
       }
 
       expected_bottom = %Content.Message.Predictions{
-        headsign: "Mattapan", minutes: :arriving
+        headsign: "Mattapan", minutes: 1
       }
 
       assert {:noreply, %{current_content_bottom: ^expected_bottom}} = Signs.Countdown.handle_info(:update_content, sign)

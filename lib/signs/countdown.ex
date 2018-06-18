@@ -144,7 +144,7 @@ defmodule Signs.Countdown do
   end
 
   defp non_boarding(%{minutes: :boarding} = msg) do
-    %{msg | minutes: :arriving}
+    %{msg | minutes: 1}
   end
   defp non_boarding(msg) do
     msg
