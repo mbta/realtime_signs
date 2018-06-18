@@ -9,7 +9,7 @@ defmodule Content.Audio.NextTrainCountdown do
   @type verb :: :arrives | :departs
 
   @type t :: %__MODULE__{
-    destination: :ashmont | :mattapan | :wonderland | :bowdoin,
+    destination: :ashmont | :mattapan | :wonderland | :bowdoin | :forest_hills | :oak_grove,
     verb: verb(),
     minutes: integer()
   }
@@ -32,6 +32,12 @@ defmodule Content.Audio.NextTrainCountdown do
   def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: "Bowdoin"}, verb) when is_integer(n) do
     %__MODULE__{destination: :bowdoin, minutes: n, verb: verb}
   end
+  def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: "Forest Hills"}, verb) when is_integer(n) do
+    %__MODULE__{destination: :forest_hills, minutes: n, verb: verb}
+  end
+  def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: "Oak Grove"}, verb) when is_integer(n) do
+    %__MODULE__{destination: :oak_grove, minutes: n, verb: verb}
+  end
   def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: headsign}, _verb) when is_integer(n) do
     Logger.warn("Content.Audio.NextTrainCountdown.from_predictions_message: unknown headsign: #{headsign}")
     nil
@@ -51,6 +57,8 @@ defmodule Content.Audio.NextTrainCountdown do
     defp destination_var(%{destination: :mattapan}), do: "4100"
     defp destination_var(%{destination: :bowdoin}), do: "4055"
     defp destination_var(%{destination: :wonderland}), do: "4044"
+    defp destination_var(%{destination: :forest_hills}), do: "4043"
+    defp destination_var(%{destination: :oak_grove}), do: "4022"
 
     defp verb_var(%{verb: :arrives}), do: "503"
     defp verb_var(%{verb: :departs}), do: "502"
