@@ -52,7 +52,7 @@ defmodule Signs.Countdown do
     announce_arriving?: boolean
   }
 
-  @default_duration 120
+  @default_duration 130
 
   def start_link(%{"type" => "countdown"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
@@ -155,8 +155,9 @@ defmodule Signs.Countdown do
     announce_arrival(new_top, sign)
     if sign.top_timer, do: Process.cancel_timer(sign.top_timer)
     if sign.bottom_timer, do: Process.cancel_timer(sign.bottom_timer)
-    timer = Process.send_after(self(), :expire_top, @default_duration * 1000 - 5000)
-    %{sign | current_content_top: new_top, top_timer: timer, current_content_bottom: new_bottom, bottom_timer: timer}
+    top_timer = Process.send_after(self(), :expire_top, @default_duration * 1000 - 15000)
+    bottom_timer = Process.send_after(self(), :expire_bottom, @default_duration * 1000 - 15000)
+    %{sign | current_content_top: new_top, top_timer: top_timer, current_content_bottom: new_bottom, bottom_timer: bottom_timer}
   end
 
   defp update_top(%{current_content_top: same} = sign, same) do
@@ -166,7 +167,7 @@ defmodule Signs.Countdown do
     sign.sign_updater.update_single_line(sign.pa_ess_id, "1", new_top, @default_duration, :now)
     announce_arrival(new_top, sign)
     if sign.top_timer, do: Process.cancel_timer(sign.top_timer)
-    timer = Process.send_after(self(), :expire_top, @default_duration * 1000 - 5000)
+    timer = Process.send_after(self(), :expire_top, @default_duration * 1000 - 15000)
     %{sign | current_content_top: new_top, top_timer: timer}
   end
 
@@ -176,7 +177,7 @@ defmodule Signs.Countdown do
   defp update_bottom(sign, new_bottom) do
     sign.sign_updater.update_single_line(sign.pa_ess_id, "2", new_bottom, @default_duration, :now)
     if sign.bottom_timer, do: Process.cancel_timer(sign.bottom_timer)
-    timer = Process.send_after(self(), :expire_bottom, @default_duration * 1000 - 5000)
+    timer = Process.send_after(self(), :expire_bottom, @default_duration * 1000 - 15000)
     %{sign | current_content_bottom: new_bottom, bottom_timer: timer}
   end
 
