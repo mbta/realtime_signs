@@ -113,7 +113,7 @@ defmodule Signs.Headway do
     {:noreply, sign}
   end
   def handle_info(msg, sign) do
-    Logger.warn("Signs.Headway #{inspect(sign.id)} unknown message: #{inspect msg}")
+    Logger.warn("#{__MODULE__} #{inspect(sign.id)} unknown message: #{inspect msg}")
     {:noreply, sign}
   end
 

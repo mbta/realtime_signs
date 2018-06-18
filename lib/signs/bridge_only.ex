@@ -8,6 +8,7 @@ defmodule Signs.BridgeOnly do
   """
 
   use GenServer
+  require Logger
 
   @enforce_keys [
     :id,
@@ -65,6 +66,10 @@ defmodule Signs.BridgeOnly do
     end
 
     {:noreply, sign}
+  end
+  def handle_info(msg, state) do
+    Logger.warn("#{__MODULE__} #{inspect(state.id)} unknown message: #{inspect msg}")
+    {:noreply, state}
   end
 
   defp schedule_bridge_check(pid, ms) do
