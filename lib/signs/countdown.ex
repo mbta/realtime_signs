@@ -139,14 +139,17 @@ defmodule Signs.Countdown do
 
     {
       Enum.at(messages, 0, Content.Message.Empty.new()),
-      messages |> Enum.at(1, Content.Message.Empty.new()) |> non_boarding
+      messages |> Enum.at(1, Content.Message.Empty.new()) |> non_boarding(sign.terminal)
     }
   end
 
-  defp non_boarding(%{minutes: :boarding} = msg) do
+  defp non_boarding(%{minutes: :boarding} = msg, true) do
     %{msg | minutes: 1}
   end
-  defp non_boarding(msg) do
+  defp non_boarding(%{minutes: :boarding} = msg, false) do
+    %{msg | minutes: :arriving}
+  end
+  defp non_boarding(msg, _) do
     msg
   end
 
