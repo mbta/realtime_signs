@@ -52,7 +52,8 @@ defmodule Signs.Countdown do
     announce_arriving?: boolean
   }
 
-  @default_duration 130
+  @default_expiration_seconds 130
+  @expiration_overlap_seconds 115
 
   def start_link(%{"type" => "countdown"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
@@ -151,12 +152,12 @@ defmodule Signs.Countdown do
     update_bottom(sign, new_bottom)
   end
   defp update_sign(sign, new_top, new_bottom) do
-    {:ok, :sent} = sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_duration, :now)
+    {:ok, :sent} = sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_expiration_seconds, :now)
     announce_arrival(new_top, sign)
     if sign.top_timer, do: Process.cancel_timer(sign.top_timer)
     if sign.bottom_timer, do: Process.cancel_timer(sign.bottom_timer)
-    top_timer = Process.send_after(self(), :expire_top, @default_duration * 1000 - 15000)
-    bottom_timer = Process.send_after(self(), :expire_bottom, @default_duration * 1000 - 15000)
+    top_timer = Process.send_after(self(), :expire_top, @expiration_overlap_seconds * 1000)
+    bottom_timer = Process.send_after(self(), :expire_bottom, @expiration_overlap_seconds * 1000)
     %{sign | current_content_top: new_top, top_timer: top_timer, current_content_bottom: new_bottom, bottom_timer: bottom_timer}
   end
 
@@ -164,10 +165,10 @@ defmodule Signs.Countdown do
     sign
   end
   defp update_top(sign, new_top) do
-    sign.sign_updater.update_single_line(sign.pa_ess_id, "1", new_top, @default_duration, :now)
+    sign.sign_updater.update_single_line(sign.pa_ess_id, "1", new_top, @default_expiration_seconds, :now)
     announce_arrival(new_top, sign)
     if sign.top_timer, do: Process.cancel_timer(sign.top_timer)
-    timer = Process.send_after(self(), :expire_top, @default_duration * 1000 - 15000)
+    timer = Process.send_after(self(), :expire_top, @expiration_overlap_seconds * 1000)
     %{sign | current_content_top: new_top, top_timer: timer}
   end
 
@@ -175,9 +176,9 @@ defmodule Signs.Countdown do
     sign
   end
   defp update_bottom(sign, new_bottom) do
-    sign.sign_updater.update_single_line(sign.pa_ess_id, "2", new_bottom, @default_duration, :now)
+    sign.sign_updater.update_single_line(sign.pa_ess_id, "2", new_bottom, @default_expiration_seconds, :now)
     if sign.bottom_timer, do: Process.cancel_timer(sign.bottom_timer)
-    timer = Process.send_after(self(), :expire_bottom, @default_duration * 1000 - 15000)
+    timer = Process.send_after(self(), :expire_bottom, @expiration_overlap_seconds * 1000)
     %{sign | current_content_bottom: new_bottom, bottom_timer: timer}
   end
 
