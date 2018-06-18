@@ -122,7 +122,7 @@ defmodule Signs.Countdown do
   end
 
   defp get_messages(sign) do
-    boarding? = Engine.Predictions.stopped_at?(sign.gtfs_stop_id)
+    boarding? = sign.prediction_engine.stopped_at?(sign.gtfs_stop_id)
     messages =
       sign.gtfs_stop_id
       |> sign.prediction_engine.for_stop(sign.direction_id)
@@ -139,8 +139,15 @@ defmodule Signs.Countdown do
 
     {
       Enum.at(messages, 0, Content.Message.Empty.new()),
-      Enum.at(messages, 1, Content.Message.Empty.new())
+      messages |> Enum.at(1, Content.Message.Empty.new()) |> non_boarding
     }
+  end
+
+  defp non_boarding(%{minutes: :boarding} = msg) do
+    %{msg | minutes: :arriving}
+  end
+  defp non_boarding(msg) do
+    msg
   end
 
   defp update_sign(%{current_content_top: same_top, current_content_bottom: same_bottom} = sign, same_top, same_bottom) do
