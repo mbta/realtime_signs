@@ -40,6 +40,9 @@ defmodule Engine.Config do
 
     {:noreply, latest_version}
   end
+  def handle_info(_msg, state) do
+    {:noreply, state}
+  end
 
   @spec init(any()) :: {:ok, version_id}
   def init(_) do

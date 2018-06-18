@@ -66,6 +66,9 @@ defmodule Signs.BridgeOnly do
 
     {:noreply, sign}
   end
+  def handle_info(_msg, state) do
+    {:noreply, state}
+  end
 
   defp schedule_bridge_check(pid, ms) do
     Process.send_after(pid, :bridge_check, ms)

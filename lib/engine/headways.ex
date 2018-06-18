@@ -38,7 +38,6 @@ defmodule Engine.Headways do
     |> Map.keys
     |> update(state)
   end
-
   @spec handle_info(:update_hourly, t) :: {:noreply, t}
   def handle_info(:update_hourly, state) do
     schedule_update(self())
@@ -46,6 +45,9 @@ defmodule Engine.Headways do
     state
     |> Map.keys
     |> update(state)
+  end
+  def handle_info(_msg, state) do
+    {:noreply, state}
   end
 
   @spec handle_call({:get_headways, String.t(), DateTime.t}, GenServer.from(), t()) :: {:reply, Headway.ScheduleHeadway.headway_range, t()}

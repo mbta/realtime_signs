@@ -39,6 +39,9 @@ defmodule Engine.Bridge do
 
     {:noreply, %{"1" => bridge_status}}
   end
+  def handle_info(_msg, state) do
+    {:noreply, state}
+  end
 
   def handle_call({:status, id}, _from, state) do
     {:reply, state[id], state}
