@@ -46,7 +46,8 @@ defmodule Engine.Headways do
     |> Map.keys
     |> update(state)
   end
-  def handle_info(_msg, state) do
+  def handle_info(msg, state) do
+    Logger.warn("#{__MODULE__} unknown message: #{inspect msg}")
     {:noreply, state}
   end
 

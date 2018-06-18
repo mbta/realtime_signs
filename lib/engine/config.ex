@@ -40,7 +40,8 @@ defmodule Engine.Config do
 
     {:noreply, latest_version}
   end
-  def handle_info(_msg, state) do
+  def handle_info(msg, state) do
+    Logger.warn("#{__MODULE__} unknown message: #{inspect msg}")
     {:noreply, state}
   end
 

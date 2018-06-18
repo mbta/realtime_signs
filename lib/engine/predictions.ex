@@ -51,7 +51,8 @@ defmodule Engine.Predictions do
     last_modified_positions = download_and_insert_data(last_modified_positions, current_time, &update_positions/2, :vehicle_positions_url)
     {:noreply, {last_modified_predictions, last_modified_positions}}
   end
-  def handle_info(_msg, state) do
+  def handle_info(msg, state) do
+    Logger.warn("#{__MODULE__} unknown message: #{inspect msg}")
     {:noreply, state}
   end
 
