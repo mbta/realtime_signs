@@ -17,7 +17,7 @@ defmodule Signs.CountdownTest do
     def update_single_line(_pa_ess_id, "2", _msg, _duration, _start_secs) do
       {:reply, {:ok, :sent}, []}
     end
-    def update_sign(_pa_ess_id, nil, nil, _duration, _start) do
+    def update_sign("notsent", _, _, _duration, _start) do
       {:error, :notsent}
     end
     def update_sign(_pa_ess_id, _top, _bottom, _duration, _start) do
@@ -116,6 +116,26 @@ defmodule Signs.CountdownTest do
       }
 
       assert {:noreply, %{current_content_top: ^top_content, current_content_bottom: ^bottom_content}} = Signs.Countdown.handle_info(:update_content, sign)
+    end
+
+    test "Does not update sign when pa_ess updater returns an error" do
+      sign = %Signs.Countdown{
+        id: "test-sign",
+        pa_ess_id: "notsent",
+        gtfs_stop_id: "many_predictions",
+        direction_id: 1,
+        route_id: "Mattapan",
+        headsign: "Mattapan",
+        current_content_bottom: nil,
+        current_content_top: nil,
+        countdown_verb: :arrives,
+        terminal: true,
+        sign_updater: FakeUpdater,
+        prediction_engine: FakePredictionsEngine,
+        read_sign_period_ms: 10_000,
+      }
+
+      assert {:noreply, %{current_content_top: nil, current_content_bottom: nil}} = Signs.Countdown.handle_info(:update_content, sign)
     end
 
     test "when both lines change, sends an update containing both lines" do
