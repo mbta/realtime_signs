@@ -20,17 +20,17 @@ defmodule PaEss.HttpUpdater do
 
   @impl PaEss.Updater
   def update_single_line(pid \\ __MODULE__, pa_ess_id, line_no, msg, duration, start_secs) do
-    GenServer.call(pid, {:update_single_line, pa_ess_id, line_no, msg, duration, start_secs})
+    GenServer.call(pid, {:update_single_line, pa_ess_id, line_no, msg, duration, start_secs}, 6000)
   end
 
   @impl PaEss.Updater
   def update_sign(pid \\ __MODULE__, pa_ess_id, top_line, bottom_line, duration, start_secs) do
-    GenServer.call(pid, {:update_sign, pa_ess_id, top_line, bottom_line, duration, start_secs})
+    GenServer.call(pid, {:update_sign, pa_ess_id, top_line, bottom_line, duration, start_secs}, 6000)
   end
 
   @impl PaEss.Updater
   def send_audio(pid \\ __MODULE__, pa_ess_id, audio, priority, timeout) do
-    GenServer.call(pid, {:send_audio, pa_ess_id, audio, priority, timeout})
+    GenServer.call(pid, {:send_audio, pa_ess_id, audio, priority, timeout}, 6000)
   end
 
   @impl GenServer
