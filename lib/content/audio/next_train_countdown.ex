@@ -32,7 +32,7 @@ defmodule Content.Audio.NextTrainCountdown do
   def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: "Bowdoin"}, verb) when is_integer(n) do
     %__MODULE__{destination: :bowdoin, minutes: n, verb: verb}
   end
-  def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: "Forest Hills"}, verb) when is_integer(n) do
+  def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: "Frst Hills"}, verb) when is_integer(n) do
     %__MODULE__{destination: :forest_hills, minutes: n, verb: verb}
   end
   def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: "Oak Grove"}, verb) when is_integer(n) do
