@@ -77,6 +77,22 @@ defmodule Signs.CountdownTest do
         route_id: "mattapan"
        }]
     end
+    def for_stop("brd-arr-bug", 1) do
+      [
+        %Predictions.Prediction{
+          stop_id: "brd-arr-bug",
+          direction_id: 1,
+          seconds_until_arrival: 100,
+          route_id: "mattapan"
+        },
+        %Predictions.Prediction{
+          stop_id: "brd-arr-bug",
+          direction_id: 1,
+          seconds_until_arrival: 600,
+          route_id: "mattapan"
+        },
+      ]
+    end
     def for_stop(gtfs_stop_id, 1) do
       [%Predictions.Prediction{
         stop_id: gtfs_stop_id,
@@ -87,6 +103,9 @@ defmodule Signs.CountdownTest do
     end
 
     def stopped_at?("two_boarding") do
+      true
+    end
+    def stopped_at?("brd-arr-bug") do
       true
     end
     def stopped_at?(_) do
@@ -204,6 +223,14 @@ defmodule Signs.CountdownTest do
       }
 
       assert {:noreply, %{current_content_top: ^top_content, current_content_bottom: ^bottom_content}} = Signs.Countdown.handle_info(:update_content, @empty_sign)
+    end
+
+    test "when train is at station, don't force bottom line to brd/arr" do
+      sign = %{@content_sign | gtfs_stop_id: "brd-arr-bug"}
+
+      {:noreply, sign} = Signs.Countdown.handle_info(:update_content, sign)
+      assert %{minutes: :boarding} = sign.current_content_top
+      assert %{minutes: 10} = sign.current_content_bottom
     end
 
     test "Does not update sign when pa_ess updater returns an error" do
