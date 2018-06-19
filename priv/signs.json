@@ -828,7 +828,7 @@
     "countdown_verb": "arrives",
     "terminal": false,
     "announce_arriving": false,
-    "type": "countdown",
+    "type": "single",
     "line_number": "2",
     "pa_ess_zone": "m"
   },
