@@ -1713,7 +1713,7 @@
     "id": "stony_brook_southbound",
     "pa_ess_loc": "OSTO",
     "headsign": "Frst Hills",
-    "gtfs_stop_id": "7004",
+    "gtfs_stop_id": "70004",
     "direction_id": 0,
     "route_id": "Orange",
     "countdown_verb": "arrives",
