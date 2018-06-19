@@ -163,13 +163,20 @@ defmodule Signs.Countdown do
     update_bottom(sign, new_bottom)
   end
   defp update_sign(sign, new_top, new_bottom) do
-    {:ok, :sent} = sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_expiration_seconds, :now)
+    update_response = sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_expiration_seconds, :now)
+    do_update_sign(update_response, sign, new_top, new_bottom)
+  end
+
+  defp do_update_sign({:ok, :sent}, sign, new_top, new_bottom) do
     announce_arrival(new_top, sign)
     if sign.top_timer, do: Process.cancel_timer(sign.top_timer)
     if sign.bottom_timer, do: Process.cancel_timer(sign.bottom_timer)
     top_timer = Process.send_after(self(), :expire_top, @expiration_overlap_seconds * 1000)
     bottom_timer = Process.send_after(self(), :expire_bottom, @expiration_overlap_seconds * 1000)
     %{sign | current_content_top: new_top, top_timer: top_timer, current_content_bottom: new_bottom, bottom_timer: bottom_timer}
+  end
+  defp do_update_sign({:error, _reason}, sign, _new_top, _new_bottom) do
+    sign
   end
 
   defp update_top(%{current_content_top: same} = sign, same) do
