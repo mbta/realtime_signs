@@ -59,7 +59,7 @@ defmodule Signs.Countdown do
   def start_link(%{"type" => "countdown"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
-    read_offset = if config |> Map.fetch!("gtfs_stop_id") |> Integer.parse |> Integer.is_even do
+    read_offset = if config |> Map.fetch!("gtfs_stop_id") |> Integer.parse |> elem(0) |> Integer.is_even do
       30 * 1000
     else
       0
