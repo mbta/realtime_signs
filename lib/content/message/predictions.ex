@@ -10,7 +10,7 @@ defmodule Content.Message.Predictions do
   yourself.
   """
 
-  @thirty_minutes 30 * 60
+  @thirty_one_minutes 31 * 60
 
   @enforce_keys [:headsign, :minutes]
   defstruct [:headsign, :minutes, width: 18]
@@ -26,7 +26,7 @@ defmodule Content.Message.Predictions do
     minutes = cond do
       stopped_at? -> :boarding
       prediction.seconds_until_arrival <= 30 -> :arriving
-      prediction.seconds_until_arrival >= @thirty_minutes -> :thirty_plus
+      prediction.seconds_until_arrival >= @thirty_one_minutes -> :thirty_plus
       true -> prediction.seconds_until_arrival |> Kernel./(60) |> round()
     end
 
@@ -42,7 +42,7 @@ defmodule Content.Message.Predictions do
     minutes = case prediction.seconds_until_arrival do
       x when x <= 30 and stopped_at? -> :boarding
       x when x <= 30 -> 1
-      x when x >= @thirty_minutes -> :thirty_plus
+      x when x >= @thirty_one_minutes -> :thirty_plus
       x -> x |> Kernel./(60) |> round()
     end
 

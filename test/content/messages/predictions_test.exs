@@ -47,6 +47,15 @@ defmodule Content.Message.PredictionsTest do
       assert Content.Message.to_string(msg) == "Mattapan   30+ min"
     end
 
+    test "Says 30 min when train is exactly 30 minutes away" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 30 * 60
+      }
+      msg = Content.Message.Predictions.non_terminal(prediction, "Mattapan", false)
+
+      assert Content.Message.to_string(msg) == "Mattapan    30 min"
+    end
+
     test "can use a shorter line length" do
       prediction = %Predictions.Prediction{seconds_until_arrival: 550}
       msg = Content.Message.Predictions.non_terminal(prediction, "Mattapan", 15, false)
