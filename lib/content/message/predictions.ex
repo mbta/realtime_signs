@@ -10,12 +10,14 @@ defmodule Content.Message.Predictions do
   yourself.
   """
 
+  @thirty_one_minutes 31 * 60
+
   @enforce_keys [:headsign, :minutes]
   defstruct [:headsign, :minutes, width: 18]
 
   @type t :: %__MODULE__{
     headsign: String.t(),
-    minutes: integer() | :boarding | :arriving,
+    minutes: integer() | :boarding | :arriving | :thirty_plus,
     width: integer(),
   }
 
@@ -24,6 +26,7 @@ defmodule Content.Message.Predictions do
     minutes = cond do
       stopped_at? -> :boarding
       prediction.seconds_until_arrival <= 30 -> :arriving
+      prediction.seconds_until_arrival >= @thirty_one_minutes -> :thirty_plus
       true -> prediction.seconds_until_arrival |> Kernel./(60) |> round()
     end
 
@@ -39,6 +42,7 @@ defmodule Content.Message.Predictions do
     minutes = case prediction.seconds_until_arrival do
       x when x <= 30 and stopped_at? -> :boarding
       x when x <= 30 -> 1
+      x when x >= @thirty_one_minutes -> :thirty_plus
       x -> x |> Kernel./(60) |> round()
     end
 
@@ -54,6 +58,7 @@ defmodule Content.Message.Predictions do
 
     @boarding "BRD"
     @arriving "ARR"
+    @thirty_plus "30+ min"
 
     def to_string(%{headsign: headsign, minutes: :boarding, width: width}) do
       build_string(headsign, @boarding, width)
@@ -61,6 +66,10 @@ defmodule Content.Message.Predictions do
 
     def to_string(%{headsign: headsign, minutes: :arriving, width: width}) do
       build_string(headsign, @arriving, width)
+    end
+
+    def to_string(%{headsign: headsign, minutes: :thirty_plus, width: width}) do
+      build_string(headsign, @thirty_plus, width)
     end
 
     def to_string(%{headsign: headsign, minutes: n, width: width}) when n > 0 and n < 1000 do
