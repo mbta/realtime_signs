@@ -10,6 +10,7 @@ defmodule Signs.Countdown do
 
   use GenServer
   require Logger
+  require Integer
 
   @enforce_keys [
     :id,
@@ -58,6 +59,11 @@ defmodule Signs.Countdown do
   def start_link(%{"type" => "countdown"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
+    read_offset = if config |> Map.fetch!("gtfs_stop_id") |> Integer.parse |> Integer.is_even do
+      30 * 1000
+    else
+      0
+    end
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
@@ -74,7 +80,7 @@ defmodule Signs.Countdown do
       bottom_timer: nil,
       sign_updater: sign_updater,
       prediction_engine: prediction_engine,
-      read_sign_period_ms: 4 * 60 * 1000,
+      read_sign_period_ms: 4 * 60 * 1000 + read_offset,
       announce_arriving?: Map.get(config, "announce_arriving", true)
     }
 
