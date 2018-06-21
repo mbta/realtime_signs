@@ -404,7 +404,7 @@ defmodule Signs.CountdownTest do
     test "initializes state with sign from config" do
       config = %{
         "id" => "sign_1",
-        "gtfs_stop_id" => "stop_id",
+        "gtfs_stop_id" => "1",
         "pa_ess_loc" => "SIGN",
         "pa_ess_zone" => "m",
         "direction_id" => 0,
@@ -417,7 +417,42 @@ defmodule Signs.CountdownTest do
       opts = [sign_updater: __MODULE__, prediction_engine: __MODULE__]
       {:ok, pid} = Signs.Countdown.start_link(config, opts)
       state = :sys.get_state(pid)
-      assert %{id: "sign_1", gtfs_stop_id: "stop_id", pa_ess_id: {"SIGN", "m"}} = state
+      assert %{id: "sign_1", gtfs_stop_id: "1", pa_ess_id: {"SIGN", "m"}} = state
+    end
+
+    test "when the stop id is even, offset is 30 seconds later than if its odd" do
+      odd_config = %{
+        "id" => "sign_1",
+        "gtfs_stop_id" => "1",
+        "pa_ess_loc" => "SIGN",
+        "pa_ess_zone" => "m",
+        "direction_id" => 0,
+        "route_id" => "Mattapan",
+        "headsign" => "Mattapan",
+        "terminal" => false,
+        "countdown_verb" => "arrives",
+        "type" => "countdown"
+      }
+      opts = [sign_updater: __MODULE__, prediction_engine: __MODULE__]
+      {:ok, pid} = Signs.Countdown.start_link(odd_config, opts)
+      odd_state = :sys.get_state(pid)
+
+      even_config = %{
+        "id" => "sign_1",
+        "gtfs_stop_id" => "2",
+        "pa_ess_loc" => "SIGN",
+        "pa_ess_zone" => "m",
+        "direction_id" => 0,
+        "route_id" => "Mattapan",
+        "headsign" => "Mattapan",
+        "terminal" => false,
+        "countdown_verb" => "arrives",
+        "type" => "countdown"
+      }
+      opts = [sign_updater: __MODULE__, prediction_engine: __MODULE__]
+      {:ok, pid} = Signs.Countdown.start_link(even_config, opts)
+      even_state = :sys.get_state(pid)
+      assert even_state.read_sign_period_ms == odd_state.read_sign_period_ms + 30_000
     end
   end
 end
