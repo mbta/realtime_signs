@@ -127,6 +127,7 @@ defmodule Signs.CountdownTest do
     sign_updater: FakeUpdater,
     prediction_engine: FakePredictionsEngine,
     read_sign_period_ms: 10_000,
+    initial_offset: 0,
   }
 
   @empty_sign %{@content_sign | gtfs_stop_id: "many_predictions", current_content_bottom: nil, current_content_top: nil, terminal: true}
@@ -145,6 +146,7 @@ defmodule Signs.CountdownTest do
     sign_updater: FakeUpdater,
     prediction_engine: FakePredictionsEngine,
     read_sign_period_ms: 10_000,
+    initial_offset: 0
   }
 
   describe "update_content callback" do
@@ -171,6 +173,7 @@ defmodule Signs.CountdownTest do
         sign_updater: FakeUpdater,
         prediction_engine: FakePredictionsEngine,
         read_sign_period_ms: 10_000,
+        initial_offset: 0
       }
 
       expected_bottom = %Content.Message.Predictions{
@@ -203,6 +206,7 @@ defmodule Signs.CountdownTest do
         sign_updater: FakeUpdater,
         prediction_engine: FakePredictionsEngine,
         read_sign_period_ms: 10_000,
+        initial_offset: 0
       }
 
       expected_bottom = %Content.Message.Predictions{
@@ -452,7 +456,7 @@ defmodule Signs.CountdownTest do
       opts = [sign_updater: __MODULE__, prediction_engine: __MODULE__]
       {:ok, pid} = Signs.Countdown.start_link(even_config, opts)
       even_state = :sys.get_state(pid)
-      assert even_state.read_sign_period_ms == odd_state.read_sign_period_ms + 30_000
+      assert even_state.initial_offset == odd_state.initial_offset + 30_000
     end
   end
 end

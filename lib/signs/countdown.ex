@@ -24,6 +24,7 @@ defmodule Signs.Countdown do
     :prediction_engine,
     :sign_updater,
     :read_sign_period_ms,
+    :initial_offset,
   ]
 
   defstruct @enforce_keys ++ [
@@ -50,6 +51,7 @@ defmodule Signs.Countdown do
     bottom_timer: reference() | nil,
     top_timer: reference() | nil,
     read_sign_period_ms: integer(),
+    initial_offset: integer(),
     announce_arriving?: boolean
   }
 
@@ -84,7 +86,8 @@ defmodule Signs.Countdown do
       bottom_timer: nil,
       sign_updater: sign_updater,
       prediction_engine: prediction_engine,
-      read_sign_period_ms: 4 * 60 * 1000 + read_offset,
+      read_sign_period_ms: 4 * 60 * 1000,
+      initial_offset: read_offset,
       announce_arriving?: Map.get(config, "announce_arriving", true)
     }
 
@@ -93,7 +96,7 @@ defmodule Signs.Countdown do
 
   def init(sign) do
     schedule_update(self())
-    schedule_reading_sign(self(), sign.read_sign_period_ms)
+    schedule_reading_sign(self(), sign.read_sign_period_ms + sign.initial_offset)
     {:ok, sign}
   end
 
