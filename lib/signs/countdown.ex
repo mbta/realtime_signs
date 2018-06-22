@@ -24,7 +24,6 @@ defmodule Signs.Countdown do
     :prediction_engine,
     :sign_updater,
     :read_sign_period_ms,
-    :initial_offset,
   ]
 
   defstruct @enforce_keys ++ [
@@ -51,7 +50,6 @@ defmodule Signs.Countdown do
     bottom_timer: reference() | nil,
     top_timer: reference() | nil,
     read_sign_period_ms: integer(),
-    initial_offset: integer(),
     announce_arriving?: boolean
   }
 
@@ -61,15 +59,6 @@ defmodule Signs.Countdown do
   def start_link(%{"type" => "countdown"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
-    offset_seed = case config |> Map.fetch!("gtfs_stop_id") |> Integer.parse do
-      {num, _} -> num
-      _ -> 0
-    end
-    read_offset = if Integer.is_even(offset_seed) do
-      30 * 1_000
-    else
-      0
-    end
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
@@ -87,7 +76,6 @@ defmodule Signs.Countdown do
       sign_updater: sign_updater,
       prediction_engine: prediction_engine,
       read_sign_period_ms: 4 * 60 * 1000,
-      initial_offset: read_offset,
       announce_arriving?: Map.get(config, "announce_arriving", true)
     }
 
@@ -96,7 +84,7 @@ defmodule Signs.Countdown do
 
   def init(sign) do
     schedule_update(self())
-    schedule_reading_sign(self(), sign.read_sign_period_ms + sign.initial_offset)
+    schedule_reading_sign(self(), sign.read_sign_period_ms + initial_offset(sign))
     {:ok, sign}
   end
 
@@ -212,6 +200,18 @@ defmodule Signs.Countdown do
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
       nil ->
         nil
+    end
+  end
+
+  def initial_offset(sign) do
+    offset_seed = case sign.gtfs_stop_id |> Integer.parse do
+      {num, _} -> num
+      _ -> 0
+    end
+    if Integer.is_even(offset_seed) do
+      30 * 1_000
+    else
+      0
     end
   end
 
