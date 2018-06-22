@@ -356,7 +356,7 @@ defmodule Signs.CountdownTest do
     test "callback is invoked periodically" do
       Process.register(self(), :fake_updater_listener)
       sign = %{@audio_sign | current_content_top: %Content.Message.Predictions{headsign: "Mattapan", minutes: 2},
-                            gtfs_stop_id: "not-arriving", read_sign_period_ms: 1_000}
+                            gtfs_stop_id: "1", read_sign_period_ms: 1_000}
 
       {:ok, _pid} = GenServer.start_link(Signs.Countdown, sign)
 
@@ -419,40 +419,13 @@ defmodule Signs.CountdownTest do
       state = :sys.get_state(pid)
       assert %{id: "sign_1", gtfs_stop_id: "1", pa_ess_id: {"SIGN", "m"}} = state
     end
+  end
 
+  describe "initial_offset/1" do
     test "when the stop id is even, offset is 30 seconds later than if its odd" do
-      odd_config = %{
-        "id" => "sign_1",
-        "gtfs_stop_id" => "1",
-        "pa_ess_loc" => "SIGN",
-        "pa_ess_zone" => "m",
-        "direction_id" => 0,
-        "route_id" => "Mattapan",
-        "headsign" => "Mattapan",
-        "terminal" => false,
-        "countdown_verb" => "arrives",
-        "type" => "countdown"
-      }
-      opts = [sign_updater: __MODULE__, prediction_engine: __MODULE__]
-      {:ok, pid} = Signs.Countdown.start_link(odd_config, opts)
-      odd_state = :sys.get_state(pid)
-
-      even_config = %{
-        "id" => "sign_1",
-        "gtfs_stop_id" => "2",
-        "pa_ess_loc" => "SIGN",
-        "pa_ess_zone" => "m",
-        "direction_id" => 0,
-        "route_id" => "Mattapan",
-        "headsign" => "Mattapan",
-        "terminal" => false,
-        "countdown_verb" => "arrives",
-        "type" => "countdown"
-      }
-      opts = [sign_updater: __MODULE__, prediction_engine: __MODULE__]
-      {:ok, pid} = Signs.Countdown.start_link(even_config, opts)
-      even_state = :sys.get_state(pid)
-      assert even_state.read_sign_period_ms == odd_state.read_sign_period_ms + 30_000
+      odd_sign = %{@content_sign | gtfs_stop_id: "1"}
+      even_sign = %{@content_sign | gtfs_stop_id: "2"}
+      assert Signs.Countdown.initial_offset(even_sign) == Signs.Countdown.initial_offset(odd_sign) + 30_000
     end
   end
 end
