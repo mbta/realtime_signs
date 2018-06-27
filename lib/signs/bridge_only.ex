@@ -55,14 +55,19 @@ defmodule Signs.BridgeOnly do
   def handle_info(:bridge_check, sign) do
     schedule_bridge_check(self(), sign.bridge_check_period_ms)
 
-    case sign.bridge_engine.status(sign.bridge_id) do
-      {"Raised", duration} ->
-        {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
-        for audio <- [english, spanish] do
-          if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120)
-        end
-      _ ->
-        nil
+    try do
+      case sign.bridge_engine.status(sign.bridge_id) do
+        {"Raised", duration} ->
+          {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
+          for audio <- [english, spanish] do
+            if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120, Timex.local())
+          end
+        e ->
+          IO.inspect(e)
+          nil
+      end
+    rescue
+      _ -> sign
     end
 
     {:noreply, sign}

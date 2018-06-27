@@ -98,7 +98,13 @@ defmodule Signs.Countdown do
       {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
-    sign = update_sign(sign, top, bottom)
+    try do
+      sign = update_sign(sign, top, bottom)
+    rescue
+      e ->
+        IO.inspect(e)
+        sign
+    end
 
     {:noreply, sign}
   end
@@ -156,7 +162,7 @@ defmodule Signs.Countdown do
     update_bottom(sign, new_bottom)
   end
   defp update_sign(sign, new_top, new_bottom) do
-    update_response = sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_expiration_seconds, :now)
+    update_response = sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_expiration_seconds, :now, Timex.local())
     do_update_sign(update_response, sign, new_top, new_bottom)
   end
 
@@ -176,7 +182,7 @@ defmodule Signs.Countdown do
     sign
   end
   defp update_top(sign, new_top) do
-    sign.sign_updater.update_single_line(sign.pa_ess_id, "1", new_top, @default_expiration_seconds, :now)
+    sign.sign_updater.update_single_line(sign.pa_ess_id, "1", new_top, @default_expiration_seconds, :now, Timex.local())
     announce_arrival(new_top, sign)
     if sign.top_timer, do: Process.cancel_timer(sign.top_timer)
     timer = Process.send_after(self(), :expire_top, @expiration_overlap_seconds * 1000)
@@ -187,7 +193,7 @@ defmodule Signs.Countdown do
     sign
   end
   defp update_bottom(sign, new_bottom) do
-    sign.sign_updater.update_single_line(sign.pa_ess_id, "2", new_bottom, @default_expiration_seconds, :now)
+    sign.sign_updater.update_single_line(sign.pa_ess_id, "2", new_bottom, @default_expiration_seconds, :now, Timex.local())
     if sign.bottom_timer, do: Process.cancel_timer(sign.bottom_timer)
     timer = Process.send_after(self(), :expire_bottom, @expiration_overlap_seconds * 1000)
     %{sign | current_content_bottom: new_bottom, bottom_timer: timer}
@@ -197,7 +203,7 @@ defmodule Signs.Countdown do
   defp announce_arrival(msg, sign) do
     case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
       %Content.Audio.TrainIsArriving{} = audio ->
-        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60, Timex.local())
       nil ->
         nil
     end
@@ -218,7 +224,7 @@ defmodule Signs.Countdown do
   defp read_countdown(%{current_content_top: msg} = sign) do
     case Content.Audio.NextTrainCountdown.from_predictions_message(msg, sign.countdown_verb) do
       %Content.Audio.NextTrainCountdown{} = audio ->
-        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60, Timex.local())
       nil ->
         nil
     end

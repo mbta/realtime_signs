@@ -2,7 +2,7 @@ defmodule Signs.CountdownTest do
   use ExUnit.Case, async: true
 
   defmodule FakeUpdater do
-    def update_single_line({"test-sign", "notify-me"}, _, _, _, _) do
+    def update_single_line({"test-sign", "notify-me"}, _, _, _, _, _current_time) do
       pid = case Process.whereis(:fake_updater_listener) do
         nil -> self()
         registered -> registered
@@ -11,19 +11,19 @@ defmodule Signs.CountdownTest do
       send pid, {:update_single_line, {"test-sign", "notify-me"}}
       {:reply, {:ok, :sent}, []}
     end
-    def update_single_line(_pa_ess_id, "1", _msg, _duration, _start_secs) do
+    def update_single_line(_pa_ess_id, "1", _msg, _duration, _start_secs, _current_time) do
       {:reply, {:ok, :sent}, []}
     end
-    def update_single_line(_pa_ess_id, "2", _msg, _duration, _start_secs) do
+    def update_single_line(_pa_ess_id, "2", _msg, _duration, _start_secs, _current_time) do
       {:reply, {:ok, :sent}, []}
     end
-    def update_sign("notsent", _, _, _duration, _start) do
+    def update_sign("notsent", _, _, _duration, _start, _current_time) do
       {:error, :notsent}
     end
-    def update_sign(_pa_ess_id, _top, _bottom, _duration, _start) do
+    def update_sign(_pa_ess_id, _top, _bottom, _duration, _start, _current_time) do
       {:ok, :sent}
     end
-    def send_audio(pa_ess_id, msg, priority, timeout) do
+    def send_audio(pa_ess_id, msg, priority, timeout, _current_time) do
       pid = case Process.whereis(:fake_updater_listener) do
         nil -> self()
         registered -> registered

@@ -2,11 +2,11 @@ defmodule  Signs.SingleTest do
   use ExUnit.Case, async: true
 
   defmodule FakeUpdater do
-    def update_single_line(_pa_ess_id, _, _msg, _duration, _start_secs) do
+    def update_single_line(_pa_ess_id, _, _msg, _duration, _start_secs, _current_time) do
       {:reply, {:ok, :sent}, []}
     end
 
-    def send_audio(pa_ess_id, msg, priority, timeout) do
+    def send_audio(pa_ess_id, msg, priority, timeout, _current_time) do
       if Process.whereis(:single_test_fake_updater_listener) do
         send :single_test_fake_updater_listener, {:send_audio, {pa_ess_id, msg, priority, timeout}}
       end

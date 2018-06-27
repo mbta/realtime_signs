@@ -19,12 +19,12 @@ defmodule Signs.BridgeOnlyTest do
 
   defmodule FakeSignUpdater do
     require Logger
-    def update_single_line(_id, _line, _message, _duration, _start) do
+    def update_single_line(_id, _line, _message, _duration, _start, _current_time) do
       send :bridge_only_test_fake_sign_updater_listener, :update_single_line
       {:ok, :sent}
     end
 
-    def send_audio(_pa_ess_id, msg, _priority, _timeout) do
+    def send_audio(_pa_ess_id, msg, _priority, _timeout, _current_time) do
       send :bridge_only_test_fake_sign_updater_listener, {:send_audio, msg}
       {:ok, :sent}
     end

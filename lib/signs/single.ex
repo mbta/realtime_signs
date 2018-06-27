@@ -89,13 +89,25 @@ defmodule Signs.Single do
       Content.Message.Empty.new()
     end
 
-    sign = update(sign, message)
+    try do
+      sign = update(sign, message)
+    rescue
+      e ->
+        IO.inspect(e)
+        sign
+    end
     {:noreply, sign}
   end
 
   def handle_info(:read_sign, sign) do
     schedule_reading_sign(self(), sign.read_sign_period_ms)
-    read_countdown(sign)
+    try do
+      read_countdown(sign)
+    rescue
+      e -> sign
+        IO.inspect(e)
+        sign
+    end
     {:noreply, sign}
   end
 
@@ -132,7 +144,7 @@ defmodule Signs.Single do
     sign
   end
   defp update(sign, new_text) do
-    sign.sign_updater.update_single_line(sign.pa_ess_id, sign.line_number, new_text, @default_duration, :now)
+    sign.sign_updater.update_single_line(sign.pa_ess_id, sign.line_number, new_text, @default_duration, :now, Timex.local())
     announce_arrival(new_text, sign)
     if sign.timer, do: Process.cancel_timer(sign.timer)
     timer = Process.send_after(self(), :expire, @default_duration * 1000 - 5000)
@@ -145,7 +157,7 @@ defmodule Signs.Single do
   defp announce_arrival(msg, sign) do
     case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
       %Content.Audio.TrainIsArriving{} = audio ->
-        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60, Timex.local())
       nil ->
         nil
     end
@@ -154,7 +166,7 @@ defmodule Signs.Single do
   defp read_countdown(%{current_content: msg} = sign) do
     case Content.Audio.NextTrainCountdown.from_predictions_message(msg, sign.countdown_verb) do
       %Content.Audio.NextTrainCountdown{} = audio ->
-        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60, Timex.local())
       nil ->
         nil
     end

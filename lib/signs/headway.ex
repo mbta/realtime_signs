@@ -94,7 +94,13 @@ defmodule Signs.Headway do
       %{sign | current_content_top: Content.Message.Empty.new(), current_content_bottom: Content.Message.Empty.new()}
     end
 
-    sign = send_update(sign, updated_sign)
+    try do
+      sign = send_update(sign, updated_sign)
+    rescue
+      e ->
+        IO.inspect(e)
+        sign
+    end
     {:noreply, sign}
   end
   def handle_info(:read_sign, sign) do
@@ -121,7 +127,7 @@ defmodule Signs.Headway do
     sign
   end
   defp send_update(_old_sign, %{current_content_top: new_top, current_content_bottom: new_bottom} = sign) do
-    sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_duration, :now)
+    sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_duration, :now, Timex.local())
 
     if new_top == %Content.Message.Bridge.Up{} do
       read_bridge_messages(sign)
@@ -165,14 +171,14 @@ defmodule Signs.Headway do
   defp read_headway(%{current_content_bottom: msg} = sign) do
     {english, spanish} = Content.Audio.BusesToDestination.from_headway_message(msg, sign.headsign)
     for audio <- [english, spanish] do
-      if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120)
+      if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120, Timex.local())
     end
   end
 
   defp read_bridge_messages(%{bridge_delay_duration: duration} = sign) do
     {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
     for audio <- [english, spanish] do
-      if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120)
+      if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120, Timex.local())
     end
   end
 
