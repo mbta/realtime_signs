@@ -3,28 +3,28 @@ defmodule PaEss.HttpUpdaterTest do
 
   describe "update_single_line/5" do
     test "replys with {:ok, :sent} when successful" do
-      assert PaEss.HttpUpdater.update_single_line({"SBOX", "c"}, "1", %Content.Message.Empty{}, 60, :now, Timex.local()) == {:ok, :sent}
+      assert PaEss.HttpUpdater.update_single_line({"SBOX", "c"}, "1", %Content.Message.Empty{}, 60, :now, System.system_time(:second)) == {:ok, :sent}
     end
 
     test "Posts a request to display a message now" do
       state = make_state()
       msg = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: :boarding}
 
-      assert {:reply, {:ok, :sent}, %{state | uid: 1}} == PaEss.HttpUpdater.handle_call({:update_single_line, {"ABCD", "n"}, 1, msg, 60, :now, Timex.local()}, self(), state)
+      assert {:reply, {:ok, :sent}, %{state | uid: 1}} == PaEss.HttpUpdater.handle_call({:update_single_line, {"ABCD", "n"}, 1, msg, 60, :now, System.system_time(:second)}, self(), state)
     end
 
     test "Returns an error if HTTP response code is not 2XX" do
       state = make_state()
       msg = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: :arriving}
 
-      assert {:reply, {:error, :bad_status}, %{state | uid: 1}} == PaEss.HttpUpdater.handle_call({:update_single_line, {"bad_sign", "n"}, 1, msg, 60, 1234, Timex.local()}, self(), state)
+      assert {:reply, {:error, :bad_status}, %{state | uid: 1}} == PaEss.HttpUpdater.handle_call({:update_single_line, {"bad_sign", "n"}, 1, msg, 60, 1234, System.system_time(:second)}, self(), state)
     end
 
     test "Returns an error if HTTP request fails" do
       state = make_state()
       msg = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: 2}
 
-      assert {:reply, {:error, :post_error}, %{state | uid: 1}} == PaEss.HttpUpdater.handle_call({:update_single_line, {"timeout", "n"}, 1, msg, 60, 1234, Timex.local()}, self(), state)
+      assert {:reply, {:error, :post_error}, %{state | uid: 1}} == PaEss.HttpUpdater.handle_call({:update_single_line, {"timeout", "n"}, 1, msg, 60, 1234, System.system_time(:second)}, self(), state)
     end
   end
 
@@ -34,11 +34,11 @@ defmodule PaEss.HttpUpdaterTest do
       top = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: :boarding}
       bottom = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: 2}
 
-      assert {:reply, {:ok, :sent}, %{state | uid: 1}} == PaEss.HttpUpdater.handle_call({:update_sign, {"ABCD", "n"}, top, bottom, 60, :now, Timex.local()}, self(), state)
+      assert {:reply, {:ok, :sent}, %{state | uid: 1}} == PaEss.HttpUpdater.handle_call({:update_sign, {"ABCD", "n"}, top, bottom, 60, :now, System.system_time(:second)}, self(), state)
     end
 
     test "replys with {:ok, :sent} when successful" do
-      assert PaEss.HttpUpdater.update_sign({"SBOX", "c"}, %Content.Message.Empty{}, %Content.Message.Empty{}, 60, :now, Timex.local()) == {:ok, :sent}
+      assert PaEss.HttpUpdater.update_sign({"SBOX", "c"}, %Content.Message.Empty{}, %Content.Message.Empty{}, 60, :now, System.system_time(:second)) == {:ok, :sent}
     end
   end
 
@@ -52,7 +52,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:ok, :sent} ==
-        PaEss.HttpUpdater.send_audio({"SBOX", "c"}, audio, 5, 60, Timex.local())
+        PaEss.HttpUpdater.send_audio({"SBOX", "c"}, audio, 5, 60, System.system_time(:second))
     end
 
     test "Buses to Chelsea" do
@@ -65,7 +65,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1001}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"SBOX", "c"}, audio, 5, 60, Timex.local()}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"SBOX", "c"}, audio, 5, 60, System.system_time(:second)}, self(), state)
     end
 
     test "Buses to South Station" do
@@ -78,7 +78,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1002}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"SBSQ", "m"}, audio, 5, 60, Timex.local()}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"SBSQ", "m"}, audio, 5, 60, System.system_time(:second)}, self(), state)
     end
 
     test "Chelsea bridge raised, expect delays" do
@@ -89,7 +89,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1003}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"SCHS", "w"}, audio, 5, 200, Timex.local()}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"SCHS", "w"}, audio, 5, 200, System.system_time(:second)}, self(), state)
     end
 
     test "Buses to Chelsea, in Spanish" do
@@ -102,7 +102,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1004}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"SBOX", "e"}, audio, 5, 60, Timex.local()}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"SBOX", "e"}, audio, 5, 60, System.system_time(:second)}, self(), state)
     end
 
     test "Next train to Ashmont arrives in 4 minutes" do
@@ -114,7 +114,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1005}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"MCED", "n"}, audio, 5, 60, Timex.local()}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"MCED", "n"}, audio, 5, 60, System.system_time(:second)}, self(), state)
     end
 
     test "Train to Mattapan arriving" do
@@ -124,7 +124,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1006}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"MCED", "s"}, audio, 5, 60, Timex.local()}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"MCED", "s"}, audio, 5, 60, System.system_time(:second)}, self(), state)
     end
 
     test "Train to Ashmont arriving" do
@@ -134,7 +134,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:reply, {:ok, :sent}, %{state | uid: 1007}} ==
-        PaEss.HttpUpdater.handle_call({:send_audio, {"MCAP", "n"}, audio, 5, 60, Timex.local()}, self(), state)
+        PaEss.HttpUpdater.handle_call({:send_audio, {"MCAP", "n"}, audio, 5, 60, System.system_time(:second)}, self(), state)
     end
   end
 

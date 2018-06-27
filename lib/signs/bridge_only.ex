@@ -60,17 +60,16 @@ defmodule Signs.BridgeOnly do
         {"Raised", duration} ->
           {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
           for audio <- [english, spanish] do
-            if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120, Timex.local())
+            if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120, System.system_time(:second))
           end
         e ->
-          IO.inspect(e)
+          Logger.warn("Error in bridge_only.update_content: #{inspect e}")
           nil
       end
+      {:noreply, sign}
     rescue
-      _ -> sign
+      _ -> {:noreply, sign}
     end
-
-    {:noreply, sign}
   end
   def handle_info(msg, state) do
     Logger.warn("#{__MODULE__} #{inspect(state.id)} unknown message: #{inspect msg}")

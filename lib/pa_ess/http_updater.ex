@@ -40,7 +40,7 @@ defmodule PaEss.HttpUpdater do
 
   @impl GenServer
   def handle_call({:update_single_line, {station, zone}, line_no, msg, duration, start_secs, current_time}, _from, state) do
-    if Timex.before?(current_time, Timex.local() |> Timex.shift(seconds: -2)) do
+    if current_time < System.system_time(:second) - 2 do
       {:reply, :too_old, state}
     else
       cmd = "#{start_display(start_secs)}e#{duration}~#{zone}#{line_no}-#{message_display(msg)}"
@@ -54,7 +54,7 @@ defmodule PaEss.HttpUpdater do
   end
   @impl GenServer
   def handle_call({:update_sign, {station, zone}, top_line, bottom_line, duration, start_secs, current_time}, _from, state) do
-    if Timex.before?(current_time, Timex.local() |> Timex.shift(seconds: -2)) do
+    if current_time < System.system_time(:second) - 2 do
       {:reply, :too_old, state}
     else
       top_cmd = "#{start_display(start_secs)}e#{duration}~#{zone}1-#{message_display(top_line)}"
@@ -68,7 +68,7 @@ defmodule PaEss.HttpUpdater do
     end
   end
   def handle_call({:send_audio, {station, zone}, audio, priority, timeout, current_time}, _from, state) do
-    if Timex.before?(current_time, Timex.local() |> Timex.shift(seconds: -2)) do
+    if current_time < System.system_time(:second) - 2 do
       {:reply, :too_old, state}
     else
       {message_id, vars, type} = Content.Audio.to_params(audio)
@@ -114,7 +114,7 @@ defmodule PaEss.HttpUpdater do
   defp audio_type(:visual), do: "2"
 
   defp send_post(http_poster, query) do
-    case http_poster.post(url(), query, [{"Content-type", "application/x-www-form-urlencoded"}], [timeout: 2000]) do
+    case http_poster.post(url(), query, [{"Content-type", "application/x-www-form-urlencoded"}], [timeout: 2000, rcv_timeout: 1000]) do
       {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
         {:ok, :sent}
       {:ok, %HTTPoison.Response{status_code: status}} ->

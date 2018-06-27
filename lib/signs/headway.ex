@@ -96,12 +96,12 @@ defmodule Signs.Headway do
 
     try do
       sign = send_update(sign, updated_sign)
+      {:noreply, sign}
     rescue
       e ->
-        IO.inspect(e)
-        sign
+        Logger.warn("Error in headway.update_content: #{inspect e}")
+        {:noreply, sign}
     end
-    {:noreply, sign}
   end
   def handle_info(:read_sign, sign) do
     schedule_reading_sign(self(), sign.read_sign_period_ms)
@@ -127,7 +127,7 @@ defmodule Signs.Headway do
     sign
   end
   defp send_update(_old_sign, %{current_content_top: new_top, current_content_bottom: new_bottom} = sign) do
-    sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_duration, :now, Timex.local())
+    sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_duration, :now, System.system_time(:second))
 
     if new_top == %Content.Message.Bridge.Up{} do
       read_bridge_messages(sign)
@@ -136,6 +136,7 @@ defmodule Signs.Headway do
 
     if sign.timer, do: Process.cancel_timer(sign.timer)
     timer = Process.send_after(self(), :expire, @default_duration * 1000 - 5000)
+
     %{sign | current_content_top: new_top, current_content_bottom: new_bottom, timer: timer}
   end
 
@@ -171,14 +172,14 @@ defmodule Signs.Headway do
   defp read_headway(%{current_content_bottom: msg} = sign) do
     {english, spanish} = Content.Audio.BusesToDestination.from_headway_message(msg, sign.headsign)
     for audio <- [english, spanish] do
-      if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120, Timex.local())
+      if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120, System.system_time(:second))
     end
   end
 
   defp read_bridge_messages(%{bridge_delay_duration: duration} = sign) do
     {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
     for audio <- [english, spanish] do
-      if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120, Timex.local())
+      if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120, System.system_time(:second))
     end
   end
 
