@@ -62,13 +62,14 @@ defmodule Signs.BridgeOnly do
           for audio <- [english, spanish] do
             if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120, System.system_time(:second))
           end
-        e ->
-          Logger.warn("Error in bridge_only.update_content: #{inspect e}")
+        _ ->
           nil
       end
       {:noreply, sign}
     rescue
-      _ -> {:noreply, sign}
+      e ->
+        Logger.warn("Error in bridge_only.update_content: #{inspect e}")
+        {:noreply, sign}
     end
   end
   def handle_info(msg, state) do
