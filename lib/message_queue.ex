@@ -18,7 +18,7 @@ defmodule MessageQueue do
     length: integer()
   }
 
-  @max_size 2
+  @max_size 150
 
   use GenServer
   require Logger
@@ -55,10 +55,9 @@ defmodule MessageQueue do
 
   @impl GenServer
   def handle_call({:queue_update, msg}, _from, state) do
-    Logger.debug("add_to_queue: #{inspect(msg)}")
 
     queue = if state.length >= @max_size do
-      Logger.debug("dropping_from_full_queue")
+      Logger.warn("MessageQueue.queue_update - dropping_message")
       :queue.drop(state.queue)
     else
       state.queue
@@ -66,10 +65,9 @@ defmodule MessageQueue do
 
     queue = :queue.in(msg, queue)
 
-    {:reply, {:ok, :sent}, %{state | queue: queue, length: max(@max_size, state.length + 1)}}
+    {:reply, {:ok, :sent}, %{state | queue: queue, length: min(@max_size, state.length + 1)}}
   end
   def handle_call(:get_message, _from, state) do
-    Logger.debug("get_message")
     {result, q} = :queue.out(state.queue)
 
     message = case result do
@@ -77,6 +75,6 @@ defmodule MessageQueue do
       :empty -> nil
     end
 
-    {:reply, message, %{state | queue: q, length: min(0, state.length - 1)}}
+    {:reply, message, %{state | queue: q, length: max(0, state.length - 1)}}
   end
 end
