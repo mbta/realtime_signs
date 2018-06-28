@@ -79,8 +79,7 @@ defmodule PaEss.HttpUpdater do
     send_post(state.http_poster, encoded)
   end
 
-  defp host, do: "localhost:8080"
-  # defp host, do: Application.get_env(:realtime_signs, :sign_head_end_host)
+  defp host, do: Application.get_env(:realtime_signs, :sign_head_end_host)
   defp url, do: "http://#{host()}/mbta/cgi-bin/RemoteMsgsCgi.exe"
 
   defp start_display(:now), do: ""
