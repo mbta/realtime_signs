@@ -14,7 +14,7 @@ defmodule MessageQueue do
   }
 
   @type t :: %{
-    queue: :erlang.queue(message()),
+    queue: :queue.queue(message()),
     length: integer()
   }
 
