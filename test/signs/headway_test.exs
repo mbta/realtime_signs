@@ -221,12 +221,12 @@ end
 
 defmodule FakeSignUpdater do
   require Logger
-  def update_sign(id, line, message, duration, start) do
+  def update_sign(id, line, message, duration, start, current_time) do
     Logger.info "update_sign called"
     {id, line, message, duration, start}
   end
 
-  def send_audio(pa_ess_id, msg, priority, timeout) do
+  def send_audio(pa_ess_id, msg, priority, timeout, current_time) do
     if Process.whereis(:headway_test_fake_updater_listener) do
       send(:headway_test_fake_updater_listener, {:send_audio, {pa_ess_id, msg, priority, timeout}})
     end

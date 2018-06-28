@@ -9,7 +9,7 @@ defmodule PaEss.Logger do
   require Logger
 
   @impl true
-  def update_single_line(pa_ess_id, line_no, msg, duration, start_secs) do
+  def update_single_line(pa_ess_id, line_no, msg, duration, start_secs, _current_time) do
     line = [
       now(),
       "update_single_line,",
@@ -31,7 +31,7 @@ defmodule PaEss.Logger do
   end
 
   @impl true
-  def update_sign(pa_ess_id, top_line, bottom_line, duration, start_secs) do
+  def update_sign(pa_ess_id, top_line, bottom_line, duration, start_secs, _current_time) do
     line = [
       now(),
       "update_sign,",
@@ -53,7 +53,7 @@ defmodule PaEss.Logger do
   end
 
   @impl true
-  def send_audio(pa_ess_id, msg, priority, timeout) do
+  def send_audio(pa_ess_id, msg, priority, timeout, _current_time) do
     line = [
       now(),
       "send_audio,",

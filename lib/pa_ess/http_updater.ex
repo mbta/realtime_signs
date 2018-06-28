@@ -19,18 +19,18 @@ defmodule PaEss.HttpUpdater do
   end
 
   @impl PaEss.Updater
-  def update_single_line(pid \\ __MODULE__, pa_ess_id, line_no, msg, duration, start_secs) do
-    GenServer.call(pid, {:update_single_line, pa_ess_id, line_no, msg, duration, start_secs}, 6000)
+  def update_single_line(pid \\ __MODULE__, pa_ess_id, line_no, msg, duration, start_secs, current_time) do
+    GenServer.call(pid, {:update_single_line, pa_ess_id, line_no, msg, duration, start_secs, current_time}, 6000)
   end
 
   @impl PaEss.Updater
-  def update_sign(pid \\ __MODULE__, pa_ess_id, top_line, bottom_line, duration, start_secs) do
-    GenServer.call(pid, {:update_sign, pa_ess_id, top_line, bottom_line, duration, start_secs}, 6000)
+  def update_sign(pid \\ __MODULE__, pa_ess_id, top_line, bottom_line, duration, start_secs, current_time) do
+    GenServer.call(pid, {:update_sign, pa_ess_id, top_line, bottom_line, duration, start_secs, current_time}, 6000)
   end
 
   @impl PaEss.Updater
-  def send_audio(pid \\ __MODULE__, pa_ess_id, audio, priority, timeout) do
-    GenServer.call(pid, {:send_audio, pa_ess_id, audio, priority, timeout}, 6000)
+  def send_audio(pid \\ __MODULE__, pa_ess_id, audio, priority, timeout, current_time) do
+    GenServer.call(pid, {:send_audio, pa_ess_id, audio, priority, timeout, current_time}, 6000)
   end
 
   @impl GenServer
@@ -39,45 +39,57 @@ defmodule PaEss.HttpUpdater do
   end
 
   @impl GenServer
-  def handle_call({:update_single_line, {station, zone}, line_no, msg, duration, start_secs}, _from, state) do
-    cmd = "#{start_display(start_secs)}e#{duration}~#{zone}#{line_no}-#{message_display(msg)}"
-    encoded = URI.encode_query([MsgType: "SignContent", uid: state.uid, sta: station, c: cmd])
-    Logger.info(["update_single_line: ", encoded])
+  def handle_call({:update_single_line, {station, zone}, line_no, msg, duration, start_secs, current_time}, _from, state) do
+    if current_time < System.system_time(:second) - 2 do
+      {:reply, :too_old, state}
+    else
+      cmd = "#{start_display(start_secs)}e#{duration}~#{zone}#{line_no}-#{message_display(msg)}"
+      encoded = URI.encode_query([MsgType: "SignContent", uid: state.uid, sta: station, c: cmd])
+      Logger.info(["update_single_line: ", encoded])
 
-    result = send_post(state.http_poster, encoded)
+      result = send_post(state.http_poster, encoded)
 
-    {:reply, result, %{state | uid: state.uid + 1}}
+      {:reply, result, %{state | uid: state.uid + 1}}
+    end
   end
   @impl GenServer
-  def handle_call({:update_sign, {station, zone}, top_line, bottom_line, duration, start_secs}, _from, state) do
-    top_cmd = "#{start_display(start_secs)}e#{duration}~#{zone}1-#{message_display(top_line)}"
-    bottom_cmd = "#{start_display(start_secs)}e#{duration}~#{zone}2-#{message_display(bottom_line)}"
-    encoded = URI.encode_query([MsgType: "SignContent", uid: state.uid, sta: station, c: top_cmd, c: bottom_cmd])
-    Logger.info(["update_sign: ", encoded])
+  def handle_call({:update_sign, {station, zone}, top_line, bottom_line, duration, start_secs, current_time}, _from, state) do
+    if current_time < System.system_time(:second) - 2 do
+      {:reply, :too_old, state}
+    else
+      top_cmd = "#{start_display(start_secs)}e#{duration}~#{zone}1-#{message_display(top_line)}"
+      bottom_cmd = "#{start_display(start_secs)}e#{duration}~#{zone}2-#{message_display(bottom_line)}"
+      encoded = URI.encode_query([MsgType: "SignContent", uid: state.uid, sta: station, c: top_cmd, c: bottom_cmd])
+      Logger.info(["update_sign: ", encoded])
 
-    result = send_post(state.http_poster, encoded)
+      result = send_post(state.http_poster, encoded)
 
-    {:reply, result, %{state | uid: state.uid + 1}}
+      {:reply, result, %{state | uid: state.uid + 1}}
+    end
   end
-  def handle_call({:send_audio, {station, zone}, audio, priority, timeout}, _from, state) do
-    {message_id, vars, type} = Content.Audio.to_params(audio)
+  def handle_call({:send_audio, {station, zone}, audio, priority, timeout, current_time}, _from, state) do
+    if current_time < System.system_time(:second) - 2 do
+      {:reply, :too_old, state}
+    else
+      {message_id, vars, type} = Content.Audio.to_params(audio)
 
-    encoded = [
-      MsgType: "Canned",
-      uid: state.uid,
-      mid: message_id,
-      var: Enum.join(vars, ","),
-      typ: audio_type(type),
-      sta: "#{station}#{zone_bitmap(zone)}",
-      pri: priority,
-      tim: timeout,
-    ]
-    |> URI.encode_query
-    Logger.info(["send_audio: ", encoded])
+      encoded = [
+        MsgType: "Canned",
+        uid: state.uid,
+        mid: message_id,
+        var: Enum.join(vars, ","),
+        typ: audio_type(type),
+        sta: "#{station}#{zone_bitmap(zone)}",
+        pri: priority,
+        tim: timeout,
+      ]
+      |> URI.encode_query
+      Logger.info(["send_audio: ", encoded])
 
-    result = send_post(state.http_poster, encoded)
+      result = send_post(state.http_poster, encoded)
 
-    {:reply, result, %{state | uid: state.uid + 1}}
+      {:reply, result, %{state | uid: state.uid + 1}}
+    end
   end
 
   defp host, do: Application.get_env(:realtime_signs, :sign_head_end_host)
@@ -102,7 +114,7 @@ defmodule PaEss.HttpUpdater do
   defp audio_type(:visual), do: "2"
 
   defp send_post(http_poster, query) do
-    case http_poster.post(url(), query, [{"Content-type", "application/x-www-form-urlencoded"}]) do
+    case http_poster.post(url(), query, [{"Content-type", "application/x-www-form-urlencoded"}], [timeout: 2000, rcv_timeout: 1000]) do
       {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
         {:ok, :sent}
       {:ok, %HTTPoison.Response{status_code: status}} ->
