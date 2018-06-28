@@ -22,4 +22,4 @@ config :logger, :splunk,
 
 config :realtime_signs,
   external_config_getter: ExternalConfig.S3,
-  sign_updater_mod: MessageQueue,
+  sign_updater_mod: MessageQueue
