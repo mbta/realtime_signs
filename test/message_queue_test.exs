@@ -11,7 +11,7 @@ defmodule MessageQueueTest do
       assert {{:value, ^msg}, _queue} = :queue.out(state.queue)
     end
 
-    test "bumps old message when more than 20" do
+    test "bumps old message when more than max size" do
       q = 1..150 |> Enum.to_list |> :queue.from_list
       state = %{queue: q, length: 150}
       msg = 151

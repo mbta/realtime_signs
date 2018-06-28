@@ -21,4 +21,5 @@ config :logger, :splunk,
   metadata: [:request_id]
 
 config :realtime_signs,
-  external_config_getter: ExternalConfig.S3
+  external_config_getter: ExternalConfig.S3,
+  sign_updater_mod: MessageQueue,
