@@ -3,19 +3,20 @@ defmodule MessageQueueTest do
 
   describe "handle_call :queue_update" do
     test "adds message to the queue" do
-      q = :queue.new()
+      state = %{queue: :queue.new(), length: 0}
       msg = {:msg, [:args]}
 
-      {:reply, {:ok, :sent}, state} = MessageQueue.handle_call({:queue_update, msg}, self(), %{queue: q})
+      {:reply, {:ok, :sent}, state} = MessageQueue.handle_call({:queue_update, msg}, self(), state)
 
       assert {{:value, ^msg}, _queue} = :queue.out(state.queue)
     end
 
     test "bumps old message when more than 20" do
-      q = 1..20 |> Enum.to_list |> :queue.from_list
-      msg = 21
+      q = 1..150 |> Enum.to_list |> :queue.from_list
+      state = %{queue: q, length: 150}
+      msg = 151
 
-      {:reply, {:ok, :sent}, state} = MessageQueue.handle_call({:queue_update, msg}, self(), %{queue: q})
+      {:reply, {:ok, :sent}, state} = MessageQueue.handle_call({:queue_update, msg}, self(), state)
 
       assert {{:value, 2}, _queue} = :queue.out(state.queue)
     end
@@ -23,13 +24,13 @@ defmodule MessageQueueTest do
 
   describe "handle_call :get_message" do
     test "returns item from queue" do
-      q = :queue.from_list([:abc])
-      assert {:reply, :abc, _new_state} = MessageQueue.handle_call(:get_message, self(), %{queue: q})
+      state = %{queue: :queue.from_list([:abc]), length: 1}
+      assert {:reply, :abc, _new_state} = MessageQueue.handle_call(:get_message, self(), state)
     end
 
     test "returns nil if empty" do
-      q = :queue.new()
-      assert {:reply, nil, _new_state} = MessageQueue.handle_call(:get_message, self(), %{queue: q})
+      state = %{queue: :queue.new(), length: 0}
+      assert {:reply, nil, _new_state} = MessageQueue.handle_call(:get_message, self(), state)
     end
   end
 

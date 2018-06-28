@@ -27,10 +27,6 @@ defmodule PaEss.HttpUpdater do
     {:ok, %{http_poster: opts[:http_poster], queue_mod: opts[:queue_mod], uid: 0}}
   end
 
-  defp schedule_check_queue(pid, ms) do
-    Process.send_after(pid, :check_queue, ms)
-  end
-
   def handle_info(:check_queue, state) do
     before_time = System.monotonic_time(:millisecond)
 
@@ -111,5 +107,9 @@ defmodule PaEss.HttpUpdater do
         Logger.warn("head_end_post_error: #{inspect reason}")
         {:error, :post_error}
     end
+  end
+
+  defp schedule_check_queue(pid, ms) do
+    Process.send_after(pid, :check_queue, ms)
   end
 end
