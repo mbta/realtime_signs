@@ -1,8 +1,8 @@
 defmodule MessageQueue do
   @moduledoc """
   Simple FIFO queue that stores messages from the signs to the PaEss server.
-  Has a buffer of 20 messages. Requests from clients for messages return
-  the oldest available of the 20. When the queue is full, drops the oldest
+  Has a buffer of 150 messages. Requests from clients for messages return
+  the oldest available of the 150. When the queue is full, drops the oldest
   message to accommodate the new one.
   """
 
