@@ -1,8 +1,8 @@
 defmodule MessageQueue do
   @moduledoc """
   Simple FIFO queue that stores messages from the signs to the PaEss server.
-  Has a buffer of 150 messages. Requests from clients for messages return
-  the oldest available of the 150. When the queue is full, drops the oldest
+  Has a buffer of @max_size messages. Requests from clients for messages return
+  the oldest available of the @max_size. When the queue is full, drops the oldest
   message to accommodate the new one.
   """
 
@@ -57,7 +57,7 @@ defmodule MessageQueue do
   def handle_call({:queue_update, msg}, _from, state) do
 
     queue = if state.length >= @max_size do
-      Logger.warn("MessageQueue.queue_update - dropping_message")
+      Logger.warn("MessageQueue.queue_update - too full, dropping oldest message")
       :queue.drop(state.queue)
     else
       state.queue
