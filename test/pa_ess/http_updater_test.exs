@@ -1,3 +1,9 @@
+defmodule Fake.MessageQueue do
+  def get_message do
+    {:update_single_line, [{"SBOX", "c"}, "1", %Content.Message.Empty{}, 60, :now]}
+  end
+end
+
 defmodule PaEss.HttpUpdaterTest do
   use ExUnit.Case, async: true
 
@@ -126,6 +132,11 @@ defmodule PaEss.HttpUpdaterTest do
       assert {:ok, :sent} ==
         PaEss.HttpUpdater.process({:send_audio, [{"MCAP", "n"}, audio, 5, 60]}, state)
     end
+  end
+
+  test "handle_info pulls from queue" do
+    state = make_state(%{queue_mod: Fake.MessageQueue})
+    assert PaEss.HttpUpdater.handle_info(:check_queue, state) == {:noreply, %{state | uid: 1}}
   end
 
   defp make_state(init \\ %{}) do
