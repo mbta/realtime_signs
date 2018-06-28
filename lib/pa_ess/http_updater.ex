@@ -1,65 +1,66 @@
 defmodule PaEss.HttpUpdater do
   @moduledoc """
-  Behaviour that HTTP POSTs sign updates to the PA/ESS server.
+  Fetches from the MessageQueue messages from the various signs, and serializes and POSTs
+  them to the PA/ESS head-end server.
   """
-
-  @behaviour PaEss.Updater
 
   @type t :: %{
     http_poster: module(),
+    queue_mod: module(),
     uid: integer()
   }
+
+  @max_send_rate_per_sec 8
+  @avg_ms_between_sends round(1000 / @max_send_rate_per_sec)
 
   use GenServer
   require Logger
 
   def start_link(opts \\ []) do
     http_poster = opts[:http_poster] || Application.get_env(:realtime_signs, :http_poster_mod)
-    GenServer.start_link(__MODULE__, [http_poster: http_poster], name: __MODULE__)
+    queue_mod = opts[:queue_mod] || MessageQueue
+    GenServer.start_link(__MODULE__, [http_poster: http_poster, queue_mod: queue_mod], name: __MODULE__)
   end
 
-  @impl PaEss.Updater
-  def update_single_line(pid \\ __MODULE__, pa_ess_id, line_no, msg, duration, start_secs) do
-    GenServer.call(pid, {:update_single_line, pa_ess_id, line_no, msg, duration, start_secs}, 6000)
-  end
-
-  @impl PaEss.Updater
-  def update_sign(pid \\ __MODULE__, pa_ess_id, top_line, bottom_line, duration, start_secs) do
-    GenServer.call(pid, {:update_sign, pa_ess_id, top_line, bottom_line, duration, start_secs}, 6000)
-  end
-
-  @impl PaEss.Updater
-  def send_audio(pid \\ __MODULE__, pa_ess_id, audio, priority, timeout) do
-    GenServer.call(pid, {:send_audio, pa_ess_id, audio, priority, timeout}, 6000)
-  end
-
-  @impl GenServer
   def init(opts) do
-    {:ok, %{http_poster: opts[:http_poster], uid: 0}}
+    schedule_check_queue(self(), 30)
+    {:ok, %{http_poster: opts[:http_poster], queue_mod: opts[:queue_mod], uid: 0}}
   end
 
-  @impl GenServer
-  def handle_call({:update_single_line, {station, zone}, line_no, msg, duration, start_secs}, _from, state) do
+  defp schedule_check_queue(pid, ms) do
+    Process.send_after(pid, :check_queue, ms)
+  end
+
+  def handle_info(:check_queue, state) do
+    before_time = System.monotonic_time(:millisecond)
+
+    if (item = state.queue_mod.get_message()) do
+      process(item, state)
+    end
+
+    send_time = System.monotonic_time(:millisecond) - before_time
+    wait_time = max(0, @avg_ms_between_sends - send_time)
+    schedule_check_queue(self(), wait_time)
+
+    {:noreply, %{state | uid: state.uid + 1}}
+  end
+
+  def process({:update_single_line, [{station, zone}, line_no, msg, duration, start_secs]}, state) do
     cmd = "#{start_display(start_secs)}e#{duration}~#{zone}#{line_no}-#{message_display(msg)}"
     encoded = URI.encode_query([MsgType: "SignContent", uid: state.uid, sta: station, c: cmd])
     Logger.info(["update_single_line: ", encoded])
 
-    result = send_post(state.http_poster, encoded)
-
-    {:reply, result, %{state | uid: state.uid + 1}}
+    send_post(state.http_poster, encoded)
   end
-  @impl GenServer
-  def handle_call({:update_sign, {station, zone}, top_line, bottom_line, duration, start_secs}, _from, state) do
+  def process({:update_sign, [{station, zone}, top_line, bottom_line, duration, start_secs]}, state) do
     top_cmd = "#{start_display(start_secs)}e#{duration}~#{zone}1-#{message_display(top_line)}"
     bottom_cmd = "#{start_display(start_secs)}e#{duration}~#{zone}2-#{message_display(bottom_line)}"
     encoded = URI.encode_query([MsgType: "SignContent", uid: state.uid, sta: station, c: top_cmd, c: bottom_cmd])
     Logger.info(["update_sign: ", encoded])
 
-    result = send_post(state.http_poster, encoded)
-
-    {:reply, result, %{state | uid: state.uid + 1}}
+    send_post(state.http_poster, encoded)
   end
-  def handle_call({:send_audio, {station, zone}, audio, priority, timeout}, _from, state) do
+  def process({:send_audio, [{station, zone}, audio, priority, timeout]}, state) do
     {message_id, vars, type} = Content.Audio.to_params(audio)
 
     encoded = [
@@ -75,12 +76,11 @@ defmodule PaEss.HttpUpdater do
     |> URI.encode_query
     Logger.info(["send_audio: ", encoded])
 
-    result = send_post(state.http_poster, encoded)
-
-    {:reply, result, %{state | uid: state.uid + 1}}
+    send_post(state.http_poster, encoded)
   end
 
-  defp host, do: Application.get_env(:realtime_signs, :sign_head_end_host)
+  defp host, do: "localhost:8080"
+  # defp host, do: Application.get_env(:realtime_signs, :sign_head_end_host)
   defp url, do: "http://#{host()}/mbta/cgi-bin/RemoteMsgsCgi.exe"
 
   defp start_display(:now), do: ""
