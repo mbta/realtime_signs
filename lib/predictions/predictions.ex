@@ -47,6 +47,14 @@ defmodule Predictions.Predictions do
   defp headsign_for_prediction("Red", 1, _), do: "Alewife"
   defp headsign_for_prediction("Red", 0, last_stop_id) when last_stop_id in ["70087", "70089", "70091", "70093"], do: "Ashmont"
   defp headsign_for_prediction("Red", 0, last_stop_id) when last_stop_id in ["70097", "70101", "70103", "70105"], do: "Braintree"
+  defp headsign_for_prediction("Green-B", 0, _), do: "Boston Col"
+  defp headsign_for_prediction("Green-C", 0, _), do: "Clvlnd Cir"
+  defp headsign_for_prediction("Green-D", 0, _), do: "Riverside"
+  defp headsign_for_prediction("Green-E", 0, _), do: "Heath St"
+  defp headsign_for_prediction(_, 1, "70209"), do: "Lechmere"
+  defp headsign_for_prediction(_, 1, "70205"), do: "North Sta"
+  defp headsign_for_prediction(_, 1, "70201"), do: "Govt Ctr"
+  defp headsign_for_prediction(_, 1, "70200"), do: "Park St"
   defp headsign_for_prediction(route_id, direction_id, last_stop_id) do
     Logger.error("Could not find headsign for route_id #{route_id}, #{direction_id}, #{last_stop_id}")
     ""
