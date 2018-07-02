@@ -21,19 +21,22 @@ defmodule  Signs.SingleTest do
         stop_id: "many_predictions",
         direction_id: 1,
         seconds_until_arrival: 10,
-        route_id: "mattapan"
+        route_id: "mattapan",
+        headsign: "Mattapan"
        },
       %Predictions.Prediction{
         stop_id: "many_predictions",
         direction_id: 1,
         seconds_until_arrival: 500,
-        route_id: "mattapan"
+        route_id: "mattapan",
+        headsign: "Mattapan"
        },
       %Predictions.Prediction{
           stop_id: "many_predictions",
           direction_id: 1,
           seconds_until_arrival: 200,
-          route_id: "mattapan"
+          route_id: "mattapan",
+          headsign: "Mattapan"
        }]
     end
     def for_stop("audio-arriving", 1) do
@@ -42,6 +45,7 @@ defmodule  Signs.SingleTest do
         direction_id: 1,
         seconds_until_arrival: 10,
         route_id: "mattapan",
+        headsign: "Mattapan"
       }]
     end
     def for_stop("boarding", 1) do
@@ -50,6 +54,7 @@ defmodule  Signs.SingleTest do
         direction_id: 1,
         seconds_until_arrival: 65,
         route_id: "mattapan",
+        headsign: "Mattapan"
       }]
     end
     def for_stop("three-mins", 1) do
@@ -58,6 +63,7 @@ defmodule  Signs.SingleTest do
         direction_id: 1,
         seconds_until_arrival: 190,
         route_id: "mattapan",
+        headsign: "Mattapan"
       }]
     end
     def for_stop(gtfs_stop_id, 1) do
@@ -65,7 +71,8 @@ defmodule  Signs.SingleTest do
         stop_id: gtfs_stop_id,
         direction_id: 1,
         seconds_until_arrival: 10,
-        route_id: "mattapan"
+        route_id: "mattapan",
+        headsign: "Mattapan"
        }]
     end
   end
@@ -77,7 +84,6 @@ defmodule  Signs.SingleTest do
     gtfs_stop_id: "ashmont-stop",
     direction_id: 1,
     route_id: "Mattapan",
-    headsign: "Mattapan",
     current_content: "Mattapan 1 minute",
     sign_updater: FakeUpdater,
     prediction_engine: FakePredictionsEngine,
