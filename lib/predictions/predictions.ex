@@ -12,7 +12,8 @@ defmodule Predictions.Predictions do
   end
 
   defp group_stop_time_updates(trip_update) do
-    Enum.map(trip_update.stop_time_update, &{&1, trip_update.stop_time_update |> Enum.max_by(fn(update) -> if update.arrival, do: update.arrival.time end) |> Map.get(:stop_id), trip_update.trip.route_id, trip_update.trip.direction_id})
+    last_stop_id = Enum.max_by(trip_update.stop_time_update, fn(update) -> if update.arrival, do: update.arrival.time end) |> Map.get(:stop_id)
+    Enum.map(trip_update.stop_time_update, &{&1, last_stop_id, trip_update.trip.route_id, trip_update.trip.direction_id})
   end
 
   defp prediction_from_update({stop_time_update, last_stop_id, route_id, direction_id}, current_time) do
