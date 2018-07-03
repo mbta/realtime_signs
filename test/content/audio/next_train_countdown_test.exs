@@ -57,6 +57,24 @@ defmodule Content.Audio.NextTrainCountdownTest do
       assert Content.Audio.to_params(audio) == {"90", ["4022", "503", "5005"], :audio}
     end
 
+    test "Next train to Alewife" do
+      audio = %Content.Audio.NextTrainCountdown{
+        destination: :alewife,
+        verb: :arrives,
+        minutes: 5,
+      }
+      assert Content.Audio.to_params(audio) == {"90", ["4000", "503", "5005"], :audio}
+    end
+
+    test "Next train to Braintree" do
+      audio = %Content.Audio.NextTrainCountdown{
+        destination: :braintree,
+        verb: :arrives,
+        minutes: 5,
+      }
+      assert Content.Audio.to_params(audio) == {"90", ["4021", "503", "5005"], :audio}
+    end
+
     test "Uses audio for 30 minutes when train is more than 30 minutes away" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :wonderland,
