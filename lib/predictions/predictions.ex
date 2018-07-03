@@ -29,12 +29,12 @@ defmodule Predictions.Predictions do
           ""
       end
     %Prediction{
-                 stop_id: stop_time_update.stop_id,
-                 direction_id: direction_id,
-                 seconds_until_arrival: max(0, prediction_time.time - current_time_seconds),
-                 route_id: route_id,
-                 headsign: headsign
-               }
+      stop_id: stop_time_update.stop_id,
+      direction_id: direction_id,
+      seconds_until_arrival: max(0, prediction_time.time - current_time_seconds),
+      route_id: route_id,
+      headsign: headsign
+    }
   end
 
   def parse_pb_response(body) do
