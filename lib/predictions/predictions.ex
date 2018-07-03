@@ -20,19 +20,21 @@ defmodule Predictions.Predictions do
     current_time_seconds = DateTime.to_unix(current_time)
     prediction_time = if stop_time_update.departure, do: stop_time_update.departure, else: stop_time_update.arrival
 
-    case headsign_for_prediction(route_id, direction_id, last_stop_id) do
-      {:ok, headsign} ->
-        %Prediction{
-                     stop_id: stop_time_update.stop_id,
-                     direction_id: direction_id,
-                     seconds_until_arrival: max(0, prediction_time.time - current_time_seconds),
-                     route_id: route_id,
-                     headsign: headsign
-                   }
-      {:error, :not_found} ->
-        Logger.error("Could not find headsign for stop_time_update #{inspect stop_time_update} with last_stop_id #{last_stop_id} on route #{route_id} in direction #{direction_id}")
-        nil
-    end
+    headsign =
+      case headsign_for_prediction(route_id, direction_id, last_stop_id) do
+        {:ok, h} ->
+          h
+        {:error, :not_found} ->
+          Logger.error("Could not find headsign for stop_time_update #{inspect stop_time_update} with last_stop_id #{last_stop_id} on route #{route_id} in direction #{direction_id}")
+          ""
+      end
+    %Prediction{
+                 stop_id: stop_time_update.stop_id,
+                 direction_id: direction_id,
+                 seconds_until_arrival: max(0, prediction_time.time - current_time_seconds),
+                 route_id: route_id,
+                 headsign: headsign
+               }
   end
 
   def parse_pb_response(body) do
