@@ -24,27 +24,6 @@ defmodule Predictions.PredictionsTest do
     incrementality: :FULL_DATASET, timestamp: 1490783458}}
 
   describe "get_all/2" do
-    test "logs an error if it can't find a headsign" do
-      feed_message = %GTFS.Realtime.FeedMessage{entity: [%GTFS.Realtime.FeedEntity{alert: nil,
-         id: "1490783458_32568935", is_deleted: false, trip_update: %GTFS.Realtime.TripUpdate{delay: nil,
-          stop_time_update: [%GTFS.Realtime.TripUpdate.StopTimeUpdate{arrival: %GTFS.Realtime.TripUpdate.StopTimeEvent{delay: nil,
-             time: 1491570120, uncertainty: nil},
-            departure: nil, schedule_relationship: :SCHEDULED,
-            stop_id: "70263", stop_sequence: 1},
-          %GTFS.Realtime.TripUpdate.StopTimeUpdate{arrival: %GTFS.Realtime.TripUpdate.StopTimeEvent{delay: nil,
-             time: 1491570180, uncertainty: nil},
-            departure: nil, schedule_relationship: :SCHEDULED,
-            stop_id: "70261", stop_sequence: 1}], timestamp: nil,
-          trip: %GTFS.Realtime.TripDescriptor{direction_id: 0, route_id: "NOT A REAL ROUTE ID",
-           schedule_relationship: :SCHEDULED, start_date: "20170329", start_time: nil,
-           trip_id: "32568935"},
-          vehicle: %GTFS.Realtime.VehicleDescriptor{id: "G-10040", label: "3260",
-           license_plate: nil}}, vehicle: nil}],
-       header: %GTFS.Realtime.FeedHeader{gtfs_realtime_version: "1.0",
-        incrementality: :FULL_DATASET, timestamp: 1490783458}}
-      log_output = capture_log(fn -> get_all(feed_message,  @current_time) end)
-      assert log_output =~ "Could not find headsign"
-    end
     test "finds predictions for one trip" do
       expected = %{{"70261", 0} => [
           %Predictions.Prediction{stop_id: "70261", seconds_until_arrival: 180, direction_id: 0, route_id: "Mattapan", headsign: "Mattapan"},

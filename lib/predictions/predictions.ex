@@ -25,7 +25,6 @@ defmodule Predictions.Predictions do
         {:ok, headsign} ->
           headsign
         {:error, :not_found} ->
-          Logger.info("Could not find headsign for stop_time_update #{inspect stop_time_update} with last_stop_id #{last_stop_id} on route #{route_id} in direction #{direction_id}")
           ""
       end
     %Prediction{
@@ -56,7 +55,6 @@ defmodule Predictions.Predictions do
   defp headsign_for_prediction("Red", 1, _), do: {:ok, "Alewife"}
   defp headsign_for_prediction("Red", 0, last_stop_id) when last_stop_id in ["70087", "70089", "70091", "70093"], do: {:ok, "Ashmont"}
   defp headsign_for_prediction("Red", 0, last_stop_id) when last_stop_id in ["70097", "70101", "70103", "70105"], do: {:ok, "Braintree"}
-  defp headsign_for_prediction("Red", 0, _), do: {:ok, ""}
   defp headsign_for_prediction("Green-B", 0, _), do: {:ok, "Boston Col"}
   defp headsign_for_prediction("Green-C", 0, _), do: {:ok, "Clvlnd Cir"}
   defp headsign_for_prediction("Green-D", 0, _), do: {:ok, "Riverside"}
