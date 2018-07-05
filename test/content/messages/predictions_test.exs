@@ -118,9 +118,9 @@ defmodule Content.Message.PredictionsTest do
   end
 
   describe "terminal/3" do
-    test "puts boarding on the sign when train is currently boarding" do
+    test "puts boarding on the sign when train is on the platform and predicted to depart in less than 30 seconds" do
       prediction = %Predictions.Prediction{
-        seconds_until_arrival: 0,
+        seconds_until_departure: 0,
         headsign: "Ashmont"
       }
       msg = Content.Message.Predictions.terminal(prediction, true)
@@ -130,7 +130,7 @@ defmodule Content.Message.PredictionsTest do
 
     test "does not put boarding if prediction is greater than 30 seconds" do
       prediction = %Predictions.Prediction{
-        seconds_until_arrival: 45,
+        seconds_until_departure: 45,
         headsign: "Ashmont"
       }
       msg = Content.Message.Predictions.terminal(prediction, true)
@@ -138,9 +138,9 @@ defmodule Content.Message.PredictionsTest do
       assert Content.Message.to_string(msg) == "Ashmont      1 min"
     end
 
-    test "puts 1 min on the sign when train is not boarding, but less than a minute away" do
+    test "puts 1 min on the sign when train is not boarding, but is predicted to depart in less than a minute" do
       prediction = %Predictions.Prediction{
-        seconds_until_arrival: 10,
+        seconds_until_departure: 10,
         headsign: "Ashmont"
       }
       msg = Content.Message.Predictions.terminal(prediction, false)
@@ -148,9 +148,9 @@ defmodule Content.Message.PredictionsTest do
       assert Content.Message.to_string(msg) == "Ashmont      1 min"
     end
 
-    test "puts the time on the sign when train is more than 30 seconds away" do
+    test "puts the time on the sign when train's departure is more than 30 seconds away" do
       prediction = %Predictions.Prediction{
-        seconds_until_arrival: 60,
+        seconds_until_departure: 60,
         headsign: "Mattapan"
       }
       msg = Content.Message.Predictions.terminal(prediction, false)

@@ -40,6 +40,7 @@ defmodule Signs.CountdownTest do
         stop_id: "two_boarding",
         direction_id: 1,
         seconds_until_arrival: 0,
+        seconds_until_departure: 0,
         route_id: "mattapan",
         headsign: "Mattapan"
        },
@@ -47,6 +48,7 @@ defmodule Signs.CountdownTest do
           stop_id: "two_boarding",
           direction_id: 1,
           seconds_until_arrival: 0,
+          seconds_until_departure: 0,
           route_id: "mattapan",
           headsign: "Mattapan"
        }]
@@ -56,6 +58,7 @@ defmodule Signs.CountdownTest do
         stop_id: "many_predictions",
         direction_id: 1,
         seconds_until_arrival: 10,
+        seconds_until_departure: 10,
         route_id: "mattapan",
         headsign: "Mattapan"
        },
@@ -63,6 +66,7 @@ defmodule Signs.CountdownTest do
         stop_id: "many_predictions",
         direction_id: 1,
         seconds_until_arrival: 500,
+        seconds_until_departure: 500,
         route_id: "mattapan",
         headsign: "Mattapan"
        },
@@ -70,6 +74,7 @@ defmodule Signs.CountdownTest do
           stop_id: "many_predictions",
           direction_id: 1,
           seconds_until_arrival: 200,
+          seconds_until_departure: 200,
           route_id: "mattapan",
           headsign: "Mattapan"
        }]
@@ -79,6 +84,7 @@ defmodule Signs.CountdownTest do
         stop_id: "not-arriving",
         direction_id: 1,
         seconds_until_arrival: 100,
+        seconds_until_departure: 100,
         route_id: "mattapan",
         headsign: "Mattapan"
        }]
@@ -89,6 +95,7 @@ defmodule Signs.CountdownTest do
           stop_id: "brd-arr-bug",
           direction_id: 1,
           seconds_until_arrival: 100,
+          seconds_until_departure: 100,
           route_id: "mattapan",
           headsign: "Mattapan"
         },
@@ -96,6 +103,7 @@ defmodule Signs.CountdownTest do
           stop_id: "brd-arr-bug",
           direction_id: 1,
           seconds_until_arrival: 600,
+          seconds_until_departure: 600,
           route_id: "mattapan",
           headsign: "Mattapan"
         },
@@ -106,6 +114,7 @@ defmodule Signs.CountdownTest do
         stop_id: gtfs_stop_id,
         direction_id: 1,
         seconds_until_arrival: 10,
+        seconds_until_departure: 10,
         route_id: "mattapan",
         headsign: "Mattapan"
        }]
