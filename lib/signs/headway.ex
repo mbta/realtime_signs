@@ -120,10 +120,10 @@ defmodule Signs.Headway do
   defp send_update(%{current_content_bottom: same}, %{current_content_bottom: same} = sign) do
     sign
   end
-  defp send_update(_old_sign, %{current_content_top: new_top, current_content_bottom: new_bottom} = sign) do
+  defp send_update(old_sign, %{current_content_top: new_top, current_content_bottom: new_bottom} = sign) do
     sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_duration, :now)
 
-    if new_top == %Content.Message.Bridge.Up{} do
+    if bridge_is_newly_up?(old_sign, sign) do
       read_bridge_messages(sign)
       schedule_bridge_announcement_update(self())
     end
@@ -160,6 +160,12 @@ defmodule Signs.Headway do
   end
   defp bottom_content(range) do
     %Content.Message.Headways.Bottom{range: range}
+  end
+
+  defp bridge_is_newly_up?(old_sign, new_sign) do
+    (new_sign.current_content_top == %Content.Message.Bridge.Up{})
+    and (old_sign.current_content_top != %Content.Message.Bridge.Up{})
+    and (old_sign.current_content_top != Content.Message.Empty.new()) # e.g. from message expiration
   end
 
   defp read_headway(%{current_content_bottom: msg} = sign) do
