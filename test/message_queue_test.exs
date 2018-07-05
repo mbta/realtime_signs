@@ -1,5 +1,6 @@
 defmodule MessageQueueTest do
   use ExUnit.Case
+  import ExUnit.CaptureLog
 
   describe "handle_call :queue_update" do
     test "adds message to the queue" do
@@ -19,6 +20,16 @@ defmodule MessageQueueTest do
       {:reply, {:ok, :sent}, state} = MessageQueue.handle_call({:queue_update, msg}, self(), state)
 
       assert {{:value, 2}, _queue} = :queue.out(state.queue)
+    end
+
+    test "logs if message size is multiple of 30" do
+      state = %{queue: :queue.new(), length: 30}
+
+      log = capture_log [level: :info], fn ->
+        MessageQueue.handle_call({:queue_update, :foo}, self(), state)
+      end
+
+      assert log =~ "queue_length=30"
     end
   end
 
