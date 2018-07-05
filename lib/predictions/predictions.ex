@@ -18,7 +18,8 @@ defmodule Predictions.Predictions do
 
   defp prediction_from_update({stop_time_update, last_stop_id, route_id, direction_id}, current_time) do
     current_time_seconds = DateTime.to_unix(current_time)
-    prediction_time = if stop_time_update.departure, do: stop_time_update.departure, else: stop_time_update.arrival
+    arrival_time = if stop_time_update.arrival, do: stop_time_update.arrival.time, else: nil
+    departure_time = if stop_time_update.departure, do: stop_time_update.departure.time, else: nil
 
     headsign =
       case headsign_for_prediction(route_id, direction_id, last_stop_id) do
@@ -30,7 +31,8 @@ defmodule Predictions.Predictions do
     %Prediction{
       stop_id: stop_time_update.stop_id,
       direction_id: direction_id,
-      seconds_until_arrival: max(0, prediction_time.time - current_time_seconds),
+      seconds_until_arrival: max(0, arrival_time - current_time_seconds),
+      seconds_until_departure: max(0, departure_time - current_time_seconds),
       route_id: route_id,
       headsign: headsign
     }
