@@ -25,7 +25,7 @@ defmodule Predictions.Predictions do
         {:ok, headsign} ->
           headsign
         {:error, :not_found} ->
-          Logger.error("Could not find headsign for stop_time_update #{inspect stop_time_update} with last_stop_id #{last_stop_id} on route #{route_id} in direction #{direction_id}")
+          #Logger.error("Could not find headsign for stop_time_update #{inspect stop_time_update} with last_stop_id #{last_stop_id} on route #{route_id} in direction #{direction_id}")
           ""
       end
     %Prediction{
