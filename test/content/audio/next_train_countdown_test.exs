@@ -57,6 +57,24 @@ defmodule Content.Audio.NextTrainCountdownTest do
       assert Content.Audio.to_params(audio) == {"90", ["4022", "503", "5005"], :audio}
     end
 
+    test "Next train to Alewife" do
+      audio = %Content.Audio.NextTrainCountdown{
+        destination: :alewife,
+        verb: :arrives,
+        minutes: 5,
+      }
+      assert Content.Audio.to_params(audio) == {"90", ["4000", "503", "5005"], :audio}
+    end
+
+    test "Next train to Braintree" do
+      audio = %Content.Audio.NextTrainCountdown{
+        destination: :braintree,
+        verb: :arrives,
+        minutes: 5,
+      }
+      assert Content.Audio.to_params(audio) == {"90", ["4021", "503", "5005"], :audio}
+    end
+
     test "Uses audio for 30 minutes when train is more than 30 minutes away" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :wonderland,
@@ -90,6 +108,18 @@ defmodule Content.Audio.NextTrainCountdownTest do
       message = %Content.Message.Predictions{headsign: "Bowdoin", minutes: 5}
       assert Content.Audio.NextTrainCountdown.from_predictions_message(message, :arrives) ==
         %Content.Audio.NextTrainCountdown{destination: :bowdoin, verb: :arrives, minutes: 5}
+    end
+
+    test "Converts Alewife countdown message to audio" do
+      message = %Content.Message.Predictions{headsign: "Alewife", minutes: 5}
+      assert Content.Audio.NextTrainCountdown.from_predictions_message(message, :arrives) ==
+        %Content.Audio.NextTrainCountdown{destination: :alewife, verb: :arrives, minutes: 5}
+    end
+
+    test "Converts Braintree countdown message to audio" do
+      message = %Content.Message.Predictions{headsign: "Braintree", minutes: 5}
+      assert Content.Audio.NextTrainCountdown.from_predictions_message(message, :arrives) ==
+        %Content.Audio.NextTrainCountdown{destination: :braintree, verb: :arrives, minutes: 5}
     end
 
     test "Logs unknown headsign countdown message" do

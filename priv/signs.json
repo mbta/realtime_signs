@@ -6,7 +6,6 @@
     "line_number": "2",
     "gtfs_stop_id": "70261",
     "direction_id": 0,
-    "headsign": "Mattapan",
     "route_id": "Mattapan",
     "countdown_verb": "departs",
     "announce_arriving": true,
@@ -16,7 +15,6 @@
     "id": "cedar_grove_outbound",
     "pa_ess_loc": "MCED",
     "pa_ess_zone": "s",
-    "headsign": "Mattapan",
     "gtfs_stop_id": "70263",
     "direction_id": 0,
     "route_id": "Mattapan",
@@ -30,7 +28,6 @@
     "pa_ess_zone": "n",
     "gtfs_stop_id": "70264",
     "direction_id": 1,
-    "headsign": "Ashmont",
     "route_id": "Mattapan",
     "terminal": false,
     "countdown_verb": "arrives",
@@ -43,7 +40,6 @@
     "line_number": "2",
     "gtfs_stop_id": "70265",
     "direction_id": 0,
-    "headsign": "Mattapan",
     "route_id": "Mattapan",
     "countdown_verb": "arrives",
     "announce_arriving": true,
@@ -56,7 +52,6 @@
     "line_number": "1",
     "gtfs_stop_id": "70266",
     "direction_id": 1,
-    "headsign": "Ashmont",
     "route_id": "Mattapan",
     "countdown_verb": "arrives",
     "announce_arriving": true,
@@ -67,7 +62,6 @@
     "gtfs_stop_id": "70267",
     "pa_ess_loc": "MMIL",
     "pa_ess_zone": "s",
-    "headsign": "Mattapan",
     "direction_id": 0,
     "route_id": "Mattapan",
     "terminal": false,
@@ -79,7 +73,6 @@
     "gtfs_stop_id": "70268",
     "pa_ess_loc": "MMIL",
     "pa_ess_zone": "n",
-    "headsign": "Ashmont",
     "direction_id": 1,
     "route_id": "Mattapan",
     "terminal": false,
@@ -91,7 +84,6 @@
     "gtfs_stop_id": "70269",
     "pa_ess_loc": "MCEN",
     "pa_ess_zone": "s",
-    "headsign": "Mattapan",
     "direction_id": 0,
     "route_id": "Mattapan",
     "terminal": false,
@@ -103,7 +95,6 @@
     "gtfs_stop_id": "70270",
     "pa_ess_loc": "MCEN",
     "pa_ess_zone": "n",
-    "headsign": "Ashmont",
     "direction_id": 1,
     "route_id": "Mattapan",
     "terminal": false,
@@ -115,7 +106,6 @@
     "gtfs_stop_id": "70271",
     "pa_ess_loc": "MVAL",
     "pa_ess_zone": "s",
-    "headsign": "Mattapan",
     "direction_id": 0,
     "route_id": "Mattapan",
     "terminal": false,
@@ -127,7 +117,6 @@
     "gtfs_stop_id": "70272",
     "pa_ess_loc": "MVAL",
     "pa_ess_zone": "n",
-    "headsign": "Ashmont",
     "direction_id": 1,
     "route_id": "Mattapan",
     "terminal": false,
@@ -139,7 +128,6 @@
     "gtfs_stop_id": "70273",
     "pa_ess_loc": "MCAP",
     "pa_ess_zone": "s",
-    "headsign": "Mattapan",
     "direction_id": 0,
     "route_id": "Mattapan",
     "terminal": false,
@@ -151,7 +139,6 @@
     "gtfs_stop_id": "70274",
     "pa_ess_loc": "MCAP",
     "pa_ess_zone": "n",
-    "headsign": "Ashmont",
     "direction_id": 1,
     "route_id": "Mattapan",
     "terminal": false,
@@ -274,7 +261,6 @@
     "id": "wonderland_westbound",
     "pa_ess_loc": "BWON",
     "pa_ess_zone": "w",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70059",
     "direction_id": 0,
     "route_id": "Blue",
@@ -287,7 +273,6 @@
     "id": "wonderland_mezzanine",
     "pa_ess_loc": "BWON",
     "pa_ess_zone": "m",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70059",
     "direction_id": 0,
     "route_id": "Blue",
@@ -300,7 +285,6 @@
     "id": "revere_beach_eastbound",
     "pa_ess_loc": "BREV",
     "pa_ess_zone": "e",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70058",
     "direction_id": 1,
     "route_id": "Blue",
@@ -313,7 +297,6 @@
     "id": "revere_beach_mezzanine_eastbound",
     "pa_ess_loc": "BREV",
     "pa_ess_zone": "m",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70058",
     "direction_id": 1,
     "route_id": "Blue",
@@ -327,7 +310,6 @@
     "id": "revere_beach_mezzanine_westbound",
     "pa_ess_loc": "BREV",
     "pa_ess_zone": "m",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70057",
     "direction_id": 0,
     "route_id": "Blue",
@@ -341,7 +323,6 @@
     "id": "revere_beach_westbound",
     "pa_ess_loc": "BREV",
     "pa_ess_zone": "w",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70057",
     "direction_id": 0,
     "route_id": "Blue",
@@ -354,7 +335,6 @@
     "id": "beachmont_eastbound",
     "pa_ess_loc": "BBEA",
     "pa_ess_zone": "e",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70056",
     "direction_id": 1,
     "route_id": "Blue",
@@ -367,7 +347,6 @@
     "id": "beachmont_westbound",
     "pa_ess_loc": "BBEA",
     "pa_ess_zone": "w",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70055",
     "direction_id": 0,
     "route_id": "Blue",
@@ -380,7 +359,6 @@
     "id": "suffolk_downs_eastbound",
     "pa_ess_loc": "BSUF",
     "pa_ess_zone": "e",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70054",
     "direction_id": 1,
     "route_id": "Blue",
@@ -393,7 +371,6 @@
     "id": "suffolk_downs_westbound",
     "pa_ess_loc": "BSUF",
     "pa_ess_zone": "w",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70053",
     "direction_id": 0,
     "route_id": "Blue",
@@ -406,7 +383,6 @@
     "id": "orient_heights_eastbound",
     "pa_ess_loc": "BORH",
     "pa_ess_zone": "e",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70052",
     "direction_id": 1,
     "route_id": "Blue",
@@ -419,7 +395,6 @@
     "id": "orient_heights_mezzanine_eastbound",
     "pa_ess_loc": "BORH",
     "pa_ess_zone": "m",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70052",
     "direction_id": 1,
     "route_id": "Blue",
@@ -433,7 +408,6 @@
     "id": "orient_heights_mezzanine_westbound",
     "pa_ess_loc": "BORH",
     "pa_ess_zone": "m",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70051",
     "direction_id": 0,
     "route_id": "Blue",
@@ -447,7 +421,6 @@
     "id": "orient_heights_westbound",
     "pa_ess_loc": "BORH",
     "pa_ess_zone": "w",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70051",
     "direction_id": 0,
     "route_id": "Blue",
@@ -460,7 +433,6 @@
     "id": "wood_island_eastbound",
     "pa_ess_loc": "BWOO",
     "pa_ess_zone": "e",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70050",
     "direction_id": 1,
     "route_id": "Blue",
@@ -473,7 +445,6 @@
     "id": "wood_island_mezzanine_eastbound",
     "pa_ess_loc": "BWOO",
     "pa_ess_zone": "m",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70050",
     "direction_id": 1,
     "route_id": "Blue",
@@ -487,7 +458,6 @@
     "id": "wood_island_mezzanine_westbound",
     "pa_ess_loc": "BWOO",
     "pa_ess_zone": "m",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70049",
     "direction_id": 0,
     "route_id": "Blue",
@@ -501,7 +471,6 @@
     "id": "wood_island_westbound",
     "pa_ess_loc": "BWOO",
     "pa_ess_zone": "w",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70049",
     "direction_id": 0,
     "route_id": "Blue",
@@ -514,7 +483,6 @@
     "id": "airport_eastbound",
     "pa_ess_loc": "BAIR",
     "pa_ess_zone": "e",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70048",
     "direction_id": 1,
     "route_id": "Blue",
@@ -527,7 +495,6 @@
     "id": "airport_westbound",
     "pa_ess_loc": "BAIR",
     "pa_ess_zone": "w",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70047",
     "direction_id": 0,
     "route_id": "Blue",
@@ -540,7 +507,6 @@
     "id": "maverick_eastbound",
     "pa_ess_loc": "BMAV",
     "pa_ess_zone": "e",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70046",
     "direction_id": 1,
     "route_id": "Blue",
@@ -553,7 +519,6 @@
     "id": "maverick_westbound",
     "pa_ess_loc": "BMAV",
     "pa_ess_zone": "w",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70045",
     "direction_id": 0,
     "route_id": "Blue",
@@ -566,7 +531,6 @@
     "id": "aquarium_eastbound",
     "pa_ess_loc": "BAQU",
     "pa_ess_zone": "e",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70044",
     "direction_id": 1,
     "route_id": "Blue",
@@ -579,7 +543,6 @@
     "id": "aquarium_mezzanine_eastbound",
     "pa_ess_loc": "BAQU",
     "pa_ess_zone": "m",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70044",
     "direction_id": 1,
     "route_id": "Blue",
@@ -593,7 +556,6 @@
     "id": "aquarium_mezzanine_westbound",
     "pa_ess_loc": "BAQU",
     "pa_ess_zone": "m",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70043",
     "direction_id": 0,
     "route_id": "Blue",
@@ -608,7 +570,6 @@
     "id": "aquarium_westbound",
     "pa_ess_loc": "BAQU",
     "pa_ess_zone": "w",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70043",
     "direction_id": 0,
     "route_id": "Blue",
@@ -621,7 +582,6 @@
     "id": "state_blue_eastbound",
     "pa_ess_loc": "BSTA",
     "pa_ess_zone": "e",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70042",
     "direction_id": 1,
     "route_id": "Blue",
@@ -634,7 +594,6 @@
     "id": "state_blue_mezzanine_eastbound",
     "pa_ess_loc": "BSTA",
     "pa_ess_zone": "m",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70042",
     "direction_id": 1,
     "route_id": "Blue",
@@ -649,7 +608,6 @@
     "id": "state_blue_mezzanine_westbound",
     "pa_ess_loc": "BSTA",
     "pa_ess_zone": "m",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70041",
     "direction_id": 0,
     "route_id": "Blue",
@@ -663,7 +621,6 @@
     "id": "state_blue_westbound",
     "pa_ess_loc": "BSTA",
     "pa_ess_zone": "w",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70041",
     "direction_id": 0,
     "route_id": "Blue",
@@ -676,7 +633,6 @@
     "id": "government_center_eastbound",
     "pa_ess_loc": "BGOV",
     "pa_ess_zone": "e",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70040",
     "direction_id": 1,
     "route_id": "Blue",
@@ -689,7 +645,6 @@
     "id": "government_center_mezzanine_eastbound",
     "pa_ess_loc": "BGOV",
     "pa_ess_zone": "m",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70040",
     "direction_id": 1,
     "route_id": "Blue",
@@ -703,7 +658,6 @@
     "id": "government_center_mezzanine_westbound",
     "pa_ess_loc": "BGOV",
     "pa_ess_zone": "m",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70039",
     "direction_id": 0,
     "route_id": "Blue",
@@ -717,7 +671,6 @@
     "id": "government_center_westbound",
     "pa_ess_loc": "BGOV",
     "pa_ess_zone": "w",
-    "headsign": "Bowdoin",
     "gtfs_stop_id": "70039",
     "direction_id": 0,
     "route_id": "Blue",
@@ -730,7 +683,6 @@
     "id": "bowdoin_eastbound",
     "pa_ess_loc": "BBOW",
     "pa_ess_zone": "e",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70038",
     "direction_id": 1,
     "route_id": "Blue",
@@ -743,7 +695,6 @@
     "id": "bowdoin_mezzanine",
     "pa_ess_loc": "BBOW",
     "pa_ess_zone": "m",
-    "headsign": "Wonderland",
     "gtfs_stop_id": "70038",
     "direction_id": 1,
     "route_id": "Blue",
@@ -756,7 +707,6 @@
     "id": "oak_grove_mezzanine_southbound",
     "pa_ess_loc": "OOAK",
     "pa_ess_zone": "m",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70036",
     "direction_id": 0,
     "route_id": "Orange",
@@ -769,7 +719,6 @@
     "id": "oak_grove_eastbound",
     "pa_ess_loc": "OOAK",
     "pa_ess_zone": "e",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70036",
     "direction_id": 0,
     "route_id": "Orange",
@@ -782,7 +731,6 @@
     "id": "oak_grove_northbound",
     "pa_ess_loc": "OOAK",
     "pa_ess_zone": "n",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70036",
     "direction_id": 0,
     "route_id": "Orange",
@@ -795,7 +743,6 @@
     "id": "oak_grove_southbound",
     "pa_ess_loc": "OOAK",
     "pa_ess_zone": "s",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70036",
     "direction_id": 0,
     "route_id": "Orange",
@@ -807,7 +754,6 @@
   {
     "id": "malden_center_mezzanine_northbound",
     "pa_ess_loc": "OMAL",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70035",
     "direction_id": 1,
     "route_id": "Orange",
@@ -821,7 +767,6 @@
   {
     "id": "malden_center_mezzanine_southbound",
     "pa_ess_loc": "OMAL",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70034",
     "direction_id": 0,
     "route_id": "Orange",
@@ -835,7 +780,6 @@
   {
     "id": "wellington_mezzanine_northbound",
     "pa_ess_loc": "OWEL",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70033",
     "direction_id": 1,
     "route_id": "Orange",
@@ -849,7 +793,6 @@
   {
     "id": "wellington_mezzanine_southbound",
     "pa_ess_loc": "OWEL",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70032",
     "direction_id": 0,
     "route_id": "Orange",
@@ -863,7 +806,6 @@
   {
     "id": "wellington_northbound",
     "pa_ess_loc": "OWEL",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70033",
     "direction_id": 1,
     "route_id": "Orange",
@@ -876,7 +818,6 @@
   {
     "id": "wellington_southbound",
     "pa_ess_loc": "OWEL",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70032",
     "direction_id": 0,
     "route_id": "Orange",
@@ -889,7 +830,6 @@
   {
     "id": "assembly_mezzanine_northbound",
     "pa_ess_loc": "OASQ",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70279",
     "direction_id": 1,
     "route_id": "Orange",
@@ -903,7 +843,6 @@
   {
     "id": "assembly_mezzanine_southbound",
     "pa_ess_loc": "OASQ",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70278",
     "direction_id": 0,
     "route_id": "Orange",
@@ -917,7 +856,6 @@
   {
     "id": "assembly_northbound",
     "pa_ess_loc": "OASQ",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70279",
     "direction_id": 1,
     "route_id": "Orange",
@@ -930,7 +868,6 @@
   {
     "id": "assembly_southbound",
     "pa_ess_loc": "OASQ",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70278",
     "direction_id": 0,
     "route_id": "Orange",
@@ -943,7 +880,6 @@
   {
     "id": "sullivan_mezzanine_northbound",
     "pa_ess_loc": "OSUL",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70031",
     "direction_id": 1,
     "route_id": "Orange",
@@ -957,7 +893,6 @@
   {
     "id": "sullivan_mezzanine_southbound",
     "pa_ess_loc": "OSUL",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70030",
     "direction_id": 0,
     "route_id": "Orange",
@@ -971,7 +906,6 @@
   {
     "id": "sullivan_northbound",
     "pa_ess_loc": "OSUL",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70031",
     "direction_id": 1,
     "route_id": "Orange",
@@ -984,7 +918,6 @@
   {
     "id": "sullivan_southbound",
     "pa_ess_loc": "OSUL",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70030",
     "direction_id": 0,
     "route_id": "Orange",
@@ -997,7 +930,6 @@
   {
     "id": "community_college_mezzanine_northbound",
     "pa_ess_loc": "OCOM",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70029",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1011,7 +943,6 @@
   {
     "id": "community_college_mezzanine_southbound",
     "pa_ess_loc": "OCOM",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70028",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1025,7 +956,6 @@
   {
     "id": "community_college_northbound",
     "pa_ess_loc": "OCOM",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70029",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1038,7 +968,6 @@
   {
     "id": "community_college_southbound",
     "pa_ess_loc": "OCOM",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70028",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1051,7 +980,6 @@
   {
     "id": "orange_north_station_northbound",
     "pa_ess_loc": "ONST",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70027",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1064,7 +992,6 @@
   {
     "id": "orange_north_station_southbound",
     "pa_ess_loc": "ONST",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70026",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1077,7 +1004,6 @@
   {
     "id": "orange_north_station_center_northbound",
     "pa_ess_loc": "ONST",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70027",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1091,7 +1017,6 @@
   {
     "id": "orange_north_station_center_southbound",
     "pa_ess_loc": "ONST",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70026",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1105,7 +1030,6 @@
   {
     "id": "orange_north_station_mezzanine_northbound",
     "pa_ess_loc": "ONST",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70027",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1119,7 +1043,6 @@
   {
     "id": "orange_north_station_mezzanine_southbound",
     "pa_ess_loc": "ONST",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70026",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1133,7 +1056,6 @@
   {
     "id": "orange_haymarket_mezzanine_northbound",
     "pa_ess_loc": "OHAY",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70025",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1147,7 +1069,6 @@
   {
     "id": "orange_haymarket_mezzanine_southbound",
     "pa_ess_loc": "OHAY",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70024",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1161,7 +1082,6 @@
   {
     "id": "orange_haymarket_northbound",
     "pa_ess_loc": "OHAY",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70025",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1174,7 +1094,6 @@
   {
     "id": "orange_haymarket_southbound",
     "pa_ess_loc": "OHAY",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70024",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1187,7 +1106,6 @@
   {
     "id": "orange_state_mezzanine_northbound",
     "pa_ess_loc": "OSTN",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70023",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1201,7 +1119,6 @@
   {
     "id": "orange_state_mezzanine_southbound",
     "pa_ess_loc": "OSTN",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70022",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1215,7 +1132,6 @@
   {
     "id": "orange_state_northbound",
     "pa_ess_loc": "OSTN",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70023",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1228,7 +1144,6 @@
   {
     "id": "orange_state_southbound",
     "pa_ess_loc": "OSTS",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70022",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1241,7 +1156,6 @@
   {
     "id": "orange_downtown_crossing_northbound",
     "pa_ess_loc": "ODTN",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70021",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1254,7 +1168,6 @@
   {
     "id": "orange_downtown_crossing_southbound",
     "pa_ess_loc": "ODTS",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70020",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1267,7 +1180,6 @@
   {
     "id": "chinatown_mezzanine_northbound",
     "pa_ess_loc": "OCHN",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70019",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1280,7 +1192,6 @@
   {
     "id": "chinatown_mezzanine_southbound",
     "pa_ess_loc": "OCHS",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70018",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1293,7 +1204,6 @@
   {
     "id": "chinatown_northbound",
     "pa_ess_loc": "OCHN",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70019",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1306,7 +1216,6 @@
   {
     "id": "chinatown_southbound",
     "pa_ess_loc": "OCHS",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70018",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1319,7 +1228,6 @@
   {
     "id": "tufts_mezzanine_northbound",
     "pa_ess_loc": "ONEM",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70017",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1333,7 +1241,6 @@
   {
     "id": "tufts_mezzanine_southbound",
     "pa_ess_loc": "ONEM",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70016",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1347,7 +1254,6 @@
   {
     "id": "tufts_northbound",
     "pa_ess_loc": "ONEM",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70017",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1360,7 +1266,6 @@
   {
     "id": "tufts_southbound",
     "pa_ess_loc": "ONEM",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70016",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1373,7 +1278,6 @@
   {
     "id": "back_bay_mezzanine_northbound",
     "pa_ess_loc": "OBAC",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70015",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1387,7 +1291,6 @@
   {
     "id": "back_bay_mezzanine_southbound",
     "pa_ess_loc": "OBAC",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70014",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1401,7 +1304,6 @@
   {
     "id": "back_bay_northbound",
     "pa_ess_loc": "OBAC",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70015",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1414,7 +1316,6 @@
   {
     "id": "back_bay_southbound",
     "pa_ess_loc": "OBAC",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70014",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1427,7 +1328,6 @@
   {
     "id": "mass_ave_mezzanine_northbound",
     "pa_ess_loc": "OMAS",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70013",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1441,7 +1341,6 @@
   {
     "id": "mass_ave_mezzanine_southbound",
     "pa_ess_loc": "OMAS",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70012",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1455,7 +1354,6 @@
   {
     "id": "mass_ave_northbound",
     "pa_ess_loc": "OMAS",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70013",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1468,7 +1366,6 @@
   {
     "id": "mass_ave_southbound",
     "pa_ess_loc": "OMAS",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70012",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1481,7 +1378,6 @@
   {
     "id": "ruggles_northbound",
     "pa_ess_loc": "ORUG",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70011",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1494,7 +1390,6 @@
   {
     "id": "ruggles_southbound",
     "pa_ess_loc": "ORUG",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70010",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1507,7 +1402,6 @@
   {
     "id": "ruggles_center_northbound",
     "pa_ess_loc": "ORUG",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70011",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1521,7 +1415,6 @@
   {
     "id": "ruggles_center_southbound",
     "pa_ess_loc": "ORUG",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70010",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1535,7 +1428,6 @@
   {
     "id": "ruggles_mezzanine_northbound",
     "pa_ess_loc": "ORUG",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70011",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1549,7 +1441,6 @@
   {
     "id": "ruggles_mezzanine_southbound",
     "pa_ess_loc": "ORUG",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70010",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1563,7 +1454,6 @@
   {
     "id": "roxbury_crossing_mezzanine_northbound",
     "pa_ess_loc": "OROX",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70009",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1577,7 +1467,6 @@
   {
     "id": "roxbury_crossing_mezzanine_southbound",
     "pa_ess_loc": "OROX",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70008",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1591,7 +1480,6 @@
   {
     "id": "roxbury_crossing_northbound",
     "pa_ess_loc": "OROX",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70009",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1604,7 +1492,6 @@
   {
     "id": "roxbury_crossing_southbound",
     "pa_ess_loc": "OROX",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70008",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1617,7 +1504,6 @@
   {
     "id": "jackson_square_mezzanine_northbound",
     "pa_ess_loc": "OJAC",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70007",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1631,7 +1517,6 @@
   {
     "id": "jackson_square_mezzanine_southbound",
     "pa_ess_loc": "OJAC",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70006",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1645,7 +1530,6 @@
   {
     "id": "jackson_square_northbound",
     "pa_ess_loc": "OJAC",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70007",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1658,7 +1542,6 @@
   {
     "id": "jackson_square_southbound",
     "pa_ess_loc": "OJAC",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70006",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1671,7 +1554,6 @@
   {
     "id": "stony_brook_mezzanine_northbound",
     "pa_ess_loc": "OSTO",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70005",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1685,7 +1567,6 @@
   {
     "id": "stony_brook_mezzanine_southbound",
     "pa_ess_loc": "OSTO",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70004",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1699,7 +1580,6 @@
   {
     "id": "stony_brook_northbound",
     "pa_ess_loc": "OSTO",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70005",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1712,7 +1592,6 @@
   {
     "id": "stony_brook_southbound",
     "pa_ess_loc": "OSTO",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70004",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1725,7 +1604,6 @@
   {
     "id": "green_street_mezzanine_northbound",
     "pa_ess_loc": "OGRE",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70003",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1739,7 +1617,6 @@
   {
     "id": "green_street_mezzanine_southbound",
     "pa_ess_loc": "OGRE",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70002",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1753,7 +1630,6 @@
   {
     "id": "green_street_northbound",
     "pa_ess_loc": "OGRE",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70003",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1766,7 +1642,6 @@
   {
     "id": "green_street_southbound",
     "pa_ess_loc": "OGRE",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70002",
     "direction_id": 0,
     "route_id": "Orange",
@@ -1779,7 +1654,6 @@
   {
     "id": "forest_hills_mezzanine_northbound",
     "pa_ess_loc": "OFOR",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70001",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1792,7 +1666,6 @@
   {
     "id": "forest_hills_northbound",
     "pa_ess_loc": "OFOR",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70001",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1805,7 +1678,6 @@
   {
     "id": "forest_hills_southbound",
     "pa_ess_loc": "OFOR",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70001",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1818,7 +1690,6 @@
   {
     "id": "forest_hills_bus_mezzanine_northbound",
     "pa_ess_loc": "SFOR",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70001",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1831,7 +1702,6 @@
   {
     "id": "ruggles_bus_mezzanine_northbound",
     "pa_ess_loc": "SRUG",
-    "headsign": "Oak Grove",
     "gtfs_stop_id": "70011",
     "direction_id": 1,
     "route_id": "Orange",
@@ -1845,7 +1715,6 @@
   {
     "id": "ruggles_bus_mezzanine_southbound",
     "pa_ess_loc": "SRUG",
-    "headsign": "Frst Hills",
     "gtfs_stop_id": "70010",
     "direction_id": 0,
     "route_id": "Orange",

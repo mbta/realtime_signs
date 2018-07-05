@@ -40,13 +40,15 @@ defmodule Signs.CountdownTest do
         stop_id: "two_boarding",
         direction_id: 1,
         seconds_until_arrival: 0,
-        route_id: "mattapan"
+        route_id: "mattapan",
+        headsign: "Mattapan"
        },
       %Predictions.Prediction{
           stop_id: "two_boarding",
           direction_id: 1,
           seconds_until_arrival: 0,
-          route_id: "mattapan"
+          route_id: "mattapan",
+          headsign: "Mattapan"
        }]
     end
     def for_stop("many_predictions", 1) do
@@ -54,19 +56,22 @@ defmodule Signs.CountdownTest do
         stop_id: "many_predictions",
         direction_id: 1,
         seconds_until_arrival: 10,
-        route_id: "mattapan"
+        route_id: "mattapan",
+        headsign: "Mattapan"
        },
       %Predictions.Prediction{
         stop_id: "many_predictions",
         direction_id: 1,
         seconds_until_arrival: 500,
-        route_id: "mattapan"
+        route_id: "mattapan",
+        headsign: "Mattapan"
        },
       %Predictions.Prediction{
           stop_id: "many_predictions",
           direction_id: 1,
           seconds_until_arrival: 200,
-          route_id: "mattapan"
+          route_id: "mattapan",
+          headsign: "Mattapan"
        }]
     end
     def for_stop("not-arriving", 1) do
@@ -74,7 +79,8 @@ defmodule Signs.CountdownTest do
         stop_id: "not-arriving",
         direction_id: 1,
         seconds_until_arrival: 100,
-        route_id: "mattapan"
+        route_id: "mattapan",
+        headsign: "Mattapan"
        }]
     end
     def for_stop("brd-arr-bug", 1) do
@@ -83,13 +89,15 @@ defmodule Signs.CountdownTest do
           stop_id: "brd-arr-bug",
           direction_id: 1,
           seconds_until_arrival: 100,
-          route_id: "mattapan"
+          route_id: "mattapan",
+          headsign: "Mattapan"
         },
         %Predictions.Prediction{
           stop_id: "brd-arr-bug",
           direction_id: 1,
           seconds_until_arrival: 600,
-          route_id: "mattapan"
+          route_id: "mattapan",
+          headsign: "Mattapan"
         },
       ]
     end
@@ -98,7 +106,8 @@ defmodule Signs.CountdownTest do
         stop_id: gtfs_stop_id,
         direction_id: 1,
         seconds_until_arrival: 10,
-        route_id: "mattapan"
+        route_id: "mattapan",
+        headsign: "Mattapan"
        }]
     end
 
@@ -119,7 +128,6 @@ defmodule Signs.CountdownTest do
     gtfs_stop_id: "321",
     direction_id: 1,
     route_id: "Mattapan",
-    headsign: "Mattapan",
     current_content_bottom: "Mattapan 1 minute",
     current_content_top: "Mattapan 2 minutes",
     countdown_verb: :arrives,
@@ -137,7 +145,6 @@ defmodule Signs.CountdownTest do
     gtfs_stop_id: "321",
     direction_id: 1,
     route_id: "Mattapan",
-    headsign: "Mattapan",
     current_content_bottom: nil,
     current_content_top: %Content.Message.Predictions{headsign: "Mattapan", minutes: 1},
     countdown_verb: :arrives,
@@ -163,7 +170,6 @@ defmodule Signs.CountdownTest do
         gtfs_stop_id: "two_boarding",
         direction_id: 1,
         route_id: "Mattapan",
-        headsign: "Mattapan",
         current_content_bottom: bottom_content,
         current_content_top: top_content,
         countdown_verb: :arrives,
@@ -195,7 +201,6 @@ defmodule Signs.CountdownTest do
         gtfs_stop_id: "two_boarding",
         direction_id: 1,
         route_id: "Mattapan",
-        headsign: "Mattapan",
         current_content_bottom: bottom_content,
         current_content_top: top_content,
         countdown_verb: :arrives,
@@ -409,7 +414,6 @@ defmodule Signs.CountdownTest do
         "pa_ess_zone" => "m",
         "direction_id" => 0,
         "route_id" => "Mattapan",
-        "headsign" => "Mattapan",
         "terminal" => false,
         "countdown_verb" => "arrives",
         "type" => "countdown"

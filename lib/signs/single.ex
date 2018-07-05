@@ -3,9 +3,9 @@ defmodule Signs.Single do
   A one-line countdown sign that displays the next train arrival as
   arriving, boarding, or how many minutes away they are.
 
-  It knows about a single GTFS stop ID, and a hardcoded headsign. It displays
-  on the sign that headsign, and uses the predictions engine to determine
-  how long until the next two vehicles arrive at that GTFS stop ID.
+  It knows about a single GTFS stop ID. It uses the
+  predictions engine to determine how long until the next two vehicles
+  arrive at that GTFS stop ID.
   """
 
   use GenServer
@@ -18,7 +18,6 @@ defmodule Signs.Single do
     :gtfs_stop_id,
     :direction_id,
     :route_id,
-    :headsign,
     :prediction_engine,
     :sign_updater,
     :read_sign_period_ms,
@@ -38,7 +37,6 @@ defmodule Signs.Single do
     gtfs_stop_id: String.t(),
     direction_id: 0 | 1,
     route_id: String.t(),
-    headsign: String.t(),
     prediction_engine: module(),
     sign_updater: module(),
     current_content: Content.Message.t() | nil,
@@ -61,7 +59,6 @@ defmodule Signs.Single do
       gtfs_stop_id: config["gtfs_stop_id"],
       direction_id: config["direction_id"],
       route_id: config["route_id"],
-      headsign: config["headsign"],
       current_content: Content.Message.Empty.new(),
       timer: nil,
       sign_updater: sign_updater,
@@ -123,7 +120,7 @@ defmodule Signs.Single do
     sign.gtfs_stop_id
     |> sign.prediction_engine.for_stop(sign.direction_id)
     |> Predictions.Predictions.sort()
-    |> Enum.map(& Content.Message.Predictions.non_terminal(&1, sign.headsign, sign_width, boarding?))
+    |> Enum.map(& Content.Message.Predictions.non_terminal(&1, sign_width, boarding?))
     |> Enum.at(0, Content.Message.Empty.new())
   end
 
