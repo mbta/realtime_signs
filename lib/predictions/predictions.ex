@@ -16,6 +16,7 @@ defmodule Predictions.Predictions do
     Enum.map(trip_update.stop_time_update, &{&1, last_stop_id, trip_update.trip.route_id, trip_update.trip.direction_id})
   end
 
+  @spec prediction_from_update({GTFS.Realtime.trip_update_stop_time_update, String.t(), String.t(), integer()}, DateTime.t()) :: Prediction.t()
   defp prediction_from_update({stop_time_update, last_stop_id, route_id, direction_id}, current_time) do
     current_time_seconds = DateTime.to_unix(current_time)
     seconds_until_arrival = if stop_time_update.arrival, do: stop_time_update.arrival.time - current_time_seconds, else: nil
