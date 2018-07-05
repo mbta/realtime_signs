@@ -46,11 +46,11 @@ defmodule Signs.Headway do
     bridge_engine = opts[:bridge_engine] || Engine.Bridge
 
     sign = %__MODULE__{
-      id: config["id"],
-      pa_ess_id: {config["pa_ess_loc"], config["pa_ess_zone"]},
-      gtfs_stop_id: config["gtfs_stop_id"],
-      route_id: config["route_id"],
-      headsign: config["headsign"],
+      id: Map.fetch!(config, "id"),
+      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "pa_ess_zone")},
+      gtfs_stop_id: Map.fetch!(config, "gtfs_stop_id"),
+      route_id: Map.fetch!(config, "route_id"),
+      headsign: Map.fetch!(config, "headsign"),
       current_content_top: Content.Message.Empty.new(),
       current_content_bottom: Content.Message.Empty.new(),
       bridge_id: config["bridge_id"],
