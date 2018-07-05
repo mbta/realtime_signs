@@ -3,8 +3,7 @@ defmodule Signs.Countdown do
   A two-line countdown sign that displays whether up to two trains are
   arriving, boarding, or how many minutes away they are.
 
-  It knows about a single GTFS stop ID, and a hardcoded headsign. It displays
-  on the sign that headsign, and uses the predictions engine to determine
+  It knows about a single GTFS stop ID. It uses the predictions engine to determine
   how long until the next two vehicles arrive at that GTFS stop ID.
   """
 
@@ -18,7 +17,6 @@ defmodule Signs.Countdown do
     :gtfs_stop_id,
     :direction_id,
     :route_id,
-    :headsign,
     :countdown_verb,
     :terminal,
     :prediction_engine,
@@ -40,7 +38,6 @@ defmodule Signs.Countdown do
     gtfs_stop_id: String.t(),
     direction_id: 0 | 1,
     route_id: String.t(),
-    headsign: String.t(),
     prediction_engine: module(),
     sign_updater: module(),
     current_content_bottom: Content.Message.t() | nil,
@@ -66,7 +63,6 @@ defmodule Signs.Countdown do
       gtfs_stop_id: Map.fetch!(config, "gtfs_stop_id"),
       direction_id: Map.fetch!(config, "direction_id"),
       route_id: Map.fetch!(config, "route_id"),
-      headsign: Map.fetch!(config, "headsign"),
       current_content_top: Content.Message.Empty.new(),
       current_content_bottom: Content.Message.Empty.new(),
       terminal: Map.fetch!(config, "terminal"),
@@ -140,9 +136,9 @@ defmodule Signs.Countdown do
   end
   defp get_message(prediction, sign, stopped_at?) do
     if sign.terminal do
-      Content.Message.Predictions.terminal(prediction, sign.headsign, stopped_at?)
+      Content.Message.Predictions.terminal(prediction, stopped_at?)
     else
-      Content.Message.Predictions.non_terminal(prediction, sign.headsign, stopped_at?)
+      Content.Message.Predictions.non_terminal(prediction, stopped_at?)
     end
   end
 
