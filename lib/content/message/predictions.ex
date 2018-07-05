@@ -39,7 +39,7 @@ defmodule Content.Message.Predictions do
 
   @spec terminal(Predictions.Prediction.t(), boolean()) :: t()
   def terminal(%Predictions.Prediction{headsign: headsign} = prediction, width \\ 18, stopped_at?) do
-    minutes = case prediction.seconds_until_arrival do
+    minutes = case prediction.seconds_until_departure do
       x when x <= 30 and stopped_at? -> :boarding
       x when x <= 30 -> 1
       x when x >= @thirty_one_minutes -> :thirty_plus
