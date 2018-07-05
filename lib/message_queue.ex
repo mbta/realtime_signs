@@ -63,6 +63,10 @@ defmodule MessageQueue do
       state.queue
     end
 
+    if state.length > 0 and rem(state.length, 30) == 0 do
+      Logger.info("MessageQueue queue_length=#{state.length}")
+    end
+
     queue = :queue.in(msg, queue)
 
     {:reply, {:ok, :sent}, %{state | queue: queue, length: min(@max_size, state.length + 1)}}
