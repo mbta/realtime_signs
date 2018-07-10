@@ -120,10 +120,15 @@ defmodule Signs.Countdown do
 
   defp get_messages(sign) do
     stopped_at? = sign.prediction_engine.stopped_at?(sign.gtfs_stop_id)
+    sort_type = if sign.terminal do
+      :departure
+    else
+      :arrival
+    end
     predictions =
       sign.gtfs_stop_id
       |> sign.prediction_engine.for_stop(sign.direction_id)
-      |> Predictions.Predictions.sort()
+      |> Predictions.Predictions.sort(sort_type)
       |> Enum.take(2)
 
     [p1, p2 | _rest] = predictions ++ [nil, nil]
