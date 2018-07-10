@@ -119,7 +119,7 @@ defmodule Signs.Single do
 
     sign.gtfs_stop_id
     |> sign.prediction_engine.for_stop(sign.direction_id)
-    |> Predictions.Predictions.sort()
+    |> Predictions.Predictions.sort(:arrival)
     |> Enum.map(& Content.Message.Predictions.non_terminal(&1, sign_width, boarding?))
     |> Enum.at(0, Content.Message.Empty.new())
   end

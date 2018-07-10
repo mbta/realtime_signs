@@ -43,9 +43,12 @@ defmodule Predictions.Predictions do
     GTFS.Realtime.FeedMessage.decode(body)
   end
 
-  @spec sort([Predictions.Prediction.t]) :: [Predictions.Prediction.t]
-  def sort(predictions) do
+  @spec sort([Predictions.Prediction.t], :arrival | :departure) :: [Predictions.Prediction.t]
+  def sort(predictions, :arrival) do
     Enum.sort(predictions, & &1.seconds_until_arrival < &2.seconds_until_arrival)
+  end
+  def sort(predictions, :departure) do
+    Enum.sort(predictions, & &1.seconds_until_departure < &2.seconds_until_departure)
   end
 
   @spec headsign_for_prediction(String.t(), 0 | 1, String.t()) :: {:ok, String.t()} | {:error, :not_found}
