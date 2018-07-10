@@ -36,7 +36,7 @@ defmodule Content.Message.Predictions do
       {:ok, dest} ->
         dest
       {:error, _} ->
-        Logger.warn "Could not find hedasign for prediction #{inspect prediction}"
+        Logger.warn "Could not find headsign for prediction #{inspect prediction}"
         ""
     end
 
@@ -60,7 +60,7 @@ defmodule Content.Message.Predictions do
       {:ok, dest} ->
         dest
       {:error, _} ->
-        Logger.warn "Could not find hedasign for prediction #{inspect prediction}"
+        Logger.warn "Could not find headsign for prediction #{inspect prediction}"
         ""
     end
 
