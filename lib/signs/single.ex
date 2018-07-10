@@ -47,6 +47,7 @@ defmodule Signs.Single do
   }
 
   @default_duration 120
+  @sign_width 18
 
   def start_link(%{"type" => "single"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
@@ -114,13 +115,12 @@ defmodule Signs.Single do
   end
 
   defp get_message(sign) do
-    sign_width = if sign.pa_ess_id == {"RASH", "m"}, do: 15, else: 18
     boarding? = Engine.Predictions.stopped_at?(sign.gtfs_stop_id)
 
     sign.gtfs_stop_id
     |> sign.prediction_engine.for_stop(sign.direction_id)
     |> Predictions.Predictions.sort(:arrival)
-    |> Enum.map(& Content.Message.Predictions.non_terminal(&1, sign_width, boarding?))
+    |> Enum.map(& Content.Message.Predictions.non_terminal(&1, @sign_width, boarding?))
     |> Enum.at(0, Content.Message.Empty.new())
   end
 
