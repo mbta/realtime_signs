@@ -24,7 +24,7 @@ defmodule Content.Message.Predictions do
   }
 
   @spec non_terminal(Predictions.Prediction.t(), boolean) :: t()
-  def non_terminal(%Predictions.Prediction{destination_stop_id: destination_stop_id} = prediction, width \\ 18, stopped_at?) do
+  def non_terminal(prediction, width \\ 18, stopped_at?) do
     minutes = cond do
       stopped_at? -> :boarding
       prediction.seconds_until_arrival <= 30 -> :arriving
@@ -48,7 +48,7 @@ defmodule Content.Message.Predictions do
   end
 
   @spec terminal(Predictions.Prediction.t(), boolean()) :: t()
-  def terminal(%Predictions.Prediction{destination_stop_id: destination_stop_id} = prediction, width \\ 18, stopped_at?) do
+  def terminal(prediction, width \\ 18, stopped_at?) do
     minutes = case prediction.seconds_until_departure do
       x when x <= 30 and stopped_at? -> :boarding
       x when x <= 30 -> 1

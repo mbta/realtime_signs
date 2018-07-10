@@ -40,4 +40,7 @@ defmodule Predictions.Predictions do
   def sort(predictions, :arrival) do
     Enum.sort(predictions, & &1.seconds_until_arrival < &2.seconds_until_arrival)
   end
+  def sort(predictions, :departure) do
+    Enum.sort(predictions, & &1.seconds_until_departure < &2.seconds_until_departure)
+  end
 end
