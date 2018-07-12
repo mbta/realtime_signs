@@ -21,22 +21,22 @@ defmodule  Signs.SingleTest do
         stop_id: "many_predictions",
         direction_id: 1,
         seconds_until_arrival: 10,
-        route_id: "mattapan",
-        headsign: "Mattapan"
+        route_id: "Mattapan",
+        destination_stop_id: "70275"
        },
       %Predictions.Prediction{
         stop_id: "many_predictions",
         direction_id: 1,
         seconds_until_arrival: 500,
-        route_id: "mattapan",
-        headsign: "Mattapan"
+        route_id: "Mattapan",
+        destination_stop_id: "70275"
        },
       %Predictions.Prediction{
           stop_id: "many_predictions",
           direction_id: 1,
           seconds_until_arrival: 200,
-          route_id: "mattapan",
-          headsign: "Mattapan"
+          route_id: "Mattapan",
+          destination_stop_id: "70275"
        }]
     end
     def for_stop("audio-arriving", 1) do
@@ -44,8 +44,8 @@ defmodule  Signs.SingleTest do
         stop_id: "audio-arriving",
         direction_id: 1,
         seconds_until_arrival: 10,
-        route_id: "mattapan",
-        headsign: "Mattapan"
+        route_id: "Mattapan",
+        destination_stop_id: "70275"
       }]
     end
     def for_stop("boarding", 1) do
@@ -53,8 +53,8 @@ defmodule  Signs.SingleTest do
         stop_id: "boarding",
         direction_id: 1,
         seconds_until_arrival: 65,
-        route_id: "mattapan",
-        headsign: "Mattapan"
+        route_id: "Mattapan",
+        destination_stop_id: "70275"
       }]
     end
     def for_stop("three-mins", 1) do
@@ -62,8 +62,8 @@ defmodule  Signs.SingleTest do
         stop_id: "three-mins",
         direction_id: 1,
         seconds_until_arrival: 190,
-        route_id: "mattapan",
-        headsign: "Mattapan"
+        route_id: "Mattapan",
+        destination_stop_id: "70275"
       }]
     end
     def for_stop(gtfs_stop_id, 1) do
@@ -71,8 +71,8 @@ defmodule  Signs.SingleTest do
         stop_id: gtfs_stop_id,
         direction_id: 1,
         seconds_until_arrival: 10,
-        route_id: "mattapan",
-        headsign: "Mattapan"
+        route_id: "Mattapan",
+        destination_stop_id: "70275"
        }]
     end
   end
@@ -100,7 +100,7 @@ defmodule  Signs.SingleTest do
     end
 
     test "when content has new predictions, sends an update" do
-      content = %Content.Message.Predictions{headsign: "Mattapan", minutes: :arriving}
+      content = %Content.Message.Predictions{headsign: "Ashmont", minutes: :arriving}
       assert {:noreply, %{current_content: ^content}} = Signs.Single.handle_info(:update_content, @sign)
     end
 
@@ -108,7 +108,7 @@ defmodule  Signs.SingleTest do
       Process.register(self(), :single_test_fake_updater_listener)
       sign = %{@sign | gtfs_stop_id: "audio-arriving"}
       assert {:noreply, %Signs.Single{}} = Signs.Single.handle_info(:update_content, sign)
-      assert_received {:send_audio, {{"RASH", "n"}, %Content.Audio.TrainIsArriving{destination: :mattapan}, 5, 60}}
+      assert_received {:send_audio, {{"RASH", "n"}, %Content.Audio.TrainIsArriving{destination: :ashmont}, 5, 60}}
     end
 
     test "Does not send arriving audio message if sign is configured to not arriving announcements" do
@@ -142,7 +142,7 @@ defmodule  Signs.SingleTest do
       }
       {:ok, _pid} = GenServer.start_link(Signs.Single, sign)
 
-      expected_message = {:send_audio, {{"RASH", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :departs, minutes: 3}, 5, 60}}
+      expected_message = {:send_audio, {{"RASH", "n"}, %Content.Audio.NextTrainCountdown{destination: :ashmont, verb: :departs, minutes: 3}, 5, 60}}
 
       :timer.sleep(500)
       refute_received(^expected_message)
