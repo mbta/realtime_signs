@@ -216,7 +216,17 @@ defmodule Signs.Countdown do
     end
   end
 
-  defp read_countdown(%{current_content_top: msg} = sign) do
+  defp read_countdown(%{current_content_top: %{headsign: top_headsign} = top_msg, current_content_bottom: %{headsign: bottom_headsign} = bottom_msg} = sign) do
+    do_read_countdown(top_msg, sign)
+    if top_headsign != bottom_headsign do
+      do_read_countdown(bottom_msg, sign)
+    end
+  end
+  defp read_countdown(%{current_content_top: top_msg} = sign) do
+    do_read_countdown(top_msg, sign)
+  end
+
+  defp do_read_countdown(msg, sign) do
     case Content.Audio.NextTrainCountdown.from_predictions_message(msg, sign.countdown_verb) do
       %Content.Audio.NextTrainCountdown{} = audio ->
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
