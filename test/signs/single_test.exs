@@ -57,6 +57,15 @@ defmodule  Signs.SingleTest do
         destination_stop_id: "70275"
       }]
     end
+    def for_stop("terminal", 1) do
+      [%Predictions.Prediction{
+        stop_id: "terminal",
+        direction_id: 1,
+        seconds_until_departure: 60,
+        route_id: "Mattapan",
+        destination_stop_id: "70275"
+      }]
+    end
     def for_stop("three-mins", 1) do
       [%Predictions.Prediction{
         stop_id: "three-mins",
@@ -89,6 +98,7 @@ defmodule  Signs.SingleTest do
     prediction_engine: FakePredictionsEngine,
     read_sign_period_ms: 30_000,
     countdown_verb: :departs,
+    terminal: false,
     announce_arriving?: true,
   }
 
@@ -116,6 +126,15 @@ defmodule  Signs.SingleTest do
       sign = %{@sign | gtfs_stop_id: "audio-arriving", announce_arriving?: false}
       assert {:noreply, %Signs.Single{}} = Signs.Single.handle_info(:update_content, sign)
       refute_received {:send_audio, {{"RASH", "n"}, %Content.Audio.TrainIsArriving{destination: :mattapan}, 5, 60}}
+    end
+
+    test "when the sign is a terminal, shows 1 min instead of arriving message" do
+      sign = %{@sign | terminal: true, gtfs_stop_id: "terminal"}
+      current_content = %Content.Message.Predictions{
+        headsign: "Ashmont", minutes: 1
+      }
+
+      assert {:noreply, %{current_content: ^current_content}} = Signs.Single.handle_info(:update_content, sign)
     end
   end
 

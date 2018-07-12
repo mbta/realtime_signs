@@ -23,6 +23,7 @@ defmodule Signs.Single do
     :read_sign_period_ms,
     :countdown_verb,
     :announce_arriving?,
+    :terminal,
   ]
 
   defstruct @enforce_keys ++ [
@@ -44,6 +45,7 @@ defmodule Signs.Single do
     read_sign_period_ms: integer(),
     countdown_verb: Content.Audio.NextTrainCountdown.verb(),
     announce_arriving?: boolean(),
+    terminal: boolean(),
   }
 
   @default_duration 120
@@ -67,6 +69,7 @@ defmodule Signs.Single do
       read_sign_period_ms: 4 * 60 * 1000,
       countdown_verb: config |> Map.fetch!("countdown_verb") |> String.to_atom(),
       announce_arriving?: Map.fetch!(config, "announce_arriving"),
+      terminal: config["terminal"]
     }
 
     GenServer.start_link(__MODULE__, sign)
@@ -116,11 +119,21 @@ defmodule Signs.Single do
 
   defp get_message(sign) do
     boarding? = Engine.Predictions.stopped_at?(sign.gtfs_stop_id)
+    sort_type = if sign.terminal do
+      :departure
+    else
+      :arrival
+    end
 
     sign.gtfs_stop_id
     |> sign.prediction_engine.for_stop(sign.direction_id)
-    |> Predictions.Predictions.sort(:arrival)
-    |> Enum.map(& Content.Message.Predictions.non_terminal(&1, @sign_width, boarding?))
+    |> Predictions.Predictions.sort(sort_type)
+    |> Enum.map(fn prediction ->
+                  case sign.terminal do
+                    false -> Content.Message.Predictions.non_terminal(prediction, @sign_width, boarding?)
+                    true -> Content.Message.Predictions.terminal(prediction, @sign_width, boarding?)
+                  end
+                end)
     |> Enum.at(0, Content.Message.Empty.new())
   end
 
