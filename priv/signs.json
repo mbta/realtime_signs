@@ -9,6 +9,7 @@
     "route_id": "Mattapan",
     "countdown_verb": "departs",
     "announce_arriving": true,
+    "terminal": true,
     "type": "single"
   },
   {
