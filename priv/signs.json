@@ -44,6 +44,7 @@
     "route_id": "Mattapan",
     "countdown_verb": "arrives",
     "announce_arriving": true,
+    "terminal": false,
     "type": "single"
   },
   {
@@ -56,6 +57,7 @@
     "route_id": "Mattapan",
     "countdown_verb": "arrives",
     "announce_arriving": true,
+    "terminal": false,
     "type": "single"
   },
   {
