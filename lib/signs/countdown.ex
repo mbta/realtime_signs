@@ -59,10 +59,10 @@ defmodule Signs.Countdown do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
     platform =
-      if is_nil(Map.get(config, "platform")) do
-        nil
-      else
-        config |> Map.get("platform") |> String.to_atom
+      case Map.get(config, "platform") do
+        nil -> nil
+        "ashmont" -> :ashmont
+        "braintree" -> :braintree
       end
 
     sign = %__MODULE__{
