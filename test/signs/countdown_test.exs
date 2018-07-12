@@ -354,19 +354,25 @@ defmodule Signs.CountdownTest do
         0 -> false
       end)
       assert(receive do
-        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :braintree, verb: :arrives, minutes: 3}, 5, 60}} -> true
+        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{}, 5, 60}} -> true
       after
         0 -> false
       end)
     end
 
-    test "sends an audio request when the top line is a minutes-away prediction" do
+    test "sends one audio request when the top line has the same headsign as the bottom line" do
       sign = %{@audio_sign | current_content_top: %Content.Message.Predictions{headsign: "Mattapan", minutes: 2},
+                            current_content_bottom: %Content.Message.Predictions{headsign: "Mattapan", minutes: 3},
                             gtfs_stop_id: "not-arriving"}
 
       assert {:noreply, %Signs.Countdown{}} = Signs.Countdown.handle_info(:read_sign, sign)
       assert(receive do
         {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 2}, 5, 60}} -> true
+      after
+        0 -> false
+      end)
+      refute(receive do
+        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 3}, 5, 60}} -> true
       after
         0 -> false
       end)

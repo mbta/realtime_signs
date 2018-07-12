@@ -216,9 +216,11 @@ defmodule Signs.Countdown do
     end
   end
 
-  defp read_countdown(%{current_content_top: %{headsign: _headsign} = top_msg, current_content_bottom: %{headsign: _different_headsign} = bottom_msg} = sign) do
+  defp read_countdown(%{current_content_top: %{headsign: top_headsign} = top_msg, current_content_bottom: %{headsign: bottom_headsign} = bottom_msg} = sign) do
     do_read_countdown(top_msg, sign)
-    do_read_countdown(bottom_msg, sign)
+    if top_headsign != bottom_headsign do
+      do_read_countdown(bottom_msg, sign)
+    end
   end
   defp read_countdown(%{current_content_top: top_msg} = sign) do
     do_read_countdown(top_msg, sign)
