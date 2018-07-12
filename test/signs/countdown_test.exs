@@ -342,6 +342,24 @@ defmodule Signs.CountdownTest do
   end
 
   describe "read_sign callback" do
+    test "sends two audio requests when the top and bottom lines show different headsigns" do
+      sign = %{@audio_sign | current_content_top: %Content.Message.Predictions{headsign: "Ashmont", minutes: 2},
+                            current_content_bottom: %Content.Message.Predictions{headsign: "Braintree", minutes: 3},
+                            gtfs_stop_id: "not-arriving"}
+
+      assert {:noreply, %Signs.Countdown{}} = Signs.Countdown.handle_info(:read_sign, sign)
+      assert(receive do
+        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :ashmont, verb: :arrives, minutes: 2}, 5, 60}} -> true
+      after
+        0 -> false
+      end)
+      assert(receive do
+        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :braintree, verb: :arrives, minutes: 3}, 5, 60}} -> true
+      after
+        0 -> false
+      end)
+    end
+
     test "sends an audio request when the top line is a minutes-away prediction" do
       sign = %{@audio_sign | current_content_top: %Content.Message.Predictions{headsign: "Mattapan", minutes: 2},
                             gtfs_stop_id: "not-arriving"}
