@@ -79,8 +79,8 @@ defmodule Content.Message.Predictions do
   defp headsign_for_prediction("Blue", 0, _), do: {:ok, "Bowdoin"}
   defp headsign_for_prediction("Blue", 1, _), do: {:ok, "Wonderland"}
   defp headsign_for_prediction("Red", 1, _), do: {:ok, "Alewife"}
-  defp headsign_for_prediction("Red", 0, last_stop_id) when last_stop_id in ["70087", "70089", "70091", "70093"], do: {:ok, "Ashmont"}
-  defp headsign_for_prediction("Red", 0, last_stop_id) when last_stop_id in ["70097", "70101", "70103", "70105"], do: {:ok, "Braintree"}
+  defp headsign_for_prediction("Red", 0, last_stop_id) when last_stop_id in ["70085", "70086", "70087", "70089", "70091", "70093"], do: {:ok, "Ashmont"}
+  defp headsign_for_prediction("Red", 0, last_stop_id) when last_stop_id in ["70095", "70096", "70097", "70101", "70103", "70105"], do: {:ok, "Braintree"}
   defp headsign_for_prediction("Green-B", 0, _), do: {:ok, "Boston Col"}
   defp headsign_for_prediction("Green-C", 0, _), do: {:ok, "Clvlnd Cir"}
   defp headsign_for_prediction("Green-D", 0, _), do: {:ok, "Riverside"}
