@@ -29,7 +29,8 @@ defmodule Signs.Countdown do
     :current_content_top,
     :bottom_timer,
     :top_timer,
-    announce_arriving?: true
+    announce_arriving?: true,
+    platform: nil
   ]
 
   @type t :: %{
@@ -47,7 +48,8 @@ defmodule Signs.Countdown do
     bottom_timer: reference() | nil,
     top_timer: reference() | nil,
     read_sign_period_ms: integer(),
-    announce_arriving?: boolean
+    announce_arriving?: boolean,
+    platform: atom | nil
   }
 
   @default_expiration_seconds 130
@@ -56,6 +58,12 @@ defmodule Signs.Countdown do
   def start_link(%{"type" => "countdown"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
+    platform =
+      case Map.get(config, "platform") do
+        nil -> nil
+        "ashmont" -> :ashmont
+        "braintree" -> :braintree
+      end
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
@@ -72,7 +80,8 @@ defmodule Signs.Countdown do
       sign_updater: sign_updater,
       prediction_engine: prediction_engine,
       read_sign_period_ms: 4 * 60 * 1000,
-      announce_arriving?: Map.get(config, "announce_arriving", true)
+      announce_arriving?: Map.get(config, "announce_arriving", true),
+      platform: platform
     }
 
     GenServer.start_link(__MODULE__, sign)
@@ -227,8 +236,7 @@ defmodule Signs.Countdown do
   end
 
   defp do_read_countdown(msg, sign) do
-    case Content.Audio.NextTrainCountdown.from_predictions_message(msg, sign.countdown_verb) do
-      %Content.Audio.NextTrainCountdown{} = audio ->
+    case Content.Audio.NextTrainCountdown.from_predictions_message(msg, sign.countdown_verb, sign.platform) do      %Content.Audio.NextTrainCountdown{} = audio ->
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
       nil ->
         nil

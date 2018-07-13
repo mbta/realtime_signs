@@ -454,7 +454,26 @@ defmodule Signs.CountdownTest do
       opts = [sign_updater: __MODULE__, prediction_engine: __MODULE__]
       {:ok, pid} = Signs.Countdown.start_link(config, opts)
       state = :sys.get_state(pid)
-      assert %{id: "sign_1", gtfs_stop_id: "1", pa_ess_id: {"SIGN", "m"}} = state
+      assert %{id: "sign_1", gtfs_stop_id: "1", pa_ess_id: {"SIGN", "m"}, platform: nil} = state
+    end
+
+    test "initializes state with sign with a platform" do
+      config = %{
+        "id" => "jfk_umass_ashmont_platform_northbound",
+        "gtfs_stop_id" => "70086",
+        "pa_ess_loc" => "RJFK",
+        "pa_ess_zone" => "e",
+        "direction_id" => 1,
+        "route_id" => "Red",
+        "terminal" => false,
+        "countdown_verb" => "arrives",
+        "type" => "countdown",
+        "platform" => "ashmont"
+      }
+      opts = [sign_updater: __MODULE__, prediction_engine: __MODULE__]
+      {:ok, pid} = Signs.Countdown.start_link(config, opts)
+      state = :sys.get_state(pid)
+      assert %{id: "jfk_umass_ashmont_platform_northbound", gtfs_stop_id: "70086", pa_ess_id: {"RJFK", "e"}, platform: :ashmont} = state
     end
   end
 
