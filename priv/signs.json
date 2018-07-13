@@ -2596,5 +2596,55 @@
     "direction_id": 1,
     "countdown_verb": "departs",
     "announce_arriving": false
+  },
+  {
+    "id": "jfk_umass_ashmont_platform_southbound",
+    "pa_ess_loc": "RJFK",
+    "gtfs_stop_id": "70085",
+    "direction_id": 0,
+    "route_id": "Red",
+    "countdown_verb": "arrives",
+    "terminal": false,
+    "announce_arriving": false,
+    "type": "countdown",
+    "pa_ess_zone": "w"
+  },
+  {
+    "id": "jfk_umass_braintree_platform_southbound",
+    "pa_ess_loc": "RJFK",
+    "gtfs_stop_id": "70095",
+    "direction_id": 0,
+    "route_id": "Red",
+    "countdown_verb": "arrives",
+    "terminal": false,
+    "announce_arriving": false,
+    "type": "countdown",
+    "pa_ess_zone": "s"
+  },
+  {
+    "id": "jfk_umass_ashmont_platform_northbound",
+    "pa_ess_loc": "RJFK",
+    "gtfs_stop_id": "70086",
+    "direction_id": 1,
+    "route_id": "Red",
+    "countdown_verb": "arrives",
+    "terminal": false,
+    "announce_arriving": false,
+    "type": "countdown",
+    "pa_ess_zone": "e",
+    "platform": "ashmont"
+  },
+  {
+    "id": "jfk_umass_braintree_platform_northbound",
+    "pa_ess_loc": "RJFK",
+    "gtfs_stop_id": "70096",
+    "direction_id": 1,
+    "route_id": "Red",
+    "countdown_verb": "arrives",
+    "terminal": false,
+    "announce_arriving": false,
+    "type": "countdown",
+    "pa_ess_zone": "n",
+    "platform": "braintree"
   }
 ]
