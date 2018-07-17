@@ -719,7 +719,7 @@
     "type": "countdown"
   },
   {
-    "id": "oak_grove_eastbound",
+    "id": "oak_grove_east_busway",
     "pa_ess_loc": "OOAK",
     "pa_ess_zone": "e",
     "gtfs_stop_id": "70036",
@@ -755,7 +755,7 @@
     "type": "countdown"
   },
   {
-    "id": "malden_center_mezzanine_northbound",
+    "id": "malden_center_entire_station_northbound",
     "pa_ess_loc": "OMAL",
     "gtfs_stop_id": "70035",
     "direction_id": 1,
@@ -768,7 +768,7 @@
     "pa_ess_zone": "m"
   },
   {
-    "id": "malden_center_mezzanine_southbound",
+    "id": "malden_center_entire_station_southbound",
     "pa_ess_loc": "OMAL",
     "gtfs_stop_id": "70034",
     "direction_id": 0,
@@ -1005,7 +1005,7 @@
     "pa_ess_zone": "s"
   },
   {
-    "id": "orange_north_station_center_northbound",
+    "id": "orange_north_station_mezzanine_northbound",
     "pa_ess_loc": "ONST",
     "gtfs_stop_id": "70027",
     "direction_id": 1,
@@ -1018,7 +1018,7 @@
     "pa_ess_zone": "c"
   },
   {
-    "id": "orange_north_station_center_southbound",
+    "id": "orange_north_station_mezzanine_southbound",
     "pa_ess_loc": "ONST",
     "gtfs_stop_id": "70026",
     "direction_id": 0,
@@ -1031,7 +1031,7 @@
     "pa_ess_zone": "c"
   },
   {
-    "id": "orange_north_station_mezzanine_northbound",
+    "id": "orange_north_station_commuter_rail_exit_northbound",
     "pa_ess_loc": "ONST",
     "gtfs_stop_id": "70027",
     "direction_id": 1,
@@ -1044,7 +1044,7 @@
     "pa_ess_zone": "m"
   },
   {
-    "id": "orange_north_station_mezzanine_southbound",
+    "id": "orange_north_station_commuter_rail_exit_southbound",
     "pa_ess_loc": "ONST",
     "gtfs_stop_id": "70026",
     "direction_id": 0,
@@ -1181,7 +1181,7 @@
     "pa_ess_zone": "s"
   },
   {
-    "id": "chinatown_mezzanine_northbound",
+    "id": "chinatown_northbound_lobby_northbound",
     "pa_ess_loc": "OCHN",
     "gtfs_stop_id": "70019",
     "direction_id": 1,
@@ -1193,7 +1193,7 @@
     "pa_ess_zone": "m"
   },
   {
-    "id": "chinatown_mezzanine_southbound",
+    "id": "chinatown_southbound_lobby_southbound",
     "pa_ess_loc": "OCHS",
     "gtfs_stop_id": "70018",
     "direction_id": 0,
@@ -1655,7 +1655,7 @@
     "pa_ess_zone": "s"
   },
   {
-    "id": "forest_hills_mezzanine_northbound",
+    "id": "forest_hills_main_lobby_northbound",
     "pa_ess_loc": "OFOR",
     "gtfs_stop_id": "70001",
     "direction_id": 1,
@@ -1691,7 +1691,7 @@
     "pa_ess_zone": "s"
   },
   {
-    "id": "forest_hills_bus_mezzanine_northbound",
+    "id": "forest_hills_entrances_from_busways_northbound",
     "pa_ess_loc": "SFOR",
     "gtfs_stop_id": "70001",
     "direction_id": 1,
@@ -1703,7 +1703,7 @@
     "pa_ess_zone": "m"
   },
   {
-    "id": "ruggles_bus_mezzanine_northbound",
+    "id": "ruggles_upper_busway_northbound",
     "pa_ess_loc": "SRUG",
     "gtfs_stop_id": "70011",
     "direction_id": 1,
@@ -1716,7 +1716,7 @@
     "pa_ess_zone": "m"
   },
   {
-    "id": "ruggles_bus_mezzanine_southbound",
+    "id": "ruggles_upper_busway_southbound",
     "pa_ess_loc": "SRUG",
     "gtfs_stop_id": "70010",
     "direction_id": 0,
