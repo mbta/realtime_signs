@@ -19,7 +19,7 @@ defmodule Headway.Request do
     http_client = Application.get_env(:realtime_signs, :http_client)
     station_ids
     |> ScheduleHeadway.build_request()
-    |> http_client.get([], [])
+    |> http_client.get([], [timeout: 2000, recv_timeout: 2000])
   end
 
   defp parse_body(body) do
