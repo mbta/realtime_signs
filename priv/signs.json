@@ -1691,7 +1691,7 @@
     "pa_ess_zone": "s"
   },
   {
-    "id": "forest_hills_entrances_from_busways_northbound",
+    "id": "forest_hills_entrances_from_busways",
     "pa_ess_loc": "SFOR",
     "gtfs_stop_id": "70001",
     "direction_id": 1,
