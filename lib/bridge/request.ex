@@ -10,7 +10,7 @@ defmodule Bridge.Request do
 
     @bridge_url
     |> Kernel.<>("#{id}")
-    |> http_client.get(headers)
+    |> http_client.get(headers, [timeout: 4500, recv_timeout: 4500])
     |> parse_response(current_time)
   end
 
