@@ -1655,7 +1655,7 @@
     "pa_ess_zone": "s"
   },
   {
-    "id": "forest_hills_main_lobby_northbound",
+    "id": "forest_hills_main_lobby",
     "pa_ess_loc": "OFOR",
     "gtfs_stop_id": "70001",
     "direction_id": 1,
