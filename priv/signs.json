@@ -2099,6 +2099,32 @@
     "announce_arriving": false
   },
   {
+    "pa_ess_zone": "w",
+    "type": "single",
+    "terminal": false,
+    "route_id": "Red",
+    "pa_ess_loc": "SSOU",
+    "line_number": "1",
+    "id": "south_station_silver_line_arrival_platform_northbound",
+    "gtfs_stop_id": "70080",
+    "direction_id": 1,
+    "countdown_verb": "arrives",
+    "announce_arriving": false
+  },
+  {
+    "pa_ess_zone": "w",
+    "type": "single",
+    "terminal": false,
+    "route_id": "Red",
+    "pa_ess_loc": "SSOU",
+    "line_number": "2",
+    "id": "south_station_silver_line_arrival_platform_southbound",
+    "gtfs_stop_id": "70079",
+    "direction_id": 0,
+    "countdown_verb": "arrives",
+    "announce_arriving": false
+  },
+  {
     "pa_ess_zone": "m",
     "type": "single",
     "terminal": false,
