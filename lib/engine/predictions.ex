@@ -80,7 +80,7 @@ defmodule Engine.Predictions do
   defp download_and_insert_data(last_modified, current_time, parse_fn, url) do
     http_client = Application.get_env(:realtime_signs, :http_client)
     full_url = Application.get_env(:realtime_signs, url)
-    case http_client.get(full_url, [{"If-Modified-Since", format_last_modified(last_modified)}], [timeout: 4500, recv_timeout: 4500]) do
+    case http_client.get(full_url, [{"If-Modified-Since", format_last_modified(last_modified)}], [timeout: 2000, recv_timeout: 2000]) do
       {:ok, %HTTPoison.Response{body: body, status_code: status}} when status >= 200 and status < 300 ->
         parse_fn.(body, current_time)
         current_time
