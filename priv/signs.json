@@ -1181,7 +1181,7 @@
     "pa_ess_zone": "s"
   },
   {
-    "id": "chinatown_northbound_lobby_northbound",
+    "id": "chinatown_northbound_lobby",
     "pa_ess_loc": "OCHN",
     "gtfs_stop_id": "70019",
     "direction_id": 1,
@@ -1193,7 +1193,7 @@
     "pa_ess_zone": "m"
   },
   {
-    "id": "chinatown_southbound_lobby_southbound",
+    "id": "chinatown_southbound_lobby",
     "pa_ess_loc": "OCHS",
     "gtfs_stop_id": "70018",
     "direction_id": 0,
