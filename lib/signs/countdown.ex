@@ -236,7 +236,8 @@ defmodule Signs.Countdown do
   end
 
   defp do_read_countdown(msg, sign) do
-    case Content.Audio.NextTrainCountdown.from_predictions_message(msg, sign.countdown_verb, sign.platform) do      %Content.Audio.NextTrainCountdown{} = audio ->
+    case Content.Audio.NextTrainCountdown.from_predictions_message(msg, sign.countdown_verb, sign.platform) do
+      %Content.Audio.NextTrainCountdown{} = audio ->
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
       nil ->
         nil
