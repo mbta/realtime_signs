@@ -2672,5 +2672,21 @@
     "type": "countdown",
     "pa_ess_zone": "n",
     "platform": "braintree"
+  },
+  {
+    "id": "jfk_umass_mezzanine",
+    "type": "realtime",
+    "pa_ess_loc": "RJFK",
+    "pa_ess_zone": "m",
+    "source_config": [
+      [
+        {"stop_id": "70086", "direction_id": 1, "platform": "ashmont", "terminal": false, "announce_arriving": false},
+        {"stop_id": "70096", "direction_id": 1, "platform": "braintree", "terminal": false, "announce_arriving": false}
+      ],
+      [
+        {"stop_id": "70085", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false},
+        {"stop_id": "70095", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+      ]
+    ]
   }
 ]
