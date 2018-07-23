@@ -46,6 +46,7 @@ defmodule PaEss.HttpUpdater do
     encoded = URI.encode_query([MsgType: "SignContent", uid: state.uid, sta: station, c: cmd])
     Logger.info(["update_single_line: ", encoded])
 
+    update_ui(state.http_poster, encoded)
     send_post(state.http_poster, encoded)
   end
   def process({:update_sign, [{station, zone}, top_line, bottom_line, duration, start_secs]}, state) do
@@ -54,6 +55,7 @@ defmodule PaEss.HttpUpdater do
     encoded = URI.encode_query([MsgType: "SignContent", uid: state.uid, sta: station, c: top_cmd, c: bottom_cmd])
     Logger.info(["update_sign: ", encoded])
 
+    update_ui(state.http_poster, encoded)
     send_post(state.http_poster, encoded)
   end
   def process({:send_audio, [{station, zone}, audio, priority, timeout]}, state) do
@@ -75,8 +77,10 @@ defmodule PaEss.HttpUpdater do
     send_post(state.http_poster, encoded)
   end
 
-  defp host, do: Application.get_env(:realtime_signs, :sign_head_end_host)
-  defp url, do: "http://#{host()}/mbta/cgi-bin/RemoteMsgsCgi.exe"
+  defp sign_host, do: Application.get_env(:realtime_signs, :sign_head_end_host)
+  defp sign_url, do: "http://#{host()}/mbta/cgi-bin/RemoteMsgsCgi.exe"
+  defp sign_ui_url, do: Application.get_env(:realtime_signs, :sign_ui_url)
+  defp sign_ui_url, do: "http://#{sign_ui_host()}/messages"
 
   defp start_display(:now), do: ""
   defp start_display(seconds_from_midnight), do: "t#{seconds_from_midnight}"
@@ -97,7 +101,7 @@ defmodule PaEss.HttpUpdater do
   defp audio_type(:visual), do: "2"
 
   defp send_post(http_poster, query) do
-    case http_poster.post(url(), query, [{"Content-type", "application/x-www-form-urlencoded"}]) do
+    case http_poster.post(sign_url(), query, [{"Content-type", "application/x-www-form-urlencoded"}]) do
       {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
         {:ok, :sent}
       {:ok, %HTTPoison.Response{status_code: status}} ->
@@ -105,6 +109,19 @@ defmodule PaEss.HttpUpdater do
         {:error, :bad_status}
       {:error, %HTTPoison.Error{reason: reason}} ->
         Logger.warn("head_end_post_error: #{inspect reason}")
+        {:error, :post_error}
+    end
+  end
+
+  def update_ui(pid \\ __MODULE__, http_poster, query) do
+    case http_poster.post(sign_ui_url(), query, [{"Content-type", "application/x-www-form-urlencoded"}, {"x-api-key", Application.get_env(:realtime_signs, :sign_ui_api_key)}]) do
+      {:ok, %HTTPoison.Response{status_code: status}} when status == 201 ->
+        {:ok, :sent}
+      {:ok, %HTTPoison.Response{status_code: status}} ->
+        Logger.warn("sign_ui_post_error: response had status code: #{inspect status}")
+        {:error, :bad_status}
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        Logger.warn("sign_ui_post_error: #{inspect reason}")
         {:error, :post_error}
     end
   end
