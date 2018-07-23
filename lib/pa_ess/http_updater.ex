@@ -113,7 +113,7 @@ defmodule PaEss.HttpUpdater do
     end
   end
 
-  def update_ui(pid \\ __MODULE__, http_poster, query) do
+  def update_ui(http_poster, query) do
     key = Application.get_env(:realtime_signs, :sign_ui_api_key)
     case http_poster.post(sign_ui_url(), query, [{"Content-type", "application/x-www-form-urlencoded"}, {"x-api-key", key}]) do
       {:ok, %HTTPoison.Response{status_code: status}} when status == 201 ->
