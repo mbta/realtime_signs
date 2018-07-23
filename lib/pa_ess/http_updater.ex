@@ -101,7 +101,6 @@ defmodule PaEss.HttpUpdater do
   defp audio_type(:visual), do: "2"
 
   defp send_post(http_poster, query) do
-    Logger.warn "send_post"
     case http_poster.post(sign_url(), query, [{"Content-type", "application/x-www-form-urlencoded"}]) do
       {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
         {:ok, :sent}
@@ -115,18 +114,14 @@ defmodule PaEss.HttpUpdater do
   end
 
   def update_ui(pid \\ __MODULE__, http_poster, query) do
-    Logger.warn "update_ui"
     key = Application.get_env(:realtime_signs, :sign_ui_api_key)
     case http_poster.post(sign_ui_url(), query, [{"Content-type", "application/x-www-form-urlencoded"}, {"x-api-key", key}]) do
       {:ok, %HTTPoison.Response{status_code: status}} when status == 201 ->
-        Logger.warn "update_ui good"
         {:ok, :sent}
       {:ok, %HTTPoison.Response{status_code: status}} ->
-        Logger.warn "update_ui bad"
         Logger.warn("sign_ui_post_error: response had status code: #{inspect status}")
         {:error, :bad_status}
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn "update_ui worse"
         Logger.warn("sign_ui_post_error: #{inspect reason}")
         {:error, :post_error}
     end
