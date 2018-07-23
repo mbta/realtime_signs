@@ -78,8 +78,8 @@ defmodule PaEss.HttpUpdater do
   end
 
   defp sign_host, do: Application.get_env(:realtime_signs, :sign_head_end_host)
-  defp sign_url, do: "http://#{host()}/mbta/cgi-bin/RemoteMsgsCgi.exe"
-  defp sign_ui_url, do: Application.get_env(:realtime_signs, :sign_ui_url)
+  defp sign_url, do: "http://#{sign_host()}/mbta/cgi-bin/RemoteMsgsCgi.exe"
+  defp sign_ui_host, do: Application.get_env(:realtime_signs, :sign_ui_url)
   defp sign_ui_url, do: "http://#{sign_ui_host()}/messages"
 
   defp start_display(:now), do: ""
