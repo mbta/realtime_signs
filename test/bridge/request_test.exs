@@ -12,25 +12,28 @@ defmodule Bridge.RequestTest do
     end
 
     test "Logs warning with bad status code" do
-      log = capture_log [level: :warn], fn ->
-        refute get_status(500, @current_time)
-      end
+      log =
+        capture_log([level: :warn], fn ->
+          refute get_status(500, @current_time)
+        end)
 
       assert log =~ "Could not query bridge API: status code 500"
     end
 
     test "Logs warning when request fails" do
-      log = capture_log [level: :warn], fn ->
-        refute get_status(754, @current_time)
-      end
+      log =
+        capture_log([level: :warn], fn ->
+          refute get_status(754, @current_time)
+        end)
 
       assert log =~ "Could not query bridge API: Unknown error"
     end
 
     test "Logs warning when parsing fails" do
-      log = capture_log [level: :warn], fn ->
-        refute get_status(201, @current_time)
-      end
+      log =
+        capture_log([level: :warn], fn ->
+          refute get_status(201, @current_time)
+        end)
 
       assert log =~ "Could not parse json response"
     end

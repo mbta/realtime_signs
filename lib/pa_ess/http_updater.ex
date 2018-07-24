@@ -5,10 +5,10 @@ defmodule PaEss.HttpUpdater do
   """
 
   @type t :: %{
-    http_poster: module(),
-    queue_mod: module(),
-    uid: integer()
-  }
+          http_poster: module(),
+          queue_mod: module(),
+          uid: integer()
+        }
 
   @max_send_rate_per_sec 8
   @avg_ms_between_sends round(1000 / @max_send_rate_per_sec)
@@ -19,7 +19,12 @@ defmodule PaEss.HttpUpdater do
   def start_link(opts \\ []) do
     http_poster = opts[:http_poster] || Application.get_env(:realtime_signs, :http_poster_mod)
     queue_mod = opts[:queue_mod] || MessageQueue
-    GenServer.start_link(__MODULE__, [http_poster: http_poster, queue_mod: queue_mod], name: __MODULE__)
+
+    GenServer.start_link(
+      __MODULE__,
+      [http_poster: http_poster, queue_mod: queue_mod],
+      name: __MODULE__
+    )
   end
 
   def init(opts) do
@@ -30,7 +35,7 @@ defmodule PaEss.HttpUpdater do
   def handle_info(:check_queue, state) do
     before_time = System.monotonic_time(:millisecond)
 
-    if (item = state.queue_mod.get_message()) do
+    if item = state.queue_mod.get_message() do
       process(item, state)
     end
 
@@ -43,33 +48,51 @@ defmodule PaEss.HttpUpdater do
 
   def process({:update_single_line, [{station, zone}, line_no, msg, duration, start_secs]}, state) do
     cmd = "#{start_display(start_secs)}e#{duration}~#{zone}#{line_no}-#{message_display(msg)}"
-    encoded = URI.encode_query([MsgType: "SignContent", uid: state.uid, sta: station, c: cmd])
+    encoded = URI.encode_query(MsgType: "SignContent", uid: state.uid, sta: station, c: cmd)
     Logger.info(["update_single_line: ", encoded])
 
     send_post(state.http_poster, encoded)
   end
-  def process({:update_sign, [{station, zone}, top_line, bottom_line, duration, start_secs]}, state) do
+
+  def process(
+        {:update_sign, [{station, zone}, top_line, bottom_line, duration, start_secs]},
+        state
+      ) do
     top_cmd = "#{start_display(start_secs)}e#{duration}~#{zone}1-#{message_display(top_line)}"
-    bottom_cmd = "#{start_display(start_secs)}e#{duration}~#{zone}2-#{message_display(bottom_line)}"
-    encoded = URI.encode_query([MsgType: "SignContent", uid: state.uid, sta: station, c: top_cmd, c: bottom_cmd])
+
+    bottom_cmd =
+      "#{start_display(start_secs)}e#{duration}~#{zone}2-#{message_display(bottom_line)}"
+
+    encoded =
+      URI.encode_query(
+        MsgType: "SignContent",
+        uid: state.uid,
+        sta: station,
+        c: top_cmd,
+        c: bottom_cmd
+      )
+
     Logger.info(["update_sign: ", encoded])
 
     send_post(state.http_poster, encoded)
   end
+
   def process({:send_audio, [{station, zone}, audio, priority, timeout]}, state) do
     {message_id, vars, type} = Content.Audio.to_params(audio)
 
-    encoded = [
-      MsgType: "Canned",
-      uid: state.uid,
-      mid: message_id,
-      var: Enum.join(vars, ","),
-      typ: audio_type(type),
-      sta: "#{station}#{zone_bitmap(zone)}",
-      pri: priority,
-      tim: timeout,
-    ]
-    |> URI.encode_query
+    encoded =
+      [
+        MsgType: "Canned",
+        uid: state.uid,
+        mid: message_id,
+        var: Enum.join(vars, ","),
+        typ: audio_type(type),
+        sta: "#{station}#{zone_bitmap(zone)}",
+        pri: priority,
+        tim: timeout
+      ]
+      |> URI.encode_query()
+
     Logger.info(["send_audio: ", encoded])
 
     send_post(state.http_poster, encoded)
@@ -100,11 +123,13 @@ defmodule PaEss.HttpUpdater do
     case http_poster.post(url(), query, [{"Content-type", "application/x-www-form-urlencoded"}]) do
       {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
         {:ok, :sent}
+
       {:ok, %HTTPoison.Response{status_code: status}} ->
-        Logger.warn("head_end_post_error: response had status code: #{inspect status}")
+        Logger.warn("head_end_post_error: response had status code: #{inspect(status)}")
         {:error, :bad_status}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("head_end_post_error: #{inspect reason}")
+        Logger.warn("head_end_post_error: #{inspect(reason)}")
         {:error, :post_error}
     end
   end

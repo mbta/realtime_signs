@@ -21,7 +21,7 @@ defmodule Signs.Utilities.ReaderTest do
     direction_id: 0,
     platform: nil,
     terminal?: false,
-    announce_arriving?: false,
+    announce_arriving?: false
   }
 
   @sign %Signs.Realtime{
@@ -36,7 +36,7 @@ defmodule Signs.Utilities.ReaderTest do
     tick_top: 1,
     tick_read: 1,
     expiration_seconds: 100,
-    read_period_seconds: 100,
+    read_period_seconds: 100
   }
 
   describe "read_sign/1" do
@@ -45,18 +45,34 @@ defmodule Signs.Utilities.ReaderTest do
 
       sign = Reader.read_sign(sign)
 
-      assert_received({:send_audio, _id, %A{destination: :alewife, minutes: 4, verb: :arrives}, _p, _t})
-      assert_received({:send_audio, _id, %A{destination: :ashmont, minutes: 3, verb: :arrives}, _p, _t})
+      assert_received(
+        {:send_audio, _id, %A{destination: :alewife, minutes: 4, verb: :arrives}, _p, _t}
+      )
+
+      assert_received(
+        {:send_audio, _id, %A{destination: :ashmont, minutes: 3, verb: :arrives}, _p, _t}
+      )
+
       assert sign.tick_read == 100
     end
 
     test "sends audio only for top, if bottom has same headsign" do
-      sign = %{@sign | tick_read: 0, current_content_bottom: {@src, %P{headsign: "Alewife", minutes: 3}}}
+      sign = %{
+        @sign
+        | tick_read: 0,
+          current_content_bottom: {@src, %P{headsign: "Alewife", minutes: 3}}
+      }
 
       sign = Reader.read_sign(sign)
 
-      assert_received({:send_audio, _id, %A{destination: :alewife, minutes: 4, verb: :arrives}, _p, _t})
-      refute_received({:send_audio, _id, %A{destination: :alewife, minutes: 3, verb: :arrives}, _p, _t})
+      assert_received(
+        {:send_audio, _id, %A{destination: :alewife, minutes: 4, verb: :arrives}, _p, _t}
+      )
+
+      refute_received(
+        {:send_audio, _id, %A{destination: :alewife, minutes: 3, verb: :arrives}, _p, _t}
+      )
+
       assert sign.tick_read == 100
     end
 
@@ -71,7 +87,12 @@ defmodule Signs.Utilities.ReaderTest do
 
     test "uses 'departs' if it's for a terminal" do
       src = %{@src | terminal?: true}
-      sign = %{@sign | tick_read: 0, current_content_top: {src, %P{headsign: "Alewife", minutes: 4}}}
+
+      sign = %{
+        @sign
+        | tick_read: 0,
+          current_content_top: {src, %P{headsign: "Alewife", minutes: 4}}
+      }
 
       sign = Reader.read_sign(sign)
 

@@ -43,39 +43,47 @@ defmodule Signs.Utilities.SourceConfig do
   defstruct @enforce_keys
 
   @type one :: %__MODULE__{
-    stop_id: String.t(),
-    direction_id: 0 | 1,
-    platform: :ashmont | :braintree | nil,
-    terminal?: boolean(),
-    announce_arriving?: boolean(),
-  }
+          stop_id: String.t(),
+          direction_id: 0 | 1,
+          platform: :ashmont | :braintree | nil,
+          terminal?: boolean(),
+          announce_arriving?: boolean()
+        }
 
   @type full :: {[one()]} | {[one()], [one()]}
 
   @spec parse!([[map()]]) :: full()
   def parse!([both_lines_config]) do
-    { Enum.map(both_lines_config, &parse_one!/1) }
+    {Enum.map(both_lines_config, &parse_one!/1)}
   end
+
   def parse!([top_line_config, bottom_line_config]) do
     {
       Enum.map(top_line_config, &parse_one!/1),
-      Enum.map(bottom_line_config, &parse_one!/1),
+      Enum.map(bottom_line_config, &parse_one!/1)
     }
   end
 
-  defp parse_one!(%{"stop_id" => stop_id, "direction_id" => direction_id, "platform" => platform, "terminal" => terminal?, "announce_arriving" => announce_arriving?}) do
-    platform = case platform do
-      nil -> nil
-      "ashmont" -> :ashmont
-      "braintree" -> :braintree
-    end
+  defp parse_one!(%{
+         "stop_id" => stop_id,
+         "direction_id" => direction_id,
+         "platform" => platform,
+         "terminal" => terminal?,
+         "announce_arriving" => announce_arriving?
+       }) do
+    platform =
+      case platform do
+        nil -> nil
+        "ashmont" -> :ashmont
+        "braintree" -> :braintree
+      end
 
     %__MODULE__{
       stop_id: stop_id,
       direction_id: direction_id,
       platform: platform,
       terminal?: terminal?,
-      announce_arriving?: announce_arriving?,
+      announce_arriving?: announce_arriving?
     }
   end
 end
