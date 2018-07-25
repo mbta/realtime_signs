@@ -1,25 +1,37 @@
 [
   {
     "id": "cedar_grove_outbound",
+    "type": "realtime",
     "pa_ess_loc": "MCED",
     "pa_ess_zone": "s",
-    "gtfs_stop_id": "70263",
-    "direction_id": 0,
-    "route_id": "Mattapan",
-    "terminal": false,
-    "countdown_verb": "arrives",
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70263",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
   },
   {
     "id": "cedar_grove_inbound",
+    "type": "realtime",
     "pa_ess_loc": "MCED",
     "pa_ess_zone": "n",
-    "gtfs_stop_id": "70264",
-    "direction_id": 1,
-    "route_id": "Mattapan",
-    "terminal": false,
-    "countdown_verb": "arrives",
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70264",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
   },
   {
     "id": "butler_center",
@@ -28,100 +40,160 @@
     "pa_ess_zone": "c",
     "source_config": [
       [
-        {"stop_id": "70266", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": true}
+        {
+          "stop_id": "70266",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
       ],
       [
-        {"stop_id": "70265", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": true}
+        {
+          "stop_id": "70265",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
       ]
     ]
   },
   {
     "id": "milton_outbound",
-    "gtfs_stop_id": "70267",
+    "type": "realtime",
     "pa_ess_loc": "MMIL",
     "pa_ess_zone": "s",
-    "direction_id": 0,
-    "route_id": "Mattapan",
-    "terminal": false,
-    "countdown_verb": "arrives",
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70267",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
   },
   {
     "id": "milton_inbound",
-    "gtfs_stop_id": "70268",
+    "type": "realtime",
     "pa_ess_loc": "MMIL",
     "pa_ess_zone": "n",
-    "direction_id": 1,
-    "route_id": "Mattapan",
-    "terminal": false,
-    "countdown_verb": "arrives",
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70268",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
   },
   {
     "id": "central_avenue_outbound",
-    "gtfs_stop_id": "70269",
+    "type": "realtime",
     "pa_ess_loc": "MCEN",
     "pa_ess_zone": "s",
-    "direction_id": 0,
-    "route_id": "Mattapan",
-    "terminal": false,
-    "countdown_verb": "arrives",
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70269",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
   },
   {
     "id": "central_avenue_inbound",
-    "gtfs_stop_id": "70270",
+    "type": "realtime",
     "pa_ess_loc": "MCEN",
     "pa_ess_zone": "n",
-    "direction_id": 1,
-    "route_id": "Mattapan",
-    "terminal": false,
-    "countdown_verb": "arrives",
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70270",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
   },
   {
     "id": "valley_road_outbound",
-    "gtfs_stop_id": "70271",
+    "type": "realtime",
     "pa_ess_loc": "MVAL",
     "pa_ess_zone": "s",
-    "direction_id": 0,
-    "route_id": "Mattapan",
-    "terminal": false,
-    "countdown_verb": "arrives",
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70271",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
   },
   {
     "id": "valley_road_inbound",
-    "gtfs_stop_id": "70272",
+    "type": "realtime",
     "pa_ess_loc": "MVAL",
     "pa_ess_zone": "n",
-    "direction_id": 1,
-    "route_id": "Mattapan",
-    "terminal": false,
-    "countdown_verb": "arrives",
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70272",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
   },
   {
     "id": "capen_street_outbound",
-    "gtfs_stop_id": "70273",
+    "type": "realtime",
     "pa_ess_loc": "MCAP",
     "pa_ess_zone": "s",
-    "direction_id": 0,
-    "route_id": "Mattapan",
-    "terminal": false,
-    "countdown_verb": "arrives",
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70273",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
   },
   {
     "id": "capen_street_inbound",
-    "gtfs_stop_id": "70274",
+    "type": "realtime",
     "pa_ess_loc": "MCAP",
     "pa_ess_zone": "n",
-    "direction_id": 1,
-    "route_id": "Mattapan",
-    "terminal": false,
-    "countdown_verb": "arrives",
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70274",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
   },
   {
     "id": "chelsea_inbound",
@@ -237,39 +309,54 @@
   },
   {
     "id": "wonderland_westbound",
+    "type": "realtime",
     "pa_ess_loc": "BWON",
     "pa_ess_zone": "w",
-    "gtfs_stop_id": "70059",
-    "direction_id": 0,
-    "route_id": "Blue",
-    "countdown_verb": "departs",
-    "terminal": true,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70059",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "wonderland_mezzanine",
+    "type": "realtime",
     "pa_ess_loc": "BWON",
     "pa_ess_zone": "m",
-    "gtfs_stop_id": "70059",
-    "direction_id": 0,
-    "route_id": "Blue",
-    "countdown_verb": "departs",
-    "terminal": true,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70059",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "revere_beach_eastbound",
+    "type": "realtime",
     "pa_ess_loc": "BREV",
     "pa_ess_zone": "e",
-    "gtfs_stop_id": "70058",
-    "direction_id": 1,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70058",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "revere_beach_mezzanine",
@@ -278,84 +365,126 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70058", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70058",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70057", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70057",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "revere_beach_westbound",
+    "type": "realtime",
     "pa_ess_loc": "BREV",
     "pa_ess_zone": "w",
-    "gtfs_stop_id": "70057",
-    "direction_id": 0,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70057",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "beachmont_eastbound",
+    "type": "realtime",
     "pa_ess_loc": "BBEA",
     "pa_ess_zone": "e",
-    "gtfs_stop_id": "70056",
-    "direction_id": 1,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70056",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "beachmont_westbound",
+    "type": "realtime",
     "pa_ess_loc": "BBEA",
     "pa_ess_zone": "w",
-    "gtfs_stop_id": "70055",
-    "direction_id": 0,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70055",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "suffolk_downs_eastbound",
+    "type": "realtime",
     "pa_ess_loc": "BSUF",
     "pa_ess_zone": "e",
-    "gtfs_stop_id": "70054",
-    "direction_id": 1,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70054",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "suffolk_downs_westbound",
+    "type": "realtime",
     "pa_ess_loc": "BSUF",
     "pa_ess_zone": "w",
-    "gtfs_stop_id": "70053",
-    "direction_id": 0,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70053",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "orient_heights_eastbound",
+    "type": "realtime",
     "pa_ess_loc": "BORH",
     "pa_ess_zone": "e",
-    "gtfs_stop_id": "70052",
-    "direction_id": 1,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70052",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "orient_heights_mezzanine",
@@ -364,36 +493,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70052", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70052",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70051", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70051",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "orient_heights_westbound",
+    "type": "realtime",
     "pa_ess_loc": "BORH",
     "pa_ess_zone": "w",
-    "gtfs_stop_id": "70051",
-    "direction_id": 0,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70051",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "wood_island_eastbound",
+    "type": "realtime",
     "pa_ess_loc": "BWOO",
     "pa_ess_zone": "e",
-    "gtfs_stop_id": "70050",
-    "direction_id": 1,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70050",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "wood_island_mezzanine",
@@ -402,84 +553,126 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70050", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70050",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70049", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70049",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "wood_island_westbound",
+    "type": "realtime",
     "pa_ess_loc": "BWOO",
     "pa_ess_zone": "w",
-    "gtfs_stop_id": "70049",
-    "direction_id": 0,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70049",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "airport_eastbound",
+    "type": "realtime",
     "pa_ess_loc": "BAIR",
     "pa_ess_zone": "e",
-    "gtfs_stop_id": "70048",
-    "direction_id": 1,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70048",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "airport_westbound",
+    "type": "realtime",
     "pa_ess_loc": "BAIR",
     "pa_ess_zone": "w",
-    "gtfs_stop_id": "70047",
-    "direction_id": 0,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70047",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "maverick_eastbound",
+    "type": "realtime",
     "pa_ess_loc": "BMAV",
     "pa_ess_zone": "e",
-    "gtfs_stop_id": "70046",
-    "direction_id": 1,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70046",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "maverick_westbound",
+    "type": "realtime",
     "pa_ess_loc": "BMAV",
     "pa_ess_zone": "w",
-    "gtfs_stop_id": "70045",
-    "direction_id": 0,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70045",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "aquarium_eastbound",
+    "type": "realtime",
     "pa_ess_loc": "BAQU",
     "pa_ess_zone": "e",
-    "gtfs_stop_id": "70044",
-    "direction_id": 1,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70044",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "aquarium_mezzanine",
@@ -488,36 +681,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70044", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70044",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70043", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70043",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "aquarium_westbound",
+    "type": "realtime",
     "pa_ess_loc": "BAQU",
     "pa_ess_zone": "w",
-    "gtfs_stop_id": "70043",
-    "direction_id": 0,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70043",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "state_blue_eastbound",
+    "type": "realtime",
     "pa_ess_loc": "BSTA",
     "pa_ess_zone": "e",
-    "gtfs_stop_id": "70042",
-    "direction_id": 1,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70042",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "state_blue_mezzanine",
@@ -526,36 +741,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70042", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70042",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70041", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70041",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "state_blue_westbound",
+    "type": "realtime",
     "pa_ess_loc": "BSTA",
     "pa_ess_zone": "w",
-    "gtfs_stop_id": "70041",
-    "direction_id": 0,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70041",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "government_center_eastbound",
+    "type": "realtime",
     "pa_ess_loc": "BGOV",
     "pa_ess_zone": "e",
-    "gtfs_stop_id": "70040",
-    "direction_id": 1,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70040",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "government_center_mezzanine",
@@ -564,96 +801,143 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70040", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70040",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70039", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70039",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "government_center_westbound",
+    "type": "realtime",
     "pa_ess_loc": "BGOV",
     "pa_ess_zone": "w",
-    "gtfs_stop_id": "70039",
-    "direction_id": 0,
-    "route_id": "Blue",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70039",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "bowdoin_eastbound",
+    "type": "realtime",
     "pa_ess_loc": "BBOW",
     "pa_ess_zone": "e",
-    "gtfs_stop_id": "70038",
-    "direction_id": 1,
-    "route_id": "Blue",
-    "countdown_verb": "departs",
-    "terminal": true,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70038",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "bowdoin_mezzanine",
+    "type": "realtime",
     "pa_ess_loc": "BBOW",
     "pa_ess_zone": "m",
-    "gtfs_stop_id": "70038",
-    "direction_id": 1,
-    "route_id": "Blue",
-    "countdown_verb": "departs",
-    "terminal": true,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70038",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "oak_grove_mezzanine_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OOAK",
     "pa_ess_zone": "m",
-    "gtfs_stop_id": "70036",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "departs",
-    "terminal": true,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70036",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "oak_grove_east_busway",
+    "type": "realtime",
     "pa_ess_loc": "OOAK",
     "pa_ess_zone": "e",
-    "gtfs_stop_id": "70036",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "departs",
-    "terminal": true,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70036",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "oak_grove_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OOAK",
     "pa_ess_zone": "n",
-    "gtfs_stop_id": "70036",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "departs",
-    "terminal": true,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70036",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "oak_grove_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OOAK",
     "pa_ess_zone": "s",
-    "gtfs_stop_id": "70036",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "departs",
-    "terminal": true,
-    "announce_arriving": false,
-    "type": "countdown"
+    "source_config": [
+      [
+        {
+          "stop_id": "70036",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "malden_center_entire_station",
@@ -662,10 +946,22 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70035", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70035",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70034", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70034",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
@@ -676,36 +972,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70033", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70033",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70032", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70032",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "wellington_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OWEL",
-    "gtfs_stop_id": "70033",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70033",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "wellington_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OWEL",
-    "gtfs_stop_id": "70032",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70032",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "assembly_mezzanine",
@@ -714,36 +1032,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70279", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70279",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70278", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70278",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "assembly_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OASQ",
-    "gtfs_stop_id": "70279",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70279",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "assembly_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OASQ",
-    "gtfs_stop_id": "70278",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70278",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "sullivan_mezzanine",
@@ -752,36 +1092,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70031", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70031",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70030", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70030",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "sullivan_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OSUL",
-    "gtfs_stop_id": "70031",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70031",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "sullivan_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OSUL",
-    "gtfs_stop_id": "70030",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70030",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "community_college_mezzanine",
@@ -790,60 +1152,92 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70029", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70029",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70028", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70028",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "community_college_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OCOM",
-    "gtfs_stop_id": "70029",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70029",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "community_college_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OCOM",
-    "gtfs_stop_id": "70028",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70028",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "orange_north_station_northbound",
+    "type": "realtime",
     "pa_ess_loc": "ONST",
-    "gtfs_stop_id": "70027",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70027",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "orange_north_station_southbound",
+    "type": "realtime",
     "pa_ess_loc": "ONST",
-    "gtfs_stop_id": "70026",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70026",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "orange_north_station_mezzanine",
@@ -852,10 +1246,22 @@
     "pa_ess_zone": "c",
     "source_config": [
       [
-        {"stop_id": "70027", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70027",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70026", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70026",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
@@ -866,10 +1272,22 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70027", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70027",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70026", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70026",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
@@ -880,36 +1298,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70025", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70025",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70024", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70024",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "orange_haymarket_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OHAY",
-    "gtfs_stop_id": "70025",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70025",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "orange_haymarket_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OHAY",
-    "gtfs_stop_id": "70024",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70024",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "orange_state_mezzanine",
@@ -918,108 +1358,160 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70023", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70023",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70022", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70022",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "orange_state_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OSTN",
-    "gtfs_stop_id": "70023",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70023",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "orange_state_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OSTS",
-    "gtfs_stop_id": "70022",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70022",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "orange_downtown_crossing_northbound",
+    "type": "realtime",
     "pa_ess_loc": "ODTN",
-    "gtfs_stop_id": "70021",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70021",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "orange_downtown_crossing_southbound",
+    "type": "realtime",
     "pa_ess_loc": "ODTS",
-    "gtfs_stop_id": "70020",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70020",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "chinatown_northbound_lobby",
+    "type": "realtime",
     "pa_ess_loc": "OCHN",
-    "gtfs_stop_id": "70019",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "m"
+    "pa_ess_zone": "m",
+    "source_config": [
+      [
+        {
+          "stop_id": "70019",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "chinatown_southbound_lobby",
+    "type": "realtime",
     "pa_ess_loc": "OCHS",
-    "gtfs_stop_id": "70018",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "m"
+    "pa_ess_zone": "m",
+    "source_config": [
+      [
+        {
+          "stop_id": "70018",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "chinatown_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OCHN",
-    "gtfs_stop_id": "70019",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70019",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "chinatown_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OCHS",
-    "gtfs_stop_id": "70018",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70018",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "tufts_mezzanine",
@@ -1028,36 +1520,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70017", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70017",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70016", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70016",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "tufts_northbound",
+    "type": "realtime",
     "pa_ess_loc": "ONEM",
-    "gtfs_stop_id": "70017",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70017",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "tufts_southbound",
+    "type": "realtime",
     "pa_ess_loc": "ONEM",
-    "gtfs_stop_id": "70016",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70016",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "back_bay_mezzanine",
@@ -1066,36 +1580,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70015", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70015",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70014", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70014",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "back_bay_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OBAC",
-    "gtfs_stop_id": "70015",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70015",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "back_bay_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OBAC",
-    "gtfs_stop_id": "70014",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70014",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "mass_ave_mezzanine",
@@ -1104,60 +1640,92 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70013", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70013",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70012", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70012",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "mass_ave_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OMAS",
-    "gtfs_stop_id": "70013",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70013",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "mass_ave_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OMAS",
-    "gtfs_stop_id": "70012",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70012",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "ruggles_northbound",
+    "type": "realtime",
     "pa_ess_loc": "ORUG",
-    "gtfs_stop_id": "70011",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70011",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "ruggles_southbound",
+    "type": "realtime",
     "pa_ess_loc": "ORUG",
-    "gtfs_stop_id": "70010",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70010",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "ruggles_center",
@@ -1166,10 +1734,22 @@
     "pa_ess_zone": "c",
     "source_config": [
       [
-        {"stop_id": "70011", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70011",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70010", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70010",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
@@ -1180,10 +1760,22 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70011", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70011",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70010", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70010",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
@@ -1194,36 +1786,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70009", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70009",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70008", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70008",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "roxbury_crossing_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OROX",
-    "gtfs_stop_id": "70009",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70009",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "roxbury_crossing_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OROX",
-    "gtfs_stop_id": "70008",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70008",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "jackson_square_mezzanine",
@@ -1232,36 +1846,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70007", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70007",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70006", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70006",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "jackson_square_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OJAC",
-    "gtfs_stop_id": "70007",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70007",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "jackson_square_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OJAC",
-    "gtfs_stop_id": "70006",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70006",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "stony_brook_mezzanine",
@@ -1270,36 +1906,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70005", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70005",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70004", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70004",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "stony_brook_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OSTO",
-    "gtfs_stop_id": "70005",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70005",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "stony_brook_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OSTO",
-    "gtfs_stop_id": "70004",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70004",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "green_street_mezzanine",
@@ -1308,84 +1966,126 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70003", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70003",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70002", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70002",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
     "id": "green_street_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OGRE",
-    "gtfs_stop_id": "70003",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70003",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "green_street_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OGRE",
-    "gtfs_stop_id": "70002",
-    "direction_id": 0,
-    "route_id": "Orange",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70002",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "forest_hills_main_lobby",
+    "type": "realtime",
     "pa_ess_loc": "OFOR",
-    "gtfs_stop_id": "70001",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "departs",
-    "terminal": true,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "m"
+    "pa_ess_zone": "m",
+    "source_config": [
+      [
+        {
+          "stop_id": "70001",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "forest_hills_northbound",
+    "type": "realtime",
     "pa_ess_loc": "OFOR",
-    "gtfs_stop_id": "70001",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "departs",
-    "terminal": true,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "n"
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70001",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "forest_hills_southbound",
+    "type": "realtime",
     "pa_ess_loc": "OFOR",
-    "gtfs_stop_id": "70001",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "departs",
-    "terminal": true,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70001",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "forest_hills_entrances_from_busways",
+    "type": "realtime",
     "pa_ess_loc": "SFOR",
-    "gtfs_stop_id": "70001",
-    "direction_id": 1,
-    "route_id": "Orange",
-    "countdown_verb": "departs",
-    "terminal": true,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "m"
+    "pa_ess_zone": "m",
+    "source_config": [
+      [
+        {
+          "stop_id": "70001",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "ruggles_upper_busway",
@@ -1394,36 +2094,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70011", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70011",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70010", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70010",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "c",
-    "type": "countdown",
-    "terminal": true,
-    "route_id": "Red",
-    "pa_ess_loc": "RALE",
     "id": "alewife_center_southbound",
-    "gtfs_stop_id": "70061",
-    "direction_id": 0,
-    "countdown_verb": "departs",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RALE",
+    "pa_ess_zone": "c",
+    "source_config": [
+      [
+        {
+          "stop_id": "70061",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "m",
-    "type": "countdown",
-    "terminal": true,
-    "route_id": "Red",
-    "pa_ess_loc": "RALE",
     "id": "alewife_mezzanine_southbound",
-    "gtfs_stop_id": "70061",
-    "direction_id": 0,
-    "countdown_verb": "departs",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RALE",
+    "pa_ess_zone": "m",
+    "source_config": [
+      [
+        {
+          "stop_id": "70061",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "davis_mezzanine",
@@ -1432,36 +2154,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70064", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70064",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70063", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70063",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RDAV",
     "id": "davis_northbound",
-    "gtfs_stop_id": "70064",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RDAV",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70064",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RDAV",
     "id": "davis_southbound",
-    "gtfs_stop_id": "70063",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RDAV",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70063",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "porter_mezzanine",
@@ -1470,36 +2214,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70066", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70066",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70065", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70065",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RPOR",
     "id": "porter_northbound",
-    "gtfs_stop_id": "70066",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RPOR",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70066",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RPOR",
     "id": "porter_southbound",
-    "gtfs_stop_id": "70065",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RPOR",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70065",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "harvard_mezzanine",
@@ -1508,132 +2274,194 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70068", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70068",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70067", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70067",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RHAR",
     "id": "harvard_northbound",
-    "gtfs_stop_id": "70068",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
-  },
-  {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
+    "type": "realtime",
     "pa_ess_loc": "RHAR",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70068",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
+  },
+  {
     "id": "harvard_southbound",
-    "gtfs_stop_id": "70067",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RHAR",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70067",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RCEN",
     "id": "central_northbound",
-    "gtfs_stop_id": "70070",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
-  },
-  {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
+    "type": "realtime",
     "pa_ess_loc": "RCEN",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70070",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
+  },
+  {
     "id": "central_southbound",
-    "gtfs_stop_id": "70069",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RCEN",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70069",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RKEN",
     "id": "kendall_mit_northbound",
-    "gtfs_stop_id": "70072",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
-  },
-  {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
+    "type": "realtime",
     "pa_ess_loc": "RKEN",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70072",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
+  },
+  {
     "id": "kendall_mit_southbound",
-    "gtfs_stop_id": "70071",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RKEN",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70071",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RMGH",
     "id": "charles_mgh_northbound",
-    "gtfs_stop_id": "70074",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
-  },
-  {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
+    "type": "realtime",
     "pa_ess_loc": "RMGH",
-    "id": "charles_mgh_southbound",
-    "gtfs_stop_id": "70073",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
-  },
-  {
     "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RPRK",
-    "id": "red_park_st_northbound",
-    "gtfs_stop_id": "70076",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "source_config": [
+      [
+        {
+          "stop_id": "70074",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
+    "id": "charles_mgh_southbound",
+    "type": "realtime",
+    "pa_ess_loc": "RMGH",
     "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
+    "source_config": [
+      [
+        {
+          "stop_id": "70073",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "red_park_st_northbound",
+    "type": "realtime",
     "pa_ess_loc": "RPRK",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70076",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
+  },
+  {
     "id": "red_park_st_southbound",
-    "gtfs_stop_id": "70075",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RPRK",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70075",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "red_park_st_center",
@@ -1642,36 +2470,58 @@
     "pa_ess_zone": "c",
     "source_config": [
       [
-        {"stop_id": "70076", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70076",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70075", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70075",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RDTC",
     "id": "red_downtown_crossing_northbound",
-    "gtfs_stop_id": "70078",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RDTC",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70078",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RDTC",
     "id": "red_downtown_crossing_southbound",
-    "gtfs_stop_id": "70077",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RDTC",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70077",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "red_south_station_mezzanine",
@@ -1680,36 +2530,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70080", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70080",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70079", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70079",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RSOU",
     "id": "red_south_station_northbound",
-    "gtfs_stop_id": "70080",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RSOU",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70080",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RSOU",
     "id": "red_south_station_southbound",
-    "gtfs_stop_id": "70079",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RSOU",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70079",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "south_station_silver_line_arrival_platform",
@@ -1718,10 +2590,22 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70080", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70080",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70079", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70079",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
@@ -1732,36 +2616,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70082", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70082",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70081", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70081",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RBRO",
     "id": "broadway_northbound",
-    "gtfs_stop_id": "70082",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RBRO",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70082",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RBRO",
     "id": "broadway_southbound",
-    "gtfs_stop_id": "70081",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RBRO",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70081",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "andrew_mezzanine",
@@ -1770,36 +2676,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70084", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70084",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70083", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70083",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RAND",
     "id": "andrew_northbound",
-    "gtfs_stop_id": "70084",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RAND",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70084",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RAND",
     "id": "andrew_southbound",
-    "gtfs_stop_id": "70083",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RAND",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70083",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "savin_hill_mezzanine",
@@ -1808,36 +2736,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70088", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70088",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70087", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70087",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RSAV",
     "id": "savin_hill_northbound",
-    "gtfs_stop_id": "70088",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RSAV",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70088",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RSAV",
     "id": "savin_hill_southbound",
-    "gtfs_stop_id": "70087",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RSAV",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70087",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "fields_corner_mezzanine",
@@ -1846,36 +2796,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70090", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70090",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70089", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70089",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RFIE",
     "id": "fields_corner_northbound",
-    "gtfs_stop_id": "70090",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RFIE",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70090",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RFIE",
     "id": "fields_corner_southbound",
-    "gtfs_stop_id": "70089",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RFIE",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70089",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "shawmut_mezzanine",
@@ -1884,36 +2856,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70092", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70092",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70091", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70091",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RSHA",
     "id": "shawmut_northbound",
-    "gtfs_stop_id": "70092",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RSHA",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70092",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RSHA",
     "id": "shawmut_southbound",
-    "gtfs_stop_id": "70091",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RSHA",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70091",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "ashmont_mezzanine",
@@ -1922,24 +2916,41 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70094", "direction_id": 1, "platform": null, "terminal": true, "announce_arriving": false}
+        {
+          "stop_id": "70094",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70261", "direction_id": 0, "platform": null, "terminal": true, "announce_arriving": true}
+        {
+          "stop_id": "70261",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": true
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": true,
-    "route_id": "Red",
-    "pa_ess_loc": "RASH",
     "id": "red_ashmont_northbound",
-    "gtfs_stop_id": "70094",
-    "direction_id": 1,
-    "countdown_verb": "departs",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RASH",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70094",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "north_quincy_mezzanine",
@@ -1948,36 +2959,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70098", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70098",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70097", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70097",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RNQU",
     "id": "north_quincy_northbound",
-    "gtfs_stop_id": "70098",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RNQU",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70098",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RNQU",
     "id": "north_quincy_southbound",
-    "gtfs_stop_id": "70097",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RNQU",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70097",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "wollaston_mezzanine",
@@ -1986,36 +3019,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70100", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70100",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70099", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70099",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RWOL",
     "id": "wollaston_northbound",
-    "gtfs_stop_id": "70100",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RWOL",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70100",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RWOL",
     "id": "wollaston_southbound",
-    "gtfs_stop_id": "70099",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RWOL",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70099",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "quincy_center_mezzanine",
@@ -2024,36 +3079,58 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70102", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70102",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70101", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70101",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RQUC",
     "id": "quincy_center_northbound",
-    "gtfs_stop_id": "70102",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RQUC",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70102",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RQUC",
     "id": "quincy_center_southbound",
-    "gtfs_stop_id": "70101",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RQUC",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70101",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "quincy_adams_mezzanine",
@@ -2062,110 +3139,160 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70104", "direction_id": 1, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70104",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70103", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70103",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   },
   {
-    "pa_ess_zone": "n",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
-    "pa_ess_loc": "RQUA",
     "id": "quincy_adams_northbound",
-    "gtfs_stop_id": "70104",
-    "direction_id": 1,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
-  },
-  {
-    "pa_ess_zone": "s",
-    "type": "countdown",
-    "terminal": false,
-    "route_id": "Red",
+    "type": "realtime",
     "pa_ess_loc": "RQUA",
+    "pa_ess_zone": "n",
+    "source_config": [
+      [
+        {
+          "stop_id": "70104",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
+  },
+  {
     "id": "quincy_adams_southbound",
-    "gtfs_stop_id": "70103",
-    "direction_id": 0,
-    "countdown_verb": "arrives",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RQUA",
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70103",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "c",
-    "type": "countdown",
-    "terminal": true,
-    "route_id": "Red",
-    "pa_ess_loc": "RBRA",
     "id": "braintree_center_northbound",
-    "gtfs_stop_id": "70105",
-    "direction_id": 1,
-    "countdown_verb": "departs",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RBRA",
+    "pa_ess_zone": "c",
+    "source_config": [
+      [
+        {
+          "stop_id": "70105",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
-    "pa_ess_zone": "m",
-    "type": "countdown",
-    "terminal": true,
-    "route_id": "Red",
-    "pa_ess_loc": "RBRA",
     "id": "braintree_mezzanine_northbound",
-    "gtfs_stop_id": "70105",
-    "direction_id": 1,
-    "countdown_verb": "departs",
-    "announce_arriving": false
+    "type": "realtime",
+    "pa_ess_loc": "RBRA",
+    "pa_ess_zone": "m",
+    "source_config": [
+      [
+        {
+          "stop_id": "70105",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "jfk_umass_ashmont_platform_southbound",
+    "type": "realtime",
     "pa_ess_loc": "RJFK",
-    "gtfs_stop_id": "70085",
-    "direction_id": 0,
-    "route_id": "Red",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "w"
+    "pa_ess_zone": "w",
+    "source_config": [
+      [
+        {
+          "stop_id": "70085",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "jfk_umass_braintree_platform_southbound",
+    "type": "realtime",
     "pa_ess_loc": "RJFK",
-    "gtfs_stop_id": "70095",
-    "direction_id": 0,
-    "route_id": "Red",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
-    "pa_ess_zone": "s"
+    "pa_ess_zone": "s",
+    "source_config": [
+      [
+        {
+          "stop_id": "70095",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "jfk_umass_ashmont_platform_northbound",
+    "type": "realtime",
     "pa_ess_loc": "RJFK",
-    "gtfs_stop_id": "70086",
-    "direction_id": 1,
-    "route_id": "Red",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
     "pa_ess_zone": "e",
-    "platform": "ashmont"
+    "source_config": [
+      [
+        {
+          "stop_id": "70086",
+          "direction_id": 1,
+          "platform": "ashmont",
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "jfk_umass_braintree_platform_northbound",
+    "type": "realtime",
     "pa_ess_loc": "RJFK",
-    "gtfs_stop_id": "70096",
-    "direction_id": 1,
-    "route_id": "Red",
-    "countdown_verb": "arrives",
-    "terminal": false,
-    "announce_arriving": false,
-    "type": "countdown",
     "pa_ess_zone": "n",
-    "platform": "braintree"
+    "source_config": [
+      [
+        {
+          "stop_id": "70096",
+          "direction_id": 1,
+          "platform": "braintree",
+          "terminal": false,
+          "announce_arriving": false
+        }
+      ]
+    ]
   },
   {
     "id": "jfk_umass_mezzanine",
@@ -2174,12 +3301,36 @@
     "pa_ess_zone": "m",
     "source_config": [
       [
-        {"stop_id": "70086", "direction_id": 1, "platform": "ashmont", "terminal": false, "announce_arriving": false},
-        {"stop_id": "70096", "direction_id": 1, "platform": "braintree", "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70086",
+          "direction_id": 1,
+          "platform": "ashmont",
+          "terminal": false,
+          "announce_arriving": false
+        },
+        {
+          "stop_id": "70096",
+          "direction_id": 1,
+          "platform": "braintree",
+          "terminal": false,
+          "announce_arriving": false
+        }
       ],
       [
-        {"stop_id": "70085", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false},
-        {"stop_id": "70095", "direction_id": 0, "platform": null, "terminal": false, "announce_arriving": false}
+        {
+          "stop_id": "70085",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        },
+        {
+          "stop_id": "70095",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false
+        }
       ]
     ]
   }
