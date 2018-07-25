@@ -3,92 +3,108 @@ defmodule Signs.CountdownTest do
 
   defmodule FakeUpdater do
     def update_single_line({"test-sign", "notify-me"}, _, _, _, _) do
-      pid = case Process.whereis(:fake_updater_listener) do
-        nil -> self()
-        registered -> registered
-      end
+      pid =
+        case Process.whereis(:fake_updater_listener) do
+          nil -> self()
+          registered -> registered
+        end
 
-      send pid, {:update_single_line, {"test-sign", "notify-me"}}
+      send(pid, {:update_single_line, {"test-sign", "notify-me"}})
       {:reply, {:ok, :sent}, []}
     end
+
     def update_single_line(_pa_ess_id, "1", _msg, _duration, _start_secs) do
       {:reply, {:ok, :sent}, []}
     end
+
     def update_single_line(_pa_ess_id, "2", _msg, _duration, _start_secs) do
       {:reply, {:ok, :sent}, []}
     end
+
     def update_sign("notsent", _, _, _duration, _start) do
       {:error, :notsent}
     end
+
     def update_sign(_pa_ess_id, _top, _bottom, _duration, _start) do
       {:ok, :sent}
     end
-    def send_audio(pa_ess_id, msg, priority, timeout) do
-      pid = case Process.whereis(:fake_updater_listener) do
-        nil -> self()
-        registered -> registered
-      end
 
-      send pid, {:send_audio, {pa_ess_id, msg, priority, timeout}}
+    def send_audio(pa_ess_id, msg, priority, timeout) do
+      pid =
+        case Process.whereis(:fake_updater_listener) do
+          nil -> self()
+          registered -> registered
+        end
+
+      send(pid, {:send_audio, {pa_ess_id, msg, priority, timeout}})
       {:reply, {:ok, :sent}, []}
     end
   end
 
   defmodule FakePredictionsEngine do
     def for_stop("two_boarding", 1) do
-      [%Predictions.Prediction{
-        stop_id: "two_boarding",
-        direction_id: 1,
-        seconds_until_arrival: 0,
-        seconds_until_departure: 0,
-        route_id: "Mattapan",
-        destination_stop_id: "70275"
-       },
-      %Predictions.Prediction{
+      [
+        %Predictions.Prediction{
           stop_id: "two_boarding",
           direction_id: 1,
           seconds_until_arrival: 0,
           seconds_until_departure: 0,
           route_id: "Mattapan",
           destination_stop_id: "70275"
-       }]
+        },
+        %Predictions.Prediction{
+          stop_id: "two_boarding",
+          direction_id: 1,
+          seconds_until_arrival: 0,
+          seconds_until_departure: 0,
+          route_id: "Mattapan",
+          destination_stop_id: "70275"
+        }
+      ]
     end
+
     def for_stop("many_predictions", 1) do
-      [%Predictions.Prediction{
-        stop_id: "many_predictions",
-        direction_id: 1,
-        seconds_until_arrival: 10,
-        seconds_until_departure: 10,
-        route_id: "Mattapan",
-        destination_stop_id: "70275"
-       },
-      %Predictions.Prediction{
-        stop_id: "many_predictions",
-        direction_id: 1,
-        seconds_until_arrival: 500,
-        seconds_until_departure: 500,
-        route_id: "Mattapan",
-        destination_stop_id: "70275"
-       },
-      %Predictions.Prediction{
+      [
+        %Predictions.Prediction{
+          stop_id: "many_predictions",
+          direction_id: 1,
+          seconds_until_arrival: 10,
+          seconds_until_departure: 10,
+          route_id: "Mattapan",
+          destination_stop_id: "70275"
+        },
+        %Predictions.Prediction{
+          stop_id: "many_predictions",
+          direction_id: 1,
+          seconds_until_arrival: 500,
+          seconds_until_departure: 500,
+          route_id: "Mattapan",
+          destination_stop_id: "70275"
+        },
+        %Predictions.Prediction{
           stop_id: "many_predictions",
           direction_id: 1,
           seconds_until_arrival: 200,
           seconds_until_departure: 200,
           route_id: "Mattapan",
           destination_stop_id: "70275"
-       }]
+        }
+      ]
     end
+
     def for_stop("not-arriving", 1) do
-      [%Predictions.Prediction{
-        stop_id: "not-arriving",
-        direction_id: 1,
-        seconds_until_arrival: 100,
-        seconds_until_departure: 100,
-        route_id: "Mattapan",
-        destination_stop_id: "70275"
-       }]
+      [
+        %Predictions.Prediction{
+          stop_id: "not-arriving",
+          direction_id: 1,
+          seconds_until_arrival: 100,
+          seconds_until_departure: 100,
+          route_id: "Mattapan",
+          destination_stop_id: "70275"
+        }
+      ]
     end
+
     def for_stop("brd-arr-bug", 1) do
       [
         %Predictions.Prediction{
@@ -106,26 +122,31 @@ defmodule Signs.CountdownTest do
           seconds_until_departure: 600,
           route_id: "Mattapan",
           destination_stop_id: "70275"
-        },
+        }
       ]
     end
+
     def for_stop(gtfs_stop_id, 1) do
-      [%Predictions.Prediction{
-        stop_id: gtfs_stop_id,
-        direction_id: 1,
-        seconds_until_arrival: 10,
-        seconds_until_departure: 10,
-        route_id: "Mattapan",
-        destination_stop_id: "70275"
-       }]
+      [
+        %Predictions.Prediction{
+          stop_id: gtfs_stop_id,
+          direction_id: 1,
+          seconds_until_arrival: 10,
+          seconds_until_departure: 10,
+          route_id: "Mattapan",
+          destination_stop_id: "70275"
+        }
+      ]
     end
 
     def stopped_at?("two_boarding") do
       true
     end
+
     def stopped_at?("brd-arr-bug") do
       true
     end
+
     def stopped_at?(_) do
       false
     end
@@ -143,10 +164,16 @@ defmodule Signs.CountdownTest do
     terminal: false,
     sign_updater: FakeUpdater,
     prediction_engine: FakePredictionsEngine,
-    read_sign_period_ms: 10_000,
+    read_sign_period_ms: 10_000
   }
 
-  @empty_sign %{@content_sign | gtfs_stop_id: "many_predictions", current_content_bottom: nil, current_content_top: nil, terminal: true}
+  @empty_sign %{
+    @content_sign
+    | gtfs_stop_id: "many_predictions",
+      current_content_bottom: nil,
+      current_content_top: nil,
+      terminal: true
+  }
 
   @audio_sign %Signs.Countdown{
     id: "audio-sign",
@@ -160,17 +187,19 @@ defmodule Signs.CountdownTest do
     terminal: false,
     sign_updater: FakeUpdater,
     prediction_engine: FakePredictionsEngine,
-    read_sign_period_ms: 10_000,
+    read_sign_period_ms: 10_000
   }
 
   describe "update_content callback" do
     test "when the bottom line is boarding at a terminal, instead show arriving" do
       top_content = %Content.Message.Predictions{
-        headsign: "Ashmont", minutes: :boarding
+        headsign: "Ashmont",
+        minutes: :boarding
       }
 
       bottom_content = %Content.Message.Predictions{
-        headsign: "Ashmont", minutes: :boarding
+        headsign: "Ashmont",
+        minutes: :boarding
       }
 
       sign = %Signs.Countdown{
@@ -185,23 +214,27 @@ defmodule Signs.CountdownTest do
         terminal: false,
         sign_updater: FakeUpdater,
         prediction_engine: FakePredictionsEngine,
-        read_sign_period_ms: 10_000,
+        read_sign_period_ms: 10_000
       }
 
       expected_bottom = %Content.Message.Predictions{
-        headsign: "Ashmont", minutes: :arriving
+        headsign: "Ashmont",
+        minutes: :arriving
       }
 
-      assert {:noreply, %{current_content_bottom: ^expected_bottom}} = Signs.Countdown.handle_info(:update_content, sign)
+      assert {:noreply, %{current_content_bottom: ^expected_bottom}} =
+               Signs.Countdown.handle_info(:update_content, sign)
     end
 
     test "when the bottom line is boarding at a terminal, instead show 1 min" do
       top_content = %Content.Message.Predictions{
-        headsign: "Ashmont", minutes: :boarding
+        headsign: "Ashmont",
+        minutes: :boarding
       }
 
       bottom_content = %Content.Message.Predictions{
-        headsign: "Ashmont", minutes: :boarding
+        headsign: "Ashmont",
+        minutes: :boarding
       }
 
       sign = %Signs.Countdown{
@@ -216,27 +249,32 @@ defmodule Signs.CountdownTest do
         terminal: true,
         sign_updater: FakeUpdater,
         prediction_engine: FakePredictionsEngine,
-        read_sign_period_ms: 10_000,
+        read_sign_period_ms: 10_000
       }
 
       expected_bottom = %Content.Message.Predictions{
-        headsign: "Ashmont", minutes: 1
+        headsign: "Ashmont",
+        minutes: 1
       }
 
-      assert {:noreply, %{current_content_bottom: ^expected_bottom}} = Signs.Countdown.handle_info(:update_content, sign)
+      assert {:noreply, %{current_content_bottom: ^expected_bottom}} =
+               Signs.Countdown.handle_info(:update_content, sign)
     end
 
     test "when the sign is a terminal, shows 1 min instead of arriving message" do
-
       top_content = %Content.Message.Predictions{
-        headsign: "Ashmont", minutes: 1
+        headsign: "Ashmont",
+        minutes: 1
       }
 
       bottom_content = %Content.Message.Predictions{
-        headsign: "Ashmont", minutes: 3
+        headsign: "Ashmont",
+        minutes: 3
       }
 
-      assert {:noreply, %{current_content_top: ^top_content, current_content_bottom: ^bottom_content}} = Signs.Countdown.handle_info(:update_content, @empty_sign)
+      assert {:noreply,
+              %{current_content_top: ^top_content, current_content_bottom: ^bottom_content}} =
+               Signs.Countdown.handle_info(:update_content, @empty_sign)
     end
 
     test "when train is at station, don't force bottom line to brd/arr" do
@@ -250,50 +288,68 @@ defmodule Signs.CountdownTest do
     test "Does not update sign when pa_ess updater returns an error" do
       sign = %{@empty_sign | pa_ess_id: "notsent"}
 
-      assert {:noreply, %{current_content_top: nil, current_content_bottom: nil}} = Signs.Countdown.handle_info(:update_content, sign)
+      assert {:noreply, %{current_content_top: nil, current_content_bottom: nil}} =
+               Signs.Countdown.handle_info(:update_content, sign)
     end
 
     test "when both lines change, sends an update containing both lines" do
       sign = %{@empty_sign | terminal: false}
 
       top_content = %Content.Message.Predictions{
-        headsign: "Ashmont", minutes: :arriving
+        headsign: "Ashmont",
+        minutes: :arriving
       }
 
       bottom_content = %Content.Message.Predictions{
-        headsign: "Ashmont", minutes: 3
+        headsign: "Ashmont",
+        minutes: 3
       }
 
-      assert {:noreply, %{current_content_top: ^top_content, current_content_bottom: ^bottom_content}} = Signs.Countdown.handle_info(:update_content, sign)
+      assert {:noreply,
+              %{current_content_top: ^top_content, current_content_bottom: ^bottom_content}} =
+               Signs.Countdown.handle_info(:update_content, sign)
     end
 
     test "when top has new predictions, sends an update" do
       top_content = %Content.Message.Predictions{
-        headsign: "Ashmont", minutes: :arriving
+        headsign: "Ashmont",
+        minutes: :arriving
       }
-      assert {:noreply, %{current_content_top: ^top_content, current_content_bottom: %Content.Message.Empty{}}} = Signs.Countdown.handle_info(:update_content, @content_sign)
+
+      assert {:noreply,
+              %{
+                current_content_top: ^top_content,
+                current_content_bottom: %Content.Message.Empty{}
+              }} = Signs.Countdown.handle_info(:update_content, @content_sign)
     end
 
     test "when the sign is disabled, does not send an update" do
       sign = %{@content_sign | id: "MVAL0"}
       :timer.sleep(1000)
-      assert {:noreply, %{
-        current_content_top: %Content.Message.Empty{},
-        current_content_bottom: %Content.Message.Empty{}}} = Signs.Countdown.handle_info(:update_content, sign)
+
+      assert {:noreply,
+              %{
+                current_content_top: %Content.Message.Empty{},
+                current_content_bottom: %Content.Message.Empty{}
+              }} = Signs.Countdown.handle_info(:update_content, sign)
     end
 
     test "when bottom has new predictions, sends an update" do
       sign = %{@empty_sign | terminal: false}
 
       top_content = %Content.Message.Predictions{
-        headsign: "Ashmont", minutes: :arriving
+        headsign: "Ashmont",
+        minutes: :arriving
       }
 
       bottom_content = %Content.Message.Predictions{
-        headsign: "Ashmont", minutes: 3
+        headsign: "Ashmont",
+        minutes: 3
       }
 
-      assert {:noreply, %{current_content_top: ^top_content, current_content_bottom: ^bottom_content}} = Signs.Countdown.handle_info(:update_content, sign)
+      assert {:noreply,
+              %{current_content_top: ^top_content, current_content_bottom: ^bottom_content}} =
+               Signs.Countdown.handle_info(:update_content, sign)
     end
 
     test "when unchanged, no update sent" do
@@ -301,132 +357,209 @@ defmodule Signs.CountdownTest do
 
       assert {:noreply, %Signs.Countdown{}} = Signs.Countdown.handle_info(:update_content, sign)
 
-      assert(receive do
-        {:update_single_line, {"test-sign", "notify-me"}} -> false
-      after
-        0 -> true
-      end)
+      assert(
+        receive do
+          {:update_single_line, {"test-sign", "notify-me"}} -> false
+        after
+          0 -> true
+        end
+      )
     end
 
     test "when top changes to mattapan arriving, sends an audio message" do
+      assert {:noreply, %Signs.Countdown{}} =
+               Signs.Countdown.handle_info(:update_content, @audio_sign)
 
-      assert {:noreply, %Signs.Countdown{}} = Signs.Countdown.handle_info(:update_content, @audio_sign)
-      assert(receive do
-        {:send_audio, {{"ABCD", "n"}, %Content.Audio.TrainIsArriving{destination: :ashmont}, 5, 60}} -> true
-      after
-        0 -> false
-      end)
+      assert(
+        receive do
+          {:send_audio,
+           {{"ABCD", "n"}, %Content.Audio.TrainIsArriving{destination: :ashmont}, 5, 60}} ->
+            true
+        after
+          0 -> false
+        end
+      )
     end
 
     test "Does not send arriving audio message if sign is configured to not arriving announcements" do
       sign = %{@audio_sign | announce_arriving?: false}
       assert {:noreply, %Signs.Countdown{}} = Signs.Countdown.handle_info(:update_content, sign)
-      refute(receive do
-        {:send_audio, {{"ABCD", "n"}, %Content.Audio.TrainIsArriving{destination: :mattapan}, 5, 60}} -> true
-      after
-        0 -> false
-      end)
+
+      refute(
+        receive do
+          {:send_audio,
+           {{"ABCD", "n"}, %Content.Audio.TrainIsArriving{destination: :mattapan}, 5, 60}} ->
+            true
+        after
+          0 -> false
+        end
+      )
     end
 
     test "when top changes to a different minute, no audio message sent" do
-      sign = %{@audio_sign | current_content_top: %Content.Message.Predictions{headsign: "Mattapan", minutes: 2},
-                            gtfs_stop_id: "not-arriving"}
+      sign = %{
+        @audio_sign
+        | current_content_top: %Content.Message.Predictions{headsign: "Mattapan", minutes: 2},
+          gtfs_stop_id: "not-arriving"
+      }
 
       assert {:noreply, %Signs.Countdown{}} = Signs.Countdown.handle_info(:update_content, sign)
-      assert(receive do
-        {:send_audio, _} -> false
-      after
-        0 -> true
-      end)
+
+      assert(
+        receive do
+          {:send_audio, _} -> false
+        after
+          0 -> true
+        end
+      )
     end
   end
 
   describe "read_sign callback" do
     test "sends two audio requests when the top and bottom lines show different headsigns" do
-      sign = %{@audio_sign | current_content_top: %Content.Message.Predictions{headsign: "Ashmont", minutes: 2},
-                            current_content_bottom: %Content.Message.Predictions{headsign: "Braintree", minutes: 3},
-                            gtfs_stop_id: "not-arriving"}
+      sign = %{
+        @audio_sign
+        | current_content_top: %Content.Message.Predictions{headsign: "Ashmont", minutes: 2},
+          current_content_bottom: %Content.Message.Predictions{headsign: "Braintree", minutes: 3},
+          gtfs_stop_id: "not-arriving"
+      }
 
       assert {:noreply, %Signs.Countdown{}} = Signs.Countdown.handle_info(:read_sign, sign)
-      assert(receive do
-        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :ashmont, verb: :arrives, minutes: 2}, 5, 60}} -> true
-      after
-        0 -> false
-      end)
-      assert(receive do
-        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{}, 5, 60}} -> true
-      after
-        0 -> false
-      end)
+
+      assert(
+        receive do
+          {:send_audio,
+           {{"ABCD", "n"},
+            %Content.Audio.NextTrainCountdown{destination: :ashmont, verb: :arrives, minutes: 2},
+            5, 60}} ->
+            true
+        after
+          0 -> false
+        end
+      )
+
+      assert(
+        receive do
+          {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{}, 5, 60}} -> true
+        after
+          0 -> false
+        end
+      )
     end
 
     test "sends one audio request when the top line has the same headsign as the bottom line" do
-      sign = %{@audio_sign | current_content_top: %Content.Message.Predictions{headsign: "Mattapan", minutes: 2},
-                            current_content_bottom: %Content.Message.Predictions{headsign: "Mattapan", minutes: 3},
-                            gtfs_stop_id: "not-arriving"}
+      sign = %{
+        @audio_sign
+        | current_content_top: %Content.Message.Predictions{headsign: "Mattapan", minutes: 2},
+          current_content_bottom: %Content.Message.Predictions{headsign: "Mattapan", minutes: 3},
+          gtfs_stop_id: "not-arriving"
+      }
 
       assert {:noreply, %Signs.Countdown{}} = Signs.Countdown.handle_info(:read_sign, sign)
-      assert(receive do
-        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 2}, 5, 60}} -> true
-      after
-        0 -> false
-      end)
-      refute(receive do
-        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 3}, 5, 60}} -> true
-      after
-        0 -> false
-      end)
+
+      assert(
+        receive do
+          {:send_audio,
+           {{"ABCD", "n"},
+            %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 2},
+            5, 60}} ->
+            true
+        after
+          0 -> false
+        end
+      )
+
+      refute(
+        receive do
+          {:send_audio,
+           {{"ABCD", "n"},
+            %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 3},
+            5, 60}} ->
+            true
+        after
+          0 -> false
+        end
+      )
     end
 
     test "does not send an audio request for a boarding prediction" do
-      sign = %{@audio_sign | current_content_top: %Content.Message.Predictions{headsign: "Mattapan", minutes: :boarding},
-                            gtfs_stop_id: "not-arriving"}
+      sign = %{
+        @audio_sign
+        | current_content_top: %Content.Message.Predictions{
+            headsign: "Mattapan",
+            minutes: :boarding
+          },
+          gtfs_stop_id: "not-arriving"
+      }
 
       assert {:noreply, %Signs.Countdown{}} = Signs.Countdown.handle_info(:read_sign, sign)
-      assert(receive do
-        {:send_audio, _} -> false
-      after
-        0 -> true
-      end)
 
+      assert(
+        receive do
+          {:send_audio, _} -> false
+        after
+          0 -> true
+        end
+      )
     end
 
     test "callback is invoked periodically" do
       Process.register(self(), :fake_updater_listener)
-      sign = %{@audio_sign | current_content_top: %Content.Message.Predictions{headsign: "Mattapan", minutes: 2},
-                            gtfs_stop_id: "1", read_sign_period_ms: 1_000}
+
+      sign = %{
+        @audio_sign
+        | current_content_top: %Content.Message.Predictions{headsign: "Mattapan", minutes: 2},
+          gtfs_stop_id: "1",
+          read_sign_period_ms: 1_000
+      }
 
       {:ok, _pid} = GenServer.start_link(Signs.Countdown, sign)
 
       :timer.sleep(1500)
 
-      assert(receive do
-        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 1}, 5, 60}} -> false
-      after
-        0 -> true
-      end)
+      assert(
+        receive do
+          {:send_audio,
+           {{"ABCD", "n"},
+            %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 1},
+            5, 60}} ->
+            false
+        after
+          0 -> true
+        end
+      )
 
       :timer.sleep(1000)
 
-      assert(receive do
-        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 2}, 5, 60}} -> true
-      after
-        0 -> false
-      end)
+      assert(
+        receive do
+          {:send_audio,
+           {{"ABCD", "n"},
+            %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 2},
+            5, 60}} ->
+            true
+        after
+          0 -> false
+        end
+      )
 
       :timer.sleep(1000)
 
-      assert(receive do
-        {:send_audio, {{"ABCD", "n"}, %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 2}, 5, 60}} -> true
-      after
-        0 -> false
-      end)
-
+      assert(
+        receive do
+          {:send_audio,
+           {{"ABCD", "n"},
+            %Content.Audio.NextTrainCountdown{destination: :mattapan, verb: :arrives, minutes: 2},
+            5, 60}} ->
+            true
+        after
+          0 -> false
+        end
+      )
     end
   end
 
   describe "expire_x callback" do
-
     test "expire_top removes anything in the current_content_top field" do
       {:noreply, sign} = Signs.Countdown.handle_info(:expire_top, @content_sign)
       assert sign.current_content_top == Content.Message.Empty.new()
@@ -451,6 +584,7 @@ defmodule Signs.CountdownTest do
         "countdown_verb" => "arrives",
         "type" => "countdown"
       }
+
       opts = [sign_updater: __MODULE__, prediction_engine: __MODULE__]
       {:ok, pid} = Signs.Countdown.start_link(config, opts)
       state = :sys.get_state(pid)
@@ -470,10 +604,17 @@ defmodule Signs.CountdownTest do
         "type" => "countdown",
         "platform" => "ashmont"
       }
+
       opts = [sign_updater: __MODULE__, prediction_engine: __MODULE__]
       {:ok, pid} = Signs.Countdown.start_link(config, opts)
       state = :sys.get_state(pid)
-      assert %{id: "jfk_umass_ashmont_platform_northbound", gtfs_stop_id: "70086", pa_ess_id: {"RJFK", "e"}, platform: :ashmont} = state
+
+      assert %{
+               id: "jfk_umass_ashmont_platform_northbound",
+               gtfs_stop_id: "70086",
+               pa_ess_id: {"RJFK", "e"},
+               platform: :ashmont
+             } = state
     end
   end
 
@@ -481,7 +622,9 @@ defmodule Signs.CountdownTest do
     test "when the stop id is even, offset is 30 seconds later than if its odd" do
       odd_sign = %{@content_sign | gtfs_stop_id: "1"}
       even_sign = %{@content_sign | gtfs_stop_id: "2"}
-      assert Signs.Countdown.initial_offset(even_sign) == Signs.Countdown.initial_offset(odd_sign) + 30_000
+
+      assert Signs.Countdown.initial_offset(even_sign) ==
+               Signs.Countdown.initial_offset(odd_sign) + 30_000
     end
   end
 end

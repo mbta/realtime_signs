@@ -6,7 +6,7 @@ defmodule Engine.Config do
   use GenServer
   require Logger
 
-  @type version_id :: String.t | nil
+  @type version_id :: String.t() | nil
 
   @table __MODULE__
 
@@ -30,18 +30,22 @@ defmodule Engine.Config do
   def handle_info(:update, current_version) do
     schedule_update(self())
     updater = Application.get_env(:realtime_signs, :external_config_getter)
-    latest_version = case updater.get(current_version) do
-      {version, config} ->
-        :ets.insert(@table, Enum.into(config, []))
-        version
-      :unchanged ->
-        current_version
-    end
+
+    latest_version =
+      case updater.get(current_version) do
+        {version, config} ->
+          :ets.insert(@table, Enum.into(config, []))
+          version
+
+        :unchanged ->
+          current_version
+      end
 
     {:noreply, latest_version}
   end
+
   def handle_info(msg, state) do
-    Logger.warn("#{__MODULE__} unknown message: #{inspect msg}")
+    Logger.warn("#{__MODULE__} unknown message: #{inspect(msg)}")
     {:noreply, state}
   end
 

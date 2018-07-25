@@ -26,6 +26,7 @@ defmodule Signs.Supervisor do
   defp children() do
     for sign_config <- children_config() do
       sign_module = sign_module(sign_config)
+
       %{
         id: :"sign_#{sign_config["id"]}",
         start: {sign_module, :start_link, [sign_config]}
@@ -41,9 +42,9 @@ defmodule Signs.Supervisor do
 
   defp children_config() do
     :realtime_signs
-    |> :code.priv_dir
+    |> :code.priv_dir()
     |> Path.join("signs.json")
-    |> File.read!
-    |> Poison.Parser.parse!
+    |> File.read!()
+    |> Poison.Parser.parse!()
   end
 end

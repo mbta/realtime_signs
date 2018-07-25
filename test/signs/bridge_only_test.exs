@@ -5,13 +5,16 @@ defmodule Signs.BridgeOnlyTest do
     def status("down") do
       {"Lowered", nil}
     end
+
     def status("up") do
       {"Raised", 15}
     end
+
     def status("notify") do
-      send :bridge_only_test_fake_bridge_engine_listener, :notified
+      send(:bridge_only_test_fake_bridge_engine_listener, :notified)
       {"Lowered", nil}
     end
+
     def status(_) do
       nil
     end
@@ -19,13 +22,14 @@ defmodule Signs.BridgeOnlyTest do
 
   defmodule FakeSignUpdater do
     require Logger
+
     def update_single_line(_id, _line, _message, _duration, _start) do
-      send :bridge_only_test_fake_sign_updater_listener, :update_single_line
+      send(:bridge_only_test_fake_sign_updater_listener, :update_single_line)
       {:ok, :sent}
     end
 
     def send_audio(_pa_ess_id, msg, _priority, _timeout) do
-      send :bridge_only_test_fake_sign_updater_listener, {:send_audio, msg}
+      send(:bridge_only_test_fake_sign_updater_listener, {:send_audio, msg})
       {:ok, :sent}
     end
   end
@@ -36,7 +40,7 @@ defmodule Signs.BridgeOnlyTest do
     bridge_engine: FakeBridgeEngine,
     bridge_id: "1",
     sign_updater: FakeSignUpdater,
-    bridge_check_period_ms: 5 * 60 * 1000,
+    bridge_check_period_ms: 5 * 60 * 1000
   }
 
   test "After start up, checks the bridge engine once per check period" do

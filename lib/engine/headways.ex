@@ -8,8 +8,8 @@ defmodule Engine.Headways do
   require Logger
 
   @type t :: %{
-    String.t => [Headway.ScheduleHeadway.schedule_map]
-  }
+          String.t() => [Headway.ScheduleHeadway.schedule_map()]
+        }
 
   def start_link do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -25,7 +25,7 @@ defmodule Engine.Headways do
     GenServer.call(pid, {:register, gtfs_stop_id})
   end
 
-  @spec get_headways(GenServer.server(), String.t()) :: Headway.ScheduleHeadway.headway_range
+  @spec get_headways(GenServer.server(), String.t()) :: Headway.ScheduleHeadway.headway_range()
   def get_headways(pid \\ __MODULE__, stop_id) do
     GenServer.call(pid, {:get_headways, stop_id, Timex.now()})
   end
@@ -34,29 +34,38 @@ defmodule Engine.Headways do
   def handle_info(:quick_update, state) do
     state
     |> Enum.reject(fn {_stop, schedule} -> schedule != [] end)
-    |> Map.new
-    |> Map.keys
+    |> Map.new()
+    |> Map.keys()
     |> update(state)
   end
+
   @spec handle_info(:update_hourly, t) :: {:noreply, t}
   def handle_info(:update_hourly, state) do
     schedule_update(self())
 
     state
-    |> Map.keys
+    |> Map.keys()
     |> update(state)
   end
+
   def handle_info(msg, state) do
-    Logger.warn("#{__MODULE__} unknown message: #{inspect msg}")
+    Logger.warn("#{__MODULE__} unknown message: #{inspect(msg)}")
     {:noreply, state}
   end
 
-  @spec handle_call({:get_headways, String.t(), DateTime.t}, GenServer.from(), t()) :: {:reply, Headway.ScheduleHeadway.headway_range, t()}
+  @spec handle_call({:get_headways, String.t(), DateTime.t()}, GenServer.from(), t()) ::
+          {:reply, Headway.ScheduleHeadway.headway_range(), t()}
   def handle_call({:get_headways, stop_id, current_time}, _from, state) do
     headway_calculator = Application.get_env(:realtime_signs, :headway_calculator)
     schedules = state[stop_id]
-    {:reply, Map.get(headway_calculator.group_headways_for_stations(schedules, [stop_id], current_time), stop_id), state}
+
+    {:reply,
+     Map.get(
+       headway_calculator.group_headways_for_stations(schedules, [stop_id], current_time),
+       stop_id
+     ), state}
   end
+
   @spec handle_call({:register, String.t()}, GenServer.from(), t()) :: {:reply, t(), t()}
   def handle_call({:register, gtfs_stop_id}, _from, state) do
     state = Map.put(state, gtfs_stop_id, [])
@@ -75,13 +84,17 @@ defmodule Engine.Headways do
   defp update([], state) do
     {:noreply, state}
   end
+
   defp update(stops, state) do
     headway_updater = Application.get_env(:realtime_signs, :headway_requester)
-    schedules = stops
-                |> headway_updater.get_schedules()
-                |> Enum.group_by(fn schedule ->
-                  schedule["relationships"]["stop"]["data"]["id"]
-                end)
+
+    schedules =
+      stops
+      |> headway_updater.get_schedules()
+      |> Enum.group_by(fn schedule ->
+        schedule["relationships"]["stop"]["data"]["id"]
+      end)
+
     schedules = Map.merge(state, schedules)
 
     {:noreply, schedules}

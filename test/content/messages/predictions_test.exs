@@ -10,9 +10,11 @@ defmodule Content.Message.PredictionsTest do
         route_id: "NON-ROUTE",
         destination_stop_id: "70261"
       }
-      log = capture_log [level: :warn], fn ->
-        Content.Message.Predictions.non_terminal(prediction, false)
-      end
+
+      log =
+        capture_log([level: :warn], fn ->
+          Content.Message.Predictions.non_terminal(prediction, false)
+        end)
 
       assert log =~ "Could not find headsign for prediction"
     end
@@ -24,6 +26,7 @@ defmodule Content.Message.PredictionsTest do
         route_id: "Mattapan",
         destination_stop_id: "70261"
       }
+
       msg = Content.Message.Predictions.non_terminal(prediction, false)
 
       assert Content.Message.to_string(msg) == "Ashmont        ARR"
@@ -36,6 +39,7 @@ defmodule Content.Message.PredictionsTest do
         route_id: "Mattapan",
         destination_stop_id: "70261"
       }
+
       msg = Content.Message.Predictions.non_terminal(prediction, true)
 
       assert Content.Message.to_string(msg) == "Ashmont        BRD"
@@ -48,6 +52,7 @@ defmodule Content.Message.PredictionsTest do
         route_id: "Mattapan",
         destination_stop_id: "70275"
       }
+
       msg = Content.Message.Predictions.non_terminal(prediction, false)
 
       assert Content.Message.to_string(msg) == "Mattapan       ARR"
@@ -60,6 +65,7 @@ defmodule Content.Message.PredictionsTest do
         route_id: "Mattapan",
         destination_stop_id: "70275"
       }
+
       msg = Content.Message.Predictions.non_terminal(prediction, false)
 
       assert Content.Message.to_string(msg) == "Mattapan     1 min"
@@ -72,6 +78,7 @@ defmodule Content.Message.PredictionsTest do
         route_id: "Mattapan",
         destination_stop_id: "70275"
       }
+
       msg = Content.Message.Predictions.non_terminal(prediction, false)
 
       assert Content.Message.to_string(msg) == "Mattapan   30+ min"
@@ -84,13 +91,19 @@ defmodule Content.Message.PredictionsTest do
         route_id: "Mattapan",
         destination_stop_id: "70275"
       }
+
       msg = Content.Message.Predictions.non_terminal(prediction, false)
 
       assert Content.Message.to_string(msg) == "Mattapan    30 min"
     end
 
     test "can use a shorter line length" do
-      prediction = %Predictions.Prediction{seconds_until_arrival: 550, route_id: "Mattapan", direction_id: 0, destination_stop_id: "70275"}
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 550,
+        route_id: "Mattapan",
+        direction_id: 0,
+        destination_stop_id: "70275"
+      }
 
       msg = Content.Message.Predictions.non_terminal(prediction, 15, false)
       assert Content.Message.to_string(msg) == "Mattapan  9 min"
@@ -103,6 +116,7 @@ defmodule Content.Message.PredictionsTest do
         route_id: "Mattapan",
         destination_stop_id: "70261"
       }
+
       msg = Content.Message.Predictions.non_terminal(prediction, false)
 
       assert Content.Message.to_string(msg) == "Ashmont      1 min"
@@ -115,27 +129,46 @@ defmodule Content.Message.PredictionsTest do
         route_id: "Mattapan",
         destination_stop_id: "70261"
       }
+
       msg = Content.Message.Predictions.non_terminal(prediction, false)
 
       assert Content.Message.to_string(msg) == "Ashmont      2 min"
     end
 
     test "Still shows predictions for negative arrivals" do
-      prediction = %Predictions.Prediction{seconds_until_arrival: -5, route_id: "Mattapan", direction_id: 1, destination_stop_id: "70261"}
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: -5,
+        route_id: "Mattapan",
+        direction_id: 1,
+        destination_stop_id: "70261"
+      }
+
       msg = Content.Message.Predictions.non_terminal(prediction, false)
 
       assert Content.Message.to_string(msg) == "Ashmont        ARR"
     end
 
     test "Shows BRD for negative arrival times if vehicle is STOPPED_AT" do
-      prediction = %Predictions.Prediction{seconds_until_arrival: -5, route_id: "Mattapan", direction_id: 1, destination_stop_id: "70261"}
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: -5,
+        route_id: "Mattapan",
+        direction_id: 1,
+        destination_stop_id: "70261"
+      }
+
       msg = Content.Message.Predictions.non_terminal(prediction, true)
 
       assert Content.Message.to_string(msg) == "Ashmont        BRD"
     end
 
     test "Rounds to the nearest minute" do
-      prediction = %Predictions.Prediction{seconds_until_arrival: 91, route_id: "Mattapan", direction_id: 1, destination_stop_id: "70261"}
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 91,
+        route_id: "Mattapan",
+        direction_id: 1,
+        destination_stop_id: "70261"
+      }
+
       msg = Content.Message.Predictions.non_terminal(prediction, false)
 
       assert Content.Message.to_string(msg) == "Ashmont      2 min"
@@ -150,9 +183,11 @@ defmodule Content.Message.PredictionsTest do
         route_id: "NON-ROUTE",
         destination_stop_id: "70261"
       }
-      log = capture_log [level: :warn], fn ->
-        Content.Message.Predictions.terminal(prediction, false)
-      end
+
+      log =
+        capture_log([level: :warn], fn ->
+          Content.Message.Predictions.terminal(prediction, false)
+        end)
 
       assert log =~ "Could not find headsign for prediction"
     end
@@ -164,6 +199,7 @@ defmodule Content.Message.PredictionsTest do
         route_id: "Mattapan",
         destination_stop_id: "70261"
       }
+
       msg = Content.Message.Predictions.terminal(prediction, true)
 
       assert Content.Message.to_string(msg) == "Ashmont        BRD"
@@ -176,6 +212,7 @@ defmodule Content.Message.PredictionsTest do
         route_id: "Mattapan",
         destination_stop_id: "70261"
       }
+
       msg = Content.Message.Predictions.terminal(prediction, true)
 
       assert Content.Message.to_string(msg) == "Ashmont      1 min"
@@ -188,6 +225,7 @@ defmodule Content.Message.PredictionsTest do
         route_id: "Mattapan",
         destination_stop_id: "70261"
       }
+
       msg = Content.Message.Predictions.terminal(prediction, false)
 
       assert Content.Message.to_string(msg) == "Ashmont      1 min"
@@ -200,6 +238,7 @@ defmodule Content.Message.PredictionsTest do
         route_id: "Mattapan",
         destination_stop_id: "70275"
       }
+
       msg = Content.Message.Predictions.terminal(prediction, false)
 
       assert Content.Message.to_string(msg) == "Mattapan     1 min"

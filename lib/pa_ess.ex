@@ -7,7 +7,7 @@ defmodule PaEss do
   and their zone.
   """
 
-  @type sign_loc_code :: String.t
-  @type zone :: String.t
+  @type sign_loc_code :: String.t()
+  @type zone :: String.t()
   @type id :: {sign_loc_code(), zone()}
 end

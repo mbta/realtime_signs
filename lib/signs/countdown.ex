@@ -21,36 +21,37 @@ defmodule Signs.Countdown do
     :terminal,
     :prediction_engine,
     :sign_updater,
-    :read_sign_period_ms,
+    :read_sign_period_ms
   ]
 
-  defstruct @enforce_keys ++ [
-    :current_content_bottom,
-    :current_content_top,
-    :bottom_timer,
-    :top_timer,
-    announce_arriving?: true,
-    platform: nil
-  ]
+  defstruct @enforce_keys ++
+              [
+                :current_content_bottom,
+                :current_content_top,
+                :bottom_timer,
+                :top_timer,
+                announce_arriving?: true,
+                platform: nil
+              ]
 
   @type t :: %{
-    id: String.t(),
-    pa_ess_id: PaEss.id(),
-    gtfs_stop_id: String.t(),
-    direction_id: 0 | 1,
-    route_id: String.t(),
-    prediction_engine: module(),
-    sign_updater: module(),
-    current_content_bottom: Content.Message.t() | nil,
-    current_content_top: Content.Message.t() | nil,
-    countdown_verb: String.t(),
-    terminal: boolean,
-    bottom_timer: reference() | nil,
-    top_timer: reference() | nil,
-    read_sign_period_ms: integer(),
-    announce_arriving?: boolean,
-    platform: atom | nil
-  }
+          id: String.t(),
+          pa_ess_id: PaEss.id(),
+          gtfs_stop_id: String.t(),
+          direction_id: 0 | 1,
+          route_id: String.t(),
+          prediction_engine: module(),
+          sign_updater: module(),
+          current_content_bottom: Content.Message.t() | nil,
+          current_content_top: Content.Message.t() | nil,
+          countdown_verb: String.t(),
+          terminal: boolean,
+          bottom_timer: reference() | nil,
+          top_timer: reference() | nil,
+          read_sign_period_ms: integer(),
+          announce_arriving?: boolean,
+          platform: atom | nil
+        }
 
   @default_expiration_seconds 130
   @expiration_overlap_seconds 115
@@ -58,6 +59,7 @@ defmodule Signs.Countdown do
   def start_link(%{"type" => "countdown"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
+
     platform =
       case Map.get(config, "platform") do
         nil -> nil
@@ -93,15 +95,17 @@ defmodule Signs.Countdown do
     {:ok, sign}
   end
 
-  @spec handle_info(:update_content | :expire_top | :expire_bottom | :read_sign, t()) :: {:noreply, t()}
+  @spec handle_info(:update_content | :expire_top | :expire_bottom | :read_sign, t()) ::
+          {:noreply, t()}
   def handle_info(:update_content, sign) do
     schedule_update(self())
 
-    {top, bottom} = if Engine.Config.enabled?(sign.id) do
-      get_messages(sign)
-    else
-      {Content.Message.Empty.new(), Content.Message.Empty.new()}
-    end
+    {top, bottom} =
+      if Engine.Config.enabled?(sign.id) do
+        get_messages(sign)
+      else
+        {Content.Message.Empty.new(), Content.Message.Empty.new()}
+      end
 
     sign = update_sign(sign, top, bottom)
 
@@ -123,17 +127,20 @@ defmodule Signs.Countdown do
   end
 
   def handle_info(msg, state) do
-    Logger.warn("#{__MODULE__} #{inspect(state.id)} unknown message: #{inspect msg}")
+    Logger.warn("#{__MODULE__} #{inspect(state.id)} unknown message: #{inspect(msg)}")
     {:noreply, state}
   end
 
   defp get_messages(sign) do
     stopped_at? = sign.prediction_engine.stopped_at?(sign.gtfs_stop_id)
-    sort_type = if sign.terminal do
-      :departure
-    else
-      :arrival
-    end
+
+    sort_type =
+      if sign.terminal do
+        :departure
+      else
+        :arrival
+      end
+
     predictions =
       sign.gtfs_stop_id
       |> sign.prediction_engine.for_stop(sign.direction_id)
@@ -148,6 +155,7 @@ defmodule Signs.Countdown do
   defp get_message(nil, _sign, _stopped_at) do
     Content.Message.Empty.new()
   end
+
   defp get_message(prediction, sign, stopped_at?) do
     if sign.terminal do
       Content.Message.Predictions.terminal(prediction, stopped_at?)
@@ -156,17 +164,40 @@ defmodule Signs.Countdown do
     end
   end
 
-  defp update_sign(%{current_content_top: same_top, current_content_bottom: same_bottom} = sign, same_top, same_bottom) do
+  defp update_sign(
+         %{current_content_top: same_top, current_content_bottom: same_bottom} = sign,
+         same_top,
+         same_bottom
+       ) do
     sign
   end
-  defp update_sign(%{current_content_top: _old_top, current_content_bottom: same_bottom} = sign, new_top, same_bottom) do
+
+  defp update_sign(
+         %{current_content_top: _old_top, current_content_bottom: same_bottom} = sign,
+         new_top,
+         same_bottom
+       ) do
     update_top(sign, new_top)
   end
-  defp update_sign(%{current_content_top: same_top, current_content_bottom: _old_bottom} = sign, same_top, new_bottom) do
+
+  defp update_sign(
+         %{current_content_top: same_top, current_content_bottom: _old_bottom} = sign,
+         same_top,
+         new_bottom
+       ) do
     update_bottom(sign, new_bottom)
   end
+
   defp update_sign(sign, new_top, new_bottom) do
-    update_response = sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_expiration_seconds, :now)
+    update_response =
+      sign.sign_updater.update_sign(
+        sign.pa_ess_id,
+        new_top,
+        new_bottom,
+        @default_expiration_seconds,
+        :now
+      )
+
     do_update_sign(update_response, sign, new_top, new_bottom)
   end
 
@@ -176,8 +207,16 @@ defmodule Signs.Countdown do
     if sign.bottom_timer, do: Process.cancel_timer(sign.bottom_timer)
     top_timer = Process.send_after(self(), :expire_top, @expiration_overlap_seconds * 1000)
     bottom_timer = Process.send_after(self(), :expire_bottom, @expiration_overlap_seconds * 1000)
-    %{sign | current_content_top: new_top, top_timer: top_timer, current_content_bottom: new_bottom, bottom_timer: bottom_timer}
+
+    %{
+      sign
+      | current_content_top: new_top,
+        top_timer: top_timer,
+        current_content_bottom: new_bottom,
+        bottom_timer: bottom_timer
+    }
   end
+
   defp do_update_sign({:error, _reason}, sign, _new_top, _new_bottom) do
     sign
   end
@@ -185,8 +224,16 @@ defmodule Signs.Countdown do
   defp update_top(%{current_content_top: same} = sign, same) do
     sign
   end
+
   defp update_top(sign, new_top) do
-    sign.sign_updater.update_single_line(sign.pa_ess_id, "1", new_top, @default_expiration_seconds, :now)
+    sign.sign_updater.update_single_line(
+      sign.pa_ess_id,
+      "1",
+      new_top,
+      @default_expiration_seconds,
+      :now
+    )
+
     announce_arrival(new_top, sign)
     if sign.top_timer, do: Process.cancel_timer(sign.top_timer)
     timer = Process.send_after(self(), :expire_top, @expiration_overlap_seconds * 1000)
@@ -196,28 +243,40 @@ defmodule Signs.Countdown do
   defp update_bottom(%{current_content_bottom: same} = sign, same) do
     sign
   end
+
   defp update_bottom(sign, new_bottom) do
-    sign.sign_updater.update_single_line(sign.pa_ess_id, "2", new_bottom, @default_expiration_seconds, :now)
+    sign.sign_updater.update_single_line(
+      sign.pa_ess_id,
+      "2",
+      new_bottom,
+      @default_expiration_seconds,
+      :now
+    )
+
     if sign.bottom_timer, do: Process.cancel_timer(sign.bottom_timer)
     timer = Process.send_after(self(), :expire_bottom, @expiration_overlap_seconds * 1000)
     %{sign | current_content_bottom: new_bottom, bottom_timer: timer}
   end
 
   defp announce_arrival(_msg, %{announce_arriving?: false}), do: nil
+
   defp announce_arrival(msg, sign) do
     case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
       %Content.Audio.TrainIsArriving{} = audio ->
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+
       nil ->
         nil
     end
   end
 
   def initial_offset(sign) do
-    offset_seed = case sign.gtfs_stop_id |> Integer.parse do
-      {num, _} -> num
-      _ -> 0
-    end
+    offset_seed =
+      case sign.gtfs_stop_id |> Integer.parse() do
+        {num, _} -> num
+        _ -> 0
+      end
+
     if Integer.is_even(offset_seed) do
       30 * 1_000
     else
@@ -225,20 +284,32 @@ defmodule Signs.Countdown do
     end
   end
 
-  defp read_countdown(%{current_content_top: %{headsign: top_headsign} = top_msg, current_content_bottom: %{headsign: bottom_headsign} = bottom_msg} = sign) do
+  defp read_countdown(
+         %{
+           current_content_top: %{headsign: top_headsign} = top_msg,
+           current_content_bottom: %{headsign: bottom_headsign} = bottom_msg
+         } = sign
+       ) do
     do_read_countdown(top_msg, sign)
+
     if top_headsign != bottom_headsign do
       do_read_countdown(bottom_msg, sign)
     end
   end
+
   defp read_countdown(%{current_content_top: top_msg} = sign) do
     do_read_countdown(top_msg, sign)
   end
 
   defp do_read_countdown(msg, sign) do
-    case Content.Audio.NextTrainCountdown.from_predictions_message(msg, sign.countdown_verb, sign.platform) do
+    case Content.Audio.NextTrainCountdown.from_predictions_message(
+           msg,
+           sign.countdown_verb,
+           sign.platform
+         ) do
       %Content.Audio.NextTrainCountdown{} = audio ->
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+
       nil ->
         nil
     end

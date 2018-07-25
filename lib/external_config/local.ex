@@ -5,9 +5,10 @@ defmodule ExternalConfig.Local do
   def get(current_version) do
     {:ok, file} = File.read("priv/config.json")
 
-    etag = file
-           |> :erlang.phash2()
-           |> Kernel.inspect()
+    etag =
+      file
+      |> :erlang.phash2()
+      |> Kernel.inspect()
 
     if etag == current_version do
       :unchanged

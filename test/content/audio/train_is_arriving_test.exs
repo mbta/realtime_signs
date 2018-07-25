@@ -27,34 +27,39 @@ defmodule Content.Audio.TrainIsArrivingTest do
   describe "from_predictions_message/1" do
     test "Converts Ashmont arriving message to audio" do
       message = %Content.Message.Predictions{headsign: "Ashmont", minutes: :arriving}
+
       assert Content.Audio.TrainIsArriving.from_predictions_message(message) ==
-        %Content.Audio.TrainIsArriving{destination: :ashmont}
+               %Content.Audio.TrainIsArriving{destination: :ashmont}
     end
 
     test "Converts Mattapan arriving message to audio" do
       message = %Content.Message.Predictions{headsign: "Mattapan", minutes: :arriving}
+
       assert Content.Audio.TrainIsArriving.from_predictions_message(message) ==
-        %Content.Audio.TrainIsArriving{destination: :mattapan}
+               %Content.Audio.TrainIsArriving{destination: :mattapan}
     end
 
     test "Converts Wonderland arriving message to audio" do
       message = %Content.Message.Predictions{headsign: "Wonderland", minutes: :arriving}
+
       assert Content.Audio.TrainIsArriving.from_predictions_message(message) ==
-        %Content.Audio.TrainIsArriving{destination: :wonderland}
+               %Content.Audio.TrainIsArriving{destination: :wonderland}
     end
 
     test "Converts Bowdoin arriving message to audio" do
       message = %Content.Message.Predictions{headsign: "Bowdoin", minutes: :arriving}
+
       assert Content.Audio.TrainIsArriving.from_predictions_message(message) ==
-        %Content.Audio.TrainIsArriving{destination: :bowdoin}
+               %Content.Audio.TrainIsArriving{destination: :bowdoin}
     end
 
     test "Logs unknown headsign arriving message" do
       message = %Content.Message.Predictions{headsign: "Neverland", minutes: :arriving}
 
-      log = capture_log [level: :warn], fn ->
-        assert Content.Audio.TrainIsArriving.from_predictions_message(message) == nil
-      end
+      log =
+        capture_log([level: :warn], fn ->
+          assert Content.Audio.TrainIsArriving.from_predictions_message(message) == nil
+        end)
 
       assert log =~ "unknown headsign"
     end

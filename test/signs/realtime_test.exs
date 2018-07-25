@@ -25,17 +25,18 @@ defmodule Signs.RealtimeTest do
     tick_top: 1,
     tick_read: 1,
     expiration_seconds: 100,
-    read_period_seconds: 100,
+    read_period_seconds: 100
   }
 
   describe "run loop" do
     test "starts up and logs unknown messages" do
       assert {:ok, pid} = GenServer.start_link(Signs.Realtime, @sign)
 
-      log = capture_log [level: :warn], fn ->
-        send(pid, :foo)
-        :timer.sleep(50)
-      end
+      log =
+        capture_log([level: :warn], fn ->
+          send(pid, :foo)
+          :timer.sleep(50)
+        end)
 
       assert Process.alive?(pid)
       assert log =~ "unknown_message"
@@ -49,11 +50,12 @@ defmodule Signs.RealtimeTest do
     end
 
     test "expires content when tick is zero" do
-      sign = %{@sign |
-        current_content_top: {%{}, :to_be_expired},
-        tick_top: 0,
-        current_content_bottom: {%{}, :to_be_expired},
-        tick_bottom: 0,
+      sign = %{
+        @sign
+        | current_content_top: {%{}, :to_be_expired},
+          tick_top: 0,
+          current_content_bottom: {%{}, :to_be_expired},
+          tick_bottom: 0
       }
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
