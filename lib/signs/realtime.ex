@@ -21,25 +21,25 @@ defmodule Signs.Realtime do
     :tick_bottom,
     :tick_read,
     :expiration_seconds,
-    :read_period_seconds,
+    :read_period_seconds
   ]
 
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-    id: String.t(),
-    pa_ess_id: PaEss.id(),
-    source_config: Utilities.SourceConfig.full(),
-    current_content_top: {Utilities.SourceConfig.one() | nil, Content.Message.t()},
-    current_content_bottom: {Utilities.SourceConfig.one() | nil, Content.Message.t()},
-    prediction_engine: module(),
-    sign_updater: module(),
-    tick_bottom: non_neg_integer(),
-    tick_top: non_neg_integer(),
-    tick_read: non_neg_integer(),
-    expiration_seconds: non_neg_integer(),
-    read_period_seconds: non_neg_integer(),
-  }
+          id: String.t(),
+          pa_ess_id: PaEss.id(),
+          source_config: Utilities.SourceConfig.full(),
+          current_content_top: {Utilities.SourceConfig.one() | nil, Content.Message.t()},
+          current_content_bottom: {Utilities.SourceConfig.one() | nil, Content.Message.t()},
+          prediction_engine: module(),
+          sign_updater: module(),
+          tick_bottom: non_neg_integer(),
+          tick_top: non_neg_integer(),
+          tick_read: non_neg_integer(),
+          expiration_seconds: non_neg_integer(),
+          read_period_seconds: non_neg_integer()
+        }
 
   def start_link(%{"type" => "realtime"} = config, opts \\ []) do
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
@@ -57,7 +57,7 @@ defmodule Signs.Realtime do
       tick_top: 130,
       tick_read: 240,
       expiration_seconds: 130,
-      read_period_seconds: 240,
+      read_period_seconds: 240
     }
 
     GenServer.start_link(__MODULE__, sign)
@@ -69,16 +69,18 @@ defmodule Signs.Realtime do
   end
 
   def handle_info(:run_loop, sign) do
-    sign = sign
-    |> expire_bottom()
-    |> expire_top()
+    sign =
+      sign
+      |> expire_bottom()
+      |> expire_top()
 
     {top, bottom} = Utilities.Predictions.get_messages(sign, Engine.Config.enabled?(sign.id))
 
-    sign = sign
-    |> Utilities.Updater.update_sign(top, bottom)
-    |> Utilities.Reader.read_sign()
-    |> decrement_ticks()
+    sign =
+      sign
+      |> Utilities.Updater.update_sign(top, bottom)
+      |> Utilities.Reader.read_sign()
+      |> decrement_ticks()
 
     schedule_run_loop(self())
     {:noreply, sign}
@@ -96,22 +98,33 @@ defmodule Signs.Realtime do
   def expire_bottom(%{tick_bottom: n} = sign) when n > 0 do
     sign
   end
+
   def expire_bottom(sign) do
-    %{sign | tick_bottom: sign.expiration_seconds, current_content_bottom: {nil, Content.Message.Empty.new()}}
+    %{
+      sign
+      | tick_bottom: sign.expiration_seconds,
+        current_content_bottom: {nil, Content.Message.Empty.new()}
+    }
   end
 
   def expire_top(%{tick_top: n} = sign) when n > 0 do
     sign
   end
+
   def expire_top(sign) do
-    %{sign | tick_top: sign.expiration_seconds, current_content_top: {nil, Content.Message.Empty.new()}}
+    %{
+      sign
+      | tick_top: sign.expiration_seconds,
+        current_content_top: {nil, Content.Message.Empty.new()}
+    }
   end
 
   def decrement_ticks(sign) do
-    %{sign |
-      tick_bottom: sign.tick_bottom - 1,
-      tick_top: sign.tick_top - 1,
-      tick_read: sign.tick_read - 1,
+    %{
+      sign
+      | tick_bottom: sign.tick_bottom - 1,
+        tick_top: sign.tick_top - 1,
+        tick_read: sign.tick_read - 1
     }
   end
 end

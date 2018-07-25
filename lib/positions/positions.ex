@@ -10,10 +10,10 @@ defmodule Positions.Positions do
     GTFS.Realtime.FeedMessage.decode(body)
   end
 
-  @spec get_stopped(map) :: [{String.t, true}]
+  @spec get_stopped(map) :: [{String.t(), true}]
   def get_stopped(feed_message) do
     feed_message.entity
-    |> Enum.filter(& &1.vehicle.current_status == :STOPPED_AT)
-    |> Enum.map(& {&1.vehicle.stop_id, true})
+    |> Enum.filter(&(&1.vehicle.current_status == :STOPPED_AT))
+    |> Enum.map(&{&1.vehicle.stop_id, true})
   end
 end

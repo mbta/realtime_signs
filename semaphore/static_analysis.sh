@@ -13,3 +13,4 @@ MIX_ENV=test mix dialyzer --plt
 cp _build/test/*_deps-test.plt* $SEMAPHORE_CACHE_DIR
 
 MIX_ENV=test mix dialyzer --halt-exit-status
+mix format mix.exs "lib/**/*.{ex,exs}" "test/**/*.{ex,exs}" --check-formatted

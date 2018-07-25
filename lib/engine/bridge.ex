@@ -39,8 +39,9 @@ defmodule Engine.Bridge do
 
     {:noreply, %{"1" => bridge_status}}
   end
+
   def handle_info(msg, state) do
-    Logger.warn("#{__MODULE__} unknown message: #{inspect msg}")
+    Logger.warn("#{__MODULE__} unknown message: #{inspect(msg)}")
     {:noreply, state}
   end
 

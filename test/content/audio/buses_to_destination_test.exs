@@ -11,6 +11,7 @@ defmodule Content.Audio.BusesToDestinationTest do
       next_bus_mins: 7,
       later_bus_mins: 10
     }
+
     assert Content.Audio.to_params(audio) == {"133", ["5507", "5510"], :audio}
   end
 
@@ -21,6 +22,7 @@ defmodule Content.Audio.BusesToDestinationTest do
       next_bus_mins: 7,
       later_bus_mins: 10
     }
+
     assert Content.Audio.to_params(audio) == {"150", ["37007", "37010"], :audio}
   end
 
@@ -31,6 +33,7 @@ defmodule Content.Audio.BusesToDestinationTest do
       next_bus_mins: 7,
       later_bus_mins: 10
     }
+
     assert Content.Audio.to_params(audio) == {"134", ["5507", "5510"], :audio}
   end
 
@@ -41,6 +44,7 @@ defmodule Content.Audio.BusesToDestinationTest do
       next_bus_mins: 7,
       later_bus_mins: 10
     }
+
     assert Content.Audio.to_params(audio) == {"151", ["37007", "37010"], :audio}
   end
 
@@ -49,16 +53,16 @@ defmodule Content.Audio.BusesToDestinationTest do
 
     test "returns an audio message from a headway message to chelsea" do
       assert {
-        %Content.Audio.BusesToDestination{language: :english, destination: :chelsea},
-        %Content.Audio.BusesToDestination{language: :spanish, destination: :chelsea}
-      } = from_headway_message(@msg, "Chelsea")
+               %Content.Audio.BusesToDestination{language: :english, destination: :chelsea},
+               %Content.Audio.BusesToDestination{language: :spanish, destination: :chelsea}
+             } = from_headway_message(@msg, "Chelsea")
     end
 
     test "returns an audio message from a headway message to south station" do
       assert {
-        %Content.Audio.BusesToDestination{language: :english, destination: :south_station},
-        %Content.Audio.BusesToDestination{language: :spanish, destination: :south_station}
-      } = from_headway_message(@msg, "South Station")
+               %Content.Audio.BusesToDestination{language: :english, destination: :south_station},
+               %Content.Audio.BusesToDestination{language: :spanish, destination: :south_station}
+             } = from_headway_message(@msg, "South Station")
     end
 
     test "returns nils for an unknown destination" do
@@ -68,9 +72,10 @@ defmodule Content.Audio.BusesToDestinationTest do
     test "returns nils when range is all nil, but doesn't warn" do
       msg = %{@msg | range: {nil, nil}}
 
-      log = capture_log [level: :warn], fn ->
-        assert from_headway_message(msg, "Chelsea") == {nil, nil}
-      end
+      log =
+        capture_log([level: :warn], fn ->
+          assert from_headway_message(msg, "Chelsea") == {nil, nil}
+        end)
 
       refute log =~ "from_headway_message"
     end
@@ -87,9 +92,17 @@ defmodule Content.Audio.BusesToDestinationTest do
 
       Enum.each([msg1, msg2, msg3], fn msg ->
         assert {
-          %Content.Audio.BusesToDestination{language: :english, next_bus_mins: 10, later_bus_mins: 12},
-          %Content.Audio.BusesToDestination{language: :spanish, next_bus_mins: 10, later_bus_mins: 12}
-        } = from_headway_message(msg, "Chelsea")
+                 %Content.Audio.BusesToDestination{
+                   language: :english,
+                   next_bus_mins: 10,
+                   later_bus_mins: 12
+                 },
+                 %Content.Audio.BusesToDestination{
+                   language: :spanish,
+                   next_bus_mins: 10,
+                   later_bus_mins: 12
+                 }
+               } = from_headway_message(msg, "Chelsea")
       end)
     end
 
@@ -99,18 +112,31 @@ defmodule Content.Audio.BusesToDestinationTest do
 
       Enum.each([msg1, msg2], fn msg ->
         assert {
-          %Content.Audio.BusesToDestination{language: :english, next_bus_mins: 10, later_bus_mins: 15},
-          %Content.Audio.BusesToDestination{language: :spanish, next_bus_mins: 10, later_bus_mins: 15}
-        } = from_headway_message(msg, "Chelsea")
+                 %Content.Audio.BusesToDestination{
+                   language: :english,
+                   next_bus_mins: 10,
+                   later_bus_mins: 15
+                 },
+                 %Content.Audio.BusesToDestination{
+                   language: :spanish,
+                   next_bus_mins: 10,
+                   later_bus_mins: 15
+                 }
+               } = from_headway_message(msg, "Chelsea")
       end)
     end
 
     test "returns an english struct but not a spanish, if number is out of the latter range" do
       msg = %{@msg | range: {20, 25}}
+
       assert {
-        %Content.Audio.BusesToDestination{language: :english, next_bus_mins: 20, later_bus_mins: 25},
-        nil
-      } = from_headway_message(msg, "Chelsea")
+               %Content.Audio.BusesToDestination{
+                 language: :english,
+                 next_bus_mins: 20,
+                 later_bus_mins: 25
+               },
+               nil
+             } = from_headway_message(msg, "Chelsea")
     end
   end
 end

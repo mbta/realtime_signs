@@ -38,41 +38,69 @@ defmodule Engine.Predictions do
   @spec init(any()) :: {:ok, any()}
   def init(_) do
     schedule_update(self())
-    @predictions_table = :ets.new(@predictions_table, [:set, :protected, :named_table, read_concurrency: true])
-    @positions_table = :ets.new(@positions_table, [:set, :protected, :named_table, read_concurrency: true])
+
+    @predictions_table =
+      :ets.new(@predictions_table, [:set, :protected, :named_table, read_concurrency: true])
+
+    @positions_table =
+      :ets.new(@positions_table, [:set, :protected, :named_table, read_concurrency: true])
+
     {:ok, {Timex.now(), Timex.now()}}
   end
 
-  @spec handle_info(:update, {DateTime.t, DateTime.t}) :: {:noreply, {DateTime.t, DateTime.t}}
+  @spec handle_info(:update, {DateTime.t(), DateTime.t()}) ::
+          {:noreply, {DateTime.t(), DateTime.t()}}
   def handle_info(:update, {last_modified_predictions, last_modified_positions}) do
     schedule_update(self())
     current_time = Timex.now()
-    last_modified_predictions = download_and_insert_data(last_modified_predictions, current_time, &update_predictions/2, :trip_update_url)
-    last_modified_positions = download_and_insert_data(last_modified_positions, current_time, &update_positions/2, :vehicle_positions_url)
+
+    last_modified_predictions =
+      download_and_insert_data(
+        last_modified_predictions,
+        current_time,
+        &update_predictions/2,
+        :trip_update_url
+      )
+
+    last_modified_positions =
+      download_and_insert_data(
+        last_modified_positions,
+        current_time,
+        &update_positions/2,
+        :vehicle_positions_url
+      )
+
     {:noreply, {last_modified_predictions, last_modified_positions}}
   end
+
   def handle_info(msg, state) do
-    Logger.warn("#{__MODULE__} unknown message: #{inspect msg}")
+    Logger.warn("#{__MODULE__} unknown message: #{inspect(msg)}")
     {:noreply, state}
   end
 
   defp format_last_modified(time) do
-    {:ok, last_modified} = Timex.format(time, "{WDshort}, {D} {Mshort} {YYYY} {h24}:{m}:{s} {Zabbr}")
+    {:ok, last_modified} =
+      Timex.format(time, "{WDshort}, {D} {Mshort} {YYYY} {h24}:{m}:{s} {Zabbr}")
+
     last_modified
   end
 
   defp update_predictions(body, current_time) do
-    new_predictions = body
-                      |> Predictions.Predictions.parse_pb_response()
-                      |> Predictions.Predictions.get_all(current_time)
+    new_predictions =
+      body
+      |> Predictions.Predictions.parse_pb_response()
+      |> Predictions.Predictions.get_all(current_time)
+
     :ets.delete_all_objects(@predictions_table)
     :ets.insert(@predictions_table, Enum.into(new_predictions, []))
   end
 
   defp update_positions(body, _current_time) do
-    new_positions = body
-                      |> Positions.Positions.parse_pb_response()
-                      |> Positions.Positions.get_stopped()
+    new_positions =
+      body
+      |> Positions.Positions.parse_pb_response()
+      |> Positions.Positions.get_stopped()
+
     :ets.delete_all_objects(@positions_table)
     :ets.insert(@positions_table, new_positions)
   end
@@ -80,14 +108,23 @@ defmodule Engine.Predictions do
   defp download_and_insert_data(last_modified, current_time, parse_fn, url) do
     http_client = Application.get_env(:realtime_signs, :http_client)
     full_url = Application.get_env(:realtime_signs, url)
-    case http_client.get(full_url, [{"If-Modified-Since", format_last_modified(last_modified)}], [timeout: 2000, recv_timeout: 2000]) do
-      {:ok, %HTTPoison.Response{body: body, status_code: status}} when status >= 200 and status < 300 ->
+
+    case http_client.get(
+           full_url,
+           [{"If-Modified-Since", format_last_modified(last_modified)}],
+           timeout: 2000,
+           recv_timeout: 2000
+         ) do
+      {:ok, %HTTPoison.Response{body: body, status_code: status}}
+      when status >= 200 and status < 300 ->
         parse_fn.(body, current_time)
         current_time
+
       {:ok, %HTTPoison.Response{}} ->
         last_modified
+
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("Could not fetch pb file from #{inspect full_url}: #{inspect reason}")
+        Logger.warn("Could not fetch pb file from #{inspect(full_url)}: #{inspect(reason)}")
         last_modified
     end
   end

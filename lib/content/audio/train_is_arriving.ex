@@ -9,26 +9,49 @@ defmodule Content.Audio.TrainIsArriving do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-    destination: :ashmont | :mattapan | :wonderland | :bowdoin
-  }
+          destination: :ashmont | :mattapan | :wonderland | :bowdoin
+        }
 
   @spec from_predictions_message(Content.Message.t()) :: t() | nil
-  def from_predictions_message(%Content.Message.Predictions{headsign: "Ashmont", minutes: :arriving}) do
+  def from_predictions_message(%Content.Message.Predictions{
+        headsign: "Ashmont",
+        minutes: :arriving
+      }) do
     %__MODULE__{destination: :ashmont}
   end
-  def from_predictions_message(%Content.Message.Predictions{headsign: "Mattapan", minutes: :arriving}) do
+
+  def from_predictions_message(%Content.Message.Predictions{
+        headsign: "Mattapan",
+        minutes: :arriving
+      }) do
     %__MODULE__{destination: :mattapan}
   end
-  def from_predictions_message(%Content.Message.Predictions{headsign: "Bowdoin", minutes: :arriving}) do
+
+  def from_predictions_message(%Content.Message.Predictions{
+        headsign: "Bowdoin",
+        minutes: :arriving
+      }) do
     %__MODULE__{destination: :bowdoin}
   end
-  def from_predictions_message(%Content.Message.Predictions{headsign: "Wonderland", minutes: :arriving}) do
+
+  def from_predictions_message(%Content.Message.Predictions{
+        headsign: "Wonderland",
+        minutes: :arriving
+      }) do
     %__MODULE__{destination: :wonderland}
   end
-  def from_predictions_message(%Content.Message.Predictions{headsign: headsign, minutes: :arriving}) do
-    Logger.warn("Content.Audio.TrainIsArriving.from_predictions_message: unknown headsign: #{headsign}")
+
+  def from_predictions_message(%Content.Message.Predictions{
+        headsign: headsign,
+        minutes: :arriving
+      }) do
+    Logger.warn(
+      "Content.Audio.TrainIsArriving.from_predictions_message: unknown headsign: #{headsign}"
+    )
+
     nil
   end
+
   def from_predictions_message(_) do
     nil
   end

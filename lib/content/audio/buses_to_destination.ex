@@ -10,35 +10,40 @@ defmodule Content.Audio.BusesToDestination do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-    language: :english | :spanish,
-    destination: :chelsea | :south_station,
-    next_bus_mins: integer(),
-    later_bus_mins: integer(),
-  }
+          language: :english | :spanish,
+          destination: :chelsea | :south_station,
+          next_bus_mins: integer(),
+          later_bus_mins: integer()
+        }
 
-  @spec from_headway_message(Content.Message.t(), String.t) :: {t() | nil, t() | nil}
+  @spec from_headway_message(Content.Message.t(), String.t()) :: {t() | nil, t() | nil}
   def from_headway_message(%Content.Message.Headways.Bottom{range: range} = msg, dest)
-  when range != {nil, nil} do
+      when range != {nil, nil} do
     with {:ok, destination} <- convert_destination(dest),
          {x, y} <- get_mins(range) do
       {create(:english, destination, x, y), create(:spanish, destination, x, y)}
     else
       _ ->
-        Logger.warn("Content.Audio.BusesToDestination.from_headway_message: #{inspect(msg)}, #{dest}")
+        Logger.warn(
+          "Content.Audio.BusesToDestination.from_headway_message: #{inspect(msg)}, #{dest}"
+        )
+
         {nil, nil}
     end
   end
+
   def from_headway_message(_msg, _dest) do
     {nil, nil}
   end
 
   defp create(language, destination, next_mins, later_mins) do
-    if Utilities.valid_range?(next_mins, language) and Utilities.valid_range?(later_mins, language) do
+    if Utilities.valid_range?(next_mins, language) and
+         Utilities.valid_range?(later_mins, language) do
       %__MODULE__{
         language: language,
         destination: destination,
         next_bus_mins: next_mins,
-        later_bus_mins: later_mins,
+        later_bus_mins: later_mins
       }
     end
   end
@@ -47,9 +52,9 @@ defmodule Content.Audio.BusesToDestination do
   defp convert_destination("South Station"), do: {:ok, :south_station}
   defp convert_destination(_), do: {:error, :unknown_destination}
 
-  defp get_mins({x, nil}), do: {x, x+2}
-  defp get_mins({nil, x}), do: {x, x+2}
-  defp get_mins({x, x}), do: {x, x+2}
+  defp get_mins({x, nil}), do: {x, x + 2}
+  defp get_mins({nil, x}), do: {x, x + 2}
+  defp get_mins({x, x}), do: {x, x + 2}
   defp get_mins({x, y}) when x < y, do: {x, y}
   defp get_mins({y, x}), do: {x, y}
   defp get_mins(_), do: :error

@@ -1,6 +1,5 @@
 defmodule RealtimeSigns do
-
-  @env Mix.env
+  @env Mix.env()
   def env, do: @env
 
   def start(_type, _args) do
@@ -14,7 +13,7 @@ defmodule RealtimeSigns do
       worker(Engine.Static, []),
       worker(MessageQueue, []),
       worker(PaEss.HttpUpdater, []),
-      supervisor(Signs.Supervisor, []),
+      supervisor(Signs.Supervisor, [])
     ]
 
     opts = [strategy: :one_for_one, name: __MODULE__]

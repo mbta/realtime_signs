@@ -5,7 +5,9 @@ defmodule Headway.ScheduleHeadwayTest do
 
   describe "build_request/1" do
     test "builds request with comma separated station ids" do
-      assert build_request(["7022", "1123"]) == "https://api-v3.mbta.com/schedules?filter[stop]=7022,1123"
+      assert build_request(["7022", "1123"]) ==
+               "https://api-v3.mbta.com/schedules?filter[stop]=7022,1123"
+
       assert build_request(["7022"]) == "https://api-v3.mbta.com/schedules?filter[stop]=7022"
     end
   end
@@ -20,42 +22,88 @@ defmodule Headway.ScheduleHeadwayTest do
     ]
 
     test "adjacent times to current time are used for calculation" do
-      schedules = Enum.map(@times, fn time ->
-        %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-          "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
-      end)
-      headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(@current_time, "America/New_York"))
+      schedules =
+        Enum.map(@times, fn time ->
+          %{
+            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+            "attributes" => %{
+              "departure_time" =>
+                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+            }
+          }
+        end)
+
+      headways =
+        group_headways_for_stations(
+          schedules,
+          ["111"],
+          Timex.to_datetime(@current_time, "America/New_York")
+        )
+
       assert headways == %{"111" => {10, 17}}
     end
 
     test "filters out attributes that don't have times" do
-      schedules = Enum.map(@times, fn _time ->
-        %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-          "attributes" => %{}}
-      end)
-      headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(@current_time, "America/New_York"))
+      schedules =
+        Enum.map(@times, fn _time ->
+          %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}}, "attributes" => %{}}
+        end)
+
+      headways =
+        group_headways_for_stations(
+          schedules,
+          ["111"],
+          Timex.to_datetime(@current_time, "America/New_York")
+        )
+
       assert headways == %{"111" => {nil, nil}}
     end
 
     test "Returns first departure and headway range when no departures have left yet" do
-      schedules = Enum.map(@times, fn time ->
-        %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-          "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
-      end)
-      headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(~N[2017-07-04 07:15:00], "America/New_York"))
-      expected_first_departure = ~N[2017-07-04 08:45:00] |> Timex.to_datetime("America/New_York") |> Timex.to_unix
+      schedules =
+        Enum.map(@times, fn time ->
+          %{
+            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+            "attributes" => %{
+              "departure_time" =>
+                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+            }
+          }
+        end)
+
+      headways =
+        group_headways_for_stations(
+          schedules,
+          ["111"],
+          Timex.to_datetime(~N[2017-07-04 07:15:00], "America/New_York")
+        )
+
+      expected_first_departure =
+        ~N[2017-07-04 08:45:00] |> Timex.to_datetime("America/New_York") |> Timex.to_unix()
 
       assert %{"111" => {:first_departure, {10, 12}, first_departure}} = headways
       assert Timex.to_unix(first_departure) == expected_first_departure
     end
 
     test "gracefully handles bad time string and logs warning" do
-      schedules = [%{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-         "attributes" => %{"departure_time" => "This is a bad time string"}}]
-      log = capture_log [level: :warn], fn ->
-        headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(~N[2017-07-04 09:15:00], "America/New_York"))
-        assert headways == %{"111" => {nil, nil}}
-      end
+      schedules = [
+        %{
+          "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+          "attributes" => %{"departure_time" => "This is a bad time string"}
+        }
+      ]
+
+      log =
+        capture_log([level: :warn], fn ->
+          headways =
+            group_headways_for_stations(
+              schedules,
+              ["111"],
+              Timex.to_datetime(~N[2017-07-04 09:15:00], "America/New_York")
+            )
+
+          assert headways == %{"111" => {nil, nil}}
+        end)
 
       assert log =~ "Could not parse time"
     end
@@ -67,17 +115,35 @@ defmodule Headway.ScheduleHeadwayTest do
         ~N[2017-07-04 09:14:00]
       ]
 
-      schedules1 = Enum.map(@times, fn time ->
-        %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-          "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
-      end)
+      schedules1 =
+        Enum.map(@times, fn time ->
+          %{
+            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+            "attributes" => %{
+              "departure_time" =>
+                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+            }
+          }
+        end)
 
-      schedules2 = Enum.map(times2, fn time ->
-        %{"relationships" => %{"stop" => %{"data" => %{"id" => "222"}}},
-          "attributes" => %{"arrival_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
-      end)
+      schedules2 =
+        Enum.map(times2, fn time ->
+          %{
+            "relationships" => %{"stop" => %{"data" => %{"id" => "222"}}},
+            "attributes" => %{
+              "arrival_time" =>
+                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+            }
+          }
+        end)
 
-      headways = group_headways_for_stations(schedules1 ++ schedules2, ["111", "222"], Timex.to_datetime(@current_time, "America/New_York"))
+      headways =
+        group_headways_for_stations(
+          schedules1 ++ schedules2,
+          ["111", "222"],
+          Timex.to_datetime(@current_time, "America/New_York")
+        )
+
       assert headways == %{"111" => {10, 17}, "222" => {12, 14}}
     end
 
@@ -88,12 +154,24 @@ defmodule Headway.ScheduleHeadwayTest do
         ~N[2017-07-04 09:05:00]
       ]
 
-      schedules = Enum.map(times, fn time ->
-        %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-          "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
-      end)
+      schedules =
+        Enum.map(times, fn time ->
+          %{
+            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+            "attributes" => %{
+              "departure_time" =>
+                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+            }
+          }
+        end)
 
-      headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(@current_time, "America/New_York"))
+      headways =
+        group_headways_for_stations(
+          schedules,
+          ["111"],
+          Timex.to_datetime(@current_time, "America/New_York")
+        )
+
       assert headways == %{"111" => {5, 22}}
     end
 
@@ -104,12 +182,24 @@ defmodule Headway.ScheduleHeadwayTest do
         ~N[2017-07-04 09:10:00]
       ]
 
-      schedules = Enum.map(times, fn time ->
-        %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-          "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
-      end)
+      schedules =
+        Enum.map(times, fn time ->
+          %{
+            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+            "attributes" => %{
+              "departure_time" =>
+                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+            }
+          }
+        end)
 
-      headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(@current_time, "America/New_York"))
+      headways =
+        group_headways_for_stations(
+          schedules,
+          ["111"],
+          Timex.to_datetime(@current_time, "America/New_York")
+        )
+
       assert headways == %{"111" => {5, 10}}
     end
 
@@ -120,27 +210,51 @@ defmodule Headway.ScheduleHeadwayTest do
         ~N[2017-07-04 09:02:00]
       ]
 
-      schedules = Enum.map(times, fn time ->
-        %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-          "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
-      end)
+      schedules =
+        Enum.map(times, fn time ->
+          %{
+            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+            "attributes" => %{
+              "departure_time" =>
+                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+            }
+          }
+        end)
 
-      headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(@current_time, "America/New_York"))
+      headways =
+        group_headways_for_stations(
+          schedules,
+          ["111"],
+          Timex.to_datetime(@current_time, "America/New_York")
+        )
+
       assert headways == %{"111" => {5, 7}}
     end
 
     test "Pads headway when only two times are given" do
       times = [
         ~N[2017-07-04 09:01:00],
-        ~N[2017-07-04 09:02:00],
+        ~N[2017-07-04 09:02:00]
       ]
 
-      schedules = Enum.map(times, fn time ->
-        %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-          "attributes" => %{"departure_time" => Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")}}
-      end)
+      schedules =
+        Enum.map(times, fn time ->
+          %{
+            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+            "attributes" => %{
+              "departure_time" =>
+                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+            }
+          }
+        end)
 
-      headways = group_headways_for_stations(schedules, ["111"], Timex.to_datetime(@current_time, "America/New_York"))
+      headways =
+        group_headways_for_stations(
+          schedules,
+          ["111"],
+          Timex.to_datetime(@current_time, "America/New_York")
+        )
+
       {:first_departure, headway, _first_time} = Map.get(headways, "111")
       assert headway == {5, nil}
     end
@@ -163,18 +277,18 @@ defmodule Headway.ScheduleHeadwayTest do
 
   describe "max_headway/1" do
     test "Returns max headway from range" do
-      assert max_headway({1,5}) == 5
-      assert max_headway({5,5}) == 5
-      assert max_headway({5,1}) == 5
+      assert max_headway({1, 5}) == 5
+      assert max_headway({5, 5}) == 5
+      assert max_headway({5, 1}) == 5
     end
 
     test "Returns max headway when nil value is included" do
-      assert max_headway({5,nil}) == 5
+      assert max_headway({5, nil}) == 5
       assert max_headway({nil, 5}) == 5
     end
 
     test "Returns nil when no headway values available" do
-      assert max_headway({nil,nil}) == nil
+      assert max_headway({nil, nil}) == nil
     end
   end
 

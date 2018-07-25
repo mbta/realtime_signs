@@ -14,9 +14,9 @@ defmodule Content.Audio.BridgeIsUp do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-    language: :english | :spanish,
-    time_estimate_mins: integer() | nil
-  }
+          language: :english | :spanish,
+          time_estimate_mins: integer() | nil
+        }
 
   @spec create_bridge_messages(integer | nil) :: {t() | nil, t() | nil}
   def create_bridge_messages(minutes) do
@@ -26,6 +26,7 @@ defmodule Content.Audio.BridgeIsUp do
   defp create(language, nil) do
     %__MODULE__{language: language, time_estimate_mins: nil}
   end
+
   defp create(language, minutes) do
     if Utilities.valid_range?(minutes, language) do
       %__MODULE__{language: language, time_estimate_mins: minutes}
@@ -45,6 +46,7 @@ defmodule Content.Audio.BridgeIsUp do
     defp message_id(%{language: :spanish, time_estimate_mins: _mins}), do: "152"
 
     defp vars(%{language: _language, time_estimate_mins: nil}), do: []
+
     defp vars(%{language: language, time_estimate_mins: mins}) do
       [Utilities.number_var(mins, language)]
     end

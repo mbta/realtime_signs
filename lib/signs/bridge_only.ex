@@ -16,19 +16,19 @@ defmodule Signs.BridgeOnly do
     :bridge_engine,
     :bridge_id,
     :sign_updater,
-    :bridge_check_period_ms,
+    :bridge_check_period_ms
   ]
 
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-    id: String.t(),
-    pa_ess_id: PaEss.id(),
-    bridge_engine: module(),
-    bridge_id: String.t(),
-    sign_updater: module(),
-    bridge_check_period_ms: integer(),
-  }
+          id: String.t(),
+          pa_ess_id: PaEss.id(),
+          bridge_engine: module(),
+          bridge_id: String.t(),
+          sign_updater: module(),
+          bridge_check_period_ms: integer()
+        }
 
   def start_link(%{"type" => "bridge_only"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
@@ -40,7 +40,7 @@ defmodule Signs.BridgeOnly do
       bridge_engine: bridge_engine,
       bridge_id: Map.fetch!(config, "bridge_id"),
       sign_updater: sign_updater,
-      bridge_check_period_ms: 5 * 60 * 1_000,
+      bridge_check_period_ms: 5 * 60 * 1_000
     }
 
     GenServer.start_link(__MODULE__, sign)
@@ -58,17 +58,20 @@ defmodule Signs.BridgeOnly do
     case sign.bridge_engine.status(sign.bridge_id) do
       {"Raised", duration} ->
         {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
+
         for audio <- [english, spanish] do
           if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120)
         end
+
       _ ->
         nil
     end
 
     {:noreply, sign}
   end
+
   def handle_info(msg, state) do
-    Logger.warn("#{__MODULE__} #{inspect(state.id)} unknown message: #{inspect msg}")
+    Logger.warn("#{__MODULE__} #{inspect(state.id)} unknown message: #{inspect(msg)}")
     {:noreply, state}
   end
 

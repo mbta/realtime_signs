@@ -28,7 +28,7 @@ defmodule Signs.Utilities.UpdaterTest do
     direction_id: 0,
     platform: nil,
     terminal?: false,
-    announce_arriving?: false,
+    announce_arriving?: false
   }
 
   @sign %Signs.Realtime{
@@ -43,7 +43,7 @@ defmodule Signs.Utilities.UpdaterTest do
     tick_top: 1,
     tick_read: 1,
     expiration_seconds: 100,
-    read_period_seconds: 100,
+    read_period_seconds: 100
   }
 
   describe "update_sign/3" do
@@ -55,7 +55,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       refute_received({:send_audio, _, _, _, _})
       refute_received({:update_single_line, _, _, _, _, _})
-      refute_received({:update_sign, _, _, _ , _, _})
+      refute_received({:update_sign, _, _, _, _, _})
       assert sign.tick_top == 1
       assert sign.tick_bottom == 1
     end
@@ -68,7 +68,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       refute_received({:send_audio, _, _, _, _})
       assert_received({:update_single_line, _id, "1", %P{minutes: 3}, _dur, _start})
-      refute_received({:update_sign, _, _, _ , _, _})
+      refute_received({:update_sign, _, _, _, _, _})
       assert sign.tick_top == 100
       assert sign.tick_bottom == 1
     end
@@ -81,7 +81,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       refute_received({:send_audio, _, _, _, _})
       assert_received({:update_single_line, _id, "2", %P{minutes: 2}, _dur, _start})
-      refute_received({:update_sign, _, _, _ , _, _})
+      refute_received({:update_sign, _, _, _, _, _})
       assert sign.tick_top == 1
       assert sign.tick_bottom == 100
     end
@@ -94,7 +94,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       refute_received({:send_audio, _, _, _, _})
       refute_received({:update_single_line, _, _, _, _, _})
-      assert_received({:update_sign, _id, %P{minutes: 3}, %P{minutes: 2} , _dur, _start})
+      assert_received({:update_sign, _id, %P{minutes: 3}, %P{minutes: 2}, _dur, _start})
       assert sign.tick_top == 100
       assert sign.tick_bottom == 100
     end
@@ -106,7 +106,10 @@ defmodule Signs.Utilities.UpdaterTest do
 
       sign = Updater.update_sign(@sign, diff_top, diff_bottom)
 
-      assert_received({:send_audio, _, %Content.Audio.TrainIsArriving{destination: :ashmont}, _, _})
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :ashmont}, _, _}
+      )
+
       assert sign.tick_top == 100
       assert sign.tick_bottom == 100
     end

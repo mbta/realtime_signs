@@ -7,17 +7,19 @@ defmodule MessageQueueTest do
       state = %{queue: :queue.new(), length: 0}
       msg = {:msg, [:args]}
 
-      {:reply, {:ok, :sent}, state} = MessageQueue.handle_call({:queue_update, msg}, self(), state)
+      {:reply, {:ok, :sent}, state} =
+        MessageQueue.handle_call({:queue_update, msg}, self(), state)
 
       assert {{:value, ^msg}, _queue} = :queue.out(state.queue)
     end
 
     test "bumps old message when more than max size" do
-      q = 1..150 |> Enum.to_list |> :queue.from_list
+      q = 1..150 |> Enum.to_list() |> :queue.from_list()
       state = %{queue: q, length: 150}
       msg = 151
 
-      {:reply, {:ok, :sent}, state} = MessageQueue.handle_call({:queue_update, msg}, self(), state)
+      {:reply, {:ok, :sent}, state} =
+        MessageQueue.handle_call({:queue_update, msg}, self(), state)
 
       assert {{:value, 2}, _queue} = :queue.out(state.queue)
     end
@@ -25,9 +27,10 @@ defmodule MessageQueueTest do
     test "logs if message size is multiple of 30" do
       state = %{queue: :queue.new(), length: 30}
 
-      log = capture_log [level: :info], fn ->
-        MessageQueue.handle_call({:queue_update, :foo}, self(), state)
-      end
+      log =
+        capture_log([level: :info], fn ->
+          MessageQueue.handle_call({:queue_update, :foo}, self(), state)
+        end)
 
       assert log =~ "queue_length=30"
     end
@@ -47,7 +50,7 @@ defmodule MessageQueueTest do
 
   describe "works through public interfaces" do
     {:ok, pid} = GenServer.start_link(MessageQueue, [])
-    {:ok, :sent} = MessageQueue.update_single_line(pid, 1, 2, 3, 4,5)
+    {:ok, :sent} = MessageQueue.update_single_line(pid, 1, 2, 3, 4, 5)
     {:ok, :sent} = MessageQueue.update_sign(pid, 1, 2, 3, 4, 5)
     {:ok, :sent} = MessageQueue.send_audio(pid, 1, 2, 3, 4)
 
