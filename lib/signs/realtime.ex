@@ -44,10 +44,11 @@ defmodule Signs.Realtime do
   def start_link(%{"type" => "realtime"} = config, opts \\ []) do
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
+    pa_ess_zone = Map.fetch!(config, "pa_ess_zone")
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
-      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "pa_ess_zone")},
+      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), pa_ess_zone},
       source_config: config |> Map.fetch!("source_config") |> Utilities.SourceConfig.parse!(),
       current_content_top: {nil, Content.Message.Empty.new()},
       current_content_bottom: {nil, Content.Message.Empty.new()},
@@ -55,7 +56,7 @@ defmodule Signs.Realtime do
       sign_updater: sign_updater,
       tick_bottom: 130,
       tick_top: 130,
-      tick_read: 240,
+      tick_read: 240 + offset(pa_ess_zone),
       expiration_seconds: 130,
       read_period_seconds: 240
     }
@@ -94,6 +95,10 @@ defmodule Signs.Realtime do
   def schedule_run_loop(pid) do
     Process.send_after(pid, :run_loop, 1_000)
   end
+
+  defp offset(zone) when zone in ["n", "e"], do: 0
+  defp offset(zone) when zone in ["s", "w"], do: 60
+  defp offset(zone) when zone in ["m", "c"], do: 120
 
   def expire_bottom(%{tick_bottom: n} = sign) when n > 0 do
     sign
