@@ -2,30 +2,32 @@ defmodule Predictions.Predictions do
   alias Predictions.Prediction
   require Logger
 
-  @spec get_all(GTFS.Realtime.feed_message(), DateTime.t()) :: %{
+  @spec get_all(map(), DateTime.t()) :: %{
           optional({String.t(), integer()}) => [Predictions.Prediction.t()]
         }
   def get_all(feed_message, current_time) do
-    feed_message.entity
-    |> Enum.map(& &1.trip_update)
+    feed_message["entity"]
+    |> Enum.map(& &1["trip_update"])
     |> Enum.flat_map(&group_stop_time_updates/1)
-    |> Enum.filter(fn {update, _, _, _} -> update.arrival || update.departure end)
+    |> Enum.filter(fn {update, _, _, _} -> update["arrival"] || update["departure"] end)
     |> Enum.group_by(
-      fn {update, _last_stop_id, _route_id, direction_id} -> {update.stop_id, direction_id} end,
+      fn {update, _last_stop_id, _route_id, direction_id} ->
+        {update["stop_id"], direction_id}
+      end,
       &prediction_from_update(&1, current_time)
     )
   end
 
   defp group_stop_time_updates(trip_update) do
     last_stop_id =
-      Enum.max_by(trip_update.stop_time_update, fn update ->
-        if update.arrival, do: update.arrival.time, else: 0
+      Enum.max_by(trip_update["stop_time_update"], fn update ->
+        if update["arrival"], do: update["arrival"]["time"], else: 0
       end)
-      |> Map.get(:stop_id)
+      |> Map.get("stop_id")
 
     Enum.map(
-      trip_update.stop_time_update,
-      &{&1, last_stop_id, trip_update.trip.route_id, trip_update.trip.direction_id}
+      trip_update["stop_time_update"],
+      &{&1, last_stop_id, trip_update["trip"]["route_id"], trip_update["trip"]["direction_id"]}
     )
   end
 
@@ -40,17 +42,17 @@ defmodule Predictions.Predictions do
     current_time_seconds = DateTime.to_unix(current_time)
 
     seconds_until_arrival =
-      if stop_time_update.arrival,
-        do: stop_time_update.arrival.time - current_time_seconds,
+      if stop_time_update["arrival"],
+        do: stop_time_update["arrival"]["time"] - current_time_seconds,
         else: nil
 
     seconds_until_departure =
-      if stop_time_update.departure,
-        do: stop_time_update.departure.time - current_time_seconds,
+      if stop_time_update["departure"],
+        do: stop_time_update["departure"]["time"] - current_time_seconds,
         else: nil
 
     %Prediction{
-      stop_id: stop_time_update.stop_id,
+      stop_id: stop_time_update["stop_id"],
       direction_id: direction_id,
       seconds_until_arrival: max(0, seconds_until_arrival),
       seconds_until_departure: max(0, seconds_until_departure),
@@ -59,8 +61,12 @@ defmodule Predictions.Predictions do
     }
   end
 
-  def parse_pb_response(body) do
-    GTFS.Realtime.FeedMessage.decode(body)
+  def parse_json_response("") do
+    %{"entity" => []}
+  end
+
+  def parse_json_response(body) do
+    Poison.Parser.parse!(body)
   end
 
   @spec sort([Predictions.Prediction.t()], :arrival | :departure) :: [Predictions.Prediction.t()]

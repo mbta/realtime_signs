@@ -5,15 +5,19 @@ defmodule Positions.Positions do
   Fetches from the GTFS-RT PB file about once per second.
   """
 
-  @spec parse_pb_response(binary) :: map()
-  def parse_pb_response(body) do
-    GTFS.Realtime.FeedMessage.decode(body)
+  @spec parse_json_response(String.t()) :: map()
+  def parse_json_response("") do
+    %{"entity" => []}
+  end
+
+  def parse_json_response(body) do
+    Poison.Parser.parse!(body)
   end
 
   @spec get_stopped(map) :: [{String.t(), true}]
   def get_stopped(feed_message) do
-    feed_message.entity
-    |> Enum.filter(&(&1.vehicle.current_status == :STOPPED_AT))
-    |> Enum.map(&{&1.vehicle.stop_id, true})
+    feed_message["entity"]
+    |> Enum.filter(&(&1["vehicle"]["current_status"] == "STOPPED_AT"))
+    |> Enum.map(&{&1["vehicle"]["stop_id"], true})
   end
 end
