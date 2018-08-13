@@ -88,7 +88,7 @@ defmodule Engine.Predictions do
   defp update_predictions(body, current_time) do
     new_predictions =
       body
-      |> Predictions.Predictions.parse_pb_response()
+      |> Predictions.Predictions.parse_json_response()
       |> Predictions.Predictions.get_all(current_time)
 
     :ets.delete_all_objects(@predictions_table)
@@ -98,7 +98,7 @@ defmodule Engine.Predictions do
   defp update_positions(body, _current_time) do
     new_positions =
       body
-      |> Positions.Positions.parse_pb_response()
+      |> Positions.Positions.parse_json_response()
       |> Positions.Positions.get_stopped()
 
     :ets.delete_all_objects(@positions_table)
