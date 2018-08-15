@@ -8,8 +8,13 @@ defprotocol Content.Message do
   a template. For example to make a sign say "Mattapan  BRD", you must use a
   %Content.Message.Predictions{headsign: "Mattapan", minutes: :boarding}
   struct.
+
+  The `to_string` function returns either a plain string or a tuple with a
+  list of strings if it's to be paginated on the sign, together with the length
+  in seconds of how long each page should be displayed.
   """
 
   @doc "converts a content message to a string for display on a sign"
+  @spec to_string(Content.Message.t()) :: String.t() | {[String.t()], non_neg_integer()}
   def to_string(message)
 end
