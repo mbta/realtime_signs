@@ -117,8 +117,21 @@ defmodule PaEss.HttpUpdater do
   defp start_display(:now), do: ""
   defp start_display(seconds_from_midnight), do: "t#{seconds_from_midnight}"
 
-  defp message_display(msg) when is_atom(msg), do: "-#{msg}"
-  defp message_display(msg) when is_map(msg), do: ~s(-"#{Content.Message.to_string(msg)}")
+  defp message_display(msg) when is_map(msg) do
+    case Content.Message.to_string(msg) do
+      str when is_binary(str) ->
+        ~s(-"#{str}")
+
+      {pages, duration} ->
+        pages
+        |> Enum.map(fn pg -> ~s(-"#{pg}".#{duration}) end)
+        |> Enum.join()
+    end
+  end
+
+  defp message_display(msg) when is_atom(msg) do
+    "-#{msg}"
+  end
 
   # bitmap representing zone: m c n s e w
   defp zone_bitmap("m"), do: "100000"

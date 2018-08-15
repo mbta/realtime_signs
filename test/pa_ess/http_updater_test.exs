@@ -177,6 +177,12 @@ defmodule PaEss.HttpUpdaterTest do
       assert PaEss.HttpUpdater.to_command(msg, 55, :now, "n", 1)
         == "e55~n1-\"Inf n Beynd  2 min\""
     end
+
+    test "handles messages that paginate" do
+      msg = %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 3}
+      assert PaEss.HttpUpdater.to_command(msg, 55, :now, "n", 1)
+        == "e55~n1-\"Ashmont    Stopped\".5-\"Ashmont    3 stops\".5-\"Ashmont    away   \".5"
+    end
   end
 
   defp make_state(init \\ %{}) do
