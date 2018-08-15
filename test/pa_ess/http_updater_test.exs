@@ -171,6 +171,14 @@ defmodule PaEss.HttpUpdaterTest do
     assert PaEss.HttpUpdater.handle_info(:check_queue, state) == {:noreply, %{state | uid: 1}}
   end
 
+  describe "to_command/5" do
+    test "handles messages that are single string" do
+      msg = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: 2}
+      assert PaEss.HttpUpdater.to_command(msg, 55, :now, "n", 1)
+        == "e55~n1-\"Inf n Beynd  2 min\""
+    end
+  end
+
   defp make_state(init \\ %{}) do
     Map.merge(%{http_poster: Fake.HTTPoison, uid: 0}, init)
   end
