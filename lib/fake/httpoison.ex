@@ -55,65 +55,65 @@ defmodule Fake.HTTPoison do
     end
   end
 
-  def mock_response("https://fake_update/mbta-gtfs-s3/fake_trip_update.pb") do
+  def mock_response("https://fake_update/mbta-gtfs-s3/fake_trip_update.json") do
     feed_message =
-      %GTFS.Realtime.FeedMessage{
-        entity: [
-          %GTFS.Realtime.FeedEntity{
-            alert: nil,
-            id: "1490783458_32568935",
-            is_deleted: false,
-            trip_update: %GTFS.Realtime.TripUpdate{
-              delay: nil,
-              stop_time_update: [
-                %GTFS.Realtime.TripUpdate.StopTimeUpdate{
-                  arrival: %GTFS.Realtime.TripUpdate.StopTimeEvent{
-                    delay: nil,
-                    time: 1_491_570_120,
-                    uncertainty: nil
+      %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783458_32568935",
+            "is_deleted" => false,
+            "trip_update" => %{
+              "delay" => nil,
+              "stop_time_update" => [
+                %{
+                  "arrival" => %{
+                    "delay" => nil,
+                    "time" => 1_491_570_120,
+                    "uncertainty" => nil
                   },
-                  departure: nil,
-                  schedule_relationship: :SCHEDULED,
-                  stop_id: "70263",
-                  stop_sequence: 1
+                  "departure" => nil,
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70263",
+                  "stop_sequence" => 1
                 },
-                %GTFS.Realtime.TripUpdate.StopTimeUpdate{
-                  arrival: %GTFS.Realtime.TripUpdate.StopTimeEvent{
-                    delay: nil,
-                    time: 1_491_570_180,
-                    uncertainty: nil
+                %{
+                  "arrival" => %{
+                    "delay" => nil,
+                    "time" => 1_491_570_180,
+                    "uncertainty" => nil
                   },
-                  departure: nil,
-                  schedule_relationship: :SCHEDULED,
-                  stop_id: "70261",
-                  stop_sequence: 1
+                  "departure" => nil,
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70261",
+                  "stop_sequence" => 1
                 }
               ],
-              timestamp: nil,
-              trip: %GTFS.Realtime.TripDescriptor{
-                direction_id: 0,
-                route_id: "Mattapan",
-                schedule_relationship: :SCHEDULED,
-                start_date: "20170329",
-                start_time: nil,
-                trip_id: "32568935"
+              "timestamp" => nil,
+              "trip" => %{
+                "direction_id" => 0,
+                "route_id" => "Mattapan",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
               },
-              vehicle: %GTFS.Realtime.VehicleDescriptor{
-                id: "G-10040",
-                label: "3260",
-                license_plate: nil
+              "vehicle" => %{
+                "id" => "G-10040",
+                "label" => "3260",
+                "license_plate" => nil
               }
             },
-            vehicle: nil
+            "vehicle" => nil
           }
         ],
-        header: %GTFS.Realtime.FeedHeader{
-          gtfs_realtime_version: "1.0",
-          incrementality: :FULL_DATASET,
-          timestamp: 1_490_783_458
+        "header" => %{
+          "gtfs_realtime_version" => "1.0",
+          "incrementality" => "FULL_DATASET",
+          "timestamp" => 1_490_783_458
         }
       }
-      |> GTFS.Realtime.FeedMessage.encode()
+      |> Poison.encode!()
 
     {:ok, %HTTPoison.Response{status_code: 200, body: feed_message}}
   end
