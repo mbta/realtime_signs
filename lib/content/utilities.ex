@@ -17,12 +17,12 @@ defmodule Content.Utilities do
   def headsign_for_prediction("Red", 1, _), do: {:ok, "Alewife"}
 
   def headsign_for_prediction("Red", 0, last_stop_id)
-       when last_stop_id in ["70085", "70086", "70087", "70089", "70091", "70093"],
-       do: {:ok, "Ashmont"}
+      when last_stop_id in ["70085", "70086", "70087", "70089", "70091", "70093"],
+      do: {:ok, "Ashmont"}
 
   def headsign_for_prediction("Red", 0, last_stop_id)
-       when last_stop_id in ["70095", "70096", "70097", "70101", "70103", "70105"],
-       do: {:ok, "Braintree"}
+      when last_stop_id in ["70095", "70096", "70097", "70101", "70103", "70105"],
+      do: {:ok, "Braintree"}
 
   def headsign_for_prediction("Green-B", 0, _), do: {:ok, "Boston Col"}
   def headsign_for_prediction("Green-C", 0, _), do: {:ok, "Clvlnd Cir"}
