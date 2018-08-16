@@ -42,7 +42,7 @@ config :realtime_signs,
   s3_client: ExAws.S3,
   s3_bucket: System.get_env("SIGNS_S3_BUCKET"),
   s3_path: System.get_env("SIGNS_S3_PATH"),
-  stops_away_enabled?: if System.get_env("STOPS_AWAY_ENABLED") == "true", do: true, else: false
+  stopped_train_enabled?: if System.get_env("STOPPED_TRAIN_ENABLED") == "true", do: true, else: false
 
 config :ex_aws,
   access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],

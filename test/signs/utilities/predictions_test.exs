@@ -326,9 +326,9 @@ defmodule Signs.Utilities.PredictionsTest do
     end
 
     test "Returns stopped train message if enabled" do
-      old_env = Application.get_env(:realtime_signs, :stops_away_enabled?)
-      Application.put_env(:realtime_signs, :stops_away_enabled?, true)
-      on_exit(fn -> Application.put_env(:realtime_signs, :stops_away_enabled?, old_env) end)
+      old_env = Application.get_env(:realtime_signs, :stopped_train_enabled?)
+      Application.put_env(:realtime_signs, :stopped_train_enabled?, true)
+      on_exit(fn -> Application.put_env(:realtime_signs, :stopped_train_enabled?, old_env) end)
 
       s = %SourceConfig{
         stop_id: "9",
@@ -348,9 +348,9 @@ defmodule Signs.Utilities.PredictionsTest do
     end
 
     test "Does not return stopped train message if not enabled" do
-      old_env = Application.get_env(:realtime_signs, :stops_away_enabled?)
-      Application.put_env(:realtime_signs, :stops_away_enabled?, false)
-      on_exit(fn -> Application.put_env(:realtime_signs, :stops_away_enabled?, old_env) end)
+      old_env = Application.get_env(:realtime_signs, :stopped_train_enabled?)
+      Application.put_env(:realtime_signs, :stopped_train_enabled?, false)
+      on_exit(fn -> Application.put_env(:realtime_signs, :stopped_train_enabled?, old_env) end)
 
       s = %SourceConfig{
         stop_id: "9",
