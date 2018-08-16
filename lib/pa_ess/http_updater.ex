@@ -99,7 +99,7 @@ defmodule PaEss.HttpUpdater do
   end
 
   @spec to_command(
-          Content.Message.t() | atom(),
+          Content.Message.t(),
           non_neg_integer(),
           non_neg_integer() | :now,
           String.t(),
@@ -127,10 +127,6 @@ defmodule PaEss.HttpUpdater do
         |> Enum.map(fn pg -> ~s(-"#{pg}".#{duration}) end)
         |> Enum.join()
     end
-  end
-
-  defp message_display(msg) when is_atom(msg) do
-    "-#{msg}"
   end
 
   # bitmap representing zone: m c n s e w
