@@ -40,11 +40,17 @@ defmodule Signs.Utilities.Predictions do
     |> Enum.with_index()
     |> Enum.map(fn {{source, prediction}, i} ->
       stopped_at? = i == 0 and prediction_engine.stopped_at?(source.stop_id)
+      do_stops_away? = Application.get_env(:realtime_signs, :stops_away_enabled?)
 
-      if source.terminal? do
-        {source, Content.Message.Predictions.terminal(prediction, stopped_at?)}
-      else
-        {source, Content.Message.Predictions.non_terminal(prediction, stopped_at?)}
+      cond do
+        do_stops_away? && prediction.boarding_status ->
+          {source, Content.Message.StoppedTrain.from_prediction(prediction)}
+
+        source.terminal? ->
+          {source, Content.Message.Predictions.terminal(prediction, stopped_at?)}
+
+        true ->
+          {source, Content.Message.Predictions.non_terminal(prediction, stopped_at?)}
       end
     end)
     |> case do

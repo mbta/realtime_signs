@@ -10,6 +10,8 @@ defmodule Content.Message.StoppedTrain do
   then it's the normal Ashmont BRD.
   """
 
+  require Logger
+
   @enforce_keys [:headsign, :stops_away]
   defstruct @enforce_keys
 
@@ -17,6 +19,41 @@ defmodule Content.Message.StoppedTrain do
           headsign: String.t(),
           stops_away: non_neg_integer()
         }
+
+  @spec from_prediction(Predictions.Prediction.t()) :: t()
+  def from_prediction(%{boarding_status: status} = prediction) when not is_nil(status) do
+    headsign =
+      case Content.Utilities.headsign_for_prediction(
+             prediction.route_id,
+             prediction.direction_id,
+             prediction.destination_stop_id
+           ) do
+        {:ok, dest} ->
+          dest
+
+        {:error, _} ->
+          Logger.warn("Could not find headsign for prediction #{inspect(prediction)}")
+          ""
+      end
+
+    stops_away = parse_stops_away(prediction.boarding_status)
+
+    %__MODULE__{
+      headsign: headsign,
+      stops_away: stops_away
+    }
+  end
+
+  defp parse_stops_away("Stopped at station") do
+    0
+  end
+
+  defp parse_stops_away(str) do
+    ~r/Stopped (?<stops_away>\d+) stops? away/
+    |> Regex.named_captures(str)
+    |> Map.fetch!("stops_away")
+    |> String.to_integer()
+  end
 
   defimpl Content.Message do
     def to_string(%{headsign: headsign, stops_away: 0}) do
