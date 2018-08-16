@@ -103,7 +103,7 @@ defmodule PaEss.HttpUpdater do
           non_neg_integer(),
           non_neg_integer() | :now,
           String.t(),
-          0 | 1
+          1 | 2
         ) :: String.t()
   def to_command(msg, duration, start_secs, zone, line_no) do
     "#{start_display(start_secs)}e#{duration}~#{zone}#{line_no}#{message_display(msg)}"
