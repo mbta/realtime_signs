@@ -22,7 +22,8 @@ defmodule Predictions.PredictionsTest do
               },
               "schedule_relationship" => "SCHEDULED",
               "stop_id" => "70263",
-              "stop_sequence" => 1
+              "stop_sequence" => 1,
+              "boarding_status" => "Stopped 1 stop away"
             },
             %{
               "arrival" => %{
@@ -79,7 +80,8 @@ defmodule Predictions.PredictionsTest do
             seconds_until_departure: 120,
             direction_id: 0,
             route_id: "Mattapan",
-            destination_stop_id: "70261"
+            destination_stop_id: "70261",
+            boarding_status: "Stopped 1 stop away"
           }
         ]
       }

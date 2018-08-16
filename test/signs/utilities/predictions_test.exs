@@ -1,5 +1,5 @@
 defmodule Signs.Utilities.PredictionsTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
   alias Signs.Utilities.SourceConfig
 
   defmodule FakePredictions do
@@ -143,6 +143,20 @@ defmodule Signs.Utilities.PredictionsTest do
           destination_stop_id: "123",
           seconds_until_arrival: 100,
           seconds_until_departure: 120
+        }
+      ]
+    end
+
+    def for_stop("9", 0) do
+      [
+        %Predictions.Prediction{
+          stop_id: "9",
+          direction_id: 0,
+          route_id: "Red",
+          destination_stop_id: "123",
+          seconds_until_arrival: 10,
+          seconds_until_departure: 100,
+          boarding_status: "Stopped 1 stop away"
         }
       ]
     end
@@ -308,6 +322,50 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s, %Content.Message.Predictions{minutes: :boarding}},
                {^s, %Content.Message.Predictions{minutes: 2}}
+             } = Signs.Utilities.Predictions.get_messages(sign, true)
+    end
+
+    test "Returns stopped train message if enabled" do
+      old_env = Application.get_env(:realtime_signs, :stops_away_enabled?)
+      Application.put_env(:realtime_signs, :stops_away_enabled?, true)
+      on_exit(fn -> Application.put_env(:realtime_signs, :stops_away_enabled?, old_env) end)
+
+      s = %SourceConfig{
+        stop_id: "9",
+        direction_id: 0,
+        terminal?: false,
+        platform: nil,
+        announce_arriving?: false
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      assert {
+               {^s, %Content.Message.StoppedTrain{stops_away: 1}},
+               {nil, %Content.Message.Empty{}}
+             } = Signs.Utilities.Predictions.get_messages(sign, true)
+    end
+
+    test "Does not return stopped train message if not enabled" do
+      old_env = Application.get_env(:realtime_signs, :stops_away_enabled?)
+      Application.put_env(:realtime_signs, :stops_away_enabled?, false)
+      on_exit(fn -> Application.put_env(:realtime_signs, :stops_away_enabled?, old_env) end)
+
+      s = %SourceConfig{
+        stop_id: "9",
+        direction_id: 0,
+        terminal?: false,
+        platform: nil,
+        announce_arriving?: false
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      assert {
+               {^s, %Content.Message.Predictions{}},
+               {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign, true)
     end
   end
