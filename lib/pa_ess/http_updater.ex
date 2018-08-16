@@ -123,10 +123,17 @@ defmodule PaEss.HttpUpdater do
         ~s(-"#{str}")
 
       {pages, duration} ->
-        pages
+        rotate(pages)
         |> Enum.map(fn pg -> ~s(-"#{pg}".#{duration}) end)
         |> Enum.join()
     end
+  end
+
+  # When sending a list of pages [a, b, c] to ARINC, the display starts with b, so move
+  # the last item in the list to the front, go get proper pagination.
+  defp rotate(pages) do
+    {last, rest} = List.pop_at(pages, -1)
+    [last | rest]
   end
 
   # bitmap representing zone: m c n s e w
