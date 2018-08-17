@@ -61,15 +61,15 @@ defmodule Content.Message.StoppedTrain do
     end
 
     def to_string(%{headsign: headsign, stops_away: n}) do
-      stop_word = if n == 1, do: "stop ", else: "stops"
+      stop_word = if n == 1, do: "stop", else: "stops"
 
       pages = [
         Content.Utilities.width_padded_string(headsign, "Stopped", 18),
         Content.Utilities.width_padded_string(headsign, "#{n} #{stop_word}", 18),
-        Content.Utilities.width_padded_string(headsign, "away   ", 18)
+        Content.Utilities.width_padded_string(headsign, "away", 18)
       ]
 
-      {pages, 4}
+      {pages, 3}
     end
   end
 end
