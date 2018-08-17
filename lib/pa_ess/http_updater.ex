@@ -47,7 +47,7 @@ defmodule PaEss.HttpUpdater do
   end
 
   def process({:update_single_line, [{station, zone}, line_no, msg, duration, start_secs]}, state) do
-    cmd = "#{start_display(start_secs)}e#{duration}~#{zone}#{line_no}-#{message_display(msg)}"
+    cmd = to_command(msg, duration, start_secs, zone, line_no)
     encoded = URI.encode_query(MsgType: "SignContent", uid: state.uid, sta: station, c: cmd)
     Logger.info(["update_single_line: ", encoded])
 
@@ -59,10 +59,8 @@ defmodule PaEss.HttpUpdater do
         {:update_sign, [{station, zone}, top_line, bottom_line, duration, start_secs]},
         state
       ) do
-    top_cmd = "#{start_display(start_secs)}e#{duration}~#{zone}1-#{message_display(top_line)}"
-
-    bottom_cmd =
-      "#{start_display(start_secs)}e#{duration}~#{zone}2-#{message_display(bottom_line)}"
+    top_cmd = to_command(top_line, duration, start_secs, zone, 1)
+    bottom_cmd = to_command(bottom_line, duration, start_secs, zone, 2)
 
     encoded =
       URI.encode_query(
@@ -100,6 +98,17 @@ defmodule PaEss.HttpUpdater do
     send_post(state.http_poster, encoded)
   end
 
+  @spec to_command(
+          Content.Message.t(),
+          non_neg_integer(),
+          non_neg_integer() | :now,
+          String.t(),
+          1 | 2
+        ) :: String.t()
+  def to_command(msg, duration, start_secs, zone, line_no) do
+    "#{start_display(start_secs)}e#{duration}~#{zone}#{line_no}#{message_display(msg)}"
+  end
+
   defp sign_host, do: Application.get_env(:realtime_signs, :sign_head_end_host)
   defp sign_url, do: "http://#{sign_host()}/mbta/cgi-bin/RemoteMsgsCgi.exe"
   defp sign_ui_host, do: Application.get_env(:realtime_signs, :sign_ui_url)
@@ -108,8 +117,24 @@ defmodule PaEss.HttpUpdater do
   defp start_display(:now), do: ""
   defp start_display(seconds_from_midnight), do: "t#{seconds_from_midnight}"
 
-  defp message_display(msg) when is_atom(msg), do: "#{msg}"
-  defp message_display(msg) when is_map(msg), do: ~s("#{Content.Message.to_string(msg)}")
+  defp message_display(msg) when is_map(msg) do
+    case Content.Message.to_string(msg) do
+      str when is_binary(str) ->
+        ~s(-"#{str}")
+
+      {pages, duration} ->
+        rotate(pages)
+        |> Enum.map(fn pg -> ~s(-"#{pg}".#{duration - 1}) end)
+        |> Enum.join()
+    end
+  end
+
+  # When sending a list of pages [a, b, c] to ARINC, the display starts with b, so move
+  # the last item in the list to the front, go get proper pagination.
+  defp rotate(pages) do
+    {last, rest} = List.pop_at(pages, -1)
+    [last | rest]
+  end
 
   # bitmap representing zone: m c n s e w
   defp zone_bitmap("m"), do: "100000"
