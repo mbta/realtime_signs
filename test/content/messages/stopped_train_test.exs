@@ -14,9 +14,9 @@ defmodule Content.Message.StoppedTrainTest do
                [
                  "Braintree  Stopped",
                  "Braintree  2 stops",
-                 "Braintree  away   "
+                 "Braintree     away"
                ],
-               5
+               3
              }
     end
 
@@ -26,10 +26,10 @@ defmodule Content.Message.StoppedTrainTest do
       assert Content.Message.to_string(msg) == {
                [
                  "Braintree  Stopped",
-                 "Braintree  1 stop ",
-                 "Braintree  away   "
+                 "Braintree   1 stop",
+                 "Braintree     away"
                ],
-               5
+               3
              }
     end
   end
