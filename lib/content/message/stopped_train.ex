@@ -69,7 +69,7 @@ defmodule Content.Message.StoppedTrain do
         Content.Utilities.width_padded_string(headsign, "away   ", 18)
       ]
 
-      {pages, 2}
+      {pages, 3}
     end
   end
 end
