@@ -124,7 +124,7 @@ defmodule PaEss.HttpUpdater do
 
       {pages, duration} ->
         rotate(pages)
-        |> Enum.map(fn pg -> ~s(-"#{pg}".#{duration}) end)
+        |> Enum.map(fn pg -> ~s(-"#{pg}".#{duration - 1}) end)
         |> Enum.join()
     end
   end
