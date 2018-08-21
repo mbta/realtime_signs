@@ -116,12 +116,19 @@ defmodule Content.Audio.NextTrainCountdown do
     alias PaEss.Utilities
 
     def to_params(%{platform: nil} = audio) do
-      {"90", [PaEss.Utilities.destination_var(audio.destination), verb_var(audio), minutes_var(audio)], :audio}
+      {"90",
+       [PaEss.Utilities.destination_var(audio.destination), verb_var(audio), minutes_var(audio)],
+       :audio}
     end
 
     def to_params(audio) do
-      {"99", [PaEss.Utilities.destination_var(audio.destination), platform_var(audio), verb_var(audio), minutes_var(audio)],
-       :audio}
+      {"99",
+       [
+         PaEss.Utilities.destination_var(audio.destination),
+         platform_var(audio),
+         verb_var(audio),
+         minutes_var(audio)
+       ], :audio}
     end
 
     defp platform_var(%{platform: :ashmont}), do: "4016"

@@ -39,11 +39,12 @@ defmodule Signs.Utilities.Updater do
 
         announce_arrival(bottom, sign)
 
-        sign = if different_headsigns?(bottom, sign.current_content_bottom) do
-          announce_stopped_train(bottom_msg, sign)
-        else
-          sign
-        end
+        sign =
+          if different_headsigns?(bottom, sign.current_content_bottom) do
+            announce_stopped_train(bottom_msg, sign)
+          else
+            sign
+          end
 
         %{sign | current_content_bottom: bottom, tick_bottom: sign.expiration_seconds}
 
@@ -63,11 +64,12 @@ defmodule Signs.Utilities.Updater do
 
         announce_arrival(bottom, sign)
 
-        sign = if different_headsigns?(bottom, sign.current_content_bottom) do
-          announce_stopped_train(bottom_msg, sign)
-        else
-          sign
-        end
+        sign =
+          if different_headsigns?(bottom, sign.current_content_bottom) do
+            announce_stopped_train(bottom_msg, sign)
+          else
+            sign
+          end
 
         %{
           sign

@@ -58,7 +58,8 @@ defmodule PaEss.Utilities do
   def destination_var(:braintree), do: "4021"
   def destination_var(:alewife), do: "4000"
 
-  @spec headsign_to_terminal_station(String.t()) :: {:ok, PaEss.terminal_station()} | {:error, :unknown}
+  @spec headsign_to_terminal_station(String.t()) ::
+          {:ok, PaEss.terminal_station()} | {:error, :unknown}
   def headsign_to_terminal_station("Ashmont"), do: {:ok, :ashmont}
   def headsign_to_terminal_station("Mattapan"), do: {:ok, :mattapan}
   def headsign_to_terminal_station("Bowdoin"), do: {:ok, :bowdoin}

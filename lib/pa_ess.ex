@@ -10,5 +10,13 @@ defmodule PaEss do
   @type sign_loc_code :: String.t()
   @type zone :: String.t()
   @type id :: {sign_loc_code(), zone()}
-  @type terminal_station :: :ashmont | :mattapan | :wonderland | :bowdoin | :forest_hills | :oak_grove | :alewife | :braintree
+  @type terminal_station ::
+          :ashmont
+          | :mattapan
+          | :wonderland
+          | :bowdoin
+          | :forest_hills
+          | :oak_grove
+          | :alewife
+          | :braintree
 end

@@ -32,13 +32,17 @@ defmodule Content.Audio.StoppedTrain do
   defimpl Content.Audio do
     def to_params(audio) do
       vars = [
-        "501", # "the next"
-        "507", # "train to"
+        # "the next"
+        "501",
+        # "train to"
+        "507",
         PaEss.Utilities.destination_var(audio.destination),
-        "533", # "is"
-        "641", # "stopped"
+        # "is"
+        "533",
+        # "stopped"
+        "641",
         number_var(audio.stops_away),
-        stops_away_var(audio.stops_away),
+        stops_away_var(audio.stops_away)
       ]
 
       {PaEss.Utilities.take_message_id(vars), vars}
@@ -47,7 +51,7 @@ defmodule Content.Audio.StoppedTrain do
     defp stops_away_var(1), do: "535"
     defp stops_away_var(_plural), do: "534"
 
-    defp number_var(n) when n > 0 and n <= 100  do
+    defp number_var(n) when n > 0 and n <= 100 do
       Integer.to_string(5000 + n)
     end
   end
