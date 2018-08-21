@@ -40,7 +40,7 @@ defmodule Signs.Utilities.Updater do
         announce_arrival(bottom, sign)
 
         sign =
-          if different_headsigns?(bottom, sign.current_content_bottom) do
+          if different_headsigns?(top, bottom) do
             announce_stopped_train(bottom_msg, sign)
           else
             sign
@@ -102,13 +102,13 @@ defmodule Signs.Utilities.Updater do
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
 
         if sign.tick_read < 60 do
-          %{sign | tick_read: sign.tick_read + 240}
+          %{sign | tick_read: sign.tick_read + sign.read_period_seconds}
         else
           sign
         end
 
       nil ->
-        nil
+        sign
     end
   end
 end

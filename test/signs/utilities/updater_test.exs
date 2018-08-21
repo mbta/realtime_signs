@@ -113,5 +113,58 @@ defmodule Signs.Utilities.UpdaterTest do
       assert sign.tick_top == 100
       assert sign.tick_bottom == 100
     end
+
+    test "announces stopped train message if top line changes to it" do
+      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
+      same_bottom = @sign.current_content_bottom
+
+      sign = %{@sign | tick_read: 10, read_period_seconds: 100}
+
+      sign = Updater.update_sign(sign, diff_top, same_bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur, _start}
+      )
+
+      assert sign.tick_read == 110
+    end
+
+    test "announces stopped train message if bottom line changes to it and has different headsign from top" do
+      same_top = @sign.current_content_top
+      diff_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Braintree", stops_away: 2}}
+
+      sign = Updater.update_sign(@sign, same_top, diff_bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :braintree, stops_away: 2}, _dur, _start}
+      )
+    end
+
+    test "does not announce stopped train message on bottom if same headsign as top" do
+      # top is to Alewife
+      same_top = @sign.current_content_top
+      diff_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
+
+      sign = Updater.update_sign(@sign, same_top, diff_bottom)
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur, _start}
+      )
+    end
+
+    test "does not add one period to tick read if it's more than 60 seconds from now" do
+      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
+      same_bottom = @sign.current_content_bottom
+
+      sign = %{@sign | tick_read: 70, read_period_seconds: 100}
+
+      sign = Updater.update_sign(sign, diff_top, same_bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur, _start}
+      )
+
+      assert sign.tick_read == 70
+    end
   end
 end

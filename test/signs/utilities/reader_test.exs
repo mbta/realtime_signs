@@ -100,5 +100,17 @@ defmodule Signs.Utilities.ReaderTest do
       assert_received({:send_audio, _id, %A{destination: :ashmont, verb: :arrives}, _p, _t})
       assert sign.tick_read == 100
     end
+
+    test "sends stopped train message" do
+      sign = %{
+        @sign
+        | tick_read: 0,
+          current_content_top: {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
+      }
+
+      Reader.read_sign(sign)
+
+      assert_received({:send_audio, _id, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _p, _t})
+    end
   end
 end
