@@ -42,7 +42,7 @@ defmodule PaEss.Utilities do
   end
 
   @doc "Message ID for a dynamic message constructed from TAKE variables"
-  @spec take_message_id([integer()]) :: integer()
+  @spec take_message_id([String.t()]) :: String.t()
   def take_message_id(vars) do
     Integer.to_string(102 + length(vars))
   end
