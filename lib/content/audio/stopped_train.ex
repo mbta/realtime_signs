@@ -51,7 +51,7 @@ defmodule Content.Audio.StoppedTrain do
     defp stops_away_var(1), do: "535"
     defp stops_away_var(_plural), do: "534"
 
-    defp number_var(n) when n > 0 and n <= 100 do
+    defp number_var(n) when n >= 0 and n <= 100 do
       Integer.to_string(5000 + n)
     end
   end
