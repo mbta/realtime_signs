@@ -105,12 +105,16 @@ defmodule Signs.Utilities.ReaderTest do
       sign = %{
         @sign
         | tick_read: 0,
-          current_content_top: {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
+          current_content_top:
+            {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
       }
 
       Reader.read_sign(sign)
 
-      assert_received({:send_audio, _id, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _p, _t})
+      assert_received(
+        {:send_audio, _id, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _p,
+         _t}
+      )
     end
   end
 end

@@ -123,7 +123,8 @@ defmodule Signs.Utilities.UpdaterTest do
       sign = Updater.update_sign(sign, diff_top, same_bottom)
 
       assert_received(
-        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur, _start}
+        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur,
+         _start}
       )
 
       assert sign.tick_read == 110
@@ -133,10 +134,11 @@ defmodule Signs.Utilities.UpdaterTest do
       same_top = @sign.current_content_top
       diff_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Braintree", stops_away: 2}}
 
-      sign = Updater.update_sign(@sign, same_top, diff_bottom)
+      Updater.update_sign(@sign, same_top, diff_bottom)
 
       assert_received(
-        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :braintree, stops_away: 2}, _dur, _start}
+        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :braintree, stops_away: 2},
+         _dur, _start}
       )
     end
 
@@ -145,10 +147,11 @@ defmodule Signs.Utilities.UpdaterTest do
       same_top = @sign.current_content_top
       diff_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
 
-      sign = Updater.update_sign(@sign, same_top, diff_bottom)
+      Updater.update_sign(@sign, same_top, diff_bottom)
 
       refute_received(
-        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur, _start}
+        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur,
+         _start}
       )
     end
 
@@ -161,7 +164,8 @@ defmodule Signs.Utilities.UpdaterTest do
       sign = Updater.update_sign(sign, diff_top, same_bottom)
 
       assert_received(
-        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur, _start}
+        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur,
+         _start}
       )
 
       assert sign.tick_read == 70
