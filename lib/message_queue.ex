@@ -63,7 +63,6 @@ defmodule MessageQueue do
   def handle_call({:queue_update, msg}, _from, state) do
     queue =
       if state.length >= @max_size do
-        Logger.warn("MessageQueue.queue_update - too full, dropping oldest message")
         :queue.drop(state.queue)
       else
         state.queue
