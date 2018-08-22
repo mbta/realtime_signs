@@ -114,11 +114,14 @@ defmodule Signs.Utilities.UpdaterTest do
       assert sign.tick_bottom == 100
     end
 
-    test "announces stopped train message if top line changes to it" do
+    test "announces stopped train message if top line changes to it, and adds period to tick_read" do
       diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
       same_bottom = @sign.current_content_bottom
 
-      sign = %{@sign | tick_read: 10, read_period_seconds: 100}
+      initial_tick_read = 10
+      read_period_seconds = 100
+
+      sign = %{@sign | tick_read: initial_tick_read, read_period_seconds: read_period_seconds}
 
       sign = Updater.update_sign(sign, diff_top, same_bottom)
 
@@ -127,7 +130,7 @@ defmodule Signs.Utilities.UpdaterTest do
          _start}
       )
 
-      assert sign.tick_read == 110
+      assert sign.tick_read == initial_tick_read + read_period_seconds
     end
 
     test "announces stopped train message if bottom line changes to it and has different headsign from top" do
