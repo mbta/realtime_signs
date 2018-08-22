@@ -3,6 +3,8 @@ defmodule PaEss.Utilities do
   Some simple helpers for working with the PA/ESS system
   """
 
+  require Logger
+
   @spec valid_range?(integer(), :english | :spanish) :: boolean()
   def valid_range?(n, :english) do
     n > 0 and n < 60
@@ -38,4 +40,33 @@ defmodule PaEss.Utilities do
   def countdown_minutes_var(n) when n >= 30 do
     Integer.to_string(5030)
   end
+
+  @doc "Message ID for a dynamic message constructed from TAKE variables"
+  @spec take_message_id([String.t()]) :: String.t()
+  def take_message_id(vars) do
+    Integer.to_string(102 + length(vars))
+  end
+
+  @doc "Take ID for terminal destinations"
+  @spec destination_var(PaEss.terminal_station()) :: String.t()
+  def destination_var(:ashmont), do: "4016"
+  def destination_var(:mattapan), do: "4100"
+  def destination_var(:bowdoin), do: "4055"
+  def destination_var(:wonderland), do: "4044"
+  def destination_var(:forest_hills), do: "4043"
+  def destination_var(:oak_grove), do: "4022"
+  def destination_var(:braintree), do: "4021"
+  def destination_var(:alewife), do: "4000"
+
+  @spec headsign_to_terminal_station(String.t()) ::
+          {:ok, PaEss.terminal_station()} | {:error, :unknown}
+  def headsign_to_terminal_station("Ashmont"), do: {:ok, :ashmont}
+  def headsign_to_terminal_station("Mattapan"), do: {:ok, :mattapan}
+  def headsign_to_terminal_station("Bowdoin"), do: {:ok, :bowdoin}
+  def headsign_to_terminal_station("Wonderland"), do: {:ok, :wonderland}
+  def headsign_to_terminal_station("Frst Hills"), do: {:ok, :forest_hills}
+  def headsign_to_terminal_station("Oak Grove"), do: {:ok, :oak_grove}
+  def headsign_to_terminal_station("Braintree"), do: {:ok, :braintree}
+  def headsign_to_terminal_station("Alewife"), do: {:ok, :alewife}
+  def headsign_to_terminal_station(_unknown), do: {:error, :unknown}
 end

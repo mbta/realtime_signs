@@ -10,7 +10,7 @@ defmodule Content.Audio.NextTrainCountdown do
   @type platform :: :ashmont | :braintree | nil
 
   @type t :: %__MODULE__{
-          destination: :ashmont | :mattapan | :wonderland | :bowdoin | :forest_hills | :oak_grove,
+          destination: PaEss.terminal_station(),
           verb: verb(),
           minutes: integer(),
           platform: :ashmont | :braintree | nil
@@ -116,22 +116,20 @@ defmodule Content.Audio.NextTrainCountdown do
     alias PaEss.Utilities
 
     def to_params(%{platform: nil} = audio) do
-      {"90", [destination_var(audio), verb_var(audio), minutes_var(audio)], :audio}
-    end
-
-    def to_params(audio) do
-      {"99", [destination_var(audio), platform_var(audio), verb_var(audio), minutes_var(audio)],
+      {"90",
+       [PaEss.Utilities.destination_var(audio.destination), verb_var(audio), minutes_var(audio)],
        :audio}
     end
 
-    defp destination_var(%{destination: :ashmont}), do: "4016"
-    defp destination_var(%{destination: :mattapan}), do: "4100"
-    defp destination_var(%{destination: :bowdoin}), do: "4055"
-    defp destination_var(%{destination: :wonderland}), do: "4044"
-    defp destination_var(%{destination: :forest_hills}), do: "4043"
-    defp destination_var(%{destination: :oak_grove}), do: "4022"
-    defp destination_var(%{destination: :braintree}), do: "4021"
-    defp destination_var(%{destination: :alewife}), do: "4000"
+    def to_params(audio) do
+      {"99",
+       [
+         PaEss.Utilities.destination_var(audio.destination),
+         platform_var(audio),
+         verb_var(audio),
+         minutes_var(audio)
+       ], :audio}
+    end
 
     defp platform_var(%{platform: :ashmont}), do: "4016"
     defp platform_var(%{platform: :braintree}), do: "4021"
