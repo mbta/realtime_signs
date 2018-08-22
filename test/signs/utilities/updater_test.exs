@@ -175,7 +175,7 @@ defmodule Signs.Utilities.UpdaterTest do
       )
     end
 
-    test "does not add one period to tick read if it's more than 60 seconds from now" do
+    test "does not add one period to tick read if it's more than 30 seconds from now" do
       diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
       same_bottom = @sign.current_content_bottom
 
