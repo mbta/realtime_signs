@@ -142,6 +142,23 @@ defmodule Signs.Utilities.UpdaterTest do
       )
     end
 
+    test "announces stopped train message for top and bottom if both change and have different headsigns" do
+      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
+      diff_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Braintree", stops_away: 2}}
+
+      Updater.update_sign(@sign, diff_top, diff_bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :braintree, stops_away: 2},
+         _dur, _start}
+      )
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur,
+         _start}
+      )
+    end
+
     test "does not announce stopped train message on bottom if same headsign as top" do
       # top is to Alewife
       same_top = @sign.current_content_top
