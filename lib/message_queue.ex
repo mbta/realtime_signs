@@ -63,7 +63,7 @@ defmodule MessageQueue do
   def handle_call({:queue_update, msg}, _from, state) do
     queue =
       if state.length >= @max_size do
-        :queue.drop(state.queue)
+        drop_x(state.queue, 15)
       else
         state.queue
       end
@@ -87,5 +87,13 @@ defmodule MessageQueue do
       end
 
     {:reply, message, %{state | queue: q, length: max(0, state.length - 1)}}
+  end
+
+  defp drop_x(queue, number) do
+    if number == 0 do
+      queue
+    else
+      drop_x(:queue.drop(queue), number - 1)
+    end
   end
 end
