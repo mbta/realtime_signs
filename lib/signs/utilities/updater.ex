@@ -7,6 +7,7 @@ defmodule Signs.Utilities.Updater do
   """
 
   alias Signs.Utilities.SourceConfig
+  require Logger
 
   def update_sign(sign, {_top_src, top_msg} = top, {_bottom_src, bottom_msg} = bottom) do
     case {sign.current_content_top == top, sign.current_content_bottom == bottom} do
@@ -15,6 +16,7 @@ defmodule Signs.Utilities.Updater do
 
       # update top
       {false, true} ->
+        log_line_update(sign, top_msg, "top")
         sign.sign_updater.update_single_line(
           sign.pa_ess_id,
           "1",
@@ -29,6 +31,7 @@ defmodule Signs.Utilities.Updater do
 
       # update bottom
       {true, false} ->
+        log_line_update(sign, bottom_msg, "bottom")
         sign.sign_updater.update_single_line(
           sign.pa_ess_id,
           "2",
@@ -50,6 +53,8 @@ defmodule Signs.Utilities.Updater do
 
       # update both
       {false, false} ->
+        log_line_update(sign, top_msg, "top")
+        log_line_update(sign, bottom_msg, "bottom")
         sign.sign_updater.update_sign(
           sign.pa_ess_id,
           top_msg,
@@ -78,6 +83,17 @@ defmodule Signs.Utilities.Updater do
             tick_top: sign.expiration_seconds,
             tick_bottom: sign.expiration_seconds
         }
+    end
+  end
+
+  defp log_line_update(sign, msg, line) do
+    case {sign, msg} do
+      {%Signs.Realtime{id: sign_id, current_content_top: {_, %Content.Message.Predictions{}}}, %Content.Message.StoppedTrain{}} ->
+        Logger.info("sign_id=#{sign_id},line=#{line},status=on")
+      {%Signs.Realtime{id: sign_id, current_content_top: {_, %Content.Message.StoppedTrain{}}}, %Content.Message.Predictions{}} ->
+        Logger.info("sign_id=#{sign_id},line=#{line},status=off")
+      _ ->
+        :ok
     end
   end
 
