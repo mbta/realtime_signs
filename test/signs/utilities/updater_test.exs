@@ -216,8 +216,13 @@ defmodule Signs.Utilities.UpdaterTest do
       initial_tick_read = 10
       read_period_seconds = 100
 
-      sign = %{@sign | current_content_top: {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
-                       tick_read: initial_tick_read, read_period_seconds: read_period_seconds}
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
+          tick_read: initial_tick_read,
+          read_period_seconds: read_period_seconds
+      }
 
       log =
         capture_log([level: :info], fn ->
