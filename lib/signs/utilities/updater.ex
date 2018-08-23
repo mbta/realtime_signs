@@ -92,11 +92,29 @@ defmodule Signs.Utilities.Updater do
   defp log_line_update(sign, msg, line) do
     case {sign, msg} do
       {%Signs.Realtime{id: sign_id, current_content_top: {_, %Content.Message.Predictions{}}},
-       %Content.Message.StoppedTrain{}} ->
+       %Content.Message.StoppedTrain{stops_away: msg_stops_away}}
+      when msg_stops_away > 0 ->
         Logger.info("sign_id=#{sign_id} line=#{line} status=on")
 
-      {%Signs.Realtime{id: sign_id, current_content_top: {_, %Content.Message.StoppedTrain{}}},
-       %Content.Message.Predictions{}} ->
+      {%Signs.Realtime{
+         id: sign_id,
+         current_content_top: {_, %Content.Message.StoppedTrain{stops_away: sign_stops_away}}
+       }, %Content.Message.StoppedTrain{stops_away: msg_stops_away}}
+      when sign_stops_away = 0 and msg_stops_away > 0 ->
+        Logger.info("sign_id=#{sign_id} line=#{line} status=on")
+
+      {%Signs.Realtime{
+         id: sign_id,
+         current_content_top: {_, %Content.Message.StoppedTrain{stops_away: sign_stops_away}}
+       }, %Content.Message.Predictions{}}
+      when sign_stops_away > 0 ->
+        Logger.info("sign_id=#{sign_id} line=#{line} status=off")
+
+      {%Signs.Realtime{
+         id: sign_id,
+         current_content_top: {_, %Content.Message.StoppedTrain{stops_away: sign_stops_away}}
+       }, %Content.Message.StoppedTrain{stops_away: msg_stops_away}}
+      when sign_stops_away > 0 and msg_stops_away = 0 ->
         Logger.info("sign_id=#{sign_id} line=#{line} status=off")
 
       _ ->
