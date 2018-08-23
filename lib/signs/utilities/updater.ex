@@ -89,7 +89,7 @@ defmodule Signs.Utilities.Updater do
     end
   end
 
-  defp log_line_update(sign, msg, line) do
+  defp log_line_update(sign, msg, "top" = line) do
     case {sign, msg} do
       {%Signs.Realtime{id: sign_id, current_content_top: {_, %Content.Message.Predictions{}}},
        %Content.Message.StoppedTrain{stops_away: msg_stops_away}}
@@ -113,6 +113,39 @@ defmodule Signs.Utilities.Updater do
       {%Signs.Realtime{
          id: sign_id,
          current_content_top: {_, %Content.Message.StoppedTrain{stops_away: sign_stops_away}}
+       }, %Content.Message.StoppedTrain{stops_away: msg_stops_away}}
+      when sign_stops_away > 0 and msg_stops_away == 0 ->
+        Logger.info("sign_id=#{sign_id} line=#{line} status=off")
+
+      _ ->
+        :ok
+    end
+  end
+
+  defp log_line_update(sign, msg, "bottom" = line) do
+    case {sign, msg} do
+      {%Signs.Realtime{id: sign_id, current_content_bottom: {_, %Content.Message.Predictions{}}},
+       %Content.Message.StoppedTrain{stops_away: msg_stops_away}}
+      when msg_stops_away > 0 ->
+        Logger.info("sign_id=#{sign_id} line=#{line} status=on")
+
+      {%Signs.Realtime{
+         id: sign_id,
+         current_content_bottom: {_, %Content.Message.StoppedTrain{stops_away: sign_stops_away}}
+       }, %Content.Message.StoppedTrain{stops_away: msg_stops_away}}
+      when sign_stops_away == 0 and msg_stops_away > 0 ->
+        Logger.info("sign_id=#{sign_id} line=#{line} status=on")
+
+      {%Signs.Realtime{
+         id: sign_id,
+         current_content_bottom: {_, %Content.Message.StoppedTrain{stops_away: sign_stops_away}}
+       }, %Content.Message.Predictions{}}
+      when sign_stops_away > 0 ->
+        Logger.info("sign_id=#{sign_id} line=#{line} status=off")
+
+      {%Signs.Realtime{
+         id: sign_id,
+         current_content_bottom: {_, %Content.Message.StoppedTrain{stops_away: sign_stops_away}}
        }, %Content.Message.StoppedTrain{stops_away: msg_stops_away}}
       when sign_stops_away > 0 and msg_stops_away == 0 ->
         Logger.info("sign_id=#{sign_id} line=#{line} status=off")
