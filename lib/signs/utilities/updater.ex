@@ -93,11 +93,11 @@ defmodule Signs.Utilities.Updater do
     case {sign, msg} do
       {%Signs.Realtime{id: sign_id, current_content_top: {_, %Content.Message.Predictions{}}},
        %Content.Message.StoppedTrain{}} ->
-        Logger.info("sign_id=#{sign_id},line=#{line},status=on")
+        Logger.info("sign_id=#{sign_id} line=#{line} status=on")
 
       {%Signs.Realtime{id: sign_id, current_content_top: {_, %Content.Message.StoppedTrain{}}},
        %Content.Message.Predictions{}} ->
-        Logger.info("sign_id=#{sign_id},line=#{line},status=off")
+        Logger.info("sign_id=#{sign_id} line=#{line} status=off")
 
       _ ->
         :ok

@@ -206,7 +206,7 @@ defmodule Signs.Utilities.UpdaterTest do
           sign = Updater.update_sign(sign, diff_top, same_bottom)
         end)
 
-      assert log =~ "sign_id=sign_id,line=top,status=on"
+      assert log =~ "sign_id=sign_id line=top status=on"
     end
 
     test "logs when stopped train message turns off" do
@@ -229,7 +229,7 @@ defmodule Signs.Utilities.UpdaterTest do
           sign = Updater.update_sign(sign, diff_top, same_bottom)
         end)
 
-      assert log =~ "sign_id=sign_id,line=top,status=off"
+      assert log =~ "sign_id=sign_id line=top status=off"
     end
   end
 end
