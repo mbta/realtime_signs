@@ -90,6 +90,8 @@ defmodule MessageQueue do
   end
 
   defp drop_x(queue, number) do
+    Logger.warn("Message queue too full; dropping #{number}")
+
     if number == 0 do
       queue
     else
