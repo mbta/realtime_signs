@@ -100,7 +100,7 @@ defmodule Signs.Utilities.Updater do
          id: sign_id,
          current_content_top: {_, %Content.Message.StoppedTrain{stops_away: sign_stops_away}}
        }, %Content.Message.StoppedTrain{stops_away: msg_stops_away}}
-      when sign_stops_away = 0 and msg_stops_away > 0 ->
+      when sign_stops_away == 0 and msg_stops_away > 0 ->
         Logger.info("sign_id=#{sign_id} line=#{line} status=on")
 
       {%Signs.Realtime{
@@ -114,7 +114,7 @@ defmodule Signs.Utilities.Updater do
          id: sign_id,
          current_content_top: {_, %Content.Message.StoppedTrain{stops_away: sign_stops_away}}
        }, %Content.Message.StoppedTrain{stops_away: msg_stops_away}}
-      when sign_stops_away > 0 and msg_stops_away = 0 ->
+      when sign_stops_away > 0 and msg_stops_away == 0 ->
         Logger.info("sign_id=#{sign_id} line=#{line} status=off")
 
       _ ->
