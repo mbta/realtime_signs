@@ -19,6 +19,7 @@ defmodule MessageQueue do
         }
 
   @max_size 150
+  @too_full_drop 15
 
   use GenServer
   require Logger
@@ -61,21 +62,21 @@ defmodule MessageQueue do
 
   @impl GenServer
   def handle_call({:queue_update, msg}, _from, state) do
-    queue =
+    {queue, length} =
       if state.length >= @max_size do
-        Logger.warn("MessageQueue.queue_update - too full, dropping oldest message")
-        :queue.drop(state.queue)
+        Logger.warn("Message queue too full; dropping #{@too_full_drop}")
+        {drop_x(state.queue, @too_full_drop), state.length - @too_full_drop}
       else
-        state.queue
+        {state.queue, state.length}
       end
 
-    if state.length > 0 and rem(state.length, 30) == 0 do
+    if length > 0 and rem(length, 30) == 0 do
       Logger.info("MessageQueue queue_length=#{state.length}")
     end
 
     queue = :queue.in(msg, queue)
 
-    {:reply, {:ok, :sent}, %{state | queue: queue, length: min(@max_size, state.length + 1)}}
+    {:reply, {:ok, :sent}, %{state | queue: queue, length: length + 1}}
   end
 
   def handle_call(:get_message, _from, state) do
@@ -88,5 +89,13 @@ defmodule MessageQueue do
       end
 
     {:reply, message, %{state | queue: q, length: max(0, state.length - 1)}}
+  end
+
+  defp drop_x(queue, number) do
+    if number == 0 do
+      queue
+    else
+      drop_x(:queue.drop(queue), number - 1)
+    end
   end
 end
