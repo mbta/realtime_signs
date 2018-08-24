@@ -210,8 +210,8 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "logs when stopped train message turns off" do
-      diff_top = {@src, %P{headsign: "Alewife", minutes: 4}}
-      same_bottom = @sign.current_content_bottom
+      new_top = {@src, %P{headsign: "Alewife", minutes: 4}}
+      new_bottom = {@src, %P{headsign: "Alewife", minutes: 4}}
 
       initial_tick_read = 10
       read_period_seconds = 100
@@ -220,16 +220,19 @@ defmodule Signs.Utilities.UpdaterTest do
         @sign
         | current_content_top:
             {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
+          current_content_bottom:
+              {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
           tick_read: initial_tick_read,
           read_period_seconds: read_period_seconds
       }
 
       log =
         capture_log([level: :info], fn ->
-          sign = Updater.update_sign(sign, diff_top, same_bottom)
+          sign = Updater.update_sign(sign, new_top, new_bottom)
         end)
 
       assert log =~ "sign_id=sign_id line=top status=off"
+      assert log =~ "sign_id=sign_id line=bottom status=off"
     end
 
     test "logs when stopped train message changes from zero to non-zero stops away" do
