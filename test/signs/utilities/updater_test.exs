@@ -1,5 +1,6 @@
 defmodule Signs.Utilities.UpdaterTest do
   use ExUnit.Case, async: true
+  import ExUnit.CaptureLog
 
   alias Content.Message.Predictions, as: P
   alias Signs.Utilities.Updater
@@ -189,6 +190,101 @@ defmodule Signs.Utilities.UpdaterTest do
       )
 
       assert sign.tick_read == 70
+    end
+
+    test "logs when stopped train message turns on" do
+      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
+      same_bottom = @sign.current_content_bottom
+
+      initial_tick_read = 10
+      read_period_seconds = 100
+
+      sign = %{@sign | tick_read: initial_tick_read, read_period_seconds: read_period_seconds}
+
+      log =
+        capture_log([level: :info], fn ->
+          sign = Updater.update_sign(sign, diff_top, same_bottom)
+        end)
+
+      assert log =~ "sign_id=sign_id line=top status=on"
+    end
+
+    test "logs when stopped train message turns off" do
+      new_top = {@src, %P{headsign: "Alewife", minutes: 4}}
+      new_bottom = {@src, %P{headsign: "Alewife", minutes: 4}}
+
+      initial_tick_read = 10
+      read_period_seconds = 100
+
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
+          current_content_bottom:
+            {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
+          tick_read: initial_tick_read,
+          read_period_seconds: read_period_seconds
+      }
+
+      log =
+        capture_log([level: :info], fn ->
+          sign = Updater.update_sign(sign, new_top, new_bottom)
+        end)
+
+      assert log =~ "sign_id=sign_id line=top status=off"
+      assert log =~ "sign_id=sign_id line=bottom status=off"
+    end
+
+    test "logs when stopped train message changes from zero to non-zero stops away" do
+      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
+      same_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 2}}
+
+      initial_tick_read = 10
+      read_period_seconds = 100
+
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 0}},
+          current_content_bottom:
+            {@src, %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 0}},
+          tick_read: initial_tick_read,
+          read_period_seconds: read_period_seconds
+      }
+
+      log =
+        capture_log([level: :info], fn ->
+          sign = Updater.update_sign(sign, diff_top, same_bottom)
+        end)
+
+      assert log =~ "sign_id=sign_id line=top status=on"
+      assert log =~ "sign_id=sign_id line=bottom status=on"
+    end
+
+    test "logs when stopped train message changes from non-zero to zero stops away" do
+      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 0}}
+      same_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 0}}
+
+      initial_tick_read = 10
+      read_period_seconds = 100
+
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
+          current_content_bottom:
+            {@src, %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 2}},
+          tick_read: initial_tick_read,
+          read_period_seconds: read_period_seconds
+      }
+
+      log =
+        capture_log([level: :info], fn ->
+          sign = Updater.update_sign(sign, diff_top, same_bottom)
+        end)
+
+      assert log =~ "sign_id=sign_id line=top status=off"
+      assert log =~ "sign_id=sign_id line=bottom status=off"
     end
   end
 end
