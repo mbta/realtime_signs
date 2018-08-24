@@ -231,5 +231,57 @@ defmodule Signs.Utilities.UpdaterTest do
 
       assert log =~ "sign_id=sign_id line=top status=off"
     end
+
+    test "logs when stopped train message changes from zero to non-zero stops away" do
+      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
+      same_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 2}}
+
+      initial_tick_read = 10
+      read_period_seconds = 100
+
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 0}},
+          current_content_bottom:
+            {@src, %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 0}},
+          tick_read: initial_tick_read,
+          read_period_seconds: read_period_seconds
+      }
+
+      log =
+        capture_log([level: :info], fn ->
+          sign = Updater.update_sign(sign, diff_top, same_bottom)
+        end)
+
+      assert log =~ "sign_id=sign_id line=top status=on"
+      assert log =~ "sign_id=sign_id line=bottom status=on"
+    end
+
+    test "logs when stopped train message changes from non-zero to zero stops away" do
+      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 0}}
+      same_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 0}}
+
+      initial_tick_read = 10
+      read_period_seconds = 100
+
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
+          current_content_bottom:
+            {@src, %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 2}},
+          tick_read: initial_tick_read,
+          read_period_seconds: read_period_seconds
+      }
+
+      log =
+        capture_log([level: :info], fn ->
+          sign = Updater.update_sign(sign, diff_top, same_bottom)
+        end)
+
+      assert log =~ "sign_id=sign_id line=top status=off"
+      assert log =~ "sign_id=sign_id line=bottom status=off"
+    end
   end
 end
