@@ -221,7 +221,7 @@ defmodule Signs.Utilities.UpdaterTest do
         | current_content_top:
             {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
           current_content_bottom:
-              {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
+            {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
           tick_read: initial_tick_read,
           read_period_seconds: read_period_seconds
       }
