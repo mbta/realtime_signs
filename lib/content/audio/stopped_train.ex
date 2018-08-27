@@ -14,7 +14,8 @@ defmodule Content.Audio.StoppedTrain do
         }
 
   @spec from_message(Content.Message.t()) :: t() | nil
-  def from_message(%Content.Message.StoppedTrain{headsign: headsign, stops_away: stops_away}) do
+  def from_message(%Content.Message.StoppedTrain{headsign: headsign, stops_away: stops_away})
+      when stops_away > 0 do
     case PaEss.Utilities.headsign_to_terminal_station(headsign) do
       {:ok, terminal} ->
         %__MODULE__{destination: terminal, stops_away: stops_away}

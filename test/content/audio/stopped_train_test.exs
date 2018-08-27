@@ -41,5 +41,11 @@ defmodule Content.Audio.StoppedTrainTest do
       msg = %Content.Message.Empty{}
       assert Content.Audio.StoppedTrain.from_message(msg) == nil
     end
+
+    test "when the trian is stopped 0 stops away, does not announce that it is stopped 0 stops away" do
+      msg = %Content.Message.StoppedTrain{headsign: "Frst Hills", stops_away: 0}
+
+      assert Content.Audio.StoppedTrain.from_message(msg) == nil
+    end
   end
 end
