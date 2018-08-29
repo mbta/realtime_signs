@@ -22,7 +22,7 @@ defmodule Signs.Utilities.SourceConfig do
   and Braintree platforms, and it wishes to display the next train from either location.
 
   We currently support up to two _lists_ of sources. If one list is provided, then its next two trips will
-  show up on the lines of the sign. If two lists are provided, then the next one trip from each list will
+  show up on the lines of the sign. If two lists are provided, then the next trip from each list will
   appear on different lines of the sign.
 
   The JSON structure for one list of sources is:
@@ -42,7 +42,7 @@ defmodule Signs.Utilities.SourceConfig do
   @enforce_keys [:stop_id, :direction_id, :platform, :terminal?, :announce_arriving?]
   defstruct @enforce_keys
 
-  @type one :: %__MODULE__{
+  @type source :: %__MODULE__{
           stop_id: String.t(),
           direction_id: 0 | 1,
           platform: :ashmont | :braintree | nil,
@@ -50,21 +50,21 @@ defmodule Signs.Utilities.SourceConfig do
           announce_arriving?: boolean()
         }
 
-  @type full :: {[one()]} | {[one()], [one()]}
+  @type config :: {[source()]} | {[source()], [source()]}
 
-  @spec parse!([[map()]]) :: full()
+  @spec parse!([[map()]]) :: config()
   def parse!([both_lines_config]) do
-    {Enum.map(both_lines_config, &parse_one!/1)}
+    {Enum.map(both_lines_config, &parse_source!/1)}
   end
 
   def parse!([top_line_config, bottom_line_config]) do
     {
-      Enum.map(top_line_config, &parse_one!/1),
-      Enum.map(bottom_line_config, &parse_one!/1)
+      Enum.map(top_line_config, &parse_source!/1),
+      Enum.map(bottom_line_config, &parse_source!/1)
     }
   end
 
-  defp parse_one!(%{
+  defp parse_source!(%{
          "stop_id" => stop_id,
          "direction_id" => direction_id,
          "platform" => platform,

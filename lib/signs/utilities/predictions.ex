@@ -8,8 +8,8 @@ defmodule Signs.Utilities.Predictions do
   alias Signs.Utilities.SourceConfig
 
   @spec get_messages(Signs.Realtime.t(), boolean()) ::
-          {{SourceConfig.one() | nil, Content.Message.t()},
-           {SourceConfig.one() | nil, Content.Message.t()}}
+          {{SourceConfig.source() | nil, Content.Message.t()},
+           {SourceConfig.source() | nil, Content.Message.t()}}
   def get_messages(_sign, false) do
     {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
   end
