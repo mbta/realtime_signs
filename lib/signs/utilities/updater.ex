@@ -173,6 +173,7 @@ defmodule Signs.Utilities.Updater do
         if sign.tick_read > 30 do
           sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
         end
+
         sign
 
       nil ->
