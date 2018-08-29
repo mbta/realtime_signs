@@ -86,4 +86,8 @@ defmodule Signs.Utilities.SourceConfig do
       announce_arriving?: announce_arriving?
     }
   end
+
+  @spec multi_source?(config) :: boolean()
+  def multi_source?({_, _}), do: true
+  def multi_source?({_}), do: false
 end
