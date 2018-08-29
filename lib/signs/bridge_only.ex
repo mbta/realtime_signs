@@ -56,8 +56,8 @@ defmodule Signs.BridgeOnly do
     schedule_bridge_check(self(), sign.bridge_check_period_ms)
 
     case sign.bridge_engine.status(sign.bridge_id) do
-      {"Raised", duration} ->
-        {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
+      {"Raised", _duration} ->
+        {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(nil)
 
         for audio <- [english, spanish] do
           if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120)
