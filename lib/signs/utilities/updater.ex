@@ -45,7 +45,7 @@ defmodule Signs.Utilities.Updater do
         announce_arrival(bottom, sign)
 
         sign =
-          if different_headsigns?(top, bottom) do
+          if SourceConfig.multi_source?(sign.source_config) do
             announce_stopped_train(bottom_msg, sign)
           else
             sign
@@ -73,7 +73,7 @@ defmodule Signs.Utilities.Updater do
         announce_arrival(bottom, sign)
 
         sign =
-          if different_headsigns?(bottom, sign.current_content_bottom) do
+          if SourceConfig.multi_source?(sign.source_config) or different_headsigns?(top, bottom) do
             announce_stopped_train(bottom_msg, sign)
           else
             sign
@@ -173,13 +173,11 @@ defmodule Signs.Utilities.Updater do
   defp announce_stopped_train(msg, sign) do
     case Content.Audio.StoppedTrain.from_message(msg) do
       %Content.Audio.StoppedTrain{} = audio ->
-        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-
-        if sign.tick_read <= 30 do
-          %{sign | tick_read: sign.tick_read + sign.read_period_seconds}
-        else
-          sign
+        if sign.tick_read > 30 do
+          sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
         end
+
+        sign
 
       nil ->
         sign

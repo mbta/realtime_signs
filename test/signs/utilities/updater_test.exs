@@ -35,14 +35,14 @@ defmodule Signs.Utilities.UpdaterTest do
   @sign %Signs.Realtime{
     id: "sign_id",
     pa_ess_id: {"TEST", "x"},
-    source_config: {[], []},
+    source_config: {[]},
     current_content_top: {@src, %P{headsign: "Alewife", minutes: 4}},
     current_content_bottom: {@src, %P{headsign: "Ashmont", minutes: 3}},
     prediction_engine: FakePredictions,
     sign_updater: FakeUpdater,
     tick_bottom: 1,
     tick_top: 1,
-    tick_read: 1,
+    tick_read: 60,
     expiration_seconds: 100,
     read_period_seconds: 100
   }
@@ -115,11 +115,11 @@ defmodule Signs.Utilities.UpdaterTest do
       assert sign.tick_bottom == 100
     end
 
-    test "announces stopped train message if top line changes to it, and adds period to tick_read" do
+    test "announces stopped-train message if top line changes to it and tick_read is greater than 30 seconds" do
       diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
       same_bottom = @sign.current_content_bottom
 
-      initial_tick_read = 10
+      initial_tick_read = 40
       read_period_seconds = 100
 
       sign = %{@sign | tick_read: initial_tick_read, read_period_seconds: read_period_seconds}
@@ -130,15 +130,44 @@ defmodule Signs.Utilities.UpdaterTest do
         {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur,
          _start}
       )
-
-      assert sign.tick_read == initial_tick_read + read_period_seconds
     end
 
-    test "announces stopped train message if bottom line changes to it and has different headsign from top" do
+    test "does not announce stopped train message if top line changes to it and tick_read is less than 30 seconds" do
+      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
+      same_bottom = @sign.current_content_bottom
+
+      initial_tick_read = 10
+      read_period_seconds = 100
+
+      sign = %{@sign | tick_read: initial_tick_read, read_period_seconds: read_period_seconds}
+
+      sign = Updater.update_sign(sign, diff_top, same_bottom)
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur,
+         _start}
+      )
+    end
+
+    test "does not announce stopped train message if single-source sign and only the bottom line has changed" do
+      single_source_sign = %{@sign | source_config: {[]}, tick_read: 40}
+      same_top = @sign.current_content_top
+      diff_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
+
+      Updater.update_sign(single_source_sign, same_top, diff_bottom)
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur,
+         _start}
+      )
+    end
+
+    test "announces stopped train message if bottom line changes to it and it is a multi-source sign" do
+      multi_source_sign = %{@sign | source_config: {[], []}, tick_read: 40}
       same_top = @sign.current_content_top
       diff_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Braintree", stops_away: 2}}
 
-      Updater.update_sign(@sign, same_top, diff_bottom)
+      Updater.update_sign(multi_source_sign, same_top, diff_bottom)
 
       assert_received(
         {:send_audio, _, %Content.Audio.StoppedTrain{destination: :braintree, stops_away: 2},
@@ -161,35 +190,6 @@ defmodule Signs.Utilities.UpdaterTest do
         {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur,
          _start}
       )
-    end
-
-    test "does not announce stopped train message on bottom if same headsign as top" do
-      # top is to Alewife
-      same_top = @sign.current_content_top
-      diff_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
-
-      Updater.update_sign(@sign, same_top, diff_bottom)
-
-      refute_received(
-        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur,
-         _start}
-      )
-    end
-
-    test "does not add one period to tick read if it's more than 30 seconds from now" do
-      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
-      same_bottom = @sign.current_content_bottom
-
-      sign = %{@sign | tick_read: 70, read_period_seconds: 100}
-
-      sign = Updater.update_sign(sign, diff_top, same_bottom)
-
-      assert_received(
-        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur,
-         _start}
-      )
-
-      assert sign.tick_read == 70
     end
 
     test "logs when stopped train message turns on" do

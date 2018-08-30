@@ -29,9 +29,9 @@ defmodule Signs.Realtime do
   @type t :: %__MODULE__{
           id: String.t(),
           pa_ess_id: PaEss.id(),
-          source_config: Utilities.SourceConfig.full(),
-          current_content_top: {Utilities.SourceConfig.one() | nil, Content.Message.t()},
-          current_content_bottom: {Utilities.SourceConfig.one() | nil, Content.Message.t()},
+          source_config: Utilities.SourceConfig.config(),
+          current_content_top: {Utilities.SourceConfig.source() | nil, Content.Message.t()},
+          current_content_bottom: {Utilities.SourceConfig.source() | nil, Content.Message.t()},
           prediction_engine: module(),
           sign_updater: module(),
           tick_bottom: non_neg_integer(),
