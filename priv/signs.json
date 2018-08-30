@@ -2587,7 +2587,7 @@
     "id": "south_station_silver_line_arrival_platform",
     "type": "realtime",
     "pa_ess_loc": "SSOU",
-    "pa_ess_zone": "m",
+    "pa_ess_zone": "w",
     "source_config": [
       [
         {
