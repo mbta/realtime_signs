@@ -73,7 +73,7 @@ defmodule Signs.Utilities.Updater do
         announce_arrival(bottom, sign)
 
         sign =
-          if SourceConfig.multi_source?(sign.source_config) do
+          if SourceConfig.multi_source?(sign.source_config) or different_headsigns?(top, bottom) do
             announce_stopped_train(bottom_msg, sign)
           else
             sign
@@ -154,6 +154,9 @@ defmodule Signs.Utilities.Updater do
         :ok
     end
   end
+
+  defp different_headsigns?({_src, %{headsign: same}}, {_src2, %{headsign: same}}), do: false
+  defp different_headsigns?(_, _), do: true
 
   defp announce_arrival({%SourceConfig{announce_arriving?: false}, _msg}, _sign), do: nil
 
