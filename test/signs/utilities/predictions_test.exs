@@ -161,6 +161,19 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("10", 0) do
+      [
+        %Predictions.Prediction{
+          stop_id: "10",
+          direction_id: 0,
+          route_id: "Red",
+          destination_stop_id: "123",
+          seconds_until_arrival: 10,
+          seconds_until_departure: nil
+        }
+      ]
+    end
+
     def for_stop(_stop_id, _direction_id) do
       []
     end
@@ -365,6 +378,24 @@ defmodule Signs.Utilities.PredictionsTest do
 
       assert {
                {^s, %Content.Message.Predictions{}},
+               {nil, %Content.Message.Empty{}}
+             } = Signs.Utilities.Predictions.get_messages(sign, true)
+    end
+
+    test "Only includes predictions if a departure prediction is present" do
+      s = %SourceConfig{
+        stop_id: "10",
+        direction_id: 0,
+        terminal?: false,
+        platform: nil,
+        announce_arriving?: false
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      assert {
+               {nil, %Content.Message.Empty{}},
                {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign, true)
     end
