@@ -31,6 +31,9 @@ defmodule Signs.Utilities.Predictions do
       |> prediction_engine.for_stop(source.direction_id)
       |> Enum.map(&{source, &1})
     end)
+    |> Enum.filter(fn {_, p} ->
+      p.seconds_until_departure
+    end)
     |> Enum.sort(fn {s1, p1}, {s2, p2} ->
       p1_time = if s1.terminal?, do: p1.seconds_until_departure, else: p1.seconds_until_arrival
       p2_time = if s2.terminal?, do: p2.seconds_until_departure, else: p2.seconds_until_arrival
