@@ -161,10 +161,10 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
-    def for_stop("10", 0) do
+    def for_stop("stop_with_nil_departure_prediction", 0) do
       [
         %Predictions.Prediction{
-          stop_id: "10",
+          stop_id: "stop_with_nil_departure_prediction",
           direction_id: 0,
           route_id: "Red",
           destination_stop_id: "123",
@@ -384,7 +384,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
     test "Only includes predictions if a departure prediction is present" do
       s = %SourceConfig{
-        stop_id: "10",
+        stop_id: "stop_with_nil_departure_prediction",
         direction_id: 0,
         terminal?: false,
         platform: nil,
