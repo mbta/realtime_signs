@@ -50,6 +50,6 @@ defmodule Engine.Bridge do
   end
 
   defp schedule_update(pid) do
-    Process.send_after(pid, :update, 60 * 1_000)
+    Process.send_after(pid, :update, 60 * 10_000)
   end
 end
