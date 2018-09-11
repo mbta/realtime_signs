@@ -57,6 +57,16 @@ defmodule PaEss.Utilities do
   def destination_var(:oak_grove), do: "4022"
   def destination_var(:braintree), do: "4021"
   def destination_var(:alewife), do: "4000"
+  def destination_var(:boston_college), do: "4202"
+  def destination_var(:cleveland_circle), do: "4203"
+  def destination_var(:riverside), do: "4084"
+  def destination_var(:heath_st), do: "4204"
+  def destination_var(:reservoir), do: "4076"
+  def destination_var(:lechmere), do: "4056"
+  def destination_var(:north_station), do: "4027"
+  def destination_var(:government_center), do: "4061"
+  def destination_var(:park_st), do: "4007"
+  def destination_var(:kenmore), do: "4070"
 
   @spec headsign_to_terminal_station(String.t()) ::
           {:ok, PaEss.terminal_station()} | {:error, :unknown}
@@ -68,5 +78,16 @@ defmodule PaEss.Utilities do
   def headsign_to_terminal_station("Oak Grove"), do: {:ok, :oak_grove}
   def headsign_to_terminal_station("Braintree"), do: {:ok, :braintree}
   def headsign_to_terminal_station("Alewife"), do: {:ok, :alewife}
+  def headsign_to_terminal_station("Boston Col"), do: {:ok, :boston_college}
+  def headsign_to_terminal_station("Clvlnd Cir"), do: {:ok, :cleveland_circle}
+  def headsign_to_terminal_station("Riverside"), do: {:ok, :riverside}
+  def headsign_to_terminal_station("Heath St"), do: {:ok, :heath_st}
+  def headsign_to_terminal_station("Reservoir"), do: {:ok, :reservoir}
+  def headsign_to_terminal_station("Lechmere"), do: {:ok, :lechmere}
+  def headsign_to_terminal_station("North Sta"), do: {:ok, :north_station}
+  def headsign_to_terminal_station("Govt Ctr"), do: {:ok, :government_center}
+  def headsign_to_terminal_station("Park St"), do: {:ok, :park_st}
+  def headsign_to_terminal_station("Kenmore"), do: {:ok, :kenmore}
+
   def headsign_to_terminal_station(_unknown), do: {:error, :unknown}
 end
