@@ -24,7 +24,8 @@ defmodule Signs.Supervisor do
   end
 
   defp children() do
-    for sign_config <- children_config() do
+    for sign_config <- children_config(),
+        enable_sign?(sign_config) do
       sign_module = sign_module(sign_config)
 
       %{
@@ -32,6 +33,14 @@ defmodule Signs.Supervisor do
         start: {sign_module, :start_link, [sign_config]}
       }
     end
+  end
+
+  defp enable_sign?(%{"pa_ess_loc" => "G" <> _rest}) do
+    Application.get_env(:realtime_signs, :green_line_enabled?)
+  end
+
+  defp enable_sign?(_) do
+    true
   end
 
   defp sign_module(%{"type" => "countdown"}), do: Signs.Countdown

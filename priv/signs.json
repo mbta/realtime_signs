@@ -3333,5 +3333,687 @@
         }
       ]
     ]
+  },
+  {
+    "id": "woodland_eastbound",
+    "pa_ess_loc": "GWOO",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70162",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "woodland_westbound",
+    "pa_ess_loc": "GWOO",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70163",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "waban_eastbound",
+    "pa_ess_loc": "GWAB",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70164",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "waban_westbound",
+    "pa_ess_loc": "GWAB",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70165",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "eliot_eastbound",
+    "pa_ess_loc": "GELI",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70166",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "eliot_westbound",
+    "pa_ess_loc": "GELI",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70167",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "newton_highlands_eastbound",
+    "pa_ess_loc": "GNEH",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70168",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "newton_highlands_westbound",
+    "pa_ess_loc": "GNEH",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70169",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "newton_centre_eastbound",
+    "pa_ess_loc": "GNEC",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70170",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "newton_centre_westbound",
+    "pa_ess_loc": "GNEC",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70171",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "chestnut_hill_eastbound",
+    "pa_ess_loc": "GCHE",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70172",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "chestnut_hill_westbound",
+    "pa_ess_loc": "GCHE",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70173",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "reservoir_eastbound",
+    "pa_ess_loc": "GRES",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70174",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "reservoir_westbound",
+    "pa_ess_loc": "GRES",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70175",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "beaconsfield_eastbound",
+    "pa_ess_loc": "GBEA",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+        [
+        {
+          "stop_id": "70176",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "beaconsfield_westbound",
+    "pa_ess_loc": "GBEA",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70177",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "brookline_hills_eastbound",
+    "pa_ess_loc": "GBRH",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70178",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "brookline_hills_westbound",
+    "pa_ess_loc": "GBRH",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70179",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "brookline_village_eastbound",
+    "pa_ess_loc": "GBRV",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70180",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "brookline_village_westbound",
+    "pa_ess_loc": "GBRV",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70181",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "longwood_eastbound",
+    "pa_ess_loc": "GLON",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70182",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "longwood_westbound",
+    "pa_ess_loc": "GLON",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70183",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "fenway_eastbound",
+    "pa_ess_loc": "GFEN",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70186",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "fenway_westbound",
+    "pa_ess_loc": "GFEN",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70187",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "kenmore_eastbound",
+    "pa_ess_loc": "GKEN",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70150",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "kenmore_westbound",
+    "pa_ess_loc": "GKEN",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70151",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "kenmore_northbound",
+    "pa_ess_loc": "GKEN",
+    "pa_ess_zone": "n",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70150",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "kenmore_southbound",
+    "pa_ess_loc": "GKEN",
+    "pa_ess_zone": "s",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70151",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "kenmore_mezzanine",
+    "pa_ess_loc": "GKEN",
+    "pa_ess_zone": "m",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70150",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ],
+      [
+        {
+          "stop_id": "70151",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "hynes_eastbound",
+    "pa_ess_loc": "GAUD",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70152",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "hynes_westbound",
+    "pa_ess_loc": "GAUD",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70153",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "hynes_mezzanine",
+    "pa_ess_loc": "GAUD",
+    "pa_ess_zone": "m",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70152",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ],
+      [
+        {
+          "stop_id": "70153",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "copley_eastbound",
+    "pa_ess_loc": "GCOP",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70154",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "copley_westbound",
+    "pa_ess_loc": "GCOP",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70155",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "copley_mezzanine",
+    "pa_ess_loc": "GCOP",
+    "pa_ess_zone": "m",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70154",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ],
+      [
+        {
+          "stop_id": "70155",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "arlington_eastbound",
+    "pa_ess_loc": "GARL",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70156",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "arlington_westbound",
+    "pa_ess_loc": "GARL",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70157",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "arlington_mezzanine",
+    "pa_ess_loc": "GARL",
+    "pa_ess_zone": "m",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70156",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ],
+      [
+        {
+          "stop_id": "70157",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
   }
 ]
