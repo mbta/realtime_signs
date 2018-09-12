@@ -17,27 +17,29 @@ defmodule Content.Audio.NextTrainCountdown do
         }
 
   require Logger
+  alias Signs.Utilities.SourceConfig
 
-  @spec from_predictions_message(Content.Message.t(), verb(), platform()) :: t() | nil
-  def from_predictions_message(%Content.Message.Predictions{minutes: 1}, _verb, _platform) do
+  @spec from_predictions_message(Content.Message.t(), SourceConfig.source()) :: t() | nil
+  def from_predictions_message(%Content.Message.Predictions{minutes: 1}, %{terminal?: false}) do
     nil
   end
 
   def from_predictions_message(
         %Content.Message.Predictions{minutes: n, headsign: "Alewife"},
-        verb,
-        platform
+        src
       )
       when is_integer(n) do
-    %__MODULE__{destination: :alewife, minutes: n, verb: verb, platform: platform}
+    verb = if src.terminal?, do: :departs, else: :arrives
+    %__MODULE__{destination: :alewife, minutes: n, verb: verb, platform: src.platform}
   end
 
   def from_predictions_message(
         %Content.Message.Predictions{minutes: n, headsign: headsign},
-        verb,
-        _platform
+        src
       )
       when is_integer(n) do
+    verb = if src.terminal?, do: :departs, else: :arrives
+
     case PaEss.Utilities.headsign_to_terminal_station(headsign) do
       {:ok, headsign_atom} ->
         %__MODULE__{destination: headsign_atom, minutes: n, verb: verb}
@@ -53,7 +55,7 @@ defmodule Content.Audio.NextTrainCountdown do
     end
   end
 
-  def from_predictions_message(_, _verb, _platform) do
+  def from_predictions_message(_, _src) do
     nil
   end
 
