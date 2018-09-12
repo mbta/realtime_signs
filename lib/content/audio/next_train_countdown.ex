@@ -24,69 +24,6 @@ defmodule Content.Audio.NextTrainCountdown do
   end
 
   def from_predictions_message(
-        %Content.Message.Predictions{minutes: n, headsign: "Ashmont"},
-        verb,
-        _platform
-      )
-      when is_integer(n) do
-    %__MODULE__{destination: :ashmont, minutes: n, verb: verb}
-  end
-
-  def from_predictions_message(
-        %Content.Message.Predictions{minutes: n, headsign: "Mattapan"},
-        verb,
-        _platform
-      )
-      when is_integer(n) do
-    %__MODULE__{destination: :mattapan, minutes: n, verb: verb}
-  end
-
-  def from_predictions_message(
-        %Content.Message.Predictions{minutes: n, headsign: "Wonderland"},
-        verb,
-        _platform
-      )
-      when is_integer(n) do
-    %__MODULE__{destination: :wonderland, minutes: n, verb: verb}
-  end
-
-  def from_predictions_message(
-        %Content.Message.Predictions{minutes: n, headsign: "Bowdoin"},
-        verb,
-        _platform
-      )
-      when is_integer(n) do
-    %__MODULE__{destination: :bowdoin, minutes: n, verb: verb}
-  end
-
-  def from_predictions_message(
-        %Content.Message.Predictions{minutes: n, headsign: "Frst Hills"},
-        verb,
-        _platform
-      )
-      when is_integer(n) do
-    %__MODULE__{destination: :forest_hills, minutes: n, verb: verb}
-  end
-
-  def from_predictions_message(
-        %Content.Message.Predictions{minutes: n, headsign: "Oak Grove"},
-        verb,
-        _platform
-      )
-      when is_integer(n) do
-    %__MODULE__{destination: :oak_grove, minutes: n, verb: verb}
-  end
-
-  def from_predictions_message(
-        %Content.Message.Predictions{minutes: n, headsign: "Braintree"},
-        verb,
-        _platform
-      )
-      when is_integer(n) do
-    %__MODULE__{destination: :braintree, minutes: n, verb: verb}
-  end
-
-  def from_predictions_message(
         %Content.Message.Predictions{minutes: n, headsign: "Alewife"},
         verb,
         platform
@@ -97,15 +34,23 @@ defmodule Content.Audio.NextTrainCountdown do
 
   def from_predictions_message(
         %Content.Message.Predictions{minutes: n, headsign: headsign},
-        _verb,
+        verb,
         _platform
       )
       when is_integer(n) do
-    Logger.warn(
-      "Content.Audio.NextTrainCountdown.from_predictions_message: unknown headsign: #{headsign}"
-    )
+    case PaEss.Utilities.headsign_to_terminal_station(headsign) do
+      {:ok, headsign_atom} ->
+        %__MODULE__{destination: headsign_atom, minutes: n, verb: verb}
 
-    nil
+      {:error, :unknown} ->
+        Logger.warn(
+          "Content.Audio.NextTrainCountdown.from_predictions_message: unknown headsign: #{
+            headsign
+          }"
+        )
+
+        nil
+    end
   end
 
   def from_predictions_message(_, _verb, _platform) do
@@ -116,15 +61,14 @@ defmodule Content.Audio.NextTrainCountdown do
     alias PaEss.Utilities
 
     def to_params(%{platform: nil} = audio) do
-      {"90",
-       [PaEss.Utilities.destination_var(audio.destination), verb_var(audio), minutes_var(audio)],
+      {"90", [Utilities.destination_var(audio.destination), verb_var(audio), minutes_var(audio)],
        :audio}
     end
 
     def to_params(audio) do
       {"99",
        [
-         PaEss.Utilities.destination_var(audio.destination),
+         Utilities.destination_var(audio.destination),
          platform_var(audio),
          verb_var(audio),
          minutes_var(audio)
