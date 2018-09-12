@@ -36,6 +36,16 @@ defmodule Content.Audio.UtilitiesTest do
     assert destination_var(:oak_grove) == "4022"
     assert destination_var(:braintree) == "4021"
     assert destination_var(:alewife) == "4000"
+    assert destination_var(:boston_college) == "4202"
+    assert destination_var(:cleveland_circle) == "4203"
+    assert destination_var(:riverside) == "4084"
+    assert destination_var(:heath_st) == "4204"
+    assert destination_var(:reservoir) == "4076"
+    assert destination_var(:lechmere) == "4056"
+    assert destination_var(:north_station) == "4027"
+    assert destination_var(:government_center) == "4061"
+    assert destination_var(:park_st) == "4007"
+    assert destination_var(:kenmore) == "4070"
   end
 
   test "headsign_to_terminal_station/1" do
@@ -47,6 +57,15 @@ defmodule Content.Audio.UtilitiesTest do
     assert headsign_to_terminal_station("Oak Grove") == {:ok, :oak_grove}
     assert headsign_to_terminal_station("Braintree") == {:ok, :braintree}
     assert headsign_to_terminal_station("Alewife") == {:ok, :alewife}
+    assert headsign_to_terminal_station("Boston Col") == {:ok, :boston_college}
+    assert headsign_to_terminal_station("Clvlnd Cir") == {:ok, :cleveland_circle}
+    assert headsign_to_terminal_station("Riverside") == {:ok, :riverside}
+    assert headsign_to_terminal_station("Heath St") == {:ok, :heath_st}
+    assert headsign_to_terminal_station("Reservoir") == {:ok, :reservoir}
+    assert headsign_to_terminal_station("Lechmere") == {:ok, :lechmere}
+    assert headsign_to_terminal_station("North Sta") == {:ok, :north_station}
+    assert headsign_to_terminal_station("Govt Ctr") == {:ok, :government_center}
+    assert headsign_to_terminal_station("Park St") == {:ok, :park_st}
     assert headsign_to_terminal_station("Unknown") == {:error, :unknown}
   end
 end
