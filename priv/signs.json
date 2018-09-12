@@ -3777,7 +3777,7 @@
     ]
   },
   {
-    "id": "kenmore_northbound",
+    "id": "kenmore_c_d_eastbound",
     "pa_ess_loc": "GKEN",
     "pa_ess_zone": "n",
     "type": "realtime",
@@ -3794,7 +3794,7 @@
     ]
   },
   {
-    "id": "kenmore_southbound",
+    "id": "kenmore_c_d_westbound",
     "pa_ess_loc": "GKEN",
     "pa_ess_zone": "s",
     "type": "realtime",
