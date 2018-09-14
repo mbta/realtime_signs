@@ -40,11 +40,12 @@ defmodule Signs.Utilities.SourceConfig do
   """
 
   @enforce_keys [:stop_id, :direction_id, :platform, :terminal?, :announce_arriving?]
-  defstruct @enforce_keys
+  defstruct @enforce_keys ++ [:routes]
 
   @type source :: %__MODULE__{
           stop_id: String.t(),
           direction_id: 0 | 1,
+          routes: [String.t()] | nil,
           platform: :ashmont | :braintree | nil,
           terminal?: boolean(),
           announce_arriving?: boolean()
@@ -64,13 +65,15 @@ defmodule Signs.Utilities.SourceConfig do
     }
   end
 
-  defp parse_source!(%{
-         "stop_id" => stop_id,
-         "direction_id" => direction_id,
-         "platform" => platform,
-         "terminal" => terminal?,
-         "announce_arriving" => announce_arriving?
-       }) do
+  defp parse_source!(
+         %{
+           "stop_id" => stop_id,
+           "direction_id" => direction_id,
+           "platform" => platform,
+           "terminal" => terminal?,
+           "announce_arriving" => announce_arriving?
+         } = source
+       ) do
     platform =
       case platform do
         nil -> nil
@@ -81,6 +84,7 @@ defmodule Signs.Utilities.SourceConfig do
     %__MODULE__{
       stop_id: stop_id,
       direction_id: direction_id,
+      routes: source["routes"],
       platform: platform,
       terminal?: terminal?,
       announce_arriving?: announce_arriving?
