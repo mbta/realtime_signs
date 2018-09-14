@@ -3752,6 +3752,7 @@
         {
           "stop_id": "70150",
           "direction_id": 1,
+          "routes": ["Green-B"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3769,6 +3770,7 @@
         {
           "stop_id": "70151",
           "direction_id": 0,
+          "routes": ["Green-B"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3786,6 +3788,7 @@
         {
           "stop_id": "70150",
           "direction_id": 1,
+          "routes": ["Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3803,6 +3806,7 @@
         {
           "stop_id": "70151",
           "direction_id": 0,
+          "routes": ["Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true

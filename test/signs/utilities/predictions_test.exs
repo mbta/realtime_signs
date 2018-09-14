@@ -174,6 +174,27 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("filterable_by_route", 0) do
+      [
+        %Predictions.Prediction{
+          stop_id: "filterable_by_route",
+          direction_id: 0,
+          route_id: "Green-B",
+          destination_stop_id: "123",
+          seconds_until_arrival: 100,
+          seconds_until_departure: 150
+        },
+        %Predictions.Prediction{
+          stop_id: "filterable_by_route",
+          direction_id: 0,
+          route_id: "Green-D",
+          destination_stop_id: "123",
+          seconds_until_arrival: 200,
+          seconds_until_departure: 250
+        }
+      ]
+    end
+
     def for_stop(_stop_id, _direction_id) do
       []
     end
@@ -398,6 +419,35 @@ defmodule Signs.Utilities.PredictionsTest do
                {nil, %Content.Message.Empty{}},
                {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign, true)
+    end
+
+    test "Filters by route if present" do
+      s1 = %SourceConfig{
+        stop_id: "filterable_by_route",
+        direction_id: 0,
+        terminal?: false,
+        platform: nil,
+        routes: nil,
+        announce_arriving?: false
+      }
+
+      s2 = %{s1 | routes: ["Green-D"]}
+
+      config1 = {[s1]}
+      config2 = {[s2]}
+
+      sign1 = %{@sign | source_config: config1}
+      sign2 = %{@sign | source_config: config2}
+
+      assert {
+               {^s1, %Content.Message.Predictions{headsign: "Boston Col"}},
+               {^s1, %Content.Message.Predictions{headsign: "Riverside"}}
+             } = Signs.Utilities.Predictions.get_messages(sign1, true)
+
+      assert {
+               {^s2, %Content.Message.Predictions{headsign: "Riverside"}},
+               {nil, %Content.Message.Empty{}}
+             } = Signs.Utilities.Predictions.get_messages(sign2, true)
     end
   end
 end
