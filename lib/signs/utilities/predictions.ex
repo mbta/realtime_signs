@@ -29,6 +29,7 @@ defmodule Signs.Utilities.Predictions do
     |> Enum.flat_map(fn source ->
       source.stop_id
       |> prediction_engine.for_stop(source.direction_id)
+      |> Enum.filter(&(source.routes == nil or &1.route_id in source.routes))
       |> Enum.map(&{source, &1})
     end)
     |> Enum.filter(fn {_, p} ->
