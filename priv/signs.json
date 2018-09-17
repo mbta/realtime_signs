@@ -4019,5 +4019,133 @@
         }
       ]
     ]
+  },
+  {
+    "id": "boylston_eastbound",
+    "pa_ess_loc": "GBOY",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70158",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "boylston_westbound",
+    "pa_ess_loc": "GBOY",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70159",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "symphony_eastbound",
+    "pa_ess_loc": "GSYM",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70242",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "symphony_westbound",
+    "pa_ess_loc": "GSYM",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70241",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "prudential_eastbound",
+    "pa_ess_loc": "GPRU",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70240",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "prudential_westbound",
+    "pa_ess_loc": "GPRU",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70239",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "prudential_mezzanine",
+    "pa_ess_loc": "GPRU",
+    "pa_ess_zone": "m",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70240",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ],
+      [
+        {
+          "stop_id": "70239",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
   }
 ]
