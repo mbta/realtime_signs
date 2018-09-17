@@ -4019,5 +4019,39 @@
         }
       ]
     ]
-  }
+  },
+  {
+    "id": "boylston_eastbound",
+    "pa_ess_loc": "GBOY",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70158",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "boylston_westbound",
+    "pa_ess_loc": "GBOY",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70159",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
 ]
