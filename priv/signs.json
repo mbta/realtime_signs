@@ -3935,32 +3935,6 @@
     ]
   },
   {
-    "id": "copley_mezzanine",
-    "pa_ess_loc": "GCOP",
-    "pa_ess_zone": "m",
-    "type": "realtime",
-    "source_config": [
-      [
-        {
-          "stop_id": "70154",
-          "direction_id": 1,
-          "platform": null,
-          "terminal": false,
-          "announce_arriving": true
-        }
-      ],
-      [
-        {
-          "stop_id": "70155",
-          "direction_id": 0,
-          "platform": null,
-          "terminal": false,
-          "announce_arriving": true
-        }
-      ]
-    ]
-  },
-  {
     "id": "arlington_eastbound",
     "pa_ess_loc": "GARL",
     "pa_ess_zone": "e",
