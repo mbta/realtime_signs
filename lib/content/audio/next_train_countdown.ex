@@ -25,15 +25,6 @@ defmodule Content.Audio.NextTrainCountdown do
   end
 
   def from_predictions_message(
-        %Content.Message.Predictions{minutes: n, headsign: "Alewife"},
-        src
-      )
-      when is_integer(n) do
-    verb = if src.terminal?, do: :departs, else: :arrives
-    %__MODULE__{destination: :alewife, minutes: n, verb: verb, platform: src.platform}
-  end
-
-  def from_predictions_message(
         %Content.Message.Predictions{minutes: n, headsign: headsign},
         src
       )
@@ -42,7 +33,7 @@ defmodule Content.Audio.NextTrainCountdown do
 
     case PaEss.Utilities.headsign_to_terminal_station(headsign) do
       {:ok, headsign_atom} ->
-        %__MODULE__{destination: headsign_atom, minutes: n, verb: verb}
+        %__MODULE__{destination: headsign_atom, minutes: n, verb: verb, platform: src.platform}
 
       {:error, :unknown} ->
         Logger.warn(
