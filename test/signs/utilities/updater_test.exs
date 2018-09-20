@@ -108,11 +108,37 @@ defmodule Signs.Utilities.UpdaterTest do
       sign = Updater.update_sign(@sign, diff_top, diff_bottom)
 
       assert_received(
-        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :ashmont}, _, _}
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
       )
 
       assert sign.tick_top == 100
       assert sign.tick_bottom == 100
+    end
+
+    test "does not announce arrival if single-source sign and the bottom line has changed" do
+      single_source_sign = %{@sign | source_config: {[]}, tick_read: 40}
+      src = %{@src | announce_arriving?: true}
+      same_top = @sign.current_content_top
+      diff_bottom = {src, %P{headsign: "Riverside", minutes: :arriving}}
+
+      Updater.update_sign(single_source_sign, same_top, diff_bottom)
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :riverside}, _dur, _start}
+      )
+    end
+
+    test "announces arrival if multi-source sign and only the bottom line has changed" do
+      multi_source_sign = %{@sign | source_config: {[], []}, tick_read: 40}
+      src = %{@src | announce_arriving?: true}
+      same_top = @sign.current_content_top
+      diff_bottom = {src, %P{headsign: "Riverside", minutes: :arriving}}
+
+      Updater.update_sign(multi_source_sign, same_top, diff_bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :riverside}, _dur, _start}
+      )
     end
 
     test "announces stopped-train message if top line changes to it and tick_read is greater than 30 seconds" do
@@ -124,7 +150,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       sign = %{@sign | tick_read: initial_tick_read, read_period_seconds: read_period_seconds}
 
-      sign = Updater.update_sign(sign, diff_top, same_bottom)
+      Updater.update_sign(sign, diff_top, same_bottom)
 
       assert_received(
         {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur,
@@ -141,7 +167,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       sign = %{@sign | tick_read: initial_tick_read, read_period_seconds: read_period_seconds}
 
-      sign = Updater.update_sign(sign, diff_top, same_bottom)
+      Updater.update_sign(sign, diff_top, same_bottom)
 
       refute_received(
         {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur,
@@ -175,23 +201,6 @@ defmodule Signs.Utilities.UpdaterTest do
       )
     end
 
-    test "announces stopped train message for top and bottom if both change and have different headsigns" do
-      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
-      diff_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Braintree", stops_away: 2}}
-
-      Updater.update_sign(@sign, diff_top, diff_bottom)
-
-      assert_received(
-        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :braintree, stops_away: 2},
-         _dur, _start}
-      )
-
-      assert_received(
-        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur,
-         _start}
-      )
-    end
-
     test "logs when stopped train message turns on" do
       diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
       same_bottom = @sign.current_content_bottom
@@ -203,7 +212,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       log =
         capture_log([level: :info], fn ->
-          sign = Updater.update_sign(sign, diff_top, same_bottom)
+          Updater.update_sign(sign, diff_top, same_bottom)
         end)
 
       assert log =~ "sign_id=sign_id line=top status=on"
@@ -228,7 +237,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       log =
         capture_log([level: :info], fn ->
-          sign = Updater.update_sign(sign, new_top, new_bottom)
+          Updater.update_sign(sign, new_top, new_bottom)
         end)
 
       assert log =~ "sign_id=sign_id line=top status=off"
@@ -254,7 +263,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       log =
         capture_log([level: :info], fn ->
-          sign = Updater.update_sign(sign, diff_top, same_bottom)
+          Updater.update_sign(sign, diff_top, same_bottom)
         end)
 
       assert log =~ "sign_id=sign_id line=top status=on"
@@ -280,7 +289,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       log =
         capture_log([level: :info], fn ->
-          sign = Updater.update_sign(sign, diff_top, same_bottom)
+          Updater.update_sign(sign, diff_top, same_bottom)
         end)
 
       assert log =~ "sign_id=sign_id line=top status=off"
