@@ -34,9 +34,7 @@ defmodule Signs.Utilities.Reader do
   end
 
   defp send_audio_update({src, msg}, sign) do
-    verb = if src.terminal?, do: :departs, else: :arrives
-
-    case Content.Audio.NextTrainCountdown.from_predictions_message(msg, verb, src.platform) do
+    case Content.Audio.NextTrainCountdown.from_predictions_message(msg, src) do
       %Content.Audio.NextTrainCountdown{} = audio ->
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
 
