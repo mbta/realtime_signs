@@ -26,14 +26,42 @@ defmodule Content.Audio.NextTrainCountdown do
 
   def from_predictions_message(
         %Content.Message.Predictions{minutes: n, headsign: headsign},
-        src
+        %{terminal?: true} = src
       )
       when is_integer(n) do
-    verb = if src.terminal?, do: :departs, else: :arrives
-
     case PaEss.Utilities.headsign_to_terminal_station(headsign) do
       {:ok, headsign_atom} ->
-        %__MODULE__{destination: headsign_atom, minutes: n, verb: verb, platform: src.platform}
+        %__MODULE__{
+          destination: headsign_atom,
+          minutes: n,
+          verb: :departs,
+          platform: src.platform
+        }
+
+      {:error, :unknown} ->
+        Logger.warn(
+          "Content.Audio.NextTrainCountdown.from_predictions_message: unknown headsign: #{
+            headsign
+          }"
+        )
+
+        nil
+    end
+  end
+
+  def from_predictions_message(
+        %Content.Message.Predictions{minutes: n, headsign: headsign},
+        %{terminal?: false} = src
+      )
+      when is_integer(n) do
+    case PaEss.Utilities.headsign_to_terminal_station(headsign) do
+      {:ok, headsign_atom} ->
+        %__MODULE__{
+          destination: headsign_atom,
+          minutes: n,
+          verb: :arrives,
+          platform: src.platform
+        }
 
       {:error, :unknown} ->
         Logger.warn(
