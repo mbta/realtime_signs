@@ -128,6 +128,23 @@ defmodule Signs.Utilities.UpdaterTest do
       )
     end
 
+    test "announces arrival on bottom if multi-source sign and both lines have changed" do
+      multi_source_sign = %{@sign | source_config: {[], []}, tick_read: 40}
+      src = %{@src | announce_arriving?: true}
+      diff_top = {src, %P{headsign: "Alewife", minutes: :arriving}}
+      diff_bottom = {src, %P{headsign: "Riverside", minutes: :arriving}}
+
+      Updater.update_sign(multi_source_sign, diff_top, diff_bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :riverside}, _dur, _start}
+      )
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
+      )
+    end
+
     test "announces arrival if multi-source sign and only the bottom line has changed" do
       multi_source_sign = %{@sign | source_config: {[], []}, tick_read: 40}
       src = %{@src | announce_arriving?: true}
