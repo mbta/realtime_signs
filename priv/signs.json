@@ -4121,5 +4121,304 @@
         }
       ]
     ]
+  },
+  {
+    "id": "park_st_eastbound",
+    "pa_ess_loc": "GPRKE",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70200",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "park_st_winter_st_concourse",
+    "pa_ess_loc": "GPRKE",
+    "pa_ess_zone": "m",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70200",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "park_st_westbound_wall_track",
+    "pa_ess_loc": "GPRKW",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70197",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        },
+        {
+          "stop_id": "70199",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "park_st_westbound_fence_track",
+    "pa_ess_loc": "GPRKW",
+    "pa_ess_zone": "n",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70196",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        },
+        {
+          "stop_id": "70198",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+
+  {
+    "id": "green_government_center_eastbound",
+    "pa_ess_loc": "GGOV",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70201",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "green_government_center_westbound",
+    "pa_ess_loc": "GGOV",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70202",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "green_government_center_mezzanine",
+    "pa_ess_loc": "GGOV",
+    "pa_ess_zone": "m",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70201",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ],
+      [
+        {
+          "stop_id": "70202",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+
+  {
+    "id": "green_haymarket_eastbound",
+    "pa_ess_loc": "GHAY",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70203",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "green_haymarket_westbound",
+    "pa_ess_loc": "GHAY",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70204",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+
+  {
+    "id": "green_north_station_eastbound",
+    "pa_ess_loc": "GNST",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70205",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "green_north_station_westbound",
+    "pa_ess_loc": "GNST",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70206",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "green_north_station_commuter_rail_exit",
+    "pa_ess_loc": "GNST",
+    "pa_ess_zone": "m",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70205",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ],
+      [
+        {
+          "stop_id": "70206",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "science_park_eastbound",
+    "pa_ess_loc": "GSCI",
+    "pa_ess_zone": "e",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70207",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "science_park_westbound",
+    "pa_ess_loc": "GSCI",
+    "pa_ess_zone": "w",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70208",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
+  },
+  {
+    "id": "science_park_mezzanine",
+    "pa_ess_loc": "GSCI",
+    "pa_ess_zone": "m",
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70207",
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ],
+      [
+        {
+          "stop_id": "70208",
+          "direction_id": 0,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true
+        }
+      ]
+    ]
   }
 ]
