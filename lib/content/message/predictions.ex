@@ -23,12 +23,13 @@ defmodule Content.Message.Predictions do
           width: integer()
         }
 
-  @spec non_terminal(Predictions.Prediction.t(), boolean) :: t()
-  def non_terminal(prediction, width \\ 18, stopped_at?) do
+  @spec non_terminal(Predictions.Prediction.t(), integer(), boolean, boolean()) :: t()
+  def non_terminal(prediction, width \\ 18, stopped_at?, can_be_arriving?) do
     minutes =
       cond do
         stopped_at? -> :boarding
-        prediction.seconds_until_arrival <= 30 -> :arriving
+        can_be_arriving? && prediction.seconds_until_arrival <= 30 -> :arriving
+        prediction.seconds_until_arrival <= 30 -> 1
         prediction.seconds_until_arrival >= @thirty_one_minutes -> :thirty_plus
         true -> prediction.seconds_until_arrival |> Kernel./(60) |> round()
       end
