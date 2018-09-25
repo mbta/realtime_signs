@@ -48,10 +48,6 @@ defmodule Content.Message.StoppedTrain do
     0
   end
 
-  defp parse_stops_away("Stopped at station") do
-    0
-  end
-
   defp parse_stops_away(str) do
     ~r/Stopped (?<stops_away>\d+) stops? away/
     |> Regex.named_captures(str)

@@ -133,8 +133,9 @@ defmodule Signs.Utilities.PredictionsTest do
           direction_id: 0,
           route_id: "Red",
           destination_stop_id: "123",
-          seconds_until_arrival: 30,
-          seconds_until_departure: 90
+          seconds_until_arrival: 0,
+          seconds_until_departure: 90,
+          boarding_status: "Boarding"
         },
         %Predictions.Prediction{
           stop_id: "8",
@@ -198,9 +199,6 @@ defmodule Signs.Utilities.PredictionsTest do
     def for_stop(_stop_id, _direction_id) do
       []
     end
-
-    def stopped_at?("8"), do: true
-    def stopped_at?(_stop_id), do: false
   end
 
   defmodule FakeUpdater do

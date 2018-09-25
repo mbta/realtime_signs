@@ -43,7 +43,7 @@ defmodule Content.Message.StoppedTrainTest do
   @prediction %Predictions.Prediction{
     route_id: "Red",
     direction_id: 1,
-    boarding_status: "Stopped at station"
+    boarding_status: "Boarding"
   }
 
   describe "from_prediction/1" do
