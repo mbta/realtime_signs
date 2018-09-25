@@ -205,7 +205,7 @@ defmodule Content.Message.PredictionsTest do
       assert log =~ "Could not find headsign for prediction"
     end
 
-    test "puts boarding on the sign when train is on the platform and predicted to depart in less than 30 seconds" do
+    test "puts boarding on the sign when train is supposed to be boarding according to rtr" do
       prediction = %Predictions.Prediction{
         direction_id: 1,
         route_id: "Mattapan",
