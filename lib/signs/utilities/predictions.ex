@@ -44,6 +44,7 @@ defmodule Signs.Utilities.Predictions do
     |> Enum.with_index()
     |> Enum.map(fn {{source, prediction}, i} ->
       stopped_at? = i == 0 and prediction_engine.stopped_at?(source.stop_id)
+      can_be_arriving? = i == 0
 
       cond do
         stopped_train?(prediction) ->
@@ -53,7 +54,8 @@ defmodule Signs.Utilities.Predictions do
           {source, Content.Message.Predictions.terminal(prediction, stopped_at?)}
 
         true ->
-          {source, Content.Message.Predictions.non_terminal(prediction, stopped_at?)}
+          {source,
+           Content.Message.Predictions.non_terminal(prediction, stopped_at?, can_be_arriving?)}
       end
     end)
     |> case do
