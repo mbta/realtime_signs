@@ -189,6 +189,23 @@ defmodule Content.Message.PredictionsTest do
   end
 
   describe "terminal/3" do
+    test "logs a warning when we cant find a headsign, even if it should be boarding" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 0,
+        direction_id: 1,
+        route_id: "NON-ROUTE",
+        destination_stop_id: "70261",
+        boarding_status: "Boarding"
+      }
+
+      log =
+        capture_log([level: :warn], fn ->
+          Content.Message.Predictions.terminal(prediction)
+        end)
+
+      assert log =~ "Could not find headsign for prediction"
+    end
+
     test "logs a warning when we cant find a headsign" do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 0,
