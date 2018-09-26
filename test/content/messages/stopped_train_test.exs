@@ -34,6 +34,12 @@ defmodule Content.Message.StoppedTrainTest do
     end
   end
 
+  @boarding_prediction %Predictions.Prediction{
+    route_id: "Red",
+    direction_id: 1,
+    boarding_status: "Boarding"
+  }
+
   @prediction %Predictions.Prediction{
     route_id: "Red",
     direction_id: 1,
@@ -41,6 +47,14 @@ defmodule Content.Message.StoppedTrainTest do
   }
 
   describe "from_prediction/1" do
+    test "handles 'boarding' message" do
+      assert Content.Message.StoppedTrain.from_prediction(@boarding_prediction) ==
+               %Content.Message.StoppedTrain{
+                 headsign: "Alewife",
+                 stops_away: 0
+               }
+    end
+
     test "handles 'Stopped at station' message" do
       assert Content.Message.StoppedTrain.from_prediction(@prediction) ==
                %Content.Message.StoppedTrain{
