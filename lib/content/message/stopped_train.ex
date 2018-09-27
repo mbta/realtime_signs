@@ -44,7 +44,7 @@ defmodule Content.Message.StoppedTrain do
     }
   end
 
-  defp parse_stops_away("Boarding") do
+  defp parse_stops_away("Stopped at stop") do
     0
   end
 
