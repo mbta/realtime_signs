@@ -27,7 +27,7 @@ defmodule Content.Message.Predictions do
   def non_terminal(prediction, width \\ 18, can_be_arriving?)
 
   def non_terminal(
-        %Predictions.Prediction{boarding_status: "Boarding"} = prediction,
+        %Predictions.Prediction{stops_away: 0} = prediction,
         width,
         _can_be_arriving?
       ) do
@@ -86,7 +86,7 @@ defmodule Content.Message.Predictions do
   def terminal(prediction, width \\ 18)
 
   def terminal(
-        %Predictions.Prediction{boarding_status: "Boarding"} = prediction,
+        %Predictions.Prediction{stops_away: 0} = prediction,
         width
       ) do
     headsign =

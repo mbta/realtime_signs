@@ -9,6 +9,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "1",
           direction_id: 0,
           route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "70093",
           seconds_until_arrival: 120,
           seconds_until_departure: 180
@@ -17,6 +19,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "1",
           direction_id: 0,
           route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "70093",
           seconds_until_arrival: 240,
           seconds_until_departure: 300
@@ -30,6 +34,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "2",
           direction_id: 1,
           route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 120,
           seconds_until_departure: 180
@@ -38,6 +44,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "2",
           direction_id: 1,
           route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 240,
           seconds_until_departure: 300
@@ -51,6 +59,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "3",
           direction_id: 1,
           route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 120,
           seconds_until_departure: 180
@@ -59,6 +69,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "3",
           direction_id: 1,
           route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 500,
           seconds_until_departure: 600
@@ -72,6 +84,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "4",
           direction_id: 1,
           route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 240,
           seconds_until_departure: 300
@@ -85,6 +99,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "5",
           direction_id: 1,
           route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 240,
           seconds_until_departure: 300
@@ -93,6 +109,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "5",
           direction_id: 1,
           route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 500,
           seconds_until_departure: 600
@@ -106,6 +124,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "6",
           direction_id: 1,
           route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 0,
           seconds_until_departure: 300
@@ -119,6 +139,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "7",
           direction_id: 1,
           route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 0,
           seconds_until_departure: 300
@@ -132,15 +154,19 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "8",
           direction_id: 0,
           route_id: "Red",
+          stopped?: false,
+          stops_away: 0,
           destination_stop_id: "123",
           seconds_until_arrival: 0,
           seconds_until_departure: 90,
-          boarding_status: "Boarding"
+          boarding_status: nil
         },
         %Predictions.Prediction{
           stop_id: "8",
           direction_id: 0,
           route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 100,
           seconds_until_departure: 120
@@ -154,6 +180,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "9",
           direction_id: 0,
           route_id: "Red",
+          stopped?: true,
+          stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 10,
           seconds_until_departure: 100,
@@ -168,6 +196,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "stop_with_nil_departure_prediction",
           direction_id: 0,
           route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 10,
           seconds_until_departure: nil
@@ -181,6 +211,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "filterable_by_route",
           direction_id: 0,
           route_id: "Green-B",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 100,
           seconds_until_departure: 150
@@ -189,6 +221,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stop_id: "filterable_by_route",
           direction_id: 0,
           route_id: "Green-D",
+          stopped?: false,
+          stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 200,
           seconds_until_departure: 250
