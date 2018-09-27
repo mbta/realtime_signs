@@ -58,6 +58,8 @@ defmodule Predictions.Predictions do
       seconds_until_departure: max(0, seconds_until_departure),
       route_id: route_id,
       destination_stop_id: last_stop_id,
+      stopped?: stop_time_update["stopped?"],
+      stops_away: stop_time_update["stops_away"],
       boarding_status: stop_time_update["boarding_status"]
     }
   end
