@@ -256,6 +256,7 @@ defmodule Content.Message.PredictionsTest do
 
     test "puts boarding on the sign when train is supposed to be boarding according to rtr" do
       prediction = %Predictions.Prediction{
+        seconds_until_departure: 15,
         direction_id: 1,
         route_id: "Mattapan",
         destination_stop_id: "70261",
@@ -267,6 +268,22 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.terminal(prediction)
 
       assert Content.Message.to_string(msg) == "Ashmont        BRD"
+    end
+
+    test "does not put boarding on the sign too early when train is stopped at terminal" do
+      prediction = %Predictions.Prediction{
+        seconds_until_departure: 120,
+        direction_id: 1,
+        route_id: "Mattapan",
+        destination_stop_id: "70261",
+        stopped?: false,
+        stops_away: 0,
+        boarding_status: "Stopped at station"
+      }
+
+      msg = Content.Message.Predictions.terminal(prediction)
+
+      assert Content.Message.to_string(msg) == "Ashmont      2 min"
     end
 
     test "does not put boarding if prediction is greater than 30 seconds" do
