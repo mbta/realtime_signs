@@ -23,6 +23,8 @@ defmodule Predictions.PredictionsTest do
               "schedule_relationship" => "SCHEDULED",
               "stop_id" => "70263",
               "stop_sequence" => 1,
+              "stops_away" => 1,
+              "stopped?" => true,
               "boarding_status" => "Stopped 1 stop away"
             },
             %{
@@ -34,6 +36,8 @@ defmodule Predictions.PredictionsTest do
               "departure" => nil,
               "schedule_relationship" => "SCHEDULED",
               "stop_id" => "70261",
+              "stops_away" => 1,
+              "stopped?" => false,
               "stop_sequence" => 1
             }
           ],
@@ -71,6 +75,8 @@ defmodule Predictions.PredictionsTest do
             seconds_until_arrival: 180,
             direction_id: 0,
             route_id: "Mattapan",
+            stops_away: 1,
+            stopped?: false,
             destination_stop_id: "70261"
           }
         ],
@@ -81,6 +87,8 @@ defmodule Predictions.PredictionsTest do
             direction_id: 0,
             route_id: "Mattapan",
             destination_stop_id: "70261",
+            stops_away: 1,
+            stopped?: true,
             boarding_status: "Stopped 1 stop away"
           }
         ]
@@ -108,6 +116,8 @@ defmodule Predictions.PredictionsTest do
                   "departure" => nil,
                   "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70263",
+                  "stopped?" => false,
+                  "stops_away" => 1,
                   "stop_sequence" => 1
                 },
                 %{
@@ -119,6 +129,8 @@ defmodule Predictions.PredictionsTest do
                   "departure" => nil,
                   "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70261",
+                  "stopped?" => false,
+                  "stops_away" => 1,
                   "stop_sequence" => 1
                 },
                 %{
@@ -126,6 +138,8 @@ defmodule Predictions.PredictionsTest do
                   "departure" => nil,
                   "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70261",
+                  "stopped?" => false,
+                  "stops_away" => 1,
                   "stop_sequence" => 1
                 }
               ],
@@ -162,6 +176,8 @@ defmodule Predictions.PredictionsTest do
                   "departure" => nil,
                   "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70038",
+                  "stopped?" => false,
+                  "stops_away" => 1,
                   "stop_sequence" => 1
                 },
                 %{
@@ -173,6 +189,8 @@ defmodule Predictions.PredictionsTest do
                   "departure" => nil,
                   "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70060",
+                  "stopped?" => false,
+                  "stops_away" => 1,
                   "stop_sequence" => 1
                 }
               ],
@@ -208,6 +226,8 @@ defmodule Predictions.PredictionsTest do
             seconds_until_arrival: 180,
             direction_id: 0,
             route_id: "Mattapan",
+            stopped?: false,
+            stops_away: 1,
             destination_stop_id: "70261"
           }
         ],
@@ -217,6 +237,8 @@ defmodule Predictions.PredictionsTest do
             seconds_until_arrival: 120,
             direction_id: 0,
             route_id: "Mattapan",
+            stopped?: false,
+            stops_away: 1,
             destination_stop_id: "70261"
           }
         ],
@@ -226,6 +248,8 @@ defmodule Predictions.PredictionsTest do
             seconds_until_arrival: 200,
             direction_id: 1,
             route_id: "Blue",
+            stopped?: false,
+            stops_away: 1,
             destination_stop_id: "70060"
           }
         ],
@@ -235,6 +259,8 @@ defmodule Predictions.PredictionsTest do
             seconds_until_arrival: 400,
             direction_id: 1,
             route_id: "Blue",
+            stopped?: false,
+            stops_away: 1,
             destination_stop_id: "70060"
           }
         ]
@@ -262,6 +288,8 @@ defmodule Predictions.PredictionsTest do
                   "departure" => nil,
                   "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70263",
+                  "stopped?" => false,
+                  "stops_away" => 1,
                   "stop_sequence" => 1
                 }
               ],
@@ -297,6 +325,8 @@ defmodule Predictions.PredictionsTest do
                    seconds_until_arrival: 0,
                    direction_id: 0,
                    route_id: "Mattapan",
+                   stopped?: false,
+                   stops_away: 1,
                    destination_stop_id: "70263"
                  }
                ]

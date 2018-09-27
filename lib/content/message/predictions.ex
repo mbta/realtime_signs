@@ -23,11 +23,38 @@ defmodule Content.Message.Predictions do
           width: integer()
         }
 
-  @spec non_terminal(Predictions.Prediction.t(), integer(), boolean, boolean()) :: t()
-  def non_terminal(prediction, width \\ 18, stopped_at?, can_be_arriving?) do
+  @spec non_terminal(Predictions.Prediction.t(), integer(), boolean()) :: t()
+  def non_terminal(prediction, width \\ 18, can_be_arriving?)
+
+  def non_terminal(
+        %Predictions.Prediction{stops_away: 0} = prediction,
+        width,
+        _can_be_arriving?
+      ) do
+    headsign =
+      case Content.Utilities.headsign_for_prediction(
+             prediction.route_id,
+             prediction.direction_id,
+             prediction.destination_stop_id
+           ) do
+        {:ok, dest} ->
+          dest
+
+        {:error, _} ->
+          Logger.warn("Could not find headsign for prediction #{inspect(prediction)}")
+          ""
+      end
+
+    %__MODULE__{
+      headsign: headsign,
+      minutes: :boarding,
+      width: width
+    }
+  end
+
+  def non_terminal(prediction, width, can_be_arriving?) do
     minutes =
       cond do
-        stopped_at? -> :boarding
         can_be_arriving? && prediction.seconds_until_arrival <= 30 -> :arriving
         prediction.seconds_until_arrival <= 30 -> 1
         prediction.seconds_until_arrival >= @thirty_one_minutes -> :thirty_plus
@@ -55,11 +82,37 @@ defmodule Content.Message.Predictions do
     }
   end
 
-  @spec terminal(Predictions.Prediction.t(), boolean()) :: t()
-  def terminal(prediction, width \\ 18, stopped_at?) do
+  @spec terminal(Predictions.Prediction.t(), integer()) :: t()
+  def terminal(prediction, width \\ 18)
+
+  def terminal(
+        %Predictions.Prediction{stops_away: 0} = prediction,
+        width
+      ) do
+    headsign =
+      case Content.Utilities.headsign_for_prediction(
+             prediction.route_id,
+             prediction.direction_id,
+             prediction.destination_stop_id
+           ) do
+        {:ok, dest} ->
+          dest
+
+        {:error, _} ->
+          Logger.warn("Could not find headsign for prediction #{inspect(prediction)}")
+          ""
+      end
+
+    %__MODULE__{
+      headsign: headsign,
+      minutes: :boarding,
+      width: width
+    }
+  end
+
+  def terminal(prediction, width) do
     minutes =
       case prediction.seconds_until_departure do
-        x when x <= 30 and stopped_at? -> :boarding
         x when x <= 30 -> 1
         x when x >= @thirty_one_minutes -> :thirty_plus
         x -> x |> Kernel./(60) |> round()
