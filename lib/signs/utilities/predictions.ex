@@ -35,9 +35,9 @@ defmodule Signs.Utilities.Predictions do
     |> Enum.filter(fn {_, p} ->
       p.seconds_until_departure
     end)
-    |> Enum.sort(fn {s1, p1}, {s2, p2} ->
-      p1_time = if s1.terminal?, do: p1.seconds_until_departure, else: p1.seconds_until_arrival
-      p2_time = if s2.terminal?, do: p2.seconds_until_departure, else: p2.seconds_until_arrival
+    |> Enum.sort(fn {_s1, p1}, {_s2, p2} ->
+      p1_time = p1.seconds_until_arrival || p1.seconds_until_departure
+      p2_time = p2.seconds_until_arrival || p2.seconds_until_departure
       p1_time < p2_time
     end)
     |> Enum.take(2)

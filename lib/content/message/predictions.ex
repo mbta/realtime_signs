@@ -53,12 +53,15 @@ defmodule Content.Message.Predictions do
   end
 
   def non_terminal(prediction, width, can_be_arriving?) do
+    # e.g., North Station which is non-terminal but has trips that begin there
+    predicted_time = prediction.seconds_until_arrival || prediction.seconds_until_departure
+
     minutes =
       cond do
-        can_be_arriving? && prediction.seconds_until_arrival <= 30 -> :arriving
-        prediction.seconds_until_arrival <= 30 -> 1
-        prediction.seconds_until_arrival >= @thirty_one_minutes -> :thirty_plus
-        true -> prediction.seconds_until_arrival |> Kernel./(60) |> round()
+        can_be_arriving? && predicted_time <= 30 -> :arriving
+        predicted_time <= 30 -> 1
+        predicted_time >= @thirty_one_minutes -> :thirty_plus
+        true -> predicted_time |> Kernel./(60) |> round()
       end
 
     headsign =
