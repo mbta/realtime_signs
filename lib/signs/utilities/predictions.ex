@@ -32,8 +32,21 @@ defmodule Signs.Utilities.Predictions do
       |> Enum.filter(&(source.routes == nil or &1.route_id in source.routes))
       |> Enum.map(&{source, &1})
     end)
-    |> Enum.filter(fn {_, p} ->
-      p.seconds_until_departure
+    |> Enum.flat_map(fn {s, p} ->
+      if p.seconds_until_departure do
+        p =
+          if is_nil(p.seconds_until_arrival) do
+            # e.g. North Station, a non-terminal, create an arrival time
+            # for trips beginning there
+            %{p | seconds_until_arrival: p.seconds_until_departure - 30}
+          else
+            p
+          end
+
+        [{s, p}]
+      else
+        []
+      end
     end)
     |> Enum.sort(fn {s1, p1}, {s2, p2} ->
       p1_time = if s1.terminal?, do: p1.seconds_until_departure, else: p1.seconds_until_arrival
