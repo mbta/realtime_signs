@@ -81,7 +81,7 @@ defmodule Content.Message.PredictionsTest do
       assert Content.Message.to_string(msg) == "Mattapan     1 min"
     end
 
-    test "Says 30+ min when train is more than 30 minutes away" do
+    test "Says 30+ min when train is 30 or more minutes away" do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 45 * 60,
         direction_id: 0,
@@ -94,21 +94,6 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.non_terminal(prediction, true)
 
       assert Content.Message.to_string(msg) == "Mattapan   30+ min"
-    end
-
-    test "Says 30 min when train is exactly 30 minutes away" do
-      prediction = %Predictions.Prediction{
-        seconds_until_arrival: 30 * 60,
-        direction_id: 0,
-        route_id: "Mattapan",
-        stopped?: false,
-        stops_away: 10,
-        destination_stop_id: "70275"
-      }
-
-      msg = Content.Message.Predictions.non_terminal(prediction, true)
-
-      assert Content.Message.to_string(msg) == "Mattapan    30 min"
     end
 
     test "can use a shorter line length" do
