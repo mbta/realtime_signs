@@ -27,6 +27,7 @@ defmodule Content.Utilities do
   def headsign_for_prediction(_, 0, "70149"), do: {:ok, "Kenmore"}
   def headsign_for_prediction(_, 0, "70151"), do: {:ok, "Kenmore"}
   def headsign_for_prediction(_, 0, "70202"), do: {:ok, "Govt Ctr"}
+  def headsign_for_prediction(_, 0, "70201"), do: {:ok, "Govt Ctr"}
   def headsign_for_prediction(_, 0, "70175"), do: {:ok, "Reservoir"}
   def headsign_for_prediction(_, 0, "70107"), do: {:ok, "Boston Col"}
   def headsign_for_prediction(_, 0, "70237"), do: {:ok, "Clvlnd Cir"}
