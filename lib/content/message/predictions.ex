@@ -12,7 +12,7 @@ defmodule Content.Message.Predictions do
 
   require Logger
 
-  @thirty_one_minutes 31 * 60
+  @thirty_plus_minutes 30 * 60
 
   @enforce_keys [:headsign, :minutes]
   defstruct [:headsign, :minutes, width: 18]
@@ -60,7 +60,7 @@ defmodule Content.Message.Predictions do
       cond do
         can_be_arriving? && predicted_time <= 30 -> :arriving
         predicted_time <= 30 -> 1
-        predicted_time >= @thirty_one_minutes -> :thirty_plus
+        predicted_time >= @thirty_plus_minutes -> :thirty_plus
         true -> predicted_time |> Kernel./(60) |> round()
       end
 
@@ -95,7 +95,7 @@ defmodule Content.Message.Predictions do
       case prediction.seconds_until_departure do
         x when x <= 30 and stopped_at? -> :boarding
         x when x <= 30 -> 1
-        x when x >= @thirty_one_minutes -> :thirty_plus
+        x when x >= @thirty_plus_minutes -> :thirty_plus
         x -> x |> Kernel./(60) |> round()
       end
 
