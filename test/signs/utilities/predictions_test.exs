@@ -102,8 +102,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stopped?: false,
           stops_away: 1,
           destination_stop_id: "123",
-          seconds_until_arrival: 240,
-          seconds_until_departure: 300
+          seconds_until_arrival: nil,
+          seconds_until_departure: 270
         },
         %Predictions.Prediction{
           stop_id: "5",
@@ -311,7 +311,7 @@ defmodule Signs.Utilities.PredictionsTest do
              } = Signs.Utilities.Predictions.get_messages(sign, true)
     end
 
-    test "sorts by arrival and departure depending on whether source is a terminal" do
+    test "sorts by created pseudo-arrival if non-terminal and arrival was nil" do
       s1 = %SourceConfig{
         stop_id: "5",
         direction_id: 1,
