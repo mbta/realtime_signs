@@ -93,10 +93,10 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
-    def for_stop("5", 1) do
+    def for_stop("arrival_vs_departure_time", 1) do
       [
         %Predictions.Prediction{
-          stop_id: "5",
+          stop_id: "arrival_vs_departure_time",
           direction_id: 1,
           route_id: "Red",
           stopped?: false,
@@ -106,29 +106,14 @@ defmodule Signs.Utilities.PredictionsTest do
           seconds_until_departure: 300
         },
         %Predictions.Prediction{
-          stop_id: "5",
+          stop_id: "arrival_vs_departure_time",
           direction_id: 1,
           route_id: "Red",
           stopped?: false,
           stops_away: 1,
           destination_stop_id: "123",
-          seconds_until_arrival: 500,
+          seconds_until_arrival: nil,
           seconds_until_departure: 600
-        }
-      ]
-    end
-
-    def for_stop("6", 1) do
-      [
-        %Predictions.Prediction{
-          stop_id: "6",
-          direction_id: 1,
-          route_id: "Red",
-          stopped?: false,
-          stops_away: 1,
-          destination_stop_id: "123",
-          seconds_until_arrival: 0,
-          seconds_until_departure: 300
         }
       ]
     end
@@ -311,29 +296,21 @@ defmodule Signs.Utilities.PredictionsTest do
              } = Signs.Utilities.Predictions.get_messages(sign, true)
     end
 
-    test "sorts by arrival and departure depending on whether source is a terminal" do
-      s1 = %SourceConfig{
-        stop_id: "5",
+    test "sorts by arrival or departure depending on which is present" do
+      src = %SourceConfig{
+        stop_id: "arrival_vs_departure_time",
         direction_id: 1,
         terminal?: false,
         platform: nil,
         announce_arriving?: false
       }
 
-      s2 = %SourceConfig{
-        stop_id: "6",
-        direction_id: 1,
-        terminal?: true,
-        platform: nil,
-        announce_arriving?: false
-      }
-
-      config = {[s1, s2]}
+      config = {[src]}
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s1, %Content.Message.Predictions{headsign: "Alewife", minutes: 4}},
-               {^s2, %Content.Message.Predictions{headsign: "Alewife", minutes: 5}}
+               {^src, %Content.Message.Predictions{headsign: "Alewife", minutes: 4}},
+               {^src, %Content.Message.Predictions{headsign: "Alewife", minutes: 10}}
              } = Signs.Utilities.Predictions.get_messages(sign, true)
     end
 
