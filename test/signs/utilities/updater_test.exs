@@ -218,6 +218,81 @@ defmodule Signs.Utilities.UpdaterTest do
       )
     end
 
+    test "does not announce track change message if top line changes and the train is on the right track" do
+      prediction = %Content.Message.Predictions{
+        stop_id: "70199",
+        minutes: :boarding,
+        route_id: "Green-E",
+        headsign: "Heath St"
+      }
+
+      diff_top = {@src, prediction}
+      same_bottom = @sign.current_content_bottom
+
+      initial_tick_read = 40
+      read_period_seconds = 100
+
+      sign = %{@sign | tick_read: initial_tick_read, read_period_seconds: read_period_seconds}
+
+      Updater.update_sign(sign, diff_top, same_bottom)
+
+      refute_received(
+        {:send_audio, _,
+         %Content.Audio.TrackChange{destination: :heath_st, track: 2, route_id: "Green-E"}, _dur,
+         _start}
+      )
+    end
+
+    test "announces track change message if top line changes and the train is on the wrong track and its e line" do
+      prediction = %Content.Message.Predictions{
+        stop_id: "70198",
+        minutes: :boarding,
+        route_id: "Green-E",
+        headsign: "Heath St"
+      }
+
+      diff_top = {@src, prediction}
+      same_bottom = @sign.current_content_bottom
+
+      initial_tick_read = 40
+      read_period_seconds = 100
+
+      sign = %{@sign | tick_read: initial_tick_read, read_period_seconds: read_period_seconds}
+
+      Updater.update_sign(sign, diff_top, same_bottom)
+
+      assert_received(
+        {:send_audio, _,
+         %Content.Audio.TrackChange{destination: :heath_st, track: 2, route_id: "Green-E"}, _dur,
+         _start}
+      )
+    end
+
+    test "announces track change message if top line changes and the train is on the wrong track" do
+      prediction = %Content.Message.Predictions{
+        stop_id: "70199",
+        minutes: :boarding,
+        route_id: "Green-D",
+        headsign: "Reservoir"
+      }
+
+      diff_top = {@src, prediction}
+      same_bottom = @sign.current_content_bottom
+
+      initial_tick_read = 40
+      read_period_seconds = 100
+
+      sign = %{@sign | tick_read: initial_tick_read, read_period_seconds: read_period_seconds}
+
+      Updater.update_sign(sign, diff_top, same_bottom)
+
+      assert_received(
+        {:send_audio, _,
+         %Content.Audio.TrackChange{destination: :reservoir, track: 1, route_id: "Green-D"}, _dur,
+         _start}
+      )
+    end
+
     test "logs when stopped train message turns on" do
       diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
       same_bottom = @sign.current_content_bottom

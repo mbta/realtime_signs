@@ -43,7 +43,7 @@ defmodule Content.Audio.TrackChange do
     %__MODULE__{
       destination: dest,
       route_id: route_id,
-      track: 1
+      track: 2
     }
   end
 
