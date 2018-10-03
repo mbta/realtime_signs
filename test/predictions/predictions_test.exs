@@ -348,21 +348,53 @@ defmodule Predictions.PredictionsTest do
 
   describe "sort/1" do
     test "Sorts predictions in ascending order of seconds_until_arrival" do
-      p1 = %Prediction{seconds_until_arrival: 500, seconds_until_departure: 180}
-      p2 = %Prediction{seconds_until_arrival: 120, seconds_until_departure: 120}
-      p3 = %Prediction{seconds_until_arrival: 45, seconds_until_departure: 500}
-      p4 = %Prediction{seconds_until_arrival: 180, seconds_until_departure: 45}
+      p1 = %Prediction{stops_away: 1, seconds_until_arrival: 500, seconds_until_departure: 180}
+      p2 = %Prediction{stops_away: 1, seconds_until_arrival: 120, seconds_until_departure: 120}
+      p3 = %Prediction{stops_away: 1, seconds_until_arrival: 45, seconds_until_departure: 500}
+      p4 = %Prediction{stops_away: 1, seconds_until_arrival: 180, seconds_until_departure: 45}
 
       assert sort([p1, p2, p3, p4], :arrival) == [p3, p2, p4, p1]
     end
 
     test "Sorts predictions in ascending order of seconds_until_departure" do
-      p1 = %Prediction{seconds_until_departure: 500, seconds_until_arrival: 180}
-      p2 = %Prediction{seconds_until_departure: 120, seconds_until_arrival: 120}
-      p3 = %Prediction{seconds_until_departure: 45, seconds_until_arrival: 500}
-      p4 = %Prediction{seconds_until_departure: 180, seconds_until_arrival: 45}
+      p1 = %Prediction{stops_away: 1, seconds_until_departure: 500, seconds_until_arrival: 180}
+      p2 = %Prediction{stops_away: 1, seconds_until_departure: 120, seconds_until_arrival: 120}
+      p3 = %Prediction{stops_away: 1, seconds_until_departure: 45, seconds_until_arrival: 500}
+      p4 = %Prediction{stops_away: 1, seconds_until_departure: 180, seconds_until_arrival: 45}
 
       assert sort([p1, p2, p3, p4], :departure) == [p3, p2, p4, p1]
+    end
+
+    test "Sorts boarding predictions first for arrival predictions" do
+      p1 = %Prediction{stops_away: 0, seconds_until_departure: 500, seconds_until_arrival: 180}
+      p2 = %Prediction{stops_away: 1, seconds_until_departure: 120, seconds_until_arrival: 120}
+      p3 = %Prediction{stops_away: 1, seconds_until_departure: 45, seconds_until_arrival: 500}
+      p4 = %Prediction{stops_away: 1, seconds_until_departure: 180, seconds_until_arrival: 45}
+
+      assert sort([p1, p2, p3, p4], :arrival) == [p1, p4, p2, p3]
+
+      p1 = %Prediction{stops_away: 1, seconds_until_departure: 500, seconds_until_arrival: 180}
+      p2 = %Prediction{stops_away: 1, seconds_until_departure: 120, seconds_until_arrival: 120}
+      p3 = %Prediction{stops_away: 1, seconds_until_departure: 45, seconds_until_arrival: 500}
+      p4 = %Prediction{stops_away: 0, seconds_until_departure: 180, seconds_until_arrival: 45}
+
+      assert sort([p1, p2, p3, p4], :arrival) == [p4, p2, p1, p3]
+    end
+
+    test "Sorts boarding predictions first for departure predictions" do
+      p1 = %Prediction{stops_away: 0, seconds_until_departure: 500, seconds_until_arrival: 180}
+      p2 = %Prediction{stops_away: 1, seconds_until_departure: 120, seconds_until_arrival: 120}
+      p3 = %Prediction{stops_away: 1, seconds_until_departure: 45, seconds_until_arrival: 500}
+      p4 = %Prediction{stops_away: 1, seconds_until_departure: 180, seconds_until_arrival: 45}
+
+      assert sort([p1, p2, p3, p4], :departure) == [p1, p3, p2, p4]
+
+      p1 = %Prediction{stops_away: 1, seconds_until_departure: 500, seconds_until_arrival: 180}
+      p2 = %Prediction{stops_away: 1, seconds_until_departure: 120, seconds_until_arrival: 120}
+      p3 = %Prediction{stops_away: 1, seconds_until_departure: 45, seconds_until_arrival: 500}
+      p4 = %Prediction{stops_away: 0, seconds_until_departure: 180, seconds_until_arrival: 45}
+
+      assert sort([p1, p2, p3, p4], :departure) == [p4, p3, p2, p1]
     end
   end
 end

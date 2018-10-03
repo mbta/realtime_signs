@@ -74,10 +74,40 @@ defmodule Predictions.Predictions do
 
   @spec sort([Predictions.Prediction.t()], :arrival | :departure) :: [Predictions.Prediction.t()]
   def sort(predictions, :arrival) do
-    Enum.sort(predictions, &(&1.seconds_until_arrival < &2.seconds_until_arrival))
+    Enum.sort(
+      predictions,
+      &compare_predictions(&1, &2, :arrival)
+    )
   end
 
   def sort(predictions, :departure) do
-    Enum.sort(predictions, &(&1.seconds_until_departure < &2.seconds_until_departure))
+    Enum.sort(
+      predictions,
+      &compare_predictions(&1, &2, :departure)
+    )
+  end
+
+  defp compare_predictions(%{stops_away: 0}, _time_two, _) do
+    true
+  end
+
+  defp compare_predictions(_time_one, %{stops_away: 0}, _) do
+    false
+  end
+
+  defp compare_predictions(
+         %{seconds_until_arrival: time_one},
+         %{seconds_until_arrival: time_two},
+         :arrival
+       ) do
+    time_one < time_two
+  end
+
+  defp compare_predictions(
+         %{seconds_until_departure: time_one},
+         %{seconds_until_departure: time_two},
+         :departure
+       ) do
+    time_one < time_two
   end
 end
