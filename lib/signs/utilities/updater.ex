@@ -66,7 +66,7 @@ defmodule Signs.Utilities.Updater do
         )
 
         announce_arrival(top, sign)
-
+        announce_track_change(top_msg, sign)
         sign = announce_stopped_train(top_msg, sign)
 
         sign =
@@ -172,6 +172,17 @@ defmodule Signs.Utilities.Updater do
           sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
         end
 
+        sign
+
+      nil ->
+        sign
+    end
+  end
+
+  defp announce_track_change(msg, sign) do
+    case Content.Audio.TrackChange.from_message(msg) do
+      %Content.Audio.TrackChange{} = audio ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
         sign
 
       nil ->

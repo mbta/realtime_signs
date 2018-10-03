@@ -15,11 +15,13 @@ defmodule Content.Message.Predictions do
   @thirty_plus_minutes 30 * 60
 
   @enforce_keys [:headsign, :minutes]
-  defstruct [:headsign, :minutes, width: 18]
+  defstruct [:headsign, :minutes, :route_id, :stop_id, width: 18]
 
   @type t :: %__MODULE__{
           headsign: String.t(),
           minutes: integer() | :boarding | :arriving | :thirty_plus,
+          route_id: String.t(),
+          stop_id: String.t(),
           width: integer()
         }
 
@@ -48,6 +50,8 @@ defmodule Content.Message.Predictions do
     %__MODULE__{
       headsign: headsign,
       minutes: :boarding,
+      route_id: prediction.route_id,
+      stop_id: prediction.stop_id,
       width: width
     }
   end
@@ -81,6 +85,8 @@ defmodule Content.Message.Predictions do
     %__MODULE__{
       headsign: headsign,
       minutes: minutes,
+      route_id: prediction.route_id,
+      stop_id: prediction.stop_id,
       width: width
     }
   end
@@ -116,6 +122,8 @@ defmodule Content.Message.Predictions do
     %__MODULE__{
       headsign: headsign,
       minutes: minutes,
+      route_id: prediction.route_id,
+      stop_id: prediction.stop_id,
       width: width
     }
   end
