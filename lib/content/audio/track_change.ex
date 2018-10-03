@@ -16,12 +16,12 @@ defmodule Content.Audio.TrackChange do
 
   @spec from_message(Content.Message.Predictions.t()) :: t() | nil
   def from_message(%Content.Message.Predictions{
-        stop_id: "70197",
+        stop_id: stop_id,
         route_id: route_id,
         minutes: :boarding,
         headsign: headsign
       })
-      when route_id in ["Green-B", "Green-D"] do
+      when route_id in ["Green-B", "Green-D"] and stop_id in ["70197", "70199"] do
     %__MODULE__{
       destination: headsign,
       route_id: route_id,
@@ -29,45 +29,18 @@ defmodule Content.Audio.TrackChange do
     }
   end
 
+  @spec from_message(Content.Message.Predictions.t()) :: t() | nil
   def from_message(%Content.Message.Predictions{
-        stop_id: "70199",
+        stop_id: stop_id,
         route_id: route_id,
         minutes: :boarding,
         headsign: headsign
       })
-      when route_id in ["Green-B", "Green-D"] do
+      when route_id in ["Green-C", "Green-E"] and stop_id in ["70196", "70198"] do
     %__MODULE__{
       destination: headsign,
       route_id: route_id,
       track: 1
-    }
-  end
-
-  def from_message(%Content.Message.Predictions{
-        stop_id: "70196",
-        route_id: route_id,
-        minutes: :boarding,
-        headsign: headsign
-      })
-      when route_id in ["Green-C", "Green-E"] do
-    %__MODULE__{
-      destination: headsign,
-      route_id: route_id,
-      track: 2
-    }
-  end
-
-  def from_message(%Content.Message.Predictions{
-        stop_id: "70198",
-        route_id: route_id,
-        minutes: :boarding,
-        headsign: headsign
-      })
-      when route_id in ["Green-C", "Green-E"] do
-    %__MODULE__{
-      destination: headsign,
-      route_id: route_id,
-      track: 2
     }
   end
 

@@ -27,6 +27,7 @@ defmodule Signs.Utilities.Updater do
         )
 
         announce_arrival(top, sign)
+        announce_track_change(top_msg, sign)
         sign = announce_stopped_train(top_msg, sign)
         %{sign | current_content_top: top, tick_top: sign.expiration_seconds}
 
@@ -45,6 +46,7 @@ defmodule Signs.Utilities.Updater do
         sign =
           if SourceConfig.multi_source?(sign.source_config) do
             announce_arrival(bottom, sign)
+            announce_track_change(bottom_msg, sign)
             announce_stopped_train(bottom_msg, sign)
           else
             sign
@@ -72,6 +74,7 @@ defmodule Signs.Utilities.Updater do
         sign =
           if SourceConfig.multi_source?(sign.source_config) do
             announce_arrival(bottom, sign)
+            announce_track_change(bottom_msg, sign)
             announce_stopped_train(bottom_msg, sign)
           else
             sign
