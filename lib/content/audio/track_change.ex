@@ -22,8 +22,10 @@ defmodule Content.Audio.TrackChange do
         headsign: headsign
       })
       when route_id in ["Green-B", "Green-D"] and stop_id in ["70197", "70199"] do
+    {:ok, dest} = PaEss.Utilities.headsign_to_terminal_station(headsign)
+
     %__MODULE__{
-      destination: headsign,
+      destination: dest,
       route_id: route_id,
       track: 1
     }
@@ -36,8 +38,10 @@ defmodule Content.Audio.TrackChange do
         headsign: headsign
       })
       when route_id in ["Green-C", "Green-E"] and stop_id in ["70196", "70198"] do
+    {:ok, dest} = PaEss.Utilities.headsign_to_terminal_station(headsign)
+
     %__MODULE__{
-      destination: headsign,
+      destination: dest,
       route_id: route_id,
       track: 1
     }

@@ -2,7 +2,7 @@ defmodule Content.Audio.TrackChangeTest do
   use ExUnit.Case, async: true
 
   describe "to_params/1" do
-    test "correctly changes tracks" do
+    test "correctly changes tracks for b/d" do
       audio = %Content.Audio.TrackChange{
         destination: :boston_college,
         route_id: "Green-B",
@@ -12,6 +12,17 @@ defmodule Content.Audio.TrackChangeTest do
       assert Content.Audio.to_params(audio) ==
                {"109", ["540", "501", "536", "507", "4202", "544", "541"], :audio}
     end
+
+    test "correctly changes tracks for c/e" do
+      audio = %Content.Audio.TrackChange{
+        destination: :heath_st,
+        route_id: "Green-E",
+        track: 1
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {"109", ["540", "501", "539", "507", "4204", "544", "541"], :audio}
+    end
   end
 
   describe "from_message/1" do
@@ -20,7 +31,7 @@ defmodule Content.Audio.TrackChangeTest do
         stop_id: "70199",
         minutes: :boarding,
         route_id: "Green-D",
-        headsign: :reservoir
+        headsign: "Reservoir"
       }
 
       assert Content.Audio.TrackChange.from_message(prediction) == %Content.Audio.TrackChange{
@@ -35,7 +46,7 @@ defmodule Content.Audio.TrackChangeTest do
         stop_id: "70199",
         minutes: :arriving,
         route_id: "Green-D",
-        headsign: :reservoir
+        headsign: "Reservoir"
       }
 
       assert Content.Audio.TrackChange.from_message(prediction) == nil
@@ -46,7 +57,7 @@ defmodule Content.Audio.TrackChangeTest do
         stop_id: "70199",
         minutes: :boarding,
         route_id: "Green-C",
-        headsign: :cleveland_circle
+        headsign: "Clvlnd Cir"
       }
 
       assert Content.Audio.TrackChange.from_message(prediction) == nil
