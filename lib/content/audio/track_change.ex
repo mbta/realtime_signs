@@ -29,7 +29,6 @@ defmodule Content.Audio.TrackChange do
     }
   end
 
-  @spec from_message(Content.Message.Predictions.t()) :: t() | nil
   def from_message(%Content.Message.Predictions{
         stop_id: stop_id,
         route_id: route_id,
