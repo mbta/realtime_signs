@@ -10,7 +10,7 @@ defmodule PaEss.HttpUpdater do
           uid: integer()
         }
 
-  @max_send_rate_per_sec 12
+  @max_send_rate_per_sec 13
   @avg_ms_between_sends round(1000 / @max_send_rate_per_sec)
 
   use GenServer
