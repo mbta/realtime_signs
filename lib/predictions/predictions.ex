@@ -87,6 +87,22 @@ defmodule Predictions.Predictions do
     )
   end
 
+  defp compare_predictions(
+         %{stops_away: 0, seconds_until_arrival: time_one},
+         %{stops_away: 0, seconds_until_arrival: time_two},
+         :arrival
+       ) do
+    time_one < time_two
+  end
+
+  defp compare_predictions(
+         %{stops_away: 0, seconds_until_departure: time_one},
+         %{stops_away: 0, seconds_until_departure: time_two},
+         :departure
+       ) do
+    time_one < time_two
+  end
+
   defp compare_predictions(%{stops_away: 0}, _time_two, _) do
     true
   end

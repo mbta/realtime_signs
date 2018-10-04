@@ -396,5 +396,21 @@ defmodule Predictions.PredictionsTest do
 
       assert sort([p1, p2, p3, p4], :departure) == [p4, p3, p2, p1]
     end
+
+    test "when multiple predictions are 0 stops away, sorts by arrival or departure depending on the type of predictions" do
+      p1 = %Prediction{stops_away: 0, seconds_until_departure: 500, seconds_until_arrival: 180}
+      p2 = %Prediction{stops_away: 0, seconds_until_departure: 120, seconds_until_arrival: 120}
+      p3 = %Prediction{stops_away: 0, seconds_until_departure: 45, seconds_until_arrival: 500}
+      p4 = %Prediction{stops_away: 0, seconds_until_departure: 180, seconds_until_arrival: 45}
+
+      assert sort([p1, p2, p3, p4], :arrival) == [p4, p2, p1, p3]
+
+      p1 = %Prediction{stops_away: 0, seconds_until_departure: 500, seconds_until_arrival: 180}
+      p2 = %Prediction{stops_away: 0, seconds_until_departure: 120, seconds_until_arrival: 120}
+      p3 = %Prediction{stops_away: 0, seconds_until_departure: 45, seconds_until_arrival: 500}
+      p4 = %Prediction{stops_away: 0, seconds_until_departure: 180, seconds_until_arrival: 45}
+
+      assert sort([p1, p2, p3, p4], :departure) == [p3, p2, p4, p1]
+    end
   end
 end
