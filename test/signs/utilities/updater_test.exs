@@ -74,6 +74,40 @@ defmodule Signs.Utilities.UpdaterTest do
       assert sign.tick_bottom == 1
     end
 
+    test "does not change top line if it would be a count up from ARR to 1 min" do
+      sign = %{@sign | current_content_top: {@src, %P{headsign: "Alewife", minutes: :arriving}}}
+      diff_top = {@src, %P{headsign: "Alewife", minutes: 1}}
+      same_bottom = {@src, %P{headsign: "Ashmont", minutes: 3}}
+
+      Updater.update_sign(sign, diff_top, same_bottom)
+
+      refute_received({:update_single_line, _id, "1", %P{minutes: 1}, _dur, _start})
+    end
+
+    test "does not change top line if it would be a count up from 3 min to 4 min" do
+      sign = %{@sign | current_content_top: {@src, %P{headsign: "Alewife", minutes: 3}}}
+      diff_top = {@src, %P{headsign: "Alewife", minutes: 4}}
+      same_bottom = {@src, %P{headsign: "Ashmont", minutes: 3}}
+
+      Updater.update_sign(sign, diff_top, same_bottom)
+
+      refute_received({:update_single_line, _id, "1", %P{minutes: 4}, _dur, _start})
+    end
+
+    test "does not change bottom line if it would be a count up from ARR to 1 min" do
+      sign = %{
+        @sign
+        | current_content_bottom: {@src, %P{headsign: "Ashmont", minutes: :arriving}}
+      }
+
+      same_top = {@src, %P{headsign: "Alewife", minutes: 4}}
+      diff_bottom = {@src, %P{headsign: "Ashmont", minutes: 1}}
+
+      Updater.update_sign(sign, same_top, diff_bottom)
+
+      refute_received({:update_single_line, _id, "2", %P{minutes: 1}, _dur, _start})
+    end
+
     test "changes the bottom line if necessary" do
       same_top = {@src, %P{headsign: "Alewife", minutes: 4}}
       diff_bottom = {@src, %P{headsign: "Ashmont", minutes: 2}}
