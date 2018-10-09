@@ -92,17 +92,24 @@ defmodule Signs.Utilities.Updater do
   end
 
   defp same_content?({_sign_src, sign_msg}, {_new_src, new_msg}) do
-    sign_msg == new_msg or arrival_countup?(sign_msg, new_msg)
+    sign_msg == new_msg or countup?(sign_msg, new_msg)
   end
 
-  defp arrival_countup?(
+  defp countup?(
          %Content.Message.Predictions{headsign: same, minutes: :arriving},
          %Content.Message.Predictions{headsign: same, minutes: 1}
        ) do
     true
   end
 
-  defp arrival_countup?(_sign, _new) do
+  defp countup?(
+         %Content.Message.Predictions{headsign: same, minutes: a},
+         %Content.Message.Predictions{headsign: same, minutes: b}
+       ) when a + 1 == b do
+    true
+  end
+
+  defp countup?(_sign, _new) do
     false
   end
 
