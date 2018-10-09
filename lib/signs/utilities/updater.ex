@@ -105,7 +105,8 @@ defmodule Signs.Utilities.Updater do
   defp countup?(
          %Content.Message.Predictions{headsign: same, minutes: a},
          %Content.Message.Predictions{headsign: same, minutes: b}
-       ) when a + 1 == b do
+       )
+       when a + 1 == b do
     true
   end
 
