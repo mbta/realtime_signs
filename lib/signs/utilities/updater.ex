@@ -10,7 +10,8 @@ defmodule Signs.Utilities.Updater do
   require Logger
 
   def update_sign(sign, {_top_src, top_msg} = top, {_bottom_src, bottom_msg} = bottom) do
-    case {sign.current_content_top == top, sign.current_content_bottom == bottom} do
+    case {same_content?(sign.current_content_top, top),
+          same_content?(sign.current_content_bottom, bottom)} do
       {true, true} ->
         sign
 
@@ -88,6 +89,29 @@ defmodule Signs.Utilities.Updater do
             tick_bottom: sign.expiration_seconds
         }
     end
+  end
+
+  defp same_content?({_sign_src, sign_msg}, {_new_src, new_msg}) do
+    sign_msg == new_msg or countup?(sign_msg, new_msg)
+  end
+
+  defp countup?(
+         %Content.Message.Predictions{headsign: same, minutes: :arriving},
+         %Content.Message.Predictions{headsign: same, minutes: 1}
+       ) do
+    true
+  end
+
+  defp countup?(
+         %Content.Message.Predictions{headsign: same, minutes: a},
+         %Content.Message.Predictions{headsign: same, minutes: b}
+       )
+       when a + 1 == b do
+    true
+  end
+
+  defp countup?(_sign, _new) do
+    false
   end
 
   defp log_line_update(sign, msg, "top" = line) do
