@@ -6,6 +6,7 @@ defmodule Signs.Utilities.Predictions do
   """
 
   alias Signs.Utilities.SourceConfig
+  alias Content.Message.Predictions, as: P
 
   @spec get_messages(Signs.Realtime.t(), boolean()) ::
           {{SourceConfig.source() | nil, Content.Message.t()},
@@ -54,10 +55,7 @@ defmodule Signs.Utilities.Predictions do
       end
     end)
     |> Enum.take(2)
-    |> Enum.with_index()
-    |> Enum.map(fn {{source, prediction}, i} ->
-      can_be_arriving? = i == 0
-
+    |> Enum.map(fn {source, prediction} ->
       cond do
         stopped_train?(prediction) ->
           {source, Content.Message.StoppedTrain.from_prediction(prediction)}
@@ -66,12 +64,23 @@ defmodule Signs.Utilities.Predictions do
           {source, Content.Message.Predictions.terminal(prediction)}
 
         true ->
-          {source, Content.Message.Predictions.non_terminal(prediction, can_be_arriving?)}
+          {source, Content.Message.Predictions.non_terminal(prediction)}
       end
     end)
     |> case do
-      [] -> {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
-      [msg] -> {msg, {nil, Content.Message.Empty.new()}}
+      [] ->
+        {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+
+      [msg] ->
+        {msg, {nil, Content.Message.Empty.new()}}
+
+      [{s1, %P{minutes: :arriving}} = msg1, {s2, %P{minutes: :arriving} = p2} = msg2] ->
+        if allowed_multi_berth_platform?(s1, s2) do
+          {msg1, msg2}
+        else
+          {msg1, {s2, %{p2 | minutes: 1}}}
+        end
+
       [msg1, msg2] -> {msg1, msg2}
     end
   end
@@ -80,5 +89,16 @@ defmodule Signs.Utilities.Predictions do
     enabled? = Application.get_env(:realtime_signs, :stopped_train_enabled?)
     status = prediction.boarding_status
     enabled? && status && String.starts_with?(status, "Stopped")
+  end
+
+  defp allowed_multi_berth_platform?(
+      %SourceConfig{multi_berth?: true} = s1,
+      %SourceConfig{multi_berth?: true} = s2
+    ) when s1 != s2 do
+    true
+  end
+
+  defp allowed_multi_berth_platform?(_, _) do
+    false
   end
 end

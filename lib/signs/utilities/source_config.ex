@@ -40,7 +40,7 @@ defmodule Signs.Utilities.SourceConfig do
   """
 
   @enforce_keys [:stop_id, :direction_id, :platform, :terminal?, :announce_arriving?]
-  defstruct @enforce_keys ++ [:routes]
+  defstruct @enforce_keys ++ [:routes, multi_berth?: false]
 
   @type source :: %__MODULE__{
           stop_id: String.t(),
@@ -48,7 +48,8 @@ defmodule Signs.Utilities.SourceConfig do
           routes: [String.t()] | nil,
           platform: :ashmont | :braintree | nil,
           terminal?: boolean(),
-          announce_arriving?: boolean()
+          announce_arriving?: boolean(),
+          multi_berth?: boolean()
         }
 
   @type config :: {[source()]} | {[source()], [source()]}
@@ -81,13 +82,19 @@ defmodule Signs.Utilities.SourceConfig do
         "braintree" -> :braintree
       end
 
+    multi_berth? = case source["multi_berth"] do
+      true -> true
+      _ -> false
+    end
+
     %__MODULE__{
       stop_id: stop_id,
       direction_id: direction_id,
       routes: source["routes"],
       platform: platform,
       terminal?: terminal?,
-      announce_arriving?: announce_arriving?
+      announce_arriving?: announce_arriving?,
+      multi_berth?: multi_berth?
     }
   end
 

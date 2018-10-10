@@ -20,7 +20,8 @@ defmodule Signs.Utilities.SourceConfigTest do
             "direction_id": 1,
             "platform": "ashmont",
             "terminal": true,
-            "announce_arriving": true
+            "announce_arriving": true,
+            "multi_berth": true
           }
         ]
       ]
@@ -34,14 +35,16 @@ defmodule Signs.Utilities.SourceConfigTest do
                      direction_id: 0,
                      platform: nil,
                      terminal?: false,
-                     announce_arriving?: false
+                     announce_arriving?: false,
+                     multi_berth?: false
                    },
                    %SourceConfig{
                      stop_id: "234",
                      direction_id: 1,
                      platform: :ashmont,
                      terminal?: true,
-                     announce_arriving?: true
+                     announce_arriving?: true,
+                     multi_berth?: true
                    }
                  ]
                }

@@ -293,6 +293,36 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("arr_multi_berth1", 0) do
+      [
+        %Predictions.Prediction{
+          stop_id: "arr_multi_berth1",
+          direction_id: 0,
+          route_id: "Green-C",
+          stopped?: false,
+          stops_away: 1,
+          destination_stop_id: "123",
+          seconds_until_arrival: 15,
+          seconds_until_departure: 50
+        }
+      ]
+    end
+
+    def for_stop("arr_multi_berth2", 0) do
+      [
+        %Predictions.Prediction{
+          stop_id: "arr_multi_berth2",
+          direction_id: 0,
+          route_id: "Green-D",
+          stopped?: false,
+          stops_away: 1,
+          destination_stop_id: "123",
+          seconds_until_arrival: 16,
+          seconds_until_departure: 50
+        }
+      ]
+    end
+
     def for_stop(_stop_id, _direction_id) do
       []
     end
@@ -572,6 +602,38 @@ defmodule Signs.Utilities.PredictionsTest do
                {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
                {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: 3}}
              } = Signs.Utilities.Predictions.get_messages(sign, true)
+    end
+
+    test "Does not allow ARR on second line unless platform has multiple berths" do
+      s1 = %SourceConfig{
+        stop_id: "arr_multi_berth1",
+        direction_id: 0,
+        terminal?: false,
+        platform: nil,
+        routes: nil,
+        announce_arriving?: false,
+        multi_berth?: true
+      }
+
+      s2 = %{s1 | stop_id: "arr_multi_berth2"}
+
+      config = {[s1, s2]}
+      sign = %{@sign | source_config: config}
+
+      assert {
+        {^s1, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :arriving}},
+        {^s2, %Content.Message.Predictions{headsign: "Riverside", minutes: :arriving}}
+      } = Signs.Utilities.Predictions.get_messages(sign, true)
+
+      s1 = %{s1 | multi_berth?: false}
+      s2 = %{s2 | multi_berth?: false}
+      config = {[s1, s2]}
+      sign = %{@sign | source_config: config}
+
+      assert {
+        {^s1, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :arriving}},
+        {^s2, %Content.Message.Predictions{headsign: "Riverside", minutes: 1}}
+      } = Signs.Utilities.Predictions.get_messages(sign, true)
     end
   end
 end
