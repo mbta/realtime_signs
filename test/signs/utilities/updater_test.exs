@@ -221,6 +221,8 @@ defmodule Signs.Utilities.UpdaterTest do
 
       top = {src, %P{headsign: "Alewife", minutes: :boarding}}
       sign = Updater.update_sign(sign, top, bottom)
+      top = {src, %P{headsign: "GracefullyHandlesUnknown", minutes: :boarding}}
+      sign = Updater.update_sign(sign, top, bottom)
       top = {src, %P{headsign: "Alewife", minutes: :arriving}}
       Updater.update_sign(sign, top, bottom)
 
