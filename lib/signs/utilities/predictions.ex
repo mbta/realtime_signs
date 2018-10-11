@@ -81,7 +81,8 @@ defmodule Signs.Utilities.Predictions do
           {msg1, {s2, %{p2 | minutes: 1}}}
         end
 
-      [msg1, msg2] -> {msg1, msg2}
+      [msg1, msg2] ->
+        {msg1, msg2}
     end
   end
 
@@ -92,9 +93,10 @@ defmodule Signs.Utilities.Predictions do
   end
 
   defp allowed_multi_berth_platform?(
-      %SourceConfig{multi_berth?: true} = s1,
-      %SourceConfig{multi_berth?: true} = s2
-    ) when s1 != s2 do
+         %SourceConfig{multi_berth?: true} = s1,
+         %SourceConfig{multi_berth?: true} = s2
+       )
+       when s1 != s2 do
     true
   end
 

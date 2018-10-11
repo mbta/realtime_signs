@@ -231,7 +231,10 @@ defmodule Signs.Utilities.Updater do
     end
   end
 
-  defp clear_announced_arrivals(sign, %Content.Message.Predictions{minutes: :boarding, headsign: hs}) do
+  defp clear_announced_arrivals(sign, %Content.Message.Predictions{
+         minutes: :boarding,
+         headsign: hs
+       }) do
     case PaEss.Utilities.headsign_to_terminal_station(hs) do
       {:ok, terminal} ->
         %{sign | announced_arrivals: MapSet.delete(sign.announced_arrivals, terminal)}

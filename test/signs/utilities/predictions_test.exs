@@ -621,9 +621,9 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-        {^s1, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :arriving}},
-        {^s2, %Content.Message.Predictions{headsign: "Riverside", minutes: :arriving}}
-      } = Signs.Utilities.Predictions.get_messages(sign, true)
+               {^s1, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :arriving}},
+               {^s2, %Content.Message.Predictions{headsign: "Riverside", minutes: :arriving}}
+             } = Signs.Utilities.Predictions.get_messages(sign, true)
 
       s1 = %{s1 | multi_berth?: false}
       s2 = %{s2 | multi_berth?: false}
@@ -631,9 +631,9 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-        {^s1, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :arriving}},
-        {^s2, %Content.Message.Predictions{headsign: "Riverside", minutes: 1}}
-      } = Signs.Utilities.Predictions.get_messages(sign, true)
+               {^s1, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :arriving}},
+               {^s2, %Content.Message.Predictions{headsign: "Riverside", minutes: 1}}
+             } = Signs.Utilities.Predictions.get_messages(sign, true)
     end
   end
 end

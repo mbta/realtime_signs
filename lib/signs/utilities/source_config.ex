@@ -82,10 +82,11 @@ defmodule Signs.Utilities.SourceConfig do
         "braintree" -> :braintree
       end
 
-    multi_berth? = case source["multi_berth"] do
-      true -> true
-      _ -> false
-    end
+    multi_berth? =
+      case source["multi_berth"] do
+        true -> true
+        _ -> false
+      end
 
     %__MODULE__{
       stop_id: stop_id,
