@@ -195,6 +195,7 @@ defmodule Signs.Utilities.Updater do
     case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
       %Content.Audio.TrainIsArriving{} = audio ->
         if MapSet.member?(sign.announced_arrivals, audio.destination) do
+          Logger.warn("skipping_arriving_audio #{inspect(audio)} #{inspect(sign)}")
           sign
         else
           sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
