@@ -226,7 +226,7 @@ defmodule Signs.Utilities.PredictionsTest do
           stops_away: 0,
           destination_stop_id: "123",
           seconds_until_arrival: 200,
-          seconds_until_departure: 250,
+          seconds_until_departure: 250
         },
         %Predictions.Prediction{
           stop_id: "both_brd",
@@ -236,7 +236,7 @@ defmodule Signs.Utilities.PredictionsTest do
           stops_away: 0,
           destination_stop_id: "123",
           seconds_until_arrival: 250,
-          seconds_until_departure: 300,
+          seconds_until_departure: 300
         }
       ]
     end
@@ -252,7 +252,7 @@ defmodule Signs.Utilities.PredictionsTest do
           stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 200,
-          seconds_until_departure: 250,
+          seconds_until_departure: 250
         },
         %Predictions.Prediction{
           stop_id: "second_brd",
@@ -262,7 +262,7 @@ defmodule Signs.Utilities.PredictionsTest do
           stops_away: 0,
           destination_stop_id: "123",
           seconds_until_arrival: 250,
-          seconds_until_departure: 300,
+          seconds_until_departure: 300
         }
       ]
     end
@@ -278,7 +278,7 @@ defmodule Signs.Utilities.PredictionsTest do
           stops_away: 0,
           destination_stop_id: "123",
           seconds_until_arrival: 250,
-          seconds_until_departure: 300,
+          seconds_until_departure: 300
         },
         %Predictions.Prediction{
           stop_id: "first_brd",
@@ -288,7 +288,7 @@ defmodule Signs.Utilities.PredictionsTest do
           stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: 200,
-          seconds_until_departure: 250,
+          seconds_until_departure: 250
         }
       ]
     end
@@ -546,31 +546,32 @@ defmodule Signs.Utilities.PredictionsTest do
         routes: nil,
         announce_arriving?: false
       }
+
       config = {[s]}
       sign = %{@sign | source_config: config}
 
       assert {
-          {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
-          {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :boarding}},
-      } = Signs.Utilities.Predictions.get_messages(sign, true)
+               {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
+               {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :boarding}}
+             } = Signs.Utilities.Predictions.get_messages(sign, true)
 
       s = %{s | stop_id: "second_brd"}
       config = {[s]}
       sign = %{sign | source_config: config}
 
       assert {
-          {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :boarding}},
-          {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: 3}},
-      } = Signs.Utilities.Predictions.get_messages(sign, true)
+               {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :boarding}},
+               {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: 3}}
+             } = Signs.Utilities.Predictions.get_messages(sign, true)
 
       s = %{s | stop_id: "first_brd"}
       config = {[s]}
       sign = %{sign | source_config: config}
 
       assert {
-          {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
-          {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: 3}},
-      } = Signs.Utilities.Predictions.get_messages(sign, true)
+               {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
+               {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: 3}}
+             } = Signs.Utilities.Predictions.get_messages(sign, true)
     end
   end
 end
