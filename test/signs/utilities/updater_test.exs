@@ -192,6 +192,43 @@ defmodule Signs.Utilities.UpdaterTest do
       )
     end
 
+    test "doesn't announce repeated ARR's for same destination until a BRD" do
+      src = %{@src | announce_arriving?: true}
+      top = {src, %P{headsign: "Alewife", minutes: :arriving}}
+      bottom = @sign.current_content_bottom
+
+      sign = Updater.update_sign(@sign, top, bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
+      )
+
+      top = {src, %P{headsign: "Alewife", minutes: 2}}
+      sign = Updater.update_sign(sign, top, bottom)
+      top = {src, %P{headsign: "Alewife", minutes: :arriving}}
+      sign = Updater.update_sign(sign, top, bottom)
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
+      )
+
+      top = {src, %P{headsign: "Braintree", minutes: :arriving}}
+      sign = Updater.update_sign(sign, top, bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :braintree}, _dur, _start}
+      )
+
+      top = {src, %P{headsign: "Alewife", minutes: :boarding}}
+      sign = Updater.update_sign(sign, top, bottom)
+      top = {src, %P{headsign: "Alewife", minutes: :arriving}}
+      Updater.update_sign(sign, top, bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
+      )
+    end
+
     test "announces stopped-train message if top line changes to it and tick_read is greater than 30 seconds" do
       diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
       same_bottom = @sign.current_content_bottom
