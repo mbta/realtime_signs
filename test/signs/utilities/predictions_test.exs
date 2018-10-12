@@ -215,6 +215,84 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("both_brd", 0) do
+      # when both are 0 stops away, sorts by time
+      [
+        %Predictions.Prediction{
+          stop_id: "both_brd",
+          direction_id: 0,
+          route_id: "Green-B",
+          stopped?: false,
+          stops_away: 0,
+          destination_stop_id: "123",
+          seconds_until_arrival: 200,
+          seconds_until_departure: 250
+        },
+        %Predictions.Prediction{
+          stop_id: "both_brd",
+          direction_id: 0,
+          route_id: "Green-C",
+          stopped?: false,
+          stops_away: 0,
+          destination_stop_id: "123",
+          seconds_until_arrival: 250,
+          seconds_until_departure: 300
+        }
+      ]
+    end
+
+    def for_stop("second_brd", 0) do
+      # when second is 0 stops away, sorts first, even if "later"
+      [
+        %Predictions.Prediction{
+          stop_id: "second_brd",
+          direction_id: 0,
+          route_id: "Green-B",
+          stopped?: false,
+          stops_away: 1,
+          destination_stop_id: "123",
+          seconds_until_arrival: 200,
+          seconds_until_departure: 250
+        },
+        %Predictions.Prediction{
+          stop_id: "second_brd",
+          direction_id: 0,
+          route_id: "Green-C",
+          stopped?: false,
+          stops_away: 0,
+          destination_stop_id: "123",
+          seconds_until_arrival: 250,
+          seconds_until_departure: 300
+        }
+      ]
+    end
+
+    def for_stop("first_brd", 0) do
+      # when first is 0 stops away, sorts first, even if "later"
+      [
+        %Predictions.Prediction{
+          stop_id: "first_brd",
+          direction_id: 0,
+          route_id: "Green-B",
+          stopped?: false,
+          stops_away: 0,
+          destination_stop_id: "123",
+          seconds_until_arrival: 250,
+          seconds_until_departure: 300
+        },
+        %Predictions.Prediction{
+          stop_id: "first_brd",
+          direction_id: 0,
+          route_id: "Green-C",
+          stopped?: false,
+          stops_away: 1,
+          destination_stop_id: "123",
+          seconds_until_arrival: 200,
+          seconds_until_departure: 250
+        }
+      ]
+    end
+
     def for_stop(_stop_id, _direction_id) do
       []
     end
@@ -457,6 +535,43 @@ defmodule Signs.Utilities.PredictionsTest do
                {^s2, %Content.Message.Predictions{headsign: "Riverside"}},
                {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign2, true)
+    end
+
+    test "Sorts boarding status to the top" do
+      s = %SourceConfig{
+        stop_id: "both_brd",
+        direction_id: 0,
+        terminal?: false,
+        platform: nil,
+        routes: nil,
+        announce_arriving?: false
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      assert {
+               {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
+               {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :boarding}}
+             } = Signs.Utilities.Predictions.get_messages(sign, true)
+
+      s = %{s | stop_id: "second_brd"}
+      config = {[s]}
+      sign = %{sign | source_config: config}
+
+      assert {
+               {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :boarding}},
+               {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: 3}}
+             } = Signs.Utilities.Predictions.get_messages(sign, true)
+
+      s = %{s | stop_id: "first_brd"}
+      config = {[s]}
+      sign = %{sign | source_config: config}
+
+      assert {
+               {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
+               {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: 3}}
+             } = Signs.Utilities.Predictions.get_messages(sign, true)
     end
   end
 end
