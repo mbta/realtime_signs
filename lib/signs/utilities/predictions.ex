@@ -6,7 +6,6 @@ defmodule Signs.Utilities.Predictions do
   """
 
   alias Signs.Utilities.SourceConfig
-  alias Content.Message.Predictions, as: P
 
   @spec get_messages(Signs.Realtime.t(), boolean()) ::
           {{SourceConfig.source() | nil, Content.Message.t()},
@@ -74,7 +73,10 @@ defmodule Signs.Utilities.Predictions do
       [msg] ->
         {msg, {nil, Content.Message.Empty.new()}}
 
-      [{s1, %P{minutes: :arriving}} = msg1, {s2, %P{minutes: :arriving} = p2} = msg2] ->
+      [
+        {s1, %Content.Message.Predictions{minutes: :arriving}} = msg1,
+        {s2, %Content.Message.Predictions{minutes: :arriving} = p2} = msg2
+      ] ->
         if allowed_multi_berth_platform?(s1, s2) do
           {msg1, msg2}
         else
