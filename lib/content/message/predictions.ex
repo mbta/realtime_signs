@@ -25,45 +25,17 @@ defmodule Content.Message.Predictions do
           width: integer()
         }
 
-  @spec non_terminal(Predictions.Prediction.t(), integer(), boolean()) :: t()
-  def non_terminal(prediction, width \\ 18, can_be_arriving?)
+  @spec non_terminal(Predictions.Prediction.t(), integer()) :: t()
+  def non_terminal(prediction, width \\ 18)
 
-  def non_terminal(
-        %Predictions.Prediction{stops_away: 0} = prediction,
-        width,
-        _can_be_arriving?
-      ) do
-    headsign =
-      case Content.Utilities.headsign_for_prediction(
-             prediction.route_id,
-             prediction.direction_id,
-             prediction.destination_stop_id
-           ) do
-        {:ok, dest} ->
-          dest
-
-        {:error, _} ->
-          Logger.warn("Could not find headsign for prediction #{inspect(prediction)}")
-          ""
-      end
-
-    %__MODULE__{
-      headsign: headsign,
-      minutes: :boarding,
-      route_id: prediction.route_id,
-      stop_id: prediction.stop_id,
-      width: width
-    }
-  end
-
-  def non_terminal(prediction, width, can_be_arriving?) do
+  def non_terminal(prediction, width) do
     # e.g., North Station which is non-terminal but has trips that begin there
     predicted_time = prediction.seconds_until_arrival || prediction.seconds_until_departure
 
     minutes =
       cond do
-        can_be_arriving? && predicted_time <= 30 -> :arriving
-        predicted_time <= 30 -> 1
+        prediction.stops_away == 0 -> :boarding
+        predicted_time <= 30 -> :arriving
         predicted_time >= @thirty_plus_minutes -> :thirty_plus
         true -> predicted_time |> Kernel./(60) |> round()
       end
