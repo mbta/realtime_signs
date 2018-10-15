@@ -4168,14 +4168,16 @@
           "direction_id": 0,
           "platform": null,
           "terminal": false,
-          "announce_arriving": true
+          "announce_arriving": true,
+          "multi_berth": true
         },
         {
           "stop_id": "70199",
           "direction_id": 0,
           "platform": null,
           "terminal": false,
-          "announce_arriving": true
+          "announce_arriving": true,
+          "multi_berth": true
         }
       ]
     ]
@@ -4192,14 +4194,16 @@
           "direction_id": 0,
           "platform": null,
           "terminal": false,
-          "announce_arriving": true
+          "announce_arriving": true,
+          "multi_berth": true
         },
         {
           "stop_id": "70198",
           "direction_id": 0,
           "platform": null,
           "terminal": false,
-          "announce_arriving": true
+          "announce_arriving": true,
+          "multi_berth": true
         }
       ]
     ]
