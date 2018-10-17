@@ -192,7 +192,7 @@ defmodule Signs.Utilities.UpdaterTest do
       )
     end
 
-    test "doesn't announce repeated ARR's for same destination until a BRD" do
+    test "doesn't announce repeated ARR's for same destination until a BRD comes and goes" do
       src = %{@src | announce_arriving?: true}
       top = {src, %P{headsign: "Alewife", minutes: :arriving}}
       bottom = @sign.current_content_bottom
@@ -228,6 +228,46 @@ defmodule Signs.Utilities.UpdaterTest do
 
       assert_received(
         {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
+      )
+    end
+
+    test "announces ARR when sign goes straight to BRD" do
+      src = %{@src | announce_arriving?: true}
+      top = {src, %P{headsign: "Alewife", minutes: :boarding}}
+      bottom = @sign.current_content_bottom
+      sign = @sign
+
+      Updater.update_sign(sign, top, bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
+      )
+    end
+
+    test "announces ARR when sign changes from one BRD headsign to another" do
+      src = %{@src | announce_arriving?: true}
+      top = {src, %P{headsign: "Alewife", minutes: :arriving}}
+      bottom = @sign.current_content_bottom
+      sign = @sign
+
+      sign = Updater.update_sign(sign, top, bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
+      )
+
+      top = {src, %P{headsign: "Alewife", minutes: :boarding}}
+      sign = Updater.update_sign(sign, top, bottom)
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
+      )
+
+      top = {src, %P{headsign: "Ashmont", minutes: :boarding}}
+      Updater.update_sign(sign, top, bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :ashmont}, _dur, _start}
       )
     end
 
