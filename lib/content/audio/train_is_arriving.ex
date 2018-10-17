@@ -16,7 +16,8 @@ defmodule Content.Audio.TrainIsArriving do
   def from_predictions_message(%Content.Message.Predictions{
         headsign: headsign,
         minutes: minutes
-      }) when minutes == :arriving or minutes == :boarding do
+      })
+      when minutes == :arriving or minutes == :boarding do
     case PaEss.Utilities.headsign_to_terminal_station(headsign) do
       {:ok, headsign_atom} ->
         %__MODULE__{destination: headsign_atom}
