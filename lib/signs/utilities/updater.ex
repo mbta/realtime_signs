@@ -11,93 +11,90 @@ defmodule Signs.Utilities.Updater do
 
   def update_sign(sign, {_top_src, top_msg} = top, {_bottom_src, bottom_msg} = bottom) do
     sign =
-      case {same_content?(sign.current_content_top, top),
-            same_content?(sign.current_content_bottom, bottom)} do
-        {true, true} ->
-          sign
+      sign
+      |> clear_announced_arrivals(sign.current_content_top, top)
+      |> clear_announced_arrivals(sign.current_content_bottom, bottom)
 
-        # update top
-        {false, true} ->
-          log_line_update(sign, top_msg, "top")
+    case {same_content?(sign.current_content_top, top),
+          same_content?(sign.current_content_bottom, bottom)} do
+      {true, true} ->
+        sign
 
-          sign.sign_updater.update_single_line(
-            sign.pa_ess_id,
-            "1",
-            top_msg,
-            sign.expiration_seconds + 15,
-            :now
-          )
+      # update top
+      {false, true} ->
+        log_line_update(sign, top_msg, "top")
 
-          sign = announce_arrival(top, sign)
-          announce_track_change(top_msg, sign)
-          sign = announce_stopped_train(top_msg, sign)
+        sign.sign_updater.update_single_line(
+          sign.pa_ess_id,
+          "1",
+          top_msg,
+          sign.expiration_seconds + 15,
+          :now
+        )
 
-          %{sign | current_content_top: top, tick_top: sign.expiration_seconds}
+        sign = announce_arrival(top, sign)
+        announce_track_change(top_msg, sign)
+        sign = announce_stopped_train(top_msg, sign)
 
-        # update bottom
-        {true, false} ->
-          log_line_update(sign, bottom_msg, "bottom")
+        %{sign | current_content_top: top, tick_top: sign.expiration_seconds}
 
-          sign.sign_updater.update_single_line(
-            sign.pa_ess_id,
-            "2",
-            bottom_msg,
-            sign.expiration_seconds + 15,
-            :now
-          )
+      # update bottom
+      {true, false} ->
+        log_line_update(sign, bottom_msg, "bottom")
 
-          sign =
-            if SourceConfig.multi_source?(sign.source_config) do
-              sign = announce_arrival(bottom, sign)
-              announce_track_change(bottom_msg, sign)
-              announce_stopped_train(bottom_msg, sign)
-            else
-              sign
-            end
+        sign.sign_updater.update_single_line(
+          sign.pa_ess_id,
+          "2",
+          bottom_msg,
+          sign.expiration_seconds + 15,
+          :now
+        )
 
-          %{sign | current_content_bottom: bottom, tick_bottom: sign.expiration_seconds}
-
-        # update both
-        {false, false} ->
-          log_line_update(sign, top_msg, "top")
-          log_line_update(sign, bottom_msg, "bottom")
-
-          sign.sign_updater.update_sign(
-            sign.pa_ess_id,
-            top_msg,
-            bottom_msg,
-            sign.expiration_seconds + 15,
-            :now
-          )
-
-          sign = announce_arrival(top, sign)
-          announce_track_change(top_msg, sign)
-          sign = announce_stopped_train(top_msg, sign)
-
-          sign =
-            if SourceConfig.multi_source?(sign.source_config) do
-              sign = announce_arrival(bottom, sign)
-              announce_track_change(bottom_msg, sign)
-              announce_stopped_train(bottom_msg, sign)
-            else
-              sign
-            end
-
-          sign = clear_announced_arrivals(sign, top_msg)
-          sign = clear_announced_arrivals(sign, bottom_msg)
-
-          %{
+        sign =
+          if SourceConfig.multi_source?(sign.source_config) do
+            sign = announce_arrival(bottom, sign)
+            announce_track_change(bottom_msg, sign)
+            announce_stopped_train(bottom_msg, sign)
+          else
             sign
-            | current_content_top: top,
-              current_content_bottom: bottom,
-              tick_top: sign.expiration_seconds,
-              tick_bottom: sign.expiration_seconds
-          }
-      end
+          end
 
-    sign
-    |> clear_announced_arrivals(top_msg)
-    |> clear_announced_arrivals(bottom_msg)
+        %{sign | current_content_bottom: bottom, tick_bottom: sign.expiration_seconds}
+
+      # update both
+      {false, false} ->
+        log_line_update(sign, top_msg, "top")
+        log_line_update(sign, bottom_msg, "bottom")
+
+        sign.sign_updater.update_sign(
+          sign.pa_ess_id,
+          top_msg,
+          bottom_msg,
+          sign.expiration_seconds + 15,
+          :now
+        )
+
+        sign = announce_arrival(top, sign)
+        announce_track_change(top_msg, sign)
+        sign = announce_stopped_train(top_msg, sign)
+
+        sign =
+          if SourceConfig.multi_source?(sign.source_config) do
+            sign = announce_arrival(bottom, sign)
+            announce_track_change(bottom_msg, sign)
+            announce_stopped_train(bottom_msg, sign)
+          else
+            sign
+          end
+
+        %{
+          sign
+          | current_content_top: top,
+            current_content_bottom: bottom,
+            tick_top: sign.expiration_seconds,
+            tick_bottom: sign.expiration_seconds
+        }
+    end
   end
 
   defp same_content?({_sign_src, sign_msg}, {_new_src, new_msg}) do
@@ -195,7 +192,11 @@ defmodule Signs.Utilities.Updater do
     case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
       %Content.Audio.TrainIsArriving{} = audio ->
         if MapSet.member?(sign.announced_arrivals, audio.destination) do
-          Logger.warn("skipping_arriving_audio #{inspect(audio)} #{inspect(sign)}")
+          unless match?(%Content.Message.Predictions{minutes: :boarding}, msg) do
+            # Not a warning if ARR -> BRD
+            Logger.warn("skipping_arriving_audio #{inspect(audio)} #{inspect(sign)}")
+          end
+
           sign
         else
           sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
@@ -232,10 +233,12 @@ defmodule Signs.Utilities.Updater do
     end
   end
 
-  defp clear_announced_arrivals(sign, %Content.Message.Predictions{
-         minutes: :boarding,
-         headsign: hs
-       }) do
+  defp clear_announced_arrivals(
+         sign,
+         {_src, %Content.Message.Predictions{minutes: :boarding, headsign: hs}} = current_content,
+         new_content
+       )
+       when current_content != new_content do
     case PaEss.Utilities.headsign_to_terminal_station(hs) do
       {:ok, terminal} ->
         %{sign | announced_arrivals: MapSet.delete(sign.announced_arrivals, terminal)}
@@ -245,7 +248,7 @@ defmodule Signs.Utilities.Updater do
     end
   end
 
-  defp clear_announced_arrivals(sign, _msg) do
+  defp clear_announced_arrivals(sign, _old_msg, _new_msg) do
     sign
   end
 end
