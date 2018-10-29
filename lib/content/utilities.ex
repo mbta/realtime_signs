@@ -39,7 +39,7 @@ defmodule Content.Utilities do
   def headsign_for_prediction(_, 1, "70201"), do: {:ok, "Govt Ctr"}
   def headsign_for_prediction(_, 1, "70200"), do: {:ok, "Park St"}
   def headsign_for_prediction(_, 1, "70150"), do: {:ok, "Kenmore"}
-  def headsign_for_prediction(_, 1, "70174"), do: {:ok, "Reservoir"}
+  def headsign_for_prediction(_, 1, "70174"), do: {:ok, "Park St"}
 
   def headsign_for_prediction("Green-B", 0, _), do: {:ok, "Boston Col"}
   def headsign_for_prediction("Green-C", 0, _), do: {:ok, "Clvlnd Cir"}
