@@ -162,6 +162,58 @@ defmodule Signs.Utilities.UpdaterTest do
       )
     end
 
+    test "does not reannounce arrival if the train stops but the headsign isnt a known terminal" do
+      src = %{@src | announce_arriving?: true}
+      arr_top = {src, %P{headsign: "Alewife", minutes: :arriving}}
+      same_bottom = @sign.current_content_bottom
+
+      sign = Updater.update_sign(@sign, arr_top, same_bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
+      )
+
+      stopped_top = {src, %Content.Message.StoppedTrain{headsign: "davis", stops_away: 1}}
+
+      sign = Updater.update_sign(sign, stopped_top, same_bottom)
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
+      )
+
+      sign = Updater.update_sign(sign, arr_top, same_bottom)
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
+      )
+    end
+
+    test "announces arrival even if it already had been announced if the train had been stopped" do
+      src = %{@src | announce_arriving?: true}
+      arr_top = {src, %P{headsign: "Alewife", minutes: :arriving}}
+      same_bottom = @sign.current_content_bottom
+
+      sign = Updater.update_sign(@sign, arr_top, same_bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
+      )
+
+      stopped_top = {src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 1}}
+
+      sign = Updater.update_sign(sign, stopped_top, same_bottom)
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
+      )
+
+      sign = Updater.update_sign(sign, arr_top, same_bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
+      )
+    end
+
     test "announces arrival on bottom if multi-source sign and both lines have changed" do
       multi_source_sign = %{@sign | source_config: {[], []}, tick_read: 40}
       src = %{@src | announce_arriving?: true}
