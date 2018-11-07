@@ -248,6 +248,21 @@ defmodule Signs.Utilities.Updater do
     end
   end
 
+  defp clear_announced_arrivals(
+         sign,
+         {_src, %Content.Message.StoppedTrain{headsign: hs}} = current_content,
+         new_content
+       )
+       when current_content != new_content do
+    case PaEss.Utilities.headsign_to_terminal_station(hs) do
+      {:ok, terminal} ->
+        %{sign | announced_arrivals: MapSet.delete(sign.announced_arrivals, terminal)}
+
+      _ ->
+        sign
+    end
+  end
+
   defp clear_announced_arrivals(sign, _old_msg, _new_msg) do
     sign
   end
