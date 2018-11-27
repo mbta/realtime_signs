@@ -182,5 +182,34 @@ defmodule Fake.HTTPoison do
     {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
   end
 
+  def mock_response("https://green.dev.api.mbtace.com/alerts") do
+    response = %{
+      "data" => [
+        %{
+          "attributes" => %{
+            "effect" => "SHUTTLE",
+            "informed_entity" => [
+              %{
+                "stop" => "70151"
+              }
+            ]
+          }
+        },
+        %{
+          "attributes" => %{
+            "effect" => "SOMETHING_IRRELEVANT",
+            "informed_entity" => [
+              %{
+                "stop" => "70152"
+              }
+            ]
+          }
+        }
+      ]
+    }
+
+    {:ok, %HTTPoison.Response{status_code: 200, body: Poison.encode!(response)}}
+  end
+
   def mock_response(_), do: {:ok, %HTTPoison.Response{status_code: 200, body: ""}}
 end

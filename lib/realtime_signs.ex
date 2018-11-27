@@ -11,6 +11,7 @@ defmodule RealtimeSigns do
       worker(Engine.Headways, []),
       worker(Engine.Bridge, []),
       worker(Engine.Static, []),
+      worker(Engine.Alerts, []),
       worker(MessageQueue, []),
       worker(PaEss.HttpUpdater, []),
       supervisor(Signs.Supervisor, [])

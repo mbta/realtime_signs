@@ -1,0 +1,36 @@
+{
+  "Green-Trunk": [
+    {"station": "Lechmere", "stop_ids": ["70210", "70209"]},
+    {"station": "Science Park", "stop_ids": ["70208", "70207"]},
+    {"station": "North Station", "stop_ids": ["70206", "70205"]},
+    {"station": "Haymarket", "stop_ids": ["70204", "70203"]},
+    {"station": "Government Center", "stop_ids": ["70202", "70201"]},
+    {"station": "Park St", "stop_ids": ["70196", "70197", "70198", "70199", "70200"]},
+    {"station": "Boylston", "stop_ids": ["70159", "70158"]},
+    {"station": "Arlington", "stop_ids": ["70157", "70156"]},
+    {"station": "Copley", "stop_ids": ["70155", "70154"]},
+    {"station": "Hynes", "stop_ids": ["70153", "70152"]},
+    {"station": "Kenmore", "stop_ids": ["70151", "70150"]}
+  ],
+  "Green-E": [
+    {"station": "Copley", "stop_ids": ["70155", "70154"]},
+    {"station": "Prudential", "stop_ids": ["70239", "70240"]},
+    {"station": "Symphony", "stop_ids": ["70241", "70242"]}
+  ],
+  "Green-D": [
+    {"station": "Kenmore", "stop_ids": ["70151", "70150"]},
+    {"station": "Fenway", "stop_ids": ["70187", "70186"]},
+    {"station": "Longwood", "stop_ids": ["70183", "70182"]},
+    {"station": "Brookline Village", "stop_ids": ["70181", "70180"]},
+    {"station": "Brookline Hills", "stop_ids": ["70179", "70178"]},
+    {"station": "Beaconsfield", "stop_ids": ["70177", "70176"]},
+    {"station": "Reservoir", "stop_ids": ["70175", "70174"]},
+    {"station": "Chestnut Hill", "stop_ids": ["70173", "70172"]},
+    {"station": "Newton Centre", "stop_ids": ["70171", "70170"]},
+    {"station": "Newton Highlands", "stop_ids": ["70169", "70168"]},
+    {"station": "Eliot", "stop_ids": ["70167", "70166"]},
+    {"station": "Waban", "stop_ids": ["70165", "70164"]},
+    {"station": "Woodland", "stop_ids": ["70163", "70162"]},
+    {"station": "Riverside", "stop_ids": ["70161", "70160"]}
+  ]
+}
