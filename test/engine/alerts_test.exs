@@ -23,7 +23,7 @@ defmodule Engine.AlertsTest do
   describe "stop_status returns ETS data inserted by periodic :fetch" do
     defmodule FakeAlertsFetcherHappy do
       def get_stop_statuses do
-        {:ok, %{"123" => :shuttles_closed, "234" => :shuttles_shared_service}}
+        {:ok, %{"123" => :shuttles_closed_station, "234" => :shuttles_transfer_station}}
       end
     end
 
@@ -46,8 +46,8 @@ defmodule Engine.AlertsTest do
       }
 
       {:noreply, _state} = Engine.Alerts.handle_info(:fetch, state)
-      assert Engine.Alerts.stop_status(ets_table_name, "123") == :shuttles_closed
-      assert Engine.Alerts.stop_status(ets_table_name, "234") == :shuttles_shared_service
+      assert Engine.Alerts.stop_status(ets_table_name, "123") == :shuttles_closed_station
+      assert Engine.Alerts.stop_status(ets_table_name, "234") == :shuttles_transfer_station
       assert is_nil(Engine.Alerts.stop_status(ets_table_name, "n/a"))
     end
 
@@ -57,7 +57,7 @@ defmodule Engine.AlertsTest do
       ^ets_table_name =
         :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
 
-      :ets.insert(ets_table_name, [{"abc", :shuttles_closed}])
+      :ets.insert(ets_table_name, [{"abc", :shuttles_closed_station}])
 
       state = %{
         ets_table_name: ets_table_name,
@@ -71,7 +71,7 @@ defmodule Engine.AlertsTest do
         end)
 
       assert log =~ "could not fetch"
-      assert Engine.Alerts.stop_status(ets_table_name, "abc") == :shuttles_closed
+      assert Engine.Alerts.stop_status(ets_table_name, "abc") == :shuttles_closed_station
     end
   end
 end

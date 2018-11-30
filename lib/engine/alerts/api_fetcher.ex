@@ -52,12 +52,12 @@ defmodule Engine.Alerts.ApiFetcher do
   end
 
   defp higher_priority_status(_stop_id, status1, status2)
-       when status1 == :shuttles_closed or status2 == :shuttles_closed do
-    :shuttles_closed
+       when status1 == :shuttles_closed_station or status2 == :shuttles_closed_station do
+    :shuttles_closed_station
   end
 
   defp higher_priority_status(_stop_id, _status1, _status2) do
-    :shuttles_shared_service
+    :shuttles_transfer_station
   end
 
   defp process_alert(alert, station_config) do
@@ -87,9 +87,9 @@ defmodule Engine.Alerts.ApiFetcher do
             Enum.flat_map(neighbors, fn n -> station_config.station_to_stops[n] end)
 
           if Enum.all?(neighbor_stops, fn neighbor -> neighbor in stop_ids end) do
-            [{stop_id, :shuttles_closed}]
+            [{stop_id, :shuttles_closed_station}]
           else
-            [{stop_id, :shuttles_shared_service}]
+            [{stop_id, :shuttles_transfer_station}]
           end
 
         _ ->

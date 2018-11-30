@@ -5,7 +5,7 @@ defmodule Engine.Alerts.ApiFetcherTest do
     test "downloads and parses the alerts" do
       assert {
                :ok,
-               %{"70151" => :shuttles_shared_service}
+               %{"70151" => :shuttles_transfer_station}
              } = Engine.Alerts.ApiFetcher.get_stop_statuses()
     end
 
