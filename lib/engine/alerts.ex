@@ -14,6 +14,14 @@ defmodule Engine.Alerts do
     GenServer.start_link(__MODULE__, opts, name: name)
   end
 
+  @spec max_stop_status([Fetcher.stop_id()]) :: Fetcher.stop_status()
+  def max_stop_status(ets_table_name \\ __MODULE__, stop_ids) do
+    Enum.reduce(stop_ids, :none, fn stop_id, overall_status ->
+      stop_status = stop_status(ets_table_name, stop_id)
+      Fetcher.higher_priority_status(stop_status, overall_status)
+    end)
+  end
+
   @spec stop_status(Fetcher.stop_id()) :: Fetcher.stop_status()
   def stop_status(ets_table_name \\ __MODULE__, stop_id) do
     case :ets.lookup(ets_table_name, stop_id) do
