@@ -55,18 +55,19 @@
     {"station": "Downtown Crossing", "stop_ids": ["70077", "70078"]},
     {"station": "South Station", "stop_ids": ["70079", "70080"]},
     {"station": "Broadway", "stop_ids": ["70081", "70082"]},
-    {"station": "Andrew", "stop_ids": ["70083", "70084"]},
-    {"station": "JFK/Umass", "stop_ids": ["70085", "70086", "70095", "70096"]}
+    {"station": "Andrew", "stop_ids": ["70083", "70084"]}
   ],
   "Red-Ashmont": [
-    {"station": "JFK/Umass", "stop_ids": ["70085", "70086", "70095", "70096"]},
+    {"station": "Andrew", "stop_ids": ["70083", "70084"]},
+    {"station": "JFK/Umass-Ashmont", "stop_ids": ["70085", "70086"]},
     {"station": "Savin Hill", "stop_ids": ["70087", "70088"]},
     {"station": "Fields Corner", "stop_ids": ["70089", "70090"]},
     {"station": "Shawmut", "stop_ids": ["70091", "70092"]},
     {"station": "Ashmont", "stop_ids": ["70093", "70094"]}
   ],
   "Red-Braintree": [
-    {"station": "JFK/Umass", "stop_ids": ["70085", "70086", "70095", "70096"]},
+    {"station": "Andrew", "stop_ids": ["70083", "70084"]},
+    {"station": "JFK/Umass-Braintree", "stop_ids": ["70095", "70096"]},
     {"station": "North Quincy", "stop_ids": ["70097", "70098"]},
     {"station": "Quincy Center", "stop_ids": ["70101", "70102"]},
     {"station": "Quincy Adams", "stop_ids": ["70103", "70104"]},
