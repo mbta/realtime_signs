@@ -7,12 +7,12 @@ defmodule Headway.ScheduleHeadway do
 
   @min_headway 5
   @headway_padding 2
-  @schedule_api_url "https://api-v3.mbta.com/schedules"
 
   @spec build_request([GTFS.station_id()]) :: String.t()
   def build_request(station_ids) do
     id_filter = station_ids |> Enum.map(&URI.encode/1) |> Enum.join(",")
-    @schedule_api_url <> "?filter[stop]=#{id_filter}"
+    schedule_api_url = Application.get_env(:realtime_signs, :api_v3_url) <> "/schedules"
+    schedule_api_url <> "?filter[stop]=#{id_filter}"
   end
 
   @spec group_headways_for_stations([map], [GTFS.station_id()], DateTime.t()) :: %{

@@ -23,10 +23,11 @@ defmodule Headway.Request do
 
   defp do_get_schedules(station_ids) do
     http_client = Application.get_env(:realtime_signs, :http_client)
+    api_v3_key = Application.get_env(:realtime_signs, :api_v3_key)
 
     station_ids
     |> ScheduleHeadway.build_request()
-    |> http_client.get([], timeout: 2000, recv_timeout: 2000)
+    |> http_client.get(api_key_header(api_v3_key), timeout: 2000, recv_timeout: 2000)
   end
 
   defp parse_body(body) do
@@ -39,4 +40,7 @@ defmodule Headway.Request do
         []
     end
   end
+
+  defp api_key_header(nil), do: []
+  defp api_key_header(key), do: [{"x-api-key", key}]
 end
