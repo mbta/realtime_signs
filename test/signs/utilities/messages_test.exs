@@ -33,7 +33,7 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :none
 
       assert Messages.get_messages(sign, enabled?, alert_status) ==
-        {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+               {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
     test "when sign is at a transfer station, it's empty" do
@@ -42,7 +42,7 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :shuttles_transfer_station
 
       assert Messages.get_messages(sign, enabled?, alert_status) ==
-        {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+               {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
     test "when sign is at a station closed by shuttles, it says so" do
@@ -51,7 +51,8 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :shuttles_closed_station
 
       assert Messages.get_messages(sign, enabled?, alert_status) ==
-        {{nil, %Content.Message.Alert.NoService{}}, {nil, %Content.Message.Alert.UseShuttleBus{}}}
+               {{nil, %Content.Message.Alert.NoService{}},
+                {nil, %Content.Message.Alert.UseShuttleBus{}}}
     end
   end
 end
