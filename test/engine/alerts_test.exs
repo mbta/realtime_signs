@@ -57,9 +57,15 @@ defmodule Engine.AlertsTest do
       assert Engine.Alerts.stop_status(ets_table_name, "n/a") == :none
 
       assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a-1", "n/a-2"]) == :none
-      assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a", "123"]) == :shuttles_closed_station
-      assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a", "123", "234"]) == :shuttles_closed_station
-      assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a", "234"]) == :shuttles_transfer_station
+
+      assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a", "123"]) ==
+               :shuttles_closed_station
+
+      assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a", "123", "234"]) ==
+               :shuttles_closed_station
+
+      assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a", "234"]) ==
+               :shuttles_transfer_station
     end
 
     test "when alerts fetch fails, keeps old state" do
