@@ -76,7 +76,14 @@ defmodule Signs.Realtime do
       |> expire_bottom()
       |> expire_top()
 
-    {top, bottom} = Utilities.Predictions.get_messages(sign, Engine.Config.enabled?(sign.id))
+    alert_status =
+      sign.source_config
+      |> Signs.Utilities.SourceConfig.all_stop_ids()
+      |> Engine.Alerts.max_stop_status()
+
+    enabled? = Engine.Config.enabled?(sign.id)
+
+    {top, bottom} = Utilities.Messages.get_messages(sign, enabled?, alert_status)
 
     sign =
       sign

@@ -7,20 +7,16 @@ defmodule Signs.Utilities.Predictions do
 
   alias Signs.Utilities.SourceConfig
 
-  @spec get_messages(Signs.Realtime.t(), boolean()) ::
+  @spec get_messages(Signs.Realtime.t()) ::
           {{SourceConfig.source() | nil, Content.Message.t()},
            {SourceConfig.source() | nil, Content.Message.t()}}
-  def get_messages(_sign, false) do
-    {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
-  end
-
-  def get_messages(%{source_config: {top_line_sources, bottom_line_sources}} = sign, true) do
+  def get_messages(%{source_config: {top_line_sources, bottom_line_sources}} = sign) do
     {top, _} = get_predictions(sign.prediction_engine, top_line_sources)
     {bottom, _} = get_predictions(sign.prediction_engine, bottom_line_sources)
     {top, bottom}
   end
 
-  def get_messages(%{source_config: {both_lines_sources}} = sign, true) do
+  def get_messages(%{source_config: {both_lines_sources}} = sign) do
     get_predictions(sign.prediction_engine, both_lines_sources)
   end
 

@@ -347,11 +347,6 @@ defmodule Signs.Utilities.PredictionsTest do
   }
 
   describe "get_messages/2" do
-    test "returns empty messages if sign is not enabled" do
-      assert Signs.Utilities.Predictions.get_messages(@sign, false) ==
-               {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
-    end
-
     test "when given two source lists, returns earliest result from each" do
       s1 = %SourceConfig{
         stop_id: "1",
@@ -375,7 +370,7 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s1, %Content.Message.Predictions{headsign: "Ashmont", minutes: 2}},
                {^s2, %Content.Message.Predictions{headsign: "Alewife", minutes: 2}}
-             } = Signs.Utilities.Predictions.get_messages(sign, true)
+             } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "when given one source list, returns earliest two results" do
@@ -401,7 +396,7 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s1, %Content.Message.Predictions{headsign: "Alewife", minutes: 2}},
                {^s2, %Content.Message.Predictions{headsign: "Alewife", minutes: 4}}
-             } = Signs.Utilities.Predictions.get_messages(sign, true)
+             } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "sorts by arrival or departure depending on which is present" do
@@ -419,7 +414,7 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^src, %Content.Message.Predictions{headsign: "Alewife", minutes: 4}},
                {^src, %Content.Message.Predictions{headsign: "Alewife", minutes: 10}}
-             } = Signs.Utilities.Predictions.get_messages(sign, true)
+             } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "pads out results if only one prediction" do
@@ -437,7 +432,7 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s, %Content.Message.Predictions{}},
                {nil, %Content.Message.Empty{}}
-             } = Signs.Utilities.Predictions.get_messages(sign, true)
+             } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "pads out results if no predictions" do
@@ -455,7 +450,7 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {nil, %Content.Message.Empty{}},
                {nil, %Content.Message.Empty{}}
-             } = Signs.Utilities.Predictions.get_messages(sign, true)
+             } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "only the first prediction in a source list can be BRD" do
@@ -473,7 +468,7 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s, %Content.Message.Predictions{minutes: :boarding}},
                {^s, %Content.Message.Predictions{minutes: 2}}
-             } = Signs.Utilities.Predictions.get_messages(sign, true)
+             } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "Returns stopped train message if enabled" do
@@ -495,7 +490,7 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s, %Content.Message.StoppedTrain{stops_away: 1}},
                {nil, %Content.Message.Empty{}}
-             } = Signs.Utilities.Predictions.get_messages(sign, true)
+             } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "Does not return stopped train message if not enabled" do
@@ -517,7 +512,7 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s, %Content.Message.Predictions{}},
                {nil, %Content.Message.Empty{}}
-             } = Signs.Utilities.Predictions.get_messages(sign, true)
+             } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "Only includes predictions if a departure prediction is present" do
@@ -535,7 +530,7 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {nil, %Content.Message.Empty{}},
                {nil, %Content.Message.Empty{}}
-             } = Signs.Utilities.Predictions.get_messages(sign, true)
+             } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "Filters by route if present" do
@@ -559,12 +554,12 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s1, %Content.Message.Predictions{headsign: "Boston Col"}},
                {^s1, %Content.Message.Predictions{headsign: "Riverside"}}
-             } = Signs.Utilities.Predictions.get_messages(sign1, true)
+             } = Signs.Utilities.Predictions.get_messages(sign1)
 
       assert {
                {^s2, %Content.Message.Predictions{headsign: "Riverside"}},
                {nil, %Content.Message.Empty{}}
-             } = Signs.Utilities.Predictions.get_messages(sign2, true)
+             } = Signs.Utilities.Predictions.get_messages(sign2)
     end
 
     test "Sorts boarding status to the top" do
@@ -583,7 +578,7 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
                {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :boarding}}
-             } = Signs.Utilities.Predictions.get_messages(sign, true)
+             } = Signs.Utilities.Predictions.get_messages(sign)
 
       s = %{s | stop_id: "second_brd"}
       config = {[s]}
@@ -592,7 +587,7 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :boarding}},
                {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: 3}}
-             } = Signs.Utilities.Predictions.get_messages(sign, true)
+             } = Signs.Utilities.Predictions.get_messages(sign)
 
       s = %{s | stop_id: "first_brd"}
       config = {[s]}
@@ -601,7 +596,7 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
                {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: 3}}
-             } = Signs.Utilities.Predictions.get_messages(sign, true)
+             } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "Does not allow ARR on second line unless platform has multiple berths" do
@@ -623,7 +618,7 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s1, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :arriving}},
                {^s2, %Content.Message.Predictions{headsign: "Riverside", minutes: :arriving}}
-             } = Signs.Utilities.Predictions.get_messages(sign, true)
+             } = Signs.Utilities.Predictions.get_messages(sign)
 
       s1 = %{s1 | multi_berth?: false}
       s2 = %{s2 | multi_berth?: false}
@@ -633,7 +628,7 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s1, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :arriving}},
                {^s2, %Content.Message.Predictions{headsign: "Riverside", minutes: 1}}
-             } = Signs.Utilities.Predictions.get_messages(sign, true)
+             } = Signs.Utilities.Predictions.get_messages(sign)
     end
   end
 end
