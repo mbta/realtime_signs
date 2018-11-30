@@ -6,9 +6,10 @@ defmodule Headway.ScheduleHeadwayTest do
   describe "build_request/1" do
     test "builds request with comma separated station ids" do
       assert build_request(["7022", "1123"]) ==
-               "https://api-v3.mbta.com/schedules?filter[stop]=7022,1123"
+               "https://green.dev.api.mbtace.com/schedules?filter[stop]=7022,1123"
 
-      assert build_request(["7022"]) == "https://api-v3.mbta.com/schedules?filter[stop]=7022"
+      assert build_request(["7022"]) ==
+               "https://green.dev.api.mbtace.com/schedules?filter[stop]=7022"
     end
   end
 
