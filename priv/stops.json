@@ -32,5 +32,80 @@
     {"station": "Waban", "stop_ids": ["70165", "70164"]},
     {"station": "Woodland", "stop_ids": ["70163", "70162"]},
     {"station": "Riverside", "stop_ids": ["70161", "70160"]}
+  ],
+  "Mattapan": [
+    {"station": "Ashmont", "stop_ids": ["70261", "70261"]},
+    {"station": "Cedar Grove", "stop_ids": ["70263", "70264"]},
+    {"station": "Butler", "stop_ids": ["70265", "70266"]},
+    {"station": "Milton", "stop_ids": ["70267", "70268"]},
+    {"station": "Central Ave", "stop_ids": ["70269", "70270"]},
+    {"station": "Valley Road", "stop_ids": ["70271", "70272"]},
+    {"station": "Capen St.", "stop_ids": ["70273", "70274"]},
+    {"station": "Mattapan", "stop_ids": ["70275", "70276"]}
+  ],
+  "Red-Trunk": [
+    {"station": "Alewife", "stop_ids": ["70061", "70061"]},
+    {"station": "Davis", "stop_ids": ["70063", "70064"]},
+    {"station": "Porter", "stop_ids": ["70065", "70066"]},
+    {"station": "Harvard", "stop_ids": ["70067", "70068"]},
+    {"station": "Central", "stop_ids": ["70069", "70070"]},
+    {"station": "Kendall/MIT", "stop_ids": ["70071", "70072"]},
+    {"station": "Charles/MGH", "stop_ids": ["70073", "70074"]},
+    {"station": "Park Street", "stop_ids": ["70075", "70076"]},
+    {"station": "Downtown Crossing", "stop_ids": ["70077", "70078"]},
+    {"station": "South Station", "stop_ids": ["70079", "70080"]},
+    {"station": "Broadway", "stop_ids": ["70081", "70082"]},
+    {"station": "Andrew", "stop_ids": ["70083", "70084"]},
+    {"station": "JFK/Umass", "stop_ids": ["70085", "70086", "70095", "70096"]}
+  ],
+  "Red-Ashmont": [
+    {"station": "JFK/Umass", "stop_ids": ["70085", "70086", "70095", "70096"]},
+    {"station": "Savin Hill", "stop_ids": ["70087", "70088"]},
+    {"station": "Fields Corner", "stop_ids": ["70089", "70090"]},
+    {"station": "Shawmut", "stop_ids": ["70091", "70092"]},
+    {"station": "Ashmont", "stop_ids": ["70093", "70094"]}
+  ],
+  "Red-Braintree": [
+    {"station": "JFK/Umass", "stop_ids": ["70085", "70086", "70095", "70096"]},
+    {"station": "North Quincy", "stop_ids": ["70097", "70098"]},
+    {"station": "Quincy Center", "stop_ids": ["70101", "70102"]},
+    {"station": "Quincy Adams", "stop_ids": ["70103", "70104"]},
+    {"station": "Braintree", "stop_ids": ["70105", "70105"]}
+  ],
+  "Orange": [
+    {"station": "Oak Grove", "stop_ids": ["70036", "70036"]},
+    {"station": "Malden Center", "stop_ids": ["70034", "70035"]},
+    {"station": "Wellington", "stop_ids": ["70032", "70033"]},
+    {"station": "Assembly", "stop_ids": ["70278", "70279"]},
+    {"station": "Sullivan Square", "stop_ids": ["70030", "70031"]},
+    {"station": "Community College", "stop_ids": ["70028", "70029"]},
+    {"station": "North Station", "stop_ids": ["70026", "70027"]},
+    {"station": "Haymarket", "stop_ids": ["70024", "70025"]},
+    {"station": "State Street", "stop_ids": ["70022", "70023"]},
+    {"station": "Downtown Crossing", "stop_ids": ["70020", "70021"]},
+    {"station": "Chinatown", "stop_ids": ["70018", "70019"]},
+    {"station": "Tufts Medical Center", "stop_ids": ["70016", "70017"]},
+    {"station": "Back Bay", "stop_ids": ["70014", "70015"]},
+    {"station": "Massachusetts Ave.", "stop_ids": ["70012", "70013"]},
+    {"station": "Ruggles", "stop_ids": ["70010", "70011"]},
+    {"station": "Roxbury Crossing", "stop_ids": ["70008", "70009"]},
+    {"station": "Jackson Square", "stop_ids": ["70006", "70007"]},
+    {"station": "Stony Brook", "stop_ids": ["70004", "70005"]},
+    {"station": "Green Street", "stop_ids": ["70002", "70003"]},
+    {"station": "Forest Hills", "stop_ids": ["70001", "70001"]}
+  ],
+  "Blue": [
+    {"station": "Wonderland", "stop_ids": ["70059", "70060"]},
+    {"station": "Revere Beach", "stop_ids": ["70057", "70058"]},
+    {"station": "Beachmont", "stop_ids": ["70055", "70056"]},
+    {"station": "Suffolk Downs", "stop_ids": ["70053", "70054"]},
+    {"station": "Orient Heights", "stop_ids": ["70051", "70052"]},
+    {"station": "Wood Island", "stop_ids": ["70049", "70050"]},
+    {"station": "Airport", "stop_ids": ["70047", "70048"]},
+    {"station": "Maverick", "stop_ids": ["70045", "70046"]},
+    {"station": "Aquarium", "stop_ids": ["70043", "70044"]},
+    {"station": "State Street", "stop_ids": ["70041", "70042"]},
+    {"station": "Government Center", "stop_ids": ["70039", "70040"]},
+    {"station": "Bowdoin", "stop_ids": ["70838", "70038"]}
   ]
 }
