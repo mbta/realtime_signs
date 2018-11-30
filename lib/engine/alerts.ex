@@ -18,7 +18,7 @@ defmodule Engine.Alerts do
   def stop_status(ets_table_name \\ __MODULE__, stop_id) do
     case :ets.lookup(ets_table_name, stop_id) do
       [{^stop_id, status}] -> status
-      _ -> nil
+      _ -> :none
     end
   end
 

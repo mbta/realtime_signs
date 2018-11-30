@@ -48,7 +48,7 @@ defmodule Engine.AlertsTest do
       {:noreply, _state} = Engine.Alerts.handle_info(:fetch, state)
       assert Engine.Alerts.stop_status(ets_table_name, "123") == :shuttles_closed_station
       assert Engine.Alerts.stop_status(ets_table_name, "234") == :shuttles_transfer_station
-      assert is_nil(Engine.Alerts.stop_status(ets_table_name, "n/a"))
+      assert Engine.Alerts.stop_status(ets_table_name, "n/a") == :none
     end
 
     test "when alerts fetch fails, keeps old state" do

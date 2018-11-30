@@ -46,18 +46,9 @@ defmodule Engine.Alerts.ApiFetcher do
       Map.merge(
         acc,
         statuses,
-        &higher_priority_status/3
+        fn _stop_id, s1, s2 -> Engine.Alerts.Fetcher.higher_priority_status(s1, s2) end
       )
     end)
-  end
-
-  defp higher_priority_status(_stop_id, status1, status2)
-       when status1 == :shuttles_closed_station or status2 == :shuttles_closed_station do
-    :shuttles_closed_station
-  end
-
-  defp higher_priority_status(_stop_id, _status1, _status2) do
-    :shuttles_transfer_station
   end
 
   defp process_alert(alert, station_config) do

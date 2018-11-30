@@ -76,7 +76,28 @@ defmodule Signs.Realtime do
       |> expire_bottom()
       |> expire_top()
 
-    {top, bottom} = Utilities.Predictions.get_messages(sign, Engine.Config.enabled?(sign.id))
+    alert_status =
+      sign.source_config
+      |> Signs.Utilities.SourceConfig.all_stop_ids()
+      |> Enum.reduce(:none, fn stop_id, overall_status ->
+        stop_status = Engine.Alerts.stop_status(stop_id)
+        Engine.Alerts.Fetcher.higher_priority_status(stop_status, overall_status)
+      end)
+
+    {top, bottom} =
+      cond do
+        Engine.Config.enabled?(sign.id) ->
+          {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+
+        alert_status == :shuttles_transfer_station ->
+          {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+
+        alert_status == :shuttles_closed_station ->
+          {{nil, %Content.Message.Alert.NoService{}}, {nil, %Content.Message.Alert.UseShuttleBus{}}}
+
+        true ->
+          Utilities.Predictions.get_messages(sign)
+      end
 
     sign =
       sign
