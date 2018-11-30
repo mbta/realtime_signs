@@ -22,12 +22,18 @@ defmodule Engine.AlertsTest do
 
   describe "stop_status returns ETS data inserted by periodic :fetch" do
     defmodule FakeAlertsFetcherHappy do
+      @behaviour Engine.Alerts.Fetcher
+
+      @impl true
       def get_stop_statuses do
         {:ok, %{"123" => :shuttles_closed_station, "234" => :shuttles_transfer_station}}
       end
     end
 
     defmodule FakeAlertsFetcherSad do
+      @behaviour Engine.Alerts.Fetcher
+
+      @impl true
       def get_stop_statuses do
         {:error, :didnt_work}
       end
@@ -48,7 +54,18 @@ defmodule Engine.AlertsTest do
       {:noreply, _state} = Engine.Alerts.handle_info(:fetch, state)
       assert Engine.Alerts.stop_status(ets_table_name, "123") == :shuttles_closed_station
       assert Engine.Alerts.stop_status(ets_table_name, "234") == :shuttles_transfer_station
-      assert is_nil(Engine.Alerts.stop_status(ets_table_name, "n/a"))
+      assert Engine.Alerts.stop_status(ets_table_name, "n/a") == :none
+
+      assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a-1", "n/a-2"]) == :none
+
+      assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a", "123"]) ==
+               :shuttles_closed_station
+
+      assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a", "123", "234"]) ==
+               :shuttles_closed_station
+
+      assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a", "234"]) ==
+               :shuttles_transfer_station
     end
 
     test "when alerts fetch fails, keeps old state" do

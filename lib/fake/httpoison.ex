@@ -197,6 +197,16 @@ defmodule Fake.HTTPoison do
         },
         %{
           "attributes" => %{
+            "effect" => "SHUTTLE",
+            "informed_entity" => [
+              %{
+                "stop" => "70151"
+              }
+            ]
+          }
+        },
+        %{
+          "attributes" => %{
             "effect" => "SOMETHING_IRRELEVANT",
             "informed_entity" => [
               %{
