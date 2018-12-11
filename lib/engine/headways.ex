@@ -53,14 +53,18 @@ defmodule Engine.Headways do
       stop_ids: opts[:stop_ids]
     }
 
+    :ets.insert(ets_table_name, Enum.map(state.stop_ids, fn x -> {x, :none} end))
+
     schedule_update(self(), state)
 
     {:ok, state}
   end
 
-  @spec get_headways(GenServer.server(), String.t()) :: Headway.ScheduleHeadway.headway_range()
-  def get_headways(pid \\ __MODULE__, stop_id) do
-    GenServer.call(pid, {:get_headways, stop_id})
+  @spec get_headways(:ets.tab(), String.t()) :: Headway.ScheduleHeadway.headway_range() | :none
+  def get_headways(table_name \\ __MODULE__, stop_id) do
+    [{_stop_id, headways}] = :ets.lookup(table_name, stop_id)
+
+    headways
   end
 
   @spec handle_info(:update_hourly, t) :: {:noreply, t}
@@ -73,15 +77,6 @@ defmodule Engine.Headways do
   def handle_info(msg, state) do
     Logger.warn("#{__MODULE__} unknown message: #{inspect(msg)}")
     {:noreply, state}
-  end
-
-  @spec handle_call({:get_headways, String.t()}, GenServer.from(), state()) ::
-          {:reply, Headway.ScheduleHeadway.headway_range(), state()} | {:noreply, state}
-  def handle_call({:get_headways, stop_id}, _from, state) do
-    case :ets.lookup(state.ets_table_name, stop_id) do
-      [{_stop_id, headways}] -> {:reply, headways, state}
-      _ -> {:noreply, state}
-    end
   end
 
   @spec schedule_update(pid(), state()) :: reference()
