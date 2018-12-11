@@ -2,13 +2,6 @@ defmodule Engine.HeadwaysTest do
   use ExUnit.Case
   import ExUnit.CaptureLog
 
-  describe "register callback" do
-    test "adds the stop id to the state" do
-      assert Engine.Headways.handle_call({:register, "123"}, %{}, %{}) ==
-               {:reply, :ok, %{"123" => []}}
-    end
-  end
-
   describe "get_headways callback" do
     @times [
       ~N[2017-07-04 09:05:00],
@@ -87,13 +80,6 @@ defmodule Engine.HeadwaysTest do
         id_path = ["relationships", "stop", "data", "id"]
         assert get_in(schedule, id_path) == get_in(state_schedule, id_path)
       end
-    end
-  end
-
-  describe "register/2" do
-    test "succesfully registers" do
-      {:ok, pid} = GenServer.start_link(Engine.Headways, [])
-      assert Engine.Headways.register(pid, "123") == :ok
     end
   end
 
