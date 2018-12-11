@@ -31,10 +31,10 @@ defmodule Engine.Headways do
       |> File.read!()
       |> Poison.Parser.parse!()
 
-    Enum.map(json_data, fn x -> Map.get(x, "source_config") end)
-    |> List.flatten()
-    |> Enum.reject(fn x -> x == nil end)
-    |> Enum.map(fn x -> Map.get(x, "stop_id") end)
+    json_data
+    |> Enum.flat_map(&(&1[:source_config] || []))
+    |> Enum.map(& &1[:stop_id])
+    |> Enum.uniq()
   end
 
   @spec init(Keyword.t()) :: {:ok, state()}
