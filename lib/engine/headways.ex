@@ -50,8 +50,8 @@ defmodule Engine.Headways do
 
     :ets.insert(ets_table_name, Enum.map(state.stop_ids, fn x -> {x, :none} end))
 
-    send(self(), :update_hourly)
-    send(self(), :headway_update)
+    send(self(), :data_update)
+    send(self(), :calculation_update)
 
     {:ok, state}
   end
@@ -63,17 +63,17 @@ defmodule Engine.Headways do
     headways
   end
 
-  @spec handle_info(:update_hourly, t) :: {:noreply, t}
-  def handle_info(:update_hourly, state) do
-    schedule_update(self(), state)
+  @spec handle_info(:data_update, t) :: {:noreply, t}
+  def handle_info(:data_update, state) do
+    schedule_data_update(self(), state.fetch_ms)
 
-    update_schedule_data(state)
+    {:noreply, update_schedule_data(state)}
   end
 
-  def handle_info(:headway_update, state) do
-    headway_update(self(), state)
+  def handle_info(:calculation_update, state) do
+    schedule_calculation_update(self(), state.headway_calc_ms)
 
-    update_headway_data(state)
+    {:noreply, update_headway_data(state)}
   end
 
   def handle_info(msg, state) do
@@ -81,17 +81,17 @@ defmodule Engine.Headways do
     {:noreply, state}
   end
 
-  @spec schedule_update(pid(), state()) :: reference()
-  defp schedule_update(pid, state) do
-    Process.send_after(pid, :update_hourly, state.fetch_ms)
+  @spec schedule_data_update(pid(), integer()) :: reference()
+  defp schedule_data_update(pid, fetch_ms) do
+    Process.send_after(pid, :data_update, fetch_ms)
   end
 
-  @spec headway_update(pid(), state()) :: reference()
-  defp headway_update(pid, state) do
-    Process.send_after(pid, :headway_update, state.headway_calc_ms)
+  @spec schedule_calculation_update(pid(), integer()) :: reference()
+  defp schedule_calculation_update(pid, headway_calc_ms) do
+    Process.send_after(pid, :calculation_update, headway_calc_ms)
   end
 
-  @spec update_schedule_data(state()) :: {:noreply, state()}
+  @spec update_schedule_data(state()) :: state()
   defp update_schedule_data(state) do
     schedule_updater = state[:fetcher]
 
@@ -105,10 +105,10 @@ defmodule Engine.Headways do
       end)
     )
 
-    {:noreply, state}
+    state
   end
 
-  @spec update_headway_data(state()) :: {:noreply, state()}
+  @spec update_headway_data(state()) :: state()
   defp update_headway_data(state) do
     headway_calculator = Application.get_env(:realtime_signs, :headway_calculator)
 
@@ -125,6 +125,6 @@ defmodule Engine.Headways do
     :ets.delete_all_objects(state.ets_table_name)
     :ets.insert(state.ets_table_name, headways)
 
-    {:noreply, state}
+    state
   end
 end
