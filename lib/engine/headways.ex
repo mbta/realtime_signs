@@ -21,11 +21,13 @@ defmodule Engine.Headways do
           stop_ids: [String.t()]
         }
 
-  def start_link do
+  def start_link(opts \\ []) do
+    name = opts[:gen_server_name] || __MODULE__
+
     GenServer.start_link(
       __MODULE__,
-      [stop_ids: Signs.Utilities.SignsConfig.all_stop_ids()],
-      name: __MODULE__
+      opts ++ [stop_ids: Signs.Utilities.SignsConfig.all_stop_ids()],
+      name: name
     )
   end
 
@@ -61,6 +63,12 @@ defmodule Engine.Headways do
     [{_stop_id, headways}] = :ets.lookup(table_name, stop_id)
 
     headways
+  end
+
+  @spec handle_call({:get_headways, String.t()}, GenServer.from(), state()) ::
+          {:reply, Headway.ScheduleHeadway.headway_range() | :none, state()}
+  def handle_call({:get_headways, stop_id}, _from, state) do
+    {:reply, get_headways(state.ets_table_name, stop_id), state}
   end
 
   @spec handle_info(:data_update, t) :: {:noreply, t}
