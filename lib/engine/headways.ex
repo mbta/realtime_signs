@@ -6,6 +6,7 @@ defmodule Engine.Headways do
   """
   use GenServer
   require Logger
+  require Signs.Utilities.SignsConfig
 
   @type t :: %{
           String.t() => [Headway.ScheduleHeadway.schedule_map()]
@@ -19,22 +20,11 @@ defmodule Engine.Headways do
         }
 
   def start_link do
-    GenServer.start_link(__MODULE__, [stop_ids: all_stop_ids()], name: __MODULE__)
-  end
-
-  @spec all_stop_ids() :: [String.t()]
-  defp all_stop_ids do
-    json_data =
-      :realtime_signs
-      |> :code.priv_dir()
-      |> Path.join("signs.json")
-      |> File.read!()
-      |> Poison.Parser.parse!()
-
-    json_data
-    |> Enum.flat_map(&(&1[:source_config] || []))
-    |> Enum.map(& &1[:stop_id])
-    |> Enum.uniq()
+    GenServer.start_link(
+      __MODULE__,
+      [stop_ids: Signs.Utilities.SignsConfig.all_stop_ids()],
+      name: __MODULE__
+    )
   end
 
   @spec init(Keyword.t()) :: {:ok, state()}

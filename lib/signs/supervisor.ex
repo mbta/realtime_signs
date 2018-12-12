@@ -18,14 +18,14 @@ defmodule Signs.Supervisor do
   could differ. One-liners vs. two? Stops Away vs time? GreenLine Park St
   weird cases?)
   """
+  require Signs.Utilities.SignsConfig
 
   def start_link do
     Supervisor.start_link(children(), name: __MODULE__, strategy: :one_for_one)
   end
 
   defp children() do
-    for sign_config <- children_config(),
-        enable_sign?(sign_config) do
+    for sign_config <- Signs.Utilities.SignsConfig.children_config(), enable_sign?(sign_config) do
       sign_module = sign_module(sign_config)
 
       %{
@@ -48,12 +48,4 @@ defmodule Signs.Supervisor do
   defp sign_module(%{"type" => "headway"}), do: Signs.Headway
   defp sign_module(%{"type" => "bridge_only"}), do: Signs.BridgeOnly
   defp sign_module(%{"type" => "realtime"}), do: Signs.Realtime
-
-  defp children_config() do
-    :realtime_signs
-    |> :code.priv_dir()
-    |> Path.join("signs.json")
-    |> File.read!()
-    |> Poison.Parser.parse!()
-  end
 end
