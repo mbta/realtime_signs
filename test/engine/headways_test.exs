@@ -5,7 +5,11 @@ defmodule Engine.HeadwaysTest do
   describe "GenServer initialization" do
     test "GenServer starts up successfully" do
       {:ok, pid} =
-        Engine.Headways.start_link(gen_server_name: __MODULE__, ets_table_name: __MODULE__)
+        Engine.Headways.start_link(
+          gen_server_name: __MODULE__,
+          ets_table_name: __MODULE__,
+          time_fetcher: fn -> Timex.to_datetime(~N[2017-07-04 09:00:00], "America/New_York") end
+        )
 
       Process.sleep(500)
       assert Process.alive?(pid)

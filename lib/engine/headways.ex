@@ -41,7 +41,7 @@ defmodule Engine.Headways do
 
     time_fetcher =
       opts[:time_fetcher] ||
-        fn -> Timex.shift(Timex.now(), seconds: div(headway_calc_ms, 2 * 1_000)) end
+        fn -> Timex.shift(Timex.now(), milliseconds: div(headway_calc_ms, 2)) end
 
     ^ets_table_name =
       :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
