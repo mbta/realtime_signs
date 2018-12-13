@@ -18,7 +18,8 @@ defmodule Engine.Headways do
           fetcher: module(),
           fetch_ms: integer(),
           headway_calc_ms: integer(),
-          stop_ids: [String.t()]
+          stop_ids: [String.t()],
+          time_fetcher: fun()
         }
 
   def start_link(opts \\ []) do
@@ -37,6 +38,7 @@ defmodule Engine.Headways do
     fetcher = opts[:fetcher] || Application.get_env(:realtime_signs, :headway_requester)
     fetch_ms = opts[:fetch_ms] || 60 * 60 * 1_000
     headway_calc_ms = opts[:headway_calc_ms] || 5 * 60 * 1_000
+    time_fetcher = opts[:time_fetcher] || (&Timex.now/0)
 
     ^ets_table_name =
       :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
@@ -47,7 +49,8 @@ defmodule Engine.Headways do
       fetcher: fetcher,
       fetch_ms: fetch_ms,
       headway_calc_ms: headway_calc_ms,
-      stop_ids: opts[:stop_ids]
+      stop_ids: opts[:stop_ids],
+      time_fetcher: time_fetcher
     }
 
     :ets.insert(ets_table_name, Enum.map(state.stop_ids, fn x -> {x, :none} end))
@@ -63,12 +66,6 @@ defmodule Engine.Headways do
     [{_stop_id, headways}] = :ets.lookup(table_name, stop_id)
 
     headways
-  end
-
-  @spec handle_call({:get_headways, String.t()}, GenServer.from(), state()) ::
-          {:reply, Headway.ScheduleHeadway.headway_range() | :none, state()}
-  def handle_call({:get_headways, stop_id}, _from, state) do
-    {:reply, get_headways(state.ets_table_name, stop_id), state}
   end
 
   @spec handle_info(:data_update, t) :: {:noreply, t}
@@ -108,12 +105,7 @@ defmodule Engine.Headways do
       :schedule_data,
       state.stop_ids
       |> schedule_updater.get_schedules()
-      |> Enum.group_by(fn schedule ->
-        schedule["relationships"]["stop"]["data"]["id"]
-      end)
     )
-
-    state
   end
 
   @spec update_headway_data(state()) :: state()
@@ -125,7 +117,7 @@ defmodule Engine.Headways do
         headway_calculator.group_headways_for_stations(
           state.schedule_data,
           state.stop_ids,
-          Timex.now()
+          state.time_fetcher.()
         ),
         fn {k, v} -> {k, v} end
       )
