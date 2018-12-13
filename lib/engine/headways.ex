@@ -38,7 +38,10 @@ defmodule Engine.Headways do
     fetcher = opts[:fetcher] || Application.get_env(:realtime_signs, :headway_requester)
     fetch_ms = opts[:fetch_ms] || 60 * 60 * 1_000
     headway_calc_ms = opts[:headway_calc_ms] || 5 * 60 * 1_000
-    time_fetcher = opts[:time_fetcher] || (&Timex.now/0)
+
+    time_fetcher =
+      opts[:time_fetcher] ||
+        fn -> Timex.shift(Timex.now(), seconds: div(headway_calc_ms, 2 * 1_000)) end
 
     ^ets_table_name =
       :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
