@@ -1,7 +1,7 @@
 defmodule Headway.ScheduleHeadway do
   require Logger
 
-  @type headway_range :: {non_neg_integer | nil, non_neg_integer | nil}
+  @type headway_range :: {non_neg_integer | nil, non_neg_integer | nil} | :none
   @type t :: headway_range | {:first_departure, headway_range, DateTime.t()}
   @type schedule_map :: map
 
@@ -108,6 +108,7 @@ defmodule Headway.ScheduleHeadway do
   defp pad_upper_value(y), do: max(y, @min_headway) + @headway_padding
 
   @spec format_headway_range(headway_range) :: String.t()
+  def format_headway_range(:none), do: ""
   def format_headway_range({nil, nil}), do: ""
   def format_headway_range({x, y}) when x == y or is_nil(y), do: "Every #{x} min"
   def format_headway_range({x, y}) when x > y, do: "Every #{y} to #{x} min"

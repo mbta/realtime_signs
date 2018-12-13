@@ -61,7 +61,7 @@ defmodule Engine.Headways do
     {:ok, state}
   end
 
-  @spec get_headways(:ets.tab(), String.t()) :: Headway.ScheduleHeadway.headway_range() | :none
+  @spec get_headways(:ets.tab(), String.t()) :: Headway.ScheduleHeadway.headway_range()
   def get_headways(table_name \\ __MODULE__, stop_id) do
     [{_stop_id, headways}] = :ets.lookup(table_name, stop_id)
 
