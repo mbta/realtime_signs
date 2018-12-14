@@ -14,7 +14,7 @@ defmodule Engine.Headways do
 
   @type state :: %{
           ets_table_name: term(),
-          schedule_data: map(),
+          schedule_data: list(),
           fetcher: module(),
           fetch_ms: integer(),
           headway_calc_ms: integer(),
@@ -52,7 +52,7 @@ defmodule Engine.Headways do
 
     state = %{
       ets_table_name: ets_table_name,
-      schedule_data: %{},
+      schedule_data: [],
       fetcher: fetcher,
       fetch_ms: fetch_ms,
       headway_calc_ms: headway_calc_ms,
