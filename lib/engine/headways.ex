@@ -19,7 +19,7 @@ defmodule Engine.Headways do
           fetch_ms: integer(),
           headway_calc_ms: integer(),
           stop_ids: [String.t()],
-          time_fetcher: fun()
+          time_fetcher: (() -> DateTime.t())
         }
 
   def start_link(opts \\ []) do
@@ -27,7 +27,11 @@ defmodule Engine.Headways do
 
     GenServer.start_link(
       __MODULE__,
-      opts ++ [stop_ids: Signs.Utilities.SignsConfig.all_stop_ids()],
+      Keyword.put_new(
+        opts,
+        :stop_ids,
+        Signs.Utilities.SignsConfig.all_stop_ids()
+      ),
       name: name
     )
   end
