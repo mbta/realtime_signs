@@ -122,14 +122,12 @@ defmodule Engine.Headways do
     headway_calculator = Application.get_env(:realtime_signs, :headway_calculator)
 
     headways =
-      Enum.map(
-        headway_calculator.group_headways_for_stations(
-          state.schedule_data,
-          state.stop_ids,
-          state.time_fetcher.()
-        ),
-        fn {k, v} -> {k, v} end
+      headway_calculator.group_headways_for_stations(
+        state.schedule_data,
+        state.stop_ids,
+        state.time_fetcher.()
       )
+      |> Enum.into([])
 
     :ets.delete_all_objects(state.ets_table_name)
     :ets.insert(state.ets_table_name, headways)
