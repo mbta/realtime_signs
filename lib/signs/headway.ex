@@ -67,7 +67,6 @@ defmodule Signs.Headway do
   end
 
   def init(sign) do
-    Engine.Headways.register(sign.gtfs_stop_id)
     schedule_update(self())
     schedule_reading_sign(self(), sign.read_sign_period_ms)
     {:ok, sign}

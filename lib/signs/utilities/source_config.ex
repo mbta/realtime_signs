@@ -103,12 +103,12 @@ defmodule Signs.Utilities.SourceConfig do
   def multi_source?({_, _}), do: true
   def multi_source?({_}), do: false
 
-  @spec all_stop_ids(config) :: [String.t()]
-  def all_stop_ids({s1, s2}) do
+  @spec sign_stop_ids(config) :: [String.t()]
+  def sign_stop_ids({s1, s2}) do
     Enum.map(s1, & &1.stop_id) ++ Enum.map(s2, & &1.stop_id)
   end
 
-  def all_stop_ids({s}) do
+  def sign_stop_ids({s}) do
     Enum.map(s, & &1.stop_id)
   end
 end
