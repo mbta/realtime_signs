@@ -25,12 +25,17 @@ defmodule Signs.Utilities.SignsConfig do
 
   @spec get_stop_ids_for_sign(map()) :: [String.t()]
   defp get_stop_ids_for_sign(sign) do
-    if Map.has_key?(sign, "source_config") do
-      sign["source_config"]
-      |> List.flatten()
-      |> Enum.map(& &1["stop_id"])
-    else
-      [sign["gtfs_stop_id"]]
+    case sign["type"] do
+      "realtime" ->
+        sign["source_config"]
+        |> List.flatten()
+        |> Enum.map(& &1["stop_id"])
+
+      "headway" ->
+        [sign["gtfs_stop_id"]]
+
+      "bridge_only" ->
+        []
     end
   end
 end

@@ -113,7 +113,7 @@ defmodule Engine.Headways do
       state.stop_ids
       |> Enum.chunk_every(20)
       |> Enum.map(&schedule_updater.get_schedules(&1))
-      |> List.foldl([], &(&1 ++ &2))
+      |> (&Enum.concat(&1)).()
     )
   end
 
