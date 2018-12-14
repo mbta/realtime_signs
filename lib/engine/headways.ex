@@ -107,7 +107,9 @@ defmodule Engine.Headways do
       state,
       :schedule_data,
       state.stop_ids
-      |> schedule_updater.get_schedules()
+      |> Enum.chunk_every(20)
+      |> Enum.map(&schedule_updater.get_schedules(&1))
+      |> List.foldl([], &(&1 ++ &2))
     )
   end
 
