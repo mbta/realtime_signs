@@ -78,7 +78,7 @@ defmodule Signs.Realtime do
 
     alert_status =
       sign.source_config
-      |> Signs.Utilities.SourceConfig.all_stop_ids()
+      |> Signs.Utilities.SourceConfig.sign_stop_ids()
       |> Engine.Alerts.max_stop_status()
 
     enabled? = Engine.Config.enabled?(sign.id)

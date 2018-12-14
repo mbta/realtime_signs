@@ -6,46 +6,86 @@ defmodule Engine.Headways do
   """
   use GenServer
   require Logger
+  require Signs.Utilities.SignsConfig
 
   @type t :: %{
           String.t() => [Headway.ScheduleHeadway.schedule_map()]
         }
 
-  def start_link do
-    GenServer.start_link(__MODULE__, [], name: __MODULE__)
+  @type state :: %{
+          ets_table_name: term(),
+          schedule_data: list(),
+          fetcher: module(),
+          fetch_ms: integer(),
+          headway_calc_ms: integer(),
+          stop_ids: [String.t()],
+          time_fetcher: (() -> DateTime.t())
+        }
+
+  def start_link(opts \\ []) do
+    name = opts[:gen_server_name] || __MODULE__
+
+    GenServer.start_link(
+      __MODULE__,
+      Keyword.put_new(
+        opts,
+        :stop_ids,
+        Signs.Utilities.SignsConfig.all_stop_ids()
+      ),
+      name: name
+    )
   end
 
-  def init([]) do
-    schedule_update(self())
-    {:ok, %{}}
+  @spec init(Keyword.t()) :: {:ok, state()}
+  def init(opts) do
+    ets_table_name = opts[:ets_table_name] || __MODULE__
+    fetcher = opts[:fetcher] || Application.get_env(:realtime_signs, :headway_requester)
+    fetch_ms = opts[:fetch_ms] || 60 * 60 * 1_000
+    headway_calc_ms = opts[:headway_calc_ms] || 5 * 60 * 1_000
+
+    time_fetcher =
+      opts[:time_fetcher] ||
+        fn -> Timex.shift(Timex.now(), milliseconds: div(headway_calc_ms, 2)) end
+
+    ^ets_table_name =
+      :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+
+    state = %{
+      ets_table_name: ets_table_name,
+      schedule_data: [],
+      fetcher: fetcher,
+      fetch_ms: fetch_ms,
+      headway_calc_ms: headway_calc_ms,
+      stop_ids: opts[:stop_ids],
+      time_fetcher: time_fetcher
+    }
+
+    :ets.insert(ets_table_name, Enum.map(state.stop_ids, fn x -> {x, :none} end))
+
+    send(self(), :data_update)
+    send(self(), :calculation_update)
+
+    {:ok, state}
   end
 
-  @spec register(GenServer.server(), String.t()) :: :ok
-  def register(pid \\ __MODULE__, gtfs_stop_id) do
-    GenServer.call(pid, {:register, gtfs_stop_id})
+  @spec get_headways(:ets.tab(), String.t()) :: Headway.ScheduleHeadway.headway_range()
+  def get_headways(table_name \\ __MODULE__, stop_id) do
+    [{_stop_id, headways}] = :ets.lookup(table_name, stop_id)
+
+    headways
   end
 
-  @spec get_headways(GenServer.server(), String.t()) :: Headway.ScheduleHeadway.headway_range()
-  def get_headways(pid \\ __MODULE__, stop_id) do
-    GenServer.call(pid, {:get_headways, stop_id, Timex.now()})
+  @spec handle_info(:data_update, t) :: {:noreply, t}
+  def handle_info(:data_update, state) do
+    schedule_data_update(self(), state.fetch_ms)
+
+    {:noreply, update_schedule_data(state)}
   end
 
-  @spec handle_info(:quick_update, t) :: {:noreply, t}
-  def handle_info(:quick_update, state) do
-    state
-    |> Enum.reject(fn {_stop, schedule} -> schedule != [] end)
-    |> Map.new()
-    |> Map.keys()
-    |> update(state)
-  end
+  def handle_info(:calculation_update, state) do
+    schedule_calculation_update(self(), state.headway_calc_ms)
 
-  @spec handle_info(:update_hourly, t) :: {:noreply, t}
-  def handle_info(:update_hourly, state) do
-    schedule_update(self())
-
-    state
-    |> Map.keys()
-    |> update(state)
+    {:noreply, update_headway_data(state)}
   end
 
   def handle_info(msg, state) do
@@ -53,50 +93,45 @@ defmodule Engine.Headways do
     {:noreply, state}
   end
 
-  @spec handle_call({:get_headways, String.t(), DateTime.t()}, GenServer.from(), t()) ::
-          {:reply, Headway.ScheduleHeadway.headway_range(), t()}
-  def handle_call({:get_headways, stop_id, current_time}, _from, state) do
+  @spec schedule_data_update(pid(), integer()) :: reference()
+  defp schedule_data_update(pid, fetch_ms) do
+    Process.send_after(pid, :data_update, fetch_ms)
+  end
+
+  @spec schedule_calculation_update(pid(), integer()) :: reference()
+  defp schedule_calculation_update(pid, headway_calc_ms) do
+    Process.send_after(pid, :calculation_update, headway_calc_ms)
+  end
+
+  @spec update_schedule_data(state()) :: state()
+  defp update_schedule_data(state) do
+    schedule_updater = state[:fetcher]
+
+    Map.put(
+      state,
+      :schedule_data,
+      state.stop_ids
+      |> Enum.chunk_every(20)
+      |> Enum.map(&schedule_updater.get_schedules(&1))
+      |> Enum.concat()
+    )
+  end
+
+  @spec update_headway_data(state()) :: state()
+  defp update_headway_data(state) do
     headway_calculator = Application.get_env(:realtime_signs, :headway_calculator)
-    schedules = state[stop_id]
 
-    {:reply,
-     Map.get(
-       headway_calculator.group_headways_for_stations(schedules, [stop_id], current_time),
-       stop_id
-     ), state}
-  end
+    headways =
+      headway_calculator.group_headways_for_stations(
+        state.schedule_data,
+        state.stop_ids,
+        state.time_fetcher.()
+      )
+      |> Enum.into([])
 
-  @spec handle_call({:register, String.t()}, GenServer.from(), t()) :: {:reply, t(), t()}
-  def handle_call({:register, gtfs_stop_id}, _from, state) do
-    state = Map.put(state, gtfs_stop_id, [])
-    quick_update(self())
-    {:reply, :ok, state}
-  end
+    :ets.delete_all_objects(state.ets_table_name)
+    :ets.insert(state.ets_table_name, headways)
 
-  defp quick_update(pid) do
-    Process.send_after(pid, :quick_update, 10_000)
-  end
-
-  defp schedule_update(pid) do
-    Process.send_after(pid, :update_hourly, 60 * 60 * 1_000)
-  end
-
-  defp update([], state) do
-    {:noreply, state}
-  end
-
-  defp update(stops, state) do
-    headway_updater = Application.get_env(:realtime_signs, :headway_requester)
-
-    schedules =
-      stops
-      |> headway_updater.get_schedules()
-      |> Enum.group_by(fn schedule ->
-        schedule["relationships"]["stop"]["data"]["id"]
-      end)
-
-    schedules = Map.merge(state, schedules)
-
-    {:noreply, schedules}
+    state
   end
 end
