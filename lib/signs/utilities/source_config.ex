@@ -44,6 +44,7 @@ defmodule Signs.Utilities.SourceConfig do
 
   @type source :: %__MODULE__{
           stop_id: String.t(),
+          headway_direction_name: String.t(),
           direction_id: 0 | 1,
           routes: [String.t()] | nil,
           platform: :ashmont | :braintree | nil,
@@ -69,6 +70,7 @@ defmodule Signs.Utilities.SourceConfig do
   defp parse_source!(
          %{
            "stop_id" => stop_id,
+           "headway_direction_name" => headway_direction_name,
            "direction_id" => direction_id,
            "platform" => platform,
            "terminal" => terminal?,
@@ -90,6 +92,7 @@ defmodule Signs.Utilities.SourceConfig do
 
     %__MODULE__{
       stop_id: stop_id,
+      headway_direction_name: headway_direction_name,
       direction_id: direction_id,
       routes: source["routes"],
       platform: platform,

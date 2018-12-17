@@ -16,7 +16,13 @@ defmodule Signs.Utilities.Messages do
         {{nil, %Content.Message.Alert.NoService{}}, {nil, %Content.Message.Alert.UseShuttleBus{}}}
 
       true ->
-        Signs.Utilities.Predictions.get_messages(sign)
+        case Signs.Utilities.Predictions.get_messages(sign) do
+          {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}} ->
+            Signs.Utilities.Headways.get_messages(sign)
+
+          messages ->
+            messages
+        end
     end
   end
 end
