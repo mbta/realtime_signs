@@ -3,6 +3,40 @@ defmodule Signs.Utilities.MessagesTest do
 
   alias Signs.Utilities.Messages
 
+  defmodule FakePredictions do
+    def for_stop("1", 0) do
+      [
+        %Predictions.Prediction{
+          stop_id: "1",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
+          destination_stop_id: "70093",
+          seconds_until_arrival: 120,
+          seconds_until_departure: 180
+        },
+        %Predictions.Prediction{
+          stop_id: "1",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
+          destination_stop_id: "70093",
+          seconds_until_arrival: 240,
+          seconds_until_departure: 300
+        }
+      ]
+    end
+
+    def for_stop(_stop_id, _direction_id), do: []
+    def stopped_at?(_stop_id), do: false
+  end
+
+  defmodule FakeHeadways do
+    def get_headways(_stop_id), do: {1, 4}
+  end
+
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     direction_id: 0,
@@ -55,6 +89,80 @@ defmodule Signs.Utilities.MessagesTest do
       assert Messages.get_messages(sign, enabled?, alert_status) ==
                {{nil, %Content.Message.Alert.NoService{}},
                 {nil, %Content.Message.Alert.UseShuttleBus{}}}
+    end
+
+    test "when there are predictions, puts predictions on the sign" do
+      sign = @sign
+      enabled? = true
+      alert_status = :none
+
+      assert Messages.get_messages(sign, enabled?, alert_status) ==
+               {{%Signs.Utilities.SourceConfig{
+                   announce_arriving?: false,
+                   direction_id: 0,
+                   headway_direction_name: "Mattapan",
+                   multi_berth?: false,
+                   platform: nil,
+                   routes: nil,
+                   stop_id: "1",
+                   terminal?: false
+                 },
+                 %Content.Message.Predictions{
+                   headsign: "Ashmont",
+                   minutes: 2,
+                   route_id: "Red",
+                   stop_id: "1",
+                   width: 18
+                 }},
+                {%Signs.Utilities.SourceConfig{
+                   announce_arriving?: false,
+                   direction_id: 0,
+                   headway_direction_name: "Mattapan",
+                   multi_berth?: false,
+                   platform: nil,
+                   routes: nil,
+                   stop_id: "1",
+                   terminal?: false
+                 },
+                 %Content.Message.Predictions{
+                   headsign: "Ashmont",
+                   minutes: 4,
+                   route_id: "Red",
+                   stop_id: "1",
+                   width: 18
+                 }}}
+    end
+
+    test "when there are no predictions and only one source config, puts headways on the sign" do
+      sign = %{@sign | source_config: {[%{@src | stop_id: "no_preds"}]}}
+      enabled? = true
+      alert_status = :none
+
+      assert Messages.get_messages(sign, enabled?, alert_status) ==
+               {{%Signs.Utilities.SourceConfig{
+                   announce_arriving?: false,
+                   direction_id: 0,
+                   headway_direction_name: "Mattapan",
+                   multi_berth?: false,
+                   platform: nil,
+                   routes: nil,
+                   stop_id: "no_preds",
+                   terminal?: false
+                 },
+                 %Content.Message.Headways.Top{
+                   headsign: "Mattapan",
+                   vehicle_type: :train
+                 }},
+                {%Signs.Utilities.SourceConfig{
+                   announce_arriving?: false,
+                   direction_id: 0,
+                   headway_direction_name: "Mattapan",
+                   multi_berth?: false,
+                   platform: nil,
+                   routes: nil,
+                   stop_id: "no_preds",
+                   terminal?: false
+                 }, %Content.Message.Headways.Bottom{range: {1, 4}}}}
     end
   end
 end
