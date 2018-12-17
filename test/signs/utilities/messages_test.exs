@@ -164,5 +164,18 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  }, %Content.Message.Headways.Bottom{range: {1, 4}}}}
     end
+
+    test "when there are no predictions and more than one source config, puts nothing on the sign" do
+      sign = %{
+        @sign
+        | source_config: {[%{@src | stop_id: "no_preds"}, %{@src | stop_id: "no_preds"}]}
+      }
+
+      enabled? = true
+      alert_status = :none
+
+      assert Messages.get_messages(sign, enabled?, alert_status) ==
+               {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+    end
   end
 end
