@@ -6,6 +6,7 @@ defmodule Signs.Utilities.MessagesTest do
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     direction_id: 0,
+    headway_direction_name: "Mattapan",
     platform: nil,
     terminal?: false,
     announce_arriving?: false
@@ -18,6 +19,7 @@ defmodule Signs.Utilities.MessagesTest do
     current_content_top: {@src, %Content.Message.Predictions{headsign: "Alewife", minutes: 4}},
     current_content_bottom: {@src, %Content.Message.Predictions{headsign: "Ashmont", minutes: 3}},
     prediction_engine: FakePredictions,
+    headway_engine: FakeHeadways,
     sign_updater: FakeUpdater,
     tick_bottom: 1,
     tick_top: 1,

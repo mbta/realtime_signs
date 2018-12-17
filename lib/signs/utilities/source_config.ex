@@ -39,7 +39,14 @@ defmodule Signs.Utilities.SourceConfig do
   ]
   """
 
-  @enforce_keys [:stop_id, :direction_id, :platform, :terminal?, :announce_arriving?]
+  @enforce_keys [
+    :stop_id,
+    :headway_direction_name,
+    :direction_id,
+    :platform,
+    :terminal?,
+    :announce_arriving?
+  ]
   defstruct @enforce_keys ++ [:routes, multi_berth?: false]
 
   @type source :: %__MODULE__{

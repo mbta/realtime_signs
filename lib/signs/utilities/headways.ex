@@ -16,14 +16,16 @@ defmodule Signs.Utilities.Headways do
 
   defp do_headway_messages(sign, stop_id) do
     config = source_config(sign)
-    headway_range = Engine.Headways.get_headways(stop_id)
+    headway_range = sign.headway_engine.get_headways(stop_id)
 
     if config do
-      {config,
-       %Content.Message.Headways.Top{
-         headsign: config.headway_direction_name,
-         vehicle_type: vehicle_type(config.routes)
-       }, {config, %Content.Message.Headways.Bottom{range: headway_range}}}
+      {{config,
+        %Content.Message.Headways.Top{
+          headsign: config.headway_direction_name,
+          vehicle_type: vehicle_type(config.routes)
+        }}, {config, %Content.Message.Headways.Bottom{range: headway_range}}}
+    else
+      {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
     end
   end
 
@@ -33,7 +35,7 @@ defmodule Signs.Utilities.Headways do
 
   defp source_config(sign) do
     case sign.source_config do
-      {one} -> one
+      {[one]} -> one
       {_, _} -> nil
     end
   end
