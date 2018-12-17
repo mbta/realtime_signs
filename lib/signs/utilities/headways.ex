@@ -1,4 +1,8 @@
 defmodule Signs.Utilities.Headways do
+  @moduledoc """
+  Given a sign with a SourceConfig, fetches headways and
+  geneartes the top and bottom lines for the sign
+  """
   alias Signs.Utilities.SourceConfig
 
   @spec get_messages(Signs.Realtime.t()) ::
