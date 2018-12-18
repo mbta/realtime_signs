@@ -128,7 +128,10 @@ defmodule Engine.Headways do
         state.time_fetcher.()
       )
 
-    headways = Map.merge(Map.new(Enum.map(state.stop_ids, fn x -> {x, :none} end)), headways)
+    headways =
+      Enum.map(state.stop_ids, fn x -> {x, :none} end)
+      |> Map.new()
+      |> Map.merge(headways)
 
     :ets.insert(state.ets_table_name, headways |> Enum.into([]))
 
