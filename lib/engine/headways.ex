@@ -129,7 +129,8 @@ defmodule Engine.Headways do
       )
 
     headways =
-      Enum.map(state.stop_ids, fn x -> {x, :none} end)
+      state.stop_ids
+      |> Enum.map(fn x -> {x, :none} end)
       |> Map.new()
       |> Map.merge(headways)
 
