@@ -33,7 +33,6 @@ defmodule Signs.Utilities.Headways do
     end
   end
 
-  defp vehicle_type(["Mattapan"]), do: :trolley
   defp vehicle_type(["743"]), do: :bus
   defp vehicle_type(_), do: :train
 
