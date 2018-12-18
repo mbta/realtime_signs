@@ -3767,7 +3767,7 @@
           "stop_id": "70162",
           "direction_id": 1,
           "headway_direction_name": "Govt Ctr",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3786,7 +3786,7 @@
           "stop_id": "70163",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3805,7 +3805,7 @@
           "stop_id": "70164",
           "direction_id": 1,
           "headway_direction_name": "Govt Ctr",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3824,7 +3824,7 @@
           "stop_id": "70165",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3843,7 +3843,7 @@
           "stop_id": "70166",
           "direction_id": 1,
           "headway_direction_name": "Govt Ctr",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3862,7 +3862,7 @@
           "stop_id": "70167",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3881,7 +3881,7 @@
           "stop_id": "70168",
           "direction_id": 1,
           "headway_direction_name": "Govt Ctr",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3900,7 +3900,7 @@
           "stop_id": "70169",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3919,7 +3919,7 @@
           "stop_id": "70170",
           "direction_id": 1,
           "headway_direction_name": "Govt Ctr",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3938,7 +3938,7 @@
           "stop_id": "70171",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3957,7 +3957,7 @@
           "stop_id": "70172",
           "direction_id": 1,
           "headway_direction_name": "Govt Ctr",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3976,7 +3976,7 @@
           "stop_id": "70173",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -3995,7 +3995,7 @@
           "stop_id": "70174",
           "direction_id": 1,
           "headway_direction_name": "Govt Ctr",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4014,7 +4014,7 @@
           "stop_id": "70175",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4033,7 +4033,7 @@
           "stop_id": "70176",
           "direction_id": 1,
           "headway_direction_name": "Govt Ctr",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4052,7 +4052,7 @@
           "stop_id": "70177",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4071,7 +4071,7 @@
           "stop_id": "70178",
           "direction_id": 1,
           "headway_direction_name": "Govt Ctr",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4090,7 +4090,7 @@
           "stop_id": "70179",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4109,7 +4109,7 @@
           "stop_id": "70180",
           "direction_id": 1,
           "headway_direction_name": "Govt Ctr",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4128,7 +4128,7 @@
           "stop_id": "70181",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4147,7 +4147,7 @@
           "stop_id": "70182",
           "direction_id": 1,
           "headway_direction_name": "Govt Ctr",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4166,7 +4166,7 @@
           "stop_id": "70183",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4185,7 +4185,7 @@
           "stop_id": "70186",
           "direction_id": 1,
           "headway_direction_name": "Govt Ctr",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4204,7 +4204,7 @@
           "stop_id": "70187",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4299,7 +4299,7 @@
           "stop_id": "70150",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4310,7 +4310,7 @@
           "stop_id": "70151",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4329,7 +4329,7 @@
           "stop_id": "70152",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4348,7 +4348,7 @@
           "stop_id": "70153",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4367,7 +4367,7 @@
           "stop_id": "70152",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4378,7 +4378,7 @@
           "stop_id": "70153",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4397,7 +4397,7 @@
           "stop_id": "70154",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4416,7 +4416,7 @@
           "stop_id": "70155",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4435,7 +4435,7 @@
           "stop_id": "70156",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4454,7 +4454,7 @@
           "stop_id": "70157",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4473,7 +4473,7 @@
           "stop_id": "70156",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4484,7 +4484,7 @@
           "stop_id": "70157",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4503,7 +4503,7 @@
           "stop_id": "70158",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4522,7 +4522,7 @@
           "stop_id": "70159",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4541,7 +4541,7 @@
           "stop_id": "70242",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4560,7 +4560,7 @@
           "stop_id": "70241",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4579,7 +4579,7 @@
           "stop_id": "70240",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4598,7 +4598,7 @@
           "stop_id": "70239",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4617,7 +4617,7 @@
           "stop_id": "70240",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4628,7 +4628,7 @@
           "stop_id": "70239",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4647,7 +4647,7 @@
           "stop_id": "70200",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4666,7 +4666,7 @@
           "stop_id": "70200",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4685,7 +4685,7 @@
           "stop_id": "70197",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -4696,7 +4696,7 @@
           "direction_id": 0,
           "headway_direction_name": "Westbound",
           "platform": null,
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "terminal": false,
           "announce_arriving": true,
           "multi_berth": true
@@ -4715,7 +4715,7 @@
           "stop_id": "70196",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -4726,7 +4726,7 @@
           "direction_id": 0,
           "headway_direction_name": "Westbound",
           "platform": null,
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "terminal": false,
           "announce_arriving": true,
           "multi_berth": true
@@ -4746,7 +4746,7 @@
           "stop_id": "70201",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4765,7 +4765,7 @@
           "stop_id": "70202",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4784,7 +4784,7 @@
           "stop_id": "70201",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4795,7 +4795,7 @@
           "stop_id": "70202",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4815,7 +4815,7 @@
           "stop_id": "70203",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4834,7 +4834,7 @@
           "stop_id": "70204",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4854,7 +4854,7 @@
           "stop_id": "70205",
           "direction_id": 1,
           "headway_direction_name": "Lechmere",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4873,7 +4873,7 @@
           "stop_id": "70206",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4892,7 +4892,7 @@
           "stop_id": "70205",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4903,7 +4903,7 @@
           "stop_id": "70206",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4922,7 +4922,7 @@
           "stop_id": "70207",
           "direction_id": 1,
           "headway_direction_name": "Lechmere",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4941,7 +4941,7 @@
           "stop_id": "70208",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4960,7 +4960,7 @@
           "stop_id": "70207",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
@@ -4971,7 +4971,7 @@
           "stop_id": "70208",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green=B", "Green-C", "Green-D", "Green-E"],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true
