@@ -71,11 +71,19 @@ defmodule Engine.Alerts.ApiFetcher do
   end
 
   @spec determine_route_statuses([%{}]) :: %{Engine.Alerts.Fetcher.stop_id() => any()}
-  defp determine_route_statuses(_alert_data) do
-    %{}
+  defp determine_route_statuses(alert_data) do
+    Enum.reduce(alert_data, %{}, fn alert, acc ->
+      statuses = process_alert_for_routes(alert)
+
+      Map.merge(acc, statuses, fn _stop_id, s1, s2 ->
+        Engine.Alerts.Fetcher.higher_priority_status(s1, s2)
+      end)
+    end)
   end
 
-  @spec process_alert_for_stations(map(), %Engine.Alerts.StationConfig{}) :: %{}
+  @spec process_alert_for_stations(%{}, %StationConfig{}) :: %{
+          Engine.Alerts.Fetcher.route_id() => Engine.Alerts.Fetcher.stop_status()
+        }
   defp process_alert_for_stations(alert, station_config) do
     case get_in(alert, ["attributes", "effect"]) do
       "SHUTTLE" ->
@@ -92,6 +100,19 @@ defmodule Engine.Alerts.ApiFetcher do
       _ ->
         %{}
     end
+  end
+
+  @spec process_alert_for_routes(%{}) :: %{}
+  defp process_alert_for_routes(alert) do
+    alert["attributes"]["informed_entity"]
+    |> Enum.flat_map(fn ie ->
+      if get_in(alert, ["attributes", "effect"]) == "SUSPENSION" and !("stop" in Map.keys(ie)) do
+        [{ie["route"], :suspension}]
+      else
+        []
+      end
+    end)
+    |> Enum.into(%{})
   end
 
   @spec get_statuses([String.t()], %Engine.Alerts.StationConfig{}) :: %{}
