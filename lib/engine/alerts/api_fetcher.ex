@@ -5,11 +5,26 @@ defmodule Engine.Alerts.ApiFetcher do
 
   @impl Engine.Alerts.Fetcher
 
-  @spec get_stop_statuses() :: {:ok, %{}} | {:error, atom()}
-  def get_stop_statuses do
+  @spec get_statuses() ::
+          {:ok,
+           %{
+             :stop_statuses => %{
+               Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()
+             },
+             :route_statuses => %{}
+           }}
+          | {:error, any()}
+  def get_statuses do
     case get_alerts() do
-      {:ok, data} -> {:ok, determine_stop_statuses(data)}
-      err -> {:error, err}
+      {:ok, data} ->
+        {:ok,
+         %{
+           :stop_statuses => determine_stop_statuses(data),
+           :route_statuses => determine_route_statuses(data)
+         }}
+
+      err ->
+        {:error, err}
     end
   end
 
@@ -40,7 +55,9 @@ defmodule Engine.Alerts.ApiFetcher do
     end
   end
 
-  @spec determine_stop_statuses([%{}]) :: %{}
+  @spec determine_stop_statuses([%{}]) :: %{
+          Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()
+        }
   defp determine_stop_statuses(alert_data) do
     station_config = StationConfig.load_config()
 
@@ -51,6 +68,11 @@ defmodule Engine.Alerts.ApiFetcher do
         Engine.Alerts.Fetcher.higher_priority_status(s1, s2)
       end)
     end)
+  end
+
+  @spec determine_route_statuses([%{}]) :: %{Engine.Alerts.Fetcher.stop_id() => any()}
+  defp determine_route_statuses(_alert_data) do
+    %{}
   end
 
   @spec process_alert_for_stations(map(), %Engine.Alerts.StationConfig{}) :: %{}

@@ -63,11 +63,11 @@ defmodule Engine.Alerts do
   def handle_info(:fetch, state) do
     schedule_fetch(self(), state.fetch_ms)
 
-    case state.fetcher.get_stop_statuses() do
-      {:ok, statuses} ->
+    case state.fetcher.get_statuses() do
+      {:ok, %{:stop_statuses => stop_statuses, :route_statuses => _}} ->
         :ets.delete_all_objects(state.stops_ets_table_name)
-        :ets.insert(state.stops_ets_table_name, Enum.into(statuses, []))
-        Logger.info("Engine.Alerts alert_statuses: #{inspect(statuses)}")
+        :ets.insert(state.stops_ets_table_name, Enum.into(stop_statuses, []))
+        Logger.info("Engine.Alerts alert_statuses: #{inspect(stop_statuses)}")
 
       {:error, e} ->
         Logger.warn("Engine.Alerts could not fetch stop statuses: #{inspect(e)}")

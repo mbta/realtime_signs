@@ -29,8 +29,15 @@ defmodule Engine.AlertsTest do
       @behaviour Engine.Alerts.Fetcher
 
       @impl true
-      def get_stop_statuses do
-        {:ok, %{"123" => :shuttles_closed_station, "234" => :shuttles_transfer_station}}
+      def get_statuses do
+        {:ok,
+         %{
+           :stop_statuses => %{
+             "123" => :shuttles_closed_station,
+             "234" => :shuttles_transfer_station
+           },
+           :route_statuses => %{}
+         }}
       end
     end
 
@@ -38,7 +45,7 @@ defmodule Engine.AlertsTest do
       @behaviour Engine.Alerts.Fetcher
 
       @impl true
-      def get_stop_statuses do
+      def get_statuses do
         {:error, :didnt_work}
       end
     end
