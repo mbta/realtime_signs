@@ -190,7 +190,8 @@ defmodule Fake.HTTPoison do
             "effect" => "SHUTTLE",
             "informed_entity" => [
               %{
-                "stop" => "70151"
+                "stop" => "70151",
+                "route" => "Green-B"
               }
             ]
           }
@@ -200,7 +201,8 @@ defmodule Fake.HTTPoison do
             "effect" => "SHUTTLE",
             "informed_entity" => [
               %{
-                "stop" => "70151"
+                "stop" => "70151",
+                "route" => "Green-B"
               }
             ]
           }
