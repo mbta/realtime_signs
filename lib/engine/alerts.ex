@@ -4,26 +4,30 @@ defmodule Engine.Alerts do
   alias Engine.Alerts.Fetcher
 
   @type state :: %{
-          ets_table_name: term(),
+          stops_ets_table_name: term(),
+          routes_ets_table_name: term(),
           fetcher: module(),
           fetch_ms: integer()
         }
+
+  @stops_table :alerts_by_stop
+  @routes_table :alerts_by_route
 
   def start_link(opts \\ []) do
     name = opts[:gen_server_name] || __MODULE__
     GenServer.start_link(__MODULE__, opts, name: name)
   end
 
-  @spec max_stop_status([Fetcher.stop_id()]) :: Fetcher.stop_status()
-  def max_stop_status(ets_table_name \\ __MODULE__, stop_ids) do
+  @spec max_stop_status(:ets.tab(), [Fetcher.stop_id()]) :: Fetcher.stop_status()
+  def max_stop_status(ets_table_name \\ @stops_table, stop_ids) do
     Enum.reduce(stop_ids, :none, fn stop_id, overall_status ->
       stop_status = stop_status(ets_table_name, stop_id)
       Fetcher.higher_priority_status(stop_status, overall_status)
     end)
   end
 
-  @spec stop_status(Fetcher.stop_id()) :: Fetcher.stop_status()
-  def stop_status(ets_table_name \\ __MODULE__, stop_id) do
+  @spec stop_status(:ets.tab(), Fetcher.stop_id()) :: Fetcher.stop_status()
+  def stop_status(ets_table_name \\ @stops_table, stop_id) do
     case :ets.lookup(ets_table_name, stop_id) do
       [{^stop_id, status}] -> status
       _ -> :none
@@ -34,15 +38,21 @@ defmodule Engine.Alerts do
   def init(opts) do
     fetch_ms = opts[:fetch_ms] || 30_000
     fetcher = opts[:fetcher] || Engine.Alerts.ApiFetcher
-    ets_table_name = opts[:ets_table_name] || __MODULE__
+
+    stops_ets_table_name = opts[:stops_ets_table_name] || @stops_table
+    routes_ets_table_name = opts[:routes_ets_table_name] || @routes_table
 
     schedule_fetch(self(), fetch_ms)
 
-    ^ets_table_name =
-      :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+    ^stops_ets_table_name =
+      :ets.new(stops_ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+
+    ^routes_ets_table_name =
+      :ets.new(routes_ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
 
     state = %{
-      ets_table_name: ets_table_name,
+      stops_ets_table_name: stops_ets_table_name,
+      routes_ets_table_name: routes_ets_table_name,
       fetcher: fetcher,
       fetch_ms: fetch_ms
     }
@@ -55,8 +65,8 @@ defmodule Engine.Alerts do
 
     case state.fetcher.get_stop_statuses() do
       {:ok, statuses} ->
-        :ets.delete_all_objects(state.ets_table_name)
-        :ets.insert(state.ets_table_name, Enum.into(statuses, []))
+        :ets.delete_all_objects(state.stops_ets_table_name)
+        :ets.insert(state.stops_ets_table_name, Enum.into(statuses, []))
         Logger.info("Engine.Alerts alert_statuses: #{inspect(statuses)}")
 
       {:error, e} ->

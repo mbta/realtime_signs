@@ -41,29 +41,29 @@ defmodule Engine.Alerts.ApiFetcher do
     station_config = StationConfig.load_config()
 
     Enum.reduce(alert_data, %{}, fn alert, acc ->
-      statuses = process_alert(alert, station_config)
+      statuses = process_alert_for_stations(alert, station_config)
 
-      Map.merge(
-        acc,
-        statuses,
-        fn _stop_id, s1, s2 -> Engine.Alerts.Fetcher.higher_priority_status(s1, s2) end
-      )
+      Map.merge(acc, statuses, fn _stop_id, s1, s2 ->
+        Engine.Alerts.Fetcher.higher_priority_status(s1, s2)
+      end)
     end)
   end
 
-  defp process_alert(alert, station_config) do
-    if get_in(alert, ["attributes", "effect"]) == "SHUTTLE" do
-      alert["attributes"]["informed_entity"]
-      |> Enum.flat_map(fn ie ->
-        if ie["stop"] do
-          [ie["stop"]]
-        else
-          []
-        end
-      end)
-      |> get_statuses(station_config)
-    else
-      %{}
+  defp process_alert_for_stations(alert, station_config) do
+    case get_in(alert, ["attributes", "effect"]) do
+      "SHUTTLE" ->
+        alert["attributes"]["informed_entity"]
+        |> Enum.flat_map(fn ie ->
+          if ie["stop"] do
+            [ie["stop"]]
+          else
+            []
+          end
+        end)
+        |> get_statuses(station_config)
+
+      _ ->
+        %{}
     end
   end
 
