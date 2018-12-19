@@ -15,6 +15,7 @@ defmodule Signs.Utilities.Reader do
           current_content_bottom: %Content.Message.Headways.Bottom{}
         } = sign
       ) do
+    Logger.info("reading headway sign")
     send_audio_update({sign.source_config, sign.current_content_top}, sign)
     %{sign | tick_read: sign.read_period_seconds}
   end
@@ -61,8 +62,8 @@ defmodule Signs.Utilities.Reader do
     end
 
     case Content.Audio.BusesToDestination.from_headway_message(sign, msg.headsign) do
-      {%Content.Audio.BusesToDestination{} = audio,
-       %Content.Audio.BusesToDestination{} = _spanish} ->
+      {%Content.Audio.BusesToDestination{} = audio, %Content.Audio.BusesToDestination{}} ->
+        Logger.info("sent the audio for the headways")
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
 
       {nil, nil} ->
