@@ -219,10 +219,31 @@ defmodule Fake.HTTPoison do
         },
         %{
           "attributes" => %{
+            "effect" => "SUSPENSION",
+            "informed_entity" => [
+              %{
+                "route" => "Red"
+              }
+            ]
+          }
+        },
+        %{
+          "attributes" => %{
             "effect" => "SOMETHING_IRRELEVANT",
             "informed_entity" => [
               %{
-                "stop" => "70152"
+                "stop" => "70152",
+                "route" => "Green-B"
+              }
+            ]
+          }
+        },
+        %{
+          "attributes" => %{
+            "effect" => "SOMETHING_ELSE_IRRELEVANT",
+            "informed_entity" => [
+              %{
+                "route" => "Red"
               }
             ]
           }

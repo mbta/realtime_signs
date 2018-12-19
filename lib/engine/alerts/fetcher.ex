@@ -10,7 +10,7 @@ defmodule Engine.Alerts.Fetcher do
   @spec higher_priority_status(stop_status(), stop_status()) :: stop_status()
   def higher_priority_status(status1, status2)
       when status1 == :suspension or status2 == :suspension do
-    :shuttles_closed_station
+    :suspension
   end
 
   def higher_priority_status(status1, status2)
