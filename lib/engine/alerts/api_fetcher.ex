@@ -4,6 +4,8 @@ defmodule Engine.Alerts.ApiFetcher do
   alias Engine.Alerts.StationConfig
 
   @impl Engine.Alerts.Fetcher
+
+  @spec get_stop_statuses() :: {:ok, %{}} | {:error, atom()}
   def get_stop_statuses do
     case get_alerts() do
       {:ok, data} -> {:ok, determine_stop_statuses(data)}
@@ -11,6 +13,7 @@ defmodule Engine.Alerts.ApiFetcher do
     end
   end
 
+  @spec get_alerts() :: {:ok, [%{}]} | {:error, atom()}
   defp get_alerts do
     alerts_url = Application.get_env(:realtime_signs, :api_v3_url) <> "/alerts"
 
@@ -37,6 +40,7 @@ defmodule Engine.Alerts.ApiFetcher do
     end
   end
 
+  @spec determine_stop_statuses([%{}]) :: %{}
   defp determine_stop_statuses(alert_data) do
     station_config = StationConfig.load_config()
 
@@ -49,6 +53,7 @@ defmodule Engine.Alerts.ApiFetcher do
     end)
   end
 
+  @spec process_alert_for_stations(map(), %Engine.Alerts.StationConfig{}) :: %{}
   defp process_alert_for_stations(alert, station_config) do
     case get_in(alert, ["attributes", "effect"]) do
       "SHUTTLE" ->
@@ -67,6 +72,7 @@ defmodule Engine.Alerts.ApiFetcher do
     end
   end
 
+  @spec get_statuses([String.t()], %Engine.Alerts.StationConfig{}) :: %{}
   def get_statuses(stop_ids, station_config) do
     stop_ids
     |> Enum.flat_map(fn stop_id ->
