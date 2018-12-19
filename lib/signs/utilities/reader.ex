@@ -16,6 +16,7 @@ defmodule Signs.Utilities.Reader do
         } = sign
       ) do
     send_audio_update({sign.source_config, sign.current_content_top}, sign)
+    %{sign | tick_read: sign.read_period_seconds}
   end
 
   def read_sign(sign) do
