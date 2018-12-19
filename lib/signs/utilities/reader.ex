@@ -9,6 +9,14 @@ defmodule Signs.Utilities.Reader do
     sign
   end
 
+  def read_sign(
+        %{
+          current_content_top: %Content.Message.Headways.Top{},
+          current_content_bottom: %Content.Message.Headways.Bottom{}
+        } = sign
+      ) do
+  end
+
   def read_sign(sign) do
     top_headsign =
       case sign.current_content_top do
