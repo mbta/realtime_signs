@@ -124,10 +124,10 @@ defmodule Signs.Utilities.SourceConfig do
 
   @spec sign_routes(config) :: [String.t()]
   def sign_routes({s1, s2}) do
-    Enum.flat_map(s1, & &1.routes) ++ Enum.flat_map(s2, & &1.routes)
+    Enum.flat_map(s1, &(&1.routes || [])) ++ Enum.flat_map(s2, &(&1.routes || []))
   end
 
   def sign_routes({s}) do
-    Enum.flat_map(s, & &1.routes)
+    Enum.flat_map(s, &(&1.routes || []))
   end
 end

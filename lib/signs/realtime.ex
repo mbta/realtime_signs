@@ -80,10 +80,15 @@ defmodule Signs.Realtime do
       |> expire_bottom()
       |> expire_top()
 
-    alert_status =
+    sign_stop_ids =
       sign.source_config
       |> Signs.Utilities.SourceConfig.sign_stop_ids()
-      |> Engine.Alerts.max_stop_status([])
+
+    sign_routes =
+      sign.source_config
+      |> Signs.Utilities.SourceConfig.sign_routes()
+
+    alert_status = Engine.Alerts.max_stop_status(sign_stop_ids, sign_routes)
 
     enabled? = Engine.Config.enabled?(sign.id)
 
