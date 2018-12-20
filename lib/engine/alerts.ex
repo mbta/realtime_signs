@@ -34,6 +34,14 @@ defmodule Engine.Alerts do
     end
   end
 
+  @spec route_status(:ets.tab(), Fetcher.route_id()) :: Fetcher.stop_status()
+  def route_status(ets_table_name \\ @routes_table, route_id) do
+    case :ets.lookup(ets_table_name, route_id) do
+      [{^route_id, status}] -> status
+      _ -> :none
+    end
+  end
+
   @spec init(Keyword.t()) :: {:ok, state()}
   def init(opts) do
     fetch_ms = opts[:fetch_ms] || 30_000
@@ -64,10 +72,17 @@ defmodule Engine.Alerts do
     schedule_fetch(self(), state.fetch_ms)
 
     case state.fetcher.get_statuses() do
-      {:ok, %{:stop_statuses => stop_statuses, :route_statuses => _}} ->
+      {:ok, %{:stop_statuses => stop_statuses, :route_statuses => route_statuses}} ->
         :ets.delete_all_objects(state.stops_ets_table_name)
         :ets.insert(state.stops_ets_table_name, Enum.into(stop_statuses, []))
-        Logger.info("Engine.Alerts alert_statuses: #{inspect(stop_statuses)}")
+        :ets.delete_all_objects(state.routes_ets_table_name)
+        :ets.insert(state.routes_ets_table_name, Enum.into(route_statuses, []))
+
+        Logger.info(
+          "Engine.Alerts Stop alert statuses: #{inspect(stop_statuses)} Route alert statuses #{
+            inspect(route_statuses)
+          }"
+        )
 
       {:error, e} ->
         Logger.warn("Engine.Alerts could not fetch stop statuses: #{inspect(e)}")

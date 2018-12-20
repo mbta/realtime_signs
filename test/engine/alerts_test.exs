@@ -36,7 +36,9 @@ defmodule Engine.AlertsTest do
              "123" => :shuttles_closed_station,
              "234" => :shuttles_transfer_station
            },
-           :route_statuses => %{}
+           :route_statuses => %{
+             "Red" => :suspension
+           }
          }}
       end
     end
@@ -84,6 +86,9 @@ defmodule Engine.AlertsTest do
 
       assert Engine.Alerts.max_stop_status(stops_ets_table_name, ["n/a", "234"]) ==
                :shuttles_transfer_station
+
+      assert Engine.Alerts.route_status(routes_ets_table_name, "Red") == :suspension
+      assert Engine.Alerts.route_status(routes_ets_table_name, "Orange") == :none
     end
 
     test "when alerts fetch fails, keeps old state" do
