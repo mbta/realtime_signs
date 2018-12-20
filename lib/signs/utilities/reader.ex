@@ -17,18 +17,14 @@ defmodule Signs.Utilities.Reader do
           current_content_bottom: {_, %Content.Message.Headways.Bottom{} = bottom}
         } = sign
       ) do
-    Logger.info("sign read for headway sign: #{inspect(top)} #{inspect(bottom)}")
+    Logger.info("sign read for headway sign: ")
 
     send_audio_update({sign.source_config, sign.current_content_top}, sign)
     %{sign | tick_read: sign.read_period_seconds}
   end
 
   def read_sign(sign) do
-    Logger.info(
-      "sign read for normal predictions: #{inspect(sign.current_content_top)} #{
-        inspect(sign.current_content_bottom)
-      }"
-    )
+    Logger.info("sign read for normal predictions:  ")
 
     top_headsign =
       case sign.current_content_top do
