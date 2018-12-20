@@ -10,7 +10,7 @@ defmodule Signs.Utilities.Updater do
   require Logger
 
   def update_sign(sign, {_top_src, top_msg} = top, {_bottom_src, bottom_msg} = bottom) do
-    IO.inspect("update_sign_messages: #{inspect(top_msg)}, #{inspect(bottom_msg)}")
+    IO.inspect("update_sign_messages: ")
 
     sign =
       sign
