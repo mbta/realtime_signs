@@ -18,11 +18,23 @@ defmodule Engine.Alerts do
     GenServer.start_link(__MODULE__, opts, name: name)
   end
 
-  @spec max_stop_status(:ets.tab(), [Fetcher.stop_id()]) :: Fetcher.stop_status()
-  def max_stop_status(ets_table_name \\ @stops_table, stop_ids) do
-    Enum.reduce(stop_ids, :none, fn stop_id, overall_status ->
-      stop_status = stop_status(ets_table_name, stop_id)
-      Fetcher.higher_priority_status(stop_status, overall_status)
+  @spec max_stop_status(:ets.tab(), :ets.tab(), [Fetcher.stop_id()], [Fetcher.route_id()]) ::
+          Fetcher.stop_status()
+  def max_stop_status(
+        stops_ets_table_name \\ @stops_table,
+        routes_ets_table_name \\ @routes_table,
+        stop_ids,
+        route_ids
+      ) do
+    overall_stop_status =
+      Enum.reduce(stop_ids, :none, fn stop_id, overall_status ->
+        stop_status(stops_ets_table_name, stop_id)
+        |> Fetcher.higher_priority_status(overall_status)
+      end)
+
+    Enum.reduce(route_ids, overall_stop_status, fn route_id, overall_status ->
+      route_status(routes_ets_table_name, route_id)
+      |> Fetcher.higher_priority_status(overall_status)
     end)
   end
 

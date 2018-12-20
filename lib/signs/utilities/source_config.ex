@@ -121,4 +121,13 @@ defmodule Signs.Utilities.SourceConfig do
   def sign_stop_ids({s}) do
     Enum.map(s, & &1.stop_id)
   end
+
+  @spec sign_routes(config) :: [String.t()]
+  def sign_routes({s1, s2}) do
+    Enum.flat_map(s1, & &1.routes) ++ Enum.flat_map(s2, & &1.routes)
+  end
+
+  def sign_routes({s}) do
+    Enum.flat_map(s, & &1.routes)
+  end
 end

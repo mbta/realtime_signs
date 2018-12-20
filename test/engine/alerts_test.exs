@@ -76,16 +76,49 @@ defmodule Engine.AlertsTest do
       assert Engine.Alerts.stop_status(stops_ets_table_name, "234") == :shuttles_transfer_station
       assert Engine.Alerts.stop_status(stops_ets_table_name, "n/a") == :none
 
-      assert Engine.Alerts.max_stop_status(stops_ets_table_name, ["n/a-1", "n/a-2"]) == :none
+      assert Engine.Alerts.max_stop_status(
+               stops_ets_table_name,
+               routes_ets_table_name,
+               ["n/a-1", "n/a-2"],
+               ["n/a-3"]
+             ) == :none
 
-      assert Engine.Alerts.max_stop_status(stops_ets_table_name, ["n/a", "123"]) ==
-               :shuttles_closed_station
+      assert Engine.Alerts.max_stop_status(
+               stops_ets_table_name,
+               routes_ets_table_name,
+               ["n/a-1", "123"],
+               ["n/a-2"]
+             ) == :shuttles_closed_station
 
-      assert Engine.Alerts.max_stop_status(stops_ets_table_name, ["n/a", "123", "234"]) ==
-               :shuttles_closed_station
+      assert Engine.Alerts.max_stop_status(
+               stops_ets_table_name,
+               routes_ets_table_name,
+               ["n/a-1", "123", "234"],
+               [
+                 "n/a-2"
+               ]
+             ) == :shuttles_closed_station
 
-      assert Engine.Alerts.max_stop_status(stops_ets_table_name, ["n/a", "234"]) ==
-               :shuttles_transfer_station
+      assert Engine.Alerts.max_stop_status(
+               stops_ets_table_name,
+               routes_ets_table_name,
+               ["n/a-1", "234"],
+               ["n/a-2"]
+             ) == :shuttles_transfer_station
+
+      assert Engine.Alerts.max_stop_status(
+               stops_ets_table_name,
+               routes_ets_table_name,
+               ["n/a-1", "234"],
+               ["Red"]
+             ) == :suspension
+
+      assert Engine.Alerts.max_stop_status(
+               stops_ets_table_name,
+               routes_ets_table_name,
+               ["n/a-1", "234"],
+               ["Orange"]
+             ) == :shuttles_transfer_station
 
       assert Engine.Alerts.route_status(routes_ets_table_name, "Red") == :suspension
       assert Engine.Alerts.route_status(routes_ets_table_name, "Orange") == :none
