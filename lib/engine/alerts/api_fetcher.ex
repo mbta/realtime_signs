@@ -82,32 +82,55 @@ defmodule Engine.Alerts.ApiFetcher do
   end
 
   @spec process_alert_for_stations(%{}, %StationConfig{}) :: %{
-          Engine.Alerts.Fetcher.route_id() => Engine.Alerts.Fetcher.stop_status()
+          Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()
         }
   defp process_alert_for_stations(alert, station_config) do
+    stops = stops_for_alert(alert)
+
     case get_in(alert, ["attributes", "effect"]) do
       "SHUTTLE" ->
-        alert["attributes"]["informed_entity"]
-        |> Enum.flat_map(fn ie ->
-          if ie["stop"] do
-            [ie["stop"]]
-          else
-            []
-          end
-        end)
-        |> get_statuses(station_config)
+        stops
+        |> get_shuttle_statuses(station_config)
+
+      "SUSPENSION" ->
+        stops
+        |> Enum.map(fn s -> {s, :suspension} end)
+        |> Enum.into(%{})
 
       _ ->
         %{}
     end
   end
 
-  @spec process_alert_for_routes(%{}) :: %{}
+  @spec stops_for_alert(%{}) :: [Engine.Alerts.Fetcher.stop_id()]
+  defp stops_for_alert(alert) do
+    alert["attributes"]["informed_entity"]
+    |> Enum.flat_map(fn ie ->
+      if ie["stop"] do
+        [ie["stop"]]
+      else
+        []
+      end
+    end)
+  end
+
+  @spec process_alert_for_routes(%{}) :: %{
+          Engine.Alerts.Fetcher.route_id() => Engine.Alerts.Fetcher.stop_status()
+        }
   defp process_alert_for_routes(alert) do
     alert["attributes"]["informed_entity"]
     |> Enum.flat_map(fn ie ->
-      if get_in(alert, ["attributes", "effect"]) == "SUSPENSION" and !("stop" in Map.keys(ie)) do
-        [{ie["route"], :suspension}]
+      if !("stop" in Map.keys(ie)) do
+        case get_in(alert, ["attributes", "effect"]) do
+          "SUSPENSION" ->
+            [{ie["route"], :suspension}]
+
+          "SHUTTLE" ->
+            [{ie["route"], :shuttles_closed_station}]
+
+          _ ->
+            []
+        end
       else
         []
       end
@@ -115,8 +138,8 @@ defmodule Engine.Alerts.ApiFetcher do
     |> Enum.into(%{})
   end
 
-  @spec get_statuses([String.t()], %Engine.Alerts.StationConfig{}) :: %{}
-  def get_statuses(stop_ids, station_config) do
+  @spec get_shuttle_statuses([String.t()], %Engine.Alerts.StationConfig{}) :: %{}
+  def get_shuttle_statuses(stop_ids, station_config) do
     stop_ids
     |> Enum.flat_map(fn stop_id ->
       case station_config.stop_to_station[stop_id] do

@@ -6,8 +6,14 @@ defmodule Engine.Alerts.ApiFetcherTest do
       assert {
                :ok,
                %{
-                 :stop_statuses => %{"70151" => :shuttles_transfer_station},
-                 :route_statuses => %{"Red" => :suspension}
+                 :stop_statuses => %{
+                   "70151" => :shuttles_transfer_station,
+                   "70036" => :suspension
+                 },
+                 :route_statuses => %{
+                   "Red" => :suspension,
+                   "Mattapan" => :shuttles_closed_station
+                 }
                }
              } = Engine.Alerts.ApiFetcher.get_statuses()
     end
