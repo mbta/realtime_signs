@@ -3,9 +3,13 @@ defmodule Engine.Alerts do
   require Logger
   alias Engine.Alerts.Fetcher
 
+  @type ets_tables :: %{
+          stops_table: :ets.tab(),
+          routes_table: :ets.tab()
+        }
+
   @type state :: %{
-          stops_ets_table_name: term(),
-          routes_ets_table_name: term(),
+          tables: ets_tables(),
           fetcher: module(),
           fetch_ms: integer()
         }
@@ -18,22 +22,21 @@ defmodule Engine.Alerts do
     GenServer.start_link(__MODULE__, opts, name: name)
   end
 
-  @spec max_stop_status(:ets.tab(), :ets.tab(), [Fetcher.stop_id()], [Fetcher.route_id()]) ::
+  @spec max_stop_status(ets_tables(), [Fetcher.stop_id()], [Fetcher.route_id()]) ::
           Fetcher.stop_status()
   def max_stop_status(
-        stops_ets_table_name \\ @stops_table,
-        routes_ets_table_name \\ @routes_table,
+        tables \\ %{stops_table: @stops_table, routes_table: @routes_table},
         stop_ids,
         route_ids
       ) do
     overall_stop_status =
       Enum.reduce(stop_ids, :none, fn stop_id, overall_status ->
-        stop_status(stops_ets_table_name, stop_id)
+        stop_status(tables.stops_table, stop_id)
         |> Fetcher.higher_priority_status(overall_status)
       end)
 
     Enum.reduce(route_ids, overall_stop_status, fn route_id, overall_status ->
-      route_status(routes_ets_table_name, route_id)
+      route_status(tables.routes_table, route_id)
       |> Fetcher.higher_priority_status(overall_status)
     end)
   end
@@ -71,8 +74,10 @@ defmodule Engine.Alerts do
       :ets.new(routes_ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
 
     state = %{
-      stops_ets_table_name: stops_ets_table_name,
-      routes_ets_table_name: routes_ets_table_name,
+      tables: %{
+        stops_table: stops_ets_table_name,
+        routes_table: routes_ets_table_name
+      },
       fetcher: fetcher,
       fetch_ms: fetch_ms
     }
@@ -85,10 +90,10 @@ defmodule Engine.Alerts do
 
     case state.fetcher.get_statuses() do
       {:ok, %{:stop_statuses => stop_statuses, :route_statuses => route_statuses}} ->
-        :ets.delete_all_objects(state.stops_ets_table_name)
-        :ets.insert(state.stops_ets_table_name, Enum.into(stop_statuses, []))
-        :ets.delete_all_objects(state.routes_ets_table_name)
-        :ets.insert(state.routes_ets_table_name, Enum.into(route_statuses, []))
+        :ets.delete_all_objects(state.tables.stops_table)
+        :ets.insert(state.tables.stops_table, Enum.into(stop_statuses, []))
+        :ets.delete_all_objects(state.tables.routes_table)
+        :ets.insert(state.tables.routes_table, Enum.into(route_statuses, []))
 
         Logger.info(
           "Engine.Alerts Stop alert statuses: #{inspect(stop_statuses)} Route alert statuses #{
@@ -97,8 +102,8 @@ defmodule Engine.Alerts do
         )
 
       {:error, e} ->
-        :ets.delete_all_objects(state.stops_ets_table_name)
-        :ets.delete_all_objects(state.routes_ets_table_name)
+        :ets.delete_all_objects(state.tables.stops_table)
+        :ets.delete_all_objects(state.tables.routes_table)
         Logger.warn("Engine.Alerts could not fetch stop statuses: #{inspect(e)}")
     end
 
