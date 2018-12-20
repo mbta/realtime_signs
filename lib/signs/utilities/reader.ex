@@ -13,8 +13,8 @@ defmodule Signs.Utilities.Reader do
 
   def read_sign(
         %{
-          current_content_top: %Content.Message.Headways.Top{},
-          current_content_bottom: %Content.Message.Headways.Bottom{}
+          current_content_top: {_, %Content.Message.Headways.Top{}},
+          current_content_bottom: {_, %Content.Message.Headways.Bottom{}}
         } = sign
       ) do
     Logger.info("reading headway sign")
