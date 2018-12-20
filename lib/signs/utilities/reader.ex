@@ -7,6 +7,7 @@ defmodule Signs.Utilities.Reader do
   require Logger
 
   def read_sign(%{tick_read: n} = sign) when n > 0 do
+    Logger.info("tick read: #{n}")
     sign
   end
 
@@ -22,6 +23,8 @@ defmodule Signs.Utilities.Reader do
   end
 
   def read_sign(sign) do
+    Logger.info("sign read for normal predictions")
+
     top_headsign =
       case sign.current_content_top do
         {_src, %{headsign: headsign}} -> headsign

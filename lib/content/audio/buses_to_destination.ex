@@ -118,7 +118,7 @@ defmodule Content.Audio.BusesToDestination do
     defp message_id(%{language: :english, destination: :park_street}), do: "649"
     defp message_id(%{language: :english, destination: :north_sta}), do: "650"
     defp message_id(%{language: :english, destination: :lechmere}), do: "651"
-    # 652 and 653 are "trolleys to mattapan" and "trollys to ashmont"
+    # 652 and 653 are "trolleys to mattapan" and "trolleys to ashmont"
     defp message_id(%{language: :english, destination: :ashmont}), do: "654"
     defp message_id(%{language: :english, destination: :braintree}), do: "655"
     defp message_id(%{language: :english, destination: :alewife}), do: "656"
