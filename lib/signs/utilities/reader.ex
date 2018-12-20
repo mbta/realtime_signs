@@ -23,7 +23,11 @@ defmodule Signs.Utilities.Reader do
   end
 
   def read_sign(sign) do
-    Logger.info("sign read for normal predictions: #{inspect(sign)}")
+    Logger.info(
+      "sign read for normal predictions: #{inspect(sign.current_content_top)} #{
+        inspect(sign.current_content_bottom)
+      }"
+    )
 
     top_headsign =
       case sign.current_content_top do
