@@ -13,15 +13,11 @@ defmodule Signs.Utilities.Reader do
 
   def read_sign(
         %{
-          current_content_top: {_, %Content.Message.Headways.Top{}} = top,
+          current_content_top: {_, %Content.Message.Headways.Top{} = top},
           current_content_bottom: {_, %Content.Message.Headways.Bottom{} = bottom}
         } = sign
       ) do
-    Logger.info(
-      "sign read for headway sign: #{inspect(sign.current_content_top)} #{
-        inspect(sign.current_content_bottom)
-      }"
-    )
+    Logger.info("sign read for headway sign: #{inspect(top)} #{inspect(bottom)}")
 
     send_audio_update({sign.source_config, sign.current_content_top}, sign)
     %{sign | tick_read: sign.read_period_seconds}
