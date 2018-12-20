@@ -16,15 +16,11 @@ defmodule Signs.Utilities.Reader do
           current_content_bottom: {_, %Content.Message.Headways.Bottom{} = bottom}
         } = sign
       ) do
-    Logger.info("sign read for headway sign: #{inspect(top)} #{inspect(bottom)}")
-
     send_audio_update({sign.source_config, sign.current_content_top}, sign)
     %{sign | tick_read: sign.read_period_seconds}
   end
 
   def read_sign(sign) do
-    Logger.info("sign read for normal predictions:  ")
-
     top_headsign =
       case sign.current_content_top do
         {_src, %{headsign: headsign}} -> headsign
@@ -49,8 +45,6 @@ defmodule Signs.Utilities.Reader do
   end
 
   defp send_audio_update({src, msg}, sign) do
-    Logger.info("this should happen at least sometimes")
-
     case Content.Audio.NextTrainCountdown.from_predictions_message(msg, src) do
       %Content.Audio.NextTrainCountdown{} = audio ->
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
@@ -69,7 +63,6 @@ defmodule Signs.Utilities.Reader do
 
     case Content.Audio.BusesToDestination.from_headway_message(sign, msg.headsign) do
       {%Content.Audio.BusesToDestination{} = audio, %Content.Audio.BusesToDestination{}} ->
-        Logger.info("sent the audio for the headways")
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
 
       {nil, nil} ->

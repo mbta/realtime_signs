@@ -10,8 +10,6 @@ defmodule Signs.Utilities.Updater do
   require Logger
 
   def update_sign(sign, {_top_src, top_msg} = top, {_bottom_src, bottom_msg} = bottom) do
-    Logger.info("update_sign_messages: top: #{inspect(top_msg)} bottom: #{inspect(bottom_msg)}")
-
     sign =
       sign
       |> clear_announced_arrivals(sign.current_content_top, top)
