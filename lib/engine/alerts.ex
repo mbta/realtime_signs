@@ -35,10 +35,18 @@ defmodule Engine.Alerts do
         |> Fetcher.higher_priority_status(overall_status)
       end)
 
-    Enum.reduce(route_ids, overall_stop_status, fn route_id, overall_status ->
-      route_status(tables.routes_table, route_id)
-      |> Fetcher.higher_priority_status(overall_status)
-    end)
+    route_states = Enum.map(route_ids, &route_status(tables.routes_table, &1))
+
+    overall_route_status =
+      Enum.reduce(route_states, :none, fn route_state, overall_status ->
+        Fetcher.higher_priority_status(route_state, overall_status)
+      end)
+
+    if Enum.all?(route_states, fn s -> s == overall_route_status end) do
+      Fetcher.higher_priority_status(overall_stop_status, overall_route_status)
+    else
+      overall_stop_status
+    end
   end
 
   @spec stop_status(:ets.tab(), Fetcher.stop_id()) :: Fetcher.stop_status()
