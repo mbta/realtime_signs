@@ -91,7 +91,7 @@ defmodule Engine.AlertsTest do
       assert Engine.Alerts.route_status(routes_ets_table_name, "Orange") == :none
     end
 
-    test "when alerts fetch fails, keeps old state" do
+    test "when alerts fetch fails, empties out state" do
       stops_ets_table_name = :engine_alerts_test_sad_path_stops
       routes_ets_table_name = :engine_alerts_test_sad_path_routes
 
@@ -102,6 +102,7 @@ defmodule Engine.AlertsTest do
         :ets.new(routes_ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
 
       :ets.insert(stops_ets_table_name, [{"abc", :shuttles_closed_station}])
+      :ets.insert(routes_ets_table_name, [{"Red", :suspension}])
 
       state = %{
         stops_ets_table_name: stops_ets_table_name,
@@ -116,7 +117,8 @@ defmodule Engine.AlertsTest do
         end)
 
       assert log =~ "could not fetch"
-      assert Engine.Alerts.stop_status(stops_ets_table_name, "abc") == :shuttles_closed_station
+      assert Engine.Alerts.stop_status(stops_ets_table_name, "abc") == :none
+      assert Engine.Alerts.route_status(routes_ets_table_name, "Red") == :none
     end
   end
 end

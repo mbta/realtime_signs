@@ -85,6 +85,8 @@ defmodule Engine.Alerts do
         )
 
       {:error, e} ->
+        :ets.delete_all_objects(state.stops_ets_table_name)
+        :ets.delete_all_objects(state.routes_ets_table_name)
         Logger.warn("Engine.Alerts could not fetch stop statuses: #{inspect(e)}")
     end
 
