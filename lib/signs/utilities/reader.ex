@@ -7,7 +7,6 @@ defmodule Signs.Utilities.Reader do
   require Logger
 
   def read_sign(%{tick_read: n} = sign) when n > 0 do
-    Logger.info("tick read: #{n}")
     sign
   end
 
