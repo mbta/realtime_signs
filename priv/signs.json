@@ -2278,7 +2278,7 @@
           "stop_id": "70001",
           "routes": ["Orange"],
           "direction_id": 1,
-          "headway_direction_name": "Forest Hills",
+          "headway_direction_name": "Oak Grove",
           "platform": null,
           "terminal": true,
           "announce_arriving": false
@@ -2297,7 +2297,7 @@
           "stop_id": "70001",
           "routes": ["Orange"],
           "direction_id": 1,
-          "headway_direction_name": "Forest Hills",
+          "headway_direction_name": "Oak Grove",
           "platform": null,
           "terminal": true,
           "announce_arriving": false
@@ -2316,7 +2316,7 @@
           "stop_id": "70001",
           "routes": ["Orange"],
           "direction_id": 1,
-          "headway_direction_name": "Forest Hills",
+          "headway_direction_name": "Oak Grove",
           "platform": null,
           "terminal": true,
           "announce_arriving": false
@@ -2335,7 +2335,7 @@
           "stop_id": "70001",
           "routes": ["Orange"],
           "direction_id": 1,
-          "headway_direction_name": "Forest Hills",
+          "headway_direction_name": "Oak Grove",
           "platform": null,
           "terminal": true,
           "announce_arriving": false
