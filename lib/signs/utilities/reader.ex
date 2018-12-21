@@ -4,7 +4,6 @@ defmodule Signs.Utilities.Reader do
   If the headsign on the second line is different from the top line, will
   read that as well.
   """
-  require Logger
 
   def read_sign(%{tick_read: n} = sign) when n > 0 do
     sign
