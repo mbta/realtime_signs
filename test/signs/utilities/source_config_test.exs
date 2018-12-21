@@ -8,17 +8,17 @@ defmodule Signs.Utilities.SourceConfigTest do
     [
       {
         "stop_id": "123",
-  "routes": ["Foo"],
+        "routes": ["Foo"],
         "direction_id": 0,
-  "headway_direction_name": "Southbound",
+        "headway_direction_name": "Southbound",
         "platform": null,
         "terminal": false,
         "announce_arriving": false
       },
       {
         "stop_id": "234",
-  "headway_direction_name": "Southbound",
-  "routes": ["Bar"],
+        "headway_direction_name": "Southbound",
+        "routes": ["Bar"],
         "direction_id": 1,
         "platform": "ashmont",
         "terminal": true,
@@ -34,8 +34,8 @@ defmodule Signs.Utilities.SourceConfigTest do
     [
       {
         "stop_id": "123",
-  "headway_direction_name": "Southbound",
-  "routes": ["Foo"],
+        "headway_direction_name": "Southbound",
+        "routes": ["Foo"],
         "direction_id": 0,
         "platform": null,
         "terminal": false,
@@ -45,8 +45,8 @@ defmodule Signs.Utilities.SourceConfigTest do
     [
       {
         "stop_id": "234",
-  "headway_direction_name": "Southbound",
-  "routes": ["Bar"],
+        "headway_direction_name": "Southbound",
+        "routes": ["Bar"],
         "direction_id": 1,
         "platform": "braintree",
         "terminal": true,
