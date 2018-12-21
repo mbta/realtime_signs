@@ -200,8 +200,8 @@ defmodule Signs.HeadwayTest do
         {:send_audio,
          {{"ABCD", "n"},
           %Content.Audio.VehiclesToDestination{
-            next_bus_mins: 10,
-            later_bus_mins: 12,
+            next_trip_mins: 10,
+            later_trip_mins: 12,
             language: :english
           }, 5, 120}}
       )
@@ -210,8 +210,8 @@ defmodule Signs.HeadwayTest do
         {:send_audio,
          {{"ABCD", "n"},
           %Content.Audio.VehiclesToDestination{
-            next_bus_mins: 10,
-            later_bus_mins: 12,
+            next_trip_mins: 10,
+            later_trip_mins: 12,
             language: :spanish
           }, 5, 120}}
       )
@@ -226,8 +226,8 @@ defmodule Signs.HeadwayTest do
         {:send_audio,
          {{"ABCD", "n"},
           %Content.Audio.VehiclesToDestination{
-            next_bus_mins: 10,
-            later_bus_mins: 12,
+            next_trip_mins: 10,
+            later_trip_mins: 12,
             language: :english
           }, 5, 120}}
       )
@@ -236,8 +236,8 @@ defmodule Signs.HeadwayTest do
         {:send_audio,
          {{"ABCD", "n"},
           %Content.Audio.VehiclesToDestination{
-            next_bus_mins: 10,
-            later_bus_mins: 12,
+            next_trip_mins: 10,
+            later_trip_mins: 12,
             language: :spanish
           }, 5, 120}}
       )

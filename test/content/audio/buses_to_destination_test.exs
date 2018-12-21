@@ -8,8 +8,8 @@ defmodule Content.Audio.VehiclesToDestinationTest do
     audio = %Content.Audio.VehiclesToDestination{
       destination: :chelsea,
       language: :english,
-      next_bus_mins: 7,
-      later_bus_mins: 10
+      next_trip_mins: 7,
+      later_trip_mins: 10
     }
 
     assert Content.Audio.to_params(audio) == {"133", ["5507", "5510"], :audio}
@@ -19,8 +19,8 @@ defmodule Content.Audio.VehiclesToDestinationTest do
     audio = %Content.Audio.VehiclesToDestination{
       destination: :chelsea,
       language: :spanish,
-      next_bus_mins: 7,
-      later_bus_mins: 10
+      next_trip_mins: 7,
+      later_trip_mins: 10
     }
 
     assert Content.Audio.to_params(audio) == {"150", ["37007", "37010"], :audio}
@@ -30,8 +30,8 @@ defmodule Content.Audio.VehiclesToDestinationTest do
     audio = %Content.Audio.VehiclesToDestination{
       destination: :south_station,
       language: :english,
-      next_bus_mins: 7,
-      later_bus_mins: 10
+      next_trip_mins: 7,
+      later_trip_mins: 10
     }
 
     assert Content.Audio.to_params(audio) == {"134", ["5507", "5510"], :audio}
@@ -41,8 +41,8 @@ defmodule Content.Audio.VehiclesToDestinationTest do
     audio = %Content.Audio.VehiclesToDestination{
       destination: :south_station,
       language: :spanish,
-      next_bus_mins: 7,
-      later_bus_mins: 10
+      next_trip_mins: 7,
+      later_trip_mins: 10
     }
 
     assert Content.Audio.to_params(audio) == {"151", ["37007", "37010"], :audio}
@@ -100,13 +100,13 @@ defmodule Content.Audio.VehiclesToDestinationTest do
         assert {
                  %Content.Audio.VehiclesToDestination{
                    language: :english,
-                   next_bus_mins: 10,
-                   later_bus_mins: 12
+                   next_trip_mins: 10,
+                   later_trip_mins: 12
                  },
                  %Content.Audio.VehiclesToDestination{
                    language: :spanish,
-                   next_bus_mins: 10,
-                   later_bus_mins: 12
+                   next_trip_mins: 10,
+                   later_trip_mins: 12
                  }
                } = from_headway_message(msg, "Chelsea")
       end)
@@ -120,13 +120,13 @@ defmodule Content.Audio.VehiclesToDestinationTest do
         assert {
                  %Content.Audio.VehiclesToDestination{
                    language: :english,
-                   next_bus_mins: 10,
-                   later_bus_mins: 15
+                   next_trip_mins: 10,
+                   later_trip_mins: 15
                  },
                  %Content.Audio.VehiclesToDestination{
                    language: :spanish,
-                   next_bus_mins: 10,
-                   later_bus_mins: 15
+                   next_trip_mins: 10,
+                   later_trip_mins: 15
                  }
                } = from_headway_message(msg, "Chelsea")
       end)
@@ -138,8 +138,8 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       assert {
                %Content.Audio.VehiclesToDestination{
                  language: :english,
-                 next_bus_mins: 20,
-                 later_bus_mins: 25
+                 next_trip_mins: 20,
+                 later_trip_mins: 25
                },
                nil
              } = from_headway_message(msg, "Chelsea")

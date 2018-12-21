@@ -6,7 +6,7 @@ defmodule Content.Audio.VehiclesToDestination do
   require Logger
   alias PaEss.Utilities
 
-  @enforce_keys [:language, :destination, :next_bus_mins, :later_bus_mins]
+  @enforce_keys [:language, :destination, :next_trip_mins, :later_trip_mins]
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
@@ -34,8 +34,8 @@ defmodule Content.Audio.VehiclesToDestination do
             | :boston_college
             | :cleveland_circle
             | :mattapan,
-          next_bus_mins: integer(),
-          later_bus_mins: integer()
+          next_trip_mins: integer(),
+          later_trip_mins: integer()
         }
 
   @spec from_headway_message(Content.Message.t(), String.t()) :: {t() | nil, t() | nil}
@@ -64,8 +64,8 @@ defmodule Content.Audio.VehiclesToDestination do
       %__MODULE__{
         language: language,
         destination: destination,
-        next_bus_mins: next_mins,
-        later_bus_mins: later_mins
+        next_trip_mins: next_mins,
+        later_trip_mins: later_mins
       }
     end
   end
@@ -136,7 +136,7 @@ defmodule Content.Audio.VehiclesToDestination do
     defp message_id(%{language: :spanish, destination: :chelsea}), do: "150"
     defp message_id(%{language: :spanish, destination: :south_station}), do: "151"
 
-    defp vars(%{language: language, next_bus_mins: next, later_bus_mins: later}) do
+    defp vars(%{language: language, next_trip_mins: next, later_trip_mins: later}) do
       [Utilities.number_var(next, language), Utilities.number_var(later, language)]
     end
   end

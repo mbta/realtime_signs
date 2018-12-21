@@ -118,8 +118,8 @@ defmodule Signs.Utilities.ReaderTest do
 
       assert_received(
         {:send_audio, _id,
-         %VTD{language: :english, destination: :alewife, next_bus_mins: 1, later_bus_mins: 3}, _p,
-         _t}
+         %VTD{language: :english, destination: :alewife, next_trip_mins: 1, later_trip_mins: 3},
+         _p, _t}
       )
 
       assert sign.tick_read == 100
