@@ -39,10 +39,6 @@ defmodule Content.Audio.BusesToDestination do
         }
 
   @spec from_headway_message(Content.Message.t(), String.t()) :: {t() | nil, t() | nil}
-  def from_headway_message(_msg, _dest) do
-    {nil, nil}
-  end
-
   def from_headway_message(%Content.Message.Headways.Bottom{range: range} = msg, dest)
       when range != {nil, nil} do
     with {:ok, destination} <- convert_destination(dest),

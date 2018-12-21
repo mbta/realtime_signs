@@ -16,7 +16,7 @@ defmodule Signs.Utilities.Reader do
           current_content_bottom: {_, %Content.Message.Headways.Bottom{} = bottom}
         } = sign
       ) do
-    send_audio_update({sign.source_config, sign.current_content_top}, sign)
+    send_audio_update(sign.current_content_top, sign)
     %{sign | tick_read: sign.read_period_seconds}
   end
 
