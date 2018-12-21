@@ -12,8 +12,8 @@ defmodule Signs.Utilities.Reader do
 
   def read_sign(
         %{
-          current_content_top: {_, %Content.Message.Headways.Top{} = top},
-          current_content_bottom: {_, %Content.Message.Headways.Bottom{} = bottom}
+          current_content_top: {_, %Content.Message.Headways.Top{}},
+          current_content_bottom: {_, %Content.Message.Headways.Bottom{}}
         } = sign
       ) do
     send_audio_update(sign.current_content_top, sign)
