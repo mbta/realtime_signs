@@ -16,6 +16,7 @@ defmodule Signs.Realtime do
     :current_content_top,
     :current_content_bottom,
     :prediction_engine,
+    :headway_engine,
     :sign_updater,
     :tick_top,
     :tick_bottom,
@@ -33,6 +34,7 @@ defmodule Signs.Realtime do
           current_content_top: {Utilities.SourceConfig.source() | nil, Content.Message.t()},
           current_content_bottom: {Utilities.SourceConfig.source() | nil, Content.Message.t()},
           prediction_engine: module(),
+          headway_engine: module(),
           sign_updater: module(),
           tick_bottom: non_neg_integer(),
           tick_top: non_neg_integer(),
@@ -44,6 +46,7 @@ defmodule Signs.Realtime do
 
   def start_link(%{"type" => "realtime"} = config, opts \\ []) do
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
+    headway_engine = opts[:headway_engine] || Engine.Headways
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
     pa_ess_zone = Map.fetch!(config, "pa_ess_zone")
 
@@ -54,6 +57,7 @@ defmodule Signs.Realtime do
       current_content_top: {nil, Content.Message.Empty.new()},
       current_content_bottom: {nil, Content.Message.Empty.new()},
       prediction_engine: prediction_engine,
+      headway_engine: headway_engine,
       sign_updater: sign_updater,
       tick_bottom: 130,
       tick_top: 130,

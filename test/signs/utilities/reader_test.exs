@@ -2,7 +2,10 @@ defmodule Signs.Utilities.ReaderTest do
   use ExUnit.Case, async: true
 
   alias Content.Message.Predictions, as: P
+  alias Content.Message.Headways.Top, as: T
+  alias Content.Message.Headways.Bottom, as: B
   alias Content.Audio.NextTrainCountdown, as: A
+  alias Content.Audio.VehiclesToDestination, as: VTD
   alias Signs.Utilities.Reader
 
   defmodule FakePredictions do
@@ -19,6 +22,7 @@ defmodule Signs.Utilities.ReaderTest do
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     direction_id: 0,
+    headway_direction_name: "Southbound",
     platform: nil,
     terminal?: false,
     announce_arriving?: false
@@ -31,6 +35,7 @@ defmodule Signs.Utilities.ReaderTest do
     current_content_top: {@src, %P{headsign: "Alewife", minutes: 4}},
     current_content_bottom: {@src, %P{headsign: "Ashmont", minutes: 3}},
     prediction_engine: FakePredictions,
+    headway_engine: FakeHeadways,
     sign_updater: FakeUpdater,
     tick_bottom: 1,
     tick_top: 1,
@@ -98,6 +103,25 @@ defmodule Signs.Utilities.ReaderTest do
 
       assert_received({:send_audio, _id, %A{destination: :alewife, verb: :departs}, _p, _t})
       assert_received({:send_audio, _id, %A{destination: :ashmont, verb: :arrives}, _p, _t})
+      assert sign.tick_read == 100
+    end
+
+    test "sends headway message if the headways are displayed" do
+      sign = %{
+        @sign
+        | tick_read: 0,
+          current_content_top: {@src, %T{headsign: "Alewife"}},
+          current_content_bottom: {@src, %B{range: {1, 3}}}
+      }
+
+      sign = Reader.read_sign(sign)
+
+      assert_received(
+        {:send_audio, _id,
+         %VTD{language: :english, destination: :alewife, next_trip_mins: 1, later_trip_mins: 3},
+         _p, _t}
+      )
+
       assert sign.tick_read == 100
     end
 
