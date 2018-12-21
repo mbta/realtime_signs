@@ -22,5 +22,27 @@ defmodule Content.Message.Headways.TopTest do
                vehicle_type: :trolley
              }) == "Trolleys to South Sta"
     end
+
+    test "Shows directionbound headsigns in a way that makes sense in english" do
+      assert Content.Message.to_string(%Content.Message.Headways.Top{
+               headsign: "Northbound",
+               vehicle_type: :trolley
+             }) == "Northbound Trolleys"
+
+      assert Content.Message.to_string(%Content.Message.Headways.Top{
+               headsign: "Southbound",
+               vehicle_type: :trolley
+             }) == "Southbound Trolleys"
+
+      assert Content.Message.to_string(%Content.Message.Headways.Top{
+               headsign: "Eastbound",
+               vehicle_type: :trolley
+             }) == "Eastbound Trolleys"
+
+      assert Content.Message.to_string(%Content.Message.Headways.Top{
+               headsign: "Westbound",
+               vehicle_type: :trolley
+             }) == "Westbound Trolleys"
+    end
   end
 end

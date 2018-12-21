@@ -338,6 +338,7 @@ defmodule Signs.Utilities.PredictionsTest do
     current_content_top: {nil, Content.Message.Empty.new()},
     current_content_bottom: {nil, Content.Message.Empty.new()},
     prediction_engine: FakePredictions,
+    headway_engine: FakeHeadways,
     sign_updater: FakeUpdater,
     tick_bottom: 130,
     tick_top: 130,
@@ -350,6 +351,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "when given two source lists, returns earliest result from each" do
       s1 = %SourceConfig{
         stop_id: "1",
+        headway_direction_name: "Mattapan",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -358,6 +360,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s2 = %SourceConfig{
         stop_id: "2",
+        headway_direction_name: "Mattapan",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -376,6 +379,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "when given one source list, returns earliest two results" do
       s1 = %SourceConfig{
         stop_id: "3",
+        headway_direction_name: "Mattapan",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -384,6 +388,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s2 = %SourceConfig{
         stop_id: "4",
+        headway_direction_name: "Mattapan",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -402,6 +407,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "sorts by arrival or departure depending on which is present" do
       src = %SourceConfig{
         stop_id: "arrival_vs_departure_time",
+        headway_direction_name: "Mattapan",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -420,6 +426,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "pads out results if only one prediction" do
       s = %SourceConfig{
         stop_id: "7",
+        headway_direction_name: "Mattapan",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -438,6 +445,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "pads out results if no predictions" do
       s = %SourceConfig{
         stop_id: "n/a",
+        headway_direction_name: "Mattapan",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -456,6 +464,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "only the first prediction in a source list can be BRD" do
       s = %SourceConfig{
         stop_id: "8",
+        headway_direction_name: "Mattapan",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -478,6 +487,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s = %SourceConfig{
         stop_id: "9",
+        headway_direction_name: "Mattapan",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -500,6 +510,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s = %SourceConfig{
         stop_id: "9",
+        headway_direction_name: "Mattapan",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -518,6 +529,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Only includes predictions if a departure prediction is present" do
       s = %SourceConfig{
         stop_id: "stop_with_nil_departure_prediction",
+        headway_direction_name: "Mattapan",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -536,6 +548,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Filters by route if present" do
       s1 = %SourceConfig{
         stop_id: "filterable_by_route",
+        headway_direction_name: "Mattapan",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -565,6 +578,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Sorts boarding status to the top" do
       s = %SourceConfig{
         stop_id: "both_brd",
+        headway_direction_name: "Mattapan",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -602,6 +616,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Does not allow ARR on second line unless platform has multiple berths" do
       s1 = %SourceConfig{
         stop_id: "arr_multi_berth1",
+        headway_direction_name: "Mattapan",
         direction_id: 0,
         terminal?: false,
         platform: nil,

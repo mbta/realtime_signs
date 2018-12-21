@@ -7,6 +7,10 @@ defmodule Signs.RealtimeTest do
     def stopped_at?(_stop_id), do: false
   end
 
+  defmodule FakeHeadways do
+    def get_headways(_stop_id), do: {1, 5}
+  end
+
   defmodule FakeUpdater do
     def update_single_line(_id, _line_no, _msg, _duration, _start), do: nil
     def update_sign(_id, _top_msg, _bottom_msg, _duration, _start), do: nil
@@ -20,6 +24,7 @@ defmodule Signs.RealtimeTest do
     current_content_top: {nil, Content.Message.Empty.new()},
     current_content_bottom: {nil, Content.Message.Empty.new()},
     prediction_engine: FakePredictions,
+    headway_engine: FakeHeadways,
     sign_updater: FakeUpdater,
     tick_bottom: 1,
     tick_top: 1,

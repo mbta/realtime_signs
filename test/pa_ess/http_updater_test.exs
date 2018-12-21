@@ -79,11 +79,11 @@ defmodule PaEss.HttpUpdaterTest do
     test "Buses to Chelsea" do
       state = make_state(%{uid: 1000})
 
-      audio = %Content.Audio.BusesToDestination{
+      audio = %Content.Audio.VehiclesToDestination{
         language: :english,
         destination: :chelsea,
-        next_bus_mins: 8,
-        later_bus_mins: 12
+        next_trip_mins: 8,
+        later_trip_mins: 12
       }
 
       assert {:ok, :sent} ==
@@ -93,11 +93,11 @@ defmodule PaEss.HttpUpdaterTest do
     test "Buses to South Station" do
       state = make_state(%{uid: 1001})
 
-      audio = %Content.Audio.BusesToDestination{
+      audio = %Content.Audio.VehiclesToDestination{
         language: :english,
         destination: :south_station,
-        next_bus_mins: 8,
-        later_bus_mins: 12
+        next_trip_mins: 8,
+        later_trip_mins: 12
       }
 
       assert {:ok, :sent} ==
@@ -119,11 +119,11 @@ defmodule PaEss.HttpUpdaterTest do
     test "Buses to Chelsea, in Spanish" do
       state = make_state(%{uid: 1003})
 
-      audio = %Content.Audio.BusesToDestination{
+      audio = %Content.Audio.VehiclesToDestination{
         language: :spanish,
         destination: :chelsea,
-        next_bus_mins: 8,
-        later_bus_mins: 14
+        next_trip_mins: 8,
+        later_trip_mins: 14
       }
 
       assert {:ok, :sent} ==

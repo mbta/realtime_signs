@@ -9,6 +9,16 @@ defmodule Signs.Utilities.Reader do
     sign
   end
 
+  def read_sign(
+        %{
+          current_content_top: {_, %Content.Message.Headways.Top{}},
+          current_content_bottom: {_, %Content.Message.Headways.Bottom{}}
+        } = sign
+      ) do
+    send_audio_update(sign.current_content_top, sign)
+    %{sign | tick_read: sign.read_period_seconds}
+  end
+
   def read_sign(sign) do
     top_headsign =
       case sign.current_content_top do
@@ -47,6 +57,17 @@ defmodule Signs.Utilities.Reader do
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
 
       nil ->
+        nil
+    end
+
+    case Content.Audio.VehiclesToDestination.from_headway_message(
+           elem(sign.current_content_bottom, 1),
+           msg.headsign
+         ) do
+      {%Content.Audio.VehiclesToDestination{} = audio, %Content.Audio.VehiclesToDestination{}} ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+
+      {nil, nil} ->
         nil
     end
   end
