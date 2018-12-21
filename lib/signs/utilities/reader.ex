@@ -62,7 +62,7 @@ defmodule Signs.Utilities.Reader do
     end
 
     case Content.Audio.BusesToDestination.from_headway_message(
-           elem(sign.currnt_content_bottom, 1),
+           elem(sign.current_content_bottom, 1),
            msg.headsign
          ) do
       {%Content.Audio.BusesToDestination{} = audio, %Content.Audio.BusesToDestination{}} ->
