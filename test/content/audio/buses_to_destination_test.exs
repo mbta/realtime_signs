@@ -1,11 +1,11 @@
-defmodule Content.Audio.BusesToDestinationTest do
+defmodule Content.Audio.VehiclesToDestinationTest do
   use ExUnit.Case
   import ExUnit.CaptureLog
 
-  import Content.Audio.BusesToDestination
+  import Content.Audio.VehiclesToDestination
 
   test "Buses to Chelsea in English" do
-    audio = %Content.Audio.BusesToDestination{
+    audio = %Content.Audio.VehiclesToDestination{
       destination: :chelsea,
       language: :english,
       next_bus_mins: 7,
@@ -16,7 +16,7 @@ defmodule Content.Audio.BusesToDestinationTest do
   end
 
   test "Buses to Chelsea in Spanish" do
-    audio = %Content.Audio.BusesToDestination{
+    audio = %Content.Audio.VehiclesToDestination{
       destination: :chelsea,
       language: :spanish,
       next_bus_mins: 7,
@@ -27,7 +27,7 @@ defmodule Content.Audio.BusesToDestinationTest do
   end
 
   test "Buses to South Station in English" do
-    audio = %Content.Audio.BusesToDestination{
+    audio = %Content.Audio.VehiclesToDestination{
       destination: :south_station,
       language: :english,
       next_bus_mins: 7,
@@ -38,7 +38,7 @@ defmodule Content.Audio.BusesToDestinationTest do
   end
 
   test "Buses to South Station in Spanish" do
-    audio = %Content.Audio.BusesToDestination{
+    audio = %Content.Audio.VehiclesToDestination{
       destination: :south_station,
       language: :spanish,
       next_bus_mins: 7,
@@ -53,15 +53,21 @@ defmodule Content.Audio.BusesToDestinationTest do
 
     test "returns an audio message from a headway message to chelsea" do
       assert {
-               %Content.Audio.BusesToDestination{language: :english, destination: :chelsea},
-               %Content.Audio.BusesToDestination{language: :spanish, destination: :chelsea}
+               %Content.Audio.VehiclesToDestination{language: :english, destination: :chelsea},
+               %Content.Audio.VehiclesToDestination{language: :spanish, destination: :chelsea}
              } = from_headway_message(@msg, "Chelsea")
     end
 
     test "returns an audio message from a headway message to south station" do
       assert {
-               %Content.Audio.BusesToDestination{language: :english, destination: :south_station},
-               %Content.Audio.BusesToDestination{language: :spanish, destination: :south_station}
+               %Content.Audio.VehiclesToDestination{
+                 language: :english,
+                 destination: :south_station
+               },
+               %Content.Audio.VehiclesToDestination{
+                 language: :spanish,
+                 destination: :south_station
+               }
              } = from_headway_message(@msg, "South Station")
     end
 
@@ -92,12 +98,12 @@ defmodule Content.Audio.BusesToDestinationTest do
 
       Enum.each([msg1, msg2, msg3], fn msg ->
         assert {
-                 %Content.Audio.BusesToDestination{
+                 %Content.Audio.VehiclesToDestination{
                    language: :english,
                    next_bus_mins: 10,
                    later_bus_mins: 12
                  },
-                 %Content.Audio.BusesToDestination{
+                 %Content.Audio.VehiclesToDestination{
                    language: :spanish,
                    next_bus_mins: 10,
                    later_bus_mins: 12
@@ -112,12 +118,12 @@ defmodule Content.Audio.BusesToDestinationTest do
 
       Enum.each([msg1, msg2], fn msg ->
         assert {
-                 %Content.Audio.BusesToDestination{
+                 %Content.Audio.VehiclesToDestination{
                    language: :english,
                    next_bus_mins: 10,
                    later_bus_mins: 15
                  },
-                 %Content.Audio.BusesToDestination{
+                 %Content.Audio.VehiclesToDestination{
                    language: :spanish,
                    next_bus_mins: 10,
                    later_bus_mins: 15
@@ -130,7 +136,7 @@ defmodule Content.Audio.BusesToDestinationTest do
       msg = %{@msg | range: {20, 25}}
 
       assert {
-               %Content.Audio.BusesToDestination{
+               %Content.Audio.VehiclesToDestination{
                  language: :english,
                  next_bus_mins: 20,
                  later_bus_mins: 25

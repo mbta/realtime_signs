@@ -199,7 +199,7 @@ defmodule Signs.HeadwayTest do
       assert_received(
         {:send_audio,
          {{"ABCD", "n"},
-          %Content.Audio.BusesToDestination{
+          %Content.Audio.VehiclesToDestination{
             next_bus_mins: 10,
             later_bus_mins: 12,
             language: :english
@@ -209,7 +209,7 @@ defmodule Signs.HeadwayTest do
       assert_received(
         {:send_audio,
          {{"ABCD", "n"},
-          %Content.Audio.BusesToDestination{
+          %Content.Audio.VehiclesToDestination{
             next_bus_mins: 10,
             later_bus_mins: 12,
             language: :spanish
@@ -225,7 +225,7 @@ defmodule Signs.HeadwayTest do
       refute_received(
         {:send_audio,
          {{"ABCD", "n"},
-          %Content.Audio.BusesToDestination{
+          %Content.Audio.VehiclesToDestination{
             next_bus_mins: 10,
             later_bus_mins: 12,
             language: :english
@@ -235,7 +235,7 @@ defmodule Signs.HeadwayTest do
       refute_received(
         {:send_audio,
          {{"ABCD", "n"},
-          %Content.Audio.BusesToDestination{
+          %Content.Audio.VehiclesToDestination{
             next_bus_mins: 10,
             later_bus_mins: 12,
             language: :spanish
@@ -258,28 +258,28 @@ defmodule Signs.HeadwayTest do
 
       refute_received(
         {:send_audio,
-         {{"ABCD", "n"}, %Content.Audio.BusesToDestination{language: :english}, 5, 120}}
+         {{"ABCD", "n"}, %Content.Audio.VehiclesToDestination{language: :english}, 5, 120}}
       )
 
       :timer.sleep(100)
 
       assert_received(
         {:send_audio,
-         {{"ABCD", "n"}, %Content.Audio.BusesToDestination{language: :english}, 5, 120}}
+         {{"ABCD", "n"}, %Content.Audio.VehiclesToDestination{language: :english}, 5, 120}}
       )
 
       :timer.sleep(5)
 
       refute_received(
         {:send_audio,
-         {{"ABCD", "n"}, %Content.Audio.BusesToDestination{language: :english}, 5, 120}}
+         {{"ABCD", "n"}, %Content.Audio.VehiclesToDestination{language: :english}, 5, 120}}
       )
 
       :timer.sleep(100)
 
       assert_received(
         {:send_audio,
-         {{"ABCD", "n"}, %Content.Audio.BusesToDestination{language: :english}, 5, 120}}
+         {{"ABCD", "n"}, %Content.Audio.VehiclesToDestination{language: :english}, 5, 120}}
       )
     end
   end

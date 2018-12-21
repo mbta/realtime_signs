@@ -61,11 +61,11 @@ defmodule Signs.Utilities.Reader do
         nil
     end
 
-    case Content.Audio.BusesToDestination.from_headway_message(
+    case Content.Audio.VehiclesToDestination.from_headway_message(
            elem(sign.current_content_bottom, 1),
            msg.headsign
          ) do
-      {%Content.Audio.BusesToDestination{} = audio, %Content.Audio.BusesToDestination{}} ->
+      {%Content.Audio.VehiclesToDestination{} = audio, %Content.Audio.VehiclesToDestination{}} ->
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
 
       {nil, nil} ->

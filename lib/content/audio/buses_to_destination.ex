@@ -1,4 +1,4 @@
-defmodule Content.Audio.BusesToDestination do
+defmodule Content.Audio.VehiclesToDestination do
   @moduledoc """
   Buses to Chelsea / S. Station arrive every [Number] to [Number] minutes
   """
@@ -47,7 +47,7 @@ defmodule Content.Audio.BusesToDestination do
     else
       _ ->
         Logger.warn(
-          "Content.Audio.BusesToDestination.from_headway_message: #{inspect(msg)}, #{dest}"
+          "Content.Audio.VehiclesToDestination.from_headway_message: #{inspect(msg)}, #{dest}"
         )
 
         {nil, nil}
