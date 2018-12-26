@@ -5,6 +5,8 @@ defmodule Signs.Utilities.Reader do
   read that as well.
   """
 
+  require Logger
+
   def read_sign(%{tick_read: n} = sign) when n > 0 do
     sign
   end
