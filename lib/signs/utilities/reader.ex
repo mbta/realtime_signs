@@ -70,8 +70,8 @@ defmodule Signs.Utilities.Reader do
            elem(sign.current_content_bottom, 1),
            msg.headsign
          ) do
-      {%Content.Audio.VehiclesToDestination{} = english_audio,
-       %Content.Audio.VehiclesToDestination{} = spanish_audio} ->
+      {%Content.Audio.VehiclesToDestination{language: :english} = english_audio,
+       %Content.Audio.VehiclesToDestination{language: :spanish} = spanish_audio} ->
         sign.sign_updater.send_audio(sign.pa_ess_id, english_audio, 5, 60)
         sign.sign_updater.send_audio(sign.pa_ess_id, spanish_audio, 5, 60)
 
