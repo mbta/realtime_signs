@@ -5,7 +5,7 @@ defmodule PaEss.Utilities do
 
   require Logger
 
-  @spec valid_range?(integer(), :english | :spanish) :: boolean()
+  @spec valid_range?(integer(), Content.Audio.language()) :: boolean()
   def valid_range?(n, :english) do
     n > 0 and n < 60
   end
@@ -14,7 +14,12 @@ defmodule PaEss.Utilities do
     n > 0 and n < 21
   end
 
-  @spec number_var(integer(), :english | :spanish) :: String.t() | no_return()
+  @spec valid_destination?(Content.Audio.destination(), Content.Audio.language()) :: boolean()
+  def valid_destination?(destination, language) when not is_nil(destination) do
+    language == :english or destination in [:chelsea, :south_station]
+  end
+
+  @spec number_var(integer(), Content.Audio.language()) :: String.t() | no_return()
   def number_var(n, :english) do
     cond do
       valid_range?(n, :english) -> Integer.to_string(5500 + n)

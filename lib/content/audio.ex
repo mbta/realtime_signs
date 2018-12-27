@@ -11,4 +11,30 @@ defprotocol Content.Audio do
   @spec to_params(Content.Audio.t()) :: {mid, vars, type}
         when mid: String.t(), vars: [String.t()], type: :audio | :visual | :audio_visual
   def to_params(audio)
+
+  @type destination ::
+          :chelsea
+          | :south_station
+          | :northbound
+          | :southbound
+          | :eastbound
+          | :westbound
+          | :alewife
+          | :ashmont
+          | :braintree
+          | :wonderland
+          | :bowdoin
+          | :forest_hills
+          | :oak_grove
+          | :park_street
+          | :govt_ctr
+          | :north_sta
+          | :lechmere
+          | :riverside
+          | :heath_street
+          | :boston_college
+          | :cleveland_circle
+          | :mattapan
+
+  @type language :: :english | :spanish
 end

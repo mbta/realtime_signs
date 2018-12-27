@@ -10,30 +10,8 @@ defmodule Content.Audio.VehiclesToDestination do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          language: :english | :spanish,
-          destination:
-            :chelsea
-            | :south_station
-            | :northbound
-            | :southbound
-            | :eastbound
-            | :westbound
-            | :alewife
-            | :ashmont
-            | :braintree
-            | :wonderland
-            | :bowdoin
-            | :forest_hills
-            | :oak_grove
-            | :park_street
-            | :govt_ctr
-            | :north_sta
-            | :lechmere
-            | :riverside
-            | :heath_street
-            | :boston_college
-            | :cleveland_circle
-            | :mattapan,
+          language: Content.Audio.language(),
+          destination: Content.Audio.destination(),
           next_trip_mins: integer(),
           later_trip_mins: integer()
         }
@@ -60,7 +38,8 @@ defmodule Content.Audio.VehiclesToDestination do
 
   defp create(language, destination, next_mins, later_mins) do
     if Utilities.valid_range?(next_mins, language) and
-         Utilities.valid_range?(later_mins, language) do
+         Utilities.valid_range?(later_mins, language) and
+         Utilities.valid_destination?(destination, language) do
       %__MODULE__{
         language: language,
         destination: destination,
@@ -108,28 +87,29 @@ defmodule Content.Audio.VehiclesToDestination do
       {message_id(audio), vars(audio), :audio}
     end
 
-    defp message_id(%{language: _, destination: :boston_college}), do: "642"
-    defp message_id(%{language: _, destination: :cleveland_circle}), do: "643"
-    defp message_id(%{language: _, destination: :riverside}), do: "644"
-    defp message_id(%{language: _, destination: :heath_street}), do: "645"
-    defp message_id(%{language: _, destination: :reservoir}), do: "646"
-    defp message_id(%{language: _, destination: :kenmore}), do: "647"
-    defp message_id(%{language: _, destination: :govt_ctr}), do: "648"
-    defp message_id(%{language: _, destination: :park_street}), do: "649"
-    defp message_id(%{language: _, destination: :north_sta}), do: "650"
-    defp message_id(%{language: _, destination: :lechmere}), do: "651"
-    defp message_id(%{language: _, destination: :ashmont}), do: "654"
-    defp message_id(%{language: _, destination: :braintree}), do: "655"
-    defp message_id(%{language: _, destination: :alewife}), do: "656"
-    defp message_id(%{language: _, destination: :forest_hills}), do: "657"
-    defp message_id(%{language: _, destination: :oak_grove}), do: "658"
-    defp message_id(%{language: _, destination: :bowdoin}), do: "659"
-    defp message_id(%{language: _, destination: :wonderland}), do: "660"
-    defp message_id(%{language: _, destination: :mattapan}), do: "661"
-    defp message_id(%{language: _, destination: :eastbound}), do: "662"
-    defp message_id(%{language: _, destination: :westbound}), do: "663"
-    defp message_id(%{language: _, destination: :northbound}), do: "664"
-    defp message_id(%{language: _, destination: :southbound}), do: "665"
+    @spec message_id(Content.Audio.VehiclesToDestination.t()) :: String.t()
+    defp message_id(%{language: :english, destination: :boston_college}), do: "642"
+    defp message_id(%{language: :english, destination: :cleveland_circle}), do: "643"
+    defp message_id(%{language: :english, destination: :riverside}), do: "644"
+    defp message_id(%{language: :english, destination: :heath_street}), do: "645"
+    defp message_id(%{language: :english, destination: :reservoir}), do: "646"
+    defp message_id(%{language: :english, destination: :kenmore}), do: "647"
+    defp message_id(%{language: :english, destination: :govt_ctr}), do: "648"
+    defp message_id(%{language: :english, destination: :park_street}), do: "649"
+    defp message_id(%{language: :english, destination: :north_sta}), do: "650"
+    defp message_id(%{language: :english, destination: :lechmere}), do: "651"
+    defp message_id(%{language: :english, destination: :ashmont}), do: "654"
+    defp message_id(%{language: :english, destination: :braintree}), do: "655"
+    defp message_id(%{language: :english, destination: :alewife}), do: "656"
+    defp message_id(%{language: :english, destination: :forest_hills}), do: "657"
+    defp message_id(%{language: :english, destination: :oak_grove}), do: "658"
+    defp message_id(%{language: :english, destination: :bowdoin}), do: "659"
+    defp message_id(%{language: :english, destination: :wonderland}), do: "660"
+    defp message_id(%{language: :english, destination: :mattapan}), do: "661"
+    defp message_id(%{language: :english, destination: :eastbound}), do: "662"
+    defp message_id(%{language: :english, destination: :westbound}), do: "663"
+    defp message_id(%{language: :english, destination: :northbound}), do: "664"
+    defp message_id(%{language: :english, destination: :southbound}), do: "665"
 
     defp message_id(%{language: :english, destination: :chelsea}), do: "133"
     defp message_id(%{language: :english, destination: :south_station}), do: "134"
