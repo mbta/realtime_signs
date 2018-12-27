@@ -12,7 +12,8 @@ defprotocol Content.Audio do
         when mid: String.t(), vars: [String.t()], type: :audio | :visual | :audio_visual
   def to_params(audio)
 
-  @type destination :: :chelsea
+  @type destination ::
+          :chelsea
           | :south_station
           | :northbound
           | :southbound
