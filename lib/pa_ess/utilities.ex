@@ -15,7 +15,7 @@ defmodule PaEss.Utilities do
   end
 
   @spec valid_destination?(Content.Audio.destination(), Content.Audio.language()) :: boolean()
-  def valid_destination?(destination, language) do
+  def valid_destination?(destination, language) when not is_nil(destination) do
     language == :english or destination in [:chelsea, :south_station]
   end
 
