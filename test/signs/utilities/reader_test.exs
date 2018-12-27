@@ -125,6 +125,31 @@ defmodule Signs.Utilities.ReaderTest do
       assert sign.tick_read == 100
     end
 
+    test "sends both English and Spanish audio if both are available" do
+      sign = %{
+        @sign
+        | tick_read: 0,
+          current_content_top: {@src, %T{headsign: "Chelsea"}},
+          current_content_bottom: {@src, %B{range: {1, 3}}}
+      }
+
+      sign = Reader.read_sign(sign)
+
+      assert_received(
+        {:send_audio, _id,
+         %VTD{language: :english, destination: :chelsea, next_trip_mins: 1, later_trip_mins: 3},
+         _p, _t}
+      )
+
+      assert_received(
+        {:send_audio, _id,
+         %VTD{language: :spanish, destination: :chelsea, next_trip_mins: 1, later_trip_mins: 3},
+         _p, _t}
+      )
+
+      assert sign.tick_read == 100
+    end
+
     test "sends stopped train message" do
       sign = %{
         @sign

@@ -10,6 +10,12 @@ defmodule Content.Audio.UtilitiesTest do
     refute valid_range?(100, :spanish)
   end
 
+  test "valid_destination?" do
+    assert valid_destination?(:chelsea, :spanish)
+    assert valid_destination?(:south_station, :english)
+    refute valid_destination?(:cleveland_circle, :spanish)
+  end
+
   test "number_var/2" do
     assert number_var(10, :english) == "5510"
     assert number_var(10, :spanish) == "37010"
