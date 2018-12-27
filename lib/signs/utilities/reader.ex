@@ -71,14 +71,8 @@ defmodule Signs.Utilities.Reader do
         sign.sign_updater.send_audio(sign.pa_ess_id, english_audio, 5, 60)
         sign.sign_updater.send_audio(sign.pa_ess_id, spanish_audio, 5, 60)
 
-      {%Content.Audio.VehiclesToDestination{} = audio, nil} ->
-        Logger.warn(
-          "No Spanish audio available for content #{inspect(sign.current_content_bottom)}, headsign #{
-            inspect(msg.headsign)
-          }"
-        )
-
-        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+      {%Content.Audio.VehiclesToDestination{} = english_audio, nil} ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, english_audio, 5, 60)
 
       {nil, nil} ->
         nil

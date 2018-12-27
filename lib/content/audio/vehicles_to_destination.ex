@@ -10,30 +10,8 @@ defmodule Content.Audio.VehiclesToDestination do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          language: :english | :spanish,
-          destination:
-            :chelsea
-            | :south_station
-            | :northbound
-            | :southbound
-            | :eastbound
-            | :westbound
-            | :alewife
-            | :ashmont
-            | :braintree
-            | :wonderland
-            | :bowdoin
-            | :forest_hills
-            | :oak_grove
-            | :park_street
-            | :govt_ctr
-            | :north_sta
-            | :lechmere
-            | :riverside
-            | :heath_street
-            | :boston_college
-            | :cleveland_circle
-            | :mattapan,
+          language: Content.Audio.Language.t(),
+          destination: Content.Audio.Destination.t(),
           next_trip_mins: integer(),
           later_trip_mins: integer()
         }
@@ -60,7 +38,8 @@ defmodule Content.Audio.VehiclesToDestination do
 
   defp create(language, destination, next_mins, later_mins) do
     if Utilities.valid_range?(next_mins, language) and
-         Utilities.valid_range?(later_mins, language) do
+         Utilities.valid_range?(later_mins, language) and
+         Utilities.valid_destination?(destination, language) do
       %__MODULE__{
         language: language,
         destination: destination,
