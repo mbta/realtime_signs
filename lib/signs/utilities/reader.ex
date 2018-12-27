@@ -5,6 +5,8 @@ defmodule Signs.Utilities.Reader do
   read that as well.
   """
 
+  require Logger
+
   def read_sign(%{tick_read: n} = sign) when n > 0 do
     sign
   end
@@ -43,6 +45,10 @@ defmodule Signs.Utilities.Reader do
     %{sign | tick_read: sign.read_period_seconds}
   end
 
+  @spec send_audio_update(
+          {Signs.Utilities.SourceConfig.source() | nil, Content.Message.t()},
+          Signs.Realtime.t()
+        ) :: any()
   defp send_audio_update({src, msg}, sign) do
     case Content.Audio.NextTrainCountdown.from_predictions_message(msg, src) do
       %Content.Audio.NextTrainCountdown{} = audio ->
@@ -64,8 +70,13 @@ defmodule Signs.Utilities.Reader do
            elem(sign.current_content_bottom, 1),
            msg.headsign
          ) do
-      {%Content.Audio.VehiclesToDestination{} = audio, %Content.Audio.VehiclesToDestination{}} ->
-        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+      {%Content.Audio.VehiclesToDestination{language: :english} = english_audio,
+       %Content.Audio.VehiclesToDestination{language: :spanish} = spanish_audio} ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, english_audio, 5, 60)
+        sign.sign_updater.send_audio(sign.pa_ess_id, spanish_audio, 5, 60)
+
+      {%Content.Audio.VehiclesToDestination{} = english_audio, nil} ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, english_audio, 5, 60)
 
       {nil, nil} ->
         nil
