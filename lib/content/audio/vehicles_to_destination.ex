@@ -10,8 +10,8 @@ defmodule Content.Audio.VehiclesToDestination do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          language: Content.Audio.Language.t(),
-          destination: Content.Audio.Destination.t(),
+          language: Content.Audio.language(),
+          destination: Content.Audio.destination(),
           next_trip_mins: integer(),
           later_trip_mins: integer()
         }
