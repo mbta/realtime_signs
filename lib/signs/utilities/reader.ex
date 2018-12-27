@@ -45,6 +45,7 @@ defmodule Signs.Utilities.Reader do
     %{sign | tick_read: sign.read_period_seconds}
   end
 
+  @spec send_audio_update({Signs.Utilities.SourceConfig.source() | nil, Content.Message.t()}, Signs.Realtime.t()) :: any()
   defp send_audio_update({src, msg}, sign) do
     case Content.Audio.NextTrainCountdown.from_predictions_message(msg, src) do
       %Content.Audio.NextTrainCountdown{} = audio ->

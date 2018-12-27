@@ -87,6 +87,7 @@ defmodule Content.Audio.VehiclesToDestination do
       {message_id(audio), vars(audio), :audio}
     end
 
+    @spec message_id(Content.Audio.VehiclesToDestination.t()) :: String.t()
     defp message_id(%{language: :english, destination: :boston_college}), do: "642"
     defp message_id(%{language: :english, destination: :cleveland_circle}), do: "643"
     defp message_id(%{language: :english, destination: :riverside}), do: "644"
