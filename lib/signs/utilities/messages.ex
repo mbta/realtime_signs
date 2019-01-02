@@ -15,6 +15,9 @@ defmodule Signs.Utilities.Messages do
       alert_status == :shuttles_closed_station ->
         {{nil, %Content.Message.Alert.NoService{}}, {nil, %Content.Message.Alert.UseShuttleBus{}}}
 
+      alert_status == :suspension ->
+        {{nil, %Content.Message.Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
+
       true ->
         case Signs.Utilities.Predictions.get_messages(sign) do
           {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}} ->

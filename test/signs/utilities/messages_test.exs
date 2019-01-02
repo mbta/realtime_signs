@@ -91,6 +91,15 @@ defmodule Signs.Utilities.MessagesTest do
                 {nil, %Content.Message.Alert.UseShuttleBus{}}}
     end
 
+    test "when sign is at a station closed due to suspension, it says so" do
+      alert_status = :suspension
+      sign = @sign
+      enabled? = true
+
+      assert Messages.get_messages(sign, enabled?, alert_status) ==
+               {{nil, %Content.Message.Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
+    end
+
     test "when there are predictions, puts predictions on the sign" do
       sign = @sign
       enabled? = true

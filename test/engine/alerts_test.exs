@@ -5,7 +5,11 @@ defmodule Engine.AlertsTest do
   describe "GenServer initialization" do
     test "GenServer starts up successfully" do
       {:ok, pid} =
-        Engine.Alerts.start_link(gen_server_name: __MODULE__, ets_table_name: __MODULE__)
+        Engine.Alerts.start_link(
+          gen_server_name: __MODULE__,
+          stops_ets_table_name: :stops_ets_table_test,
+          routes_ets_table_name: :routes_ets_table_test
+        )
 
       Process.sleep(500)
       assert Process.alive?(pid)
@@ -25,8 +29,18 @@ defmodule Engine.AlertsTest do
       @behaviour Engine.Alerts.Fetcher
 
       @impl true
-      def get_stop_statuses do
-        {:ok, %{"123" => :shuttles_closed_station, "234" => :shuttles_transfer_station}}
+      def get_statuses do
+        {:ok,
+         %{
+           :stop_statuses => %{
+             "123" => :shuttles_closed_station,
+             "234" => :shuttles_transfer_station
+           },
+           :route_statuses => %{
+             "Red" => :suspension,
+             "Green-B" => :suspension
+           }
+         }}
       end
     end
 
@@ -34,50 +48,83 @@ defmodule Engine.AlertsTest do
       @behaviour Engine.Alerts.Fetcher
 
       @impl true
-      def get_stop_statuses do
+      def get_statuses do
         {:error, :didnt_work}
       end
     end
 
     test "works as described on the happy path" do
-      ets_table_name = :engine_alerts_test_happy_path
+      stops_ets_table_name = :engine_alerts_test_happy_path_stops
+      routes_ets_table_name = :engine_alerts_test_happy_path_routes
 
-      ^ets_table_name =
-        :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+      ^stops_ets_table_name =
+        :ets.new(stops_ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+
+      ^routes_ets_table_name =
+        :ets.new(routes_ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+
+      tables = %{
+        stops_table: stops_ets_table_name,
+        routes_table: routes_ets_table_name
+      }
 
       state = %{
-        ets_table_name: ets_table_name,
+        tables: tables,
         fetcher: FakeAlertsFetcherHappy,
         fetch_ms: 30_000
       }
 
       {:noreply, _state} = Engine.Alerts.handle_info(:fetch, state)
-      assert Engine.Alerts.stop_status(ets_table_name, "123") == :shuttles_closed_station
-      assert Engine.Alerts.stop_status(ets_table_name, "234") == :shuttles_transfer_station
-      assert Engine.Alerts.stop_status(ets_table_name, "n/a") == :none
 
-      assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a-1", "n/a-2"]) == :none
+      assert Engine.Alerts.stop_status(stops_ets_table_name, "123") == :shuttles_closed_station
 
-      assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a", "123"]) ==
+      assert Engine.Alerts.stop_status(stops_ets_table_name, "234") == :shuttles_transfer_station
+      assert Engine.Alerts.stop_status(stops_ets_table_name, "n/a") == :none
+
+      assert Engine.Alerts.max_stop_status(tables, ["n/a-1", "n/a-2"], ["n/a-3"]) == :none
+
+      assert Engine.Alerts.max_stop_status(tables, ["n/a-1", "123"], ["n/a-2"]) ==
                :shuttles_closed_station
 
-      assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a", "123", "234"]) ==
-               :shuttles_closed_station
+      assert Engine.Alerts.max_stop_status(tables, ["n/a-1", "123", "234"], [
+               "n/a-2"
+             ]) == :shuttles_closed_station
 
-      assert Engine.Alerts.max_stop_status(ets_table_name, ["n/a", "234"]) ==
+      assert Engine.Alerts.max_stop_status(tables, ["n/a-1", "234"], ["n/a-2"]) ==
                :shuttles_transfer_station
+
+      assert Engine.Alerts.max_stop_status(tables, ["n/a-1", "234"], ["Red"]) == :suspension
+
+      assert Engine.Alerts.max_stop_status(tables, ["n/a-1", "234"], ["Orange"]) ==
+               :shuttles_transfer_station
+
+      assert Engine.Alerts.max_stop_status(tables, ["n/a"], ["Green-B"]) == :suspension
+      assert Engine.Alerts.max_stop_status(tables, ["n/a"], ["Green-B", "Green-C"]) == :none
+
+      assert Engine.Alerts.route_status(routes_ets_table_name, "Red") == :suspension
+      assert Engine.Alerts.route_status(routes_ets_table_name, "Orange") == :none
     end
 
-    test "when alerts fetch fails, keeps old state" do
-      ets_table_name = :engine_alerts_test_sad_path
+    test "when alerts fetch fails, empties out state" do
+      stops_ets_table_name = :engine_alerts_test_sad_path_stops
+      routes_ets_table_name = :engine_alerts_test_sad_path_routes
 
-      ^ets_table_name =
-        :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+      ^stops_ets_table_name =
+        :ets.new(stops_ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
 
-      :ets.insert(ets_table_name, [{"abc", :shuttles_closed_station}])
+      ^routes_ets_table_name =
+        :ets.new(routes_ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+
+      :ets.insert(stops_ets_table_name, [{"abc", :shuttles_closed_station}])
+      :ets.insert(routes_ets_table_name, [{"Red", :suspension}])
+
+      tables = %{
+        stops_table: stops_ets_table_name,
+        routes_table: routes_ets_table_name
+      }
 
       state = %{
-        ets_table_name: ets_table_name,
+        tables: tables,
         fetcher: FakeAlertsFetcherSad,
         fetch_ms: 30_000
       }
@@ -88,7 +135,8 @@ defmodule Engine.AlertsTest do
         end)
 
       assert log =~ "could not fetch"
-      assert Engine.Alerts.stop_status(ets_table_name, "abc") == :shuttles_closed_station
+      assert Engine.Alerts.stop_status(stops_ets_table_name, "abc") == :none
+      assert Engine.Alerts.route_status(routes_ets_table_name, "Red") == :none
     end
   end
 end
