@@ -190,7 +190,8 @@ defmodule Fake.HTTPoison do
             "effect" => "SHUTTLE",
             "informed_entity" => [
               %{
-                "stop" => "70151"
+                "stop" => "70151",
+                "route" => "Green-B"
               }
             ]
           }
@@ -200,7 +201,49 @@ defmodule Fake.HTTPoison do
             "effect" => "SHUTTLE",
             "informed_entity" => [
               %{
-                "stop" => "70151"
+                "stop" => "70151",
+                "route" => "Green-B"
+              }
+            ]
+          }
+        },
+        %{
+          "attributes" => %{
+            "effect" => "SUSPENSION",
+            "informed_entity" => [
+              %{
+                "route" => "Red"
+              }
+            ]
+          }
+        },
+        %{
+          "attributes" => %{
+            "effect" => "SUSPENSION",
+            "informed_entity" => [
+              %{
+                "stop" => "70036",
+                "route" => "Orange"
+              }
+            ]
+          }
+        },
+        %{
+          "attributes" => %{
+            "effect" => "SUSPENSION",
+            "informed_entity" => [
+              %{
+                "route" => "Red"
+              }
+            ]
+          }
+        },
+        %{
+          "attributes" => %{
+            "effect" => "SHUTTLE",
+            "informed_entity" => [
+              %{
+                "route" => "Mattapan"
               }
             ]
           }
@@ -210,7 +253,18 @@ defmodule Fake.HTTPoison do
             "effect" => "SOMETHING_IRRELEVANT",
             "informed_entity" => [
               %{
-                "stop" => "70152"
+                "stop" => "70152",
+                "route" => "Green-B"
+              }
+            ]
+          }
+        },
+        %{
+          "attributes" => %{
+            "effect" => "SOMETHING_ELSE_IRRELEVANT",
+            "informed_entity" => [
+              %{
+                "route" => "Red"
               }
             ]
           }
