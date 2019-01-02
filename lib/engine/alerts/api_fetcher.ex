@@ -11,7 +11,9 @@ defmodule Engine.Alerts.ApiFetcher do
              :stop_statuses => %{
                Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()
              },
-             :route_statuses => %{}
+             :route_statuses => %{
+               Engine.Alerts.Fetcher.route_id() => Engine.Alerts.Fetcher.stop_status()
+             }
            }}
           | {:error, any()}
   def get_statuses do

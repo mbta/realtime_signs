@@ -4,7 +4,11 @@ defmodule Engine.Alerts.Fetcher do
   @type stop_status :: :shuttles_closed_station | :shuttles_transfer_station | :suspension | :none
 
   @callback get_statuses() ::
-              {:ok, %{:stop_statuses => %{stop_id() => stop_status()}, :route_statuses => %{}}}
+              {:ok,
+               %{
+                 :stop_statuses => %{stop_id() => stop_status()},
+                 :route_statuses => %{route_id() => stop_status()}
+               }}
               | {:error, any()}
 
   @spec higher_priority_status(stop_status(), stop_status()) :: stop_status()
