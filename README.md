@@ -1,6 +1,6 @@
 # RealtimeSigns
 
-[![Build Status](https://semaphoreci.com/api/v1/projects/39cb0e53-0299-441e-ab09-ddcb9fa9d2aa/1832678/badge.svg)](https://semaphoreci.com/mbta/realtime_signs)
+[![Build Status](https://semaphoreci.com/api/v1/projects/39cb0e53-0299-441e-ab09-ddcb9fa9d2aa/1806488/badge.svg)](https://semaphoreci.com/mbta/realtime_signs)
 
 ## Installation
 
