@@ -4,6 +4,74 @@ defmodule Signs.HeadwayTest do
   import ExUnit.CaptureLog
   import Signs.Headway
 
+  defmodule FakeHeadwayEngine do
+    def get_headways("first_departure_soon") do
+      future_departure = Timex.shift(Timex.now(), minutes: 5)
+      {:first_departure, {8, 10}, future_departure}
+    end
+
+    def get_headways("first_departure") do
+      future_departure = Timex.shift(Timex.now(), minutes: 20)
+      {:first_departure, {1, 2}, future_departure}
+    end
+
+    def get_headways("none") do
+      :none
+    end
+
+    def get_headways("nil_nil") do
+      {nil, nil}
+    end
+
+    def get_headways(_stop_id) do
+      {1, 2}
+    end
+  end
+
+  defmodule FakeBridgeEngine do
+    def status("down") do
+      {"Lowered", nil}
+    end
+
+    def status("up") do
+      {"Raised", 15}
+    end
+
+    def status(_) do
+      nil
+    end
+  end
+
+  defmodule FakeSignUpdater do
+    require Logger
+
+    def update_sign(id, line, message, duration, start) do
+      Logger.info("update_sign called")
+      {id, line, message, duration, start}
+    end
+
+    def send_audio(pa_ess_id, msg, priority, timeout) do
+      if Process.whereis(:headway_test_fake_updater_listener) do
+        send(
+          :headway_test_fake_updater_listener,
+          {:send_audio, {pa_ess_id, msg, priority, timeout}}
+        )
+      end
+
+      {:ok, :sent}
+    end
+  end
+
+  defmodule FakeAlertsEngine do
+    def max_stop_status(["suspended"], _routes) do
+      :suspension
+    end
+
+    def max_stop_status(_stops, _routes) do
+      :none
+    end
+  end
+
   @sign %Signs.Headway{
     id: "SIGN",
     pa_ess_id: {"ABCD", "n"},
@@ -12,6 +80,7 @@ defmodule Signs.HeadwayTest do
     headsign: "Chelsea",
     headway_engine: FakeHeadwayEngine,
     bridge_engine: FakeBridgeEngine,
+    alerts_engine: FakeAlertsEngine,
     sign_updater: FakeSignUpdater,
     timer: nil,
     read_sign_period_ms: 30_000
@@ -111,23 +180,14 @@ defmodule Signs.HeadwayTest do
     end
 
     test "if the bridge is down, does not update the sign" do
-      sign = %Signs.Headway{
-        id: "SIGN",
-        pa_ess_id: "1",
-        gtfs_stop_id: "123",
-        route_id: "743",
-        headsign: "Chelsea",
-        headway_engine: FakeHeadwayEngine,
-        bridge_engine: FakeBridgeEngine,
-        sign_updater: FakeSignUpdater,
-        read_sign_period_ms: 30_000,
-        bridge_id: "down",
-        timer: nil,
-        current_content_top: %Content.Message.Headways.Top{
-          headsign: "Chelsea",
-          vehicle_type: :bus
-        },
-        current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}
+      sign = %{
+        @sign
+        | pa_ess_id: "1",
+          current_content_top: %Content.Message.Headways.Top{
+            headsign: "Chelsea",
+            vehicle_type: :bus
+          },
+          current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}
       }
 
       log =
@@ -181,22 +241,14 @@ defmodule Signs.HeadwayTest do
     end
 
     test "if there is no bridge id, does not update the sign" do
-      sign = %Signs.Headway{
-        id: "SIGN",
-        pa_ess_id: "1",
-        gtfs_stop_id: "123",
-        route_id: "743",
-        headsign: "Chelsea",
-        headway_engine: FakeHeadwayEngine,
-        bridge_engine: FakeBridgeEngine,
-        sign_updater: FakeSignUpdater,
-        read_sign_period_ms: 30_000,
-        timer: nil,
-        current_content_top: %Content.Message.Headways.Top{
-          headsign: "Chelsea",
-          vehicle_type: :bus
-        },
-        current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}
+      sign = %{
+        @sign
+        | pa_ess_id: "1",
+          current_content_top: %Content.Message.Headways.Top{
+            headsign: "Chelsea",
+            vehicle_type: :bus
+          },
+          current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}
       }
 
       log =
@@ -208,22 +260,10 @@ defmodule Signs.HeadwayTest do
     end
 
     test "Messages for buses are passed through correctly" do
-      sign = %Signs.Headway{
-        id: "SIGN",
-        pa_ess_id: "1",
-        gtfs_stop_id: "123",
-        route_id: "743",
-        headsign: "Chelsea",
-        headway_engine: FakeHeadwayEngine,
-        bridge_engine: FakeBridgeEngine,
-        sign_updater: FakeSignUpdater,
-        read_sign_period_ms: 30_000,
-        timer: nil,
-        current_content_top: %Content.Message.Headways.Top{
-          headsign: "Chelsea",
-          vehicle_type: :bus
-        },
-        current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}
+      sign = %{
+        @sign
+        | route_id: "743",
+          headsign: "Chelsea"
       }
 
       {:noreply, sign} = handle_info(:update_content, sign)
@@ -235,22 +275,10 @@ defmodule Signs.HeadwayTest do
     end
 
     test "Messages for trolleys are passed through correctly" do
-      sign = %Signs.Headway{
-        id: "SIGN",
-        pa_ess_id: "1",
-        gtfs_stop_id: "123",
-        route_id: "Mattapan",
-        headsign: "Ashmont",
-        headway_engine: FakeHeadwayEngine,
-        bridge_engine: FakeBridgeEngine,
-        sign_updater: FakeSignUpdater,
-        read_sign_period_ms: 30_000,
-        timer: nil,
-        current_content_top: %Content.Message.Headways.Top{
-          headsign: "Ashmont",
-          vehicle_type: :trolley
-        },
-        current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}
+      sign = %{
+        @sign
+        | route_id: "Mattapan",
+          headsign: "Ashmont"
       }
 
       {:noreply, sign} = handle_info(:update_content, sign)
@@ -262,22 +290,10 @@ defmodule Signs.HeadwayTest do
     end
 
     test "Messages for trains are passed through correctly" do
-      sign = %Signs.Headway{
-        id: "SIGN",
-        pa_ess_id: "1",
-        gtfs_stop_id: "123",
-        route_id: "Green-D",
-        headsign: "Riverside",
-        headway_engine: FakeHeadwayEngine,
-        bridge_engine: FakeBridgeEngine,
-        sign_updater: FakeSignUpdater,
-        read_sign_period_ms: 30_000,
-        timer: nil,
-        current_content_top: %Content.Message.Headways.Top{
-          headsign: "Riverside",
-          vehicle_type: :train
-        },
-        current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}
+      sign = %{
+        @sign
+        | route_id: "Green-D",
+          headsign: "Riverside"
       }
 
       {:noreply, sign} = handle_info(:update_content, sign)
@@ -286,6 +302,19 @@ defmodule Signs.HeadwayTest do
                headsign: "Riverside",
                vehicle_type: :train
              }
+    end
+
+    test "if the station is closed from a suspension, it displays that" do
+      sign = %{
+        @sign
+        | current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new(),
+          gtfs_stop_id: "suspended"
+      }
+
+      {:noreply, sign} = handle_info(:update_content, sign)
+
+      assert sign.current_content_top == %Content.Message.Alert.NoService{}
     end
   end
 
@@ -403,63 +432,5 @@ defmodule Signs.HeadwayTest do
 
   test "handles unknown messages" do
     assert {:noreply, %Signs.Headway{}} = Signs.Headway.handle_info(:unknown, @sign)
-  end
-end
-
-defmodule FakeHeadwayEngine do
-  def get_headways("first_departure_soon") do
-    future_departure = Timex.shift(Timex.now(), minutes: 5)
-    {:first_departure, {8, 10}, future_departure}
-  end
-
-  def get_headways("first_departure") do
-    future_departure = Timex.shift(Timex.now(), minutes: 20)
-    {:first_departure, {1, 2}, future_departure}
-  end
-
-  def get_headways("none") do
-    :none
-  end
-
-  def get_headways("nil_nil") do
-    {nil, nil}
-  end
-
-  def get_headways(_stop_id) do
-    {1, 2}
-  end
-end
-
-defmodule FakeBridgeEngine do
-  def status("down") do
-    {"Lowered", nil}
-  end
-
-  def status("up") do
-    {"Raised", 15}
-  end
-
-  def status(_) do
-    nil
-  end
-end
-
-defmodule FakeSignUpdater do
-  require Logger
-
-  def update_sign(id, line, message, duration, start) do
-    Logger.info("update_sign called")
-    {id, line, message, duration, start}
-  end
-
-  def send_audio(pa_ess_id, msg, priority, timeout) do
-    if Process.whereis(:headway_test_fake_updater_listener) do
-      send(
-        :headway_test_fake_updater_listener,
-        {:send_audio, {pa_ess_id, msg, priority, timeout}}
-      )
-    end
-
-    {:ok, :sent}
   end
 end

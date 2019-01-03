@@ -10,6 +10,7 @@ defmodule Signs.Headway do
     :headsign,
     :headway_engine,
     :bridge_engine,
+    :alerts_engine,
     :sign_updater,
     :read_sign_period_ms
   ]
@@ -31,6 +32,7 @@ defmodule Signs.Headway do
           headsign: String.t(),
           headway_engine: module(),
           bridge_engine: module(),
+          alerts_engine: module(),
           sign_updater: module(),
           current_content_bottom: Content.Message.t() | nil,
           current_content_top: Content.Message.t() | nil,
@@ -46,6 +48,7 @@ defmodule Signs.Headway do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
     headway_engine = opts[:headway_engine] || Engine.Headways
     bridge_engine = opts[:bridge_engine] || Engine.Bridge
+    alerts_engine = opts[:alerts_engine] || Engine.Alerts
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
@@ -60,6 +63,7 @@ defmodule Signs.Headway do
       sign_updater: sign_updater,
       headway_engine: headway_engine,
       bridge_engine: bridge_engine,
+      alerts_engine: alerts_engine,
       read_sign_period_ms: 5 * 60 * 1000
     }
 
@@ -75,29 +79,65 @@ defmodule Signs.Headway do
   def handle_info(:update_content, sign) do
     schedule_update(self())
 
+    alert_status = sign.alerts_engine.max_stop_status([sign.gtfs_stop_id], [sign.route_id])
+    disabled? = !Engine.Config.enabled?(sign.id)
+
     updated_sign =
-      if Engine.Config.enabled?(sign.id) do
-        case sign.bridge_engine.status(sign.bridge_id) do
-          {"Raised", duration} ->
-            %{
-              sign
-              | current_content_top: %Content.Message.Bridge.Up{},
-                current_content_bottom: %Content.Message.Bridge.Delays{},
-                bridge_delay_duration: clean_duration(duration)
-            }
+      cond do
+        disabled? ->
+          %{
+            sign
+            | current_content_top: Content.Message.Empty.new(),
+              current_content_bottom: Content.Message.Empty.new()
+          }
 
-          _ ->
-            {top_content, bottom_content} =
-              case sign.headway_engine.get_headways(sign.gtfs_stop_id) do
-                {:first_departure, range, first_departure} ->
-                  max_headway = Headway.ScheduleHeadway.max_headway(range)
-                  time_buffer = if max_headway, do: max_headway, else: 0
+        alert_status == :suspension ->
+          %{
+            sign
+            | current_content_top: %Content.Message.Alert.NoService{},
+              current_content_bottom: Content.Message.Empty.new()
+          }
 
-                  if Headway.ScheduleHeadway.show_first_departure?(
-                       first_departure,
-                       Timex.now(),
-                       time_buffer
-                     ) do
+        true ->
+          case sign.bridge_engine.status(sign.bridge_id) do
+            {"Raised", duration} ->
+              %{
+                sign
+                | current_content_top: %Content.Message.Bridge.Up{},
+                  current_content_bottom: %Content.Message.Bridge.Delays{},
+                  bridge_delay_duration: clean_duration(duration)
+              }
+
+            _ ->
+              {top_content, bottom_content} =
+                case sign.headway_engine.get_headways(sign.gtfs_stop_id) do
+                  {:first_departure, range, first_departure} ->
+                    max_headway = Headway.ScheduleHeadway.max_headway(range)
+                    time_buffer = if max_headway, do: max_headway, else: 0
+
+                    if Headway.ScheduleHeadway.show_first_departure?(
+                         first_departure,
+                         Timex.now(),
+                         time_buffer
+                       ) do
+                      {
+                        %Content.Message.Headways.Top{
+                          headsign: sign.headsign,
+                          vehicle_type: vehicle_type(sign.route_id)
+                        },
+                        %Content.Message.Headways.Bottom{range: range}
+                      }
+                    else
+                      {Content.Message.Empty.new(), Content.Message.Empty.new()}
+                    end
+
+                  :none ->
+                    {Content.Message.Empty.new(), Content.Message.Empty.new()}
+
+                  {nil, nil} ->
+                    {Content.Message.Empty.new(), Content.Message.Empty.new()}
+
+                  range ->
                     {
                       %Content.Message.Headways.Top{
                         headsign: sign.headsign,
@@ -105,39 +145,15 @@ defmodule Signs.Headway do
                       },
                       %Content.Message.Headways.Bottom{range: range}
                     }
-                  else
-                    {Content.Message.Empty.new(), Content.Message.Empty.new()}
-                  end
+                end
 
-                :none ->
-                  {Content.Message.Empty.new(), Content.Message.Empty.new()}
-
-                {nil, nil} ->
-                  {Content.Message.Empty.new(), Content.Message.Empty.new()}
-
-                range ->
-                  {
-                    %Content.Message.Headways.Top{
-                      headsign: sign.headsign,
-                      vehicle_type: vehicle_type(sign.route_id)
-                    },
-                    %Content.Message.Headways.Bottom{range: range}
-                  }
-              end
-
-            %{
-              sign
-              | current_content_top: top_content,
-                current_content_bottom: bottom_content,
-                bridge_delay_duration: nil
-            }
-        end
-      else
-        %{
-          sign
-          | current_content_top: Content.Message.Empty.new(),
-            current_content_bottom: Content.Message.Empty.new()
-        }
+              %{
+                sign
+                | current_content_top: top_content,
+                  current_content_bottom: bottom_content,
+                  bridge_delay_duration: nil
+              }
+          end
       end
 
     sign = send_update(sign, updated_sign)
