@@ -44,6 +44,7 @@ defmodule Signs.Headway do
 
   @default_duration 120
 
+  @spec start_link(map(), Keyword.t()) :: GenServer.on_start()
   def start_link(%{"type" => "headway"} = config, opts \\ []) do
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
     headway_engine = opts[:headway_engine] || Engine.Headways
