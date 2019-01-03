@@ -76,6 +76,7 @@ defmodule Signs.Headway do
     {:ok, sign}
   end
 
+  @spec handle_info(:update_content, t()) :: {:noreply, t()}
   def handle_info(:update_content, sign) do
     schedule_update(self())
 
