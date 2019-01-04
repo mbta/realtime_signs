@@ -49,10 +49,10 @@ defmodule PaEss.HttpUpdater do
   def process({:update_single_line, [{station, zone}, line_no, msg, duration, start_secs]}, state) do
     cmd = to_command(msg, duration, start_secs, zone, line_no)
     encoded = URI.encode_query(MsgType: "SignContent", uid: state.uid, sta: station, c: cmd)
-    Logger.info(["update_single_line: ", encoded])
+    {timer, result} = send_post(state.http_poster, encoded)
+    Logger.info(["update_single_line: ", encoded, " head_end_ms=#{timer / 1_000} ms"])
 
     update_ui(state.http_poster, encoded)
-    {_timer, result} = send_post(state.http_poster, encoded)
     result
   end
 
@@ -72,10 +72,10 @@ defmodule PaEss.HttpUpdater do
         c: bottom_cmd
       )
 
-    Logger.info(["update_sign: ", encoded])
+    {timer, result} = send_post(state.http_poster, encoded)
+    Logger.info(["update_sign: ", encoded, " head_end_ms=#{timer / 1_000} ms"])
 
     update_ui(state.http_poster, encoded)
-    {_timer, result} = send_post(state.http_poster, encoded)
     result
   end
 
