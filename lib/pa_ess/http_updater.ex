@@ -52,7 +52,8 @@ defmodule PaEss.HttpUpdater do
     Logger.info(["update_single_line: ", encoded])
 
     update_ui(state.http_poster, encoded)
-    send_post(state.http_poster, encoded)
+    {timer, result} = send_post(state.http_poster, encoded)
+    result
   end
 
   def process(
@@ -74,7 +75,8 @@ defmodule PaEss.HttpUpdater do
     Logger.info(["update_sign: ", encoded])
 
     update_ui(state.http_poster, encoded)
-    send_post(state.http_poster, encoded)
+    {_timer, result} = send_post(state.http_poster, encoded)
+    result
   end
 
   def process({:send_audio, [{station, zone}, audio, priority, timeout]}, state) do
@@ -93,9 +95,10 @@ defmodule PaEss.HttpUpdater do
       ]
       |> URI.encode_query()
 
-    Logger.info(["send_audio: ", encoded])
+    {timer, result} = send_post(state.http_poster, encoded)
 
-    send_post(state.http_poster, encoded)
+    Logger.info(["send_audio: ", encoded, " head_end_ms=", timer])
+    result
   end
 
   @spec to_command(
@@ -149,19 +152,24 @@ defmodule PaEss.HttpUpdater do
   defp audio_type(:visual), do: "2"
 
   defp send_post(http_poster, query) do
-    case http_poster.post(sign_url(), query, [
-           {"Content-type", "application/x-www-form-urlencoded"}
-         ]) do
+    {timer, result} =
+      :timer.tc(fn ->
+        http_poster.post(sign_url(), query, [
+          {"Content-type", "application/x-www-form-urlencoded"}
+        ])
+      end)
+
+    case result do
       {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
-        {:ok, :sent}
+        {timer, {:ok, :sent}}
 
       {:ok, %HTTPoison.Response{status_code: status}} ->
         Logger.warn("head_end_post_error: response had status code: #{inspect(status)}")
-        {:error, :bad_status}
+        {timer, {:error, :bad_status}}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
         Logger.warn("head_end_post_error: #{inspect(reason)}")
-        {:error, :post_error}
+        {timer, {:error, :post_error}}
     end
   end
 
