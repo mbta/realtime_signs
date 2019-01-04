@@ -97,7 +97,7 @@ defmodule PaEss.HttpUpdater do
 
     {timer, result} = send_post(state.http_poster, encoded)
 
-    Logger.info(["send_audio: ", encoded, " head_end_ms=", timer])
+    Logger.info(["send_audio: ", encoded, " head_end_ms=#{timer / 1_000} ms"])
     result
   end
 
