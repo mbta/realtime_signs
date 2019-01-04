@@ -52,7 +52,7 @@ defmodule PaEss.HttpUpdater do
     Logger.info(["update_single_line: ", encoded])
 
     update_ui(state.http_poster, encoded)
-    {timer, result} = send_post(state.http_poster, encoded)
+    {_timer, result} = send_post(state.http_poster, encoded)
     result
   end
 
