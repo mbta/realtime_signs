@@ -10,11 +10,21 @@ defmodule PaEss.HttpUpdater do
           uid: integer()
         }
 
-  @max_send_rate_per_sec 15
+  # Normally an anti-pattern! But we mix compile --force with every deploy
+  @max_send_rate_per_sec (16 / Application.get_env(:realtime_signs, :number_of_http_updaters))
+                         |> Float.ceil()
+                         |> Kernel.trunc()
   @avg_ms_between_sends round(1000 / @max_send_rate_per_sec)
 
   use GenServer
   require Logger
+
+  def child_spec(nth) do
+    %{
+      id: :"http_updater#{nth}",
+      start: {__MODULE__, :start_link, []}
+    }
+  end
 
   def start_link(opts \\ []) do
     http_poster = opts[:http_poster] || Application.get_env(:realtime_signs, :http_poster_mod)
@@ -22,8 +32,8 @@ defmodule PaEss.HttpUpdater do
 
     GenServer.start_link(
       __MODULE__,
-      [http_poster: http_poster, queue_mod: queue_mod],
-      name: __MODULE__
+      http_poster: http_poster,
+      queue_mod: queue_mod
     )
   end
 
@@ -49,7 +59,7 @@ defmodule PaEss.HttpUpdater do
   def process({:update_single_line, [{station, zone}, line_no, msg, duration, start_secs]}, state) do
     cmd = to_command(msg, duration, start_secs, zone, line_no)
     encoded = URI.encode_query(MsgType: "SignContent", uid: state.uid, sta: station, c: cmd)
-    Logger.info(["update_single_line: ", encoded])
+    Logger.info(["update_single_line: ", encoded, " pid=", inspect(self())])
 
     update_ui(state.http_poster, encoded)
     send_post(state.http_poster, encoded)
@@ -71,7 +81,7 @@ defmodule PaEss.HttpUpdater do
         c: bottom_cmd
       )
 
-    Logger.info(["update_sign: ", encoded])
+    Logger.info(["update_sign: ", encoded, " pid=", inspect(self())])
 
     update_ui(state.http_poster, encoded)
     send_post(state.http_poster, encoded)
@@ -93,7 +103,7 @@ defmodule PaEss.HttpUpdater do
       ]
       |> URI.encode_query()
 
-    Logger.info(["send_audio: ", encoded])
+    Logger.info(["send_audio: ", encoded, " pid=", inspect(self())])
 
     send_post(state.http_poster, encoded)
   end
