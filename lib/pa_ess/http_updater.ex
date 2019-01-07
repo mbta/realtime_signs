@@ -10,7 +10,10 @@ defmodule PaEss.HttpUpdater do
           uid: integer()
         }
 
-  @max_send_rate_per_sec 4
+  # Normally an anti-pattern! But we mix compile --force with every deploy
+  @max_send_rate_per_sec (16 / Application.get_env(:realtime_signs, :number_of_http_updaters))
+                         |> Float.ceil()
+                         |> Kernel.trunc()
   @avg_ms_between_sends round(1000 / @max_send_rate_per_sec)
 
   use GenServer
@@ -19,12 +22,11 @@ defmodule PaEss.HttpUpdater do
   def start_link(opts \\ []) do
     http_poster = opts[:http_poster] || Application.get_env(:realtime_signs, :http_poster_mod)
     queue_mod = opts[:queue_mod] || MessageQueue
-    name = opts[:name] || __MODULE__
 
     GenServer.start_link(
       __MODULE__,
-      [http_poster: http_poster, queue_mod: queue_mod],
-      name: name
+      http_poster: http_poster,
+      queue_mod: queue_mod
     )
   end
 
