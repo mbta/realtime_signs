@@ -52,7 +52,7 @@ defmodule PaEss.HttpUpdater do
   def process({:update_single_line, [{station, zone}, line_no, msg, duration, start_secs]}, state) do
     cmd = to_command(msg, duration, start_secs, zone, line_no)
     encoded = URI.encode_query(MsgType: "SignContent", uid: state.uid, sta: station, c: cmd)
-    Logger.info(["update_single_line: ", encoded])
+    Logger.info(["update_single_line: ", encoded, " pid=", inspect(self())])
 
     update_ui(state.http_poster, encoded)
     send_post(state.http_poster, encoded)
@@ -74,7 +74,7 @@ defmodule PaEss.HttpUpdater do
         c: bottom_cmd
       )
 
-    Logger.info(["update_sign: ", encoded])
+    Logger.info(["update_sign: ", encoded, " pid=", inspect(self())])
 
     update_ui(state.http_poster, encoded)
     send_post(state.http_poster, encoded)
@@ -96,7 +96,7 @@ defmodule PaEss.HttpUpdater do
       ]
       |> URI.encode_query()
 
-    Logger.info(["send_audio: ", encoded])
+    Logger.info(["send_audio: ", encoded, " pid=", inspect(self())])
 
     send_post(state.http_poster, encoded)
   end
