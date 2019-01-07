@@ -5,13 +5,11 @@ defmodule Engine.Alerts.StationConfig do
     stops_data = File.read!("priv/stops.json") |> Poison.Parser.parse!()
 
     {stop_to_station, station_to_stops, station_neighbors} =
-      Enum.reduce(
-        stops_data,
-        {%{}, %{}, %{}},
-        fn {_segment, stops}, {stop_to_station, station_to_stops, station_neighbors} ->
-          do_load_config(stops, stop_to_station, station_to_stops, station_neighbors, nil)
-        end
-      )
+      Enum.reduce(stops_data, {%{}, %{}, %{}}, fn {_segment, stops},
+                                                  {stop_to_station, station_to_stops,
+                                                   station_neighbors} ->
+        do_load_config(stops, stop_to_station, station_to_stops, station_neighbors, nil)
+      end)
 
     %__MODULE__{
       stop_to_station: stop_to_station,
