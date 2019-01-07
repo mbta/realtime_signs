@@ -13,7 +13,10 @@ defmodule RealtimeSigns do
       worker(Engine.Static, []),
       worker(Engine.Alerts, []),
       worker(MessageQueue, []),
-      worker(PaEss.HttpUpdater, []),
+      Supervisor.child_spec({PaEss.HttpUpdater, name: :http_updater1}, id: :http_updater1),
+      Supervisor.child_spec({PaEss.HttpUpdater, name: :http_updater2}, id: :http_updater2),
+      Supervisor.child_spec({PaEss.HttpUpdater, name: :http_updater3}, id: :http_updater3),
+      Supervisor.child_spec({PaEss.HttpUpdater, name: :http_updater4}, id: :http_updater4),
       supervisor(Signs.Supervisor, [])
     ]
 

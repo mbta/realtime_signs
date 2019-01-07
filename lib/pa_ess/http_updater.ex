@@ -10,7 +10,7 @@ defmodule PaEss.HttpUpdater do
           uid: integer()
         }
 
-  @max_send_rate_per_sec 15
+  @max_send_rate_per_sec 4
   @avg_ms_between_sends round(1000 / @max_send_rate_per_sec)
 
   use GenServer
@@ -19,11 +19,12 @@ defmodule PaEss.HttpUpdater do
   def start_link(opts \\ []) do
     http_poster = opts[:http_poster] || Application.get_env(:realtime_signs, :http_poster_mod)
     queue_mod = opts[:queue_mod] || MessageQueue
+    name = opts[:name] || __MODULE__
 
     GenServer.start_link(
       __MODULE__,
       [http_poster: http_poster, queue_mod: queue_mod],
-      name: __MODULE__
+      name: name
     )
   end
 
