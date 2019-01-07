@@ -19,6 +19,13 @@ defmodule PaEss.HttpUpdater do
   use GenServer
   require Logger
 
+  def child_spec(nth) do
+    %{
+      id: :"http_updater#{nth}",
+      start: {__MODULE__, :start_link, []}
+    }
+  end
+
   def start_link(opts \\ []) do
     http_poster = opts[:http_poster] || Application.get_env(:realtime_signs, :http_poster_mod)
     queue_mod = opts[:queue_mod] || MessageQueue

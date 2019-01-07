@@ -29,7 +29,7 @@ defmodule RealtimeSigns do
     num_children = Application.get_env(:realtime_signs, :number_of_http_updaters)
 
     for i <- 1..num_children do
-      Supervisor.child_spec({PaEss.HttpUpdater, []}, id: :"http_updater#{i}")
+      {PaEss.HttpUpdater, i}
     end
   end
 end

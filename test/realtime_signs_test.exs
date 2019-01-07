@@ -12,8 +12,8 @@ defmodule RealtimeSignsTest do
       Application.put_env(:realtime_signs, :number_of_http_updaters, 2)
 
       assert RealtimeSigns.http_updater_children() == [
-               Supervisor.child_spec({PaEss.HttpUpdater, []}, id: :http_updater1),
-               Supervisor.child_spec({PaEss.HttpUpdater, []}, id: :http_updater2)
+               {PaEss.HttpUpdater, 1},
+               {PaEss.HttpUpdater, 2}
              ]
     end
   end
