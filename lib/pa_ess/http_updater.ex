@@ -49,10 +49,10 @@ defmodule PaEss.HttpUpdater do
   def process({:update_single_line, [{station, zone}, line_no, msg, duration, start_secs]}, state) do
     cmd = to_command(msg, duration, start_secs, zone, line_no)
     encoded = URI.encode_query(MsgType: "SignContent", uid: state.uid, sta: station, c: cmd)
-    Logger.info(["update_single_line: ", encoded])
+    success_log = ["update_single_line: ", encoded]
 
     update_ui(state.http_poster, encoded)
-    send_post(state.http_poster, encoded)
+    send_post(state.http_poster, encoded, success_log)
   end
 
   def process(
@@ -71,10 +71,10 @@ defmodule PaEss.HttpUpdater do
         c: bottom_cmd
       )
 
-    Logger.info(["update_sign: ", encoded])
+    success_log = ["update_sign: ", encoded]
 
     update_ui(state.http_poster, encoded)
-    send_post(state.http_poster, encoded)
+    send_post(state.http_poster, encoded, success_log)
   end
 
   def process({:send_audio, [{station, zone}, audio, priority, timeout]}, state) do
@@ -93,9 +93,9 @@ defmodule PaEss.HttpUpdater do
       ]
       |> URI.encode_query()
 
-    Logger.info(["send_audio: ", encoded])
+    success_log = ["send_audio: ", encoded]
 
-    send_post(state.http_poster, encoded)
+    send_post(state.http_poster, encoded, success_log)
   end
 
   @spec to_command(
@@ -148,21 +148,26 @@ defmodule PaEss.HttpUpdater do
   defp audio_type(:audio), do: "1"
   defp audio_type(:visual), do: "2"
 
-  defp send_post(http_poster, query) do
-    case http_poster.post(sign_url(), query, [
-           {"Content-type", "application/x-www-form-urlencoded"}
-         ]) do
-      {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
-        {:ok, :sent}
+  defp send_post(http_poster, query, success_log) do
+    spawn(fn ->
+      case http_poster.post(sign_url(), query, [
+             {"Content-type", "application/x-www-form-urlencoded"}
+           ]) do
+        {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
+          Logger.info(success_log)
+          {:ok, :sent}
 
-      {:ok, %HTTPoison.Response{status_code: status}} ->
-        Logger.warn("head_end_post_error: response had status code: #{inspect(status)}")
-        {:error, :bad_status}
+        {:ok, %HTTPoison.Response{status_code: status}} ->
+          Logger.warn("head_end_post_error: response had status code: #{inspect(status)}")
+          {:error, :bad_status}
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("head_end_post_error: #{inspect(reason)}")
-        {:error, :post_error}
-    end
+        {:error, %HTTPoison.Error{reason: reason}} ->
+          Logger.warn("head_end_post_error: #{inspect(reason)}")
+          {:error, :post_error}
+      end
+    end)
+
+    {:ok, :sent}
   end
 
   def update_ui(http_poster, query) do
