@@ -9,6 +9,10 @@ defmodule Signs.Utilities.HeadwaysTest do
     def get_headways("456") do
       :none
     end
+
+    def get_headways("789") do
+      {:first_departure, {1, 5}, DateTime.utc_now()}
+    end
   end
 
   @sign %Signs.Realtime{
@@ -109,6 +113,46 @@ defmodule Signs.Utilities.HeadwaysTest do
                    platform: nil,
                    routes: nil,
                    stop_id: "456",
+                   terminal?: false
+                 }, %Content.Message.Empty{}}}
+    end
+
+    test "generates blank messages to display prior to first departure of the day" do
+      sign = %{
+        @sign
+        | source_config:
+            {[
+               %Signs.Utilities.SourceConfig{
+                 stop_id: "789",
+                 headway_direction_name: "Southbound",
+                 direction_id: 0,
+                 platform: nil,
+                 terminal?: false,
+                 announce_arriving?: false,
+                 multi_berth?: false
+               }
+             ]}
+      }
+
+      assert Signs.Utilities.Headways.get_messages(sign) ==
+               {{%Signs.Utilities.SourceConfig{
+                   announce_arriving?: false,
+                   direction_id: 0,
+                   headway_direction_name: "Southbound",
+                   multi_berth?: false,
+                   platform: nil,
+                   routes: nil,
+                   stop_id: "789",
+                   terminal?: false
+                 }, %Content.Message.Empty{}},
+                {%Signs.Utilities.SourceConfig{
+                   announce_arriving?: false,
+                   direction_id: 0,
+                   headway_direction_name: "Southbound",
+                   multi_berth?: false,
+                   platform: nil,
+                   routes: nil,
+                   stop_id: "789",
                    terminal?: false
                  }, %Content.Message.Empty{}}}
     end

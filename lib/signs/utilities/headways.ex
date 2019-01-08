@@ -27,6 +27,9 @@ defmodule Signs.Utilities.Headways do
       :none ->
         {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
 
+      {:first_departure, _, _} ->
+        {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
+
       headway_range ->
         {{config,
           %Content.Message.Headways.Top{
