@@ -191,7 +191,10 @@ defmodule Signs.Headway do
     {:noreply, sign}
   end
 
-  defp send_update(%{current_content_bottom: same}, %{current_content_bottom: same} = sign) do
+  defp send_update(
+         %{current_content_bottom: same_bottom, current_content_top: same_top},
+         %{current_content_bottom: same_bottom, current_content_top: same_top} = sign
+       ) do
     sign
   end
 
