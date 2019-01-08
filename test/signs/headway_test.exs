@@ -314,7 +314,7 @@ defmodule Signs.HeadwayTest do
 
       {:noreply, sign} = handle_info(:update_content, sign)
 
-      assert sign.current_content_top == %Content.Message.Alert.NoService{}
+      assert sign.current_content_top == %Content.Message.Alert.NoService{mode: nil}
     end
   end
 
