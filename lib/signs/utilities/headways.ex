@@ -18,14 +18,22 @@ defmodule Signs.Utilities.Headways do
     end
   end
 
+  @spec do_headway_messages(Signs.Realtime.t(), map()) ::
+          {{map(), Content.Message.t()}, {map(), Content.Message.t()}}
   defp do_headway_messages(sign, config) do
     headway_range = sign.headway_engine.get_headways(config.stop_id)
 
-    {{config,
-      %Content.Message.Headways.Top{
-        headsign: config.headway_direction_name,
-        vehicle_type: vehicle_type(config.routes)
-      }}, {config, %Content.Message.Headways.Bottom{range: headway_range}}}
+    case headway_range do
+      :none ->
+        {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
+
+      headway_range ->
+        {{config,
+          %Content.Message.Headways.Top{
+            headsign: config.headway_direction_name,
+            vehicle_type: vehicle_type(config.routes)
+          }}, {config, %Content.Message.Headways.Bottom{range: headway_range}}}
+    end
   end
 
   defp vehicle_type(["743"]), do: :bus

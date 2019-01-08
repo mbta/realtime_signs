@@ -2,8 +2,12 @@ defmodule Signs.Utilities.HeadwaysTest do
   use ExUnit.Case
 
   defmodule FakeHeadways do
-    def get_headways(_) do
+    def get_headways("123") do
       {1, 5}
+    end
+
+    def get_headways("456") do
+      :none
     end
   end
 
@@ -67,6 +71,46 @@ defmodule Signs.Utilities.HeadwaysTest do
                    stop_id: "123",
                    terminal?: false
                  }, %Content.Message.Headways.Bottom{range: {1, 5}}}}
+    end
+
+    test "generates blank messages to display when no headway information present" do
+      sign = %{
+        @sign
+        | source_config:
+            {[
+               %Signs.Utilities.SourceConfig{
+                 stop_id: "456",
+                 headway_direction_name: "Southbound",
+                 direction_id: 0,
+                 platform: nil,
+                 terminal?: false,
+                 announce_arriving?: false,
+                 multi_berth?: false
+               }
+             ]}
+      }
+
+      assert Signs.Utilities.Headways.get_messages(sign) ==
+               {{%Signs.Utilities.SourceConfig{
+                   announce_arriving?: false,
+                   direction_id: 0,
+                   headway_direction_name: "Southbound",
+                   multi_berth?: false,
+                   platform: nil,
+                   routes: nil,
+                   stop_id: "456",
+                   terminal?: false
+                 }, %Content.Message.Empty{}},
+                {%Signs.Utilities.SourceConfig{
+                   announce_arriving?: false,
+                   direction_id: 0,
+                   headway_direction_name: "Southbound",
+                   multi_berth?: false,
+                   platform: nil,
+                   routes: nil,
+                   stop_id: "456",
+                   terminal?: false
+                 }, %Content.Message.Empty{}}}
     end
   end
 end
