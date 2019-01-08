@@ -97,7 +97,8 @@ defmodule Signs.Utilities.MessagesTest do
       enabled? = true
 
       assert Messages.get_messages(sign, enabled?, alert_status) ==
-               {{nil, %Content.Message.Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
+               {{nil, %Content.Message.Alert.NoService{mode: nil}},
+                {nil, Content.Message.Empty.new()}}
     end
 
     test "when there are predictions, puts predictions on the sign" do
