@@ -44,7 +44,7 @@ defmodule Engine.Alerts.ApiFetcher do
              timeout: 2000,
              recv_timeout: 2000,
              params: %{
-               "filter[route]" => "Green-B,Green-C,Green-D,Green-E,Red,Orange,Blue",
+               "filter[route]" => "Green-B,Green-C,Green-D,Green-E,Red,Orange,Blue,Mattapan,743",
                "filter[datetime]" => "NOW"
              }
            ),
