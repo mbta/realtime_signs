@@ -188,6 +188,87 @@ defmodule Signs.HeadwayTest do
 
       assert log != "update_sign called"
     end
+
+    test "Messages for buses are passed through correctly" do
+      sign = %Signs.Headway{
+        id: "SIGN",
+        pa_ess_id: "1",
+        gtfs_stop_id: "123",
+        route_id: "743",
+        headsign: "Chelsea",
+        headway_engine: FakeHeadwayEngine,
+        bridge_engine: FakeBridgeEngine,
+        sign_updater: FakeSignUpdater,
+        read_sign_period_ms: 30_000,
+        timer: nil,
+        current_content_top: %Content.Message.Headways.Top{
+          headsign: "Chelsea",
+          vehicle_type: :bus
+        },
+        current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}
+      }
+
+      {:noreply, sign} = handle_info(:update_content, sign)
+
+      assert sign.current_content_top == %Content.Message.Headways.Top{
+               headsign: "Chelsea",
+               vehicle_type: :bus
+             }
+    end
+
+    test "Messages for trolleys are passed through correctly" do
+      sign = %Signs.Headway{
+        id: "SIGN",
+        pa_ess_id: "1",
+        gtfs_stop_id: "123",
+        route_id: "Mattapan",
+        headsign: "Ashmont",
+        headway_engine: FakeHeadwayEngine,
+        bridge_engine: FakeBridgeEngine,
+        sign_updater: FakeSignUpdater,
+        read_sign_period_ms: 30_000,
+        timer: nil,
+        current_content_top: %Content.Message.Headways.Top{
+          headsign: "Ashmont",
+          vehicle_type: :trolley
+        },
+        current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}
+      }
+
+      {:noreply, sign} = handle_info(:update_content, sign)
+
+      assert sign.current_content_top == %Content.Message.Headways.Top{
+               headsign: "Ashmont",
+               vehicle_type: :trolley
+             }
+    end
+
+    test "Messages for trains are passed through correctly" do
+      sign = %Signs.Headway{
+        id: "SIGN",
+        pa_ess_id: "1",
+        gtfs_stop_id: "123",
+        route_id: "Green-D",
+        headsign: "Riverside",
+        headway_engine: FakeHeadwayEngine,
+        bridge_engine: FakeBridgeEngine,
+        sign_updater: FakeSignUpdater,
+        read_sign_period_ms: 30_000,
+        timer: nil,
+        current_content_top: %Content.Message.Headways.Top{
+          headsign: "Riverside",
+          vehicle_type: :train
+        },
+        current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}}
+      }
+
+      {:noreply, sign} = handle_info(:update_content, sign)
+
+      assert sign.current_content_top == %Content.Message.Headways.Top{
+               headsign: "Riverside",
+               vehicle_type: :train
+             }
+    end
   end
 
   describe "read sign callback" do
