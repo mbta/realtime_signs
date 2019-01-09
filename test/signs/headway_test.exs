@@ -92,6 +92,28 @@ defmodule Signs.HeadwayTest do
       assert log =~ "update_sign called"
     end
 
+    test "when the headway engine returns :none, sends an update" do
+      sign = %{@sign | gtfs_stop_id: "none"}
+
+      log =
+        capture_log([level: :info], fn ->
+          handle_info(:update_content, sign)
+        end)
+
+      assert log =~ "update_sign called"
+    end
+
+    test "when the headway engine returns {nil, nil}, sends an update" do
+      sign = %{@sign | gtfs_stop_id: "nil_nil"}
+
+      log =
+        capture_log([level: :info], fn ->
+          handle_info(:update_content, sign)
+        end)
+
+      assert log =~ "update_sign called"
+    end
+
     test "if the bridge is down, does not update the sign" do
       sign = %Signs.Headway{
         id: "SIGN",
@@ -316,6 +338,14 @@ defmodule FakeHeadwayEngine do
   def get_headways("first_departure") do
     future_departure = Timex.shift(Timex.now(), minutes: 20)
     {:first_departure, {1, 2}, future_departure}
+  end
+
+  def get_headways("none") do
+    :none
+  end
+
+  def get_headways("nil_nil") do
+    {nil, nil}
   end
 
   def get_headways(_stop_id) do
