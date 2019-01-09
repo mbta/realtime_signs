@@ -173,6 +173,7 @@ defmodule Signs.Headway do
 
   defp vehicle_type("Mattapan"), do: :trolley
   defp vehicle_type("743"), do: :bus
+  defp vehicle_type("Green-D"), do: :subway
 
   defp bottom_content({:first_departure, range, first_departure}) do
     max_headway = Headway.ScheduleHeadway.max_headway(range)
