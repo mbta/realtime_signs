@@ -3757,9 +3757,18 @@
     ]
   },
   {
-    "id": "riverside_eastbound",
+    "id": "riverside_track_1",
     "pa_ess_loc": "GRIV",
     "pa_ess_zone": "e",
+    "headsign": "Govt Center",
+    "gtfs_stop_id": "70160",
+    "route_id": "Green-D",
+    "type": "headway"
+  },
+  {
+    "id": "riverside_track_2",
+    "pa_ess_loc": "GRIV",
+    "pa_ess_zone": "w",
     "headsign": "Govt Center",
     "gtfs_stop_id": "70160",
     "route_id": "Green-D",
