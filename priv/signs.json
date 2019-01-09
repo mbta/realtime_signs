@@ -4586,7 +4586,7 @@
           "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
-          "announce_arriving": true,
+          "announce_arriving": false,
           "multi_berth": true
         },
         {
@@ -4596,7 +4596,7 @@
           "platform": null,
           "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "terminal": false,
-          "announce_arriving": true,
+          "announce_arriving": false,
           "multi_berth": true
         }
       ]
@@ -4616,7 +4616,7 @@
           "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
-          "announce_arriving": true,
+          "announce_arriving": false,
           "multi_berth": true
         },
         {
@@ -4626,7 +4626,7 @@
           "platform": null,
           "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "terminal": false,
-          "announce_arriving": true,
+          "announce_arriving": false,
           "multi_berth": true
         }
       ]
@@ -4647,7 +4647,7 @@
           "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
-          "announce_arriving": true
+          "announce_arriving": false
         }
       ]
     ]
@@ -4666,7 +4666,7 @@
           "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
-          "announce_arriving": true
+          "announce_arriving": false
         }
       ]
     ]
@@ -4755,7 +4755,7 @@
           "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
-          "announce_arriving": true
+          "announce_arriving": false
         }
       ]
     ]
@@ -4774,7 +4774,7 @@
           "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
-          "announce_arriving": true
+          "announce_arriving": false
         }
       ]
     ]
