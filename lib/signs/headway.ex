@@ -109,6 +109,12 @@ defmodule Signs.Headway do
                     {Content.Message.Empty.new(), Content.Message.Empty.new()}
                   end
 
+                :none ->
+                  {Content.Message.Empty.new(), Content.Message.Empty.new()}
+
+                {nil, nil} ->
+                  {Content.Message.Empty.new(), Content.Message.Empty.new()}
+
                 range ->
                   {
                     %Content.Message.Headways.Top{
@@ -117,12 +123,6 @@ defmodule Signs.Headway do
                     },
                     %Content.Message.Headways.Bottom{range: range}
                   }
-
-                :none ->
-                  {Content.Message.Empty.new(), Content.Message.Empty.new()}
-
-                {nil, nil} ->
-                  {Content.Message.Empty.new(), Content.Message.Empty.new()}
               end
 
             %{
