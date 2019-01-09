@@ -171,9 +171,15 @@ defmodule Signs.Headway do
     Process.send_after(pid, :bridge_announcement_update, 5 * 60 * 1_000)
   end
 
+  @spec vehicle_type(String.t()) :: Content.Message.Headways.Top.vehicle_type()
   defp vehicle_type("Mattapan"), do: :trolley
   defp vehicle_type("743"), do: :bus
   defp vehicle_type("Green-D"), do: :train
+
+  defp vehicle_type(r)
+       when r == "Green-B" or r == "Green-C" or r == "Green-D" or r == "Green-E" do
+    :train
+  end
 
   defp bottom_content({:first_departure, range, first_departure}) do
     max_headway = Headway.ScheduleHeadway.max_headway(range)

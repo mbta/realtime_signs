@@ -3757,6 +3757,15 @@
     ]
   },
   {
+    "id": "riverside_eastbound",
+    "pa_ess_loc": "GRIV",
+    "pa_ess_zone": "e",
+    "headsign": "Govt Center",
+    "gtfs_stop_id": "70160",
+    "route_id": "Green-D",
+    "type": "headway"
+  },
+  {
     "id": "woodland_eastbound",
     "pa_ess_loc": "GWOO",
     "pa_ess_zone": "e",
