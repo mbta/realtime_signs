@@ -85,9 +85,10 @@ defmodule Signs.HeadwayTest do
       {:noreply, sign} = handle_info(:update_content, sign)
 
       assert sign.current_content_top == %Content.Message.Headways.Top{
-              headsign: "Chelsea",
-              vehicle_type: :bus
-            }
+               headsign: "Chelsea",
+               vehicle_type: :bus
+             }
+
       assert sign.current_content_bottom == %Content.Message.Headways.Bottom{range: {8, 10}}
     end
 
