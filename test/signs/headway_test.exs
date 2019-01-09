@@ -324,7 +324,8 @@ defmodule Signs.HeadwayTest do
 
       {:noreply, sign} = handle_info(:update_content, sign)
 
-      assert sign.current_content_top == %Content.Message.Alert.NoService{mode: nil}
+      assert sign.current_content_top == %Content.Message.Alert.NoService{mode: :none}
+      assert sign.current_content_bottom == %Content.Message.Empty{}
     end
   end
 

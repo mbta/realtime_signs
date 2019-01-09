@@ -96,7 +96,7 @@ defmodule Signs.Headway do
         alert_status == :suspension ->
           %{
             sign
-            | current_content_top: %Content.Message.Alert.NoService{mode: nil},
+            | current_content_top: %Content.Message.Alert.NoService{mode: :none},
               current_content_bottom: Content.Message.Empty.new()
           }
 
