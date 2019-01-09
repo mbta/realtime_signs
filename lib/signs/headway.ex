@@ -202,10 +202,6 @@ defmodule Signs.Headway do
   defp vehicle_type("Mattapan"), do: :trolley
   defp vehicle_type("743"), do: :bus
 
-  defp bottom_content(range) do
-    %Content.Message.Headways.Bottom{range: range}
-  end
-
   defp bridge_is_newly_up?(old_sign, new_sign) do
     # e.g. from message expiration
     new_sign.current_content_top == %Content.Message.Bridge.Up{} and
