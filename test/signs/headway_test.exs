@@ -66,52 +66,47 @@ defmodule Signs.HeadwayTest do
       refute log =~ "update_sign called"
     end
 
-    test "when the first departure is in the future, does not send an update" do
+    test "when the first departure is in the future outside the range of the headway, blanks the sign" do
       sign = %{
         @sign
         | current_content_bottom: Content.Message.Empty.new(),
           gtfs_stop_id: "first_departure"
       }
 
-      log =
-        capture_log([level: :info], fn ->
-          handle_info(:update_content, sign)
-        end)
+      {:noreply, sign} = handle_info(:update_content, sign)
 
-      refute log =~ "update_sign called"
+      assert sign.current_content_top == %Content.Message.Empty{}
+      assert sign.current_content_bottom == %Content.Message.Empty{}
     end
 
-    test "when the first departure is in the future but within the range of the headway, sends an update" do
+    test "when the first departure is in the future but within the range of the headway, puts headway info on sign" do
       sign = %{@sign | gtfs_stop_id: "first_departure_soon"}
 
-      log =
-        capture_log([level: :info], fn ->
-          handle_info(:update_content, sign)
-        end)
+      {:noreply, sign} = handle_info(:update_content, sign)
 
-      assert log =~ "update_sign called"
+      assert sign.current_content_top == %Content.Message.Headways.Top{
+              headsign: "Chelsea",
+              vehicle_type: :bus
+            }
+      assert sign.current_content_bottom == %Content.Message.Headways.Bottom{range: {8, 10}}
     end
 
-    test "when the headway engine returns :none, sends an update" do
+    test "when the headway engine returns :none, blanks the sign" do
       sign = %{@sign | gtfs_stop_id: "none"}
 
-      log =
-        capture_log([level: :info], fn ->
-          handle_info(:update_content, sign)
-        end)
+      {:noreply, sign} = handle_info(:update_content, sign)
 
-      assert log =~ "update_sign called"
+      assert sign.current_content_top == %Content.Message.Empty{}
+      assert sign.current_content_bottom == %Content.Message.Empty{}
     end
 
-    test "when the headway engine returns {nil, nil}, sends an update" do
-      sign = %{@sign | gtfs_stop_id: "nil_nil"}
+    test "when the headway engine returns {nil, nil}, blanks the sign" do
+      sign = %{@sign | gtfs_stop_id: "none"}
 
-      log =
-        capture_log([level: :info], fn ->
-          handle_info(:update_content, sign)
-        end)
+      {:noreply, sign} = handle_info(:update_content, sign)
 
-      assert log =~ "update_sign called"
+      assert sign.current_content_top == %Content.Message.Empty{}
+      assert sign.current_content_bottom == %Content.Message.Empty{}
     end
 
     test "if the bridge is down, does not update the sign" do
