@@ -174,7 +174,6 @@ defmodule Signs.Headway do
   @spec vehicle_type(String.t()) :: Content.Message.Headways.Top.vehicle_type()
   defp vehicle_type("Mattapan"), do: :trolley
   defp vehicle_type("743"), do: :bus
-  defp vehicle_type("Green-D"), do: :train
 
   defp vehicle_type(r)
        when r == "Green-B" or r == "Green-C" or r == "Green-D" or r == "Green-E" do
