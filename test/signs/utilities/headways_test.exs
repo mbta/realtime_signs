@@ -2,8 +2,20 @@ defmodule Signs.Utilities.HeadwaysTest do
   use ExUnit.Case
 
   defmodule FakeHeadways do
-    def get_headways(_) do
+    def get_headways("a") do
       {1, 5}
+    end
+
+    def get_headways("b") do
+      :none
+    end
+
+    def get_headways("c") do
+      {nil, nil}
+    end
+
+    def get_headways("d") do
+      {:first_departure, {1, 5}, DateTime.utc_now()}
     end
   end
 
@@ -23,6 +35,19 @@ defmodule Signs.Utilities.HeadwaysTest do
     read_period_seconds: 240
   }
 
+  @spec source_config_for_stop_id(String.t()) :: %Signs.Utilities.SourceConfig{}
+  defp source_config_for_stop_id(stop_id) do
+    %Signs.Utilities.SourceConfig{
+      stop_id: stop_id,
+      headway_direction_name: "Southbound",
+      direction_id: 0,
+      platform: nil,
+      terminal?: false,
+      announce_arriving?: false,
+      multi_berth?: false
+    }
+  end
+
   describe "get_messages/1" do
     test "generates blank messages when the source config has multiple sources" do
       assert Signs.Utilities.Headways.get_messages(@sign) ==
@@ -32,41 +57,46 @@ defmodule Signs.Utilities.HeadwaysTest do
     test "generates top and bottom messages to display the headway at a stop" do
       sign = %{
         @sign
-        | source_config:
-            {[
-               %Signs.Utilities.SourceConfig{
-                 stop_id: "123",
-                 headway_direction_name: "Southbound",
-                 direction_id: 0,
-                 platform: nil,
-                 terminal?: false,
-                 announce_arriving?: false,
-                 multi_berth?: false
-               }
-             ]}
+        | source_config: {[source_config_for_stop_id("a")]}
       }
 
       assert Signs.Utilities.Headways.get_messages(sign) ==
-               {{%Signs.Utilities.SourceConfig{
-                   announce_arriving?: false,
-                   direction_id: 0,
-                   headway_direction_name: "Southbound",
-                   multi_berth?: false,
-                   platform: nil,
-                   routes: nil,
-                   stop_id: "123",
-                   terminal?: false
-                 }, %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {%Signs.Utilities.SourceConfig{
-                   announce_arriving?: false,
-                   direction_id: 0,
-                   headway_direction_name: "Southbound",
-                   multi_berth?: false,
-                   platform: nil,
-                   routes: nil,
-                   stop_id: "123",
-                   terminal?: false
-                 }, %Content.Message.Headways.Bottom{range: {1, 5}}}}
+               {{source_config_for_stop_id("a"),
+                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
+                {source_config_for_stop_id("a"), %Content.Message.Headways.Bottom{range: {1, 5}}}}
+    end
+
+    test "generates blank messages to display when no headway information present" do
+      sign = %{
+        @sign
+        | source_config: {[source_config_for_stop_id("b")]}
+      }
+
+      assert Signs.Utilities.Headways.get_messages(sign) ==
+               {{source_config_for_stop_id("b"), %Content.Message.Empty{}},
+                {source_config_for_stop_id("b"), %Content.Message.Empty{}}}
+    end
+
+    test "generates blank messages for {nil, nil} headways" do
+      sign = %{
+        @sign
+        | source_config: {[source_config_for_stop_id("c")]}
+      }
+
+      assert Signs.Utilities.Headways.get_messages(sign) ==
+               {{source_config_for_stop_id("c"), %Content.Message.Empty{}},
+                {source_config_for_stop_id("c"), %Content.Message.Empty{}}}
+    end
+
+    test "generates blank messages to display prior to first departure of the day" do
+      sign = %{
+        @sign
+        | source_config: {[source_config_for_stop_id("d")]}
+      }
+
+      assert Signs.Utilities.Headways.get_messages(sign) ==
+               {{source_config_for_stop_id("d"), %Content.Message.Empty{}},
+                {source_config_for_stop_id("d"), %Content.Message.Empty{}}}
     end
   end
 end
