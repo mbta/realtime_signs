@@ -136,19 +136,25 @@ defmodule Signs.HeadwayTest do
     end
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     test "when the first departure is in the future outside the range of the headway, blanks the sign" do
 ||||||| merged common ancestors
     test "when the first departure is in the future, does not send an update" do
 =======
     test "when the first departure is in the future, leaves bottom content as Empty" do
 >>>>>>> Fix bug where suspension message wouldn't be caught by expiration
+||||||| merged common ancestors
+    test "when the first departure is in the future, leaves bottom content as Empty" do
+=======
+    test "when the first departure is in the future, sets sign to blank" do
+>>>>>>> Test sign better
       sign = %{
         @sign
         | current_content_top: %Content.Message.Headways.Top{
             headsign: "Chelsea",
             vehicle_type: :bus
           },
-          current_content_bottom: Content.Message.Empty.new(),
+          current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}},
           gtfs_stop_id: "first_departure"
       }
 
