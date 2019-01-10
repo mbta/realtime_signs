@@ -135,14 +135,10 @@ defmodule Signs.HeadwayTest do
       refute log =~ "update_sign called"
     end
 
-    test "when the first departure is in the future, sets sign to blank" do
+    test "when the first departure is in the future outside the range of the headway, blanks the sign" do
       sign = %{
         @sign
-        | current_content_top: %Content.Message.Headways.Top{
-            headsign: "Chelsea",
-            vehicle_type: :bus
-          },
-          current_content_bottom: %Content.Message.Headways.Bottom{range: {1, 2}},
+        | current_content_bottom: Content.Message.Empty.new(),
           gtfs_stop_id: "first_departure"
       }
 
