@@ -3757,12 +3757,30 @@
     ]
   },
   {
+    "id": "riverside_track_1",
+    "pa_ess_loc": "GRIV",
+    "pa_ess_zone": "e",
+    "headsign": "Govt Ctr",
+    "gtfs_stop_id": "70160",
+    "route_id": "Green-D",
+    "type": "headway"
+  },
+  {
+    "id": "riverside_track_2",
+    "pa_ess_loc": "GRIV",
+    "pa_ess_zone": "w",
+    "headsign": "Govt Ctr",
+    "gtfs_stop_id": "70160",
+    "route_id": "Green-D",
+    "type": "headway"
+  },
+  {
     "id": "woodland_eastbound",
     "pa_ess_loc": "GWOO",
     "pa_ess_zone": "e",
     "type": "realtime",
     "source_config": [
-        [
+      [
         {
           "stop_id": "70162",
           "direction_id": 1,
@@ -3790,7 +3808,7 @@
     "pa_ess_zone": "e",
     "type": "realtime",
     "source_config": [
-        [
+      [
         {
           "stop_id": "70164",
           "direction_id": 1,
@@ -3818,7 +3836,7 @@
     "pa_ess_zone": "e",
     "type": "realtime",
     "source_config": [
-        [
+      [
         {
           "stop_id": "70166",
           "direction_id": 1,
@@ -3846,7 +3864,7 @@
     "pa_ess_zone": "e",
     "type": "realtime",
     "source_config": [
-        [
+      [
         {
           "stop_id": "70168",
           "direction_id": 1,
@@ -3874,7 +3892,7 @@
     "pa_ess_zone": "e",
     "type": "realtime",
     "source_config": [
-        [
+      [
         {
           "stop_id": "70170",
           "direction_id": 1,
@@ -3911,7 +3929,7 @@
     "pa_ess_zone": "w",
     "type": "realtime",
     "source_config": [
-        [
+      [
         {
           "stop_id": "70173",
           "direction_id": 0,
@@ -3939,7 +3957,7 @@
     "pa_ess_zone": "w",
     "type": "realtime",
     "source_config": [
-        [
+      [
         {
           "stop_id": "70175",
           "direction_id": 0,
@@ -4858,5 +4876,14 @@
         }
       ]
     ]
+  },
+  {
+    "id": "lechmere_green_line",
+    "pa_ess_loc": "GLEC",
+    "pa_ess_zone": "w",
+    "headsign": "Heath St",
+    "gtfs_stop_id": "70210",
+    "route_id": "Green-E",
+    "type": "headway"
   }
 ]

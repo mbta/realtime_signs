@@ -2,9 +2,10 @@ defmodule Content.Message.Headways.Top do
   require Logger
   defstruct [:headsign, :vehicle_type]
 
+  @type vehicle_type :: :bus | :trolley | :train
   @type t :: %__MODULE__{
           headsign: String.t(),
-          vehicle_type: :bus | :trolley | :train
+          vehicle_type: vehicle_type
         }
 
   defimpl Content.Message do

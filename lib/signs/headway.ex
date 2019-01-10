@@ -205,9 +205,14 @@ defmodule Signs.Headway do
     Process.send_after(pid, :bridge_announcement_update, 5 * 60 * 1_000)
   end
 
+  @spec vehicle_type(String.t()) :: Content.Message.Headways.Top.vehicle_type()
   defp vehicle_type("Mattapan"), do: :trolley
   defp vehicle_type("743"), do: :bus
-  defp vehicle_type("Green-D"), do: :train
+
+  defp vehicle_type(r)
+       when r in ["Green-B", "Green-C", "Green-D", "Green-E"] do
+    :train
+  end
 
   defp bridge_is_newly_up?(old_sign, new_sign) do
     # e.g. from message expiration
