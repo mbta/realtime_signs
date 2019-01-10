@@ -176,7 +176,7 @@ defmodule Signs.Headway do
   defp vehicle_type("743"), do: :bus
 
   defp vehicle_type(r)
-       when r == "Green-B" or r == "Green-C" or r == "Green-D" or r == "Green-E" do
+       when r in ["Green-B", "Green-C", "Green-D", "Green-E"] do
     :train
   end
 
