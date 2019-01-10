@@ -43,7 +43,8 @@ defmodule Signs.Utilities.MessagesTest do
     headway_direction_name: "Mattapan",
     platform: nil,
     terminal?: false,
-    announce_arriving?: false
+    announce_arriving?: false,
+    announce_boarding?: false
   }
 
   @sign %Signs.Realtime{
@@ -109,6 +110,7 @@ defmodule Signs.Utilities.MessagesTest do
       assert Messages.get_messages(sign, enabled?, alert_status) ==
                {{%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
+                   announce_boarding?: false,
                    direction_id: 0,
                    headway_direction_name: "Mattapan",
                    multi_berth?: false,
@@ -126,6 +128,7 @@ defmodule Signs.Utilities.MessagesTest do
                  }},
                 {%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
+                   announce_boarding?: false,
                    direction_id: 0,
                    headway_direction_name: "Mattapan",
                    multi_berth?: false,
@@ -151,6 +154,7 @@ defmodule Signs.Utilities.MessagesTest do
       assert Messages.get_messages(sign, enabled?, alert_status) ==
                {{%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
+                   announce_boarding?: false,
                    direction_id: 0,
                    headway_direction_name: "Mattapan",
                    multi_berth?: false,
@@ -165,6 +169,7 @@ defmodule Signs.Utilities.MessagesTest do
                  }},
                 {%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
+                   announce_boarding?: false,
                    direction_id: 0,
                    headway_direction_name: "Mattapan",
                    multi_berth?: false,

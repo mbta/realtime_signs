@@ -30,7 +30,8 @@ defmodule Signs.Utilities.UpdaterTest do
     direction_id: 0,
     platform: nil,
     terminal?: false,
-    announce_arriving?: false
+    announce_arriving?: false,
+    announce_boarding?: false
   }
 
   @sign %Signs.Realtime{

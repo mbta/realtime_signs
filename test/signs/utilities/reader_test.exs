@@ -25,7 +25,8 @@ defmodule Signs.Utilities.ReaderTest do
     headway_direction_name: "Southbound",
     platform: nil,
     terminal?: false,
-    announce_arriving?: false
+    announce_arriving?: false,
+    announce_boarding?: false
   }
 
   @sign %Signs.Realtime{

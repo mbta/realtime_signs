@@ -33,6 +33,7 @@ defmodule Signs.Utilities.Updater do
         )
 
         sign = announce_arrival(top, sign)
+        sign = announce_boarding(top, sign)
         announce_track_change(top_msg, sign)
         sign = announce_stopped_train(top_msg, sign)
 
@@ -53,6 +54,7 @@ defmodule Signs.Utilities.Updater do
         sign =
           if SourceConfig.multi_source?(sign.source_config) do
             sign = announce_arrival(bottom, sign)
+            sign = announce_boarding(bottom, sign)
             announce_track_change(bottom_msg, sign)
             announce_stopped_train(bottom_msg, sign)
           else
@@ -75,12 +77,14 @@ defmodule Signs.Utilities.Updater do
         )
 
         sign = announce_arrival(top, sign)
+        sign = announce_boarding(top, sign)
         announce_track_change(top_msg, sign)
         sign = announce_stopped_train(top_msg, sign)
 
         sign =
           if SourceConfig.multi_source?(sign.source_config) do
             sign = announce_arrival(bottom, sign)
+            sign = announce_boarding(bottom, sign)
             announce_track_change(bottom_msg, sign)
             announce_stopped_train(bottom_msg, sign)
           else
@@ -202,6 +206,19 @@ defmodule Signs.Utilities.Updater do
           sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
           %{sign | announced_arrivals: MapSet.put(sign.announced_arrivals, audio.destination)}
         end
+
+      nil ->
+        sign
+    end
+  end
+
+  defp announce_boarding({%SourceConfig{announce_boarding?: false}, _msg}, sign), do: sign
+
+  defp announce_boarding({_src, msg}, sign) do
+    case Content.Audio.TrainIsBoarding.from_message(msg) do
+      %Content.Audio.TrainIsBoarding{} = audio ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+        sign
 
       nil ->
         sign

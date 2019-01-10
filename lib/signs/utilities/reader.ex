@@ -81,5 +81,13 @@ defmodule Signs.Utilities.Reader do
       {nil, nil} ->
         nil
     end
+
+    case Content.Audio.TrainIsBoarding.from_message(msg) do
+      %Content.Audio.TrainIsBoarding{} = audio ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+
+      nil ->
+        nil
+    end
   end
 end
