@@ -15,7 +15,6 @@ defmodule Content.Audio.TrainIsBoarding do
 
   @spec from_message(Content.Message.Predictions.t()) :: t() | nil
   def from_message(%Content.Message.Predictions{
-        stop_id: stop_id,
         route_id: route_id,
         minutes: :boarding,
         headsign: headsign
