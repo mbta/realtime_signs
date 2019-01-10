@@ -87,14 +87,48 @@ defmodule Signs.Headway do
             }
 
           _ ->
+            {top_content, bottom_content} =
+              case sign.headway_engine.get_headways(sign.gtfs_stop_id) do
+                {:first_departure, range, first_departure} ->
+                  max_headway = Headway.ScheduleHeadway.max_headway(range)
+                  time_buffer = if max_headway, do: max_headway, else: 0
+
+                  if Headway.ScheduleHeadway.show_first_departure?(
+                       first_departure,
+                       Timex.now(),
+                       time_buffer
+                     ) do
+                    {
+                      %Content.Message.Headways.Top{
+                        headsign: sign.headsign,
+                        vehicle_type: vehicle_type(sign.route_id)
+                      },
+                      %Content.Message.Headways.Bottom{range: range}
+                    }
+                  else
+                    {Content.Message.Empty.new(), Content.Message.Empty.new()}
+                  end
+
+                :none ->
+                  {Content.Message.Empty.new(), Content.Message.Empty.new()}
+
+                {nil, nil} ->
+                  {Content.Message.Empty.new(), Content.Message.Empty.new()}
+
+                range ->
+                  {
+                    %Content.Message.Headways.Top{
+                      headsign: sign.headsign,
+                      vehicle_type: vehicle_type(sign.route_id)
+                    },
+                    %Content.Message.Headways.Bottom{range: range}
+                  }
+              end
+
             %{
               sign
-              | current_content_top: %Content.Message.Headways.Top{
-                  headsign: sign.headsign,
-                  vehicle_type: vehicle_type(sign.route_id)
-                },
-                current_content_bottom:
-                  bottom_content(sign.headway_engine.get_headways(sign.gtfs_stop_id)),
+              | current_content_top: top_content,
+                current_content_bottom: bottom_content,
                 bridge_delay_duration: nil
             }
         end
@@ -174,22 +208,6 @@ defmodule Signs.Headway do
   defp vehicle_type("Mattapan"), do: :trolley
   defp vehicle_type("743"), do: :bus
   defp vehicle_type("Green-D"), do: :train
-
-  defp bottom_content({:first_departure, range, first_departure}) do
-    max_headway = Headway.ScheduleHeadway.max_headway(range)
-    time_buffer = if max_headway, do: max_headway, else: 0
-    current_time = Timex.now()
-
-    if Headway.ScheduleHeadway.show_first_departure?(first_departure, current_time, time_buffer) do
-      %Content.Message.Headways.Bottom{range: range}
-    else
-      Content.Message.Empty.new()
-    end
-  end
-
-  defp bottom_content(range) do
-    %Content.Message.Headways.Bottom{range: range}
-  end
 
   defp bridge_is_newly_up?(old_sign, new_sign) do
     # e.g. from message expiration
