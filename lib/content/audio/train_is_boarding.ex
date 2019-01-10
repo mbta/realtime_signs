@@ -53,5 +53,6 @@ defmodule Content.Audio.TrainIsBoarding do
     defp branch_letter("Green-C"), do: "537"
     defp branch_letter("Green-D"), do: "538"
     defp branch_letter("Green-E"), do: "539"
+    defp branch_letter(_), do: nil
   end
 end
