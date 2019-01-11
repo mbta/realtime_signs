@@ -555,5 +555,21 @@ defmodule Signs.Utilities.UpdaterTest do
       assert log =~ "sign_id=sign_id line=top status=off"
       assert log =~ "sign_id=sign_id line=bottom status=off"
     end
+
+    test "announces boarding if the sign is configured to allow boarding messages" do
+      source = %{@src | announce_boarding?: true, announce_arriving?: false}
+      same_top = {source, %P{headsign: "Alewife", minutes: :boarding, route_id: "Red"}}
+      same_bottom = {source, %P{headsign: "Ashmont", minutes: 3}}
+
+      sign = Updater.update_sign(@sign, same_top, same_bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsBoarding{destination: :alewife, route_id: "Red"},
+         _dur, _start}
+      )
+
+      assert sign.tick_top == 100
+      assert sign.tick_bottom == 1
+    end
   end
 end
