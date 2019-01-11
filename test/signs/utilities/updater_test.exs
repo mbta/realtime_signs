@@ -571,5 +571,17 @@ defmodule Signs.Utilities.UpdaterTest do
       assert sign.tick_top == 100
       assert sign.tick_bottom == 1
     end
+
+    test "if the sign is configured to announce boarding but the train is not boarding does not announce" do
+      source = %{@src | announce_boarding?: true, announce_arriving?: false}
+      same_top = {source, %P{headsign: "Alewife", minutes: :arriving, route_id: "Red"}}
+      same_bottom = {source, %P{headsign: "Ashmont", minutes: 3}}
+
+      sign = Updater.update_sign(@sign, same_top, same_bottom)
+
+      refute_received({:send_audio, _, _, _, _})
+      assert sign.tick_top == 100
+      assert sign.tick_bottom == 1
+    end
   end
 end
