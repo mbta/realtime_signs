@@ -184,7 +184,7 @@ defmodule Signs.Utilities.UpdaterTest do
         {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
       )
 
-      sign = Updater.update_sign(sign, arr_top, same_bottom)
+      _sign = Updater.update_sign(sign, arr_top, same_bottom)
 
       refute_received(
         {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
@@ -210,7 +210,7 @@ defmodule Signs.Utilities.UpdaterTest do
         {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
       )
 
-      sign = Updater.update_sign(sign, arr_top, same_bottom)
+      _sign = Updater.update_sign(sign, arr_top, same_bottom)
 
       assert_received(
         {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
