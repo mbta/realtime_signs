@@ -212,6 +212,8 @@ defmodule Signs.Utilities.Updater do
     end
   end
 
+  @spec announce_boarding({SourceConfig.source(), Signs.Realtime.t()}, Signs.Realtime.t()) ::
+          Signs.Realtime.t()
   defp announce_boarding({%SourceConfig{announce_boarding?: false}, _msg}, sign), do: sign
 
   defp announce_boarding({_src, msg}, sign) do
