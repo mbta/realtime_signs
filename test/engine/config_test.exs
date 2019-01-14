@@ -26,7 +26,7 @@ defmodule Engine.ConfigTest do
 
   describe "custom_text" do
     test "returns custom text when it's not expired" do
-      ets_table_name = :config_test
+      ets_table_name = :config_test_non_expired
 
       ^ets_table_name =
         :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
@@ -39,12 +39,12 @@ defmodule Engine.ConfigTest do
 
       {:noreply, _state} = Engine.Config.handle_info(:update, state)
 
-      assert Engine.Config.custom_text(:config_test, "custom_text_test") ==
+      assert Engine.Config.custom_text(ets_table_name, "custom_text_test") ==
                {"Test message", "Please ignore"}
     end
 
     test "does not return custom text when it's expired" do
-      ets_table_name = :config_test
+      ets_table_name = :config_test_expired
 
       ^ets_table_name =
         :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
@@ -57,7 +57,7 @@ defmodule Engine.ConfigTest do
 
       {:noreply, _state} = Engine.Config.handle_info(:update, state)
 
-      assert Engine.Config.custom_text(:config_test, "custom_text_test") == nil
+      assert Engine.Config.custom_text(ets_table_name, "custom_text_test") == nil
     end
   end
 
