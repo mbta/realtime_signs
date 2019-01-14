@@ -4881,7 +4881,7 @@
     "id": "lechmere_green_line",
     "pa_ess_loc": "GLEC",
     "pa_ess_zone": "w",
-    "headsign": "Heath Street",
+    "headsign": "Heath St",
     "gtfs_stop_id": "70210",
     "route_id": "Green-E",
     "type": "headway"
