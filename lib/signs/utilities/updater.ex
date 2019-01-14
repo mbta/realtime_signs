@@ -9,6 +9,11 @@ defmodule Signs.Utilities.Updater do
   alias Signs.Utilities.SourceConfig
   require Logger
 
+  @spec update_sign(
+          Signs.Realtime.t(),
+          {SourceConfig.config() | nil, Content.Message.t()},
+          {SourceConfig.config() | nil, Content.Message.t()}
+        ) :: Signs.Realtime.t()
   def update_sign(sign, {_top_src, top_msg} = top, {_bottom_src, bottom_msg} = bottom) do
     sign =
       sign
@@ -269,6 +274,8 @@ defmodule Signs.Utilities.Updater do
     end
   end
 
+  @spec announce_track_change(Content.Message.t(), Signs.Realtime.t()) ::
+          {boolean(), Signs.Realtime.t()}
   defp announce_track_change(msg, sign) do
     case Content.Audio.TrackChange.from_message(msg) do
       %Content.Audio.TrackChange{} = audio ->
