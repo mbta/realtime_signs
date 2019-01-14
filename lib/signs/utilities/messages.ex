@@ -4,6 +4,9 @@ defmodule Signs.Utilities.Messages do
   be displaying
   """
 
+  @spec get_messages(Signs.Realtime.t(), boolean(), Engine.Alerts.Fetcher.stop_status()) ::
+          {{Signs.Utilities.SourceConfig.source(), Content.Message.t()},
+           {Signs.Utilities.SourceConfig.source(), Content.Message.t()}}
   def get_messages(sign, enabled?, alert_status) do
     cond do
       !enabled? ->
