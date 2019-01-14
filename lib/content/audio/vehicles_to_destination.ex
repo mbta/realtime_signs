@@ -51,6 +51,7 @@ defmodule Content.Audio.VehiclesToDestination do
     end
   end
 
+  @spec convert_destination(String.t()) :: {:ok, atom()} | {:error, :unknown_destingation}
   defp convert_destination("Northbound"), do: {:ok, :northbound}
   defp convert_destination("Southbound"), do: {:ok, :southbound}
   defp convert_destination("Eastbound"), do: {:ok, :eastbound}
