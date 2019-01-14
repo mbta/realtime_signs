@@ -13,8 +13,8 @@ defmodule Fake.ExternalConfig.Local do
        "chelsea_outbound" => %{"enabled" => false},
        "custom_text_test" => %{
          "enabled" => true,
-         "custom_line_1" => "Test message",
-         "custom_line_2" => "Please ignore",
+         "line1" => "Test message",
+         "line2" => "Please ignore",
          "expires" => "2017-07-04T12:00:00Z"
        },
        "MVAL0" => %{"enabled" => false}
