@@ -247,6 +247,45 @@ defmodule Signs.Utilities.UpdaterTest do
       )
     end
 
+    test "does not announce boarding if multi-source sign and the bottom line changed but the train changed tracks" do
+      multi_source_sign = %{@sign | source_config: {[], []}, tick_read: 40}
+      src = %{@src | announce_boarding?: true}
+      same_top = @sign.current_content_top
+
+      diff_bottom =
+        {src,
+         %P{headsign: "Riverside", minutes: :boarding, route_id: "Green-D", stop_id: "70197"}}
+
+      Updater.update_sign(multi_source_sign, same_top, diff_bottom)
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.TrainIsBoarding{destination: :riverside}, _dur, _start}
+      )
+    end
+
+    test "does not announce boarding if multi-source sign and both lines chagned, but there is a track change" do
+      multi_source_sign = %{@sign | source_config: {[], []}, tick_read: 40}
+      src = %{@src | announce_boarding?: true}
+      same_top = @sign.current_content_top
+
+      diff_top =
+        {src, %P{headsign: "Heath St", minutes: :boarding, route_id: "Green-E", stop_id: "70196"}}
+
+      diff_bottom =
+        {src,
+         %P{headsign: "Riverside", minutes: :boarding, route_id: "Green-D", stop_id: "70197"}}
+
+      Updater.update_sign(multi_source_sign, diff_top, diff_bottom)
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.TrainIsBoarding{destination: :riverside}, _dur, _start}
+      )
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.TrainIsBoarding{destination: :heath_st}, _dur, _start}
+      )
+    end
+
     test "doesn't announce repeated ARR's for same destination until a BRD comes and goes" do
       src = %{@src | announce_arriving?: true}
       top = {src, %P{headsign: "Alewife", minutes: :arriving}}
