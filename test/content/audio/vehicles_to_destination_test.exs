@@ -72,7 +72,12 @@ defmodule Content.Audio.VehiclesToDestinationTest do
     end
 
     test "returns nils for an unknown destination" do
-      assert from_headway_message(@msg, "Unknown") == {nil, nil}
+      log =
+        capture_log([level: :warn], fn ->
+          assert from_headway_message(@msg, "Unknown") == {nil, nil}
+        end)
+
+      assert log =~ "from_headway_message"
     end
 
     test "returns nils when range is all nil, but doesn't warn" do
