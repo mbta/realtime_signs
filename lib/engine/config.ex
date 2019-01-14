@@ -20,36 +20,34 @@ defmodule Engine.Config do
     GenServer.start_link(__MODULE__, [], name: name)
   end
 
-  @spec setting_expired?(String.t()) :: boolean
-  defp setting_expired?(sign_id) do
-    case :ets.lookup(@table, sign_id) do
-      [{^sign_id, %{"expires" => expires}}] ->
-        expires
-        |> DateTime.from_iso8601()
-        |> DateTime.compare(DateTime.utc_now()) == :lt
+  @spec setting_expired?(map(), state) :: boolean
+  defp setting_expired?(sign_config, state) do
+    if Map.has_key?(sign_config, "expires") do
+      case DateTime.from_iso8601(sign_config["expires"]) do
+        {:ok, expiration_dt, 0} ->
+          DateTime.compare(expiration_dt, state.time_fetcher.()) == :lt
 
-      _ ->
-        false
+        _ ->
+          false
+      end
+    else
+      false
     end
   end
 
-  @spec enabled?(String.t()) :: boolean
-  def enabled?(sign_id) do
-    case :ets.lookup(@table, sign_id) do
+  @spec enabled?(:ets.tab(), String.t()) :: boolean
+  def enabled?(table_name \\ @table, sign_id) do
+    case :ets.lookup(table_name, sign_id) do
       [{^sign_id, %{"enabled" => false}}] -> false
       _ -> true
     end
   end
 
-  @spec custom_text(String.t()) :: {String.t(), String.t()} | nil
-  def custom_text(sign_id) do
-    case :ets.lookup(@table, sign_id) do
+  @spec custom_text(:ets.tab(), String.t()) :: {String.t(), String.t()} | nil
+  def custom_text(table_name \\ @table, sign_id) do
+    case :ets.lookup(table_name, sign_id) do
       [{^sign_id, %{"custom_line_1" => custom_line_1, "custom_line_2" => custom_line_2}}] ->
-        if setting_expired?(sign_id) do
-          nil
-        else
-          {custom_line_1, custom_line_2}
-        end
+        {custom_line_1, custom_line_2}
 
       _ ->
         nil
@@ -68,7 +66,16 @@ defmodule Engine.Config do
     latest_version =
       case updater.get(state[:current_version]) do
         {version, config} ->
-          :ets.insert(@table, Enum.into(config, []))
+          config =
+            Enum.map(config, fn {sign, sign_config} ->
+              if setting_expired?(sign_config, state) do
+                {sign, %{enabled: true}}
+              else
+                {sign, sign_config}
+              end
+            end)
+
+          :ets.insert(state.ets_table_name, Enum.into(config, []))
           version
 
         :unchanged ->
