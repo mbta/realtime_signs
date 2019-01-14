@@ -45,12 +45,16 @@ defmodule Engine.Config do
 
   @spec custom_text(:ets.tab(), String.t()) :: {String.t(), String.t()} | nil
   def custom_text(table_name \\ @table, sign_id) do
-    case :ets.lookup(table_name, sign_id) do
-      [{^sign_id, %{"line1" => line1, "line2" => line2}}] ->
-        {line1, line2}
+    if Application.get_env(:realtime_signs, :static_text_enabled?) do
+      case :ets.lookup(table_name, sign_id) do
+        [{^sign_id, %{"line1" => line1, "line2" => line2}}] ->
+          {line1, line2}
 
-      _ ->
-        nil
+        _ ->
+          nil
+      end
+    else
+      nil
     end
   end
 

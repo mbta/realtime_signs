@@ -31,8 +31,12 @@ config :realtime_signs,
   bridge_requester: Bridge.Request,
   bridge_api_username: System.get_env("BRIDGE_API_USERNAME") || "",
   bridge_api_password: System.get_env("BRIDGE_API_PASSWORD") || "",
-  trip_update_url: System.get_env("TRIP_UPDATE_URL") || "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/TripUpdates_enhanced.json",
-  vehicle_positions_url: System.get_env("VEHICLE_POSITIONS_URL") || "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/VehiclePositions_enhanced.json",
+  trip_update_url:
+    System.get_env("TRIP_UPDATE_URL") ||
+      "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/TripUpdates_enhanced.json",
+  vehicle_positions_url:
+    System.get_env("VEHICLE_POSITIONS_URL") ||
+      "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/VehiclePositions_enhanced.json",
   sign_updater_mod: PaEss.Logger,
   http_poster_mod: HTTPoison,
   headway_requester: Headway.Request,
@@ -42,8 +46,10 @@ config :realtime_signs,
   s3_client: ExAws.S3,
   s3_bucket: System.get_env("SIGNS_S3_BUCKET"),
   s3_path: System.get_env("SIGNS_S3_PATH"),
-  stopped_train_enabled?: (if System.get_env("STOPPED_TRAIN_ENABLED") == "true", do: true, else: false),
+  stopped_train_enabled?:
+    if(System.get_env("STOPPED_TRAIN_ENABLED") == "true", do: true, else: false),
   green_line_enabled?: System.get_env("GREEN_LINE_ENABLED") == "true",
+  static_text_enabled?: System.get_env("STATIC_TEXT_ENABLED") == "true",
   api_v3_key: System.get_env("API_V3_KEY"),
   api_v3_url: System.get_env("API_V3_URL") || "https://green.dev.api.mbtace.com",
   number_of_http_updaters: String.to_integer(System.get_env("NUMBER_OF_HTTP_UPDATERS") || "4")
@@ -52,8 +58,7 @@ config :ex_aws,
   access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],
   secret_access_key: [{:system, "SIGNS_S3_CONFIG_SECRET"}, :instance_role]
 
-config :logger,
-  backends: [:console]
+config :logger, backends: [:console]
 
 config :ehmon, :report_mf, {:ehmon, :info_report}
 
@@ -63,4 +68,4 @@ config :ehmon, :report_mf, {:ehmon, :info_report}
 # Configuration from the imported file will override the ones defined
 # here (which is why it is important to import them last).
 #
-import_config "#{Mix.env}.exs"
+import_config "#{Mix.env()}.exs"
