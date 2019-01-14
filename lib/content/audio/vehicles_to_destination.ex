@@ -25,7 +25,9 @@ defmodule Content.Audio.VehiclesToDestination do
     else
       _ ->
         Logger.warn(
-          "Content.Audio.VehiclesToDestination.from_headway_message: #{inspect(msg)}, #{dest}"
+          "Content.Audio.VehiclesToDestination.from_headway_message unable to convert headway message to audio: #{
+            inspect(msg)
+          }, #{dest}"
         )
 
         {nil, nil}
@@ -49,6 +51,7 @@ defmodule Content.Audio.VehiclesToDestination do
     end
   end
 
+  @spec convert_destination(String.t()) :: {:ok, atom()} | {:error, :unknown_destingation}
   defp convert_destination("Northbound"), do: {:ok, :northbound}
   defp convert_destination("Southbound"), do: {:ok, :southbound}
   defp convert_destination("Eastbound"), do: {:ok, :eastbound}
@@ -65,7 +68,7 @@ defmodule Content.Audio.VehiclesToDestination do
   defp convert_destination("North Station"), do: {:ok, :north_sta}
   defp convert_destination("Lechmere"), do: {:ok, :lechmere}
   defp convert_destination("Riverside"), do: {:ok, :riverside}
-  defp convert_destination("Heath Street"), do: {:ok, :heath_street}
+  defp convert_destination("Heath St"), do: {:ok, :heath_street}
   defp convert_destination("Boston College"), do: {:ok, :boston_college}
   defp convert_destination("Cleveland Circle"), do: {:ok, :cleveland_circle}
   defp convert_destination("Mattapan"), do: {:ok, :mattapan}
