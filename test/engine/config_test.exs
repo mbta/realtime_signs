@@ -1,5 +1,5 @@
 defmodule Engine.ConfigTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   describe "enabled?/1" do
     test "is true when the sign is enabled" do
@@ -26,38 +26,35 @@ defmodule Engine.ConfigTest do
 
   describe "custom_text" do
     test "returns custom text when it's not expired" do
-      ets_table_name = :config_test_non_expired
+      state =
+        initialize_test_state(:config_test_non_expired, fn ->
+          Timex.to_datetime(~N[2017-07-04 07:00:00], "America/New_York")
+        end)
 
-      ^ets_table_name =
-        :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
-
-      state = %{
-        ets_table_name: ets_table_name,
-        current_version: nil,
-        time_fetcher: fn -> Timex.to_datetime(~N[2017-07-04 07:00:00], "America/New_York") end
-      }
-
-      {:noreply, _state} = Engine.Config.handle_info(:update, state)
-
-      assert Engine.Config.custom_text(ets_table_name, "custom_text_test") ==
+      assert Engine.Config.custom_text(state.ets_table_name, "custom_text_test") ==
                {"Test message", "Please ignore"}
     end
 
     test "does not return custom text when it's expired" do
-      ets_table_name = :config_test_expired
+      state =
+        initialize_test_state(:config_test_expired, fn ->
+          Timex.to_datetime(~N[2017-07-04 09:00:00], "America/New_York")
+        end)
 
-      ^ets_table_name =
-        :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+      assert Engine.Config.custom_text(state.ets_table_name, "custom_text_test") == nil
+    end
 
-      state = %{
-        ets_table_name: ets_table_name,
-        current_version: nil,
-        time_fetcher: fn -> Timex.to_datetime(~N[2017-07-04 09:00:00], "America/New_York") end
-      }
+    test "returns nil when feature flag is disabled" do
+      old_env = Application.get_env(:realtime_signs, :static_text_enabled?)
+      Application.put_env(:realtime_signs, :static_text_enabled?, false)
+      on_exit(fn -> Application.put_env(:realtime_signs, :static_text_enabled?, old_env) end)
 
-      {:noreply, _state} = Engine.Config.handle_info(:update, state)
+      state =
+        initialize_test_state(:config_test_non_expired, fn ->
+          Timex.to_datetime(~N[2017-07-04 07:00:00], "America/New_York")
+        end)
 
-      assert Engine.Config.custom_text(ets_table_name, "custom_text_test") == nil
+      assert Engine.Config.custom_text(state.ets_table_name, "custom_text_test") == nil
     end
   end
 
@@ -72,5 +69,21 @@ defmodule Engine.ConfigTest do
 
       assert state[:current_version] == "unchanged"
     end
+  end
+
+  @spec initialize_test_state(:ets.tab(), (() -> DateTime.t())) :: Engine.Config.t()
+  defp initialize_test_state(ets_table_name, time_fetcher) do
+    ^ets_table_name =
+      :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+
+    state = %{
+      ets_table_name: ets_table_name,
+      current_version: nil,
+      time_fetcher: time_fetcher
+    }
+
+    {:noreply, state} = Engine.Config.handle_info(:update, state)
+
+    state
   end
 end
