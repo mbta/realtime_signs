@@ -7,7 +7,7 @@ defmodule Content.Audio.TrainIsBoardingTest do
       audio = %Content.Audio.TrainIsBoarding{destination: :riverside, route_id: "Green-D"}
 
       assert Content.Audio.to_params(audio) ==
-               {"109", ["501", "538", "507", "4084", "544"], :audio}
+               {"107", ["501", "538", "507", "4084", "544"], :audio}
     end
   end
 
