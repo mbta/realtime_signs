@@ -10,8 +10,8 @@ defmodule Signs.Utilities.Messages do
           Engine.Alerts.Fetcher.stop_status(),
           {String.t(), String.t()} | nil
         ) ::
-          {{Signs.Utilities.SourceConfig.source(), Content.Message.t()},
-           {Signs.Utilities.SourceConfig.source(), Content.Message.t()}}
+          {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
+           {Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()}}
   def get_messages(sign, enabled?, alert_status, custom_text) do
     cond do
       custom_text != nil ->
