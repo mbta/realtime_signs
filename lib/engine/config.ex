@@ -14,31 +14,35 @@ defmodule Engine.Config do
           time_fetcher: (() -> DateTime.t())
         }
 
+  @type sign_config :: %{
+          mode: :auto | :headway | :off | :static_text,
+          enabled: boolean(),
+          expires: DateTime.t() | nil,
+          line1: String.t() | nil,
+          line2: String.t() | nil
+        }
+
   @table __MODULE__
 
   def start_link(name \\ __MODULE__) do
     GenServer.start_link(__MODULE__, [], name: name)
   end
 
-  @spec setting_expired?(map(), state) :: boolean
+  @spec setting_expired?(sign_config(), state) :: boolean
   defp setting_expired?(sign_config, state) do
-    if Map.has_key?(sign_config, "expires") do
-      case DateTime.from_iso8601(sign_config["expires"]) do
-        {:ok, expiration_dt, 0} ->
-          DateTime.compare(expiration_dt, state.time_fetcher.()) == :lt
+    case sign_config[:expires] do
+      nil ->
+        false
 
-        _ ->
-          false
-      end
-    else
-      false
+      expires ->
+        DateTime.compare(expires, state.time_fetcher.()) == :lt
     end
   end
 
   @spec enabled?(:ets.tab(), String.t()) :: boolean
   def enabled?(table_name \\ @table, sign_id) do
     case :ets.lookup(table_name, sign_id) do
-      [{^sign_id, %{"enabled" => false}}] -> false
+      [{^sign_id, %{:enabled => false}}] -> false
       _ -> true
     end
   end
@@ -47,7 +51,7 @@ defmodule Engine.Config do
   def custom_text(table_name \\ @table, sign_id) do
     if Application.get_env(:realtime_signs, :static_text_enabled?) do
       case :ets.lookup(table_name, sign_id) do
-        [{^sign_id, %{"line1" => line1, "line2" => line2}}] ->
+        [{^sign_id, %{:line1 => line1, :line2 => line2}}] when line1 != nil or line2 != nil ->
           {line1, line2}
 
         _ ->
@@ -70,7 +74,11 @@ defmodule Engine.Config do
     latest_version =
       case updater.get(state[:current_version]) do
         {version, config} ->
-          config = Enum.map(config, &transform_sign_config(state, &1))
+          config =
+            Enum.map(config, fn {sign_id, config_json} ->
+              {sign_id, transform_sign_config(state, config_json)}
+            end)
+
           :ets.insert(state.ets_table_name, Enum.into(config, []))
           version
 
@@ -86,12 +94,54 @@ defmodule Engine.Config do
     {:noreply, state}
   end
 
-  @spec transform_sign_config(state(), {String.t(), map()}) :: {String.t(), map()}
-  defp transform_sign_config(state, {sign_id, sign_config}) do
-    if setting_expired?(sign_config, state) do
-      {sign_id, %{enabled: true}}
+  @spec transform_sign_config(state(), map()) :: sign_config()
+  defp transform_sign_config(state, config_json) do
+    mode =
+      case config_json["mode"] do
+        "auto" ->
+          :auto
+
+        "headway" ->
+          :headway
+
+        "off" ->
+          :off
+
+        "static_text" ->
+          :static_text
+
+        _ ->
+          :auto
+      end
+
+    expires =
+      if config_json["expires"] != nil and config_json["expires"] != "" do
+        case DateTime.from_iso8601(config_json["expires"]) do
+          {:ok, expiration_dt, 0} -> expiration_dt
+          _ -> nil
+        end
+      else
+        nil
+      end
+
+    config = %{
+      mode: mode,
+      enabled: config_json["enabled"],
+      expires: expires,
+      line1: config_json["line1"],
+      line2: config_json["line2"]
+    }
+
+    if setting_expired?(config, state) do
+      %{
+        mode: :auto,
+        enabled: true,
+        expires: nil,
+        line1: nil,
+        line2: nil
+      }
     else
-      {sign_id, sign_config}
+      config
     end
   end
 
