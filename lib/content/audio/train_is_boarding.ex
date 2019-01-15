@@ -45,7 +45,7 @@ defmodule Content.Audio.TrainIsBoarding do
         @is_now_boarding
       ]
 
-      {"109", vars, :audio}
+      {PaEss.Utilities.take_message_id(vars), vars, :audio}
     end
 
     @spec branch_letter(String.t()) :: String.t()
