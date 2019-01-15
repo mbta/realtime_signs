@@ -99,23 +99,28 @@ defmodule Engine.Config do
     if expired do
       :auto
     else
-      cond do
-        config_json["mode"] == "off" or config_json["enabled"] == false ->
-          :off
+      parse_sign_config(config_json)
+    end
+  end
 
-        config_json["mode"] == "static_text" or config_json["line1"] != nil or
-            config_json["line2"] != nil ->
-          {:static_text, {config_json["line1"], config_json["line2"]}}
+  @spec parse_sign_config(map()) :: sign_config()
+  defp parse_sign_config(config_json) do
+    cond do
+      config_json["mode"] == "off" or config_json["enabled"] == false ->
+        :off
 
-        config_json["mode"] == "auto" ->
-          :auto
+      config_json["mode"] == "static_text" or config_json["line1"] != nil or
+          config_json["line2"] != nil ->
+        {:static_text, {config_json["line1"], config_json["line2"]}}
 
-        config_json["mode"] == "headway" ->
-          :headway
+      config_json["mode"] == "auto" ->
+        :auto
 
-        true ->
-          :auto
-      end
+      config_json["mode"] == "headway" ->
+        :headway
+
+      true ->
+        :auto
     end
   end
 
