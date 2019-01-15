@@ -11,6 +11,7 @@ defmodule Signs.Headway do
     :headway_engine,
     :bridge_engine,
     :alerts_engine,
+    :config_engine,
     :sign_updater,
     :read_sign_period_ms
   ]
@@ -33,6 +34,7 @@ defmodule Signs.Headway do
           headway_engine: module(),
           bridge_engine: module(),
           alerts_engine: module(),
+          config_engine: module(),
           sign_updater: module(),
           current_content_bottom: Content.Message.t() | nil,
           current_content_top: Content.Message.t() | nil,
@@ -50,6 +52,7 @@ defmodule Signs.Headway do
     headway_engine = opts[:headway_engine] || Engine.Headways
     bridge_engine = opts[:bridge_engine] || Engine.Bridge
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
+    config_engine = opts[:config_engine] || Engine.Config
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
@@ -65,6 +68,7 @@ defmodule Signs.Headway do
       headway_engine: headway_engine,
       bridge_engine: bridge_engine,
       alerts_engine: alerts_engine,
+      config_engine: config_engine,
       read_sign_period_ms: 5 * 60 * 1000
     }
 
@@ -82,10 +86,20 @@ defmodule Signs.Headway do
     schedule_update(self())
 
     alert_status = sign.alerts_engine.max_stop_status([sign.gtfs_stop_id], [sign.route_id])
-    disabled? = !Engine.Config.enabled?(sign.id)
+    disabled? = !sign.config_engine.enabled?(sign.id)
+    custom_text = sign.config_engine.custom_text(sign.id)
 
     updated_sign =
       cond do
+        custom_text != nil ->
+          {line1, line2} = custom_text
+
+          %{
+            sign
+            | current_content_top: Content.Message.Custom.new(line1),
+              current_content_bottom: Content.Message.Custom.new(line2)
+          }
+
         disabled? ->
           %{
             sign
