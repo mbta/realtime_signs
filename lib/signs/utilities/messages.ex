@@ -4,11 +4,20 @@ defmodule Signs.Utilities.Messages do
   be displaying
   """
 
-  @spec get_messages(Signs.Realtime.t(), boolean(), Engine.Alerts.Fetcher.stop_status()) ::
+  @spec get_messages(
+          Signs.Realtime.t(),
+          boolean(),
+          Engine.Alerts.Fetcher.stop_status(),
+          {String.t(), String.t()} | nil
+        ) ::
           {{Signs.Utilities.SourceConfig.source(), Content.Message.t()},
            {Signs.Utilities.SourceConfig.source(), Content.Message.t()}}
-  def get_messages(sign, enabled?, alert_status) do
+  def get_messages(sign, enabled?, alert_status, custom_text) do
     cond do
+      custom_text != nil ->
+        {line1, line2} = custom_text
+        {{nil, Content.Message.Custom.new(line1)}, {nil, Content.Message.Custom.new(line2)}}
+
       !enabled? ->
         {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
 
