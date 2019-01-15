@@ -14,13 +14,7 @@ defmodule Engine.Config do
           time_fetcher: (() -> DateTime.t())
         }
 
-  @type sign_config :: %{
-          mode: :auto | :headway | :off | :static_text,
-          enabled: boolean(),
-          expires: DateTime.t() | nil,
-          line1: String.t() | nil,
-          line2: String.t() | nil
-        }
+  @type sign_config :: :auto | :headway | :off | {:static_text, {String.t(), String.t()}}
 
   @table __MODULE__
 
@@ -28,21 +22,10 @@ defmodule Engine.Config do
     GenServer.start_link(__MODULE__, [], name: name)
   end
 
-  @spec setting_expired?(sign_config(), state) :: boolean
-  defp setting_expired?(sign_config, state) do
-    case sign_config[:expires] do
-      nil ->
-        false
-
-      expires ->
-        DateTime.compare(expires, state.time_fetcher.()) == :lt
-    end
-  end
-
   @spec enabled?(:ets.tab(), String.t()) :: boolean
   def enabled?(table_name \\ @table, sign_id) do
     case :ets.lookup(table_name, sign_id) do
-      [{^sign_id, %{:enabled => false}}] -> false
+      [{^sign_id, :off}] -> false
       _ -> true
     end
   end
@@ -51,7 +34,7 @@ defmodule Engine.Config do
   def custom_text(table_name \\ @table, sign_id) do
     if Application.get_env(:realtime_signs, :static_text_enabled?) do
       case :ets.lookup(table_name, sign_id) do
-        [{^sign_id, %{:line1 => line1, :line2 => line2}}] when line1 != nil or line2 != nil ->
+        [{^sign_id, {:static_text, {line1, line2}}}] when line1 != nil or line2 != nil ->
           {line1, line2}
 
         _ ->
@@ -96,24 +79,6 @@ defmodule Engine.Config do
 
   @spec transform_sign_config(state(), map()) :: sign_config()
   defp transform_sign_config(state, config_json) do
-    mode =
-      case config_json["mode"] do
-        "auto" ->
-          :auto
-
-        "headway" ->
-          :headway
-
-        "off" ->
-          :off
-
-        "static_text" ->
-          :static_text
-
-        _ ->
-          :auto
-      end
-
     expires =
       if config_json["expires"] != nil and config_json["expires"] != "" do
         case DateTime.from_iso8601(config_json["expires"]) do
@@ -124,24 +89,33 @@ defmodule Engine.Config do
         nil
       end
 
-    config = %{
-      mode: mode,
-      enabled: config_json["enabled"],
-      expires: expires,
-      line1: config_json["line1"],
-      line2: config_json["line2"]
-    }
+    expired =
+      if expires != nil do
+        DateTime.compare(expires, state.time_fetcher.()) == :lt
+      else
+        false
+      end
 
-    if setting_expired?(config, state) do
-      %{
-        mode: :auto,
-        enabled: true,
-        expires: nil,
-        line1: nil,
-        line2: nil
-      }
+    if expired do
+      :auto
     else
-      config
+      cond do
+        config_json["mode"] == "off" or config_json["enabled"] == false ->
+          :off
+
+        config_json["mode"] == "static_test" or config_json["line1"] != nil or
+            config_json["line2"] != nil ->
+          {:static_text, {config_json["line1"], config_json["line2"]}}
+
+        config_json["mode"] == "auto" ->
+          :auto
+
+        config_json["mode"] == "headway" ->
+          :headway
+
+        true ->
+          :auto
+      end
     end
   end
 
