@@ -70,15 +70,7 @@ defmodule Engine.Config do
     latest_version =
       case updater.get(state[:current_version]) do
         {version, config} ->
-          config =
-            Enum.map(config, fn {sign, sign_config} ->
-              if setting_expired?(sign_config, state) do
-                {sign, %{enabled: true}}
-              else
-                {sign, sign_config}
-              end
-            end)
-
+          config = Enum.map(config, &transform_sign_config(state, &1))
           :ets.insert(state.ets_table_name, Enum.into(config, []))
           version
 
@@ -92,6 +84,15 @@ defmodule Engine.Config do
   def handle_info(msg, state) do
     Logger.warn("#{__MODULE__} unknown message: #{inspect(msg)}")
     {:noreply, state}
+  end
+
+  @spec transform_sign_config(state(), {String.t(), map()}) :: {String.t(), map()}
+  defp transform_sign_config(state, {sign_id, sign_config}) do
+    if setting_expired?(sign_config, state) do
+      {sign_id, %{enabled: true}}
+    else
+      {sign_id, sign_config}
+    end
   end
 
   @spec init(map()) :: {:ok, state}
