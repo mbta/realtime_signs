@@ -44,6 +44,7 @@ defmodule Signs.Utilities.HeadwaysTest do
       platform: nil,
       terminal?: false,
       announce_arriving?: false,
+      announce_boarding?: false,
       multi_berth?: false
     }
   end
