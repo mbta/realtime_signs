@@ -71,8 +71,8 @@ defmodule Signs.Utilities.MessagesTest do
       custom_text = {"Test message", "Please ignore"}
 
       assert Messages.get_messages(sign, enabled?, alert_status, custom_text) ==
-               {{nil, Content.Message.Custom.new("Test message")},
-                {nil, Content.Message.Custom.new("Please ignore")}}
+               {{nil, Content.Message.Custom.new("Test message", :top)},
+                {nil, Content.Message.Custom.new("Please ignore", :bottom)}}
     end
 
     test "when sign is disabled, it's empty" do

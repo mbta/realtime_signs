@@ -16,7 +16,9 @@ defmodule Signs.Utilities.Messages do
     cond do
       custom_text != nil ->
         {line1, line2} = custom_text
-        {{nil, Content.Message.Custom.new(line1)}, {nil, Content.Message.Custom.new(line2)}}
+
+        {{nil, Content.Message.Custom.new(line1, :top)},
+         {nil, Content.Message.Custom.new(line2, :bottom)}}
 
       !enabled? ->
         {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}

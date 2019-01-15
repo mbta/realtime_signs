@@ -96,8 +96,8 @@ defmodule Signs.Headway do
 
           %{
             sign
-            | current_content_top: Content.Message.Custom.new(line1),
-              current_content_bottom: Content.Message.Custom.new(line2)
+            | current_content_top: Content.Message.Custom.new(line1, :top),
+              current_content_bottom: Content.Message.Custom.new(line2, :bottom)
           }
 
         disabled? ->
