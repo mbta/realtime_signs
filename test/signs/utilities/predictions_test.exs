@@ -355,7 +355,8 @@ defmodule Signs.Utilities.PredictionsTest do
         direction_id: 0,
         terminal?: false,
         platform: nil,
-        announce_arriving?: false
+        announce_arriving?: false,
+        announce_boarding?: false
       }
 
       s2 = %SourceConfig{
@@ -364,7 +365,8 @@ defmodule Signs.Utilities.PredictionsTest do
         direction_id: 1,
         terminal?: false,
         platform: nil,
-        announce_arriving?: false
+        announce_arriving?: false,
+        announce_boarding?: false
       }
 
       config = {[s1], [s2]}
@@ -383,7 +385,8 @@ defmodule Signs.Utilities.PredictionsTest do
         direction_id: 1,
         terminal?: false,
         platform: nil,
-        announce_arriving?: false
+        announce_arriving?: false,
+        announce_boarding?: false
       }
 
       s2 = %SourceConfig{
@@ -392,7 +395,8 @@ defmodule Signs.Utilities.PredictionsTest do
         direction_id: 1,
         terminal?: false,
         platform: nil,
-        announce_arriving?: false
+        announce_arriving?: false,
+        announce_boarding?: false
       }
 
       config = {[s1, s2]}
@@ -411,7 +415,8 @@ defmodule Signs.Utilities.PredictionsTest do
         direction_id: 1,
         terminal?: false,
         platform: nil,
-        announce_arriving?: false
+        announce_arriving?: false,
+        announce_boarding?: false
       }
 
       config = {[src]}
@@ -430,7 +435,8 @@ defmodule Signs.Utilities.PredictionsTest do
         direction_id: 1,
         terminal?: false,
         platform: nil,
-        announce_arriving?: false
+        announce_arriving?: false,
+        announce_boarding?: false
       }
 
       config = {[s]}
@@ -449,7 +455,8 @@ defmodule Signs.Utilities.PredictionsTest do
         direction_id: 1,
         terminal?: false,
         platform: nil,
-        announce_arriving?: false
+        announce_arriving?: false,
+        announce_boarding?: false
       }
 
       config = {[s]}
@@ -468,7 +475,8 @@ defmodule Signs.Utilities.PredictionsTest do
         direction_id: 0,
         terminal?: false,
         platform: nil,
-        announce_arriving?: false
+        announce_arriving?: false,
+        announce_boarding?: false
       }
 
       config = {[s]}
@@ -491,7 +499,8 @@ defmodule Signs.Utilities.PredictionsTest do
         direction_id: 0,
         terminal?: false,
         platform: nil,
-        announce_arriving?: false
+        announce_arriving?: false,
+        announce_boarding?: false
       }
 
       config = {[s]}
@@ -514,7 +523,8 @@ defmodule Signs.Utilities.PredictionsTest do
         direction_id: 0,
         terminal?: false,
         platform: nil,
-        announce_arriving?: false
+        announce_arriving?: false,
+        announce_boarding?: false
       }
 
       config = {[s]}
@@ -533,7 +543,8 @@ defmodule Signs.Utilities.PredictionsTest do
         direction_id: 0,
         terminal?: false,
         platform: nil,
-        announce_arriving?: false
+        announce_arriving?: false,
+        announce_boarding?: false
       }
 
       config = {[s]}
@@ -553,7 +564,8 @@ defmodule Signs.Utilities.PredictionsTest do
         terminal?: false,
         platform: nil,
         routes: nil,
-        announce_arriving?: false
+        announce_arriving?: false,
+        announce_boarding?: false
       }
 
       s2 = %{s1 | routes: ["Green-D"]}
@@ -583,7 +595,8 @@ defmodule Signs.Utilities.PredictionsTest do
         terminal?: false,
         platform: nil,
         routes: nil,
-        announce_arriving?: false
+        announce_arriving?: false,
+        announce_boarding?: false
       }
 
       config = {[s]}
@@ -622,6 +635,7 @@ defmodule Signs.Utilities.PredictionsTest do
         platform: nil,
         routes: nil,
         announce_arriving?: false,
+        announce_boarding?: false,
         multi_berth?: true
       }
 

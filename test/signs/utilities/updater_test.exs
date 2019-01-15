@@ -30,7 +30,8 @@ defmodule Signs.Utilities.UpdaterTest do
     direction_id: 0,
     platform: nil,
     terminal?: false,
-    announce_arriving?: false
+    announce_arriving?: false,
+    announce_boarding?: false
   }
 
   @sign %Signs.Realtime{
@@ -183,7 +184,7 @@ defmodule Signs.Utilities.UpdaterTest do
         {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
       )
 
-      sign = Updater.update_sign(sign, arr_top, same_bottom)
+      _sign = Updater.update_sign(sign, arr_top, same_bottom)
 
       refute_received(
         {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
@@ -209,7 +210,7 @@ defmodule Signs.Utilities.UpdaterTest do
         {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
       )
 
-      sign = Updater.update_sign(sign, arr_top, same_bottom)
+      _sign = Updater.update_sign(sign, arr_top, same_bottom)
 
       assert_received(
         {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _, _}
@@ -243,6 +244,45 @@ defmodule Signs.Utilities.UpdaterTest do
 
       assert_received(
         {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :riverside}, _dur, _start}
+      )
+    end
+
+    test "does not announce boarding if multi-source sign and the bottom line changed but the train changed tracks" do
+      multi_source_sign = %{@sign | source_config: {[], []}, tick_read: 40}
+      src = %{@src | announce_boarding?: true}
+      same_top = @sign.current_content_top
+
+      diff_bottom =
+        {src,
+         %P{headsign: "Riverside", minutes: :boarding, route_id: "Green-D", stop_id: "70197"}}
+
+      Updater.update_sign(multi_source_sign, same_top, diff_bottom)
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.TrainIsBoarding{destination: :riverside}, _dur, _start}
+      )
+    end
+
+    test "does not announce boarding if multi-source sign and both lines chagned, but there is a track change" do
+      multi_source_sign = %{@sign | source_config: {[], []}, tick_read: 40}
+      src = %{@src | announce_boarding?: true}
+      same_top = @sign.current_content_top
+
+      diff_top =
+        {src, %P{headsign: "Heath St", minutes: :boarding, route_id: "Green-E", stop_id: "70196"}}
+
+      diff_bottom =
+        {src,
+         %P{headsign: "Riverside", minutes: :boarding, route_id: "Green-D", stop_id: "70197"}}
+
+      Updater.update_sign(multi_source_sign, diff_top, diff_bottom)
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.TrainIsBoarding{destination: :riverside}, _dur, _start}
+      )
+
+      refute_received(
+        {:send_audio, _, %Content.Audio.TrainIsBoarding{destination: :heath_st}, _dur, _start}
       )
     end
 
@@ -553,6 +593,34 @@ defmodule Signs.Utilities.UpdaterTest do
 
       assert log =~ "sign_id=sign_id line=top status=off"
       assert log =~ "sign_id=sign_id line=bottom status=off"
+    end
+
+    test "announces boarding if the sign is configured to allow boarding messages" do
+      source = %{@src | announce_boarding?: true, announce_arriving?: false}
+      same_top = {source, %P{headsign: "Alewife", minutes: :boarding, route_id: "Red"}}
+      same_bottom = {source, %P{headsign: "Ashmont", minutes: 3}}
+
+      sign = Updater.update_sign(@sign, same_top, same_bottom)
+
+      assert_received(
+        {:send_audio, _, %Content.Audio.TrainIsBoarding{destination: :alewife, route_id: "Red"},
+         _dur, _start}
+      )
+
+      assert sign.tick_top == 100
+      assert sign.tick_bottom == 1
+    end
+
+    test "if the sign is configured to announce boarding but the train is not boarding does not announce" do
+      source = %{@src | announce_boarding?: true, announce_arriving?: false}
+      same_top = {source, %P{headsign: "Alewife", minutes: :arriving, route_id: "Red"}}
+      same_bottom = {source, %P{headsign: "Ashmont", minutes: 3}}
+
+      sign = Updater.update_sign(@sign, same_top, same_bottom)
+
+      refute_received({:send_audio, _, _, _, _})
+      assert sign.tick_top == 100
+      assert sign.tick_bottom == 1
     end
   end
 end

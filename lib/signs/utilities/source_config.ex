@@ -45,7 +45,8 @@ defmodule Signs.Utilities.SourceConfig do
     :direction_id,
     :platform,
     :terminal?,
-    :announce_arriving?
+    :announce_arriving?,
+    :announce_boarding?
   ]
   defstruct @enforce_keys ++ [:routes, multi_berth?: false]
 
@@ -57,6 +58,7 @@ defmodule Signs.Utilities.SourceConfig do
           platform: :ashmont | :braintree | nil,
           terminal?: boolean(),
           announce_arriving?: boolean(),
+          announce_boarding?: boolean(),
           multi_berth?: boolean()
         }
 
@@ -81,7 +83,8 @@ defmodule Signs.Utilities.SourceConfig do
            "direction_id" => direction_id,
            "platform" => platform,
            "terminal" => terminal?,
-           "announce_arriving" => announce_arriving?
+           "announce_arriving" => announce_arriving?,
+           "announce_boarding" => announce_boarding?
          } = source
        ) do
     platform =
@@ -105,6 +108,7 @@ defmodule Signs.Utilities.SourceConfig do
       platform: platform,
       terminal?: terminal?,
       announce_arriving?: announce_arriving?,
+      announce_boarding?: announce_boarding?,
       multi_berth?: multi_berth?
     }
   end

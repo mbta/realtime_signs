@@ -13,7 +13,8 @@ defmodule Signs.Utilities.SourceConfigTest do
         "headway_direction_name": "Southbound",
         "platform": null,
         "terminal": false,
-        "announce_arriving": false
+        "announce_arriving": false,
+        "announce_boarding": false
       },
       {
         "stop_id": "234",
@@ -23,6 +24,7 @@ defmodule Signs.Utilities.SourceConfigTest do
         "platform": "ashmont",
         "terminal": true,
         "announce_arriving": true,
+        "announce_boarding": false,
         "multi_berth": true
       }
     ]
@@ -39,7 +41,8 @@ defmodule Signs.Utilities.SourceConfigTest do
         "direction_id": 0,
         "platform": null,
         "terminal": false,
-        "announce_arriving": false
+        "announce_arriving": false,
+        "announce_boarding": false
       }
     ],
     [
@@ -50,7 +53,8 @@ defmodule Signs.Utilities.SourceConfigTest do
         "direction_id": 1,
         "platform": "braintree",
         "terminal": true,
-        "announce_arriving": true
+        "announce_arriving": true,
+        "announce_boarding": true
       }
     ]
   ]
@@ -69,6 +73,7 @@ defmodule Signs.Utilities.SourceConfigTest do
                      platform: nil,
                      terminal?: false,
                      announce_arriving?: false,
+                     announce_boarding?: false,
                      multi_berth?: false
                    },
                    %SourceConfig{
@@ -79,6 +84,7 @@ defmodule Signs.Utilities.SourceConfigTest do
                      platform: :ashmont,
                      terminal?: true,
                      announce_arriving?: true,
+                     announce_boarding?: false,
                      multi_berth?: true
                    }
                  ]
@@ -96,7 +102,8 @@ defmodule Signs.Utilities.SourceConfigTest do
                      direction_id: 0,
                      platform: nil,
                      terminal?: false,
-                     announce_arriving?: false
+                     announce_arriving?: false,
+                     announce_boarding?: false
                    }
                  ],
                  [
@@ -107,7 +114,8 @@ defmodule Signs.Utilities.SourceConfigTest do
                      direction_id: 1,
                      platform: :braintree,
                      terminal?: true,
-                     announce_arriving?: true
+                     announce_arriving?: true,
+                     announce_boarding?: true
                    }
                  ]
                }
