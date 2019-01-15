@@ -103,7 +103,7 @@ defmodule Engine.Config do
         config_json["mode"] == "off" or config_json["enabled"] == false ->
           :off
 
-        config_json["mode"] == "static_test" or config_json["line1"] != nil or
+        config_json["mode"] == "static_text" or config_json["line1"] != nil or
             config_json["line2"] != nil ->
           {:static_text, {config_json["line1"], config_json["line2"]}}
 
