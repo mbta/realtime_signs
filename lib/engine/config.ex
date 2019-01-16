@@ -55,7 +55,7 @@ defmodule Engine.Config do
     updater = Application.get_env(:realtime_signs, :external_config_getter)
 
     latest_version =
-      case updater.get(state[:current_version]) do
+      case updater.get(state.current_version) do
         {version, config} ->
           config =
             Enum.map(config, fn {sign_id, config_json} ->
@@ -66,7 +66,7 @@ defmodule Engine.Config do
           version
 
         :unchanged ->
-          state[:current_version]
+          state.current_version
       end
 
     {:noreply, Map.put(state, :current_version, latest_version)}
@@ -135,7 +135,7 @@ defmodule Engine.Config do
     schedule_update(self())
 
     @table =
-      :ets.new(state[:ets_table_name], [:set, :protected, :named_table, read_concurrency: true])
+      :ets.new(state.ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
 
     {:ok, state}
   end
