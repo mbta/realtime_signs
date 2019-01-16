@@ -106,7 +106,7 @@ defmodule Engine.Config do
   @spec parse_sign_config(map()) :: sign_config()
   defp parse_sign_config(config_json) do
     cond do
-      config_json["mode"] == "off" or config_json["enabled"] == false ->
+      config_json["mode"] == "off" ->
         :off
 
       config_json["mode"] == "static_text" or config_json["line1"] != nil or
