@@ -92,7 +92,9 @@ defmodule Signs.Realtime do
 
     enabled? = Engine.Config.enabled?(sign.id)
 
-    {top, bottom} = Utilities.Messages.get_messages(sign, enabled?, alert_status)
+    custom_text = Engine.Config.custom_text(sign.id)
+
+    {top, bottom} = Utilities.Messages.get_messages(sign, enabled?, alert_status, custom_text)
 
     sign =
       sign
