@@ -72,6 +72,26 @@ defmodule Signs.HeadwayTest do
     end
   end
 
+  defmodule FakeConfigEngine do
+    @spec enabled?(String.t()) :: boolean()
+    def enabled?("disabled_sign") do
+      false
+    end
+
+    def enabled?(_) do
+      true
+    end
+
+    @spec custom_text(String.t()) :: {String.t(), String.t()} | nil
+    def custom_text("custom_text_test") do
+      {"Test message", "Please ignore"}
+    end
+
+    def custom_text(_) do
+      nil
+    end
+  end
+
   @sign %Signs.Headway{
     id: "SIGN",
     pa_ess_id: {"ABCD", "n"},
@@ -81,6 +101,7 @@ defmodule Signs.HeadwayTest do
     headway_engine: FakeHeadwayEngine,
     bridge_engine: FakeBridgeEngine,
     alerts_engine: FakeAlertsEngine,
+    config_engine: FakeConfigEngine,
     sign_updater: FakeSignUpdater,
     timer: nil,
     read_sign_period_ms: 30_000
@@ -88,13 +109,22 @@ defmodule Signs.HeadwayTest do
 
   describe "callback update_content" do
     test "when the sign is disabled, does not send an update" do
-      sign = %{@sign | id: "MVAL0"}
-      :timer.sleep(1000)
+      sign = %{@sign | id: "disabled_sign"}
 
       assert {:noreply,
               %{
                 current_content_top: %Content.Message.Empty{},
                 current_content_bottom: %Content.Message.Empty{}
+              }} = Signs.Headway.handle_info(:update_content, sign)
+    end
+
+    test "displays custom text when present" do
+      sign = %{@sign | id: "custom_text_test"}
+
+      assert {:noreply,
+              %{
+                current_content_top: %Content.Message.Custom{message: "Test message"},
+                current_content_bottom: %Content.Message.Custom{message: "Please ignore"}
               }} = Signs.Headway.handle_info(:update_content, sign)
     end
 
