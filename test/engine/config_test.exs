@@ -69,6 +69,24 @@ defmodule Engine.ConfigTest do
 
       assert state[:current_version] == "unchanged"
     end
+
+    test "correctly loads config for a sigh with a mode of \"off\"" do
+      state = initialize_test_state(:config_test_off, fn -> DateTime.utc_now() end)
+
+      assert :ets.lookup(:config_test_off, "off_test") == [{"off_test", :off}]
+    end
+
+    test "correctly loads config for a sigh with a mode of \"auto\"" do
+      state = initialize_test_state(:config_test_auto, fn -> DateTime.utc_now() end)
+
+      assert :ets.lookup(:config_test_auto, "auto_test") == [{"auto_test", :auto}]
+    end
+
+    test "correctly loads config for a sigh with a mode of \"headway\"" do
+      state = initialize_test_state(:config_test_headway, fn -> DateTime.utc_now() end)
+
+      assert :ets.lookup(:config_test_headway, "headway_test") == [{"headway_test", :headway}]
+    end
   end
 
   @spec initialize_test_state(:ets.tab(), (() -> DateTime.t())) :: Engine.Config.t()
