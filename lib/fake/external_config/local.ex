@@ -9,10 +9,9 @@ defmodule Fake.ExternalConfig.Local do
   def get(_current_version) do
     {nil,
      %{
-       "chelsea_inbound" => %{"enabled" => true},
-       "chelsea_outbound" => %{"enabled" => false},
+       "chelsea_inbound" => %{"mode" => "auto"},
+       "chelsea_outbound" => %{"mode" => "off"},
        "custom_text_test" => %{
-         "enabled" => true,
          "line1" => "Test message",
          "line2" => "Please ignore",
          "expires" => "2017-07-04T12:00:00Z"
