@@ -14,6 +14,10 @@ defmodule Content.Message.Custom do
         }
 
   @spec new(String.t(), :top | :bottom) :: t()
+  def new("", _) do
+    Content.Message.Empty.new()
+  end
+
   def new(message, line) do
     if is_valid_message?(message, line) do
       %__MODULE__{
@@ -36,7 +40,7 @@ defmodule Content.Message.Custom do
 
     cond do
       String.length(message) > max_length -> false
-      Regex.match?(~r/^[a-zA-Z0-9,.!@' ]+$/, message) -> true
+      Regex.match?(~r/^[a-zA-Z0-9,.!@' ]*$/, message) -> true
       true -> false
     end
   end

@@ -8,6 +8,11 @@ defmodule Content.Message.CustomTest do
     assert Content.Message.to_string(msg) == "Test message"
   end
 
+  test "deserializes back to empty string" do
+    msg = Content.Message.Custom.new("", :top)
+    assert Content.Message.to_string(msg) == ""
+  end
+
   test "rejects string that is too long" do
     log =
       capture_log([level: :error], fn ->
