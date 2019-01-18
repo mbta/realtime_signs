@@ -17,6 +17,10 @@ defmodule Signs.Utilities.ReaderTest do
     def send_audio(id, audio, priority, timeout) do
       send(self(), {:send_audio, id, audio, priority, timeout})
     end
+
+    def send_custom_audio(id, audio, priority, timeout) do
+      send(self(), {:send_custom_audio, id, audio, priority, timeout})
+    end
   end
 
   @src %Signs.Utilities.SourceConfig{
@@ -165,6 +169,25 @@ defmodule Signs.Utilities.ReaderTest do
         {:send_audio, _id, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _p,
          _t}
       )
+    end
+
+    test "sends custom audio when we have custom text" do
+      sign = %{
+        @sign
+        | tick_read: 0,
+          current_content_top: {@src, %Content.Message.Custom{line: :top, message: "Custom Top"}},
+          current_content_bottom:
+            {@src, %Content.Message.Custom{line: :bottom, message: "Custom Bottom"}}
+      }
+
+      sign = Reader.read_sign(sign)
+
+      assert_received(
+        {:send_custom_audio, _id, %Content.Audio.Custom{message: "Custom Top Custom Bottom"}, _p,
+         _t}
+      )
+
+      assert sign.tick_read == 100
     end
   end
 end

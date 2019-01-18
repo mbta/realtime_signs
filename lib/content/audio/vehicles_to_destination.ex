@@ -17,7 +17,10 @@ defmodule Content.Audio.VehiclesToDestination do
         }
 
   @spec from_headway_message(Content.Message.t(), String.t()) :: {t() | nil, t() | nil}
-  def from_headway_message(%Content.Message.Headways.Bottom{range: range} = msg, dest)
+  def from_headway_message(
+        %Content.Message.Headways.Bottom{range: range} = msg,
+        %Content.Message.Headways.Top{headsign: dest}
+      )
       when range != {nil, nil} do
     with {:ok, destination} <- convert_destination(dest),
          {x, y} <- get_mins(range) do
@@ -34,7 +37,7 @@ defmodule Content.Audio.VehiclesToDestination do
     end
   end
 
-  def from_headway_message(_msg, _dest) do
+  def from_headway_message(msg, dest) do
     {nil, nil}
   end
 

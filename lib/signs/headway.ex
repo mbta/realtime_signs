@@ -256,9 +256,8 @@ defmodule Signs.Headway do
       old_sign.current_content_top != Content.Message.Empty.new()
   end
 
-  defp read_headway(%{current_content_bottom: msg} = sign) do
-    {english, spanish} =
-      Content.Audio.VehiclesToDestination.from_headway_message(msg, sign.headsign)
+  defp read_headway(%{current_content_bottom: bottom, current_content_top: top} = sign) do
+    {english, spanish} = Content.Audio.VehiclesToDestination.from_headway_message(bottom, top)
 
     for audio <- [english, spanish] do
       if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120)
