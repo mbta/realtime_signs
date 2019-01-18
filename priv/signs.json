@@ -1096,10 +1096,42 @@
     ]
   },
   {
-    "id": "malden_center_entire_station",
+    "id": "malden_lobby",
     "type": "realtime",
     "pa_ess_loc": "OMAL",
     "pa_ess_zone": "m",
+    "source_config": [
+      [
+        {
+          "stop_id": "70035",
+          "routes": ["Orange"],
+          "direction_id": 1,
+          "headway_direction_name": "Oak Grove",
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ],
+      [
+        {
+          "stop_id": "70034",
+          "routes": ["Orange"],
+          "direction_id": 0,
+          "headway_direction_name": "Forest Hills",
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "malden_center_platform",
+    "type": "realtime",
+    "pa_ess_loc": "OMAL",
+    "pa_ess_zone": "n",
     "source_config": [
       [
         {
