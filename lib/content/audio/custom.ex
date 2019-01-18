@@ -21,13 +21,11 @@ defmodule Content.Audio.Custom do
     }
   end
 
-  def from_messages(top, bottom) do
+  def from_messages(_top, _bottom) do
     nil
   end
 
   defimpl Content.Audio do
-    alias PaEss.Utilities
-
     def to_params(audio) do
       {String.split(audio.message, " "), :audio}
     end
