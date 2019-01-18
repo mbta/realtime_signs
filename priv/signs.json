@@ -1096,7 +1096,7 @@
     ]
   },
   {
-    "id": "malden_center_entire_station",
+    "id": "malden_lobby",
     "type": "realtime",
     "pa_ess_loc": "OMAL",
     "pa_ess_zone": "m",
