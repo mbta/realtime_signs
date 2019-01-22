@@ -9,7 +9,7 @@ defmodule Content.Audio.Custom do
           message: String.t()
         }
 
-  @spec from_messages(Content.Message.Custom.t(), Content.Message.t()) :: t()
+  @spec from_messages(Content.Message.Custom.t(), Content.Message.t()) :: t() | nil
   def from_messages(%Content.Message.Custom{line: :top, message: top}, %Content.Message.Custom{
         line: :bottom,
         message: bottom
@@ -27,7 +27,7 @@ defmodule Content.Audio.Custom do
 
   defimpl Content.Audio do
     def to_params(audio) do
-      {String.split(audio.message, " "), :audio}
+      {"", String.split(audio.message, " "), :audio}
     end
   end
 end
