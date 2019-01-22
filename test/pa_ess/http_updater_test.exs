@@ -164,6 +164,20 @@ defmodule PaEss.HttpUpdaterTest do
       assert {:ok, :sent} ==
                PaEss.HttpUpdater.process({:send_audio, [{"MCAP", "n"}, audio, 5, 60]}, state)
     end
+
+    test "sends custom audio messages" do
+      state = make_state(%{uid: 1006})
+
+      audio = %Content.Audio.Custom{
+        message: "Custom Message"
+      }
+
+      assert {:ok, :sent} ==
+               PaEss.HttpUpdater.process(
+                 {:send_custom_audio, [{"MCAP", "n"}, audio, 5, 60]},
+                 state
+               )
+    end
   end
 
   test "handle_info pulls from queue" do

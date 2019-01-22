@@ -2,9 +2,7 @@ defmodule Content.Message.Custom do
   @moduledoc """
   Custom text entered by a PIO to override other predictions or alert messages
   """
-
   require Logger
-
   @enforce_keys [:line, :message]
   defstruct @enforce_keys
 
@@ -12,7 +10,6 @@ defmodule Content.Message.Custom do
           line: :top | :bottom,
           message: String.t()
         }
-
   @spec new(String.t(), :top | :bottom) :: t()
   def new("", _) do
     Content.Message.Empty.new()

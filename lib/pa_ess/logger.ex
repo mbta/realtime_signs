@@ -72,6 +72,26 @@ defmodule PaEss.Logger do
     {:ok, :sent}
   end
 
+  @impl true
+  def send_custom_audio(pa_ess_id, msg, priority, timeout) do
+    line = [
+      now(),
+      "send_custom_audio,",
+      inspect(pa_ess_id),
+      ",",
+      inspect(msg.message),
+      ",",
+      priority,
+      ",",
+      timeout
+    ]
+
+    Logger.info(line)
+    File.mkdir("log")
+    File.write!("log/pa_ess_updates.log", line ++ ["\n"], [:append])
+    {:ok, :sent}
+  end
+
   defp now do
     DateTime.to_iso8601(DateTime.utc_now())
   end
