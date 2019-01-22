@@ -15,6 +15,6 @@ defprotocol Content.Message do
   """
 
   @doc "converts a content message to a string for display on a sign"
-  @spec to_string(Content.Message.t()) :: String.t() | {[String.t()], non_neg_integer()}
+  @spec to_string(Content.Message.t()) :: String.t() | [{String.t(), non_neg_integer()}]
   def to_string(message)
 end
