@@ -150,9 +150,10 @@ defmodule PaEss.HttpUpdater do
       str when is_binary(str) ->
         ~s(-"#{str}")
 
-      {pages, duration} ->
-        rotate(pages)
-        |> Enum.map(fn pg -> ~s(-"#{pg}".#{duration - 1}) end)
+      pages ->
+        pages
+        |> rotate()
+        |> Enum.map(fn {str, duration} -> ~s(-"#{str}".#{duration - 1}) end)
         |> Enum.join()
     end
   end

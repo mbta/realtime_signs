@@ -10,27 +10,23 @@ defmodule Content.Message.StoppedTrainTest do
     test "returns tuple of stopped away pages otherwise" do
       msg = %Content.Message.StoppedTrain{headsign: "Braintree", stops_away: 2}
 
-      assert Content.Message.to_string(msg) == {
+      assert Content.Message.to_string(msg) ==
                [
-                 "Braintree  Stopped",
-                 "Braintree  2 stops",
-                 "Braintree     away"
-               ],
-               3
-             }
+                 {"Braintree  Stopped", 5},
+                 {"Braintree  2 stops", 3},
+                 {"Braintree     away", 3}
+               ]
     end
 
     test "if only 1 stop away, doesn't pluralize, and adjusts spacing" do
       msg = %Content.Message.StoppedTrain{headsign: "Braintree", stops_away: 1}
 
-      assert Content.Message.to_string(msg) == {
+      assert Content.Message.to_string(msg) ==
                [
-                 "Braintree  Stopped",
-                 "Braintree   1 stop",
-                 "Braintree     away"
-               ],
-               3
-             }
+                 {"Braintree  Stopped", 5},
+                 {"Braintree   1 stop", 3},
+                 {"Braintree     away", 3}
+               ]
     end
   end
 
