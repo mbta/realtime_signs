@@ -79,7 +79,7 @@ defmodule PaEss.Logger do
       "send_custom_audio,",
       inspect(pa_ess_id),
       ",",
-      inspect(Content.Audio.to_params(msg)),
+      inspect(msg.message),
       ",",
       priority,
       ",",

@@ -39,10 +39,4 @@ defmodule Content.Audio.Custom do
   def from_messages(_top, _bottom) do
     nil
   end
-
-  defimpl Content.Audio do
-    def to_params(audio) do
-      {"", String.split(audio.message, " "), :audio}
-    end
-  end
 end

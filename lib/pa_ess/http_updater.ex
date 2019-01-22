@@ -88,14 +88,12 @@ defmodule PaEss.HttpUpdater do
   end
 
   def process({:send_custom_audio, [{station, zone}, audio, priority, timeout]}, state) do
-    {_mid, msg, type} = Content.Audio.to_params(audio)
-
     encoded =
       [
         MsgType: "AdHoc",
         uid: state.uid,
-        msg: Enum.join(msg, "+"),
-        typ: audio_type(type),
+        msg: audio.message,
+        typ: audio_type(:audio),
         sta: "#{station}#{zone_bitmap(zone)}",
         pri: priority,
         tim: timeout

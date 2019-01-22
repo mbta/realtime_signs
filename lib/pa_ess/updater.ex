@@ -14,7 +14,7 @@ defmodule PaEss.Updater do
               {:ok, :sent} | {:error, any()}
             when priority: integer(), timeout: integer()
 
-  @callback send_custom_audio(PaEss.id(), Content.Audio.t(), priority, timeout) ::
+  @callback send_custom_audio(PaEss.id(), Content.Audio.Custom.t(), priority, timeout) ::
               {:ok, :sent} | {:error, any()}
             when priority: integer(), timeout: integer()
 end
