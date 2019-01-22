@@ -352,7 +352,13 @@ defmodule Signs.HeadwayTest do
   describe "read sign callback" do
     test "sends an audio request corresponding to the headway message" do
       Process.register(self(), :headway_test_fake_updater_listener)
-      sign = %{@sign | current_content_bottom: %Content.Message.Headways.Bottom{range: {10, 12}}}
+
+      sign = %{
+        @sign
+        | current_content_bottom: %Content.Message.Headways.Bottom{range: {10, 12}},
+          current_content_top: %Content.Message.Headways.Top{headsign: "Chelsea"}
+      }
+
       assert {:noreply, %Signs.Headway{}} = Signs.Headway.handle_info(:read_sign, sign)
 
       assert_received(
@@ -408,6 +414,7 @@ defmodule Signs.HeadwayTest do
       sign = %{
         @sign
         | current_content_bottom: %Content.Message.Headways.Bottom{range: {5, 8}},
+          current_content_top: %Content.Message.Headways.Top{headsign: "Chelsea"},
           read_sign_period_ms: 100
       }
 

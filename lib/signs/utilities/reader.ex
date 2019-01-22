@@ -7,6 +7,8 @@ defmodule Signs.Utilities.Reader do
 
   require Logger
 
+  @spec read_sign(Signs.Realtime.t() | Signs.Headway.t()) ::
+          Signs.Realtime.t() | Signs.Headway.t()
   def read_sign(%{tick_read: n} = sign) when n > 0 do
     sign
   end
@@ -42,6 +44,10 @@ defmodule Signs.Utilities.Reader do
       send_audio_update(sign.current_content_bottom, sign)
     end
 
+    if top_headsign == nil && bottom_headsign == nil do
+      send_audio_update(sign.current_content_top, sign)
+    end
+
     %{sign | tick_read: sign.read_period_seconds}
   end
 
@@ -50,6 +56,19 @@ defmodule Signs.Utilities.Reader do
           Signs.Realtime.t()
         ) :: any()
   defp send_audio_update({src, msg}, sign) do
+    if Application.get_env(:realtime_signs, :static_text_enabled?) do
+      case Content.Audio.Custom.from_messages(
+             elem(sign.current_content_top, 1),
+             elem(sign.current_content_bottom, 1)
+           ) do
+        %Content.Audio.Custom{} = audio ->
+          sign.sign_updater.send_custom_audio(sign.pa_ess_id, audio, 5, 60)
+
+        nil ->
+          nil
+      end
+    end
+
     case Content.Audio.NextTrainCountdown.from_predictions_message(msg, src) do
       %Content.Audio.NextTrainCountdown{} = audio ->
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
@@ -68,7 +87,7 @@ defmodule Signs.Utilities.Reader do
 
     case Content.Audio.VehiclesToDestination.from_headway_message(
            elem(sign.current_content_bottom, 1),
-           msg.headsign
+           elem(sign.current_content_top, 1)
          ) do
       {%Content.Audio.VehiclesToDestination{language: :english} = english_audio,
        %Content.Audio.VehiclesToDestination{language: :spanish} = spanish_audio} ->
