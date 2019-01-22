@@ -7,6 +7,8 @@ defmodule Signs.Utilities.Reader do
 
   require Logger
 
+  @spec read_sign(Signs.Realtime.t() | Signs.Headway.t()) ::
+          Signs.Realtime.t() | Signs.Headway.t()
   def read_sign(%{tick_read: n} = sign) when n > 0 do
     sign
   end
