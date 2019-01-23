@@ -3,6 +3,7 @@ defmodule Signs.Utilities.Messages do
   Helper functions for deciding which message a sign should
   be displaying
   """
+  require Logger
 
   @spec get_messages(
           Signs.Realtime.t(),
@@ -37,15 +38,10 @@ defmodule Signs.Utilities.Messages do
               Logger.info("shuttle_transfer_station: get messages empty and this is a transfer")
               {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
             else
-              Logger.info(
-                "shuttle_transfer_station: get messages empty and this is a not transfer"
-              )
-
               Signs.Utilities.Headways.get_messages(sign)
             end
 
           messages ->
-            Logger.info("shuttle_transfer_station: get messages not empty")
             messages
         end
     end
