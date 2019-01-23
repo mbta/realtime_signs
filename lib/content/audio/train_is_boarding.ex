@@ -36,6 +36,18 @@ defmodule Content.Audio.TrainIsBoarding do
     @train_to "507"
     @is_now_boarding "544"
 
+    def to_params(%{destination: destination})
+        when destination in [:lechmere, :north_station, :government_center, :park_st, :kenmore] do
+      vars = [
+        @the_next,
+        @train_to,
+        PaEss.Utilities.destination_var(destination),
+        @is_now_boarding
+      ]
+
+      {PaEss.Utilities.take_message_id(vars), vars, :audio}
+    end
+
     def to_params(audio) do
       vars = [
         @the_next,

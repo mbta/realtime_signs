@@ -19,4 +19,14 @@ defmodule PaEss do
           | :oak_grove
           | :alewife
           | :braintree
+          | :boston_college
+          | :cleveland_circle
+          | :riverside
+          | :heath_st
+          | :reservoir
+          | :lechmere
+          | :north_station
+          | :government_center
+          | :park_st
+          | :kenmore
 end
