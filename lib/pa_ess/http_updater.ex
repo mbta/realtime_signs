@@ -145,14 +145,16 @@ defmodule PaEss.HttpUpdater do
   defp start_display(:now), do: ""
   defp start_display(seconds_from_midnight), do: "t#{seconds_from_midnight}"
 
+  @spec message_display(Content.Message.t()) :: String.t()
   defp message_display(msg) when is_map(msg) do
     case Content.Message.to_string(msg) do
       str when is_binary(str) ->
         ~s(-"#{str}")
 
-      {pages, duration} ->
-        rotate(pages)
-        |> Enum.map(fn pg -> ~s(-"#{pg}".#{duration - 1}) end)
+      pages ->
+        pages
+        |> rotate()
+        |> Enum.map(fn {str, duration} -> ~s(-"#{str}".#{duration - 1}) end)
         |> Enum.join()
     end
   end
