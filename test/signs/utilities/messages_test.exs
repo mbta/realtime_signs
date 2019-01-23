@@ -261,15 +261,76 @@ defmodule Signs.Utilities.MessagesTest do
                  }}}
     end
 
-    test "when sign is at a station closed due to suspension, it says so" do
+    test "when sign is at a station closed due to suspension and there are no departure predictions, it says so" do
+      src = %{@src | stop_id: "no_departures", direction_id: 0}
+
+      sign = %{
+        @sign
+        | source_config: {[src]},
+          current_content_top: {src, Content.Message.Empty.new()},
+          current_content_bottom: {src, Content.Message.Empty.new()}
+      }
+
       alert_status = :suspension
-      sign = @sign
       enabled? = true
       custom_text = nil
 
       assert Messages.get_messages(sign, enabled?, alert_status, custom_text) ==
                {{nil, %Content.Message.Alert.NoService{mode: :none}},
                 {nil, Content.Message.Empty.new()}}
+    end
+
+    test "when sign is at a station closed due to suspension and there are departure predictions, it shows them" do
+      src = %{@src | stop_id: "1", direction_id: 0}
+
+      sign = %{
+        @sign
+        | source_config: {[src]},
+          current_content_top: {src, Content.Message.Empty.new()},
+          current_content_bottom: {src, Content.Message.Empty.new()}
+      }
+
+      alert_status = :suspension
+      enabled? = true
+      custom_text = nil
+
+      assert Messages.get_messages(sign, enabled?, alert_status, custom_text) ==
+               {{%Signs.Utilities.SourceConfig{
+                   announce_arriving?: false,
+                   announce_boarding?: false,
+                   direction_id: 0,
+                   headway_direction_name: "Mattapan",
+                   multi_berth?: false,
+                   platform: nil,
+                   routes: nil,
+                   stop_id: "1",
+                   terminal?: false
+                 },
+                 %Content.Message.Predictions{
+                   headsign: "Ashmont",
+                   minutes: 2,
+                   route_id: "Red",
+                   stop_id: "1",
+                   width: 18
+                 }},
+                {%Signs.Utilities.SourceConfig{
+                   announce_arriving?: false,
+                   announce_boarding?: false,
+                   direction_id: 0,
+                   headway_direction_name: "Mattapan",
+                   multi_berth?: false,
+                   platform: nil,
+                   routes: nil,
+                   stop_id: "1",
+                   terminal?: false
+                 },
+                 %Content.Message.Predictions{
+                   headsign: "Ashmont",
+                   minutes: 4,
+                   route_id: "Red",
+                   stop_id: "1",
+                   width: 18
+                 }}}
     end
 
     test "when there are predictions, puts predictions on the sign" do
