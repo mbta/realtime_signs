@@ -85,14 +85,67 @@ defmodule Signs.Utilities.MessagesTest do
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
-    test "when sign is at a transfer station, it's empty" do
-      sign = @sign
+    test "when sign is at a transfer station, and there are no predictions it's empty" do
+      src = %{@src | stop_id: "no_predictions", direction_id: 1}
+
+      sign = %{
+        @sign
+        | source_config: {[src]},
+          current_content_top: {src, Content.Message.Empty.new()},
+          current_content_bottom: {src, Content.Message.Empty.new()}
+      }
+
       enabled? = true
       alert_status = :shuttles_transfer_station
       custom_text = nil
 
       assert Messages.get_messages(sign, enabled?, alert_status, custom_text) ==
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+    end
+
+    test "when sign is at a transfer station, but there are predictions it shows them" do
+      sign = @sign
+      enabled? = true
+      alert_status = :shuttles_transfer_station
+      custom_text = nil
+
+      assert Messages.get_messages(sign, enabled?, alert_status, custom_text) ==
+               {{%Signs.Utilities.SourceConfig{
+                   announce_arriving?: false,
+                   announce_boarding?: false,
+                   direction_id: 0,
+                   headway_direction_name: "Mattapan",
+                   multi_berth?: false,
+                   platform: nil,
+                   routes: nil,
+                   stop_id: "1",
+                   terminal?: false
+                 },
+                 %Content.Message.Predictions{
+                   headsign: "Ashmont",
+                   minutes: 2,
+                   route_id: "Red",
+                   stop_id: "1",
+                   width: 18
+                 }},
+                {%Signs.Utilities.SourceConfig{
+                   announce_arriving?: false,
+                   announce_boarding?: false,
+                   direction_id: 0,
+                   headway_direction_name: "Mattapan",
+                   multi_berth?: false,
+                   platform: nil,
+                   routes: nil,
+                   stop_id: "1",
+                   terminal?: false
+                 },
+                 %Content.Message.Predictions{
+                   headsign: "Ashmont",
+                   minutes: 4,
+                   route_id: "Red",
+                   stop_id: "1",
+                   width: 18
+                 }}}
     end
 
     test "when sign is at a station closed by shuttles, it says so" do

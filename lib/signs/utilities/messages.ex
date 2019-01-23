@@ -23,9 +23,6 @@ defmodule Signs.Utilities.Messages do
       !enabled? ->
         {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
 
-      alert_status == :shuttles_transfer_station ->
-        {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
-
       alert_status == :shuttles_closed_station ->
         {{nil, %Content.Message.Alert.NoService{mode: :train}},
          {nil, %Content.Message.Alert.UseShuttleBus{}}}
@@ -36,9 +33,19 @@ defmodule Signs.Utilities.Messages do
       true ->
         case Signs.Utilities.Predictions.get_messages(sign) do
           {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}} ->
-            Signs.Utilities.Headways.get_messages(sign)
+            if alert_status == :shuttles_transfer_station do
+              Logger.info("shuttle_transfer_station: get messages empty and this is a transfer")
+              {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+            else
+              Logger.info(
+                "shuttle_transfer_station: get messages empty and this is a not transfer"
+              )
+
+              Signs.Utilities.Headways.get_messages(sign)
+            end
 
           messages ->
+            Logger.info("shuttle_transfer_station: get messages not empty")
             messages
         end
     end
