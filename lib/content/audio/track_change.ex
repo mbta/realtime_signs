@@ -70,7 +70,7 @@ defmodule Content.Audio.TrackChange do
         track(audio.track)
       ]
 
-      {"109", vars, :audio}
+      {"109", vars, :audio_visual}
     end
 
     defp track(1), do: @on_track_1
