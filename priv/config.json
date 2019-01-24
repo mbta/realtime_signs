@@ -1,11 +1,11 @@
 {
   "chelsea_inbound": {
-    "enabled": true
+    "mode": "headway"
   },
   "chelsea_outbound": {
-    "enabled": true
+    "mode": "off"
   },
   "MVAL0": {
-    "enabled": true
+    "mode": "auto"
   }
 }
