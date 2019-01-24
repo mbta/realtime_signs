@@ -488,11 +488,7 @@ defmodule Signs.Utilities.PredictionsTest do
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
-    test "Returns stopped train message if enabled" do
-      old_env = Application.get_env(:realtime_signs, :stopped_train_enabled?)
-      Application.put_env(:realtime_signs, :stopped_train_enabled?, true)
-      on_exit(fn -> Application.put_env(:realtime_signs, :stopped_train_enabled?, old_env) end)
-
+    test "Returns stopped train message" do
       s = %SourceConfig{
         stop_id: "9",
         headway_direction_name: "Mattapan",
@@ -508,30 +504,6 @@ defmodule Signs.Utilities.PredictionsTest do
 
       assert {
                {^s, %Content.Message.StoppedTrain{stops_away: 1}},
-               {nil, %Content.Message.Empty{}}
-             } = Signs.Utilities.Predictions.get_messages(sign)
-    end
-
-    test "Does not return stopped train message if not enabled" do
-      old_env = Application.get_env(:realtime_signs, :stopped_train_enabled?)
-      Application.put_env(:realtime_signs, :stopped_train_enabled?, false)
-      on_exit(fn -> Application.put_env(:realtime_signs, :stopped_train_enabled?, old_env) end)
-
-      s = %SourceConfig{
-        stop_id: "9",
-        headway_direction_name: "Mattapan",
-        direction_id: 0,
-        terminal?: false,
-        platform: nil,
-        announce_arriving?: false,
-        announce_boarding?: false
-      }
-
-      config = {[s]}
-      sign = %{@sign | source_config: config}
-
-      assert {
-               {^s, %Content.Message.Predictions{}},
                {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end

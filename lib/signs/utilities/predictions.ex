@@ -85,9 +85,8 @@ defmodule Signs.Utilities.Predictions do
   end
 
   defp stopped_train?(prediction) do
-    enabled? = Application.get_env(:realtime_signs, :stopped_train_enabled?)
     status = prediction.boarding_status
-    enabled? && status && String.starts_with?(status, "Stopped")
+    status && String.starts_with?(status, "Stopped")
   end
 
   defp allowed_multi_berth_platform?(
