@@ -19,7 +19,7 @@ defmodule Fake.ExternalConfig.Local do
        "off_test" => %{"mode" => "off"},
        "auto_test" => %{"mode" => "auto"},
        "headway_test" => %{"mode" => "headway"},
-       "MVAL0" => %{"enabled" => false}
+       "MVAL0" => %{"mode" => "auto"}
      }}
   end
 end

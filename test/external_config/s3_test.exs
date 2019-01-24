@@ -4,7 +4,7 @@ defmodule ExternalConfig.S3Test do
   describe "get/1" do
     test "loads config from an external http request" do
       assert ExternalConfig.S3.get("version") ==
-               {"deadbeef1234", %{"chelsea_inbound" => %{"enabled" => true}}}
+               {"deadbeef1234", %{"chelsea_inbound" => %{"mode" => "headway"}}}
     end
 
     test "when it fails to get the config, uses an empty config" do
