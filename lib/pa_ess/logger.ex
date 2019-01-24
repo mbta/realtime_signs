@@ -17,7 +17,7 @@ defmodule PaEss.Logger do
       ",",
       "#{line_no}",
       ",",
-      Content.Message.to_string(msg),
+      inspect(Content.Message.to_string(msg)),
       ",",
       "#{duration}",
       ",",
