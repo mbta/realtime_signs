@@ -231,7 +231,7 @@ defmodule Signs.Utilities.Updater do
         if MapSet.member?(sign.announced_arrivals, audio.destination) do
           unless match?(%Content.Message.Predictions{minutes: :boarding}, msg) do
             # Not a warning if ARR -> BRD
-            Logger.warn("skipping_arriving_audio #{inspect(audio)} #{inspect(sign)}")
+            Logger.info("skipping_arriving_audio #{inspect(audio)} #{inspect(sign)}")
           end
 
           sign
