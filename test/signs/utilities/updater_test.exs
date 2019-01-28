@@ -287,42 +287,48 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "doesn't announce repeated ARR's for same destination until a BRD comes and goes" do
-      src = %{@src | announce_arriving?: true}
-      top = {src, %P{headsign: "Alewife", minutes: :arriving}}
-      bottom = @sign.current_content_bottom
+      logs =
+        capture_log(fn ->
+          src = %{@src | announce_arriving?: true}
+          top = {src, %P{headsign: "Alewife", minutes: :arriving}}
+          bottom = @sign.current_content_bottom
 
-      sign = Updater.update_sign(@sign, top, bottom)
+          sign = Updater.update_sign(@sign, top, bottom)
 
-      assert_received(
-        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
-      )
+          assert_received(
+            {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
+          )
 
-      top = {src, %P{headsign: "Alewife", minutes: 2}}
-      sign = Updater.update_sign(sign, top, bottom)
-      top = {src, %P{headsign: "Alewife", minutes: :arriving}}
-      sign = Updater.update_sign(sign, top, bottom)
+          top = {src, %P{headsign: "Alewife", minutes: 2}}
+          sign = Updater.update_sign(sign, top, bottom)
+          top = {src, %P{headsign: "Alewife", minutes: :arriving}}
+          sign = Updater.update_sign(sign, top, bottom)
 
-      refute_received(
-        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
-      )
+          refute_received(
+            {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
+          )
 
-      top = {src, %P{headsign: "Braintree", minutes: :arriving}}
-      sign = Updater.update_sign(sign, top, bottom)
+          top = {src, %P{headsign: "Braintree", minutes: :arriving}}
+          sign = Updater.update_sign(sign, top, bottom)
 
-      assert_received(
-        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :braintree}, _dur, _start}
-      )
+          assert_received(
+            {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :braintree}, _dur,
+             _start}
+          )
 
-      top = {src, %P{headsign: "Alewife", minutes: :boarding}}
-      sign = Updater.update_sign(sign, top, bottom)
-      top = {src, %P{headsign: "GracefullyHandlesUnknown", minutes: :boarding}}
-      sign = Updater.update_sign(sign, top, bottom)
-      top = {src, %P{headsign: "Alewife", minutes: :arriving}}
-      Updater.update_sign(sign, top, bottom)
+          top = {src, %P{headsign: "Alewife", minutes: :boarding}}
+          sign = Updater.update_sign(sign, top, bottom)
+          top = {src, %P{headsign: "GracefullyHandlesUnknown", minutes: :boarding}}
+          sign = Updater.update_sign(sign, top, bottom)
+          top = {src, %P{headsign: "Alewife", minutes: :arriving}}
+          Updater.update_sign(sign, top, bottom)
 
-      assert_received(
-        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
-      )
+          assert_received(
+            {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
+          )
+        end)
+
+      assert logs =~ "[info]  skipping_arriving_audio"
     end
 
     test "announces ARR when sign goes straight to BRD" do
