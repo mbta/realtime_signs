@@ -22,4 +22,18 @@ defmodule Content.Audio.SuspensionTest do
              ) == %Content.Audio.Suspension{alert: :suspension}
     end
   end
+
+  describe "to_params/1" do
+    test "Use shuttle audio" do
+      assert Content.Audio.to_params(%Content.Audio.Suspension{
+               alert: :shuttles_closed_station
+             }) == {"123", [], :audio}
+    end
+
+    test "Station closed audio" do
+      assert Content.Audio.to_params(%Content.Audio.Suspension{
+               alert: :suspension
+             }) == {"456", [], :audio}
+    end
+  end
 end
