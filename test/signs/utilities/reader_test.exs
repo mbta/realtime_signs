@@ -201,7 +201,7 @@ defmodule Signs.Utilities.ReaderTest do
       sign = Reader.read_sign(sign)
 
       assert_received(
-        {:send_audio, _id, %Content.Audio.Suspension{alert: :shuttles_closed_station}, _p, _t}
+        {:send_audio, _id, %Content.Audio.Closure{alert: :shuttles_closed_station}, _p, _t}
       )
 
       assert sign.tick_read == 100
