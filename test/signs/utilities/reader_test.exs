@@ -189,5 +189,22 @@ defmodule Signs.Utilities.ReaderTest do
 
       assert sign.tick_read == 100
     end
+
+    test "sends station closure audio when there is a shuttle bus closure" do
+      sign = %{
+        @sign
+        | tick_read: 0,
+          current_content_top: {@src, %Content.Message.Alert.NoService{mode: :train}},
+          current_content_bottom: {@src, %Content.Message.Alert.UseShuttleBus{}}
+      }
+
+      sign = Reader.read_sign(sign)
+
+      assert_received(
+        {:send_audio, _id, %Content.Audio.Suspension{alert: :shuttles_closed_station}, _p, _t}
+      )
+
+      assert sign.tick_read == 100
+    end
   end
 end
