@@ -74,6 +74,8 @@ defmodule Signs.Utilities.Reader do
           nil ->
             sign
         end
+      else
+        sign
       end
 
     sign =
