@@ -11,8 +11,8 @@ defmodule Signs.Utilities.Updater do
 
   @spec update_sign(
           Signs.Realtime.t(),
-          {SourceConfig.config() | nil, Content.Message.t()},
-          {SourceConfig.config() | nil, Content.Message.t()}
+          Signs.Realtime.line_content(),
+          Signs.Realtime.line_content()
         ) :: Signs.Realtime.t()
   def update_sign(sign, {_top_src, top_msg} = top, {_bottom_src, bottom_msg} = bottom) do
     sign =
@@ -223,6 +223,7 @@ defmodule Signs.Utilities.Updater do
     end
   end
 
+  @spec announce_arrival(Signs.Realtime.line_content(), Signs.Realtime.t()) :: Signs.Realtime.t()
   defp announce_arrival({%SourceConfig{announce_arriving?: false}, _msg}, sign), do: sign
 
   defp announce_arrival({_src, msg}, sign) do
@@ -245,8 +246,7 @@ defmodule Signs.Utilities.Updater do
     end
   end
 
-  @spec announce_boarding({SourceConfig.source(), Signs.Realtime.t()}, Signs.Realtime.t()) ::
-          Signs.Realtime.t()
+  @spec announce_boarding(Signs.Realtime.line_content(), Signs.Realtime.t()) :: Signs.Realtime.t()
   defp announce_boarding({%SourceConfig{announce_boarding?: false}, _msg}, sign), do: sign
 
   defp announce_boarding({_src, msg}, sign) do

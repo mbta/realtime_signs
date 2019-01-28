@@ -27,12 +27,14 @@ defmodule Signs.Realtime do
 
   defstruct @enforce_keys ++ [announced_arrivals: MapSet.new()]
 
+  @type line_content :: {Utilities.SourceConfig.source() | nil, Content.Message.t()}
+
   @type t :: %__MODULE__{
           id: String.t(),
           pa_ess_id: PaEss.id(),
           source_config: Utilities.SourceConfig.config(),
-          current_content_top: {Utilities.SourceConfig.source() | nil, Content.Message.t()},
-          current_content_bottom: {Utilities.SourceConfig.source() | nil, Content.Message.t()},
+          current_content_top: line_content(),
+          current_content_bottom: line_content(),
           prediction_engine: module(),
           headway_engine: module(),
           sign_updater: module(),
