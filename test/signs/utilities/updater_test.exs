@@ -506,6 +506,17 @@ defmodule Signs.Utilities.UpdaterTest do
       )
     end
 
+    test "announces service suspension" do
+      diff_top = {@src, %Content.Message.Alert.NoService{mode: :train}}
+      diff_bottom = {@src, %Content.Message.Empty{}}
+      sign = Updater.update_sign(@sign, diff_top, diff_bottom)
+
+      assert_received({:send_audio, _, %Content.Audio.Closure{alert: :suspension}, _, _})
+
+      assert sign.tick_top == 100
+      assert sign.tick_bottom == 100
+    end
+
     test "logs when stopped train message turns on" do
       diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
       same_bottom = @sign.current_content_bottom
