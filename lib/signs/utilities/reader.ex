@@ -100,5 +100,16 @@ defmodule Signs.Utilities.Reader do
       {nil, nil} ->
         nil
     end
+
+    case Content.Audio.Suspension.from_messages(
+           elem(sign.current_content_top, 1),
+           elem(sign.current_content_bottom, 1)
+         ) do
+      %Content.Audio.Suspension{} = audio ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+
+      nil ->
+        nil
+    end
   end
 end

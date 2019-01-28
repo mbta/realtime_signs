@@ -48,6 +48,7 @@ defmodule Signs.Utilities.Updater do
           end
 
         sign = announce_stopped_train(top_msg, sign)
+        sign = announce_suspension(top_msg, bottom_msg, sign)
 
         %{sign | current_content_top: top, tick_top: sign.expiration_seconds}
 
