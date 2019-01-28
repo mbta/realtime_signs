@@ -7,6 +7,7 @@ defmodule Signs.Utilities.Updater do
   """
 
   alias Signs.Utilities.SourceConfig
+  alias Signs.Utilities.Reader
   require Logger
 
   @spec update_sign(
@@ -37,6 +38,8 @@ defmodule Signs.Utilities.Updater do
           :now
         )
 
+        sign = %{sign | current_content_top: top}
+
         {announced_track_change?, _sign} = announce_track_change(top_msg, sign)
         sign = announce_arrival(top, sign)
 
@@ -63,6 +66,8 @@ defmodule Signs.Utilities.Updater do
           sign.expiration_seconds + 15,
           :now
         )
+
+        sign = %{sign | current_content_bottom: bottom}
 
         sign =
           if SourceConfig.multi_source?(sign.source_config) do
@@ -95,6 +100,12 @@ defmodule Signs.Utilities.Updater do
           sign.expiration_seconds + 15,
           :now
         )
+
+        sign = %{
+          sign
+          | current_content_top: top,
+            current_content_bottom: bottom
+        }
 
         {announced_track_change?, _sign} = announce_track_change(top_msg, sign)
         sign = announce_arrival(top, sign)
@@ -229,23 +240,7 @@ defmodule Signs.Utilities.Updater do
   defp announce_arrival({%SourceConfig{announce_arriving?: false}, _msg}, sign), do: sign
 
   defp announce_arrival({_src, msg}, sign) do
-    case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
-      %Content.Audio.TrainIsArriving{} = audio ->
-        if MapSet.member?(sign.announced_arrivals, audio.destination) do
-          unless match?(%Content.Message.Predictions{minutes: :boarding}, msg) do
-            # Not a warning if ARR -> BRD
-            Logger.info("skipping_arriving_audio #{inspect(audio)} #{inspect(sign)}")
-          end
-
-          sign
-        else
-          sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-          %{sign | announced_arrivals: MapSet.put(sign.announced_arrivals, audio.destination)}
-        end
-
-      nil ->
-        sign
-    end
+    Reader.read_sign(sign)
   end
 
   @spec announce_boarding(Signs.Realtime.line_content(), Signs.Realtime.t()) :: Signs.Realtime.t()

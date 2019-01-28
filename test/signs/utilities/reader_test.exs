@@ -86,15 +86,6 @@ defmodule Signs.Utilities.ReaderTest do
       assert sign.tick_read == 100
     end
 
-    test "does not send audio if the tick count isn't 0" do
-      sign = %{@sign | tick_read: 37}
-
-      sign = Reader.read_sign(sign)
-
-      refute_received({:send_audio, _id, _audio, _p, _t})
-      assert sign.tick_read == 37
-    end
-
     test "uses 'departs' if it's for a terminal" do
       src = %{@src | terminal?: true}
 

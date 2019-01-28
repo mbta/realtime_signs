@@ -121,10 +121,6 @@ defmodule Signs.Realtime do
   def do_expiration(%{tick_top: 0, tick_bottom: 0} = sign) do
     {_src, top} = sign.current_content_top
     {_src, bottom} = sign.current_content_bottom
-
-    sign.sign_updater.update_sign(sign.pa_ess_id, top, bottom, sign.expiration_seconds + 15, :now)
-
-    %{sign | tick_top: sign.expiration_seconds, tick_bottom: sign.expiration_seconds}
   end
 
   def do_expiration(%{tick_top: 0} = sign) do
@@ -156,6 +152,15 @@ defmodule Signs.Realtime do
   end
 
   def do_expiration(sign), do: sign
+
+  def read_on_interval(%{tick_read: n} = sign) when n > 0 do
+    sign
+  end
+
+  def read_on_interval(%{tick_read: n} = sign) when n == 0 do
+    Utilities.Reader.read_sign(sign)
+    sign
+  end
 
   def decrement_ticks(sign) do
     %{
