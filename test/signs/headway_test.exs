@@ -382,6 +382,26 @@ defmodule Signs.HeadwayTest do
       )
     end
 
+    test "sends an audio request corresponding to station closure alert" do
+      Process.register(self(), :headway_test_fake_updater_listener)
+
+      sign = %{
+        @sign
+        | current_content_top: %Content.Message.Alert.NoService{mode: :none},
+          current_content_bottom: %Content.Message.Empty{}
+      }
+
+      assert {:noreply, %Signs.Headway{}} = Signs.Headway.handle_info(:read_sign, sign)
+
+      assert_received(
+        {:send_audio,
+         {{"ABCD", "n"},
+          %Content.Audio.Closure{
+            alert: :suspension
+          }, 5, 120}}
+      )
+    end
+
     test "does not send audio message if bridge is up" do
       Process.register(self(), :headway_test_fake_updater_listener)
       sign = %{@sign | current_content_bottom: %Content.Message.Bridge.Delays{}}
