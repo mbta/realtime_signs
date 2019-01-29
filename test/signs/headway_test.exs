@@ -67,6 +67,10 @@ defmodule Signs.HeadwayTest do
       :suspension
     end
 
+    def max_stop_status(["shuttles"], _routes) do
+      :shuttles_closed_station
+    end
+
     def max_stop_status(_stops, _routes) do
       :none
     end
@@ -346,6 +350,20 @@ defmodule Signs.HeadwayTest do
 
       assert sign.current_content_top == %Content.Message.Alert.NoService{mode: :none}
       assert sign.current_content_bottom == %Content.Message.Empty{}
+    end
+
+    test "if the station is closed due to shuttle buses, it displays that" do
+      sign = %{
+        @sign
+        | current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new(),
+          gtfs_stop_id: "shuttles"
+      }
+
+      {:noreply, sign} = handle_info(:update_content, sign)
+
+      assert sign.current_content_top == %Content.Message.Alert.NoService{mode: :none}
+      assert sign.current_content_bottom == %Content.Message.Alert.UseShuttleBus{}
     end
   end
 
