@@ -25,11 +25,11 @@ defmodule Content.Audio.Closure do
 
   defimpl Content.Audio do
     def to_params(%Content.Audio.Closure{alert: :shuttles_closed_station}) do
-      {"123", [], :audio}
+      {"90131", [], :audio}
     end
 
     def to_params(%Content.Audio.Closure{alert: :suspension}) do
-      {"456", [], :audio}
+      {"90130", [], :audio}
     end
   end
 end

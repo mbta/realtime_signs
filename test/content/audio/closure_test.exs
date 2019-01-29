@@ -27,13 +27,13 @@ defmodule Content.Audio.ClosureTest do
     test "Use shuttle audio" do
       assert Content.Audio.to_params(%Content.Audio.Closure{
                alert: :shuttles_closed_station
-             }) == {"123", [], :audio}
+             }) == {"90131", [], :audio}
     end
 
     test "Station closed audio" do
       assert Content.Audio.to_params(%Content.Audio.Closure{
                alert: :suspension
-             }) == {"456", [], :audio}
+             }) == {"90130", [], :audio}
     end
   end
 end
