@@ -77,11 +77,6 @@ defmodule Signs.Realtime do
   end
 
   def handle_info(:run_loop, sign) do
-    sign =
-      sign
-      |> expire_bottom()
-      |> expire_top()
-
     sign_stop_ids =
       sign.source_config
       |> Signs.Utilities.SourceConfig.sign_stop_ids()
@@ -102,6 +97,7 @@ defmodule Signs.Realtime do
       sign
       |> Utilities.Updater.update_sign(top, bottom)
       |> Utilities.Reader.read_sign()
+      |> do_expiration()
       |> decrement_ticks()
 
     schedule_run_loop(self())
@@ -121,29 +117,45 @@ defmodule Signs.Realtime do
   defp offset(zone) when zone in ["s", "w"], do: 60
   defp offset(zone) when zone in ["m", "c"], do: 120
 
-  def expire_bottom(%{tick_bottom: n} = sign) when n > 0 do
-    sign
+  @spec do_expiration(Signs.Realtime.t()) :: Signs.Realtime.t()
+  def do_expiration(%{tick_top: 0, tick_bottom: 0} = sign) do
+    {_src, top} = sign.current_content_top
+    {_src, bottom} = sign.current_content_bottom
+
+    sign.sign_update.update_sign(sign.pa_ess_id, top, bottom, sign.expiration_seconds + 15, :now)
+
+    %{sign | tick_top: sign.expiration_seconds, tick_bottom: sign.expiration_seconds}
   end
 
-  def expire_bottom(sign) do
-    %{
-      sign
-      | tick_bottom: sign.expiration_seconds,
-        current_content_bottom: {nil, Content.Message.Empty.new()}
-    }
+  def do_expiration(%{tick_top: 0} = sign) do
+    {_src, top} = sign.current_content_top
+
+    sign.sign_updater.update_single_line(
+      sign.pa_ess_id,
+      "1",
+      top,
+      sign.expiration_seconds + 15,
+      :now
+    )
+
+    %{sign | tick_top: sign.expiration_seconds}
   end
 
-  def expire_top(%{tick_top: n} = sign) when n > 0 do
-    sign
+  def do_expiration(%{tick_bottom: 0} = sign) do
+    {_src, bottom} = sign.current_content_bottom
+
+    sign.sign_updater.update_single_line(
+      sign.pa_ess_id,
+      "2",
+      bottom,
+      sign.expiration_seconds + 15,
+      :now
+    )
+
+    %{sign | tick_bottom: sign.expiration_seconds}
   end
 
-  def expire_top(sign) do
-    %{
-      sign
-      | tick_top: sign.expiration_seconds,
-        current_content_top: {nil, Content.Message.Empty.new()}
-    }
-  end
+  def do_expiration(sign), do: sign
 
   def decrement_ticks(sign) do
     %{
