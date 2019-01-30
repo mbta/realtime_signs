@@ -122,7 +122,7 @@ defmodule Signs.Realtime do
     {_src, top} = sign.current_content_top
     {_src, bottom} = sign.current_content_bottom
 
-    sign.sign_update.update_sign(sign.pa_ess_id, top, bottom, sign.expiration_seconds + 15, :now)
+    sign.sign_updater.update_sign(sign.pa_ess_id, top, bottom, sign.expiration_seconds + 15, :now)
 
     %{sign | tick_top: sign.expiration_seconds, tick_bottom: sign.expiration_seconds}
   end
