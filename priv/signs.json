@@ -48,7 +48,7 @@
       [
         {
           "stop_id": "70266",
-          "routes": ["Mattpan"],
+          "routes": ["Mattapan"],
           "direction_id": 1,
           "headway_direction_name": "Ashmont",
           "platform": null,
@@ -60,7 +60,7 @@
       [
         {
           "stop_id": "70265",
-          "routes": ["Mattpan"],
+          "routes": ["Mattapan"],
           "direction_id": 0,
           "headway_direction_name": "Mattapan",
           "platform": null,
@@ -3508,7 +3508,7 @@
       [
         {
           "stop_id": "70261",
-          "routes": ["Red"],
+          "routes": ["Mattapan"],
           "direction_id": 0,
           "headway_direction_name": "Alewife",
           "platform": null,
