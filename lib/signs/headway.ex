@@ -114,6 +114,13 @@ defmodule Signs.Headway do
               current_content_bottom: Content.Message.Empty.new()
           }
 
+        alert_status == :shuttles_closed_station ->
+          %{
+            sign
+            | current_content_top: %Content.Message.Alert.NoService{mode: :none},
+              current_content_bottom: %Content.Message.Alert.UseShuttleBus{}
+          }
+
         true ->
           case sign.bridge_engine.status(sign.bridge_id) do
             {"Raised", duration} ->
@@ -178,7 +185,7 @@ defmodule Signs.Headway do
 
   def handle_info(:read_sign, sign) do
     schedule_reading_sign(self(), sign.read_sign_period_ms)
-    read_headway(sign)
+    read_sign(sign)
     {:noreply, sign}
   end
 
@@ -256,13 +263,31 @@ defmodule Signs.Headway do
       old_sign.current_content_top != Content.Message.Empty.new()
   end
 
-  defp read_headway(%{current_content_bottom: bottom, current_content_top: top} = sign) do
+  @spec read_sign(Signs.Headway.t()) :: any()
+  defp read_sign(
+         %{
+           current_content_bottom: %Content.Message.Headways.Bottom{} = bottom,
+           current_content_top: %Content.Message.Headways.Top{} = top
+         } = sign
+       ) do
     {english, spanish} = Content.Audio.VehiclesToDestination.from_headway_message(bottom, top)
 
     for audio <- [english, spanish] do
       if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120)
     end
   end
+
+  defp read_sign(
+         %{
+           current_content_top: %Content.Message.Alert.NoService{} = top,
+           current_content_bottom: bottom
+         } = sign
+       ) do
+    audio = Content.Audio.Closure.from_messages(top, bottom)
+    sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120)
+  end
+
+  defp read_sign(_), do: nil
 
   defp read_bridge_messages(%{bridge_delay_duration: duration} = sign) do
     {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)

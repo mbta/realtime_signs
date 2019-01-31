@@ -48,6 +48,7 @@ defmodule Signs.Utilities.Updater do
           end
 
         sign = announce_stopped_train(top_msg, sign)
+        sign = announce_closure(top_msg, bottom_msg, sign)
 
         %{sign | current_content_top: top, tick_top: sign.expiration_seconds}
 
@@ -106,6 +107,7 @@ defmodule Signs.Utilities.Updater do
           end
 
         sign = announce_stopped_train(top_msg, sign)
+        sign = announce_closure(top_msg, bottom_msg, sign)
 
         sign =
           if SourceConfig.multi_source?(sign.source_config) do
@@ -285,6 +287,21 @@ defmodule Signs.Utilities.Updater do
       nil ->
         {false, sign}
     end
+  end
+
+  @spec announce_closure(Content.Message.t(), Content.Message.t(), Signs.Realtime.t()) ::
+          Signs.Realtime.t()
+  defp announce_closure(msg_top, msg_bot, sign) do
+    case Content.Audio.Closure.from_messages(msg_top, msg_bot) do
+      %Content.Audio.Closure{} = audio ->
+        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+        sign
+
+      nil ->
+        sign
+    end
+
+    sign
   end
 
   defp clear_announced_arrivals(
