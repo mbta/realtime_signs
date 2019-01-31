@@ -17,12 +17,23 @@ defmodule Signs.RealtimeTest do
     def send_audio(_id, _audio, _priority, _timeout), do: nil
   end
 
+  @src %Signs.Utilities.SourceConfig{
+    stop_id: "1",
+    headway_direction_name: "Southbound",
+    direction_id: 0,
+    platform: nil,
+    terminal?: false,
+    announce_arriving?: false,
+    announce_boarding?: false
+  }
+
   @sign %Signs.Realtime{
     id: "sign_id",
     pa_ess_id: {"TEST", "x"},
-    source_config: {[], []},
-    current_content_top: {nil, Content.Message.Empty.new()},
-    current_content_bottom: {nil, Content.Message.Empty.new()},
+    source_config: {[@src]},
+    current_content_top:
+      {@src, %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
+    current_content_bottom: {@src, %Content.Message.Headways.Bottom{range: {1, 5}}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     sign_updater: FakeUpdater,
@@ -54,20 +65,42 @@ defmodule Signs.RealtimeTest do
       assert sign.tick_read == 0
     end
 
-    test "expires content when tick is zero" do
+    test "expires content on both lines when tick is zero" do
       sign = %{
         @sign
-        | current_content_top: {%{}, :to_be_expired},
-          tick_top: 0,
-          current_content_bottom: {%{}, :to_be_expired},
+        | tick_top: 0,
           tick_bottom: 0
       }
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
 
-      assert sign.current_content_top == {nil, Content.Message.Empty.new()}
       assert sign.tick_top == 99
-      assert sign.current_content_bottom == {nil, Content.Message.Empty.new()}
+      assert sign.tick_bottom == 99
+    end
+
+    test "expires content on top when tick is zero" do
+      sign = %{
+        @sign
+        | tick_top: 0,
+          tick_bottom: 60
+      }
+
+      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
+
+      assert sign.tick_top == 99
+      assert sign.tick_bottom == 59
+    end
+
+    test "expires content on bottom when tick is zero" do
+      sign = %{
+        @sign
+        | tick_top: 60,
+          tick_bottom: 0
+      }
+
+      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
+
+      assert sign.tick_top == 59
       assert sign.tick_bottom == 99
     end
   end
