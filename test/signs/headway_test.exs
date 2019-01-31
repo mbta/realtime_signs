@@ -67,6 +67,10 @@ defmodule Signs.HeadwayTest do
       :suspension
     end
 
+    def max_stop_status(["shuttles"], _routes) do
+      :shuttles_closed_station
+    end
+
     def max_stop_status(_stops, _routes) do
       :none
     end
@@ -347,6 +351,20 @@ defmodule Signs.HeadwayTest do
       assert sign.current_content_top == %Content.Message.Alert.NoService{mode: :none}
       assert sign.current_content_bottom == %Content.Message.Empty{}
     end
+
+    test "if the station is closed due to shuttle buses, it displays that" do
+      sign = %{
+        @sign
+        | current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new(),
+          gtfs_stop_id: "shuttles"
+      }
+
+      {:noreply, sign} = handle_info(:update_content, sign)
+
+      assert sign.current_content_top == %Content.Message.Alert.NoService{mode: :none}
+      assert sign.current_content_bottom == %Content.Message.Alert.UseShuttleBus{}
+    end
   end
 
   describe "read sign callback" do
@@ -378,6 +396,26 @@ defmodule Signs.HeadwayTest do
             next_trip_mins: 10,
             later_trip_mins: 12,
             language: :spanish
+          }, 5, 120}}
+      )
+    end
+
+    test "sends an audio request corresponding to station closure alert" do
+      Process.register(self(), :headway_test_fake_updater_listener)
+
+      sign = %{
+        @sign
+        | current_content_top: %Content.Message.Alert.NoService{mode: :none},
+          current_content_bottom: %Content.Message.Empty{}
+      }
+
+      assert {:noreply, %Signs.Headway{}} = Signs.Headway.handle_info(:read_sign, sign)
+
+      assert_received(
+        {:send_audio,
+         {{"ABCD", "n"},
+          %Content.Audio.Closure{
+            alert: :suspension
           }, 5, 120}}
       )
     end
