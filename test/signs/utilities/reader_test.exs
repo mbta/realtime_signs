@@ -62,8 +62,6 @@ defmodule Signs.Utilities.ReaderTest do
       assert_received(
         {:send_audio, _id, %A{destination: :ashmont, minutes: 3, verb: :arrives}, _p, _t}
       )
-
-      assert sign.tick_read == 100
     end
 
     test "sends audio only for top, if bottom has same headsign" do
@@ -82,8 +80,6 @@ defmodule Signs.Utilities.ReaderTest do
       refute_received(
         {:send_audio, _id, %A{destination: :alewife, minutes: 3, verb: :arrives}, _p, _t}
       )
-
-      assert sign.tick_read == 100
     end
 
     test "uses 'departs' if it's for a terminal" do
@@ -99,7 +95,6 @@ defmodule Signs.Utilities.ReaderTest do
 
       assert_received({:send_audio, _id, %A{destination: :alewife, verb: :departs}, _p, _t})
       assert_received({:send_audio, _id, %A{destination: :ashmont, verb: :arrives}, _p, _t})
-      assert sign.tick_read == 100
     end
 
     test "sends headway message if the headways are displayed" do
@@ -117,8 +112,6 @@ defmodule Signs.Utilities.ReaderTest do
          %VTD{language: :english, destination: :alewife, next_trip_mins: 1, later_trip_mins: 3},
          _p, _t}
       )
-
-      assert sign.tick_read == 100
     end
 
     test "sends both English and Spanish audio if both are available" do
@@ -142,8 +135,6 @@ defmodule Signs.Utilities.ReaderTest do
          %VTD{language: :spanish, destination: :chelsea, next_trip_mins: 1, later_trip_mins: 3},
          _p, _t}
       )
-
-      assert sign.tick_read == 100
     end
 
     test "sends stopped train message" do
@@ -177,8 +168,6 @@ defmodule Signs.Utilities.ReaderTest do
         {:send_custom_audio, _id, %Content.Audio.Custom{message: "Custom Top Custom Bottom"}, _p,
          _t}
       )
-
-      assert sign.tick_read == 100
     end
 
     test "sends station closure audio when there is a shuttle bus closure" do
@@ -194,8 +183,6 @@ defmodule Signs.Utilities.ReaderTest do
       assert_received(
         {:send_audio, _id, %Content.Audio.Closure{alert: :shuttles_closed_station}, _p, _t}
       )
-
-      assert sign.tick_read == 100
     end
   end
 end
