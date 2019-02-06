@@ -212,13 +212,6 @@ defmodule Signs.Utilities.Reader do
           sign
       end
 
-    tick =
-      if sign.tick_read < 60 do
-        sign.tick_read + sign.read_period_seconds
-      else
-        sign.tick_read
-      end
-
     sign
   end
 
