@@ -157,16 +157,6 @@ defmodule Signs.Realtime do
 
   def do_expiration(sign), do: sign
 
-  def read_on_interval(%{tick_read: n} = sign) when n == 0 do
-    Utilities.Reader.read_sign(sign)
-    %{sign | tick_read: sign.read_period_seconds}
-  end
-
-  def read_on_interval(%{tick_read: n} = sign) when n == 0 do
-    Utilities.Reader.read_sign(sign)
-    sign
-  end
-
   def decrement_ticks(%{tick_read: 0} = sign) do
     %{
       sign
