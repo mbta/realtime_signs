@@ -22,10 +22,9 @@ defmodule Content.Audio.FollowingTrain do
     nil
   end
 
-  def from_predictions_message(
-        %Content.Message.Predictions{minutes: n, headsign: headsign},
-        %{terminal?: true} = src
-      )
+  def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: headsign}, %{
+        terminal?: true
+      })
       when is_integer(n) do
     case PaEss.Utilities.headsign_to_terminal_station(headsign) do
       {:ok, headsign_atom} ->
@@ -46,10 +45,9 @@ defmodule Content.Audio.FollowingTrain do
     end
   end
 
-  def from_predictions_message(
-        %Content.Message.Predictions{minutes: n, headsign: headsign},
-        %{terminal?: false} = src
-      )
+  def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: headsign}, %{
+        terminal?: false
+      })
       when is_integer(n) do
     case PaEss.Utilities.headsign_to_terminal_station(headsign) do
       {:ok, headsign_atom} ->

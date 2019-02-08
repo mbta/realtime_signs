@@ -10,15 +10,6 @@ defmodule Signs.Utilities.Reader do
 
   @spec read_sign(Signs.Realtime.t() | Signs.Headway.t()) ::
           Signs.Realtime.t() | Signs.Headway.t()
-  def read_sign(
-        %{
-          current_content_top: {_, %Content.Message.Headways.Top{}},
-          current_content_bottom: {_, %Content.Message.Headways.Bottom{}},
-          tick_read: 0
-        } = sign
-      ) do
-    send_audio_update(sign)
-  end
 
   def read_sign(%{tick_read: 0} = sign) do
     {top_headsign, top_content} =
@@ -61,10 +52,11 @@ defmodule Signs.Utilities.Reader do
     send_audio_update(sign)
   end
 
-  @spec send_audio_update(Signs.Realtime.t()) :: Signs.Realtime.t()
+  @spec send_audio_update(Signs.Realtime.t() | Signs.Headway.t()) ::
+          Signs.Realtime.t() | Signs.Headway.t()
   defp send_audio_update(%{tick_read: 0} = sign) do
-    {top_src, top_msg} = sign.current_content_top
-    {bottom_src, bottom_msg} = sign.current_content_bottom
+    {_top_src, top_msg} = sign.current_content_top
+    {_bottom_src, bottom_msg} = sign.current_content_bottom
     {announced_track_change_top?, _sign} = announce_track_change(top_msg, sign)
     {announced_track_change_bottom?, _sign} = announce_track_change(bottom_msg, sign)
 
@@ -142,10 +134,10 @@ defmodule Signs.Utilities.Reader do
   end
 
   defp send_audio_update(sign) do
-    {top_src, top_msg} = sign.current_content_top
-    {bottom_src, bottom_msg} = sign.current_content_bottom
-    {announced_track_change?, _sign} = announce_track_change(top_msg, sign)
-    {announced_track_change?, _sign} = announce_track_change(bottom_msg, sign)
+    {_top_src, top_msg} = sign.current_content_top
+    {_bottom_src, bottom_msg} = sign.current_content_bottom
+    {announced_track_change_top?, _sign} = announce_track_change(top_msg, sign)
+    {announced_track_change_bottom?, _sign} = announce_track_change(bottom_msg, sign)
 
     sign =
       if Application.get_env(:realtime_signs, :static_text_enabled?) do
@@ -167,32 +159,36 @@ defmodule Signs.Utilities.Reader do
     sign = announce_arrival(sign.current_content_top, sign)
 
     sign =
-      if announced_track_change? do
+      if announced_track_change_top? do
         sign
       else
         announce_boarding(sign.current_content_top, sign)
       end
 
+    sign = announce_stopped_train(elem(sign.current_content_top, 1), sign)
+
     sign =
       if SourceConfig.multi_source?(sign.source_config) do
-        {announced_track_change?, _sign} =
-          announce_track_change(elem(sign.current_content_bottom, 1), sign)
-
-        sign = announce_arrival(sign.current_content_bottom, sign)
-
         sign =
-          if !announced_track_change? do
+          if !announced_track_change_top? do
             announce_boarding(sign.current_content_top, sign)
           else
             sign
           end
 
+        sign =
+          if !announced_track_change_bottom? do
+            announce_boarding(sign.current_content_bottom, sign)
+          else
+            sign
+          end
+
+        sign = announce_arrival(sign.current_content_bottom, sign)
+
         announce_stopped_train(elem(sign.current_content_bottom, 1), sign)
       else
         sign
       end
-
-    sign = announce_stopped_train(elem(sign.current_content_top, 1), sign)
 
     sign =
       case Content.Audio.Closure.from_messages(
@@ -211,8 +207,8 @@ defmodule Signs.Utilities.Reader do
   end
 
   defp announce_next_trains(
-         {top_src, %{headsign: top_headsign, minutes: top_minutes} = top_msg},
-         {bottom_src, %{headsign: bottom_headsign, minutes: bottom_minutes} = bottom_msg},
+         {top_src, %{headsign: top_headsign, minutes: _top_minutes} = top_msg},
+         {bottom_src, %{headsign: bottom_headsign, minutes: _bottom_minutes} = bottom_msg},
          sign
        ) do
     sign =
@@ -266,6 +262,8 @@ defmodule Signs.Utilities.Reader do
         nil ->
           sign
       end
+
+    sign
   end
 
   defp announce_arrival({%SourceConfig{announce_arriving?: false}, _msg}, sign), do: sign
