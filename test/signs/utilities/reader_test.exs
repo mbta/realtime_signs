@@ -64,7 +64,7 @@ defmodule Signs.Utilities.ReaderTest do
       )
     end
 
-    test "sends audio only for top, if bottom has same headsign" do
+    test "sends a message that says following train instead of next train if the second line is the same headsign" do
       sign = %{
         @sign
         | tick_read: 0,
@@ -79,6 +79,11 @@ defmodule Signs.Utilities.ReaderTest do
 
       refute_received(
         {:send_audio, _id, %A{destination: :alewife, minutes: 3, verb: :arrives}, _p, _t}
+      )
+
+      assert_received(
+        {:send_audio, _id,
+         %Content.Audio.FollowingTrain{destination: :alewife, minutes: 3, verb: :arrives}, _p, _t}
       )
     end
 

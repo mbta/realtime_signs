@@ -13,13 +13,14 @@ defmodule Signs.Utilities.Reader do
   def read_sign(
         %{
           current_content_top: {_, %Content.Message.Headways.Top{}},
-          current_content_bottom: {_, %Content.Message.Headways.Bottom{}}
+          current_content_bottom: {_, %Content.Message.Headways.Bottom{}},
+          tick_read: 0
         } = sign
       ) do
     send_audio_update(sign)
   end
 
-  def read_sign(sign) do
+  def read_sign(%{tick_read: 0} = sign) do
     {top_headsign, top_content} =
       case sign.current_content_top do
         {_src, %{headsign: headsign, minutes: minutes}} -> {headsign, minutes}
@@ -35,9 +36,8 @@ defmodule Signs.Utilities.Reader do
       end
 
     sign =
-      if (top_headsign && (sign.tick_read == 0 || top_content != nil)) ||
-           (bottom_headsign && bottom_headsign != top_headsign &&
-              (sign.tick_read == 0 || bottom_content != nil)) ||
+      if (top_headsign && top_content != nil) ||
+           (bottom_headsign && bottom_headsign != top_headsign && bottom_content != nil) ||
            (top_headsign == nil && bottom_headsign == nil) do
         sign = send_audio_update(sign)
         sign = send_audio_update(sign)
@@ -47,6 +47,18 @@ defmodule Signs.Utilities.Reader do
       end
 
     sign
+  end
+
+  def read_sign(sign) do
+    sign
+  end
+
+  def interrupting_read(%{tick_read: 0} = sign) do
+    sign
+  end
+
+  def interrupting_read(sign) do
+    send_audio_update(sign)
   end
 
   @spec send_audio_update(Signs.Realtime.t()) :: Signs.Realtime.t()
@@ -73,26 +85,6 @@ defmodule Signs.Utilities.Reader do
         sign
       end
 
-    sign = announce_arrival(sign.current_content_top, sign)
-
-    sign =
-      if announced_track_change_top? do
-        sign
-      else
-        announce_boarding(sign.current_content_top, sign)
-      end
-
-    sign =
-      if announced_track_change_bottom? do
-        sign
-      else
-        announce_boarding(sign.current_content_bottom, sign)
-      end
-
-    sign = announce_next_trains(sign.current_content_top, sign.current_content_bottom, sign)
-
-    sign = announce_arrival(sign.current_content_bottom, sign)
-
     sign =
       if !announced_track_change_top? do
         announce_boarding(sign.current_content_top, sign)
@@ -106,6 +98,9 @@ defmodule Signs.Utilities.Reader do
       else
         sign
       end
+
+    sign = announce_arrival(sign.current_content_bottom, sign)
+    sign = announce_next_trains(sign.current_content_top, sign.current_content_bottom, sign)
 
     sign = announce_stopped_train(top_msg, sign)
     sign = announce_stopped_train(bottom_msg, sign)

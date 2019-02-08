@@ -44,7 +44,7 @@ defmodule Signs.Utilities.Updater do
           if announce_track_change(top_msg, sign) || announce_arrival(top, sign) ||
                announce_boarding(top, sign) || announce_stopped_train(top_msg, sign) ||
                announce_closure(top_msg, bottom_msg, sign) do
-            Reader.read_sign(sign)
+            Reader.interrupting_read(sign)
           else
             sign
           end
@@ -69,7 +69,7 @@ defmodule Signs.Utilities.Updater do
           if SourceConfig.multi_source?(sign.source_config) do
             if announce_track_change(bottom_msg, sign) || announce_arrival(bottom, sign) ||
                  announce_boarding(bottom, sign) || announce_stopped_train(bottom_msg, sign) do
-              Reader.read_sign(sign)
+              Reader.interrupting_read(sign)
             else
               sign
             end
@@ -101,7 +101,7 @@ defmodule Signs.Utilities.Updater do
         if announce_track_change(top_msg, sign) || announce_arrival(top, sign) ||
              announce_boarding(top, sign) || announce_stopped_train(top_msg, sign) ||
              announce_closure(top_msg, bottom_msg, sign) do
-          Reader.read_sign(sign)
+          Reader.interrupting_read(sign)
         else
           sign
         end
