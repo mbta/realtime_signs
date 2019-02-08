@@ -225,7 +225,7 @@ defmodule Signs.Utilities.Reader do
           sign
       end
 
-    if top_headsign == bottom_headsign do
+    if top_headsign == bottom_headsign && top_headsign != nil do
       case Content.Audio.FollowingTrain.from_predictions_message(bottom_msg, bottom_src) do
         %Content.Audio.FollowingTrain{} = audio ->
           sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
