@@ -8,9 +8,7 @@ defmodule Signs.Utilities.Reader do
   alias Signs.Utilities.SourceConfig
   require Logger
 
-  @spec read_sign(Signs.Realtime.t() | Signs.Headway.t()) ::
-          Signs.Realtime.t() | Signs.Headway.t()
-
+  @spec read_sign(Signs.Realtime.t()) :: Signs.Realtime.t()
   def read_sign(%{tick_read: 0} = sign) do
     {top_headsign, top_content} =
       case sign.current_content_top do
@@ -52,8 +50,7 @@ defmodule Signs.Utilities.Reader do
     send_audio_update(sign)
   end
 
-  @spec send_audio_update(Signs.Realtime.t() | Signs.Headway.t()) ::
-          Signs.Realtime.t() | Signs.Headway.t()
+  @spec send_audio_update(Signs.Realtime.t()) :: Signs.Realtime.t()
   defp send_audio_update(%{tick_read: 0} = sign) do
     {_top_src, top_msg} = sign.current_content_top
     {_bottom_src, bottom_msg} = sign.current_content_bottom
