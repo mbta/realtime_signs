@@ -51,6 +51,42 @@ defmodule Signs.Utilities.Reader do
 
   @spec send_audio_update(Signs.Realtime.t()) :: Signs.Realtime.t()
   defp send_audio_update(%{tick_read: 0} = sign) do
+    sign = announce_sign(sign)
+    sign = announce_arrival(sign.current_content_bottom, sign)
+    sign = announce_next_trains(sign.current_content_top, sign.current_content_bottom, sign)
+
+    sign =
+      case Content.Audio.VehiclesToDestination.from_headway_message(
+             elem(sign.current_content_bottom, 1),
+             elem(sign.current_content_top, 1)
+           ) do
+        {%Content.Audio.VehiclesToDestination{language: :english} = english_audio,
+         %Content.Audio.VehiclesToDestination{language: :spanish} = spanish_audio} ->
+          sign.sign_updater.send_audio(sign.pa_ess_id, english_audio, 5, 60)
+          sign.sign_updater.send_audio(sign.pa_ess_id, spanish_audio, 5, 60)
+
+          sign
+
+        {%Content.Audio.VehiclesToDestination{} = english_audio, nil} ->
+          sign.sign_updater.send_audio(sign.pa_ess_id, english_audio, 5, 60)
+          sign
+
+        {nil, nil} ->
+          sign
+      end
+
+    sign
+  end
+
+  defp send_audio_update(sign) do
+    sign = announce_sign(sign)
+    sign = announce_arrival(sign.current_content_top, sign)
+    sign = announce_arrival(sign.current_content_bottom, sign)
+
+    sign
+  end
+
+  defp announce_sign(sign) do
     {_top_src, top_msg} = sign.current_content_top
     {_bottom_src, bottom_msg} = sign.current_content_bottom
     {announced_track_change_top?, _sign} = announce_track_change(top_msg, sign)
@@ -69,6 +105,27 @@ defmodule Signs.Utilities.Reader do
           nil ->
             sign
         end
+      else
+        sign
+      end
+
+    sign =
+      if SourceConfig.multi_source?(sign.source_config) do
+        sign =
+          if !announced_track_change_top? do
+            announce_boarding(sign.current_content_top, sign)
+          else
+            sign
+          end
+
+        sign =
+          if !announced_track_change_bottom? do
+            announce_boarding(sign.current_content_bottom, sign)
+          else
+            sign
+          end
+
+        sign = announce_stopped_train(bottom_msg, sign)
       else
         sign
       end
@@ -87,117 +144,20 @@ defmodule Signs.Utilities.Reader do
         sign
       end
 
-    sign = announce_arrival(sign.current_content_bottom, sign)
-    sign = announce_next_trains(sign.current_content_top, sign.current_content_bottom, sign)
+    sign =
+      case Content.Audio.Closure.from_messages(
+             elem(sign.current_content_top, 1),
+             elem(sign.current_content_bottom, 1)
+           ) do
+        %Content.Audio.Closure{} = audio ->
+          sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+          sign
+
+        nil ->
+          sign
+      end
 
     sign = announce_stopped_train(top_msg, sign)
-    sign = announce_stopped_train(bottom_msg, sign)
-
-    sign =
-      case Content.Audio.VehiclesToDestination.from_headway_message(
-             bottom_msg,
-             top_msg
-           ) do
-        {%Content.Audio.VehiclesToDestination{language: :english} = english_audio,
-         %Content.Audio.VehiclesToDestination{language: :spanish} = spanish_audio} ->
-          sign.sign_updater.send_audio(sign.pa_ess_id, english_audio, 5, 60)
-          sign.sign_updater.send_audio(sign.pa_ess_id, spanish_audio, 5, 60)
-
-          sign
-
-        {%Content.Audio.VehiclesToDestination{} = english_audio, nil} ->
-          sign.sign_updater.send_audio(sign.pa_ess_id, english_audio, 5, 60)
-          sign
-
-        {nil, nil} ->
-          sign
-      end
-
-    sign =
-      case Content.Audio.Closure.from_messages(
-             elem(sign.current_content_top, 1),
-             elem(sign.current_content_bottom, 1)
-           ) do
-        %Content.Audio.Closure{} = audio ->
-          sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-          sign
-
-        nil ->
-          sign
-      end
-
-    sign
-  end
-
-  defp send_audio_update(sign) do
-    {_top_src, top_msg} = sign.current_content_top
-    {_bottom_src, bottom_msg} = sign.current_content_bottom
-    {announced_track_change_top?, _sign} = announce_track_change(top_msg, sign)
-    {announced_track_change_bottom?, _sign} = announce_track_change(bottom_msg, sign)
-
-    sign =
-      if Application.get_env(:realtime_signs, :static_text_enabled?) do
-        case Content.Audio.Custom.from_messages(
-               elem(sign.current_content_top, 1),
-               elem(sign.current_content_bottom, 1)
-             ) do
-          %Content.Audio.Custom{} = audio ->
-            sign.sign_updater.send_custom_audio(sign.pa_ess_id, audio, 5, 60)
-            sign
-
-          nil ->
-            sign
-        end
-      else
-        sign
-      end
-
-    sign = announce_arrival(sign.current_content_top, sign)
-
-    sign =
-      if announced_track_change_top? do
-        sign
-      else
-        announce_boarding(sign.current_content_top, sign)
-      end
-
-    sign = announce_stopped_train(elem(sign.current_content_top, 1), sign)
-
-    sign =
-      if SourceConfig.multi_source?(sign.source_config) do
-        sign =
-          if !announced_track_change_top? do
-            announce_boarding(sign.current_content_top, sign)
-          else
-            sign
-          end
-
-        sign =
-          if !announced_track_change_bottom? do
-            announce_boarding(sign.current_content_bottom, sign)
-          else
-            sign
-          end
-
-        sign = announce_arrival(sign.current_content_bottom, sign)
-
-        announce_stopped_train(elem(sign.current_content_bottom, 1), sign)
-      else
-        sign
-      end
-
-    sign =
-      case Content.Audio.Closure.from_messages(
-             elem(sign.current_content_top, 1),
-             elem(sign.current_content_bottom, 1)
-           ) do
-        %Content.Audio.Closure{} = audio ->
-          sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-          sign
-
-        nil ->
-          sign
-      end
 
     sign
   end

@@ -151,19 +151,6 @@ defmodule Signs.Utilities.UpdaterTest do
       assert sign.tick_bottom == 100
     end
 
-    test "does not announce arrival if single-source sign and the bottom line has changed" do
-      single_source_sign = %{@sign | source_config: {[]}, tick_read: 40}
-      src = %{@src | announce_arriving?: true}
-      same_top = @sign.current_content_top
-      diff_bottom = {src, %P{headsign: "Riverside", minutes: :arriving}}
-
-      Updater.update_sign(single_source_sign, same_top, diff_bottom)
-
-      refute_received(
-        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :riverside}, _dur, _start}
-      )
-    end
-
     test "does not reannounce arrival if the train stops but the headsign isnt a known terminal" do
       src = %{@src | announce_arriving?: true}
       arr_top = {src, %P{headsign: "Alewife", minutes: :arriving}}
