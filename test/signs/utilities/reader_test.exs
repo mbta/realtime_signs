@@ -64,6 +64,20 @@ defmodule Signs.Utilities.ReaderTest do
       )
     end
 
+    test "when the sign is not on a read interval, does not send next train announcements" do
+      sign = %{@sign | tick_read: 100}
+
+      sign = Reader.read_sign(sign)
+
+      refute_received(
+        {:send_audio, _id, %A{destination: :alewife, minutes: 4, verb: :arrives}, _p, _t}
+      )
+
+      refute_received(
+        {:send_audio, _id, %A{destination: :ashmont, minutes: 3, verb: :arrives}, _p, _t}
+      )
+    end
+
     test "sends a message that says following train instead of next train if the second line is the same headsign" do
       sign = %{
         @sign
@@ -187,6 +201,22 @@ defmodule Signs.Utilities.ReaderTest do
 
       assert_received(
         {:send_audio, _id, %Content.Audio.Closure{alert: :shuttles_closed_station}, _p, _t}
+      )
+    end
+  end
+
+  describe "interrupting_read/1" do
+    test "does not send audio when tick read is 0, because it will be read by the read loop" do
+      sign = %{@sign | tick_read: 0}
+
+      sign = Reader.interrupting_read(sign)
+
+      refute_received(
+        {:send_audio, _id, %A{destination: :alewife, minutes: 4, verb: :arrives}, _p, _t}
+      )
+
+      refute_received(
+        {:send_audio, _id, %A{destination: :ashmont, minutes: 3, verb: :arrives}, _p, _t}
       )
     end
   end
