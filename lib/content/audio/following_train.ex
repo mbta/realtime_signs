@@ -17,9 +17,8 @@ defmodule Content.Audio.FollowingTrain do
   require Logger
   alias Signs.Utilities.SourceConfig
 
-  @spec from_predictions_message(Content.Message.t(), SourceConfig.source()) :: t() | nil
   def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: headsign}, %{
-        terminal?: true
+        terminal?: terminal
       })
       when is_integer(n) do
     case PaEss.Utilities.headsign_to_terminal_station(headsign) do
@@ -27,28 +26,7 @@ defmodule Content.Audio.FollowingTrain do
         %__MODULE__{
           destination: headsign_atom,
           minutes: n,
-          verb: :departs
-        }
-
-      {:error, :unknown} ->
-        Logger.warn(
-          "Content.Audio.FollowingTrain.from_predictions_message: unknown headsign: #{headsign}"
-        )
-
-        nil
-    end
-  end
-
-  def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: headsign}, %{
-        terminal?: false
-      })
-      when is_integer(n) do
-    case PaEss.Utilities.headsign_to_terminal_station(headsign) do
-      {:ok, headsign_atom} ->
-        %__MODULE__{
-          destination: headsign_atom,
-          minutes: n,
-          verb: :arrives
+          verb: arrives_or_departs(terminal)
         }
 
       {:error, :unknown} ->
@@ -63,6 +41,10 @@ defmodule Content.Audio.FollowingTrain do
   def from_predictions_message(_, _src) do
     nil
   end
+
+  @spec arrives_or_departs(boolean) :: :arrives | :departs
+  defp arrives_or_departs(true), do: :departs
+  defp arrives_or_departs(false), do: :arrives
 
   defimpl Content.Audio do
     alias PaEss.Utilities
