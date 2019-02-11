@@ -29,7 +29,6 @@ defmodule Signs.Utilities.Reader do
            (bottom_headsign && bottom_headsign != top_headsign && bottom_content != nil) ||
            (top_headsign == nil && bottom_headsign == nil) do
         sign = send_audio_update(sign)
-        sign = send_audio_update(sign)
         sign
       else
         sign

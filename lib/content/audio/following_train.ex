@@ -18,10 +18,6 @@ defmodule Content.Audio.FollowingTrain do
   alias Signs.Utilities.SourceConfig
 
   @spec from_predictions_message(Content.Message.t(), SourceConfig.source()) :: t() | nil
-  def from_predictions_message(%Content.Message.Predictions{minutes: 1}, %{terminal?: false}) do
-    nil
-  end
-
   def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: headsign}, %{
         terminal?: true
       })
@@ -36,9 +32,7 @@ defmodule Content.Audio.FollowingTrain do
 
       {:error, :unknown} ->
         Logger.warn(
-          "Content.Audio.NextTrainCountdown.from_predictions_message: unknown headsign: #{
-            headsign
-          }"
+          "Content.Audio.FollowingTrain.from_predictions_message: unknown headsign: #{headsign}"
         )
 
         nil
@@ -59,9 +53,7 @@ defmodule Content.Audio.FollowingTrain do
 
       {:error, :unknown} ->
         Logger.warn(
-          "Content.Audio.NextTrainCountdown.from_predictions_message: unknown headsign: #{
-            headsign
-          }"
+          "Content.Audio.FollowingTrain.from_predictions_message: unknown headsign: #{headsign}"
         )
 
         nil
