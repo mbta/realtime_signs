@@ -46,16 +46,62 @@ defmodule Signs.Utilities.Reader do
   end
 
   def interrupting_read(sign) do
-    send_audio_update(sign)
+    case send_audio_update(sign) do
+      {true, sign} ->
+        if sign.tick_read < 60 do
+          %{sign | tick_read: sign.tick_read + sign.read_period_seconds}
+        else
+          sign
+        end
+
+      {false, sign} ->
+        sign
+    end
   end
 
   @spec send_audio_update(Signs.Realtime.t()) :: Signs.Realtime.t()
   defp send_audio_update(%{tick_read: 0} = sign) do
-    sign = announce_sign(sign)
-    sign = announce_arrival(sign.current_content_bottom, sign)
-    sign = announce_next_trains(sign.current_content_top, sign.current_content_bottom, sign)
+    {announced_sign?, sign} = announce_sign(sign)
+    {announced_arrival?, sign} = announce_arrival(sign.current_content_bottom, sign)
 
-    sign =
+    {announced_next_train?, sign} =
+      announce_next_trains(sign.current_content_top, sign.current_content_bottom, sign)
+
+    {announced_sign? || announced_arrival? || announced_next_train?, sign}
+  end
+
+  defp send_audio_update(sign) do
+    {announced_sign?, sign} = announce_sign(sign)
+    {announced_arrival_top?, sign} = announce_arrival(sign.current_content_top, sign)
+    {announced_arrival_bottom?, sign} = announce_arrival(sign.current_content_bottom, sign)
+
+    {announced_sign? || announced_arrival_top? || announced_arrival_bottom?, sign}
+  end
+
+  defp announce_sign(sign) do
+    {_top_src, top_msg} = sign.current_content_top
+    {_bottom_src, bottom_msg} = sign.current_content_bottom
+    {announced_track_change_top?, _sign} = announce_track_change(top_msg, sign)
+    {announced_track_change_bottom?, _sign} = announce_track_change(bottom_msg, sign)
+
+    {announced_custom?, sign} =
+      if Application.get_env(:realtime_signs, :static_text_enabled?) do
+        case Content.Audio.Custom.from_messages(
+               elem(sign.current_content_top, 1),
+               elem(sign.current_content_bottom, 1)
+             ) do
+          %Content.Audio.Custom{} = audio ->
+            sign.sign_updater.send_custom_audio(sign.pa_ess_id, audio, 5, 60)
+            {true, sign}
+
+          nil ->
+            {false, sign}
+        end
+      else
+        {false, sign}
+      end
+
+    {annouced_headway?, sign} =
       case Content.Audio.VehiclesToDestination.from_headway_message(
              elem(sign.current_content_bottom, 1),
              elem(sign.current_content_top, 1)
@@ -65,101 +111,73 @@ defmodule Signs.Utilities.Reader do
           sign.sign_updater.send_audio(sign.pa_ess_id, english_audio, 5, 60)
           sign.sign_updater.send_audio(sign.pa_ess_id, spanish_audio, 5, 60)
 
-          sign
+          {true, sign}
 
         {%Content.Audio.VehiclesToDestination{} = english_audio, nil} ->
           sign.sign_updater.send_audio(sign.pa_ess_id, english_audio, 5, 60)
-          sign
+          {true, sign}
 
         {nil, nil} ->
-          sign
+          {false, sign}
       end
 
-    sign
-  end
+    {announced_stopped?, sign} = announce_stopped_train(top_msg, sign)
 
-  defp send_audio_update(sign) do
-    sign = announce_sign(sign)
-    sign = announce_arrival(sign.current_content_top, sign)
-    sign = announce_arrival(sign.current_content_bottom, sign)
-
-    sign
-  end
-
-  defp announce_sign(sign) do
-    {_top_src, top_msg} = sign.current_content_top
-    {_bottom_src, bottom_msg} = sign.current_content_bottom
-    {announced_track_change_top?, _sign} = announce_track_change(top_msg, sign)
-    {announced_track_change_bottom?, _sign} = announce_track_change(bottom_msg, sign)
-
-    sign =
-      if Application.get_env(:realtime_signs, :static_text_enabled?) do
-        case Content.Audio.Custom.from_messages(
-               elem(sign.current_content_top, 1),
-               elem(sign.current_content_bottom, 1)
-             ) do
-          %Content.Audio.Custom{} = audio ->
-            sign.sign_updater.send_custom_audio(sign.pa_ess_id, audio, 5, 60)
-            sign
-
-          nil ->
-            sign
-        end
-      else
-        sign
-      end
-
-    sign =
+    {announced_multi_source_boarding?, sign} =
       if SourceConfig.multi_source?(sign.source_config) do
-        sign =
+        {announced_top?, sign} =
           if !announced_track_change_top? do
             announce_boarding(sign.current_content_top, sign)
           else
-            sign
+            {false, sign}
           end
 
-        sign =
+        {announced_bottom?, sign} =
           if !announced_track_change_bottom? do
             announce_boarding(sign.current_content_bottom, sign)
           else
-            sign
+            {false, sign}
           end
 
-        sign = announce_stopped_train(bottom_msg, sign)
+        {announced_bottom_stopped?, sign} = announce_stopped_train(bottom_msg, sign)
+        {announced_top? || announced_bottom? || announced_bottom_stopped?, sign}
       else
-        sign
+        {false, sign}
       end
 
-    sign =
+    {announced_boarding_top?, sign} =
       if !announced_track_change_top? do
         announce_boarding(sign.current_content_top, sign)
       else
-        sign
+        {false, sign}
       end
 
-    sign =
+    {announced_boarding_bottom?, sign} =
       if !announced_track_change_bottom? do
         announce_boarding(sign.current_content_bottom, sign)
       else
-        sign
+        {false, sign}
       end
 
-    sign =
+    {announced_closed?, sign} =
       case Content.Audio.Closure.from_messages(
              elem(sign.current_content_top, 1),
              elem(sign.current_content_bottom, 1)
            ) do
         %Content.Audio.Closure{} = audio ->
           sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-          sign
+          {true, sign}
 
         nil ->
-          sign
+          {false, sign}
       end
 
-    sign = announce_stopped_train(top_msg, sign)
+    announced? =
+      announced_track_change_top? || announced_track_change_bottom? || announced_stopped? ||
+        announced_multi_source_boarding? || announced_boarding_top? || announced_boarding_bottom? ||
+        announced_closed? || announced_custom? || annouced_headway?
 
-    sign
+    {announced?, sign}
   end
 
   defp announce_next_trains(
@@ -167,62 +185,66 @@ defmodule Signs.Utilities.Reader do
          {bottom_src, %{headsign: bottom_headsign, minutes: _bottom_minutes} = bottom_msg},
          sign
        ) do
-    sign =
+    {announced_next_train?, sign} =
       case Content.Audio.NextTrainCountdown.from_predictions_message(top_msg, top_src) do
         %Content.Audio.NextTrainCountdown{} = audio ->
           sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-          sign
+          {true, sign}
 
         nil ->
-          sign
+          {false, sign}
       end
 
-    if top_headsign == bottom_headsign && top_headsign != nil do
-      case Content.Audio.FollowingTrain.from_predictions_message(bottom_msg, bottom_src) do
-        %Content.Audio.FollowingTrain{} = audio ->
-          sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-          sign
+    {announced_following?, sign} =
+      if top_headsign == bottom_headsign && top_headsign != nil do
+        case Content.Audio.FollowingTrain.from_predictions_message(bottom_msg, bottom_src) do
+          %Content.Audio.FollowingTrain{} = audio ->
+            sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+            {true, sign}
 
-        nil ->
-          sign
-      end
-    else
-      case Content.Audio.NextTrainCountdown.from_predictions_message(bottom_msg, bottom_src) do
-        %Content.Audio.NextTrainCountdown{} = audio ->
-          sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-          sign
+          nil ->
+            {false, sign}
+        end
+      else
+        case Content.Audio.NextTrainCountdown.from_predictions_message(bottom_msg, bottom_src) do
+          %Content.Audio.NextTrainCountdown{} = audio ->
+            sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+            {true, sign}
 
-        nil ->
-          sign
+          nil ->
+            {false, sign}
+        end
       end
-    end
+
+    {announced_next_train? || announced_following?, sign}
   end
 
   defp announce_next_trains({top_src, top_msg}, {bottom_src, bottom_msg}, sign) do
-    sign =
+    {announced_top?, sign} =
       case Content.Audio.NextTrainCountdown.from_predictions_message(top_msg, top_src) do
         %Content.Audio.NextTrainCountdown{} = audio ->
           sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-          sign
+
+          {true, sign}
 
         nil ->
-          sign
+          {false, sign}
       end
 
-    sign =
+    {announced_bottom?, sign} =
       case Content.Audio.NextTrainCountdown.from_predictions_message(bottom_msg, bottom_src) do
         %Content.Audio.NextTrainCountdown{} = audio ->
           sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-          sign
+          {true, sign}
 
         nil ->
-          sign
+          {false, sign}
       end
 
-    sign
+    {announced_top? || announced_bottom?, sign}
   end
 
-  defp announce_arrival({%SourceConfig{announce_arriving?: false}, _msg}, sign), do: sign
+  defp announce_arrival({%SourceConfig{announce_arriving?: false}, _msg}, sign), do: {false, sign}
 
   defp announce_arrival({_src, msg}, sign) do
     case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
@@ -233,29 +255,32 @@ defmodule Signs.Utilities.Reader do
             Logger.info("skipping_arriving_audio #{inspect(audio)} #{inspect(sign)}")
           end
 
-          sign
+          {false, sign}
         else
           sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-          %{sign | announced_arrivals: MapSet.put(sign.announced_arrivals, audio.destination)}
+
+          {true,
+           %{sign | announced_arrivals: MapSet.put(sign.announced_arrivals, audio.destination)}}
         end
 
       nil ->
-        sign
+        {false, sign}
     end
   end
 
   @spec announce_boarding({SourceConfig.source(), Signs.Realtime.t()}, Signs.Realtime.t()) ::
           Signs.Realtime.t()
-  defp announce_boarding({%SourceConfig{announce_boarding?: false}, _msg}, sign), do: sign
+  defp announce_boarding({%SourceConfig{announce_boarding?: false}, _msg}, sign),
+    do: {false, sign}
 
   defp announce_boarding({_src, msg}, sign) do
     case Content.Audio.TrainIsBoarding.from_message(msg) do
       %Content.Audio.TrainIsBoarding{} = audio ->
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-        sign
+        {true, sign}
 
       nil ->
-        sign
+        {false, sign}
     end
   end
 
@@ -264,10 +289,10 @@ defmodule Signs.Utilities.Reader do
       %Content.Audio.StoppedTrain{} = audio ->
         sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
 
-        sign
+        {true, sign}
 
       nil ->
-        sign
+        {false, sign}
     end
   end
 

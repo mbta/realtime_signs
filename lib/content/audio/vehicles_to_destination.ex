@@ -37,7 +37,7 @@ defmodule Content.Audio.VehiclesToDestination do
     end
   end
 
-  def from_headway_message(msg, dest) do
+  def from_headway_message(_msg, _dest) do
     {nil, nil}
   end
 

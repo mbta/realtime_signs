@@ -80,7 +80,7 @@ defmodule Signs.Utilities.Updater do
             current_content_bottom: bottom
         }
 
-        Reader.interrupting_read(sign)
+        sign = Reader.interrupting_read(sign)
 
         %{
           sign

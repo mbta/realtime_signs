@@ -15,7 +15,6 @@ defmodule Content.Audio.FollowingTrain do
         }
 
   require Logger
-  alias Signs.Utilities.SourceConfig
 
   def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: headsign}, %{
         terminal?: terminal
