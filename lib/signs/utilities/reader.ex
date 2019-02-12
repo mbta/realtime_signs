@@ -28,7 +28,7 @@ defmodule Signs.Utilities.Reader do
       if (top_headsign && top_content != nil) ||
            (bottom_headsign && bottom_headsign != top_headsign && bottom_content != nil) ||
            (top_headsign == nil && bottom_headsign == nil) do
-        sign = send_audio_update(sign)
+        {_announced, sign} = send_audio_update(sign)
         sign
       else
         sign
@@ -59,7 +59,7 @@ defmodule Signs.Utilities.Reader do
     end
   end
 
-  @spec send_audio_update(Signs.Realtime.t()) :: Signs.Realtime.t()
+  @spec send_audio_update(Signs.Realtime.t()) :: {boolean, Signs.Realtime.t()}
   defp send_audio_update(%{tick_read: 0} = sign) do
     {announced_sign?, sign} = announce_sign(sign)
     {announced_arrival?, sign} = announce_arrival(sign.current_content_bottom, sign)
@@ -269,7 +269,7 @@ defmodule Signs.Utilities.Reader do
   end
 
   @spec announce_boarding({SourceConfig.source(), Signs.Realtime.t()}, Signs.Realtime.t()) ::
-          Signs.Realtime.t()
+          {boolean, Signs.Realtime.t()}
   defp announce_boarding({%SourceConfig{announce_boarding?: false}, _msg}, sign),
     do: {false, sign}
 
