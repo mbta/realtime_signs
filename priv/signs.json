@@ -1031,6 +1031,26 @@
           "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
+        },
+	{
+          "stop_id": "Oak Grove-01",
+          "routes": ["Orange"],
+          "direction_id": 0,
+          "headway_direction_name": "Forest Hills",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+	},
+	{
+          "stop_id": "Oak Grove-02",
+          "routes": ["Orange"],
+          "direction_id": 0,
+          "headway_direction_name": "Forest Hills",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
         }
       ]
     ]
@@ -1044,6 +1064,26 @@
       [
         {
           "stop_id": "70036",
+          "routes": ["Orange"],
+          "direction_id": 0,
+          "headway_direction_name": "Forest Hills",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "Oak Grove-01",
+          "routes": ["Orange"],
+          "direction_id": 0,
+          "headway_direction_name": "Forest Hills",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+	},
+	{
+          "stop_id": "Oak Grove-02",
           "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
@@ -1071,6 +1111,26 @@
           "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
+        },
+	{
+          "stop_id": "Oak Grove-01",
+          "routes": ["Orange"],
+          "direction_id": 0,
+          "headway_direction_name": "Forest Hills",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+	},
+	{
+          "stop_id": "Oak Grove-02",
+          "routes": ["Orange"],
+          "direction_id": 0,
+          "headway_direction_name": "Forest Hills",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
         }
       ]
     ]
@@ -1084,6 +1144,26 @@
       [
         {
           "stop_id": "70036",
+          "routes": ["Orange"],
+          "direction_id": 0,
+          "headway_direction_name": "Forest Hills",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "Oak Grove-01",
+          "routes": ["Orange"],
+          "direction_id": 0,
+          "headway_direction_name": "Forest Hills",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+	},
+	{
+          "stop_id": "Oak Grove-02",
           "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
@@ -2439,6 +2519,26 @@
           "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
+        },
+	{
+          "stop_id": "Forest Hills-01",
+          "routes": ["Orange"],
+          "direction_id": 1,
+          "headway_direction_name": "Oak Grove",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "Forest Hills-02",
+          "routes": ["Orange"],
+          "direction_id": 1,
+          "headway_direction_name": "Oak Grove",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
         }
       ]
     ]
@@ -2452,6 +2552,26 @@
       [
         {
           "stop_id": "70001",
+          "routes": ["Orange"],
+          "direction_id": 1,
+          "headway_direction_name": "Oak Grove",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "Forest Hills-01",
+          "routes": ["Orange"],
+          "direction_id": 1,
+          "headway_direction_name": "Oak Grove",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "Forest Hills-02",
           "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
@@ -2479,6 +2599,26 @@
           "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
+        },
+	{
+          "stop_id": "Forest Hills-01",
+          "routes": ["Orange"],
+          "direction_id": 1,
+          "headway_direction_name": "Oak Grove",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "Forest Hills-02",
+          "routes": ["Orange"],
+          "direction_id": 1,
+          "headway_direction_name": "Oak Grove",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
         }
       ]
     ]
@@ -2492,6 +2632,26 @@
       [
         {
           "stop_id": "70001",
+          "routes": ["Orange"],
+          "direction_id": 1,
+          "headway_direction_name": "Oak Grove",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "Forest Hills-01",
+          "routes": ["Orange"],
+          "direction_id": 1,
+          "headway_direction_name": "Oak Grove",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "Forest Hills-02",
           "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
@@ -2551,6 +2711,26 @@
           "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
+        },
+	{
+          "stop_id": "Alewife-01",
+          "routes": ["Red"],
+          "direction_id": 0,
+          "headway_direction_name": "Southbound",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+	},
+	{
+          "stop_id": "Alewife-02",
+          "routes": ["Red"],
+          "direction_id": 0,
+          "headway_direction_name": "Southbound",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
         }
       ]
     ]
@@ -2564,6 +2744,26 @@
       [
         {
           "stop_id": "70061",
+          "routes": ["Red"],
+          "direction_id": 0,
+          "headway_direction_name": "Southbound",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "Alewife-01",
+          "routes": ["Red"],
+          "direction_id": 0,
+          "headway_direction_name": "Southbound",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+	},
+	{
+          "stop_id": "Alewife-02",
           "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
@@ -3843,6 +4043,26 @@
           "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
+        },
+	{
+          "stop_id": "Braintree-01",
+          "routes": ["Red"],
+          "direction_id": 1,
+          "headway_direction_name": "Alewife",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "Braintree-02",
+          "routes": ["Red"],
+          "direction_id": 1,
+          "headway_direction_name": "Alewife",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
         }
       ]
     ]
@@ -3856,6 +4076,26 @@
       [
         {
           "stop_id": "70105",
+          "routes": ["Red"],
+          "direction_id": 1,
+          "headway_direction_name": "Alewife",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "Braintree-01",
+          "routes": ["Red"],
+          "direction_id": 1,
+          "headway_direction_name": "Alewife",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "Braintree-02",
           "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
