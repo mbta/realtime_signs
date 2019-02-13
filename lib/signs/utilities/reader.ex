@@ -61,30 +61,22 @@ defmodule Signs.Utilities.Reader do
   end
 
   @spec send_audio_update(Signs.Realtime.t()) :: {boolean, Signs.Realtime.t()}
-  defp send_audio_update(%{tick_read: 0} = sign) do
-    {announced_sign?, sign} = announce_sign(sign)
-    {announced_arrival?, sign} = announce_arrival(sign.current_content_bottom, sign)
-
-    {announced_next_train?, sign} =
-      announce_next_trains(sign.current_content_top, sign.current_content_bottom, sign)
-
-    {announced_sign? || announced_arrival? || announced_next_train?, sign}
-  end
-
   defp send_audio_update(sign) do
-    {announced_sign?, sign} = announce_sign(sign)
-    {announced_arrival_top?, sign} = announce_arrival(sign.current_content_top, sign)
-    {announced_arrival_bottom?, sign} = announce_arrival(sign.current_content_bottom, sign)
-
-    {announced_sign? || announced_arrival_top? || announced_arrival_bottom?, sign}
-  end
-
-  @spec announce_sign(Signs.Realtime.t()) :: {boolean, Signs.Realtime.t()}
-  defp announce_sign(sign) do
     {_top_src, top_msg} = sign.current_content_top
     {_bottom_src, bottom_msg} = sign.current_content_bottom
-    {announced_track_change_top?, _sign} = announce_track_change(top_msg, sign)
-    {announced_track_change_bottom?, _sign} = announce_track_change(bottom_msg, sign)
+
+    {announced_closed?, sign} =
+      case Content.Audio.Closure.from_messages(
+             elem(sign.current_content_top, 1),
+             elem(sign.current_content_bottom, 1)
+           ) do
+        %Content.Audio.Closure{} = audio ->
+          sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+          {true, sign}
+
+        nil ->
+          {false, sign}
+      end
 
     {announced_custom?, sign} =
       if Application.get_env(:realtime_signs, :static_text_enabled?) do
@@ -125,6 +117,9 @@ defmodule Signs.Utilities.Reader do
 
     {announced_stopped?, sign} = announce_stopped_train(top_msg, sign)
 
+    {announced_track_change_top?, _sign} = announce_track_change(top_msg, sign)
+    {announced_track_change_bottom?, _sign} = announce_track_change(bottom_msg, sign)
+
     {announced_multi_source_boarding?, sign} =
       if SourceConfig.multi_source?(sign.source_config) do
         {announced_top?, sign} =
@@ -161,21 +156,15 @@ defmodule Signs.Utilities.Reader do
         {false, sign}
       end
 
-    {announced_closed?, sign} =
-      case Content.Audio.Closure.from_messages(
-             elem(sign.current_content_top, 1),
-             elem(sign.current_content_bottom, 1)
-           ) do
-        %Content.Audio.Closure{} = audio ->
-          sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-          {true, sign}
+    {announced_arrival_top?, sign} = announce_arrival(sign.current_content_top, sign)
+    {announced_arrival_bottom?, sign} = announce_arrival(sign.current_content_bottom, sign)
 
-        nil ->
-          {false, sign}
-      end
+    {announced_next_train?, sign} =
+      announce_next_trains(sign.current_content_top, sign.current_content_bottom, sign)
 
     announced? =
-      announced_track_change_top? || announced_track_change_bottom? || announced_stopped? ||
+      announced_next_train? || announced_arrival_top? || announced_arrival_bottom? ||
+        announced_track_change_top? || announced_track_change_bottom? || announced_stopped? ||
         announced_multi_source_boarding? || announced_boarding_top? || announced_boarding_bottom? ||
         announced_closed? || announced_custom? || annouced_headway?
 

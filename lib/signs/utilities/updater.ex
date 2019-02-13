@@ -39,7 +39,12 @@ defmodule Signs.Utilities.Updater do
 
         sign = %{sign | current_content_top: top}
 
-        sign = Reader.interrupting_read(sign)
+        sign =
+          if should_interrupting_read?(top_msg) do
+            Reader.interrupting_read(sign)
+          else
+            sign
+          end
 
         %{sign | current_content_top: top, tick_top: sign.expiration_seconds}
 
@@ -57,7 +62,12 @@ defmodule Signs.Utilities.Updater do
 
         sign = %{sign | current_content_bottom: bottom}
 
-        sign = Reader.interrupting_read(sign)
+        sign =
+          if should_interrupting_read?(bottom_msg) do
+            Reader.interrupting_read(sign)
+          else
+            sign
+          end
 
         %{sign | current_content_bottom: bottom, tick_bottom: sign.expiration_seconds}
 
@@ -80,7 +90,12 @@ defmodule Signs.Utilities.Updater do
             current_content_bottom: bottom
         }
 
-        sign = Reader.interrupting_read(sign)
+        sign =
+          if should_interrupting_read?(top_msg) || should_interrupting_read?(bottom_msg) do
+            Reader.interrupting_read(sign)
+          else
+            sign
+          end
 
         %{
           sign
@@ -213,5 +228,13 @@ defmodule Signs.Utilities.Updater do
 
   defp clear_announced_arrivals(sign, _old_msg, _new_msg) do
     sign
+  end
+
+  defp should_interrupting_read?(%Content.Message.Predictions{minutes: x}) when is_integer(x) do
+    false
+  end
+
+  defp should_interrupting_read?(_msg) do
+    true
   end
 end
