@@ -182,7 +182,7 @@ defmodule Signs.Utilities.Reader do
 
   defp announce_next_trains(
          {top_src, %{headsign: top_headsign, minutes: _top_minutes} = top_msg},
-         {bottom_src, %{headsign: bottom_headsign, minutes: _bottom_minutes} = bottom_msg},
+         {bottom_src, %{headsign: top_headsign, minutes: _bottom_minutes} = bottom_msg},
          sign
        ) do
     {announced_next_train?, sign} =
@@ -196,24 +196,13 @@ defmodule Signs.Utilities.Reader do
       end
 
     {announced_following?, sign} =
-      if top_headsign == bottom_headsign && top_headsign != nil do
-        case Content.Audio.FollowingTrain.from_predictions_message(bottom_msg, bottom_src) do
-          %Content.Audio.FollowingTrain{} = audio ->
-            sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-            {true, sign}
+      case Content.Audio.FollowingTrain.from_predictions_message(bottom_msg, bottom_src) do
+        %Content.Audio.FollowingTrain{} = audio ->
+          sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
+          {true, sign}
 
-          nil ->
-            {false, sign}
-        end
-      else
-        case Content.Audio.NextTrainCountdown.from_predictions_message(bottom_msg, bottom_src) do
-          %Content.Audio.NextTrainCountdown{} = audio ->
-            sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-            {true, sign}
-
-          nil ->
-            {false, sign}
-        end
+        nil ->
+          {false, sign}
       end
 
     {announced_next_train? || announced_following?, sign}

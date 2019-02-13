@@ -156,7 +156,7 @@ defmodule Signs.Utilities.ReaderTest do
       )
     end
 
-    test "sends next train message" do
+    test "sends next train message when the headsigns are not the same" do
       sign = %{
         @sign
         | tick_read: 0
@@ -166,6 +166,11 @@ defmodule Signs.Utilities.ReaderTest do
 
       assert_received(
         {:send_audio, _id, %Content.Audio.NextTrainCountdown{destination: :alewife, minutes: 4},
+         _p, _t}
+      )
+
+      assert_received(
+        {:send_audio, _id, %Content.Audio.NextTrainCountdown{destination: :ashmont, minutes: 3},
          _p, _t}
       )
     end
