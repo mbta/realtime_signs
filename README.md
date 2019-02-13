@@ -20,4 +20,4 @@ These can all be set with `export VARIABLE=value`, or e.g. `OCS_PORT=1234 iex -S
 * `BRIDGE_API_USERNAME` and `BRIDGE_API_PASSWORD`: credentials for the API that gets drawbridge status. Both default to a blank string.
 * `TRIP_UPDATE_URL` and `VEHICLE_POSITIONS_URL`: URLs of the enhanced trip-update and vehicle-position feeds. Default to the real feed URLs.
 * `API_V3_KEY` and `API_V3_URL`: Access key and URL for V3 API. Default respectively to a blank string and the URL of the dev-green API instance.
-* `NUMBER_OF_HTTP_UPDATERS`: Number of `PaEss.HttpUpdater` processes that should run. These are responsible for posting updates to the PA/ESS head-end server.
+* `NUMBER_OF_HTTP_UPDATERS`: Number of `PaEss.HttpUpdater` processes that should run. These are responsible for posting updates to the PA/ESS head-end server, so this number is also the number of concurrent HTTP requests to that server.
