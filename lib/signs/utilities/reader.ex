@@ -34,7 +34,7 @@ defmodule Signs.Utilities.Reader do
         sign
       end
 
-    sign
+    %{sign | tick_read: sign.read_period_seconds}
   end
 
   def read_sign(sign) do

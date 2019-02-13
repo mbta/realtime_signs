@@ -151,16 +151,5 @@ defmodule Signs.RealtimeTest do
       assert sign.tick_bottom == 99
       assert sign.tick_read == 99
     end
-
-    test "resets tick_read when it is 0" do
-      sign = %{
-        @sign
-        | tick_read: 0
-      }
-
-      sign = Signs.Realtime.decrement_ticks(sign)
-
-      assert sign.tick_read == 100
-    end
   end
 end
