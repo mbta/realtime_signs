@@ -183,13 +183,13 @@ defmodule Signs.Utilities.Reader do
   end
 
   @spec announce_next_trains(
-          Signs.Utilities.SourceConfig.config(),
-          Signs.Utilities.SourceConfig.config(),
+          {Signs.Utilities.SourceConfig.source(), Content.Message.t()},
+          {Signs.Utilities.SourceConfig.source(), Content.Message.t()},
           Signs.Realtime.t()
         ) :: {boolean, Signs.Realtime.t()}
   defp announce_next_trains(
-         {top_src, %{headsign: top_headsign, minutes: _top_minutes} = top_msg},
-         {bottom_src, %{headsign: top_headsign, minutes: _bottom_minutes} = bottom_msg},
+         {top_src, %{headsign: same_headsign, minutes: _top_minutes} = top_msg},
+         {bottom_src, %{headsign: same_headsign, minutes: _bottom_minutes} = bottom_msg},
          sign
        ) do
     {announced_next_train?, sign} =
@@ -240,8 +240,10 @@ defmodule Signs.Utilities.Reader do
     {announced_top? || announced_bottom?, sign}
   end
 
-  @spec announce_next_trains(Signs.Utilities.SourceConfig.config(), Signs.Realtime.t()) ::
-          {boolean, Signs.Realtime.t()}
+  @spec announce_arrival(
+          {Signs.Utilities.SourceConfig.source(), Content.Message.t()},
+          Signs.Realtime.t()
+        ) :: {boolean, Signs.Realtime.t()}
   defp announce_arrival({%SourceConfig{announce_arriving?: false}, _msg}, sign), do: {false, sign}
 
   defp announce_arrival({_src, msg}, sign) do
@@ -266,7 +268,7 @@ defmodule Signs.Utilities.Reader do
     end
   end
 
-  @spec announce_boarding({SourceConfig.source(), Signs.Realtime.t()}, Signs.Realtime.t()) ::
+  @spec announce_boarding({SourceConfig.source(), Content.Message.t()}, Signs.Realtime.t()) ::
           {boolean, Signs.Realtime.t()}
   defp announce_boarding({%SourceConfig{announce_boarding?: false}, _msg}, sign),
     do: {false, sign}
@@ -282,7 +284,7 @@ defmodule Signs.Utilities.Reader do
     end
   end
 
-  @spec announce_next_trains(Content.Message.t(), Signs.Realtime.t()) ::
+  @spec announce_stopped_train(Content.Message.t(), Signs.Realtime.t()) ::
           {boolean, Signs.Realtime.t()}
   defp announce_stopped_train(msg, sign) do
     case Content.Audio.StoppedTrain.from_message(msg) do
