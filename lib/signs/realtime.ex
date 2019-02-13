@@ -157,6 +157,7 @@ defmodule Signs.Realtime do
 
   def do_expiration(sign), do: sign
 
+  @spec decrement_ticks(Signs.Realtime.t()) :: Signs.Realtime.t()
   def decrement_ticks(%{tick_read: 0} = sign) do
     %{
       sign

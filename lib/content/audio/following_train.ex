@@ -16,6 +16,10 @@ defmodule Content.Audio.FollowingTrain do
 
   require Logger
 
+  @spec from_predictions_message(
+          Content.Message.Predictions.t(),
+          Signs.Utilities.SourceConfig.source()
+        ) :: Content.Audio.FollowingTrain.t() | nil
   def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: headsign}, %{
         terminal?: terminal
       })

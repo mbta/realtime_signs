@@ -41,6 +41,7 @@ defmodule Signs.Utilities.Reader do
     sign
   end
 
+  @spec interrupting_read(Signs.Realtime.t()) :: Signs.Realtime.t()
   def interrupting_read(%{tick_read: 0} = sign) do
     sign
   end
@@ -78,6 +79,7 @@ defmodule Signs.Utilities.Reader do
     {announced_sign? || announced_arrival_top? || announced_arrival_bottom?, sign}
   end
 
+  @spec announce_sign(Signs.Realtime.t()) :: {boolean, Signs.Realtime.t()}
   defp announce_sign(sign) do
     {_top_src, top_msg} = sign.current_content_top
     {_bottom_src, bottom_msg} = sign.current_content_bottom
@@ -180,6 +182,11 @@ defmodule Signs.Utilities.Reader do
     {announced?, sign}
   end
 
+  @spec announce_next_trains(
+          Signs.Utilities.SourceConfig.config(),
+          Signs.Utilities.SourceConfig.config(),
+          Signs.Realtime.t()
+        ) :: {boolean, Signs.Realtime.t()}
   defp announce_next_trains(
          {top_src, %{headsign: top_headsign, minutes: _top_minutes} = top_msg},
          {bottom_src, %{headsign: top_headsign, minutes: _bottom_minutes} = bottom_msg},
@@ -233,6 +240,8 @@ defmodule Signs.Utilities.Reader do
     {announced_top? || announced_bottom?, sign}
   end
 
+  @spec announce_next_trains(Signs.Utilities.SourceConfig.config(), Signs.Realtime.t()) ::
+          {boolean, Signs.Realtime.t()}
   defp announce_arrival({%SourceConfig{announce_arriving?: false}, _msg}, sign), do: {false, sign}
 
   defp announce_arrival({_src, msg}, sign) do
@@ -273,6 +282,8 @@ defmodule Signs.Utilities.Reader do
     end
   end
 
+  @spec announce_next_trains(Content.Message.t(), Signs.Realtime.t()) ::
+          {boolean, Signs.Realtime.t()}
   defp announce_stopped_train(msg, sign) do
     case Content.Audio.StoppedTrain.from_message(msg) do
       %Content.Audio.StoppedTrain{} = audio ->
