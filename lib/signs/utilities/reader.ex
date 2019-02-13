@@ -10,29 +10,7 @@ defmodule Signs.Utilities.Reader do
 
   @spec read_sign(Signs.Realtime.t()) :: Signs.Realtime.t()
   def read_sign(%{tick_read: 0} = sign) do
-    {top_headsign, top_content} =
-      case sign.current_content_top do
-        {_src, %{headsign: headsign, minutes: minutes}} -> {headsign, minutes}
-        {_src, %{headsign: headsign, stops_away: stops}} -> {headsign, stops}
-        _ -> {nil, nil}
-      end
-
-    {bottom_headsign, bottom_content} =
-      case sign.current_content_bottom do
-        {_src, %{headsign: headsign, minutes: minutes}} -> {headsign, minutes}
-        {_src, %{headsign: headsign, stops_away: stops}} -> {headsign, stops}
-        _ -> {nil, nil}
-      end
-
-    sign =
-      if (top_headsign && top_content != nil) ||
-           (bottom_headsign && bottom_headsign != top_headsign && bottom_content != nil) ||
-           (top_headsign == nil && bottom_headsign == nil) do
-        {_announced, sign} = send_audio_update(sign)
-        sign
-      else
-        sign
-      end
+    {_announced, sign} = send_audio_update(sign)
 
     %{sign | tick_read: sign.read_period_seconds}
   end
@@ -67,8 +45,8 @@ defmodule Signs.Utilities.Reader do
 
     {announced_closed?, sign} =
       case Content.Audio.Closure.from_messages(
-             elem(sign.current_content_top, 1),
-             elem(sign.current_content_bottom, 1)
+             top_msg,
+             bottom_msg
            ) do
         %Content.Audio.Closure{} = audio ->
           sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
@@ -81,8 +59,8 @@ defmodule Signs.Utilities.Reader do
     {announced_custom?, sign} =
       if Application.get_env(:realtime_signs, :static_text_enabled?) do
         case Content.Audio.Custom.from_messages(
-               elem(sign.current_content_top, 1),
-               elem(sign.current_content_bottom, 1)
+               top_msg,
+               bottom_msg
              ) do
           %Content.Audio.Custom{} = audio ->
             sign.sign_updater.send_custom_audio(sign.pa_ess_id, audio, 5, 60)
@@ -97,8 +75,8 @@ defmodule Signs.Utilities.Reader do
 
     {annouced_headway?, sign} =
       case Content.Audio.VehiclesToDestination.from_headway_message(
-             elem(sign.current_content_bottom, 1),
-             elem(sign.current_content_top, 1)
+             bottom_msg,
+             top_msg
            ) do
         {%Content.Audio.VehiclesToDestination{language: :english} = english_audio,
          %Content.Audio.VehiclesToDestination{language: :spanish} = spanish_audio} ->
