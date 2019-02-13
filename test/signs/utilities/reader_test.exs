@@ -156,6 +156,20 @@ defmodule Signs.Utilities.ReaderTest do
       )
     end
 
+    test "sends next train message" do
+      sign = %{
+        @sign
+        | tick_read: 0
+      }
+
+      Reader.read_sign(sign)
+
+      assert_received(
+        {:send_audio, _id, %Content.Audio.NextTrainCountdown{destination: :alewife, minutes: 4},
+         _p, _t}
+      )
+    end
+
     test "sends stopped train message" do
       sign = %{
         @sign
@@ -202,6 +216,21 @@ defmodule Signs.Utilities.ReaderTest do
       assert_received(
         {:send_audio, _id, %Content.Audio.Closure{alert: :shuttles_closed_station}, _p, _t}
       )
+    end
+
+    test "when the sign is ready to be read, but there is no minutes for the headsign, does not read" do
+      sign = %{
+        @sign
+        | tick_read: 0,
+          current_content_top:
+            {@src, %Content.Message.Predictions{headsign: "Alewife", minutes: nil}},
+          current_content_bottom:
+            {@src, %Content.Message.Predictions{headsign: "Alewife", minutes: nil}}
+      }
+
+      sign = Reader.read_sign(sign)
+
+      refute_received({:send_audio, _id, _, _p, _t})
     end
   end
 
