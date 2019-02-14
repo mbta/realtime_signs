@@ -264,6 +264,17 @@ defmodule Fake.HTTPoison do
         },
         %{
           "attributes" => %{
+            "effect" => "STOP_CLOSURE",
+            "informed_entity" => [
+              %{
+                "stop" => "74636",
+                "route" => "743"
+              }
+            ]
+          }
+        },
+        %{
+          "attributes" => %{
             "effect" => "SOMETHING_IRRELEVANT",
             "informed_entity" => [
               %{
