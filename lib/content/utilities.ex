@@ -21,7 +21,16 @@ defmodule Content.Utilities do
       do: {:ok, "Ashmont"}
 
   def headsign_for_prediction("Red", 0, last_stop_id)
-      when last_stop_id in ["70095", "70096", "70097", "70101", "70103", "70105"],
+      when last_stop_id in [
+             "70095",
+             "70096",
+             "70097",
+             "70101",
+             "70103",
+             "70105",
+             "Braintree-01",
+             "Braintree-02"
+           ],
       do: {:ok, "Braintree"}
 
   def headsign_for_prediction(_, 0, "70149"), do: {:ok, "Kenmore"}
