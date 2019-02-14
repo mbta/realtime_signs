@@ -156,7 +156,7 @@ defmodule Signs.Utilities.Reader do
         ) :: {boolean, Signs.Realtime.t()}
   defp announce_next_trains(
          {top_src, %{headsign: same_headsign, minutes: _top_minutes} = top_msg},
-         {bottom_src, %{headsign: same_headsign, minutes: _bottom_minutes} = bottom_msg},
+         {_bottom_src, %{headsign: same_headsign, minutes: _bottom_minutes} = _bottom_msg},
          sign
        ) do
     {announced_next_train?, sign} =
