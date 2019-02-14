@@ -253,6 +253,17 @@ defmodule Fake.HTTPoison do
         },
         %{
           "attributes" => %{
+            "effect" => "STATION_CLOSURE",
+            "informed_entity" => [
+              %{
+                "stop" => "70063",
+                "route" => "Red"
+              }
+            ]
+          }
+        },
+        %{
+          "attributes" => %{
             "effect" => "SOMETHING_IRRELEVANT",
             "informed_entity" => [
               %{

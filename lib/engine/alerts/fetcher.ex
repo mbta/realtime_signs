@@ -1,7 +1,12 @@
 defmodule Engine.Alerts.Fetcher do
   @type stop_id :: String.t()
   @type route_id :: String.t()
-  @type stop_status :: :shuttles_closed_station | :shuttles_transfer_station | :suspension | :none
+  @type stop_status ::
+          :shuttles_closed_station
+          | :shuttles_transfer_station
+          | :suspension
+          | :station_closure
+          | :none
 
   @callback get_statuses() ::
               {:ok,

@@ -97,7 +97,12 @@ defmodule Engine.Alerts.ApiFetcher do
 
       "SUSPENSION" ->
         stops
-        |> Enum.map(fn s -> {s, :suspension} end)
+        |> Enum.map(&{&1, :suspension})
+        |> Enum.into(%{})
+
+      "STATION_CLOSURE" ->
+        stops
+        |> Enum.map(&{&1, :station_closure})
         |> Enum.into(%{})
 
       _ ->
@@ -130,6 +135,9 @@ defmodule Engine.Alerts.ApiFetcher do
 
           "SHUTTLE" ->
             [{ie["route"], :shuttles_closed_station}]
+
+          "STATION_CLOSURE" ->
+            [{ie["route"], :station_closure}]
 
           _ ->
             []
