@@ -78,29 +78,6 @@ defmodule Signs.Utilities.ReaderTest do
       )
     end
 
-    test "sends a message that says following train instead of next train if the second line is the same headsign" do
-      sign = %{
-        @sign
-        | tick_read: 0,
-          current_content_bottom: {@src, %P{headsign: "Alewife", minutes: 3}}
-      }
-
-      sign = Reader.read_sign(sign)
-
-      assert_received(
-        {:send_audio, _id, %A{destination: :alewife, minutes: 4, verb: :arrives}, _p, _t}
-      )
-
-      refute_received(
-        {:send_audio, _id, %A{destination: :alewife, minutes: 3, verb: :arrives}, _p, _t}
-      )
-
-      assert_received(
-        {:send_audio, _id,
-         %Content.Audio.FollowingTrain{destination: :alewife, minutes: 3, verb: :arrives}, _p, _t}
-      )
-    end
-
     test "uses 'departs' if it's for a terminal" do
       src = %{@src | terminal?: true}
 

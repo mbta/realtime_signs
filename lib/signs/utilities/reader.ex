@@ -169,17 +169,7 @@ defmodule Signs.Utilities.Reader do
           {false, sign}
       end
 
-    {announced_following?, sign} =
-      case Content.Audio.FollowingTrain.from_predictions_message(bottom_msg, bottom_src) do
-        %Content.Audio.FollowingTrain{} = audio ->
-          sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-          {true, sign}
-
-        nil ->
-          {false, sign}
-      end
-
-    {announced_next_train? || announced_following?, sign}
+    {announced_next_train?, sign}
   end
 
   defp announce_next_trains({top_src, top_msg}, {bottom_src, bottom_msg}, sign) do
