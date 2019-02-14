@@ -73,7 +73,7 @@ defmodule Signs.Utilities.Reader do
         {false, sign}
       end
 
-    {annouced_headway?, sign} =
+    {announced_headway?, sign} =
       case Content.Audio.VehiclesToDestination.from_headway_message(
              bottom_msg,
              top_msg
@@ -144,7 +144,7 @@ defmodule Signs.Utilities.Reader do
       announced_next_train? || announced_arrival_top? || announced_arrival_bottom? ||
         announced_track_change_top? || announced_track_change_bottom? || announced_stopped? ||
         announced_multi_source_boarding? || announced_boarding_top? || announced_boarding_bottom? ||
-        announced_closed? || announced_custom? || annouced_headway?
+        announced_closed? || announced_custom? || announced_headway?
 
     {announced?, sign}
   end
