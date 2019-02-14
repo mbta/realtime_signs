@@ -78,6 +78,22 @@ defmodule Signs.Utilities.ReaderTest do
       )
     end
 
+    test "doesnt send a second message when the two lines have the same headsign" do
+      sign = %{
+        @sign
+        | tick_read: 0,
+          current_content_bottom: {@src, %P{headsign: "Alewife", minutes: 3}}
+      }
+
+      sign = Reader.read_sign(sign)
+
+      assert_received(
+        {:send_audio, _id, %A{destination: :alewife, minutes: 4, verb: :arrives}, _p, _t}
+      )
+
+      refute_received({:send_audio, _id, _m, _p, _t})
+    end
+
     test "uses 'departs' if it's for a terminal" do
       src = %{@src | terminal?: true}
 
