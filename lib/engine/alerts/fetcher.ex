@@ -32,6 +32,11 @@ defmodule Engine.Alerts.Fetcher do
     :shuttles_transfer_station
   end
 
+  def higher_priority_status(status1, status2)
+      when status1 == :station_closure or status2 == :station_closure do
+    :station_closure
+  end
+
   def higher_priority_status(_status1, _status2) do
     :none
   end
