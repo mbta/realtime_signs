@@ -19,12 +19,16 @@ defmodule Content.Audio.TrainIsBoarding do
         minutes: :boarding,
         headsign: headsign
       }) do
-    {:ok, dest} = PaEss.Utilities.headsign_to_terminal_station(headsign)
+    case PaEss.Utilities.headsign_to_terminal_station(headsign) do
+      {:ok, dest} ->
+        %__MODULE__{
+          destination: dest,
+          route_id: route_id
+        }
 
-    %__MODULE__{
-      destination: dest,
-      route_id: route_id
-    }
+      {:error, _} ->
+        nil
+    end
   end
 
   def from_message(_message) do

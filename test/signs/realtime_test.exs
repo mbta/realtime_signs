@@ -135,4 +135,21 @@ defmodule Signs.RealtimeTest do
       assert sign.tick_bottom == 99
     end
   end
+
+  describe "decrement_ticks/1" do
+    test "decrements all the ticks when all of them dont need to be reset" do
+      sign = %{
+        @sign
+        | tick_top: 100,
+          tick_bottom: 100,
+          tick_read: 100
+      }
+
+      sign = Signs.Realtime.decrement_ticks(sign)
+
+      assert sign.tick_top == 99
+      assert sign.tick_bottom == 99
+      assert sign.tick_read == 99
+    end
+  end
 end

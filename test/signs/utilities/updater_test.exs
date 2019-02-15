@@ -130,7 +130,6 @@ defmodule Signs.Utilities.UpdaterTest do
 
       sign = Updater.update_sign(@sign, diff_top, diff_bottom)
 
-      refute_received({:send_audio, _, _, _, _})
       refute_received({:update_single_line, _, _, _, _, _})
       assert_received({:update_sign, _id, %P{minutes: 3}, %P{minutes: 2}, _dur, _start})
       assert sign.tick_top == 100
@@ -150,19 +149,6 @@ defmodule Signs.Utilities.UpdaterTest do
 
       assert sign.tick_top == 100
       assert sign.tick_bottom == 100
-    end
-
-    test "does not announce arrival if single-source sign and the bottom line has changed" do
-      single_source_sign = %{@sign | source_config: {[]}, tick_read: 40}
-      src = %{@src | announce_arriving?: true}
-      same_top = @sign.current_content_top
-      diff_bottom = {src, %P{headsign: "Riverside", minutes: :arriving}}
-
-      Updater.update_sign(single_source_sign, same_top, diff_bottom)
-
-      refute_received(
-        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :riverside}, _dur, _start}
-      )
     end
 
     test "does not reannounce arrival if the train stops but the headsign isnt a known terminal" do
@@ -388,23 +374,6 @@ defmodule Signs.Utilities.UpdaterTest do
       )
     end
 
-    test "does not announce stopped train message if top line changes to it and tick_read is less than 30 seconds" do
-      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
-      same_bottom = @sign.current_content_bottom
-
-      initial_tick_read = 10
-      read_period_seconds = 100
-
-      sign = %{@sign | tick_read: initial_tick_read, read_period_seconds: read_period_seconds}
-
-      Updater.update_sign(sign, diff_top, same_bottom)
-
-      refute_received(
-        {:send_audio, _, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _dur,
-         _start}
-      )
-    end
-
     test "does not announce stopped train message if single-source sign and only the bottom line has changed" do
       single_source_sign = %{@sign | source_config: {[]}, tick_read: 40}
       same_top = @sign.current_content_top
@@ -464,15 +433,23 @@ defmodule Signs.Utilities.UpdaterTest do
         headsign: "Heath St"
       }
 
-      diff_top = {@src, prediction}
-      same_bottom = @sign.current_content_bottom
+      second_line = %Content.Message.Predictions{
+        stop_id: "70197",
+        minutes: 1,
+        route_id: "Green-E",
+        headsign: "Heath St"
+      }
+
+      src = %{@src | announce_boarding?: true}
+      diff_top = {src, prediction}
+      diff_bottom = {src, second_line}
 
       initial_tick_read = 40
       read_period_seconds = 100
 
       sign = %{@sign | tick_read: initial_tick_read, read_period_seconds: read_period_seconds}
 
-      Updater.update_sign(sign, diff_top, same_bottom)
+      Updater.update_sign(sign, diff_top, diff_bottom)
 
       assert_received(
         {:send_audio, _,
@@ -640,18 +617,6 @@ defmodule Signs.Utilities.UpdaterTest do
          _dur, _start}
       )
 
-      assert sign.tick_top == 100
-      assert sign.tick_bottom == 1
-    end
-
-    test "if the sign is configured to announce boarding but the train is not boarding does not announce" do
-      source = %{@src | announce_boarding?: true, announce_arriving?: false}
-      same_top = {source, %P{headsign: "Alewife", minutes: :arriving, route_id: "Red"}}
-      same_bottom = {source, %P{headsign: "Ashmont", minutes: 3}}
-
-      sign = Updater.update_sign(@sign, same_top, same_bottom)
-
-      refute_received({:send_audio, _, _, _, _})
       assert sign.tick_top == 100
       assert sign.tick_bottom == 1
     end

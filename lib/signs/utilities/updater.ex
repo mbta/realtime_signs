@@ -6,7 +6,7 @@ defmodule Signs.Utilities.Updater do
   and the sign is configured to announce that fact, will send that audio request, too.
   """
 
-  alias Signs.Utilities.SourceConfig
+  alias Signs.Utilities.Reader
   require Logger
 
   @spec update_sign(
@@ -37,18 +37,14 @@ defmodule Signs.Utilities.Updater do
           :now
         )
 
-        {announced_track_change?, _sign} = announce_track_change(top_msg, sign)
-        sign = announce_arrival(top, sign)
+        sign = %{sign | current_content_top: top}
 
         sign =
-          if !announced_track_change? do
-            announce_boarding(top, sign)
+          if should_interrupting_read?(top_msg) do
+            Reader.interrupting_read(sign)
           else
             sign
           end
-
-        sign = announce_stopped_train(top_msg, sign)
-        sign = announce_closure(top_msg, bottom_msg, sign)
 
         %{sign | current_content_top: top, tick_top: sign.expiration_seconds}
 
@@ -64,19 +60,11 @@ defmodule Signs.Utilities.Updater do
           :now
         )
 
+        sign = %{sign | current_content_bottom: bottom}
+
         sign =
-          if SourceConfig.multi_source?(sign.source_config) do
-            {announced_track_change?, _sign} = announce_track_change(bottom_msg, sign)
-            sign = announce_arrival(bottom, sign)
-
-            sign =
-              if !announced_track_change? do
-                announce_boarding(bottom, sign)
-              else
-                sign
-              end
-
-            announce_stopped_train(bottom_msg, sign)
+          if should_interrupting_read?(bottom_msg) do
+            Reader.interrupting_read(sign)
           else
             sign
           end
@@ -96,32 +84,15 @@ defmodule Signs.Utilities.Updater do
           :now
         )
 
-        {announced_track_change?, _sign} = announce_track_change(top_msg, sign)
-        sign = announce_arrival(top, sign)
+        sign = %{
+          sign
+          | current_content_top: top,
+            current_content_bottom: bottom
+        }
 
         sign =
-          if !announced_track_change? do
-            announce_boarding(top, sign)
-          else
-            sign
-          end
-
-        sign = announce_stopped_train(top_msg, sign)
-        sign = announce_closure(top_msg, bottom_msg, sign)
-
-        sign =
-          if SourceConfig.multi_source?(sign.source_config) do
-            {announced_track_change?, _sign} = announce_track_change(bottom_msg, sign)
-            sign = announce_arrival(bottom, sign)
-
-            sign =
-              if !announced_track_change? do
-                announce_boarding(bottom, sign)
-              else
-                sign
-              end
-
-            announce_stopped_train(bottom_msg, sign)
+          if should_interrupting_read?(top_msg) || should_interrupting_read?(bottom_msg) do
+            Reader.interrupting_read(sign)
           else
             sign
           end
@@ -225,85 +196,6 @@ defmodule Signs.Utilities.Updater do
     end
   end
 
-  @spec announce_arrival(Signs.Realtime.line_content(), Signs.Realtime.t()) :: Signs.Realtime.t()
-  defp announce_arrival({%SourceConfig{announce_arriving?: false}, _msg}, sign), do: sign
-
-  defp announce_arrival({_src, msg}, sign) do
-    case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
-      %Content.Audio.TrainIsArriving{} = audio ->
-        if MapSet.member?(sign.announced_arrivals, audio.destination) do
-          unless match?(%Content.Message.Predictions{minutes: :boarding}, msg) do
-            # Not a warning if ARR -> BRD
-            Logger.info("skipping_arriving_audio #{inspect(audio)} #{inspect(sign)}")
-          end
-
-          sign
-        else
-          sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-          %{sign | announced_arrivals: MapSet.put(sign.announced_arrivals, audio.destination)}
-        end
-
-      nil ->
-        sign
-    end
-  end
-
-  @spec announce_boarding(Signs.Realtime.line_content(), Signs.Realtime.t()) :: Signs.Realtime.t()
-  defp announce_boarding({%SourceConfig{announce_boarding?: false}, _msg}, sign), do: sign
-
-  defp announce_boarding({_src, msg}, sign) do
-    case Content.Audio.TrainIsBoarding.from_message(msg) do
-      %Content.Audio.TrainIsBoarding{} = audio ->
-        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-        sign
-
-      nil ->
-        sign
-    end
-  end
-
-  defp announce_stopped_train(msg, sign) do
-    case Content.Audio.StoppedTrain.from_message(msg) do
-      %Content.Audio.StoppedTrain{} = audio ->
-        if sign.tick_read > 30 do
-          sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-        end
-
-        sign
-
-      nil ->
-        sign
-    end
-  end
-
-  @spec announce_track_change(Content.Message.t(), Signs.Realtime.t()) ::
-          {boolean(), Signs.Realtime.t()}
-  defp announce_track_change(msg, sign) do
-    case Content.Audio.TrackChange.from_message(msg) do
-      %Content.Audio.TrackChange{} = audio ->
-        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-        {true, sign}
-
-      nil ->
-        {false, sign}
-    end
-  end
-
-  @spec announce_closure(Content.Message.t(), Content.Message.t(), Signs.Realtime.t()) ::
-          Signs.Realtime.t()
-  defp announce_closure(msg_top, msg_bot, sign) do
-    case Content.Audio.Closure.from_messages(msg_top, msg_bot) do
-      %Content.Audio.Closure{} = audio ->
-        sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 60)
-        sign
-
-      nil ->
-        sign
-    end
-
-    sign
-  end
-
   defp clear_announced_arrivals(
          sign,
          {_src, %Content.Message.Predictions{minutes: :boarding, headsign: hs}} = current_content,
@@ -336,5 +228,13 @@ defmodule Signs.Utilities.Updater do
 
   defp clear_announced_arrivals(sign, _old_msg, _new_msg) do
     sign
+  end
+
+  defp should_interrupting_read?(%Content.Message.Predictions{minutes: x}) when is_integer(x) do
+    false
+  end
+
+  defp should_interrupting_read?(_msg) do
+    true
   end
 end
