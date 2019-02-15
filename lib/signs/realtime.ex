@@ -113,9 +113,12 @@ defmodule Signs.Realtime do
     Process.send_after(pid, :run_loop, 1_000)
   end
 
-  defp offset(zone) when zone in ["n", "e"], do: 0
-  defp offset(zone) when zone in ["s", "w"], do: 60
-  defp offset(zone) when zone in ["m", "c"], do: 120
+  defp offset(zone) when zone in ["n"], do: 0
+  defp offset(zone) when zone in ["s"], do: 60
+  defp offset(zone) when zone in ["m"], do: 120
+  defp offset(zone) when zone in ["e"], do: 30
+  defp offset(zone) when zone in ["w"], do: 90
+  defp offset(zone) when zone in ["c"], do: 150
 
   @spec do_expiration(Signs.Realtime.t()) :: Signs.Realtime.t()
   def do_expiration(%{tick_top: 0, tick_bottom: 0} = sign) do
@@ -157,6 +160,7 @@ defmodule Signs.Realtime do
 
   def do_expiration(sign), do: sign
 
+  @spec decrement_ticks(Signs.Realtime.t()) :: Signs.Realtime.t()
   def decrement_ticks(sign) do
     %{
       sign
