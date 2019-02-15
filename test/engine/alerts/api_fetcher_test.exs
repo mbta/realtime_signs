@@ -8,7 +8,9 @@ defmodule Engine.Alerts.ApiFetcherTest do
                %{
                  :stop_statuses => %{
                    "70151" => :shuttles_transfer_station,
-                   "70036" => :suspension
+                   "70036" => :suspension,
+                   "70063" => :station_closure,
+                   "74636" => :station_closure
                  },
                  :route_statuses => %{
                    "Red" => :suspension,

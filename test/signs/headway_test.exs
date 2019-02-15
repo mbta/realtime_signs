@@ -63,17 +63,10 @@ defmodule Signs.HeadwayTest do
   end
 
   defmodule FakeAlertsEngine do
-    def max_stop_status(["suspended"], _routes) do
-      :suspension
-    end
-
-    def max_stop_status(["shuttles"], _routes) do
-      :shuttles_closed_station
-    end
-
-    def max_stop_status(_stops, _routes) do
-      :none
-    end
+    def max_stop_status(["suspended"], _routes), do: :suspension
+    def max_stop_status(["shuttles"], _routes), do: :shuttles_closed_station
+    def max_stop_status(["closure"], _routes), do: :station_closure
+    def max_stop_status(_stops, _routes), do: :none
   end
 
   defmodule FakeConfigEngine do
@@ -364,6 +357,20 @@ defmodule Signs.HeadwayTest do
 
       assert sign.current_content_top == %Content.Message.Alert.NoService{mode: :none}
       assert sign.current_content_bottom == %Content.Message.Alert.UseShuttleBus{}
+    end
+
+    test "if the station is closed, it displays that" do
+      sign = %{
+        @sign
+        | current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new(),
+          gtfs_stop_id: "closure"
+      }
+
+      {:noreply, sign} = handle_info(:update_content, sign)
+
+      assert sign.current_content_top == %Content.Message.Alert.NoService{mode: :none}
+      assert sign.current_content_bottom == %Content.Message.Empty{}
     end
   end
 
