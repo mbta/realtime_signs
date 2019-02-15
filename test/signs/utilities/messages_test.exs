@@ -280,6 +280,25 @@ defmodule Signs.Utilities.MessagesTest do
                 {nil, Content.Message.Empty.new()}}
     end
 
+    test "when sign is at a closed station and there are no departure predictions, it says so" do
+      src = %{@src | stop_id: "no_departures", direction_id: 0}
+
+      sign = %{
+        @sign
+        | source_config: {[src]},
+          current_content_top: {src, Content.Message.Empty.new()},
+          current_content_bottom: {src, Content.Message.Empty.new()}
+      }
+
+      alert_status = :station_closure
+      enabled? = true
+      custom_text = nil
+
+      assert Messages.get_messages(sign, enabled?, alert_status, custom_text) ==
+               {{nil, %Content.Message.Alert.NoService{mode: :train}},
+                {nil, Content.Message.Empty.new()}}
+    end
+
     test "when sign is at a station closed due to suspension and there are departure predictions, it shows them" do
       src = %{@src | stop_id: "1", direction_id: 0}
 

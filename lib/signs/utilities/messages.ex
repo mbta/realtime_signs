@@ -38,6 +38,10 @@ defmodule Signs.Utilities.Messages do
                 {{nil, %Content.Message.Alert.NoService{mode: :none}},
                  {nil, Content.Message.Empty.new()}}
 
+              :station_closure ->
+                {{nil, %Content.Message.Alert.NoService{mode: :train}},
+                 {nil, Content.Message.Empty.new()}}
+
               _ ->
                 Signs.Utilities.Headways.get_messages(sign)
             end

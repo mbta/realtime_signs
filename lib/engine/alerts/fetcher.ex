@@ -1,7 +1,12 @@
 defmodule Engine.Alerts.Fetcher do
   @type stop_id :: String.t()
   @type route_id :: String.t()
-  @type stop_status :: :shuttles_closed_station | :shuttles_transfer_station | :suspension | :none
+  @type stop_status ::
+          :shuttles_closed_station
+          | :shuttles_transfer_station
+          | :suspension
+          | :station_closure
+          | :none
 
   @callback get_statuses() ::
               {:ok,
@@ -25,6 +30,11 @@ defmodule Engine.Alerts.Fetcher do
   def higher_priority_status(status1, status2)
       when status1 == :shuttles_transfer_station or status2 == :shuttles_transfer_station do
     :shuttles_transfer_station
+  end
+
+  def higher_priority_status(status1, status2)
+      when status1 == :station_closure or status2 == :station_closure do
+    :station_closure
   end
 
   def higher_priority_status(_status1, _status2) do
