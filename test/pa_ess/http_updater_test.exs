@@ -7,6 +7,13 @@ end
 defmodule PaEss.HttpUpdaterTest do
   use ExUnit.Case, async: true
 
+  defmodule FakePoster do
+    def post(_, q, _) do
+      send(self(), {:post, q})
+      {:ok, %HTTPoison.Response{status_code: 200}}
+    end
+  end
+
   describe "update_single_line/5" do
     test "replys with {:ok, :sent} when successful" do
       state = make_state()
@@ -177,6 +184,29 @@ defmodule PaEss.HttpUpdaterTest do
                  {:send_custom_audio, [{"MCAP", "n"}, audio, 5, 60]},
                  state
                )
+    end
+
+    test "can send two audio messages" do
+      state = make_state(%{http_poster: FakePoster})
+
+      audio1 = %Content.Audio.NextTrainCountdown{
+        destination: :ashmont,
+        verb: :arrives,
+        minutes: 2
+      }
+
+      audio2 = %Content.Audio.NextTrainCountdown{
+        destination: :braintree,
+        verb: :arrives,
+        minutes: 7
+      }
+
+      PaEss.HttpUpdater.process({:send_audio, [{"RPRK", "s"}, {audio1, audio2}, 5, 60]}, state)
+
+      assert_received {:post, q1}
+      assert_received {:post, q2}
+      assert q1 =~ "var=4016"
+      assert q2 =~ "var=4021"
     end
   end
 
