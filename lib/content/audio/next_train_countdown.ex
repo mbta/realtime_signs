@@ -19,7 +19,7 @@ defmodule Content.Audio.NextTrainCountdown do
   require Logger
   alias Signs.Utilities.SourceConfig
 
-  @spec from_predictions_message(Content.Message.t(), SourceConfig.source()) :: t() | nil
+  @spec from_predictions_message(Content.Message.t(), SourceConfig.source() | nil) :: t() | nil
   def from_predictions_message(%Content.Message.Predictions{minutes: 1}, %{terminal?: false}) do
     nil
   end
