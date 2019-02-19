@@ -302,8 +302,4 @@ defmodule Signs.Utilities.Reader do
   defp send_audios(_sign, []) do
     nil
   end
-
-  defp send_audios(sign, audios) do
-    Logger.error("more_than_two_audio_requests #{inspect(sign)} #{inspect(audios)}")
-  end
 end
