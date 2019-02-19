@@ -43,111 +43,78 @@ defmodule Signs.Utilities.Reader do
     {_top_src, top_msg} = sign.current_content_top
     {_bottom_src, bottom_msg} = sign.current_content_bottom
 
-    {closed_audio, sign} =
-      case Content.Audio.Closure.from_messages(
-             top_msg,
-             bottom_msg
-           ) do
-        %Content.Audio.Closure{} = audio ->
-          {[audio], sign}
+    {closed_audio, sign} = announce_closure(top_msg, bottom_msg, sign)
+    {custom_audio, sign} = announce_custom_audio(top_msg, bottom_msg, sign)
+    {headway_audio, sign} = announce_headways(top_msg, bottom_msg, sign)
 
-        nil ->
+    full_sign_audio = closed_audio ++ custom_audio ++ headway_audio
+
+    if full_sign_audio != [] do
+      send_audios(sign, full_sign_audio)
+      {true, sign}
+    else
+      {stopped_audio, sign} = announce_stopped_train(top_msg, sign)
+
+      {track_change_top_audio, _sign} = announce_track_change(top_msg, sign)
+      {track_change_bottom_audio, _sign} = announce_track_change(bottom_msg, sign)
+
+      {multi_source_boarding_audio, sign} =
+        if SourceConfig.multi_source?(sign.source_config) do
+          {top_audio, sign} =
+            if track_change_top_audio == [] do
+              announce_boarding(sign.current_content_top, sign)
+            else
+              {[], sign}
+            end
+
+          {bottom_audio, sign} =
+            if track_change_bottom_audio == [] do
+              announce_boarding(sign.current_content_bottom, sign)
+            else
+              {[], sign}
+            end
+
+          {bottom_stopped_audio, sign} = announce_stopped_train(bottom_msg, sign)
+          {top_audio ++ bottom_audio ++ bottom_stopped_audio, sign}
+        else
           {[], sign}
-      end
-
-    {custom_audio, sign} =
-      if Application.get_env(:realtime_signs, :static_text_enabled?) do
-        case Content.Audio.Custom.from_messages(
-               top_msg,
-               bottom_msg
-             ) do
-          %Content.Audio.Custom{} = audio ->
-            {[audio], sign}
-
-          nil ->
-            {[], sign}
         end
-      else
-        {[], sign}
-      end
 
-    {headway_audio, sign} =
-      case Content.Audio.VehiclesToDestination.from_headway_message(
-             bottom_msg,
-             top_msg
-           ) do
-        {%Content.Audio.VehiclesToDestination{language: :english} = english_audio,
-         %Content.Audio.VehiclesToDestination{language: :spanish} = spanish_audio} ->
-          {[english_audio, spanish_audio], sign}
-
-        {%Content.Audio.VehiclesToDestination{} = english_audio, nil} ->
-          {[english_audio], sign}
-
-        {nil, nil} ->
+      {boarding_top_audio, sign} =
+        if track_change_top_audio == [] do
+          announce_boarding(sign.current_content_top, sign)
+        else
           {[], sign}
-      end
+        end
 
-    {stopped_audio, sign} = announce_stopped_train(top_msg, sign)
+      {boarding_bottom_audio, sign} =
+        if track_change_bottom_audio == [] do
+          announce_boarding(sign.current_content_bottom, sign)
+        else
+          {[], sign}
+        end
 
-    {track_change_top_audio, _sign} = announce_track_change(top_msg, sign)
-    {track_change_bottom_audio, _sign} = announce_track_change(bottom_msg, sign)
+      {arrival_top_audio, sign} = announce_arrival(sign.current_content_top, sign)
+      {arrival_bottom_audio, sign} = announce_arrival(sign.current_content_bottom, sign)
 
-    {multi_source_boarding_audio, sign} =
-      if SourceConfig.multi_source?(sign.source_config) do
-        {top_audio, sign} =
-          if track_change_top_audio == [] do
-            announce_boarding(sign.current_content_top, sign)
-          else
-            {[], sign}
-          end
+      {next_train_audio, sign} =
+        announce_next_trains(sign.current_content_top, sign.current_content_bottom, sign)
 
-        {bottom_audio, sign} =
-          if track_change_bottom_audio == [] do
-            announce_boarding(sign.current_content_bottom, sign)
-          else
-            {[], sign}
-          end
+      audios =
+        next_train_audio ++
+          arrival_top_audio ++
+          arrival_bottom_audio ++
+          track_change_top_audio ++
+          track_change_bottom_audio ++
+          stopped_audio ++
+          multi_source_boarding_audio ++
+          boarding_top_audio ++
+          boarding_bottom_audio ++ closed_audio ++ custom_audio ++ headway_audio
 
-        {bottom_stopped_audio, sign} = announce_stopped_train(bottom_msg, sign)
-        {top_audio ++ bottom_audio ++ bottom_stopped_audio, sign}
-      else
-        {[], sign}
-      end
+      send_audios(sign, audios)
 
-    {boarding_top_audio, sign} =
-      if track_change_top_audio == [] do
-        announce_boarding(sign.current_content_top, sign)
-      else
-        {[], sign}
-      end
-
-    {boarding_bottom_audio, sign} =
-      if track_change_bottom_audio == [] do
-        announce_boarding(sign.current_content_bottom, sign)
-      else
-        {[], sign}
-      end
-
-    {arrival_top_audio, sign} = announce_arrival(sign.current_content_top, sign)
-    {arrival_bottom_audio, sign} = announce_arrival(sign.current_content_bottom, sign)
-
-    {next_train_audio, sign} =
-      announce_next_trains(sign.current_content_top, sign.current_content_bottom, sign)
-
-    audios =
-      next_train_audio ++
-        arrival_top_audio ++
-        arrival_bottom_audio ++
-        track_change_top_audio ++
-        track_change_bottom_audio ++
-        stopped_audio ++
-        multi_source_boarding_audio ++
-        boarding_top_audio ++
-        boarding_bottom_audio ++ closed_audio ++ custom_audio ++ headway_audio
-
-    send_audios(sign, audios)
-
-    {audios != [], sign}
+      {audios != [], sign}
+    end
   end
 
   @spec announce_next_trains(
@@ -251,6 +218,59 @@ defmodule Signs.Utilities.Reader do
         {[audio], sign}
 
       nil ->
+        {[], sign}
+    end
+  end
+
+  @spec announce_closure(Content.Message.t(), Content.Message.t(), Signs.Realtime.t()) ::
+          {[Content.Audio.t()], Signs.Relatime.t()}
+  defp announce_closure(top_msg, bottom_msg, sign) do
+    case Content.Audio.Closure.from_messages(
+           top_msg,
+           bottom_msg
+         ) do
+      %Content.Audio.Closure{} = audio ->
+        {[audio], sign}
+
+      nil ->
+        {[], sign}
+    end
+  end
+
+  @spec announce_custom_audio(Content.Message.t(), Content.Message.t(), Signs.Realtime.t()) ::
+          {[Content.Audio.t()], Signs.Realtime.t()}
+  defp announce_custom_audio(top_msg, bottom_msg, sign) do
+    if Application.get_env(:realtime_signs, :static_text_enabled?) do
+      case Content.Audio.Custom.from_messages(
+             top_msg,
+             bottom_msg
+           ) do
+        %Content.Audio.Custom{} = audio ->
+          {[audio], sign}
+
+        nil ->
+          {[], sign}
+      end
+    else
+      {[], sign}
+    end
+  end
+
+  @spec announce_headways(Content.Message.t(), Content.Message.t(), Signs.Realtime.t()) ::
+          {[Custom.Audio.t()], Signs.Realtime.t()}
+  defp announce_headways(top_msg, bottom_msg, sign) do
+    case Content.Audio.VehiclesToDestination.from_headway_message(
+           bottom_msg,
+           top_msg
+         ) do
+      {%Content.Audio.VehiclesToDestination{language: :english} = english_audio,
+       %Content.Audio.VehiclesToDestination{language: :spanish} = spanish_audio} ->
+        {[english_audio, spanish_audio], sign}
+
+      {%Content.Audio.VehiclesToDestination{} = english_audio, nil} ->
+        {[english_audio], sign}
+
+      {nil, nil} ->
         {[], sign}
     end
   end
