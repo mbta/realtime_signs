@@ -21,6 +21,7 @@ defmodule Engine.Predictions do
   @spec for_stop(String.t(), 0 | 1) :: [Predictions.Prediction.t()]
   def for_stop(predictions_table_id \\ @predictions_table, gtfs_stop_id, direction_id) do
     case :ets.lookup(predictions_table_id, {gtfs_stop_id, direction_id}) do
+      [{_, :none}] -> []
       [{{^gtfs_stop_id, ^direction_id}, predictions}] -> predictions
       _ -> []
     end
@@ -91,8 +92,11 @@ defmodule Engine.Predictions do
       |> Predictions.Predictions.parse_json_response()
       |> Predictions.Predictions.get_all(current_time)
 
-    :ets.delete_all_objects(@predictions_table)
-    :ets.insert(@predictions_table, Enum.into(new_predictions, []))
+    existing_predictions =
+      :ets.tab2list(@predictions_table) |> Enum.map(&{elem(&1, 0), :none}) |> Map.new()
+
+    all_predictions = Map.merge(existing_predictions, new_predictions)
+    :ets.insert(@predictions_table, Enum.into(all_predictions, []))
   end
 
   defp update_positions(body, _current_time) do

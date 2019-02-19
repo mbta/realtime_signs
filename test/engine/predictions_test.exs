@@ -5,20 +5,18 @@ defmodule Engine.PredictionsTest do
 
   describe "handle_info/2" do
     test "keeps existing states when trip_update url has not been modified" do
-      trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
-      position_url = Application.get_env(:realtime_signs, :vehicle_position_url)
+      position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
       Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_304")
       Application.put_env(:realtime_signs, :vehicle_positions_url, "vehicle_positions_304")
       existing_state = {~N[2017-07-04 09:05:00], ~N[2017-07-04 09:05:00]}
       {:noreply, updated_state} = handle_info(:update, existing_state)
-      Application.put_env(:realtime_signs, :trip_update_url, trip_update_url)
-      Application.put_env(:realtime_signs, :vehicle_position_url, position_url)
+      Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       assert updated_state == existing_state
     end
 
     test "logs error when invalid HTTP response returned" do
       trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
-      position_url = Application.get_env(:realtime_signs, :vehicle_position_url)
+      position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
       Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_error")
       Application.put_env(:realtime_signs, :vehicle_positions_url, "vehicle_positions_304")
       existing_state = {~N[2017-07-04 09:05:00], ~N[2017-07-04 09:05:00]}
@@ -30,7 +28,7 @@ defmodule Engine.PredictionsTest do
         end)
 
       Application.put_env(:realtime_signs, :trip_update_url, trip_update_url)
-      Application.put_env(:realtime_signs, :vehicle_position_url, position_url)
+      Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       assert log =~ "Could not fetch pb file "
       assert log =~ "timeout"
     end
@@ -45,10 +43,11 @@ defmodule Engine.PredictionsTest do
         route_id: "Blue"
       }
 
-      prediction_map = %{{"stop_1", 1} => [prediction]}
+      prediction_map = %{{"stop_1", 1} => [prediction], {"overwritten_stop", 1} => :none}
       table_id = :ets.new(:predictions_engine_test, [:set, :protected, read_concurrency: true])
       :ets.insert(table_id, Enum.into(prediction_map, []))
       assert for_stop(table_id, "stop_1", 1) == [prediction]
+      assert for_stop(table_id, "overwritten_stop", 1) == []
       assert for_stop(table_id, "no_entry", 0) == []
     end
   end
