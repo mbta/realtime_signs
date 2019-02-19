@@ -40,6 +40,20 @@ defmodule Signs.Utilities.Reader do
 
   @spec send_audio_update(Signs.Realtime.t()) :: {boolean, Signs.Realtime.t()}
   defp send_audio_update(sign) do
+    {full_sign_audio, sign} = calculate_full_sign_audio(sign)
+
+    if full_sign_audio != [] do
+      send_audios(sign, full_sign_audio)
+      {true, sign}
+    else
+      {multiline_audio, sign} = calculate_multiline_audio(sign)
+      send_audios(sign, multiline_audio)
+      {multiline_audio != [], sign}
+    end
+  end
+
+  @spec calculate_full_sign_audio(Signs.Realtime.t()) :: {[Content.Audio.t()], Signs.Realtime.t()}
+  defp calculate_full_sign_audio(sign) do
     {_top_src, top_msg} = sign.current_content_top
     {_bottom_src, bottom_msg} = sign.current_content_bottom
 
@@ -47,74 +61,72 @@ defmodule Signs.Utilities.Reader do
     {custom_audio, sign} = announce_custom_audio(top_msg, bottom_msg, sign)
     {headway_audio, sign} = announce_headways(top_msg, bottom_msg, sign)
 
-    full_sign_audio = closed_audio ++ custom_audio ++ headway_audio
+    audios = closed_audio ++ custom_audio ++ headway_audio
+    {audios, sign}
+  end
 
-    if full_sign_audio != [] do
-      send_audios(sign, full_sign_audio)
-      {true, sign}
-    else
-      {stopped_audio, sign} = announce_stopped_train(top_msg, sign)
+  @spec calculate_multiline_audio(Signs.Realtime.t()) :: {[Content.Audio.t()], Signs.Realtime.t()}
+  defp calculate_multiline_audio(sign) do
+    {_top_src, top_msg} = sign.current_content_top
+    {_bottom_src, bottom_msg} = sign.current_content_bottom
 
-      {track_change_top_audio, _sign} = announce_track_change(top_msg, sign)
-      {track_change_bottom_audio, _sign} = announce_track_change(bottom_msg, sign)
+    {stopped_audio, sign} = announce_stopped_train(top_msg, sign)
 
-      {multi_source_boarding_audio, sign} =
-        if SourceConfig.multi_source?(sign.source_config) do
-          {top_audio, sign} =
-            if track_change_top_audio == [] do
-              announce_boarding(sign.current_content_top, sign)
-            else
-              {[], sign}
-            end
+    {track_change_top_audio, _sign} = announce_track_change(top_msg, sign)
+    {track_change_bottom_audio, _sign} = announce_track_change(bottom_msg, sign)
 
-          {bottom_audio, sign} =
-            if track_change_bottom_audio == [] do
-              announce_boarding(sign.current_content_bottom, sign)
-            else
-              {[], sign}
-            end
+    {multi_source_boarding_audio, sign} =
+      if SourceConfig.multi_source?(sign.source_config) do
+        {top_audio, sign} =
+          if track_change_top_audio == [] do
+            announce_boarding(sign.current_content_top, sign)
+          else
+            {[], sign}
+          end
 
-          {bottom_stopped_audio, sign} = announce_stopped_train(bottom_msg, sign)
-          {top_audio ++ bottom_audio ++ bottom_stopped_audio, sign}
-        else
-          {[], sign}
-        end
+        {bottom_audio, sign} =
+          if track_change_bottom_audio == [] do
+            announce_boarding(sign.current_content_bottom, sign)
+          else
+            {[], sign}
+          end
 
-      {boarding_top_audio, sign} =
-        if track_change_top_audio == [] do
-          announce_boarding(sign.current_content_top, sign)
-        else
-          {[], sign}
-        end
+        {bottom_stopped_audio, sign} = announce_stopped_train(bottom_msg, sign)
+        {top_audio ++ bottom_audio ++ bottom_stopped_audio, sign}
+      else
+        {[], sign}
+      end
 
-      {boarding_bottom_audio, sign} =
-        if track_change_bottom_audio == [] do
-          announce_boarding(sign.current_content_bottom, sign)
-        else
-          {[], sign}
-        end
+    {boarding_top_audio, sign} =
+      if track_change_top_audio == [] do
+        announce_boarding(sign.current_content_top, sign)
+      else
+        {[], sign}
+      end
 
-      {arrival_top_audio, sign} = announce_arrival(sign.current_content_top, sign)
-      {arrival_bottom_audio, sign} = announce_arrival(sign.current_content_bottom, sign)
+    {boarding_bottom_audio, sign} =
+      if track_change_bottom_audio == [] do
+        announce_boarding(sign.current_content_bottom, sign)
+      else
+        {[], sign}
+      end
 
-      {next_train_audio, sign} =
-        announce_next_trains(sign.current_content_top, sign.current_content_bottom, sign)
+    {arrival_top_audio, sign} = announce_arrival(sign.current_content_top, sign)
+    {arrival_bottom_audio, sign} = announce_arrival(sign.current_content_bottom, sign)
 
-      audios =
-        next_train_audio ++
-          arrival_top_audio ++
-          arrival_bottom_audio ++
-          track_change_top_audio ++
-          track_change_bottom_audio ++
-          stopped_audio ++
-          multi_source_boarding_audio ++
-          boarding_top_audio ++
-          boarding_bottom_audio ++ closed_audio ++ custom_audio ++ headway_audio
+    {next_train_audio, sign} =
+      announce_next_trains(sign.current_content_top, sign.current_content_bottom, sign)
 
-      send_audios(sign, audios)
+    audios =
+      next_train_audio ++
+        arrival_top_audio ++
+        arrival_bottom_audio ++
+        track_change_top_audio ++
+        track_change_bottom_audio ++
+        stopped_audio ++
+        multi_source_boarding_audio ++ boarding_top_audio ++ boarding_bottom_audio
 
-      {audios != [], sign}
-    end
+    {audios, sign}
   end
 
   @spec announce_next_trains(
@@ -223,7 +235,7 @@ defmodule Signs.Utilities.Reader do
   end
 
   @spec announce_closure(Content.Message.t(), Content.Message.t(), Signs.Realtime.t()) ::
-          {[Content.Audio.t()], Signs.Relatime.t()}
+          {[Content.Audio.t()], Signs.Realtime.t()}
   defp announce_closure(top_msg, bottom_msg, sign) do
     case Content.Audio.Closure.from_messages(
            top_msg,
@@ -257,7 +269,7 @@ defmodule Signs.Utilities.Reader do
   end
 
   @spec announce_headways(Content.Message.t(), Content.Message.t(), Signs.Realtime.t()) ::
-          {[Custom.Audio.t()], Signs.Realtime.t()}
+          {[Content.Audio.t()], Signs.Realtime.t()}
   defp announce_headways(top_msg, bottom_msg, sign) do
     case Content.Audio.VehiclesToDestination.from_headway_message(
            bottom_msg,
