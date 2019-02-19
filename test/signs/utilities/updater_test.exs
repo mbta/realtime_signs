@@ -307,10 +307,12 @@ defmodule Signs.Utilities.UpdaterTest do
           top = {src, %P{headsign: "GracefullyHandlesUnknown", minutes: :boarding}}
           sign = Updater.update_sign(sign, top, bottom)
           top = {src, %P{headsign: "Alewife", minutes: :arriving}}
+
           Updater.update_sign(sign, top, bottom)
 
           assert_received(
-            {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :alewife}, _dur, _start}
+            {:send_audio, _, {_, %Content.Audio.TrainIsArriving{destination: :alewife}}, _dur,
+             _start}
           )
         end)
 
