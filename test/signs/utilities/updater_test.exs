@@ -159,7 +159,7 @@ defmodule Signs.Utilities.UpdaterTest do
       sign = Updater.update_sign(@sign, arr_top, same_bottom)
 
       assert_received(
-        {:send_audio, _, {_, %Content.Audio.TrainIsArriving{destination: :alewife}}, _, _}
+        {:send_audio, _, {%Content.Audio.TrainIsArriving{destination: :alewife}, _}, _, _}
       )
 
       stopped_top = {src, %Content.Message.StoppedTrain{headsign: "davis", stops_away: 1}}
@@ -185,7 +185,7 @@ defmodule Signs.Utilities.UpdaterTest do
       sign = Updater.update_sign(@sign, arr_top, same_bottom)
 
       assert_received(
-        {:send_audio, _, {_, %Content.Audio.TrainIsArriving{destination: :alewife}}, _, _}
+        {:send_audio, _, {%Content.Audio.TrainIsArriving{destination: :alewife}, _}, _, _}
       )
 
       stopped_top = {src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 1}}
@@ -199,7 +199,7 @@ defmodule Signs.Utilities.UpdaterTest do
       _sign = Updater.update_sign(sign, arr_top, same_bottom)
 
       assert_received(
-        {:send_audio, _, {_, %Content.Audio.TrainIsArriving{destination: :alewife}}, _, _}
+        {:send_audio, _, {%Content.Audio.TrainIsArriving{destination: :alewife}, _}, _, _}
       )
     end
 
@@ -227,7 +227,7 @@ defmodule Signs.Utilities.UpdaterTest do
       Updater.update_sign(multi_source_sign, same_top, diff_bottom)
 
       assert_received(
-        {:send_audio, _, {_, %Content.Audio.TrainIsArriving{destination: :riverside}}, _dur,
+        {:send_audio, _, {%Content.Audio.TrainIsArriving{destination: :riverside}, _}, _dur,
          _start}
       )
     end
@@ -281,7 +281,7 @@ defmodule Signs.Utilities.UpdaterTest do
           sign = Updater.update_sign(@sign, top, bottom)
 
           assert_received(
-            {:send_audio, _, {_, %Content.Audio.TrainIsArriving{destination: :alewife}}, _dur,
+            {:send_audio, _, {%Content.Audio.TrainIsArriving{destination: :alewife}, _}, _dur,
              _start}
           )
 
@@ -298,7 +298,7 @@ defmodule Signs.Utilities.UpdaterTest do
           sign = Updater.update_sign(sign, top, bottom)
 
           assert_received(
-            {:send_audio, _, {_, %Content.Audio.TrainIsArriving{destination: :braintree}}, _dur,
+            {:send_audio, _, {%Content.Audio.TrainIsArriving{destination: :braintree}, _}, _dur,
              _start}
           )
 
@@ -311,7 +311,7 @@ defmodule Signs.Utilities.UpdaterTest do
           Updater.update_sign(sign, top, bottom)
 
           assert_received(
-            {:send_audio, _, {_, %Content.Audio.TrainIsArriving{destination: :alewife}}, _dur,
+            {:send_audio, _, {%Content.Audio.TrainIsArriving{destination: :alewife}, _}, _dur,
              _start}
           )
         end)
@@ -328,7 +328,7 @@ defmodule Signs.Utilities.UpdaterTest do
       Updater.update_sign(sign, top, bottom)
 
       assert_received(
-        {:send_audio, _, {_, %Content.Audio.TrainIsArriving{destination: :alewife}}, _dur, _start}
+        {:send_audio, _, {%Content.Audio.TrainIsArriving{destination: :alewife}, _}, _dur, _start}
       )
     end
 
@@ -341,7 +341,7 @@ defmodule Signs.Utilities.UpdaterTest do
       sign = Updater.update_sign(sign, top, bottom)
 
       assert_received(
-        {:send_audio, _, {_, %Content.Audio.TrainIsArriving{destination: :alewife}}, _dur, _start}
+        {:send_audio, _, {%Content.Audio.TrainIsArriving{destination: :alewife}, _}, _dur, _start}
       )
 
       top = {src, %P{headsign: "Alewife", minutes: :boarding}}
@@ -371,7 +371,7 @@ defmodule Signs.Utilities.UpdaterTest do
       Updater.update_sign(sign, diff_top, same_bottom)
 
       assert_received(
-        {:send_audio, _, {_, %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}},
+        {:send_audio, _, {%Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}, _},
          _dur, _start}
       )
     end
@@ -397,7 +397,7 @@ defmodule Signs.Utilities.UpdaterTest do
       Updater.update_sign(multi_source_sign, same_top, diff_bottom)
 
       assert_received(
-        {:send_audio, _, {_, %Content.Audio.StoppedTrain{destination: :braintree, stops_away: 2}},
+        {:send_audio, _, {%Content.Audio.StoppedTrain{destination: :braintree, stops_away: 2}, _},
          _dur, _start}
       )
     end
@@ -480,7 +480,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       assert_received(
         {:send_audio, _,
-         {_, %Content.Audio.TrackChange{destination: :reservoir, track: 1, route_id: "Green-D"}},
+         {%Content.Audio.TrackChange{destination: :reservoir, track: 1, route_id: "Green-D"}, _},
          _dur, _start}
       )
     end
@@ -616,7 +616,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       assert_received(
         {:send_audio, _,
-         {_, %Content.Audio.TrainIsBoarding{destination: :alewife, route_id: "Red"}}, _dur,
+         {%Content.Audio.TrainIsBoarding{destination: :alewife, route_id: "Red"}, _}, _dur,
          _start}
       )
 
