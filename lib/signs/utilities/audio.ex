@@ -92,13 +92,12 @@ defmodule Signs.Utilities.Audio do
       announce_next_trains(sign.current_content_top, sign.current_content_bottom, sign)
 
     audios =
-      next_train_audio ++
-        arrival_top_audio ++
-        arrival_bottom_audio ++
+      boarding_top_audio ++
         track_change_top_audio ++
+        boarding_bottom_audio ++
         track_change_bottom_audio ++
-        stopped_audio ++
-        multi_source_boarding_audio ++ boarding_top_audio ++ boarding_bottom_audio
+        multi_source_boarding_audio ++
+        arrival_top_audio ++ arrival_bottom_audio ++ stopped_audio ++ next_train_audio
 
     {audios, sign}
   end
