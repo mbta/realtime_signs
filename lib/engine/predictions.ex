@@ -86,6 +86,7 @@ defmodule Engine.Predictions do
     last_modified
   end
 
+  @spec update_predictions(term, DateTime.t()) :: true
   defp update_predictions(body, current_time) do
     new_predictions =
       body
