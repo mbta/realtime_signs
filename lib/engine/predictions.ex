@@ -49,9 +49,22 @@ defmodule Engine.Predictions do
     {:ok, {Timex.now(), Timex.now()}}
   end
 
-  @spec handle_info(:update, {DateTime.t(), DateTime.t()}) ::
+  @spec handle_info(atom, {DateTime.t(), DateTime.t()}, :ets.tab(), :ets.tab()) ::
           {:noreply, {DateTime.t(), DateTime.t()}}
-  def handle_info(:update, {last_modified_predictions, last_modified_positions}) do
+
+  def handle_info(
+        msg,
+        state,
+        predictions_table \\ @predictions_table,
+        positions_table \\ @positions_table
+      )
+
+  def handle_info(
+        :update,
+        {last_modified_predictions, last_modified_positions},
+        predictions_table,
+        positions_table
+      ) do
     schedule_update(self())
     current_time = Timex.now()
 
@@ -59,22 +72,24 @@ defmodule Engine.Predictions do
       download_and_insert_data(
         last_modified_predictions,
         current_time,
-        &update_predictions/2,
-        :trip_update_url
+        &update_predictions/3,
+        :trip_update_url,
+        predictions_table
       )
 
     last_modified_positions =
       download_and_insert_data(
         last_modified_positions,
         current_time,
-        &update_positions/2,
-        :vehicle_positions_url
+        &update_positions/3,
+        :vehicle_positions_url,
+        positions_table
       )
 
     {:noreply, {last_modified_predictions, last_modified_positions}}
   end
 
-  def handle_info(msg, state) do
+  def handle_info(msg, state, _, _) do
     Logger.warn("#{__MODULE__} unknown message: #{inspect(msg)}")
     {:noreply, state}
   end
@@ -86,31 +101,39 @@ defmodule Engine.Predictions do
     last_modified
   end
 
-  @spec update_predictions(term, DateTime.t()) :: true
-  defp update_predictions(body, current_time) do
+  @spec update_predictions(any(), DateTime.t(), :ets.tab()) :: true
+  defp update_predictions(body, current_time, predictions_table) do
     new_predictions =
       body
       |> Predictions.Predictions.parse_json_response()
       |> Predictions.Predictions.get_all(current_time)
 
     existing_predictions =
-      :ets.tab2list(@predictions_table) |> Enum.map(&{elem(&1, 0), :none}) |> Map.new()
+      :ets.tab2list(predictions_table) |> Enum.map(&{elem(&1, 0), :none}) |> Map.new()
 
     all_predictions = Map.merge(existing_predictions, new_predictions)
-    :ets.insert(@predictions_table, Enum.into(all_predictions, []))
+    :ets.insert(predictions_table, Enum.into(all_predictions, []))
   end
 
-  defp update_positions(body, _current_time) do
+  @spec update_positions(any(), DateTime.t(), :ets.tab()) :: true
+  defp update_positions(body, _current_time, positions_table) do
     new_positions =
       body
       |> Positions.Positions.parse_json_response()
       |> Positions.Positions.get_stopped()
 
-    :ets.delete_all_objects(@positions_table)
-    :ets.insert(@positions_table, new_positions)
+    :ets.delete_all_objects(positions_table)
+    :ets.insert(positions_table, new_positions)
   end
 
-  defp download_and_insert_data(last_modified, current_time, parse_fn, url) do
+  @spec download_and_insert_data(
+          DateTime.t(),
+          DateTime.t(),
+          (any(), DateTime.t(), :ets.tab() -> true),
+          atom,
+          :ets.tab()
+        ) :: DateTime.t()
+  defp download_and_insert_data(last_modified, current_time, parse_fn, url, ets_table) do
     http_client = Application.get_env(:realtime_signs, :http_client)
     full_url = Application.get_env(:realtime_signs, url)
 
@@ -122,7 +145,7 @@ defmodule Engine.Predictions do
          ) do
       {:ok, %HTTPoison.Response{body: body, status_code: status}}
       when status >= 200 and status < 300 ->
-        parse_fn.(body, current_time)
+        parse_fn.(body, current_time, ets_table)
         current_time
 
       {:ok, %HTTPoison.Response{}} ->

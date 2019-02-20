@@ -3,7 +3,7 @@ defmodule Engine.PredictionsTest do
   import ExUnit.CaptureLog
   import Engine.Predictions
 
-  describe "handle_info/2" do
+  describe "handle_info/4" do
     test "keeps existing states when trip_update url has not been modified" do
       position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
       Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_304")
@@ -31,6 +31,42 @@ defmodule Engine.PredictionsTest do
       Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       assert log =~ "Could not fetch pb file "
       assert log =~ "timeout"
+    end
+
+    test "instead of deleting old predictions, overwrites them with :none" do
+      trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
+      position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
+      Application.put_env(:realtime_signs, :trip_update_url, "fake_trip_update2.json")
+      Application.put_env(:realtime_signs, :vehicle_positions_url, "vehicle_positions_304")
+
+      existing_state = {~N[2017-07-04 09:05:00], ~N[2017-07-04 09:05:00]}
+
+      predictions_table =
+        :ets.new(:test_vehicle_predictions, [
+          :set,
+          :protected,
+          :named_table,
+          read_concurrency: true
+        ])
+
+      positions_table =
+        :ets.new(:test_vehicle_positions, [:set, :protected, :named_table, read_concurrency: true])
+
+      :ets.insert(predictions_table, [
+        {{"stop_to_remove", 0}, true},
+        {{"stop_to_update", 0}, true}
+      ])
+
+      handle_info(:update, existing_state, predictions_table, positions_table)
+
+      assert :ets.info(predictions_table)[:size] == 2
+      [{{"stop_to_remove", 0}, :none}] = :ets.lookup(predictions_table, {"stop_to_remove", 0})
+
+      [{{"stop_to_update", 0}, [%Predictions.Prediction{}]}] =
+        :ets.lookup(predictions_table, {"stop_to_update", 0})
+
+      Application.put_env(:realtime_signs, :trip_update_url, trip_update_url)
+      Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
     end
   end
 
