@@ -27,7 +27,7 @@ defmodule Signs.Utilities.Reader do
   def interrupting_read(sign) do
     case send_audio_update(sign) do
       {true, sign} ->
-        if sign.tick_read < 60 do
+        if sign.tick_read < 120 do
           %{sign | tick_read: sign.tick_read + sign.read_period_seconds}
         else
           sign
