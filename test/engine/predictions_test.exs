@@ -80,6 +80,17 @@ defmodule Engine.PredictionsTest do
       [{{"stop_to_update", 0}, [%Predictions.Prediction{}]}] =
         :ets.lookup(predictions_table, {"stop_to_update", 0})
     end
+
+    test "logs a warning on any message but :update" do
+      existing_state = {~N[2017-07-04 09:05:00], ~N[2017-07-04 09:05:00]}
+
+      log =
+        capture_log([level: :warn], fn ->
+          {:noreply, ^existing_state} = handle_info(:unrecognized, existing_state)
+        end)
+
+      assert log =~ "unknown message: :unrecognized"
+    end
   end
 
   describe "for_stop/2" do
