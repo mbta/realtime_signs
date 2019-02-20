@@ -109,16 +109,28 @@ defmodule Signs.Utilities.Audio do
         ) :: {[Content.Audio.t()], Signs.Realtime.t()}
   defp announce_next_trains(
          {top_src, %{headsign: same_headsign, minutes: _top_minutes} = top_msg},
-         {_bottom_src, %{headsign: same_headsign, minutes: _bottom_minutes} = _bottom_msg},
+         {bottom_src, %{headsign: same_headsign, minutes: _bottom_minutes} = bottom_msg},
          sign
        ) do
-    case Content.Audio.NextTrainCountdown.from_predictions_message(top_msg, top_src) do
-      %Content.Audio.NextTrainCountdown{} = audio ->
-        {[audio], sign}
+    {next_train_audio, sign} =
+      case Content.Audio.NextTrainCountdown.from_predictions_message(top_msg, top_src) do
+        %Content.Audio.NextTrainCountdown{} = audio ->
+          {[audio], sign}
 
-      nil ->
-        {[], sign}
-    end
+        nil ->
+          {[], sign}
+      end
+
+    {following_train_audio, sign} =
+      case Content.Audio.FollowingTrain.from_predictions_message(bottom_msg, bottom_src) do
+        %Content.Audio.FollowingTrain{} = audio ->
+          {[audio], sign}
+
+        nil ->
+          {[], sign}
+      end
+
+    {next_train_audio ++ following_train_audio, sign}
   end
 
   defp announce_next_trains({top_src, top_msg}, {bottom_src, bottom_msg}, sign) do

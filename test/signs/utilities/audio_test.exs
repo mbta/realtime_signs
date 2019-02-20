@@ -46,17 +46,17 @@ defmodule Signs.Utilities.AudioTest do
               }, ^sign} = from_sign(sign)
     end
 
-    test "Countdowns don't say second line if same headsign" do
+    test "Countdowns says 'following' if second line is same headsign" do
       sign = %{
         @sign
         | current_content_top: {@src, %Message.Predictions{headsign: "Ashmont", minutes: 3}},
           current_content_bottom: {@src, %Message.Predictions{headsign: "Ashmont", minutes: 4}}
       }
 
-      assert {
-               %Audio.NextTrainCountdown{destination: :ashmont, minutes: 3},
-               ^sign
-             } = from_sign(sign)
+      assert {{
+                %Audio.NextTrainCountdown{destination: :ashmont, minutes: 3},
+                %Audio.FollowingTrain{destination: :ashmont, minutes: 4}
+              }, ^sign} = from_sign(sign)
     end
 
     test "Countdowns use departs or arrives depending if source is terminal" do

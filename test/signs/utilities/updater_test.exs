@@ -355,7 +355,7 @@ defmodule Signs.Utilities.UpdaterTest do
       Updater.update_sign(sign, top, bottom)
 
       assert_received(
-        {:send_audio, _, %Content.Audio.TrainIsArriving{destination: :ashmont}, _dur, _start}
+        {:send_audio, _, {%Content.Audio.TrainIsArriving{destination: :ashmont}, _}, _dur, _start}
       )
     end
 
@@ -455,8 +455,8 @@ defmodule Signs.Utilities.UpdaterTest do
 
       assert_received(
         {:send_audio, _,
-         %Content.Audio.TrackChange{destination: :heath_st, track: 2, route_id: "Green-E"}, _dur,
-         _start}
+         {%Content.Audio.TrackChange{destination: :heath_st, track: 2, route_id: "Green-E"}, _},
+         _dur, _start}
       )
     end
 
