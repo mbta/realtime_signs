@@ -133,7 +133,7 @@ defmodule Engine.Predictions do
           atom,
           :ets.tab()
         ) :: DateTime.t()
-  defp download_and_insert_data(last_modified, current_time, parse_fn, url, ets_table) do
+  defp download_and_insert_data(last_modified, current_time, parse_and_update_fn, url, ets_table) do
     http_client = Application.get_env(:realtime_signs, :http_client)
     full_url = Application.get_env(:realtime_signs, url)
 
@@ -145,7 +145,7 @@ defmodule Engine.Predictions do
          ) do
       {:ok, %HTTPoison.Response{body: body, status_code: status}}
       when status >= 200 and status < 300 ->
-        parse_fn.(body, current_time, ets_table)
+        parse_and_update_fn.(body, current_time, ets_table)
         current_time
 
       {:ok, %HTTPoison.Response{}} ->
