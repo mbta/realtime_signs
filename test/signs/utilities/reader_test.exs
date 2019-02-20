@@ -233,5 +233,16 @@ defmodule Signs.Utilities.ReaderTest do
         {:send_audio, _id, %A{destination: :ashmont, minutes: 3, verb: :arrives}, _p, _t}
       )
     end
+
+    test "bumps sign's read loop if interrupted with under 120 seconds to go" do
+      sign_under = %{@sign | tick_read: 119, read_period_seconds: 20}
+      sign_over = %{@sign | tick_read: 120, read_period_seconds: 20}
+
+      new_sign_under = Reader.interrupting_read(sign_under)
+      new_sign_over = Reader.interrupting_read(sign_over)
+
+      assert new_sign_under.tick_read == 139
+      assert new_sign_over.tick_read == 120
+    end
   end
 end
