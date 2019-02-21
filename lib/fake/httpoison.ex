@@ -121,6 +121,58 @@ defmodule Fake.HTTPoison do
     {:ok, %HTTPoison.Response{status_code: 200, body: feed_message}}
   end
 
+  def mock_response("fake_trip_update2.json") do
+    feed_message =
+      %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783458_32568935",
+            "is_deleted" => false,
+            "trip_update" => %{
+              "delay" => nil,
+              "stop_time_update" => [
+                %{
+                  "arrival" => %{
+                    "delay" => nil,
+                    "time" => 1_491_570_180,
+                    "uncertainty" => nil
+                  },
+                  "departure" => nil,
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "stop_to_update",
+                  "stop_sequence" => 1
+                }
+              ],
+              "timestamp" => nil,
+              "trip" => %{
+                "direction_id" => 0,
+                "route_id" => "Mattapan",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
+              },
+              "vehicle" => %{
+                "id" => "G-10040",
+                "label" => "3260",
+                "license_plate" => nil
+              }
+            },
+            "vehicle" => nil
+          }
+        ],
+        "header" => %{
+          "gtfs_realtime_version" => "1.0",
+          "incrementality" => "FULL_DATASET",
+          "timestamp" => 1_490_783_458
+        }
+      }
+      |> Poison.encode!()
+
+    {:ok, %HTTPoison.Response{status_code: 200, body: feed_message}}
+  end
+
   def mock_response("trip_updates_304") do
     {:ok, %HTTPoison.Response{status_code: 304}}
   end
