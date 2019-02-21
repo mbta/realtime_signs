@@ -28,7 +28,7 @@ defmodule Engine.Predictions do
     end
   end
 
-  @spec init(any()) :: {:ok, any()}
+  @spec init(state) :: {:ok, state}
   def init(_) do
     schedule_update(self())
 
