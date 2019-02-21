@@ -147,8 +147,6 @@ defmodule Signs.Utilities.Audio do
           {Signs.Utilities.SourceConfig.source(), Content.Message.t()},
           Signs.Realtime.t()
         ) :: {[Content.Audio.t()], Signs.Realtime.t()}
-  defp announce_arrival({%SourceConfig{announce_arriving?: false}, _msg}, sign), do: {[], sign}
-
   defp announce_arrival({_src, msg}, sign) do
     case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
       %Content.Audio.TrainIsArriving{} = audio ->
@@ -171,8 +169,6 @@ defmodule Signs.Utilities.Audio do
 
   @spec announce_boarding({SourceConfig.source(), Content.Message.t()}, Signs.Realtime.t()) ::
           {[Content.Audio.t()], Signs.Realtime.t()}
-  defp announce_boarding({%SourceConfig{announce_boarding?: false}, _msg}, sign), do: {[], sign}
-
   defp announce_boarding({_src, msg}, sign) do
     case Content.Audio.TrainIsBoarding.from_message(msg) do
       %Content.Audio.TrainIsBoarding{} = audio ->

@@ -159,19 +159,41 @@ defmodule Signs.Utilities.AudioTest do
     end
 
     test "When one train is boarding and another is a countdown, audio is ordered correctly" do
-      src = %{@src | announce_boarding?: true}
-
       sign = %{
         @sign
         | current_content_top:
-            {src, %Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
-          current_content_bottom: {src, %Message.Predictions{headsign: "Riverside", minutes: 4}}
+            {@src, %Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
+          current_content_bottom: {@src, %Message.Predictions{headsign: "Riverside", minutes: 4}}
       }
 
       assert {{
                 %Audio.TrainIsBoarding{destination: :boston_college},
                 %Audio.NextTrainCountdown{destination: :riverside}
               }, _sign} = from_sign(sign)
+    end
+
+    test "Reads ARR on sign even if announce_arriving? is false" do
+      src = %{@src | announce_arriving?: false}
+
+      sign = %{
+        @sign
+        | current_content_top:
+            {src, %Message.Predictions{headsign: "Alewife", minutes: :arriving}}
+      }
+
+      assert {%Audio.TrainIsArriving{destination: :alewife}, _sign} = from_sign(sign)
+    end
+
+    test "Reads BRD on sign even if announce_boarding? is false" do
+      src = %{@src | announce_boarding?: false}
+
+      sign = %{
+        @sign
+        | current_content_top:
+            {src, %Message.Predictions{headsign: "Alewife", minutes: :boarding}}
+      }
+
+      assert {%Audio.TrainIsBoarding{destination: :alewife}, _sign} = from_sign(sign)
     end
   end
 end
