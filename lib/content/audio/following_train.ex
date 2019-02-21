@@ -41,6 +41,11 @@ defmodule Content.Audio.FollowingTrain do
     end
   end
 
+  def from_predictions_message(%Content.Message.Predictions{minutes: :arriving} = msg) do
+    Logger.info("could_not_read_second_line Audio.FollowingTrain #{inspect(msg)}")
+    nil
+  end
+
   def from_predictions_message(msg, _src) do
     Logger.error("message_to_audio_error Audio.FollowingTrain #{inspect(msg)}")
     nil
