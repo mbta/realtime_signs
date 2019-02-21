@@ -16,12 +16,15 @@ defmodule Content.Audio.FollowingTrain do
 
   require Logger
 
-  @spec from_predictions_message(
-          Content.Message.Predictions.t(),
-          Signs.Utilities.SourceConfig.source()
-        ) :: Content.Audio.FollowingTrain.t() | nil
-  def from_predictions_message(%Content.Message.Predictions{minutes: n, headsign: headsign}, %{
-        terminal?: terminal
+  @spec from_predictions_message({
+          Signs.Utilities.SourceConfig.source(),
+          Content.Message.Predictions.t()
+        }) :: Content.Audio.FollowingTrain.t() | nil
+  def from_predictions_message({
+        %{
+          terminal?: terminal
+        },
+        %Content.Message.Predictions{minutes: n, headsign: headsign}
       })
       when is_integer(n) do
     case PaEss.Utilities.headsign_to_terminal_station(headsign) do
@@ -41,12 +44,12 @@ defmodule Content.Audio.FollowingTrain do
     end
   end
 
-  def from_predictions_message(%Content.Message.Predictions{minutes: :arriving} = msg) do
+  def from_predictions_message({_src, %Content.Message.Predictions{minutes: :arriving} = msg}) do
     Logger.info("could_not_read_second_line Audio.FollowingTrain #{inspect(msg)}")
     nil
   end
 
-  def from_predictions_message(msg, _src) do
+  def from_predictions_message({_src, msg}) do
     Logger.error("message_to_audio_error Audio.FollowingTrain #{inspect(msg)}")
     nil
   end
