@@ -7,6 +7,7 @@ defmodule Signs.Utilities.Updater do
   """
 
   alias Signs.Utilities.Reader
+  alias Signs.Utilities.SourceConfig
   require Logger
 
   @spec update_sign(
@@ -40,7 +41,7 @@ defmodule Signs.Utilities.Updater do
         sign = %{sign | current_content_top: top}
 
         sign =
-          if should_interrupting_read?(top_msg) do
+          if should_interrupting_read?(top) do
             Reader.interrupting_read(sign)
           else
             sign
@@ -63,7 +64,7 @@ defmodule Signs.Utilities.Updater do
         sign = %{sign | current_content_bottom: bottom}
 
         sign =
-          if should_interrupting_read?(bottom_msg) do
+          if should_interrupting_read?(bottom) do
             Reader.interrupting_read(sign)
           else
             sign
@@ -91,7 +92,7 @@ defmodule Signs.Utilities.Updater do
         }
 
         sign =
-          if should_interrupting_read?(top_msg) || should_interrupting_read?(bottom_msg) do
+          if should_interrupting_read?(top) || should_interrupting_read?(bottom) do
             Reader.interrupting_read(sign)
           else
             sign
@@ -230,11 +231,26 @@ defmodule Signs.Utilities.Updater do
     sign
   end
 
-  defp should_interrupting_read?(%Content.Message.Predictions{minutes: x}) when is_integer(x) do
+  defp should_interrupting_read?({_src, %Content.Message.Predictions{minutes: x}})
+       when is_integer(x) do
     false
   end
 
-  defp should_interrupting_read?(_msg) do
+  defp should_interrupting_read?({
+         %SourceConfig{announce_arriving?: false},
+         %Content.Message.Predictions{minutes: :arriving}
+       }) do
+    false
+  end
+
+  defp should_interrupting_read?({
+         %SourceConfig{announce_boarding?: false},
+         %Content.Message.Predictions{minutes: :boarding}
+       }) do
+    false
+  end
+
+  defp should_interrupting_read?(_content) do
     true
   end
 end

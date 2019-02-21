@@ -18,27 +18,34 @@ defmodule Content.Audio.VehiclesToDestination do
 
   @spec from_headway_message(Content.Message.t(), Content.Message.t()) :: {t() | nil, t() | nil}
   def from_headway_message(
-        %Content.Message.Headways.Bottom{range: range} = msg,
-        %Content.Message.Headways.Top{headsign: dest}
+        %Content.Message.Headways.Top{headsign: dest},
+        %Content.Message.Headways.Bottom{range: range} = msg
       )
       when range != {nil, nil} do
     with {:ok, destination} <- convert_destination(dest),
          {x, y} <- get_mins(range) do
-      {create(:english, destination, x, y), create(:spanish, destination, x, y)}
+      case {create(:english, destination, x, y), create(:spanish, destination, x, y)} do
+        {nil, nil} -> nil
+        {a, nil} -> a
+        {nil, a} -> a
+        {a1, a2} -> {a1, a2}
+      end
     else
       _ ->
-        Logger.warn(
-          "Content.Audio.VehiclesToDestination.from_headway_message unable to convert headway message to audio: #{
-            inspect(msg)
-          }, #{dest}"
+        Logger.error(
+          "message_to_audio_error Audio.VehiclesToDestination: #{inspect(msg)}, #{dest}"
         )
 
-        {nil, nil}
+        nil
     end
   end
 
-  def from_headway_message(_msg, _dest) do
-    {nil, nil}
+  def from_headway_message(top, bottom) do
+    Logger.error(
+      "message_to_audio_error Audio.VehiclesToDestination: #{inspect(top)}, #{inspect(bottom)}"
+    )
+
+    nil
   end
 
   defp create(language, destination, next_mins, later_mins) do

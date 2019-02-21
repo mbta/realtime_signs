@@ -41,7 +41,8 @@ defmodule Content.Audio.FollowingTrain do
     end
   end
 
-  def from_predictions_message(_, _src) do
+  def from_predictions_message(msg, _src) do
+    Logger.error("message_to_audio_error Audio.FollowingTrain #{inspect(msg)}")
     nil
   end
 

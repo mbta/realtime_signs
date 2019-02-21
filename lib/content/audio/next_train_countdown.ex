@@ -17,66 +17,6 @@ defmodule Content.Audio.NextTrainCountdown do
         }
 
   require Logger
-  alias Signs.Utilities.SourceConfig
-
-  @spec from_predictions_message(Content.Message.t(), SourceConfig.source() | nil) :: t() | nil
-  def from_predictions_message(%Content.Message.Predictions{minutes: 1}, %{terminal?: false}) do
-    nil
-  end
-
-  def from_predictions_message(
-        %Content.Message.Predictions{minutes: n, headsign: headsign},
-        %{terminal?: true} = src
-      )
-      when is_integer(n) do
-    case PaEss.Utilities.headsign_to_terminal_station(headsign) do
-      {:ok, headsign_atom} ->
-        %__MODULE__{
-          destination: headsign_atom,
-          minutes: n,
-          verb: :departs,
-          platform: src.platform
-        }
-
-      {:error, :unknown} ->
-        Logger.warn(
-          "Content.Audio.NextTrainCountdown.from_predictions_message: unknown headsign: #{
-            headsign
-          }"
-        )
-
-        nil
-    end
-  end
-
-  def from_predictions_message(
-        %Content.Message.Predictions{minutes: n, headsign: headsign},
-        %{terminal?: false} = src
-      )
-      when is_integer(n) do
-    case PaEss.Utilities.headsign_to_terminal_station(headsign) do
-      {:ok, headsign_atom} ->
-        %__MODULE__{
-          destination: headsign_atom,
-          minutes: n,
-          verb: :arrives,
-          platform: src.platform
-        }
-
-      {:error, :unknown} ->
-        Logger.warn(
-          "Content.Audio.NextTrainCountdown.from_predictions_message: unknown headsign: #{
-            headsign
-          }"
-        )
-
-        nil
-    end
-  end
-
-  def from_predictions_message(_, _src) do
-    nil
-  end
 
   defimpl Content.Audio do
     alias PaEss.Utilities

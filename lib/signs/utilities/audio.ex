@@ -4,255 +4,188 @@ defmodule Signs.Utilities.Audio do
   two audio structs to be sent to ARINC.
   """
 
-  alias Signs.Utilities.SourceConfig
+  alias Content.Message
+  alias Content.Audio
   require Logger
 
   @spec from_sign(Signs.Realtime.t()) ::
-          nil | Content.Audio.t() | {Content.Audio.t(), Content.Audio.t()}
+          {nil | Content.Audio.t() | {Content.Audio.t(), Content.Audio.t()}, Signs.Realtime.t()}
   def from_sign(sign) do
-    {audio_list, sign} =
-      case calculate_full_sign_audio(sign) do
-        {[], sign} ->
-          calculate_multiline_audio(sign)
-
-        {audios, sign} ->
-          {audios, sign}
-      end
-
-    case audio_list do
-      [] -> {nil, sign}
-      [a] -> {a, sign}
-      [a1, a2] -> {{a1, a2}, sign}
-    end
+    {get_audio(sign.current_content_top, sign.current_content_bottom), sign}
   end
 
-  @spec calculate_full_sign_audio(Signs.Realtime.t()) :: {[Content.Audio.t()], Signs.Realtime.t()}
-  defp calculate_full_sign_audio(sign) do
-    {_top_src, top_msg} = sign.current_content_top
-    {_bottom_src, bottom_msg} = sign.current_content_bottom
-
-    {closed_audio, sign} = announce_closure(top_msg, bottom_msg, sign)
-    {custom_audio, sign} = announce_custom_audio(top_msg, bottom_msg, sign)
-    {headway_audio, sign} = announce_headways(top_msg, bottom_msg, sign)
-
-    audios = closed_audio ++ custom_audio ++ headway_audio
-    {audios, sign}
-  end
-
-  @spec calculate_multiline_audio(Signs.Realtime.t()) :: {[Content.Audio.t()], Signs.Realtime.t()}
-  defp calculate_multiline_audio(sign) do
-    {_top_src, top_msg} = sign.current_content_top
-    {_bottom_src, bottom_msg} = sign.current_content_bottom
-
-    {stopped_audio, sign} = announce_stopped_train(top_msg, sign)
-
-    {track_change_top_audio, _sign} = announce_track_change(top_msg, sign)
-    {track_change_bottom_audio, _sign} = announce_track_change(bottom_msg, sign)
-
-    {multi_source_boarding_audio, sign} =
-      if SourceConfig.multi_source?(sign.source_config) do
-        {top_audio, sign} =
-          if track_change_top_audio == [] do
-            announce_boarding(sign.current_content_top, sign)
-          else
-            {[], sign}
-          end
-
-        {bottom_audio, sign} =
-          if track_change_bottom_audio == [] do
-            announce_boarding(sign.current_content_bottom, sign)
-          else
-            {[], sign}
-          end
-
-        {bottom_stopped_audio, sign} = announce_stopped_train(bottom_msg, sign)
-        {top_audio ++ bottom_audio ++ bottom_stopped_audio, sign}
-      else
-        {[], sign}
-      end
-
-    {boarding_top_audio, sign} =
-      if track_change_top_audio == [] do
-        announce_boarding(sign.current_content_top, sign)
-      else
-        {[], sign}
-      end
-
-    {boarding_bottom_audio, sign} =
-      if track_change_bottom_audio == [] do
-        announce_boarding(sign.current_content_bottom, sign)
-      else
-        {[], sign}
-      end
-
-    {arrival_top_audio, sign} = announce_arrival(sign.current_content_top, sign)
-    {arrival_bottom_audio, sign} = announce_arrival(sign.current_content_bottom, sign)
-
-    {next_train_audio, sign} =
-      announce_next_trains(sign.current_content_top, sign.current_content_bottom, sign)
-
-    audios =
-      boarding_top_audio ++
-        track_change_top_audio ++
-        boarding_bottom_audio ++
-        track_change_bottom_audio ++
-        multi_source_boarding_audio ++
-        arrival_top_audio ++ arrival_bottom_audio ++ stopped_audio ++ next_train_audio
-
-    {audios, sign}
-  end
-
-  @spec announce_next_trains(
-          {Signs.Utilities.SourceConfig.source(), Content.Message.t()},
-          {Signs.Utilities.SourceConfig.source(), Content.Message.t()},
-          Signs.Realtime.t()
-        ) :: {[Content.Audio.t()], Signs.Realtime.t()}
-  defp announce_next_trains(
-         {top_src, %{headsign: same_headsign, minutes: _top_minutes} = top_msg},
-         {_bottom_src, %{headsign: same_headsign, minutes: _bottom_minutes} = _bottom_msg},
-         sign
+  @spec get_audio(Signs.Realtime.line_content(), Signs.Realtime.line_content()) ::
+          nil | Content.Audio.t() | {Content.Audio.t(), Content.Audio.t()}
+  defp get_audio(
+         {_, %Message.Alert.NoService{} = top},
+         {_, bottom}
        ) do
-    case Content.Audio.NextTrainCountdown.from_predictions_message(top_msg, top_src) do
-      %Content.Audio.NextTrainCountdown{} = audio ->
-        {[audio], sign}
-
-      nil ->
-        {[], sign}
-    end
+    Audio.Closure.from_messages(top, bottom)
   end
 
-  defp announce_next_trains({top_src, top_msg}, {bottom_src, bottom_msg}, sign) do
-    {top_audio, sign} =
-      case Content.Audio.NextTrainCountdown.from_predictions_message(top_msg, top_src) do
-        %Content.Audio.NextTrainCountdown{} = audio ->
-          {[audio], sign}
+  defp get_audio(
+         {_, %Message.Custom{} = top},
+         {_, bottom}
+       ) do
+    Audio.Custom.from_messages(top, bottom)
+  end
 
+  defp get_audio(
+         {_, %Message.Headways.Top{} = top},
+         {_, bottom}
+       ) do
+    Audio.VehiclesToDestination.from_headway_message(top, bottom)
+  end
+
+  defp get_audio(
+         {_, %Message.Predictions{headsign: same}} = content_top,
+         {bottom_src, %Message.Predictions{headsign: same} = bottom}
+       ) do
+    top_audio = Audio.Predictions.from_sign_content(content_top)
+
+    if top_audio do
+      case Audio.FollowingTrain.from_predictions_message(bottom, bottom_src) do
         nil ->
-          {[], sign}
-      end
+          top_audio
 
-    {bottom_audio, sign} =
-      case Content.Audio.NextTrainCountdown.from_predictions_message(bottom_msg, bottom_src) do
-        %Content.Audio.NextTrainCountdown{} = audio ->
-          {[audio], sign}
-
-        nil ->
-          {[], sign}
-      end
-
-    {top_audio ++ bottom_audio, sign}
-  end
-
-  @spec announce_arrival(
-          {Signs.Utilities.SourceConfig.source(), Content.Message.t()},
-          Signs.Realtime.t()
-        ) :: {[Content.Audio.t()], Signs.Realtime.t()}
-  defp announce_arrival({_src, msg}, sign) do
-    case Content.Audio.TrainIsArriving.from_predictions_message(msg) do
-      %Content.Audio.TrainIsArriving{} = audio ->
-        if MapSet.member?(sign.announced_arrivals, audio.destination) do
-          unless match?(%Content.Message.Predictions{minutes: :boarding}, msg) do
-            # Not a warning if ARR -> BRD
-            Logger.info("skipping_arriving_audio #{inspect(audio)} #{inspect(sign)}")
-          end
-
-          {[], sign}
-        else
-          {[audio],
-           %{sign | announced_arrivals: MapSet.put(sign.announced_arrivals, audio.destination)}}
-        end
-
-      nil ->
-        {[], sign}
-    end
-  end
-
-  @spec announce_boarding({SourceConfig.source(), Content.Message.t()}, Signs.Realtime.t()) ::
-          {[Content.Audio.t()], Signs.Realtime.t()}
-  defp announce_boarding({_src, msg}, sign) do
-    case Content.Audio.TrainIsBoarding.from_message(msg) do
-      %Content.Audio.TrainIsBoarding{} = audio ->
-        {[audio], sign}
-
-      nil ->
-        {[], sign}
-    end
-  end
-
-  @spec announce_stopped_train(Content.Message.t(), Signs.Realtime.t()) ::
-          {[Content.Audio.t()], Signs.Realtime.t()}
-  defp announce_stopped_train(msg, sign) do
-    case Content.Audio.StoppedTrain.from_message(msg) do
-      %Content.Audio.StoppedTrain{} = audio ->
-        {[audio], sign}
-
-      nil ->
-        {[], sign}
-    end
-  end
-
-  @spec announce_track_change(Content.Message.t(), Signs.Realtime.t()) ::
-          {[Content.Audio.t()], Signs.Realtime.t()}
-  defp announce_track_change(msg, sign) do
-    case Content.Audio.TrackChange.from_message(msg) do
-      %Content.Audio.TrackChange{} = audio ->
-        {[audio], sign}
-
-      nil ->
-        {[], sign}
-    end
-  end
-
-  @spec announce_closure(Content.Message.t(), Content.Message.t(), Signs.Realtime.t()) ::
-          {[Content.Audio.t()], Signs.Realtime.t()}
-  defp announce_closure(top_msg, bottom_msg, sign) do
-    case Content.Audio.Closure.from_messages(
-           top_msg,
-           bottom_msg
-         ) do
-      %Content.Audio.Closure{} = audio ->
-        {[audio], sign}
-
-      nil ->
-        {[], sign}
-    end
-  end
-
-  @spec announce_custom_audio(Content.Message.t(), Content.Message.t(), Signs.Realtime.t()) ::
-          {[Content.Audio.t()], Signs.Realtime.t()}
-  defp announce_custom_audio(top_msg, bottom_msg, sign) do
-    if Application.get_env(:realtime_signs, :static_text_enabled?) do
-      case Content.Audio.Custom.from_messages(
-             top_msg,
-             bottom_msg
-           ) do
-        %Content.Audio.Custom{} = audio ->
-          {[audio], sign}
-
-        nil ->
-          {[], sign}
+        bottom_audio ->
+          {top_audio, bottom_audio}
       end
     else
-      {[], sign}
+      Logger.error(
+        "message_to_audio_error Utilities.Audio same_headsign #{inspect(content_top)}, #{
+          inspect(bottom)
+        }"
+      )
+
+      nil
     end
   end
 
-  @spec announce_headways(Content.Message.t(), Content.Message.t(), Signs.Realtime.t()) ::
-          {[Content.Audio.t()], Signs.Realtime.t()}
-  defp announce_headways(top_msg, bottom_msg, sign) do
-    case Content.Audio.VehiclesToDestination.from_headway_message(
-           bottom_msg,
-           top_msg
-         ) do
-      {%Content.Audio.VehiclesToDestination{language: :english} = english_audio,
-       %Content.Audio.VehiclesToDestination{language: :spanish} = spanish_audio} ->
-        {[english_audio, spanish_audio], sign}
-
-      {%Content.Audio.VehiclesToDestination{} = english_audio, nil} ->
-        {[english_audio], sign}
-
-      {nil, nil} ->
-        {[], sign}
-    end
+  defp get_audio(
+         {_, %Message.StoppedTrain{headsign: same} = top},
+         {_, %Message.StoppedTrain{headsign: same}}
+       ) do
+    Audio.StoppedTrain.from_message(top)
   end
+
+  defp get_audio(
+         {_, %Message.StoppedTrain{headsign: same} = top},
+         {_, %Message.Predictions{headsign: same}}
+       ) do
+    Audio.StoppedTrain.from_message(top)
+  end
+
+  defp get_audio(
+         {_, %Message.Predictions{headsign: same}} = top_content,
+         {_, %Message.StoppedTrain{headsign: same}}
+       ) do
+    Audio.Predictions.from_sign_content(top_content)
+  end
+
+  defp get_audio(top, bottom) do
+    top_audio = get_audio_for_line(top)
+    bottom_audio = get_audio_for_line(bottom)
+    normalize(top_audio, bottom_audio)
+  end
+
+  # defp get_audio(
+  #        {_, %Message.StoppedTrain{} = top},
+  #        {_, %Message.StoppedTrain{} = bottom}
+  #      ) do
+  #   top_audio = Audio.StoppedTrain.from_message(top)
+  #   bottom_audio = Audio.StoppedTrain.from_message(bottom)
+  #   normalize(top_audio, bottom_audio)
+  # end
+
+  # defp get_audio(
+  #        {_, %Message.Predictions{}} = top_content,
+  #        {_, %Message.StoppedTrain{} = bottom}
+  #      ) do
+  #   top_audio = Audio.Predictions.from_sign_content(top_content)
+  #   bottom_audio = Audio.StoppedTrain.from_message(bottom)
+  #   normalize(top_audio, bottom_audio)
+  # end
+
+  # defp get_audio(
+  #        {_, %Message.Predictions{}} = top_content,
+  #        {_, %Message.Predictions{}} = bottom_content
+  #      ) do
+  #   top_audio = Audio.Predictions.from_sign_content(top_content)
+  #   bottom_audio = Audio.Predictions.from_sign_content(bottom_content)
+  #   normalize(top_audio, bottom_audio)
+  # end
+
+  # defp get_audio(
+  #        {_, %Message.StoppedTrain{}},
+  #        {_, %Message.Predictions{}}
+  #      ) do
+  # end
+
+  # defp get_audio(
+  #        {_, %Message.Empty{}},
+  #        {_, %Message.Predictions{}} = content
+  #      ) do
+  #   Audio.Predictions.from_sign_content(content)
+  # end
+
+  # defp get_audio(
+  #        {_, %Message.Empty{}},
+  #        {_, %Message.StoppedTrain{} = message}
+  #      ) do
+  #   Audio.StoppedTrain.from_message(message)
+  # end
+
+  # defp get_audio(
+  #        {_, %Message.Predictions{}} = content,
+  #        {_, %Message.Empty{}}
+  #      ) do
+  #   Audio.Predictions.from_sign_content(content)
+  # end
+
+  # defp get_audio(
+  #        {_, %Message.StoppedTrain{} = message},
+  #        {_, %Message.Empty{}}
+  #      ) do
+  #   Audio.StoppedTrain.from_message(message)
+  # end
+
+  # defp get_audio(
+  #        {_, %Message.Empty{}},
+  #        {_, %Message.Empty{}}
+  #      ) do
+  #   nil
+  # end
+
+  # defp get_audio(top_content, bottom_content) do
+  #   Logger.error(
+  #     "message_to_audio_error Utilities.Audio no match: #{inspect(top_content)} #{
+  #       inspect(bottom_content)
+  #     }"
+  #   )
+
+  #   nil
+  # end
+
+  defp get_audio_for_line({_, %Message.StoppedTrain{} = message}) do
+    Audio.StoppedTrain.from_message(message)
+  end
+
+  defp get_audio_for_line({_, %Message.Predictions{}} = content) do
+    Audio.Predictions.from_sign_content(content)
+  end
+
+  defp get_audio_for_line({_, %Message.Empty{}}) do
+    nil
+  end
+
+  defp get_audio_for_line(content) do
+    Logger.error("message_to_audio_error Utilities.Audio unknown_line #{inspect(content)}")
+    nil
+  end
+
+  defp normalize(nil, nil), do: nil
+  defp normalize(nil, a), do: a
+  defp normalize(a, nil), do: a
+  defp normalize(a1, a2), do: {a1, a2}
 end
