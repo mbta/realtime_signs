@@ -4621,6 +4621,16 @@
           "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
+        },
+	{
+          "stop_id": "71150",
+          "direction_id": 1,
+          "headway_direction_name": "Eastbound",
+          "routes": ["Green-B"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
         }
       ]
     ]
@@ -4634,6 +4644,16 @@
       [
         {
           "stop_id": "70151",
+          "direction_id": 0,
+          "headway_direction_name": "Westbound",
+          "routes": ["Green-B"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "71151",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
           "routes": ["Green-B"],
@@ -4701,11 +4721,31 @@
           "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
+        },
+	{
+          "stop_id": "71150",
+          "direction_id": 1,
+          "headway_direction_name": "Eastbound",
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
         }
       ],
       [
         {
           "stop_id": "70151",
+          "direction_id": 0,
+          "headway_direction_name": "Westbound",
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "71151",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
           "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
@@ -5060,6 +5100,16 @@
     "type": "realtime",
     "source_config": [
       [
+	{
+          "stop_id": "71199",
+          "direction_id": 1,
+          "headway_direction_name": "Eastbound",
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+	},
         {
           "stop_id": "70200",
           "direction_id": 1,
@@ -5080,6 +5130,16 @@
     "type": "realtime",
     "source_config": [
       [
+	{
+          "stop_id": "71199",
+          "direction_id": 1,
+          "headway_direction_name": "Eastbound",
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+	},
         {
           "stop_id": "70200",
           "direction_id": 1,
@@ -5174,6 +5234,16 @@
           "terminal": false,
           "announce_arriving": false,
           "announce_boarding": true
+        },
+	{
+          "stop_id": "Government Center-Brattle",
+          "direction_id": 1,
+          "headway_direction_name": "Eastbound",
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false,
+          "announce_boarding": true
         }
       ]
     ]
@@ -5207,6 +5277,16 @@
       [
         {
           "stop_id": "70201",
+          "direction_id": 1,
+          "headway_direction_name": "Eastbound",
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        },
+	{
+          "stop_id": "Government Center-Brattle",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
           "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
