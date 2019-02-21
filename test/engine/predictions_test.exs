@@ -31,7 +31,7 @@ defmodule Engine.PredictionsTest do
         Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
-      existing_state = {~N[2017-07-04 09:05:00], ~N[2017-07-04 09:05:00]}
+      existing_state = {~N[2017-07-04 09:05:00]}
 
       log =
         capture_log([level: :warn], fn ->
@@ -54,7 +54,7 @@ defmodule Engine.PredictionsTest do
         Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
-      existing_state = {~N[2017-07-04 09:05:00], ~N[2017-07-04 09:05:00]}
+      existing_state = {~N[2017-07-04 09:05:00]}
 
       predictions_table =
         :ets.new(:test_vehicle_predictions, [
@@ -64,15 +64,12 @@ defmodule Engine.PredictionsTest do
           read_concurrency: true
         ])
 
-      positions_table =
-        :ets.new(:test_vehicle_positions, [:set, :protected, :named_table, read_concurrency: true])
-
       :ets.insert(predictions_table, [
         {{"stop_to_remove", 0}, true},
         {{"stop_to_update", 0}, true}
       ])
 
-      handle_info(:update, existing_state, predictions_table, positions_table)
+      handle_info(:update, existing_state, predictions_table)
 
       assert :ets.info(predictions_table)[:size] == 2
       [{{"stop_to_remove", 0}, :none}] = :ets.lookup(predictions_table, {"stop_to_remove", 0})
@@ -108,17 +105,6 @@ defmodule Engine.PredictionsTest do
       assert for_stop(table_id, "stop_1", 1) == [prediction]
       assert for_stop(table_id, "overwritten_stop", 1) == []
       assert for_stop(table_id, "no_entry", 0) == []
-    end
-  end
-
-  describe "stopped_at?/1" do
-    test "returns true when vehicle is boarding" do
-      table_id =
-        :ets.new(:predictions_engine_positions, [:set, :protected, read_concurrency: true])
-
-      :ets.insert(table_id, [{"stop_1", true}])
-      assert stopped_at?(table_id, "stop_1")
-      refute stopped_at?(table_id, "stop_2")
     end
   end
 end

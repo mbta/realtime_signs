@@ -11,7 +11,6 @@ defmodule Engine.Predictions do
   require Logger
 
   @predictions_table :vehicle_predictions
-  @positions_table :vehicle_positions
 
   def start_link do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -27,15 +26,6 @@ defmodule Engine.Predictions do
     end
   end
 
-  @doc "determines if this stop is currently boarding"
-  @spec stopped_at?(String.t()) :: boolean()
-  def stopped_at?(positions_table_id \\ @positions_table, gtfs_stop_id) do
-    case :ets.lookup(positions_table_id, gtfs_stop_id) do
-      [{^gtfs_stop_id, true}] -> true
-      _ -> false
-    end
-  end
-
   @spec init(any()) :: {:ok, any()}
   def init(_) do
     schedule_update(self())
@@ -43,28 +33,14 @@ defmodule Engine.Predictions do
     @predictions_table =
       :ets.new(@predictions_table, [:set, :protected, :named_table, read_concurrency: true])
 
-    @positions_table =
-      :ets.new(@positions_table, [:set, :protected, :named_table, read_concurrency: true])
-
-    {:ok, {Timex.now(), Timex.now()}}
+    {:ok, {Timex.now()}}
   end
 
-  @spec handle_info(atom, {DateTime.t(), DateTime.t()}, :ets.tab(), :ets.tab()) ::
-          {:noreply, {DateTime.t(), DateTime.t()}}
+  @spec handle_info(atom, {DateTime.t()}, :ets.tab()) :: {:noreply, {DateTime.t()}}
 
-  def handle_info(
-        msg,
-        state,
-        predictions_table \\ @predictions_table,
-        positions_table \\ @positions_table
-      )
+  def handle_info(msg, state, predictions_table \\ @predictions_table)
 
-  def handle_info(
-        :update,
-        {last_modified_predictions, last_modified_positions},
-        predictions_table,
-        positions_table
-      ) do
+  def handle_info(:update, {last_modified_predictions}, predictions_table) do
     schedule_update(self())
     current_time = Timex.now()
 
@@ -77,19 +53,10 @@ defmodule Engine.Predictions do
         predictions_table
       )
 
-    last_modified_positions =
-      download_and_insert_data(
-        last_modified_positions,
-        current_time,
-        &update_positions/3,
-        :vehicle_positions_url,
-        positions_table
-      )
-
-    {:noreply, {last_modified_predictions, last_modified_positions}}
+    {:noreply, {last_modified_predictions}}
   end
 
-  def handle_info(msg, state, _, _) do
+  def handle_info(msg, state, _) do
     Logger.warn("#{__MODULE__} unknown message: #{inspect(msg)}")
     {:noreply, state}
   end
@@ -113,17 +80,6 @@ defmodule Engine.Predictions do
 
     all_predictions = Map.merge(existing_predictions, new_predictions)
     :ets.insert(predictions_table, Enum.into(all_predictions, []))
-  end
-
-  @spec update_positions(any(), DateTime.t(), :ets.tab()) :: true
-  defp update_positions(body, _current_time, positions_table) do
-    new_positions =
-      body
-      |> Positions.Positions.parse_json_response()
-      |> Positions.Positions.get_stopped()
-
-    :ets.delete_all_objects(positions_table)
-    :ets.insert(positions_table, new_positions)
   end
 
   @spec download_and_insert_data(
