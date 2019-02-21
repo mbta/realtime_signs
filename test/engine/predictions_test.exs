@@ -15,7 +15,7 @@ defmodule Engine.PredictionsTest do
         Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
-      existing_state = {~N[2017-07-04 09:05:00], ~N[2017-07-04 09:05:00]}
+      existing_state = ~N[2017-07-04 09:05:00]
       {:noreply, updated_state} = handle_info(:update, existing_state)
       assert updated_state == existing_state
     end
@@ -31,7 +31,7 @@ defmodule Engine.PredictionsTest do
         Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
-      existing_state = {~N[2017-07-04 09:05:00]}
+      existing_state = ~N[2017-07-04 09:05:00]
 
       log =
         capture_log([level: :warn], fn ->
@@ -54,7 +54,7 @@ defmodule Engine.PredictionsTest do
         Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
-      existing_state = {~N[2017-07-04 09:05:00]}
+      existing_state = ~N[2017-07-04 09:05:00]
 
       predictions_table =
         :ets.new(:test_vehicle_predictions, [
@@ -79,7 +79,7 @@ defmodule Engine.PredictionsTest do
     end
 
     test "logs a warning on any message but :update" do
-      existing_state = {~N[2017-07-04 09:05:00], ~N[2017-07-04 09:05:00]}
+      existing_state = ~N[2017-07-04 09:05:00]
 
       log =
         capture_log([level: :warn], fn ->

@@ -10,6 +10,8 @@ defmodule Engine.Predictions do
   use GenServer
   require Logger
 
+  @type state :: DateTime.t()
+
   @predictions_table :vehicle_predictions
 
   def start_link do
@@ -33,14 +35,14 @@ defmodule Engine.Predictions do
     @predictions_table =
       :ets.new(@predictions_table, [:set, :protected, :named_table, read_concurrency: true])
 
-    {:ok, {Timex.now()}}
+    {:ok, Timex.now()}
   end
 
-  @spec handle_info(atom, {DateTime.t()}, :ets.tab()) :: {:noreply, {DateTime.t()}}
+  @spec handle_info(atom, state, :ets.tab()) :: {:noreply, state}
 
   def handle_info(msg, state, predictions_table \\ @predictions_table)
 
-  def handle_info(:update, {last_modified_predictions}, predictions_table) do
+  def handle_info(:update, last_modified_predictions, predictions_table) do
     schedule_update(self())
     current_time = Timex.now()
 
@@ -53,7 +55,7 @@ defmodule Engine.Predictions do
         predictions_table
       )
 
-    {:noreply, {last_modified_predictions}}
+    {:noreply, last_modified_predictions}
   end
 
   def handle_info(msg, state, _) do
