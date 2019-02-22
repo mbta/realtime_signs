@@ -16,7 +16,7 @@ defmodule Content.Audio.VehiclesToDestination do
           later_trip_mins: integer()
         }
 
-  @spec from_headway_message(Content.Message.t(), Content.Message.t()) :: {t() | nil, t() | nil}
+  @spec from_headway_message(Content.Message.t(), Content.Message.t()) :: t() | {t(), t()} | nil
   def from_headway_message(
         %Content.Message.Headways.Top{headsign: dest},
         %Content.Message.Headways.Bottom{range: range} = msg

@@ -6,7 +6,47 @@ defmodule Signs.Utilities.Audio do
 
   alias Content.Message
   alias Content.Audio
+  alias Signs.Utilities.SourceConfig
   require Logger
+
+  @doc "Takes a changed line, and returns if it should read immediately"
+  @spec should_interrupting_read?(Signs.Realtime.line_content(), :top | :bottom) :: boolean()
+  def should_interrupting_read?({_src, %Content.Message.Predictions{minutes: x}}, _line)
+      when is_integer(x) do
+    false
+  end
+
+  def should_interrupting_read?(
+        {
+          %SourceConfig{announce_arriving?: false},
+          %Content.Message.Predictions{minutes: :arriving}
+        },
+        _line
+      ) do
+    false
+  end
+
+  def should_interrupting_read?(
+        {
+          %SourceConfig{announce_boarding?: false},
+          %Content.Message.Predictions{minutes: :boarding}
+        },
+        _line
+      ) do
+    false
+  end
+
+  def should_interrupting_read?({_, %Content.Message.Empty{}}, _line) do
+    false
+  end
+
+  def should_interrupting_read?({_, %Content.Message.StoppedTrain{}}, :bottom) do
+    false
+  end
+
+  def should_interrupting_read?(_content, _line) do
+    true
+  end
 
   @spec from_sign(Signs.Realtime.t()) ::
           {nil | Content.Audio.t() | {Content.Audio.t(), Content.Audio.t()}, Signs.Realtime.t()}
@@ -44,13 +84,8 @@ defmodule Signs.Utilities.Audio do
     top_audio = Audio.Predictions.from_sign_content(content_top)
 
     if top_audio do
-      case Audio.FollowingTrain.from_predictions_message(content_bottom) do
-        nil ->
-          top_audio
-
-        bottom_audio ->
-          {top_audio, bottom_audio}
-      end
+      bottom_audio = Audio.FollowingTrain.from_predictions_message(content_bottom)
+      {top_audio, bottom_audio}
     else
       Logger.error(
         "message_to_audio_error Utilities.Audio same_headsign #{inspect(content_top)}, #{

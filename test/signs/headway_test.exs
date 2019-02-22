@@ -389,21 +389,16 @@ defmodule Signs.HeadwayTest do
       assert_received(
         {:send_audio,
          {{"ABCD", "n"},
-          %Content.Audio.VehiclesToDestination{
-            next_trip_mins: 10,
-            later_trip_mins: 12,
-            language: :english
-          }, 5, 120}}
-      )
-
-      assert_received(
-        {:send_audio,
-         {{"ABCD", "n"},
-          %Content.Audio.VehiclesToDestination{
-            next_trip_mins: 10,
-            later_trip_mins: 12,
-            language: :spanish
-          }, 5, 120}}
+          {%Content.Audio.VehiclesToDestination{
+             next_trip_mins: 10,
+             later_trip_mins: 12,
+             language: :english
+           },
+           %Content.Audio.VehiclesToDestination{
+             next_trip_mins: 10,
+             later_trip_mins: 12,
+             language: :spanish
+           }}, 5, 120}}
       )
     end
 
@@ -476,7 +471,9 @@ defmodule Signs.HeadwayTest do
 
       assert_received(
         {:send_audio,
-         {{"ABCD", "n"}, %Content.Audio.VehiclesToDestination{language: :english}, 5, 120}}
+         {{"ABCD", "n"},
+          {%Content.Audio.VehiclesToDestination{language: :english},
+           %Content.Audio.VehiclesToDestination{language: :spanish}}, 5, 120}}
       )
 
       :timer.sleep(5)
@@ -490,7 +487,9 @@ defmodule Signs.HeadwayTest do
 
       assert_received(
         {:send_audio,
-         {{"ABCD", "n"}, %Content.Audio.VehiclesToDestination{language: :english}, 5, 120}}
+         {{"ABCD", "n"},
+          {%Content.Audio.VehiclesToDestination{language: :english},
+           %Content.Audio.VehiclesToDestination{language: :spanish}}, 5, 120}}
       )
     end
   end

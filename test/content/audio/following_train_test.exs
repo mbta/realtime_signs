@@ -18,10 +18,12 @@ defmodule Content.Audio.FollowingTrainTest do
 
       log =
         capture_log([level: :warn], fn ->
-          assert Content.Audio.FollowingTrain.from_predictions_message(message, %{
-                   terminal?: false,
-                   platform: nil
-                 }) == nil
+          assert Content.Audio.FollowingTrain.from_predictions_message(
+                   {%{
+                      terminal?: false,
+                      platform: nil
+                    }, message}
+                 ) == nil
         end)
 
       assert log =~ "unknown headsign"
@@ -32,10 +34,12 @@ defmodule Content.Audio.FollowingTrainTest do
 
       log =
         capture_log([level: :warn], fn ->
-          assert Content.Audio.FollowingTrain.from_predictions_message(message, %{
-                   terminal?: true,
-                   platform: nil
-                 }) == nil
+          assert Content.Audio.FollowingTrain.from_predictions_message(
+                   {%{
+                      terminal?: true,
+                      platform: nil
+                    }, message}
+                 ) == nil
         end)
 
       assert log =~ "unknown headsign"
@@ -45,10 +49,12 @@ defmodule Content.Audio.FollowingTrainTest do
       message = %Content.Message.Predictions{headsign: "Ashmont", minutes: 5}
 
       audio =
-        Content.Audio.FollowingTrain.from_predictions_message(message, %{
-          terminal?: false,
-          platform: nil
-        })
+        Content.Audio.FollowingTrain.from_predictions_message(
+          {%{
+             terminal?: false,
+             platform: nil
+           }, message}
+        )
 
       assert audio == %Content.Audio.FollowingTrain{
                destination: :ashmont,
@@ -61,10 +67,12 @@ defmodule Content.Audio.FollowingTrainTest do
       message = %Content.Message.Predictions{headsign: "Ashmont", minutes: 5}
 
       audio =
-        Content.Audio.FollowingTrain.from_predictions_message(message, %{
-          terminal?: true,
-          platform: nil
-        })
+        Content.Audio.FollowingTrain.from_predictions_message(
+          {%{
+             terminal?: true,
+             platform: nil
+           }, message}
+        )
 
       assert audio == %Content.Audio.FollowingTrain{
                destination: :ashmont,

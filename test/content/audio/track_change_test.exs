@@ -24,43 +24,4 @@ defmodule Content.Audio.TrackChangeTest do
                {"109", ["540", "501", "539", "507", "4204", "544", "541"], :audio_visual}
     end
   end
-
-  describe "from_message/1" do
-    test "when a prediction is on the wrong track and is boarding, makes the announcement" do
-      prediction = %Content.Message.Predictions{
-        stop_id: "70199",
-        minutes: :boarding,
-        route_id: "Green-D",
-        headsign: "Reservoir"
-      }
-
-      assert Content.Audio.TrackChange.from_message(prediction) == %Content.Audio.TrackChange{
-               destination: :reservoir,
-               route_id: "Green-D",
-               track: 1
-             }
-    end
-
-    test "when a prediction is on the wrong track and is not boarding, does not make the announcement" do
-      prediction = %Content.Message.Predictions{
-        stop_id: "70199",
-        minutes: :arriving,
-        route_id: "Green-D",
-        headsign: "Reservoir"
-      }
-
-      assert Content.Audio.TrackChange.from_message(prediction) == nil
-    end
-
-    test "when a prediction is on the right track, is nil" do
-      prediction = %Content.Message.Predictions{
-        stop_id: "70199",
-        minutes: :boarding,
-        route_id: "Green-C",
-        headsign: "Clvlnd Cir"
-      }
-
-      assert Content.Audio.TrackChange.from_message(prediction) == nil
-    end
-  end
 end
