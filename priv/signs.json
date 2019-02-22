@@ -4243,19 +4243,41 @@
     "id": "riverside_track_1",
     "pa_ess_loc": "GRIV",
     "pa_ess_zone": "e",
-    "headsign": "Govt Ctr",
-    "gtfs_stop_id": "70160",
-    "route_id": "Green-D",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70160",
+          "direction_id": 1,
+          "headway_direction_name": "Govt Ctr",
+          "routes": ["Green-D"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "riverside_track_2",
     "pa_ess_loc": "GRIV",
     "pa_ess_zone": "w",
-    "headsign": "Govt Ctr",
-    "gtfs_stop_id": "70160",
-    "route_id": "Green-D",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70160",
+          "direction_id": 1,
+          "headway_direction_name": "Govt Ctr",
+          "routes": ["Green-D"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "woodland_eastbound",
@@ -4281,10 +4303,21 @@
     "id": "woodland_westbound",
     "pa_ess_loc": "GWOO",
     "pa_ess_zone": "w",
-    "headsign": "Riverside",
-    "route_id": "Green-D",
-    "gtfs_stop_id": "70163",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70163",
+          "direction_id": 0,
+          "headway_direction_name": "Riverside",
+          "routes": ["Green-D"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "waban_eastbound",
@@ -4310,10 +4343,21 @@
     "id": "waban_westbound",
     "pa_ess_loc": "GWAB",
     "pa_ess_zone": "w",
-    "headsign": "Riverside",
-    "route_id": "Green-D",
-    "gtfs_stop_id": "70165",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70165",
+          "direction_id": 0,
+          "headway_direction_name": "Riverside",
+          "routes": ["Green-D"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "eliot_eastbound",
@@ -4339,10 +4383,21 @@
     "id": "eliot_westbound",
     "pa_ess_loc": "GELI",
     "pa_ess_zone": "w",
-    "headsign": "Riverside",
-    "route_id": "Green-D",
-    "gtfs_stop_id": "70167",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70167",
+          "direction_id": 0,
+          "headway_direction_name": "Riverside",
+          "routes": ["Green-D"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "newton_highlands_eastbound",
@@ -4368,10 +4423,21 @@
     "id": "newton_highlands_westbound",
     "pa_ess_loc": "GNEH",
     "pa_ess_zone": "w",
-    "headsign": "Riverside",
-    "route_id": "Green-D",
-    "gtfs_stop_id": "70169",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70169",
+          "direction_id": 0,
+          "headway_direction_name": "Riverside",
+          "routes": ["Green-D"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "newton_centre_eastbound",
@@ -4397,19 +4463,41 @@
     "id": "newton_centre_westbound",
     "pa_ess_loc": "GNEC",
     "pa_ess_zone": "w",
-    "headsign": "Riverside",
-    "route_id": "Green-D",
-    "gtfs_stop_id": "70171",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70171",
+          "direction_id": 0,
+          "headway_direction_name": "Riverside",
+          "routes": ["Green-D"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "chestnut_hill_eastbound",
     "pa_ess_loc": "GCHE",
     "pa_ess_zone": "e",
-    "headsign": "Govt Ctr",
-    "route_id": "Green-D",
-    "gtfs_stop_id": "70172",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70172",
+          "direction_id": 1,
+          "headway_direction_name": "Govt Ctr",
+          "routes": ["Green-D"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "chestnut_hill_westbound",
@@ -4435,10 +4523,21 @@
     "id": "reservoir_eastbound",
     "pa_ess_loc": "GRES",
     "pa_ess_zone": "e",
-    "headsign": "Govt Ctr",
-    "route_id": "Green-D",
-    "gtfs_stop_id": "70174",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70174",
+          "direction_id": 1,
+          "headway_direction_name": "Govt Ctr",
+          "routes": ["Green-D"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "reservoir_westbound",
@@ -4464,10 +4563,21 @@
     "id": "beaconsfield_eastbound",
     "pa_ess_loc": "GBEA",
     "pa_ess_zone": "e",
-    "route_id": "Green-D",
-    "headsign": "Govt Ctr",
-    "gtfs_stop_id": "70176",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70176",
+          "direction_id": 1,
+          "headway_direction_name": "Govt Ctr",
+          "routes": ["Green-D"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "beaconsfield_westbound",
@@ -4493,10 +4603,21 @@
     "id": "brookline_hills_eastbound",
     "pa_ess_loc": "GBRH",
     "pa_ess_zone": "e",
-    "route_id": "Green-D",
-    "gtfs_stop_id": "70178",
-    "headsign": "Govt Ctr",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70178",
+          "direction_id": 1,
+          "headway_direction_name": "Govt Ctr",
+          "routes": ["Green-D"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "brookline_hills_westbound",
@@ -4522,10 +4643,21 @@
     "id": "brookline_village_eastbound",
     "pa_ess_loc": "GBRV",
     "pa_ess_zone": "e",
-    "headsign": "Govt Ctr",
-    "gtfs_stop_id": "70180",
-    "route_id": "Green-D",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70180",
+          "direction_id": 1,
+          "headway_direction_name": "Govt Ctr",
+          "routes": ["Green-D"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "brookline_village_westbound",
@@ -4551,10 +4683,21 @@
     "id": "longwood_eastbound",
     "pa_ess_loc": "GLON",
     "pa_ess_zone": "e",
-    "headsign": "Govt Ctr",
-    "gtfs_stop_id": "70182",
-    "route_id": "Green-D",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70182",
+          "direction_id": 1,
+          "headway_direction_name": "Govt Ctr",
+          "routes": ["Green-D"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "longwood_westbound",
@@ -4580,10 +4723,21 @@
     "id": "fenway_eastbound",
     "pa_ess_loc": "GFEN",
     "pa_ess_zone": "e",
-    "headsign": "Govt Ctr",
-    "gtfs_stop_id": "70186",
-    "route_id": "Green-D",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70186",
+          "direction_id": 1,
+          "headway_direction_name": "Govt Ctr",
+          "routes": ["Green-D"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "fenway_westbound",
@@ -5480,9 +5634,20 @@
     "id": "lechmere_green_line",
     "pa_ess_loc": "GLEC",
     "pa_ess_zone": "w",
-    "headsign": "Heath St",
-    "gtfs_stop_id": "70210",
-    "route_id": "Green-E",
-    "type": "headway"
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70210",
+          "direction_id": 0,
+          "headway_direction_name": "Heath St",
+          "routes": ["Green-E"],
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
   }
 ]
