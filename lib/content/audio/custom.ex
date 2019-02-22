@@ -2,6 +2,9 @@ defmodule Content.Audio.Custom do
   @moduledoc """
   Reads custom text from the PIOs
   """
+
+  require Logger
+
   @enforce_keys [:message]
   defstruct @enforce_keys
 
@@ -34,9 +37,5 @@ defmodule Content.Audio.Custom do
     %__MODULE__{
       message: audio
     }
-  end
-
-  def from_messages(_top, _bottom) do
-    nil
   end
 end

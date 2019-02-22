@@ -26,7 +26,12 @@ defmodule Content.Audio.StoppedTrain do
     end
   end
 
-  def from_message(_message) do
+  def from_message(%Content.Message.StoppedTrain{stops_away: 0}) do
+    nil
+  end
+
+  def from_message(message) do
+    Logger.error("message_to_audio_error Audio.StoppedTrain #{inspect(message)}")
     nil
   end
 

@@ -13,28 +13,6 @@ defmodule Content.Audio.TrainIsBoarding do
           route_id: String.t()
         }
 
-  @spec from_message(Content.Message.Predictions.t()) :: t() | nil
-  def from_message(%Content.Message.Predictions{
-        route_id: route_id,
-        minutes: :boarding,
-        headsign: headsign
-      }) do
-    case PaEss.Utilities.headsign_to_terminal_station(headsign) do
-      {:ok, dest} ->
-        %__MODULE__{
-          destination: dest,
-          route_id: route_id
-        }
-
-      {:error, _} ->
-        nil
-    end
-  end
-
-  def from_message(_message) do
-    nil
-  end
-
   defimpl Content.Audio do
     @the_next "501"
     @train_to "507"
