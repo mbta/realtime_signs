@@ -38,9 +38,4 @@ defmodule Content.Audio.Custom do
       message: audio
     }
   end
-
-  def from_message(m1, m2) do
-    Logger.error("message_to_audio_error Audio.Custom: #{inspect(m1)}, #{inspect(m2)}")
-    nil
-  end
 end

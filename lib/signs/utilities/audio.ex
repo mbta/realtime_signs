@@ -71,6 +71,13 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_audio(
+         {_, top},
+         {_, %Message.Custom{} = bottom}
+       ) do
+    Audio.Custom.from_messages(top, bottom)
+  end
+
+  defp get_audio(
          {_, %Message.Headways.Top{} = top},
          {_, bottom}
        ) do

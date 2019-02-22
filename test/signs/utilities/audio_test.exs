@@ -7,6 +7,10 @@ defmodule Signs.Utilities.AudioTest do
   import Signs.Utilities.Audio
   import ExUnit.CaptureLog
 
+  defmodule FakeMessage do
+    defstruct []
+  end
+
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     direction_id: 0,
@@ -100,6 +104,19 @@ defmodule Signs.Utilities.AudioTest do
 
       assert {
                %Audio.Custom{message: "Custom Top Custom Bottom"},
+               ^sign
+             } = from_sign(sign)
+    end
+
+    test "Custom text bottom only" do
+      sign = %{
+        @sign
+        | current_content_top: {nil, %Message.Empty{}},
+          current_content_bottom: {@src, %Message.Custom{line: :bottom, message: "Custom Bottom"}}
+      }
+
+      assert {
+               %Audio.Custom{message: "Custom Bottom"},
                ^sign
              } = from_sign(sign)
     end
@@ -309,6 +326,24 @@ defmodule Signs.Utilities.AudioTest do
       }
 
       assert {%Audio.TrainIsBoarding{destination: :alewife}, _sign} = from_sign(sign)
+    end
+
+    test "Logs error and returns nil if unknown message type" do
+      sign = %{
+        @sign
+        | current_content_top: {@src, %Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
+          current_content_bottom: {nil, %FakeMessage{}}
+      }
+
+      log =
+        capture_log([level: :error], fn ->
+          assert {
+                   %Audio.StoppedTrain{destination: :alewife, stops_away: 2},
+                   ^sign
+                 } = from_sign(sign)
+        end)
+
+      assert log =~ "message_to_audio_error"
     end
   end
 end

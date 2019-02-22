@@ -1,6 +1,5 @@
 defmodule Content.Audio.TrainIsArrivingTest do
   use ExUnit.Case, async: true
-  import ExUnit.CaptureLog
 
   describe "Content.Audio.to_params protocol" do
     test "Next train to Ashmont is now arriving" do

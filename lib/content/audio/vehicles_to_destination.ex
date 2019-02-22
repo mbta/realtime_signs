@@ -25,10 +25,9 @@ defmodule Content.Audio.VehiclesToDestination do
     with {:ok, destination} <- convert_destination(dest),
          {x, y} <- get_mins(range) do
       case {create(:english, destination, x, y), create(:spanish, destination, x, y)} do
-        {nil, nil} -> nil
-        {a, nil} -> a
-        {nil, a} -> a
-        {a1, a2} -> {a1, a2}
+        {%__MODULE__{} = a1, %__MODULE__{} = a2} -> {a1, a2}
+        {%__MODULE__{} = a, nil} -> a
+        _ -> nil
       end
     else
       _ ->
