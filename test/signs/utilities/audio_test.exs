@@ -37,7 +37,7 @@ defmodule Signs.Utilities.AudioTest do
     read_period_seconds: 100
   }
 
-  describe "should_interrupting_read?/1" do
+  describe "should_interrupting_read?/2" do
     test "returns false if it's a numeric prediction" do
       message = %Message.Predictions{headsign: "Alewife", minutes: 5}
       refute should_interrupting_read?({nil, message}, :top)
