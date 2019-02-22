@@ -12,29 +12,6 @@ defmodule Content.Audio.TrainIsArriving do
           destination: PaEss.terminal_station()
         }
 
-  @spec from_predictions_message(Content.Message.t()) :: t() | nil
-  def from_predictions_message(%Content.Message.Predictions{
-        headsign: headsign,
-        minutes: minutes
-      })
-      when minutes == :arriving or minutes == :boarding do
-    case PaEss.Utilities.headsign_to_terminal_station(headsign) do
-      {:ok, headsign_atom} ->
-        %__MODULE__{destination: headsign_atom}
-
-      {:error, :unknown} ->
-        Logger.warn(
-          "Content.Audio.TrainIsArriving.from_predictions_message: unknown headsign: #{headsign}"
-        )
-
-        nil
-    end
-  end
-
-  def from_predictions_message(_) do
-    nil
-  end
-
   defimpl Content.Audio do
     def to_params(audio) do
       {message_id(audio), [], :audio_visual}

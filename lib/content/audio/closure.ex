@@ -3,6 +3,8 @@ defmodule Content.Audio.Closure do
   Audio message for a station where service is replaced by shuttle buses or suspended entirely.
   """
 
+  require Logger
+
   @enforce_keys [:alert]
   defstruct @enforce_keys
 
@@ -19,7 +21,10 @@ defmodule Content.Audio.Closure do
     %Content.Audio.Closure{alert: :suspension}
   end
 
-  def from_messages(_, _), do: nil
+  def from_messages(top, bottom) do
+    Logger.error("message_to_audio_error Audio.Closure #{inspect(top)} #{inspect(bottom)}")
+    nil
+  end
 
   defimpl Content.Audio do
     def to_params(%Content.Audio.Closure{alert: :shuttles_closed_station}) do

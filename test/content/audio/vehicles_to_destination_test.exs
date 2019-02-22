@@ -55,7 +55,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       assert {
                %Content.Audio.VehiclesToDestination{language: :english, destination: :chelsea},
                %Content.Audio.VehiclesToDestination{language: :spanish, destination: :chelsea}
-             } = from_headway_message(@msg, %Content.Message.Headways.Top{headsign: "Chelsea"})
+             } = from_headway_message(%Content.Message.Headways.Top{headsign: "Chelsea"}, @msg)
     end
 
     test "returns an audio message from a headway message to south station" do
@@ -69,17 +69,20 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                  destination: :south_station
                }
              } =
-               from_headway_message(@msg, %Content.Message.Headways.Top{headsign: "South Station"})
+               from_headway_message(
+                 %Content.Message.Headways.Top{headsign: "South Station"},
+                 @msg
+               )
     end
 
     test "returns nils for an unknown destination" do
       log =
         capture_log([level: :warn], fn ->
-          assert from_headway_message(@msg, %Content.Message.Headways.Top{headsign: "Unknown"}) ==
-                   {nil, nil}
+          assert from_headway_message(%Content.Message.Headways.Top{headsign: "Unknown"}, @msg) ==
+                   nil
         end)
 
-      assert log =~ "from_headway_message"
+      assert log =~ "message_to_audio_error"
     end
 
     test "returns nils when range is all nil, but doesn't warn" do
@@ -87,8 +90,8 @@ defmodule Content.Audio.VehiclesToDestinationTest do
 
       log =
         capture_log([level: :warn], fn ->
-          assert from_headway_message(msg, %Content.Message.Headways.Top{headsign: "Chelsea"}) ==
-                   {nil, nil}
+          assert from_headway_message(%Content.Message.Headways.Top{headsign: "Chelsea"}, msg) ==
+                   nil
         end)
 
       refute log =~ "from_headway_message"
@@ -97,8 +100,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
     test "returns nil when range is unexpected" do
       msg = %{@msg | range: {:a, :b, :c}}
 
-      assert from_headway_message(msg, %Content.Message.Headways.Top{headsign: "Chelsea"}) ==
-               {nil, nil}
+      assert from_headway_message(%Content.Message.Headways.Top{headsign: "Chelsea"}, msg) == nil
     end
 
     test "returns a padded range when one value is missing or values are the same" do
@@ -118,7 +120,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                    next_trip_mins: 10,
                    later_trip_mins: 12
                  }
-               } = from_headway_message(msg, %Content.Message.Headways.Top{headsign: "Chelsea"})
+               } = from_headway_message(%Content.Message.Headways.Top{headsign: "Chelsea"}, msg)
       end)
     end
 
@@ -138,21 +140,18 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                    next_trip_mins: 10,
                    later_trip_mins: 15
                  }
-               } = from_headway_message(msg, %Content.Message.Headways.Top{headsign: "Chelsea"})
+               } = from_headway_message(%Content.Message.Headways.Top{headsign: "Chelsea"}, msg)
       end)
     end
 
     test "returns an english struct but not a spanish, if number is out of the latter range" do
       msg = %{@msg | range: {20, 25}}
 
-      assert {
-               %Content.Audio.VehiclesToDestination{
-                 language: :english,
-                 next_trip_mins: 20,
-                 later_trip_mins: 25
-               },
-               nil
-             } = from_headway_message(msg, %Content.Message.Headways.Top{headsign: "Chelsea"})
+      assert %Content.Audio.VehiclesToDestination{
+               language: :english,
+               next_trip_mins: 20,
+               later_trip_mins: 25
+             } = from_headway_message(%Content.Message.Headways.Top{headsign: "Chelsea"}, msg)
     end
   end
 end

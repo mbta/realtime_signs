@@ -14,43 +14,6 @@ defmodule Content.Audio.TrackChange do
           track: integer()
         }
 
-  @spec from_message(Content.Message.Predictions.t()) :: t() | nil
-  def from_message(%Content.Message.Predictions{
-        stop_id: stop_id,
-        route_id: route_id,
-        minutes: :boarding,
-        headsign: headsign
-      })
-      when route_id in ["Green-B", "Green-D"] and stop_id in ["70197", "70199"] do
-    {:ok, dest} = PaEss.Utilities.headsign_to_terminal_station(headsign)
-
-    %__MODULE__{
-      destination: dest,
-      route_id: route_id,
-      track: 1
-    }
-  end
-
-  def from_message(%Content.Message.Predictions{
-        stop_id: stop_id,
-        route_id: route_id,
-        minutes: :boarding,
-        headsign: headsign
-      })
-      when route_id in ["Green-C", "Green-E"] and stop_id in ["70196", "70198"] do
-    {:ok, dest} = PaEss.Utilities.headsign_to_terminal_station(headsign)
-
-    %__MODULE__{
-      destination: dest,
-      route_id: route_id,
-      track: 2
-    }
-  end
-
-  def from_message(_message) do
-    nil
-  end
-
   defimpl Content.Audio do
     @track_change "540"
     @the_next "501"
