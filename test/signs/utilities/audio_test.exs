@@ -146,6 +146,18 @@ defmodule Signs.Utilities.AudioTest do
                %Audio.FollowingTrain{destination: :ashmont, minutes: 4}}, ^sign} = from_sign(sign)
     end
 
+    test "Ignores 'following train' if same headsign but it's arriving (we don't have audio)" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.Predictions{headsign: "Ashmont", minutes: :boarding}},
+          current_content_bottom:
+            {@src, %Message.Predictions{headsign: "Ashmont", minutes: :arriving}}
+      }
+
+      assert {%Audio.TrainIsBoarding{destination: :ashmont}, ^sign} = from_sign(sign)
+    end
+
     test "No audio at all if same headsign but we don't know what it is" do
       sign = %{
         @sign

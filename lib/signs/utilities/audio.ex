@@ -84,8 +84,10 @@ defmodule Signs.Utilities.Audio do
     top_audio = Audio.Predictions.from_sign_content(content_top)
 
     if top_audio do
-      bottom_audio = Audio.FollowingTrain.from_predictions_message(content_bottom)
-      {top_audio, bottom_audio}
+      case Audio.FollowingTrain.from_predictions_message(content_bottom) do
+        nil -> top_audio
+        bottom_audio -> {top_audio, bottom_audio}
+      end
     else
       Logger.error(
         "message_to_audio_error Utilities.Audio same_headsign #{inspect(content_top)}, #{
