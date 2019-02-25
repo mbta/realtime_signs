@@ -110,7 +110,7 @@ defmodule Signs.Headway do
         alert_status in [:suspension, :station_closure] ->
           %{
             sign
-            | current_content_top: %Content.Message.Alert.NoService{mode: :none},
+            | current_content_top: %Content.Message.Alert.NoService{mode: :train},
               current_content_bottom: Content.Message.Empty.new()
           }
 
