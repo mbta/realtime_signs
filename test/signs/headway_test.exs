@@ -63,7 +63,7 @@ defmodule Signs.HeadwayTest do
   end
 
   defmodule FakeAlertsEngine do
-    def max_stop_status(["suspended"], _routes), do: :suspension
+    def max_stop_status(["suspended"], _routes), do: :suspension_closed_station
     def max_stop_status(["shuttles"], _routes), do: :shuttles_closed_station
     def max_stop_status(["closure"], _routes), do: :station_closure
     def max_stop_status(_stops, _routes), do: :none

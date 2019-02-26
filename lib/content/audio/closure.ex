@@ -9,7 +9,7 @@ defmodule Content.Audio.Closure do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          alert: :shuttles_closed_station | :suspension
+          alert: :shuttles_closed_station | :suspension_closed_station
         }
 
   @spec from_messages(Content.Message.t(), Content.Message.t()) :: t() | nil

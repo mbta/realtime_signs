@@ -18,8 +18,13 @@ defmodule Engine.Alerts.Fetcher do
 
   @spec higher_priority_status(stop_status(), stop_status()) :: stop_status()
   def higher_priority_status(status1, status2)
-      when status1 == :suspension or status2 == :suspension do
-    :suspension
+      when status1 == :suspension_closed_station or status2 == :suspension_closed_station do
+    :suspension_closed_station
+  end
+
+  def higher_priority_status(status1, status2)
+      when status1 == :suspension_transfer_station or status2 == :suspension_transfer_Station do
+    :suspension_transfer_Station
   end
 
   def higher_priority_status(status1, status2)

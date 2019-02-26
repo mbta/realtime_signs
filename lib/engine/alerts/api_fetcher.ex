@@ -135,7 +135,7 @@ defmodule Engine.Alerts.ApiFetcher do
       if !("stop" in Map.keys(ie)) do
         case get_in(alert, ["attributes", "effect"]) do
           "SUSPENSION" ->
-            [{ie["route"], :suspension}]
+            [{ie["route"], :suspension_closed_station}]
 
           "SHUTTLE" ->
             [{ie["route"], :shuttles_closed_station}]
