@@ -34,7 +34,10 @@ defmodule Signs.Utilities.Messages do
                 {{nil, %Content.Message.Alert.NoService{mode: :train}},
                  {nil, %Content.Message.Alert.UseShuttleBus{}}}
 
-              :suspension ->
+              :suspension_transfer_station ->
+                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+
+              :suspension_closed_station ->
                 {{nil, %Content.Message.Alert.NoService{mode: :none}},
                  {nil, Content.Message.Empty.new()}}
 

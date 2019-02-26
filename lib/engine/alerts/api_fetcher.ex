@@ -97,8 +97,7 @@ defmodule Engine.Alerts.ApiFetcher do
 
       "SUSPENSION" ->
         stops
-        |> Enum.map(&{&1, :suspension})
-        |> Enum.into(%{})
+        |> get_suspension_statuses(station_config)
 
       "STATION_CLOSURE" ->
         stops
@@ -172,6 +171,30 @@ defmodule Engine.Alerts.ApiFetcher do
             [{stop_id, :shuttles_closed_station}]
           else
             [{stop_id, :shuttles_transfer_station}]
+          end
+
+        _ ->
+          []
+      end
+    end)
+    |> Enum.into(%{})
+  end
+
+  @spec get_suspension_statuses([String.t()], %Engine.Alerts.StationConfig{}) :: %{}
+  def get_suspension_statuses(stop_ids, station_config) do
+    stop_ids
+    |> Enum.flat_map(fn stop_id ->
+      case station_config.stop_to_station[stop_id] do
+        station when not is_nil(station) ->
+          neighbors = station_config.station_neighbors[station]
+
+          neighbor_stops =
+            Enum.flat_map(neighbors, fn n -> station_config.station_to_stops[n] end)
+
+          if Enum.all?(neighbor_stops, fn neighbor -> neighbor in stop_ids end) do
+            [{stop_id, :suspension_closed_station}]
+          else
+            [{stop_id, :suspension_transfer_station}]
           end
 
         _ ->

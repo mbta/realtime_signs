@@ -108,7 +108,7 @@ defmodule Signs.Utilities.MessagesTest do
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
-    test "when sign is at a transfer station, and there are no predictions it's empty" do
+    test "when sign is at a transfer station from a shuttle, and there are no predictions it's empty" do
       src = %{@src | stop_id: "no_predictions", direction_id: 1}
 
       sign = %{
@@ -120,6 +120,24 @@ defmodule Signs.Utilities.MessagesTest do
 
       enabled? = true
       alert_status = :shuttles_transfer_station
+      custom_text = nil
+
+      assert Messages.get_messages(sign, enabled?, alert_status, custom_text) ==
+               {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+    end
+
+    test "when sign is at a transfer station from a suspension, and there are no predictions it's empty" do
+      src = %{@src | stop_id: "no_predictions", direction_id: 1}
+
+      sign = %{
+        @sign
+        | source_config: {[src]},
+          current_content_top: {src, Content.Message.Empty.new()},
+          current_content_bottom: {src, Content.Message.Empty.new()}
+      }
+
+      enabled? = true
+      alert_status = :suspension_transfer_station
       custom_text = nil
 
       assert Messages.get_messages(sign, enabled?, alert_status, custom_text) ==
@@ -271,7 +289,7 @@ defmodule Signs.Utilities.MessagesTest do
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
 
-      alert_status = :suspension
+      alert_status = :suspension_closed_station
       enabled? = true
       custom_text = nil
 
