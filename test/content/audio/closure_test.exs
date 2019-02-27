@@ -19,7 +19,7 @@ defmodule Content.Audio.ClosureTest do
       assert from_messages(
                %Content.Message.Alert.NoService{mode: :train},
                %Content.Message.Empty{}
-             ) == %Content.Audio.Closure{alert: :suspension}
+             ) == %Content.Audio.Closure{alert: :suspension_closed_station}
     end
   end
 
@@ -32,7 +32,7 @@ defmodule Content.Audio.ClosureTest do
 
     test "Station closed audio" do
       assert Content.Audio.to_params(%Content.Audio.Closure{
-               alert: :suspension
+               alert: :suspension_closed_station
              }) == {"90130", [], :audio}
     end
   end
