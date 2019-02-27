@@ -29,7 +29,7 @@ defmodule Engine.Alerts.Fetcher do
 
   def higher_priority_status(status1, status2)
       when status1 == :suspension_transfer_station or status2 == :suspension_transfer_station do
-    :suspension_transfer_Station
+    :suspension_transfer_station
   end
 
   def higher_priority_status(status1, status2)
