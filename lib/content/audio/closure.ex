@@ -18,7 +18,7 @@ defmodule Content.Audio.Closure do
   end
 
   def from_messages(%Content.Message.Alert.NoService{}, %Content.Message.Empty{}) do
-    %Content.Audio.Closure{alert: :suspension}
+    %Content.Audio.Closure{alert: :suspension_closed_station}
   end
 
   def from_messages(top, bottom) do
@@ -31,7 +31,7 @@ defmodule Content.Audio.Closure do
       {"90131", [], :audio}
     end
 
-    def to_params(%Content.Audio.Closure{alert: :suspension}) do
+    def to_params(%Content.Audio.Closure{alert: :suspension_closed_station}) do
       {"90130", [], :audio}
     end
   end

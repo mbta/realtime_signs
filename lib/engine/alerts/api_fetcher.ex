@@ -156,7 +156,8 @@ defmodule Engine.Alerts.ApiFetcher do
     |> Enum.into(%{})
   end
 
-  @spec get_alert_statuses([String.t()], %Engine.Alerts.StationConfig{}, atom()) :: %{}
+  @spec get_alert_statuses([String.t()], %Engine.Alerts.StationConfig{}, :shuttle | :suspension) ::
+          %{}
   def get_alert_statuses(stop_ids, station_config, alert_type) do
     stop_ids
     |> Enum.flat_map(fn stop_id ->

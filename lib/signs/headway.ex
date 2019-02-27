@@ -121,6 +121,13 @@ defmodule Signs.Headway do
               current_content_bottom: %Content.Message.Alert.UseShuttleBus{}
           }
 
+        alert_status in [:suspension_transfer_station] ->
+          %{
+            sign
+            | current_content_top: Content.Message.Empty.new(),
+              current_content_bottom: Content.Message.Empty.new()
+          }
+
         true ->
           case sign.bridge_engine.status(sign.bridge_id) do
             {"Raised", duration} ->
