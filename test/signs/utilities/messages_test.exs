@@ -294,7 +294,7 @@ defmodule Signs.Utilities.MessagesTest do
       custom_text = nil
 
       assert Messages.get_messages(sign, enabled?, alert_status, custom_text) ==
-               {{nil, %Content.Message.Alert.NoService{mode: :none}},
+               {{nil, %Content.Message.Alert.NoService{mode: :train}},
                 {nil, Content.Message.Empty.new()}}
     end
 
