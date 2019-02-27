@@ -346,6 +346,20 @@ defmodule Signs.HeadwayTest do
       assert sign.current_content_bottom == %Content.Message.Empty{}
     end
 
+    test "if the station is closed from a suspension but its the transfer station, it displays nothing" do
+      sign = %{
+        @sign
+        | current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new(),
+          gtfs_stop_id: "suspended_transfer"
+      }
+
+      {:noreply, sign} = handle_info(:update_content, sign)
+
+      assert sign.current_content_top == %Content.Message.Empty{}
+      assert sign.current_content_bottom == %Content.Message.Empty{}
+    end
+
     test "if the station is closed due to shuttle buses, it displays that" do
       sign = %{
         @sign
