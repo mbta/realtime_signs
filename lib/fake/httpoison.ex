@@ -279,6 +279,18 @@ defmodule Fake.HTTPoison do
               %{
                 "stop" => "70036",
                 "route" => "Orange"
+              },
+              %{
+                "stop" => "70034",
+                "route" => "Orange"
+              },
+              %{
+                "stop" => "70033",
+                "route" => "Orange"
+              },
+              %{
+                "stop" => "70032",
+                "route" => "Orange"
               }
             ]
           }

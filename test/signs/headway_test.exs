@@ -63,7 +63,8 @@ defmodule Signs.HeadwayTest do
   end
 
   defmodule FakeAlertsEngine do
-    def max_stop_status(["suspended"], _routes), do: :suspension
+    def max_stop_status(["suspended"], _routes), do: :suspension_closed_station
+    def max_stop_status(["suspended_transfer"], _routes), do: :suspension_transfer_station
     def max_stop_status(["shuttles"], _routes), do: :shuttles_closed_station
     def max_stop_status(["closure"], _routes), do: :station_closure
     def max_stop_status(_stops, _routes), do: :none
@@ -345,6 +346,20 @@ defmodule Signs.HeadwayTest do
       assert sign.current_content_bottom == %Content.Message.Empty{}
     end
 
+    test "if the station is closed from a suspension but its the transfer station, it displays nothing" do
+      sign = %{
+        @sign
+        | current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new(),
+          gtfs_stop_id: "suspended_transfer"
+      }
+
+      {:noreply, sign} = handle_info(:update_content, sign)
+
+      assert sign.current_content_top == %Content.Message.Empty{}
+      assert sign.current_content_bottom == %Content.Message.Empty{}
+    end
+
     test "if the station is closed due to shuttle buses, it displays that" do
       sign = %{
         @sign
@@ -402,7 +417,7 @@ defmodule Signs.HeadwayTest do
       )
     end
 
-    test "sends an audio request corresponding to station closure alert" do
+    test "sends an audio request corresponding to station closure due to suspesnion alert" do
       Process.register(self(), :headway_test_fake_updater_listener)
 
       sign = %{
@@ -417,9 +432,24 @@ defmodule Signs.HeadwayTest do
         {:send_audio,
          {{"ABCD", "n"},
           %Content.Audio.Closure{
-            alert: :suspension
+            alert: :suspension_closed_station
           }, 5, 120}}
       )
+    end
+
+    test "does not send audio at transfer stop of a suspension alert" do
+      Process.register(self(), :headway_test_fake_updater_listener)
+
+      sign = %{
+        @sign
+        | current_content_top: %Content.Message.Alert.NoService{mode: :none},
+          current_content_bottom: %Content.Message.Empty{},
+          gtfs_stop_id: "suspension_transfer"
+      }
+
+      assert {:noreply, %Signs.Headway{}} = Signs.Headway.handle_info(:update_content, sign)
+
+      refute_received({:send_audio, {{"ABCD", "n"}, _}})
     end
 
     test "does not send audio message if bridge is up" do

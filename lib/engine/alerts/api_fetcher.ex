@@ -93,12 +93,11 @@ defmodule Engine.Alerts.ApiFetcher do
     case get_in(alert, ["attributes", "effect"]) do
       "SHUTTLE" ->
         stops
-        |> get_shuttle_statuses(station_config)
+        |> get_alert_statuses(station_config, :shuttle)
 
       "SUSPENSION" ->
         stops
-        |> Enum.map(&{&1, :suspension})
-        |> Enum.into(%{})
+        |> get_alert_statuses(station_config, :suspension)
 
       "STATION_CLOSURE" ->
         stops
@@ -136,7 +135,7 @@ defmodule Engine.Alerts.ApiFetcher do
       if !("stop" in Map.keys(ie)) do
         case get_in(alert, ["attributes", "effect"]) do
           "SUSPENSION" ->
-            [{ie["route"], :suspension}]
+            [{ie["route"], :suspension_closed_station}]
 
           "SHUTTLE" ->
             [{ie["route"], :shuttles_closed_station}]
@@ -157,8 +156,9 @@ defmodule Engine.Alerts.ApiFetcher do
     |> Enum.into(%{})
   end
 
-  @spec get_shuttle_statuses([String.t()], %Engine.Alerts.StationConfig{}) :: %{}
-  def get_shuttle_statuses(stop_ids, station_config) do
+  @spec get_alert_statuses([String.t()], %Engine.Alerts.StationConfig{}, :shuttle | :suspension) ::
+          %{}
+  def get_alert_statuses(stop_ids, station_config, alert_type) do
     stop_ids
     |> Enum.flat_map(fn stop_id ->
       case station_config.stop_to_station[stop_id] do
@@ -169,9 +169,23 @@ defmodule Engine.Alerts.ApiFetcher do
             Enum.flat_map(neighbors, fn n -> station_config.station_to_stops[n] end)
 
           if Enum.all?(neighbor_stops, fn neighbor -> neighbor in stop_ids end) do
-            [{stop_id, :shuttles_closed_station}]
+            [
+              {stop_id,
+               if(
+                 alert_type == :shuttle,
+                 do: :shuttles_closed_station,
+                 else: :suspension_closed_station
+               )}
+            ]
           else
-            [{stop_id, :shuttles_transfer_station}]
+            [
+              {stop_id,
+               if(
+                 alert_type == :shuttle,
+                 do: :shuttles_transfer_station,
+                 else: :suspension_transfer_station
+               )}
+            ]
           end
 
         _ ->

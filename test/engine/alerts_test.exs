@@ -37,8 +37,8 @@ defmodule Engine.AlertsTest do
              "234" => :shuttles_transfer_station
            },
            :route_statuses => %{
-             "Red" => :suspension,
-             "Green-B" => :suspension
+             "Red" => :suspension_closed_station,
+             "Green-B" => :suspension_closed_station
            }
          }}
       end
@@ -93,15 +93,20 @@ defmodule Engine.AlertsTest do
       assert Engine.Alerts.max_stop_status(tables, ["n/a-1", "234"], ["n/a-2"]) ==
                :shuttles_transfer_station
 
-      assert Engine.Alerts.max_stop_status(tables, ["n/a-1", "234"], ["Red"]) == :suspension
+      assert Engine.Alerts.max_stop_status(tables, ["n/a-1", "234"], ["Red"]) ==
+               :suspension_closed_station
 
       assert Engine.Alerts.max_stop_status(tables, ["n/a-1", "234"], ["Orange"]) ==
                :shuttles_transfer_station
 
-      assert Engine.Alerts.max_stop_status(tables, ["n/a"], ["Green-B"]) == :suspension
+      assert Engine.Alerts.max_stop_status(tables, ["n/a"], ["Green-B"]) ==
+               :suspension_closed_station
+
       assert Engine.Alerts.max_stop_status(tables, ["n/a"], ["Green-B", "Green-C"]) == :none
 
-      assert Engine.Alerts.route_status(routes_ets_table_name, "Red") == :suspension
+      assert Engine.Alerts.route_status(routes_ets_table_name, "Red") ==
+               :suspension_closed_station
+
       assert Engine.Alerts.route_status(routes_ets_table_name, "Orange") == :none
     end
 
