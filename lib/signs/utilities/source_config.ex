@@ -12,7 +12,7 @@ defmodule Signs.Utilities.SourceConfig do
   }
 
   where "stop_id" is the GTFS Stop ID, "direction_id" is either 0 or 1 and corresponds to north/south,
-  east/west, inbound/outbound, platform is "ashmont", "braintree" (for JFK/UMass weirdness) or null, and
+  west/east, inbound/outbound, platform is "ashmont", "braintree" (for JFK/UMass weirdness) or null, and
   "terminal" is whether the stop is considered a terminal (whether we should use the arrival or departure
   prediction times, and whether we should announce "arrives" or "departs" on the speakers).
 
