@@ -51,9 +51,9 @@ defmodule Signs.Utilities.Headways do
   @spec config_by_headway_id(Signs.Realtime.t()) :: SourceConfig.source() | nil
   defp config_by_headway_id(sign) do
     sign.source_config
-      |> Tuple.to_list()
-      |> List.flatten()
-      |> Enum.find(&(&1.source_for_headway?))
+    |> Tuple.to_list()
+    |> List.flatten()
+    |> Enum.find(& &1.source_for_headway?)
   end
 
   defp single_source_config(sign) do

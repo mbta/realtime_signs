@@ -72,7 +72,8 @@ defmodule Signs.Utilities.HeadwaysTest do
     end
 
     test "generates top and bottom messages to display the headway for a sign with headway_stop_id" do
-      source_with_headway = %{ source_config_for_stop_id("a") | source_for_headway?: true }
+      source_with_headway = %{source_config_for_stop_id("a") | source_for_headway?: true}
+
       sign = %{
         @sign
         | source_config:

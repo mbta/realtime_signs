@@ -59,8 +59,8 @@ defmodule Signs.Utilities.SourceConfig do
           terminal?: boolean(),
           announce_arriving?: boolean(),
           announce_boarding?: boolean(),
-    multi_berth?: boolean(),
-    source_for_headway?: boolean()
+          multi_berth?: boolean(),
+          source_for_headway?: boolean()
         }
 
   @type config :: {[source()]} | {[source()], [source()]}
