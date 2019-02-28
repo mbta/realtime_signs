@@ -46,8 +46,7 @@ defmodule RealtimeSigns.Mixfile do
       {:logger_splunk_backend, git: "https://github.com/mbta/logger_splunk_backend.git"},
       {:poison, "~> 3.1"},
       {:sentry, "~> 6.2"},
-      {:timex, "~> 3.1.0"},
-      {:inflex, "~> 1.8.1"}
+      {:timex, "~> 3.1.0"}
     ]
   end
 end
