@@ -9,5 +9,4 @@ config :realtime_signs,
   bridge_requester: Fake.Bridge.Request,
   external_config_getter: Fake.ExternalConfig.Local,
   aws_client: Fake.ExAws,
-  s3_client: Fake.ExAws,
-  static_text_enabled?: true
+  s3_client: Fake.ExAws

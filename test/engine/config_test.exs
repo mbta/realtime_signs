@@ -43,19 +43,6 @@ defmodule Engine.ConfigTest do
 
       assert Engine.Config.custom_text(state.ets_table_name, "custom_text_test") == nil
     end
-
-    test "returns nil when feature flag is disabled" do
-      old_env = Application.get_env(:realtime_signs, :static_text_enabled?)
-      Application.put_env(:realtime_signs, :static_text_enabled?, false)
-      on_exit(fn -> Application.put_env(:realtime_signs, :static_text_enabled?, old_env) end)
-
-      state =
-        initialize_test_state(:config_test_non_expired, fn ->
-          Timex.to_datetime(~N[2017-07-04 07:00:00], "America/New_York")
-        end)
-
-      assert Engine.Config.custom_text(state.ets_table_name, "custom_text_test") == nil
-    end
   end
 
   describe "update callback" do
