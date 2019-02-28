@@ -48,6 +48,7 @@ defmodule Signs.Utilities.Headways do
   defp vehicle_type(["743"]), do: :bus
   defp vehicle_type(_), do: :train
 
+  @spec config_by_headway_id(Signs.Realtime.t()) :: SourceConfig.source() | nil
   defp config_by_headway_id(sign) do
     if sign.headway_stop_id do
       sign.source_config

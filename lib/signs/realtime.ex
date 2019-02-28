@@ -43,6 +43,7 @@ defmodule Signs.Realtime do
           tick_read: non_neg_integer(),
           expiration_seconds: non_neg_integer(),
           read_period_seconds: non_neg_integer(),
+          headway_stop_id: String.t() | nil,
           announced_arrivals: MapSet.t()
         }
 
