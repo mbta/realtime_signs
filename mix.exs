@@ -21,13 +21,7 @@ defmodule RealtimeSigns.Mixfile do
   def application do
     [
       extra_applications: [
-        :exprotobuf,
-        :httpoison,
-        :logger,
-        :logger_splunk_backend,
-        :poison,
-        :sentry,
-        :timex
+        :logger
       ],
       mod: {RealtimeSigns, []}
     ]
