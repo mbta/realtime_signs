@@ -30,7 +30,7 @@ defmodule RealtimeSigns.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:dialyxir, "~> 1.0.0-rc.4", runtime: false},
+      {:dialyxir, "~> 1.0.0-rc.4", only: [:dev, :test], runtime: false},
       {:ehmon, git: "https://github.com/heroku/ehmon.git", tag: "v4"},
       {:ex_aws, "~> 2.0"},
       {:ex_aws_s3, "~> 2.0"},
