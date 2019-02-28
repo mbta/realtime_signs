@@ -4032,6 +4032,7 @@
     "type": "realtime",
     "pa_ess_loc": "RBRA",
     "pa_ess_zone": "c",
+    "headway_stop_id": "70105",
     "source_config": [
       [
         {

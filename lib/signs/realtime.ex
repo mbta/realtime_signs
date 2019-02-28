@@ -25,7 +25,7 @@ defmodule Signs.Realtime do
     :read_period_seconds
   ]
 
-  defstruct @enforce_keys ++ [announced_arrivals: MapSet.new()]
+  defstruct @enforce_keys ++ [:headway_stop_id, announced_arrivals: MapSet.new()]
 
   @type line_content :: {Utilities.SourceConfig.source() | nil, Content.Message.t()}
 
@@ -56,6 +56,7 @@ defmodule Signs.Realtime do
       id: Map.fetch!(config, "id"),
       pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), pa_ess_zone},
       source_config: config |> Map.fetch!("source_config") |> Utilities.SourceConfig.parse!(),
+      headway_stop_id: Map.get(config, "headway_stop_id"),
       current_content_top: {nil, Content.Message.Empty.new()},
       current_content_bottom: {nil, Content.Message.Empty.new()},
       prediction_engine: prediction_engine,
