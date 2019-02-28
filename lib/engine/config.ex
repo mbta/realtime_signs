@@ -32,16 +32,12 @@ defmodule Engine.Config do
 
   @spec custom_text(:ets.tab(), String.t()) :: {String.t(), String.t()} | nil
   def custom_text(table_name \\ @table, sign_id) do
-    if Application.get_env(:realtime_signs, :static_text_enabled?) do
-      case :ets.lookup(table_name, sign_id) do
-        [{^sign_id, {:static_text, {line1, line2}}}] when is_binary(line1) and is_binary(line2) ->
-          {line1, line2}
+    case :ets.lookup(table_name, sign_id) do
+      [{^sign_id, {:static_text, {line1, line2}}}] when is_binary(line1) and is_binary(line2) ->
+        {line1, line2}
 
-        _ ->
-          nil
-      end
-    else
-      nil
+      _ ->
+        nil
     end
   end
 
