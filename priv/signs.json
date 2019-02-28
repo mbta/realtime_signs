@@ -1020,6 +1020,7 @@
     "type": "realtime",
     "pa_ess_loc": "OOAK",
     "pa_ess_zone": "m",
+    "headway_stop_id": "70036",
     "source_config": [
       [
         {
@@ -1060,6 +1061,7 @@
     "type": "realtime",
     "pa_ess_loc": "OOAK",
     "pa_ess_zone": "e",
+    "headway_stop_id": "70036",
     "source_config": [
       [
         {
@@ -1100,6 +1102,7 @@
     "type": "realtime",
     "pa_ess_loc": "OOAK",
     "pa_ess_zone": "n",
+    "headway_stop_id": "70036",
     "source_config": [
       [
         {
@@ -1140,6 +1143,7 @@
     "type": "realtime",
     "pa_ess_loc": "OOAK",
     "pa_ess_zone": "s",
+    "headway_stop_id": "70036",
     "source_config": [
       [
         {
@@ -2508,6 +2512,7 @@
     "type": "realtime",
     "pa_ess_loc": "OFOR",
     "pa_ess_zone": "m",
+    "headway_stop_id": "70001",
     "source_config": [
       [
         {
@@ -2548,6 +2553,7 @@
     "type": "realtime",
     "pa_ess_loc": "OFOR",
     "pa_ess_zone": "n",
+    "headway_stop_id": "70001",
     "source_config": [
       [
         {
@@ -2588,6 +2594,7 @@
     "type": "realtime",
     "pa_ess_loc": "OFOR",
     "pa_ess_zone": "s",
+    "headway_stop_id": "70001",
     "source_config": [
       [
         {
@@ -2628,6 +2635,7 @@
     "type": "realtime",
     "pa_ess_loc": "SFOR",
     "pa_ess_zone": "m",
+    "headway_stop_id": "70001",
     "source_config": [
       [
         {
@@ -2700,6 +2708,7 @@
     "type": "realtime",
     "pa_ess_loc": "RALE",
     "pa_ess_zone": "c",
+    "headway_stop_id": "70061",
     "source_config": [
       [
         {
@@ -2740,6 +2749,7 @@
     "type": "realtime",
     "pa_ess_loc": "RALE",
     "pa_ess_zone": "m",
+    "headway_stop_id": "70061",
     "source_config": [
       [
         {
@@ -4073,6 +4083,7 @@
     "type": "realtime",
     "pa_ess_loc": "RBRA",
     "pa_ess_zone": "m",
+    "headway_stop_id": "70105",
     "source_config": [
       [
         {
