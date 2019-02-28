@@ -33,6 +33,34 @@ defmodule Content.Utilities do
            ],
       do: {:ok, "Braintree"}
 
+  def headsign_for_prediction("Red", 0, last_stop_id)
+      when last_stop_id in [
+             "70061",
+             "70063",
+             "70064",
+             "70065",
+             "70066",
+             "70067",
+             "70068",
+             "70069",
+             "70070",
+             "70071",
+             "70072",
+             "70073",
+             "70074",
+             "70075",
+             "70076",
+             "70077",
+             "70078",
+             "70079",
+             "70080",
+             "70081",
+             "70082",
+             "70083",
+             "70084"
+           ],
+      do: {:ok, "Southbound"}
+
   def headsign_for_prediction(_, 0, "70149"), do: {:ok, "Kenmore"}
   def headsign_for_prediction(_, 0, "70151"), do: {:ok, "Kenmore"}
   def headsign_for_prediction(_, 0, "70202"), do: {:ok, "Govt Ctr"}
