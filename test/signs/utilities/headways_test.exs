@@ -17,6 +17,10 @@ defmodule Signs.Utilities.HeadwaysTest do
     def get_headways("d") do
       {:first_departure, {1, 5}, DateTime.utc_now()}
     end
+
+    def get_headways("e") do
+      {nil, nil}
+    end
   end
 
   @sign %Signs.Realtime{
@@ -50,15 +54,33 @@ defmodule Signs.Utilities.HeadwaysTest do
   end
 
   describe "get_messages/1" do
-    test "generates blank messages when the source config has multiple sources" do
+    test "generates blank messages when the source config has multiple sources and the sign has no headway_stop_id" do
       assert Signs.Utilities.Headways.get_messages(@sign) ==
                {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
     end
 
-    test "generates top and bottom messages to display the headway at a stop" do
+    test "generates top and bottom messages to display the headway at a single-source stop" do
       sign = %{
         @sign
         | source_config: {[source_config_for_stop_id("a")]}
+      }
+
+      assert Signs.Utilities.Headways.get_messages(sign) ==
+               {{source_config_for_stop_id("a"),
+                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
+                {source_config_for_stop_id("a"), %Content.Message.Headways.Bottom{range: {1, 5}}}}
+    end
+
+    test "generates top and bottom messages to display the headway for a sign with headway_stop_id" do
+      sign = %{
+        @sign
+        | headway_stop_id: "a",
+          source_config:
+            {[
+               source_config_for_stop_id("e"),
+               source_config_for_stop_id("a"),
+               source_config_for_stop_id("c")
+             ]}
       }
 
       assert Signs.Utilities.Headways.get_messages(sign) ==
