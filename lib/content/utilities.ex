@@ -33,6 +33,8 @@ defmodule Content.Utilities do
            ],
       do: {:ok, "Braintree"}
 
+  def headsign_for_prediction("Red", 0, _), do: {:ok, "Southbound"}
+
   def headsign_for_prediction(_, 0, "70149"), do: {:ok, "Kenmore"}
   def headsign_for_prediction(_, 0, "70151"), do: {:ok, "Kenmore"}
   def headsign_for_prediction(_, 0, "70202"), do: {:ok, "Govt Ctr"}
