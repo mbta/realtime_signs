@@ -10,10 +10,10 @@ defmodule Signs.Utilities.Headways do
            {SourceConfig.source() | nil, Content.Message.t()}}
   def get_messages(sign) do
     cond do
-      config = config_by_headway_id(sign) ->
+      config = single_source_config(sign) ->
         do_headway_messages(sign, config)
 
-      config = single_source_config(sign) ->
+      config = config_by_headway_id(sign) ->
         do_headway_messages(sign, config)
 
       true ->
@@ -50,14 +50,10 @@ defmodule Signs.Utilities.Headways do
 
   @spec config_by_headway_id(Signs.Realtime.t()) :: SourceConfig.source() | nil
   defp config_by_headway_id(sign) do
-    if sign.headway_stop_id do
-      sign.source_config
+    sign.source_config
       |> Tuple.to_list()
       |> List.flatten()
-      |> Enum.find(&(&1.stop_id == sign.headway_stop_id))
-    else
-      nil
-    end
+      |> Enum.find(&(&1.source_for_headway?))
   end
 
   defp single_source_config(sign) do

@@ -72,21 +72,21 @@ defmodule Signs.Utilities.HeadwaysTest do
     end
 
     test "generates top and bottom messages to display the headway for a sign with headway_stop_id" do
+      source_with_headway = %{ source_config_for_stop_id("a") | source_for_headway?: true }
       sign = %{
         @sign
-        | headway_stop_id: "a",
-          source_config:
+        | source_config:
             {[
                source_config_for_stop_id("e"),
-               source_config_for_stop_id("a"),
+               source_with_headway,
                source_config_for_stop_id("c")
              ]}
       }
 
       assert Signs.Utilities.Headways.get_messages(sign) ==
-               {{source_config_for_stop_id("a"),
+               {{source_with_headway,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_config_for_stop_id("a"), %Content.Message.Headways.Bottom{range: {1, 5}}}}
+                {source_with_headway, %Content.Message.Headways.Bottom{range: {1, 5}}}}
     end
 
     test "generates blank messages to display when no headway information present" do
