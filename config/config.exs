@@ -46,7 +46,6 @@ config :realtime_signs,
   s3_client: ExAws.S3,
   s3_bucket: System.get_env("SIGNS_S3_BUCKET"),
   s3_path: System.get_env("SIGNS_S3_PATH"),
-  static_text_enabled?: System.get_env("STATIC_TEXT_ENABLED") == "true",
   api_v3_key: System.get_env("API_V3_KEY"),
   api_v3_url: System.get_env("API_V3_URL") || "https://green.dev.api.mbtace.com",
   number_of_http_updaters: String.to_integer(System.get_env("NUMBER_OF_HTTP_UPDATERS") || "4")
