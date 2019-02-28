@@ -17,6 +17,15 @@ defmodule Content.UtilitiesTest do
       assert headsign_for_prediction("Orange", 1, "Oak Grove-01") == {:ok, "Oak Grove"}
       assert headsign_for_prediction("Orange", 1, "Oak Grove-02") == {:ok, "Oak Grove"}
     end
+
+    test "Southbound headsign on Red Line trunk" do
+      assert headsign_for_prediction("Red", 0, "70063") == {:ok, "Southbound"}
+    end
+
+    test "Regular headsigns for regular Red Line trips to Ashmont / Braintree" do
+      assert headsign_for_prediction("Red", 0, "70093") == {:ok, "Ashmont"}
+      assert headsign_for_prediction("Red", 0, "70105") == {:ok, "Braintree"}
+    end
   end
 
   describe "width_padded_string/3" do
