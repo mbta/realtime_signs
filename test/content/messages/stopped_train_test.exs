@@ -90,7 +90,7 @@ defmodule Content.Message.StoppedTrainTest do
     end
 
     test "handles unknown final stop_id" do
-      prediction = %{@prediction | direction_id: 0, destination_stop_id: "123"}
+      prediction = %{@prediction | route_id: "Fake Route", destination_stop_id: "123"}
 
       assert Content.Message.StoppedTrain.from_prediction(prediction) ==
                %Content.Message.StoppedTrain{
