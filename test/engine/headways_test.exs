@@ -26,8 +26,6 @@ defmodule Engine.HeadwaysTest do
   end
 
   defmodule FakeScheduleFetcher do
-    @behaviour Headway.Request
-
     @times [
       ~N[2017-07-04 09:05:00],
       ~N[2017-07-04 08:55:00],
@@ -35,7 +33,6 @@ defmodule Engine.HeadwaysTest do
       ~N[2017-07-04 09:20:00]
     ]
 
-    @impl true
     def get_schedules(_station_ids) do
       Enum.map(@times, fn time ->
         %{

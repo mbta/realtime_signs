@@ -21,13 +21,7 @@ defmodule RealtimeSigns.Mixfile do
   def application do
     [
       extra_applications: [
-        :exprotobuf,
-        :httpoison,
-        :logger,
-        :logger_splunk_backend,
-        :poison,
-        :sentry,
-        :timex
+        :logger
       ],
       mod: {RealtimeSigns, []}
     ]
@@ -36,19 +30,17 @@ defmodule RealtimeSigns.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:dialyxir, "~> 0.5"},
+      {:dialyxir, "~> 1.0.0-rc.4", only: [:dev, :test], runtime: false},
       {:ehmon, git: "https://github.com/heroku/ehmon.git", tag: "v4"},
       {:ex_aws, "~> 2.0"},
       {:ex_aws_s3, "~> 2.0"},
       {:excoveralls, "~> 0.5", only: :test},
       {:exprotobuf, "~> 1.0"},
-      {:hackney, "== 1.8.0", override: true},
       {:httpoison, "~> 1.0"},
       {:logger_splunk_backend, git: "https://github.com/mbta/logger_splunk_backend.git"},
       {:poison, "~> 3.1"},
-      {:sentry, "~> 6.2.1"},
-      {:timex, "~> 3.1.0"},
-      {:inflex, "~> 1.8.1"}
+      {:sentry, "~> 6.2"},
+      {:timex, "~> 3.1"}
     ]
   end
 end
