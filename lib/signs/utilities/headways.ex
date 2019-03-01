@@ -9,12 +9,15 @@ defmodule Signs.Utilities.Headways do
           {{SourceConfig.source() | nil, Content.Message.t()},
            {SourceConfig.source() | nil, Content.Message.t()}}
   def get_messages(sign) do
-    case single_source_config(sign) do
-      nil ->
-        {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
-
-      config ->
+    cond do
+      config = single_source_config(sign) ->
         do_headway_messages(sign, config)
+
+      config = config_by_headway_id(sign) ->
+        do_headway_messages(sign, config)
+
+      true ->
+        {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
     end
   end
 
@@ -44,6 +47,14 @@ defmodule Signs.Utilities.Headways do
 
   defp vehicle_type(["743"]), do: :bus
   defp vehicle_type(_), do: :train
+
+  @spec config_by_headway_id(Signs.Realtime.t()) :: SourceConfig.source() | nil
+  defp config_by_headway_id(sign) do
+    sign.source_config
+    |> Tuple.to_list()
+    |> List.flatten()
+    |> Enum.find(& &1.source_for_headway?)
+  end
 
   defp single_source_config(sign) do
     case sign.source_config do

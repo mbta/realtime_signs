@@ -1030,7 +1030,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
 	{
           "stop_id": "Oak Grove-01",
@@ -1070,7 +1071,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
 	{
           "stop_id": "Oak Grove-01",
@@ -1110,7 +1112,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
 	{
           "stop_id": "Oak Grove-01",
@@ -1150,7 +1153,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
 	{
           "stop_id": "Oak Grove-01",
@@ -2518,7 +2522,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
 	{
           "stop_id": "Forest Hills-01",
@@ -2558,7 +2563,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
 	{
           "stop_id": "Forest Hills-01",
@@ -2598,7 +2604,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
 	{
           "stop_id": "Forest Hills-01",
@@ -2638,7 +2645,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
 	{
           "stop_id": "Forest Hills-01",
@@ -2710,7 +2718,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
 	{
           "stop_id": "Alewife-01",
@@ -2750,7 +2759,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
 	{
           "stop_id": "Alewife-01",
@@ -4042,7 +4052,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
 	{
           "stop_id": "Braintree-01",
@@ -4082,7 +4093,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
 	{
           "stop_id": "Braintree-01",
