@@ -4,12 +4,12 @@ defmodule Headway.ScheduleHeadwayTest do
   import Headway.ScheduleHeadway
 
   describe "build_request/1" do
-    test "builds request with comma separated station ids" do
-      assert build_request(["7022", "1123"]) ==
-               "https://green.dev.api.mbtace.com/schedules?filter[stop]=7022,1123"
+    test "builds request with comma separated station ids and direction IDs" do
+      assert build_request({~w[0 1], ["7022", "1123"]}) ==
+               "https://green.dev.api.mbtace.com/schedules?filter[stop]=7022,1123&filter[direction_id]=0,1"
 
-      assert build_request(["7022"]) ==
-               "https://green.dev.api.mbtace.com/schedules?filter[stop]=7022"
+      assert build_request({["1"], ["7022"]}) ==
+               "https://green.dev.api.mbtace.com/schedules?filter[stop]=7022&filter[direction_id]=1"
     end
   end
 

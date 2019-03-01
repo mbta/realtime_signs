@@ -8,11 +8,12 @@ defmodule Headway.ScheduleHeadway do
   @min_headway 5
   @headway_padding 2
 
-  @spec build_request([GTFS.station_id()]) :: String.t()
-  def build_request(station_ids) do
+  @spec build_request({[String.t()], [GTFS.station_id()]}) :: String.t()
+  def build_request({direction_ids, station_ids}) do
     id_filter = station_ids |> Enum.map(&URI.encode/1) |> Enum.join(",")
+    direction_filter = direction_ids |> Enum.map(&URI.encode/1) |> Enum.join(",")
     schedule_api_url = Application.get_env(:realtime_signs, :api_v3_url) <> "/schedules"
-    schedule_api_url <> "?filter[stop]=#{id_filter}"
+    schedule_api_url <> "?filter[stop]=#{id_filter}&filter[direction_id]=#{direction_filter}"
   end
 
   @spec group_headways_for_stations([map], [GTFS.station_id()], DateTime.t()) :: %{
