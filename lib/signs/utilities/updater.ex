@@ -135,6 +135,7 @@ defmodule Signs.Utilities.Updater do
     false
   end
 
+  @spec is_boarding_message?(Content.Message.t()) :: boolean
   defp is_boarding_message?(msg) do
     case msg do
       %Content.Message.Predictions{minutes: :boarding} -> true
