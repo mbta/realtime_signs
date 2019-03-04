@@ -73,6 +73,9 @@ defmodule Signs.Utilities.Updater do
 
       # update both
       {false, false} ->
+        new_top_already_interrupting_read? =
+          is_boarding_message?(top_msg) && same_content?(sign.current_content_bottom, top)
+
         log_line_update(sign, top_msg, "top")
         log_line_update(sign, bottom_msg, "bottom")
 
@@ -91,8 +94,9 @@ defmodule Signs.Utilities.Updater do
         }
 
         sign =
-          if Signs.Utilities.Audio.should_interrupting_read?(top, :top) ||
-               Signs.Utilities.Audio.should_interrupting_read?(bottom, :bottom) do
+          if !new_top_already_interrupting_read? &&
+               (Signs.Utilities.Audio.should_interrupting_read?(top, :top) ||
+                  Signs.Utilities.Audio.should_interrupting_read?(bottom, :bottom)) do
             Reader.interrupting_read(sign)
           else
             sign
@@ -129,6 +133,13 @@ defmodule Signs.Utilities.Updater do
 
   defp countup?(_sign, _new) do
     false
+  end
+
+  defp is_boarding_message?(msg) do
+    case msg do
+      %Content.Message.Predictions{minutes: :boarding} -> true
+      _ -> false
+    end
   end
 
   defp log_line_update(sign, msg, "top" = line) do
