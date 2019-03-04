@@ -58,6 +58,7 @@ defmodule Fake.HTTPoison do
     end
   end
 
+  @spec mock_response(String.t()) :: {:ok, %HTTPoison.Response{}} | {:error, %HTTPoison.Error{}}
   def mock_response("https://fake_update/mbta-gtfs-s3/fake_trip_update.json") do
     feed_message =
       %{
