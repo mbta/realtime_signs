@@ -12,14 +12,15 @@ defmodule Headway.Request do
     |> Enum.map(
       &http_client.get(&1, api_key_header(api_v3_key), timeout: 2000, recv_timeout: 2000)
     )
-    |> Enum.map(&attempt_parse_response/1)
+    |> Enum.map(&validate_and_parse_response/1)
     |> Enum.concat()
   end
 
-  @spec attempt_parse_response({atom, %HTTPoison.Response{}} | {atom, %HTTPoison.Error{}}) :: [
-          %{}
-        ]
-  defp attempt_parse_response(response) do
+  @spec validate_and_parse_response({atom, %HTTPoison.Response{}} | {atom, %HTTPoison.Error{}}) ::
+          [
+            %{}
+          ]
+  defp validate_and_parse_response(response) do
     case response do
       {:ok, %HTTPoison.Response{status_code: status, body: body}}
       when status >= 200 and status < 300 ->
