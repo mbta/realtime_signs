@@ -67,6 +67,7 @@ defmodule Signs.HeadwayTest do
     def max_stop_status(["suspended_transfer"], _routes), do: :suspension_transfer_station
     def max_stop_status(["shuttles"], _routes), do: :shuttles_closed_station
     def max_stop_status(["closure"], _routes), do: :station_closure
+    def max_stop_status(_stops, ["Green-B"]), do: :something
     def max_stop_status(_stops, _routes), do: :none
   end
 
@@ -386,6 +387,19 @@ defmodule Signs.HeadwayTest do
 
       assert sign.current_content_top == %Content.Message.Alert.NoService{mode: :train}
       assert sign.current_content_bottom == %Content.Message.Empty{}
+    end
+
+    test "if the line has an alert at a different station, the headways are increased" do
+      sign = %{
+        @sign
+        | current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new(),
+          route_id: "Green-B"
+      }
+
+      {:noreply, sign} = handle_info(:update_content, sign)
+
+      assert sign.current_content_bottom == %Content.Message.Headways.Bottom{range: {4, 5}}
     end
   end
 

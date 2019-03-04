@@ -167,13 +167,20 @@ defmodule Signs.Headway do
                   {nil, nil} ->
                     {Content.Message.Empty.new(), Content.Message.Empty.new()}
 
-                  range ->
+                  {bottom, top} ->
+                    {adjusted_bottom, adjusted_top} =
+                      if alert_status != :none do
+                        {bottom + 3, top + 3}
+                      else
+                        {bottom, top}
+                      end
+
                     {
                       %Content.Message.Headways.Top{
                         headsign: sign.headsign,
                         vehicle_type: vehicle_type(sign.route_id)
                       },
-                      %Content.Message.Headways.Bottom{range: range}
+                      %Content.Message.Headways.Bottom{range: {adjusted_bottom, adjusted_top}}
                     }
                 end
 
