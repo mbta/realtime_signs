@@ -26,6 +26,16 @@ defmodule Signs.Utilities.Headways do
   defp do_headway_messages(sign, config) do
     headway_range = sign.headway_engine.get_headways(config.stop_id)
 
+    sign_stop_ids =
+      sign.source_config
+      |> Signs.Utilities.SourceConfig.sign_stop_ids()
+
+    sign_routes =
+      sign.source_config
+      |> Signs.Utilities.SourceConfig.sign_routes()
+
+    alert_status = Engine.Alerts.max_stop_status(sign_stop_ids, sign_routes)
+
     case headway_range do
       :none ->
         {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
@@ -36,12 +46,19 @@ defmodule Signs.Utilities.Headways do
       {:first_departure, _, _} ->
         {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
 
-      headway_range ->
+      {bottom, top} ->
+        adjusted_range =
+          if alert_status != :none do
+            {bottom + @alert_headway_bump, top + @alert_headway_bump}
+          else
+            {bottom, top}
+          end
+
         {{config,
           %Content.Message.Headways.Top{
             headsign: config.headway_direction_name,
             vehicle_type: vehicle_type(config.routes)
-          }}, {config, %Content.Message.Headways.Bottom{range: headway_range}}}
+          }}, {config, %Content.Message.Headways.Bottom{range: adjusted_range}}}
     end
   end
 
