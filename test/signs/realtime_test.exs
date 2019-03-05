@@ -28,6 +28,15 @@ defmodule Signs.RealtimeTest do
     end
   end
 
+  defmodule FakeAlerts do
+    def max_stop_status(["suspended"], _routes), do: :suspension_closed_station
+    def max_stop_status(["suspended_transfer"], _routes), do: :suspension_transfer_station
+    def max_stop_status(["shuttles"], _routes), do: :shuttles_closed_station
+    def max_stop_status(["closure"], _routes), do: :station_closure
+    def max_stop_status(_stops, ["Green-B"]), do: :something
+    def max_stop_status(_stops, _routes), do: :none
+  end
+
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     headway_direction_name: "Southbound",
@@ -46,6 +55,7 @@ defmodule Signs.RealtimeTest do
     current_content_bottom: {@src, %HB{range: {1, 5}}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
+    alerts_engine: FakeAlerts,
     sign_updater: FakeUpdater,
     tick_bottom: 1,
     tick_top: 1,

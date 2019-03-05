@@ -19,10 +19,13 @@ defmodule Engine.Alerts.ApiFetcher do
   def get_statuses do
     case get_alerts() do
       {:ok, data} ->
+        {stop_statuses, route_statuses} = determine_stop_statuses(data)
+        route_statuses = Map.merge(route_statuses, determine_route_statuses(data))
+
         {:ok,
          %{
-           :stop_statuses => determine_stop_statuses(data),
-           :route_statuses => determine_route_statuses(data)
+           :stop_statuses => stop_statuses,
+           :route_statuses => route_statuses
          }}
 
       err ->
@@ -58,19 +61,28 @@ defmodule Engine.Alerts.ApiFetcher do
     end
   end
 
-  @spec determine_stop_statuses([%{}]) :: %{
-          Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()
-        }
+  @spec determine_stop_statuses([%{}]) ::
+          {%{
+             Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()
+           }, %{Engine.Alerts.Fetcher.route_id() => :something}}
   defp determine_stop_statuses(alert_data) do
     station_config = StationConfig.load_config()
 
-    Enum.reduce(alert_data, %{}, fn alert, acc ->
-      statuses = process_alert_for_stations(alert, station_config)
+    {stop_statuses, routes} =
+      Enum.reduce(alert_data, {%{}, %{}}, fn alert, {acc_stop_statuses, routes} = _acc ->
+        {stop_statuses, alert_routes} = process_alert_for_stations(alert, station_config)
 
-      Map.merge(acc, statuses, fn _stop_id, s1, s2 ->
-        Engine.Alerts.Fetcher.higher_priority_status(s1, s2)
+        routes = Map.merge(routes, alert_routes)
+
+        stop_statuses =
+          Map.merge(acc_stop_statuses, stop_statuses, fn _stop_id, s1, s2 ->
+            Engine.Alerts.Fetcher.higher_priority_status(s1, s2)
+          end)
+
+        {stop_statuses, routes}
       end)
-    end)
+
+    {stop_statuses, routes}
   end
 
   @spec determine_route_statuses([%{}]) :: %{Engine.Alerts.Fetcher.stop_id() => any()}
@@ -84,34 +96,45 @@ defmodule Engine.Alerts.ApiFetcher do
     end)
   end
 
-  @spec process_alert_for_stations(%{}, %StationConfig{}) :: %{
-          Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()
-        }
+  @spec process_alert_for_stations(%{}, %StationConfig{}) ::
+          {%{
+             Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()
+           }, %{Engine.Alerts.Fetcher.route_id() => :something}}
   defp process_alert_for_stations(alert, station_config) do
     stops = stops_for_alert(alert)
 
-    case get_in(alert, ["attributes", "effect"]) do
-      "SHUTTLE" ->
-        stops
-        |> get_alert_statuses(station_config, :shuttle)
+    routes =
+      alert
+      |> routes_for_alert()
+      |> Enum.reduce(%{}, fn route, acc ->
+        Map.merge(acc, %{route => :something})
+      end)
 
-      "SUSPENSION" ->
-        stops
-        |> get_alert_statuses(station_config, :suspension)
+    stop_alerts =
+      case get_in(alert, ["attributes", "effect"]) do
+        "SHUTTLE" ->
+          stops
+          |> get_alert_statuses(station_config, :shuttle)
 
-      "STATION_CLOSURE" ->
-        stops
-        |> Enum.map(&{&1, :station_closure})
-        |> Enum.into(%{})
+        "SUSPENSION" ->
+          stops
+          |> get_alert_statuses(station_config, :suspension)
 
-      "STOP_CLOSURE" ->
-        stops
-        |> Enum.map(&{&1, :station_closure})
-        |> Enum.into(%{})
+        "STATION_CLOSURE" ->
+          stops
+          |> Enum.map(&{&1, :station_closure})
+          |> Enum.into(%{})
 
-      _ ->
-        %{}
-    end
+        "STOP_CLOSURE" ->
+          stops
+          |> Enum.map(&{&1, :station_closure})
+          |> Enum.into(%{})
+
+        _ ->
+          %{}
+      end
+
+    {stop_alerts, routes}
   end
 
   @spec stops_for_alert(%{}) :: [Engine.Alerts.Fetcher.stop_id()]
@@ -120,6 +143,18 @@ defmodule Engine.Alerts.ApiFetcher do
     |> Enum.flat_map(fn ie ->
       if ie["stop"] do
         [ie["stop"]]
+      else
+        []
+      end
+    end)
+  end
+
+  @spec routes_for_alert(%{}) :: [Engine.Alerts.Fetcher.route_id()]
+  defp routes_for_alert(alert) do
+    alert["attributes"]["informed_entity"]
+    |> Enum.flat_map(fn ie ->
+      if ie["route"] do
+        [ie["route"]]
       else
         []
       end

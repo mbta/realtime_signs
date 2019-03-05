@@ -339,6 +339,7 @@ defmodule Signs.Utilities.PredictionsTest do
     current_content_bottom: {nil, Content.Message.Empty.new()},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
+    alerts_engine: nil,
     sign_updater: FakeUpdater,
     tick_bottom: 130,
     tick_top: 130,
