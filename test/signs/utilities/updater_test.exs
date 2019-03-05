@@ -136,6 +136,21 @@ defmodule Signs.Utilities.UpdaterTest do
       assert sign.tick_bottom == 100
     end
 
+    test "doesn't do an interrupting read if new top is same as old bottom and is a boarding message" do
+      src = %{@src | announce_boarding?: true}
+
+      sign = %{
+        @sign
+        | current_content_top: {src, %P{headsign: "Alewife", minutes: :boarding}},
+          current_content_bottom: {src, %P{headsign: "Ashmont", minutes: :boarding}}
+      }
+
+      diff_top = {src, %P{headsign: "Ashmont", minutes: :boarding}}
+      diff_bottom = {src, %P{headsign: "Alewife", minutes: 19}}
+      Updater.update_sign(sign, diff_top, diff_bottom)
+      refute_received({:send_audio, _, _, _, _})
+    end
+
     test "logs when stopped train message turns on" do
       diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
       same_bottom = @sign.current_content_bottom
