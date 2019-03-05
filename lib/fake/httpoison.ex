@@ -58,6 +58,7 @@ defmodule Fake.HTTPoison do
     end
   end
 
+  @spec mock_response(String.t()) :: {:ok, %HTTPoison.Response{}} | {:error, %HTTPoison.Error{}}
   def mock_response("https://fake_update/mbta-gtfs-s3/fake_trip_update.json") do
     feed_message =
       %{
@@ -185,19 +186,27 @@ defmodule Fake.HTTPoison do
     {:error, %HTTPoison.Error{reason: :timeout}}
   end
 
-  def mock_response("https://green.dev.api.mbtace.com/schedules?filter[stop]=500_error") do
+  def mock_response(
+        "https://green.dev.api.mbtace.com/schedules?filter[stop]=500_error&filter[direction_id]=0,1"
+      ) do
     {:ok, %HTTPoison.Response{status_code: 500, body: ""}}
   end
 
-  def mock_response("https://green.dev.api.mbtace.com/schedules?filter[stop]=unknown_error") do
+  def mock_response(
+        "https://green.dev.api.mbtace.com/schedules?filter[stop]=unknown_error&filter[direction_id]=0,1"
+      ) do
     {:error, %HTTPoison.Error{reason: "Bad URL"}}
   end
 
-  def mock_response("https://green.dev.api.mbtace.com/schedules?filter[stop]=parse_error") do
+  def mock_response(
+        "https://green.dev.api.mbtace.com/schedules?filter[stop]=parse_error&filter[direction_id]=0,1"
+      ) do
     {:ok, %HTTPoison.Response{status_code: 200, body: "BAD JSON"}}
   end
 
-  def mock_response("https://green.dev.api.mbtace.com/schedules?filter[stop]=valid_json") do
+  def mock_response(
+        "https://green.dev.api.mbtace.com/schedules?filter[stop]=valid_json&filter[direction_id]=0,1"
+      ) do
     json = %{"data" => [%{"relationships" => "trip"}]}
     encoded = Poison.encode!(json)
     {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
