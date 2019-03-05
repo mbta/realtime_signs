@@ -42,6 +42,7 @@ defmodule Signs.Utilities.UpdaterTest do
     current_content_bottom: {@src, %P{headsign: "Ashmont", minutes: 3}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
+    alerts_engine: nil,
     sign_updater: FakeUpdater,
     tick_bottom: 1,
     tick_top: 1,

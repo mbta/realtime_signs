@@ -17,6 +17,7 @@ defmodule Signs.Realtime do
     :current_content_bottom,
     :prediction_engine,
     :headway_engine,
+    :alerts_engine,
     :sign_updater,
     :tick_top,
     :tick_bottom,
@@ -37,6 +38,7 @@ defmodule Signs.Realtime do
           current_content_bottom: line_content(),
           prediction_engine: module(),
           headway_engine: module(),
+          alerts_engine: module(),
           sign_updater: module(),
           tick_bottom: non_neg_integer(),
           tick_top: non_neg_integer(),
@@ -49,6 +51,7 @@ defmodule Signs.Realtime do
   def start_link(%{"type" => "realtime"} = config, opts \\ []) do
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
     headway_engine = opts[:headway_engine] || Engine.Headways
+    alerts_engine = opts[:alerts_engine] || Engine.Alerts
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
     pa_ess_zone = Map.fetch!(config, "pa_ess_zone")
 
@@ -60,6 +63,7 @@ defmodule Signs.Realtime do
       current_content_bottom: {nil, Content.Message.Empty.new()},
       prediction_engine: prediction_engine,
       headway_engine: headway_engine,
+      alerts_engine: alerts_engine,
       sign_updater: sign_updater,
       tick_bottom: 130,
       tick_top: 130,
@@ -85,7 +89,7 @@ defmodule Signs.Realtime do
       sign.source_config
       |> Signs.Utilities.SourceConfig.sign_routes()
 
-    alert_status = Engine.Alerts.max_stop_status(sign_stop_ids, sign_routes)
+    alert_status = sign.alerts_engine.max_stop_status(sign_stop_ids, sign_routes)
 
     enabled? = Engine.Config.enabled?(sign.id)
 
