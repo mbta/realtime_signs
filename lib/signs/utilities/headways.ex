@@ -35,7 +35,7 @@ defmodule Signs.Utilities.Headways do
       sign.source_config
       |> Signs.Utilities.SourceConfig.sign_routes()
 
-    alert_status = Engine.Alerts.max_stop_status(sign_stop_ids, sign_routes)
+    alert_status = sign.alerts_engine.max_stop_status(sign_stop_ids, sign_routes)
 
     case headway_range do
       :none ->

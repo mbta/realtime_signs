@@ -2,6 +2,15 @@ defmodule Signs.Utilities.PredictionsTest do
   use ExUnit.Case
   alias Signs.Utilities.SourceConfig
 
+  defmodule FakeAlerts do
+    def max_stop_status(["suspended"], _routes), do: :suspension_closed_station
+    def max_stop_status(["suspended_transfer"], _routes), do: :suspension_transfer_station
+    def max_stop_status(["shuttles"], _routes), do: :shuttles_closed_station
+    def max_stop_status(["closure"], _routes), do: :station_closure
+    def max_stop_status(_stops, ["Green-B"]), do: :something
+    def max_stop_status(_stops, _routes), do: :none
+  end
+
   defmodule FakePredictions do
     def for_stop("1", 0) do
       [
@@ -339,6 +348,7 @@ defmodule Signs.Utilities.PredictionsTest do
     current_content_bottom: {nil, Content.Message.Empty.new()},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
+    alerts_engine: FakeAlerts,
     sign_updater: FakeUpdater,
     tick_bottom: 130,
     tick_top: 130,

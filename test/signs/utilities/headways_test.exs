@@ -1,6 +1,15 @@
 defmodule Signs.Utilities.HeadwaysTest do
   use ExUnit.Case
 
+  defmodule FakeAlerts do
+    def max_stop_status(["suspended"], _routes), do: :suspension_closed_station
+    def max_stop_status(["suspended_transfer"], _routes), do: :suspension_transfer_station
+    def max_stop_status(["shuttles"], _routes), do: :shuttles_closed_station
+    def max_stop_status(["closure"], _routes), do: :station_closure
+    def max_stop_status(_stops, ["Green-B"]), do: :something
+    def max_stop_status(_stops, _routes), do: :none
+  end
+
   defmodule FakeHeadways do
     def get_headways("a") do
       {1, 5}
@@ -31,6 +40,7 @@ defmodule Signs.Utilities.HeadwaysTest do
     current_content_bottom: {nil, Content.Message.Empty.new()},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
+    alerts_engine: FakeAlerts,
     sign_updater: FakeUpdater,
     tick_bottom: 130,
     tick_top: 130,
@@ -43,6 +53,7 @@ defmodule Signs.Utilities.HeadwaysTest do
   defp source_config_for_stop_id(stop_id) do
     %Signs.Utilities.SourceConfig{
       stop_id: stop_id,
+      routes: ["Red"],
       headway_direction_name: "Southbound",
       direction_id: 0,
       platform: nil,
@@ -88,6 +99,20 @@ defmodule Signs.Utilities.HeadwaysTest do
                {{source_with_headway,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
                 {source_with_headway, %Content.Message.Headways.Bottom{range: {1, 5}}}}
+    end
+
+    test "increases the headways if there are alerts on the route" do
+      source_config = %{source_config_for_stop_id("a") | routes: ["Green-B"]}
+
+      sign = %{
+        @sign
+        | source_config: {[source_config]}
+      }
+
+      assert Signs.Utilities.Headways.get_messages(sign) ==
+               {{source_config,
+                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
+                {source_config, %Content.Message.Headways.Bottom{range: {4, 8}}}}
     end
 
     test "generates blank messages to display when no headway information present" do

@@ -5,6 +5,15 @@ defmodule Signs.Utilities.ReaderTest do
   alias Content.Audio.NextTrainCountdown
   alias Signs.Utilities.Reader
 
+  defmodule FakeAlerts do
+    def max_stop_status(["suspended"], _routes), do: :suspension_closed_station
+    def max_stop_status(["suspended_transfer"], _routes), do: :suspension_transfer_station
+    def max_stop_status(["shuttles"], _routes), do: :shuttles_closed_station
+    def max_stop_status(["closure"], _routes), do: :station_closure
+    def max_stop_status(_stops, ["Green-B"]), do: :something
+    def max_stop_status(_stops, _routes), do: :none
+  end
+
   defmodule FakePredictions do
     def for_stop(_stop_id, _direction_id), do: []
     def stopped_at?(_stop_id), do: false
@@ -38,6 +47,7 @@ defmodule Signs.Utilities.ReaderTest do
     current_content_bottom: {@src, %Predictions{headsign: "Ashmont", minutes: 3}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
+    alerts_engine: FakeAlerst,
     sign_updater: FakeUpdater,
     tick_bottom: 1,
     tick_top: 1,
