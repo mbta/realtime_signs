@@ -50,7 +50,7 @@ defmodule Signs.Utilities.Headways do
       {bottom, top} ->
         adjusted_range =
           if alert_status != :none do
-            {bottom + @alert_headway_bump, top + @alert_headway_bump}
+            {if(bottom, do: bottom + @alert_headway_bump), if(top, do: top + @alert_headway_bump)}
           else
             {bottom, top}
           end

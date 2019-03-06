@@ -30,6 +30,14 @@ defmodule Signs.Utilities.HeadwaysTest do
     def get_headways("e") do
       {nil, nil}
     end
+
+    def get_headways("f") do
+      {nil, 5}
+    end
+
+    def get_headways("g") do
+      {1, nil}
+    end
   end
 
   @sign %Signs.Realtime{
@@ -113,6 +121,34 @@ defmodule Signs.Utilities.HeadwaysTest do
                {{source_config,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
                 {source_config, %Content.Message.Headways.Bottom{range: {4, 8}}}}
+    end
+
+    test "increases the headways if there are alerts on the route and it only gets a bottom end of the range" do
+      source_config = %{source_config_for_stop_id("g") | routes: ["Green-B"]}
+
+      sign = %{
+        @sign
+        | source_config: {[source_config]}
+      }
+
+      assert Signs.Utilities.Headways.get_messages(sign) ==
+               {{source_config,
+                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
+                {source_config, %Content.Message.Headways.Bottom{range: {4, nil}}}}
+    end
+
+    test "increases the headways if there are alerts on the route and it only gets a top end of the range" do
+      source_config = %{source_config_for_stop_id("f") | routes: ["Green-B"]}
+
+      sign = %{
+        @sign
+        | source_config: {[source_config]}
+      }
+
+      assert Signs.Utilities.Headways.get_messages(sign) ==
+               {{source_config,
+                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
+                {source_config, %Content.Message.Headways.Bottom{range: {nil, 8}}}}
     end
 
     test "generates blank messages to display when no headway information present" do
