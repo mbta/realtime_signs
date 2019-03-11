@@ -23,6 +23,10 @@ defmodule Signs.HeadwayTest do
       {nil, nil}
     end
 
+    def get_headways("notnil_nil") do
+      {1, nil}
+    end
+
     def get_headways(_stop_id) do
       {1, 2}
     end
@@ -206,6 +210,18 @@ defmodule Signs.HeadwayTest do
 
       assert sign.current_content_top == %Content.Message.Empty{}
       assert sign.current_content_bottom == %Content.Message.Empty{}
+    end
+
+    test "works when on last trip of the day and an alert is on the route" do
+      sign = %{@sign | gtfs_stop_id: "notnil_nil", route_id: "Green-B"}
+      {:noreply, sign} = handle_info(:update_content, sign)
+
+      assert sign.current_content_top == %Content.Message.Headways.Top{
+               headsign: "Chelsea",
+               vehicle_type: :train
+             }
+
+      assert sign.current_content_bottom == %Content.Message.Headways.Bottom{range: {4, nil}}
     end
 
     test "if the bridge is down, does not update the sign" do
