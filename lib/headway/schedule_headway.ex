@@ -1,7 +1,8 @@
 defmodule Headway.ScheduleHeadway do
   require Logger
 
-  @type headway_range :: {non_neg_integer | nil, non_neg_integer | nil} | :none
+  @type headway_range ::
+          {nil, nil} | {non_neg_integer, nil} | {non_neg_integer, non_neg_integer} | :none
   @type t :: headway_range | {:first_departure, headway_range, DateTime.t()}
   @type schedule_map :: map
 
