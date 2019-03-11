@@ -171,7 +171,7 @@ defmodule Signs.Headway do
                   {bottom, top} ->
                     {adjusted_bottom, adjusted_top} =
                       if alert_status != :none do
-                        {bottom + @alert_headway_bump, top + @alert_headway_bump}
+                        {bottom + @alert_headway_bump, top && top + @alert_headway_bump}
                       else
                         {bottom, top}
                       end
