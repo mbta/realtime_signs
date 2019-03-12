@@ -54,7 +54,7 @@ defmodule Content.Audio.TrainIsBoarding do
       {PaEss.Utilities.take_message_id(vars), vars, :audio}
     end
 
-    @spec branch_letter(String.t()) :: String.t()
+    @spec branch_letter(String.t()) :: String.t() | nil
     defp branch_letter("Green-B"), do: "536"
     defp branch_letter("Green-C"), do: "537"
     defp branch_letter("Green-D"), do: "538"
