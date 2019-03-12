@@ -300,35 +300,5 @@ defmodule Content.Message.PredictionsTest do
 
       assert Content.Message.to_string(msg) == "Mattapan     1 min"
     end
-
-    test "correctly includes track number at appropriate terminal" do
-      prediction = %Predictions.Prediction{
-        seconds_until_departure: 60,
-        direction_id: 0,
-        route_id: "Red",
-        stopped?: true,
-        stops_away: 0,
-        stop_id: "Alewife-02",
-        destination_stop_id: "70093"
-      }
-
-      assert %Content.Message.Predictions{track: 2} =
-               Content.Message.Predictions.terminal(prediction)
-    end
-
-    test "doesn't include track number at terminal without multiple boarding tracks" do
-      prediction = %Predictions.Prediction{
-        seconds_until_departure: 60,
-        direction_id: 1,
-        route_id: "Red",
-        stopped?: true,
-        stops_away: 0,
-        stop_id: "70094",
-        destination_stop_id: "70061"
-      }
-
-      assert %Content.Message.Predictions{track: nil} =
-               Content.Message.Predictions.terminal(prediction)
-    end
   end
 end

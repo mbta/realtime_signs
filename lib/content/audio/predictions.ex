@@ -32,7 +32,7 @@ defmodule Content.Audio.Predictions do
             %TrainIsBoarding{
               destination: headsign,
               route_id: predictions.route_id,
-              track: predictions.track
+              stop_id: predictions.stop_id
             }
 
           predictions.minutes == :arriving ->

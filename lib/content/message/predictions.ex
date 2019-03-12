@@ -14,17 +14,14 @@ defmodule Content.Message.Predictions do
 
   @thirty_plus_minutes 30 * 60
 
-  @type track_number :: non_neg_integer()
-
   @enforce_keys [:headsign, :minutes]
-  defstruct [:headsign, :minutes, :route_id, :stop_id, track: nil, width: 18]
+  defstruct [:headsign, :minutes, :route_id, :stop_id, width: 18]
 
   @type t :: %__MODULE__{
           headsign: String.t(),
           minutes: integer() | :boarding | :arriving | :thirty_plus,
           route_id: String.t(),
           stop_id: String.t(),
-          track: track_number() | nil,
           width: integer()
         }
 
@@ -99,21 +96,9 @@ defmodule Content.Message.Predictions do
       minutes: minutes,
       route_id: prediction.route_id,
       stop_id: prediction.stop_id,
-      track: stop_track(prediction.stop_id),
       width: width
     }
   end
-
-  @spec stop_track(String.t()) :: track_number()
-  defp stop_track("Alewife-01"), do: 1
-  defp stop_track("Alewife-02"), do: 2
-  defp stop_track("Braintree-01"), do: 1
-  defp stop_track("Braintree-02"), do: 2
-  defp stop_track("Forest Hills-01"), do: 1
-  defp stop_track("Forest Hills-02"), do: 2
-  defp stop_track("Oak Grove-01"), do: 1
-  defp stop_track("Oak Grove-02"), do: 2
-  defp stop_track(_), do: nil
 
   defimpl Content.Message do
     require Logger
