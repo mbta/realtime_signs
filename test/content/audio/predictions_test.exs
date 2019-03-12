@@ -79,7 +79,8 @@ defmodule Content.Audio.PredictionsTest do
         stop_id: "70065"
       }
 
-      assert %Audio.TrainIsBoarding{destination: :ashmont} = from_sign_content({src, predictions})
+      assert %Audio.TrainIsBoarding{destination: :ashmont, route_id: "Red", stop_id: "70065"} =
+               from_sign_content({src, predictions})
     end
 
     test "returns a TrainIsArriving audio if predictions say it's arriving" do
