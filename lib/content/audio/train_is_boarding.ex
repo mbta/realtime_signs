@@ -21,7 +21,7 @@ defmodule Content.Audio.TrainIsBoarding do
     @on_track_1 "541"
     @on_track_2 "542"
 
-    def to_params(%{destination: destination})
+    def to_params(%{destination: destination, route_id: "Green-" <> _branch})
         when destination in [:lechmere, :north_station, :government_center, :park_st, :kenmore] do
       vars = [
         @the_next,
