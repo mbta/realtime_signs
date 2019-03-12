@@ -31,13 +31,25 @@ defmodule Content.Audio.TrainIsBoarding do
     end
 
     def to_params(audio) do
-      vars = [
-        @the_next,
-        branch_letter(audio.route_id),
-        @train_to,
-        PaEss.Utilities.destination_var(audio.destination),
-        @is_now_boarding
-      ]
+      vars =
+        case branch_letter(audio.route_id) do
+          nil ->
+            [
+              @the_next,
+              @train_to,
+              PaEss.Utilities.destination_var(audio.destination),
+              @is_now_boarding
+            ]
+
+          branch_letter ->
+            [
+              @the_next,
+              branch_letter,
+              @train_to,
+              PaEss.Utilities.destination_var(audio.destination),
+              @is_now_boarding
+            ]
+        end
 
       {PaEss.Utilities.take_message_id(vars), vars, :audio}
     end
