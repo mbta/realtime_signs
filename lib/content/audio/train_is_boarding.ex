@@ -5,18 +5,21 @@ defmodule Content.Audio.TrainIsBoarding do
 
   require Logger
 
-  @enforce_keys [:destination, :route_id]
+  @enforce_keys [:destination, :route_id, :track]
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
           destination: PaEss.terminal_station(),
-          route_id: String.t()
+          route_id: String.t(),
+          track: Content.Message.Predictions.track_number() | nil
         }
 
   defimpl Content.Audio do
     @the_next "501"
     @train_to "507"
     @is_now_boarding "544"
+    @on_track_1 "541"
+    @on_track_2 "542"
 
     def to_params(%{destination: destination})
         when destination in [:lechmere, :north_station, :government_center, :park_st, :kenmore] do
@@ -25,6 +28,18 @@ defmodule Content.Audio.TrainIsBoarding do
         @train_to,
         PaEss.Utilities.destination_var(destination),
         @is_now_boarding
+      ]
+
+      {PaEss.Utilities.take_message_id(vars), vars, :audio}
+    end
+
+    def to_params(%{track: track} = audio) when not is_nil(track) do
+      vars = [
+        @the_next,
+        @train_to,
+        PaEss.Utilities.destination_var(audio.destination),
+        @is_now_boarding,
+        track(track)
       ]
 
       {PaEss.Utilities.take_message_id(vars), vars, :audio}
@@ -53,6 +68,10 @@ defmodule Content.Audio.TrainIsBoarding do
 
       {PaEss.Utilities.take_message_id(vars), vars, :audio}
     end
+
+    @spec track(Content.Message.Predictions.track_number()) :: String.t()
+    defp track(1), do: @on_track_1
+    defp track(2), do: @on_track_2
 
     @spec branch_letter(String.t()) :: String.t() | nil
     defp branch_letter("Green-B"), do: "536"
