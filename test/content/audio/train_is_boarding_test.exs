@@ -14,5 +14,11 @@ defmodule Content.Audio.TrainIsBoardingTest do
 
       assert Content.Audio.to_params(audio) == {"106", ["501", "507", "4027", "544"], :audio}
     end
+
+    test "Next train to Alewife is now boarding (works on Heavy Rail)" do
+      audio = %Content.Audio.TrainIsBoarding{destination: :alewife, route_id: "Red"}
+
+      assert Content.Audio.to_params(audio) == {"106", ["501", "507", "4000", "544"], :audio}
+    end
   end
 end
