@@ -42,11 +42,6 @@ defmodule Engine.Alerts.Fetcher do
     :station_closure
   end
 
-  def higher_priority_status(status1, status2)
-      when status1 == :something or status2 == :something do
-    :something
-  end
-
   def higher_priority_status(_status1, _status2) do
     :none
   end

@@ -105,10 +105,7 @@ defmodule Engine.Alerts.ApiFetcher do
 
     routes =
       alert
-      |> routes_for_alert()
-      |> Enum.reduce(%{}, fn route, acc ->
-        Map.merge(acc, %{route => :something})
-      end)
+      |> process_alert_for_routes()
 
     stop_alerts =
       case get_in(alert, ["attributes", "effect"]) do
@@ -143,18 +140,6 @@ defmodule Engine.Alerts.ApiFetcher do
     |> Enum.flat_map(fn ie ->
       if ie["stop"] do
         [ie["stop"]]
-      else
-        []
-      end
-    end)
-  end
-
-  @spec routes_for_alert(%{}) :: [Engine.Alerts.Fetcher.route_id()]
-  defp routes_for_alert(alert) do
-    alert["attributes"]["informed_entity"]
-    |> Enum.flat_map(fn ie ->
-      if ie["route"] do
-        [ie["route"]]
       else
         []
       end
