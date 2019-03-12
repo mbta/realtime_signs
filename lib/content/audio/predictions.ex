@@ -43,6 +43,7 @@ defmodule Content.Audio.Predictions do
               destination: headsign,
               minutes: 30,
               verb: if(src.terminal?, do: :departs, else: :arrives),
+              stop_id: predictions.stop_id,
               platform: src.platform
             }
 
@@ -51,6 +52,7 @@ defmodule Content.Audio.Predictions do
               destination: headsign,
               minutes: predictions.minutes,
               verb: if(src.terminal?, do: :departs, else: :arrives),
+              stop_id: predictions.stop_id,
               platform: src.platform
             }
         end

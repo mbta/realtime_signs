@@ -7,6 +7,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         destination: :ashmont,
         verb: :arrives,
         minutes: 5,
+        stop_id: "70264",
         platform: nil
       }
 
@@ -18,6 +19,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         destination: :mattapan,
         verb: :arrives,
         minutes: 5,
+        stop_id: "70263",
         platform: nil
       }
 
@@ -29,6 +31,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         destination: :bowdoin,
         verb: :arrives,
         minutes: 5,
+        stop_id: "70057",
         platform: nil
       }
 
@@ -40,6 +43,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         destination: :wonderland,
         verb: :arrives,
         minutes: 5,
+        stop_id: "70058",
         platform: nil
       }
 
@@ -51,6 +55,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         destination: :forest_hills,
         verb: :arrives,
         minutes: 5,
+        stop_id: "70022",
         platform: nil
       }
 
@@ -62,6 +67,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         destination: :oak_grove,
         verb: :arrives,
         minutes: 5,
+        stop_id: "70023",
         platform: nil
       }
 
@@ -73,6 +79,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         destination: :alewife,
         verb: :arrives,
         minutes: 5,
+        stop_id: "70064",
         platform: nil
       }
 
@@ -84,6 +91,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         destination: :alewife,
         verb: :arrives,
         minutes: 1,
+        stop_id: "70064",
         platform: nil
       }
 
@@ -95,6 +103,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         destination: :alewife,
         verb: :arrives,
         minutes: 5,
+        stop_id: "70086",
         platform: :ashmont
       }
 
@@ -106,6 +115,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         destination: :alewife,
         verb: :arrives,
         minutes: 1,
+        stop_id: "70086",
         platform: :ashmont
       }
 
@@ -117,6 +127,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         destination: :alewife,
         verb: :arrives,
         minutes: 5,
+        stop_id: "70096",
         platform: :braintree
       }
 
@@ -128,6 +139,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         destination: :braintree,
         verb: :arrives,
         minutes: 5,
+        stop_id: "70063",
         platform: nil
       }
 
@@ -139,6 +151,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         destination: :wonderland,
         verb: :arrives,
         minutes: 50,
+        stop_id: "70048",
         platform: nil
       }
 

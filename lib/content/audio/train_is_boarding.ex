@@ -15,8 +15,6 @@ defmodule Content.Audio.TrainIsBoarding do
         }
 
   defimpl Content.Audio do
-    @typep track_number :: non_neg_integer()
-
     @the_next "501"
     @train_to "507"
     @is_now_boarding "544"
@@ -37,7 +35,7 @@ defmodule Content.Audio.TrainIsBoarding do
 
     def to_params(audio) do
       {vars, message_type} =
-        case {branch_letter(audio.route_id), stop_track_number(audio.stop_id)} do
+        case {branch_letter(audio.route_id), Content.Utilities.stop_track_number(audio.stop_id)} do
           {nil, nil} ->
             {[
                @the_next,
@@ -68,20 +66,9 @@ defmodule Content.Audio.TrainIsBoarding do
       {PaEss.Utilities.take_message_id(vars), vars, message_type}
     end
 
-    @spec track(track_number()) :: String.t()
+    @spec track(Content.Utilities.track_number()) :: String.t()
     defp track(1), do: @on_track_1
     defp track(2), do: @on_track_2
-
-    @spec stop_track_number(String.t()) :: track_number() | nil
-    defp stop_track_number("Alewife-01"), do: 1
-    defp stop_track_number("Alewife-02"), do: 2
-    defp stop_track_number("Braintree-01"), do: 1
-    defp stop_track_number("Braintree-02"), do: 2
-    defp stop_track_number("Forest Hills-01"), do: 1
-    defp stop_track_number("Forest Hills-02"), do: 2
-    defp stop_track_number("Oak Grove-01"), do: 1
-    defp stop_track_number("Oak Grove-02"), do: 2
-    defp stop_track_number(_), do: nil
 
     @spec branch_letter(String.t()) :: String.t() | nil
     defp branch_letter("Green-B"), do: "536"
