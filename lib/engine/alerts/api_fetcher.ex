@@ -64,7 +64,7 @@ defmodule Engine.Alerts.ApiFetcher do
   @spec determine_stop_statuses([%{}]) ::
           {%{
              Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()
-           }, %{Engine.Alerts.Fetcher.route_id() => :something}}
+           }, %{Engine.Alerts.Fetcher.route_id() => Engine.Alerts.Fetcher.stop_status()}}
   defp determine_stop_statuses(alert_data) do
     station_config = StationConfig.load_config()
 
@@ -99,7 +99,7 @@ defmodule Engine.Alerts.ApiFetcher do
   @spec process_alert_for_stations(%{}, %StationConfig{}) ::
           {%{
              Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()
-           }, %{Engine.Alerts.Fetcher.route_id() => :something}}
+           }, %{Engine.Alerts.Fetcher.route_id() => Engine.Alerts.Fetcher.stop_status()}}
   defp process_alert_for_stations(alert, station_config) do
     stops = stops_for_alert(alert)
 
