@@ -131,7 +131,7 @@ defmodule Engine.Alerts.ApiFetcher do
           %{}
       end
 
-    {stop_alerts, routes}
+    {stop_alerts, routes} |> IO.inspect(label: "{stop_alerts, routes}")
   end
 
   @spec stops_for_alert(%{}) :: [Engine.Alerts.Fetcher.stop_id()]
