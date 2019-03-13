@@ -1,4 +1,6 @@
 defmodule Content.Utilities do
+  @type track_number :: non_neg_integer()
+
   def width_padded_string(left, right, width) do
     max_left_length = width - (String.length(right) + 1)
     left = String.slice(left, 0, max_left_length)
@@ -62,4 +64,15 @@ defmodule Content.Utilities do
   def headsign_for_prediction("Green-E", 1, _), do: {:ok, "Lechmere"}
 
   def headsign_for_prediction(_, _, _), do: {:error, :not_found}
+
+  @spec stop_track_number(String.t()) :: track_number() | nil
+  def stop_track_number("Alewife-01"), do: 1
+  def stop_track_number("Alewife-02"), do: 2
+  def stop_track_number("Braintree-01"), do: 1
+  def stop_track_number("Braintree-02"), do: 2
+  def stop_track_number("Forest Hills-01"), do: 1
+  def stop_track_number("Forest Hills-02"), do: 2
+  def stop_track_number("Oak Grove-01"), do: 1
+  def stop_track_number("Oak Grove-02"), do: 2
+  def stop_track_number(_), do: nil
 end

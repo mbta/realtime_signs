@@ -29,7 +29,11 @@ defmodule Content.Audio.Predictions do
             %TrackChange{destination: headsign, route_id: predictions.route_id, track: 2}
 
           predictions.minutes == :boarding ->
-            %TrainIsBoarding{destination: headsign, route_id: predictions.route_id}
+            %TrainIsBoarding{
+              destination: headsign,
+              route_id: predictions.route_id,
+              stop_id: predictions.stop_id
+            }
 
           predictions.minutes == :arriving ->
             %TrainIsArriving{destination: headsign}
@@ -39,6 +43,7 @@ defmodule Content.Audio.Predictions do
               destination: headsign,
               minutes: 30,
               verb: if(src.terminal?, do: :departs, else: :arrives),
+              stop_id: predictions.stop_id,
               platform: src.platform
             }
 
@@ -47,6 +52,7 @@ defmodule Content.Audio.Predictions do
               destination: headsign,
               minutes: predictions.minutes,
               verb: if(src.terminal?, do: :departs, else: :arrives),
+              stop_id: predictions.stop_id,
               platform: src.platform
             }
         end
