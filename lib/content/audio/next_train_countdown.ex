@@ -26,7 +26,7 @@ defmodule Content.Audio.NextTrainCountdown do
     @train_to "507"
     @on_track_1 "541"
     @on_track_2 "542"
-    @in_word "504"
+    @in_ "504"
     @minutes "505"
     @space "21000"
 
@@ -85,7 +85,7 @@ defmodule Content.Audio.NextTrainCountdown do
         @space,
         verb_var(audio),
         @space,
-        @in_word,
+        @in_,
         @space,
         minutes_var(audio),
         @space,
