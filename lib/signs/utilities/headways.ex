@@ -4,6 +4,7 @@ defmodule Signs.Utilities.Headways do
   geneartes the top and bottom lines for the sign
   """
   alias Signs.Utilities.SourceConfig
+  require Logger
   @alert_headway_bump 3
 
   @spec get_messages(Signs.Realtime.t()) ::
