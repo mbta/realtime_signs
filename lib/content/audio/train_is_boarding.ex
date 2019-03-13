@@ -20,6 +20,7 @@ defmodule Content.Audio.TrainIsBoarding do
     @is_now_boarding "544"
     @on_track_1 "541"
     @on_track_2 "542"
+    @space "21000"
 
     def to_params(%{destination: destination, route_id: "Green-" <> _branch})
         when destination in [:lechmere, :north_station, :government_center, :park_st, :kenmore] do
@@ -47,9 +48,13 @@ defmodule Content.Audio.TrainIsBoarding do
           {nil, track_number} ->
             {[
                @the_next,
+               @space,
                @train_to,
+               @space,
                PaEss.Utilities.destination_var(audio.destination),
+               @space,
                @is_now_boarding,
+               @space,
                track(track_number)
              ], :audio_visual}
 

@@ -41,7 +41,8 @@ defmodule Content.Audio.TrainIsBoardingTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {"107", ["501", "507", "4016", "544", "542"], :audio_visual}
+               {"111", ["501", "21000", "507", "21000", "4016", "21000", "544", "21000", "542"],
+                :audio_visual}
     end
   end
 end

@@ -26,6 +26,9 @@ defmodule Content.Audio.NextTrainCountdown do
     @train_to "507"
     @on_track_1 "541"
     @on_track_2 "542"
+    @in_word "504"
+    @minutes "505"
+    @space "21000"
 
     def to_params(%{platform: nil, minutes: 1} = audio) do
       case Content.Utilities.stop_track_number(audio.stop_id) do
@@ -75,10 +78,19 @@ defmodule Content.Audio.NextTrainCountdown do
     defp terminal_track_params(audio, track_number) do
       vars = [
         @the_next,
+        @space,
         @train_to,
+        @space,
         Utilities.destination_var(audio.destination),
+        @space,
         verb_var(audio),
+        @space,
+        @in_word,
+        @space,
         minutes_var(audio),
+        @space,
+        @minutes,
+        @space,
         track(track_number)
       ]
 
