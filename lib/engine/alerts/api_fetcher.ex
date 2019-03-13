@@ -160,12 +160,6 @@ defmodule Engine.Alerts.ApiFetcher do
           "SHUTTLE" ->
             [{ie["route"], :shuttles_closed_station}]
 
-          "STATION_CLOSURE" ->
-            [{ie["route"], :station_closure}]
-
-          "STOP_CLOSURE" ->
-            [{ie["route"], :station_closure}]
-
           _ ->
             []
         end
