@@ -38,47 +38,48 @@ defmodule Signs.Utilities.AudioTest do
     read_period_seconds: 100
   }
 
-  describe "should_interrupting_read?/2" do
+  describe "should_interrupting_read?/3" do
     test "returns false if it's a numeric prediction" do
       message = %Message.Predictions{headsign: "Alewife", minutes: 5}
-      refute should_interrupting_read?({nil, message}, :top)
-      refute should_interrupting_read?({nil, message}, :bottom)
+      refute should_interrupting_read?({nil, message}, @sign.source_config, :top)
+      refute should_interrupting_read?({nil, message}, @sign.source_config, :bottom)
     end
 
     test "If it's ARR respects config's announce_arriving?" do
       message = %Message.Predictions{headsign: "Alewife", minutes: :arriving}
       src = %{@src | announce_arriving?: false}
-      refute should_interrupting_read?({src, message}, :top)
-      refute should_interrupting_read?({src, message}, :bottom)
+      refute should_interrupting_read?({src, message}, @sign.source_config, :top)
+      refute should_interrupting_read?({src, message}, @sign.source_config, :bottom)
       src = %{@src | announce_arriving?: true}
-      assert should_interrupting_read?({src, message}, :top)
-      assert should_interrupting_read?({src, message}, :bottom)
+      assert should_interrupting_read?({src, message}, @sign.source_config, :top)
+      assert should_interrupting_read?({src, message}, {[@src], [@src]}, :bottom)
+      refute should_interrupting_read?({src, message}, @sign.source_config, :bottom)
     end
 
     test "If it's ARR respects config's announce_boarding?" do
       message = %Message.Predictions{headsign: "Alewife", minutes: :boarding}
       src = %{@src | announce_boarding?: false}
-      refute should_interrupting_read?({src, message}, :top)
-      refute should_interrupting_read?({src, message}, :bottom)
+      refute should_interrupting_read?({src, message}, @sign.source_config, :top)
+      refute should_interrupting_read?({src, message}, @sign.source_config, :bottom)
       src = %{@src | announce_boarding?: true}
-      assert should_interrupting_read?({src, message}, :top)
-      assert should_interrupting_read?({src, message}, :bottom)
+      assert should_interrupting_read?({src, message}, @sign.source_config, :top)
+      assert should_interrupting_read?({src, message}, @sign.source_config, :bottom)
     end
 
     test "returns false if it's empty" do
-      refute should_interrupting_read?({nil, %Message.Empty{}}, :top)
-      refute should_interrupting_read?({nil, %Message.Empty{}}, :bottom)
+      refute should_interrupting_read?({nil, %Message.Empty{}}, @sign.source_config, :top)
+      refute should_interrupting_read?({nil, %Message.Empty{}}, @sign.source_config, :bottom)
     end
 
     test "returns false if it's the bottom line and a stopped train message" do
       message = %Message.StoppedTrain{headsign: "Alewife", stops_away: 2}
-      assert should_interrupting_read?({@src, message}, :top)
-      refute should_interrupting_read?({@src, message}, :bottom)
+      assert should_interrupting_read?({@src, message}, @sign.source_config, :top)
+      refute should_interrupting_read?({@src, message}, @sign.source_config, :bottom)
     end
 
     test "returns true if it's a different kind of message" do
       message = %Message.Headways.Top{headsign: "Alewife", vehicle_type: :train}
-      assert should_interrupting_read?({@src, message}, :top)
+      assert should_interrupting_read?({@src, message}, @sign.source_config, :top)
     end
   end
 
