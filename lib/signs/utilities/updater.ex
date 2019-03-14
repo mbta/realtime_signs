@@ -40,7 +40,7 @@ defmodule Signs.Utilities.Updater do
         sign = %{sign | current_content_top: top}
 
         sign =
-          if Signs.Utilities.Audio.should_interrupting_read?(top, :top) do
+          if Signs.Utilities.Audio.should_interrupting_read?(top, sign.source_config, :top) do
             Reader.interrupting_read(sign)
           else
             sign
@@ -63,7 +63,7 @@ defmodule Signs.Utilities.Updater do
         sign = %{sign | current_content_bottom: bottom}
 
         sign =
-          if Signs.Utilities.Audio.should_interrupting_read?(bottom, :bottom) do
+          if Signs.Utilities.Audio.should_interrupting_read?(bottom, sign.source_config, :bottom) do
             Reader.interrupting_read(sign)
           else
             sign
@@ -95,8 +95,12 @@ defmodule Signs.Utilities.Updater do
 
         sign =
           if !new_top_already_interrupting_read? &&
-               (Signs.Utilities.Audio.should_interrupting_read?(top, :top) ||
-                  Signs.Utilities.Audio.should_interrupting_read?(bottom, :bottom)) do
+               (Signs.Utilities.Audio.should_interrupting_read?(top, sign.source_config, :top) ||
+                  Signs.Utilities.Audio.should_interrupting_read?(
+                    bottom,
+                    sign.source_config,
+                    :bottom
+                  )) do
             Reader.interrupting_read(sign)
           else
             sign

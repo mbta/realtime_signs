@@ -10,8 +10,12 @@ defmodule Signs.Utilities.Audio do
   require Logger
 
   @doc "Takes a changed line, and returns if it should read immediately"
-  @spec should_interrupting_read?(Signs.Realtime.line_content(), :top | :bottom) :: boolean()
-  def should_interrupting_read?({_src, %Content.Message.Predictions{minutes: x}}, _line)
+  @spec should_interrupting_read?(
+          Signs.Realtime.line_content(),
+          SourceConfig.config(),
+          :top | :bottom
+        ) :: boolean()
+  def should_interrupting_read?({_src, %Content.Message.Predictions{minutes: x}}, _config, _line)
       when is_integer(x) do
     false
   end
@@ -21,6 +25,7 @@ defmodule Signs.Utilities.Audio do
           %SourceConfig{announce_arriving?: false},
           %Content.Message.Predictions{minutes: :arriving}
         },
+        _config,
         _line
       ) do
     false
@@ -28,23 +33,35 @@ defmodule Signs.Utilities.Audio do
 
   def should_interrupting_read?(
         {
+          %SourceConfig{announce_arriving?: true},
+          %Content.Message.Predictions{minutes: :arriving}
+        },
+        config,
+        :bottom
+      ) do
+    SourceConfig.multi_source?(config)
+  end
+
+  def should_interrupting_read?(
+        {
           %SourceConfig{announce_boarding?: false},
           %Content.Message.Predictions{minutes: :boarding}
         },
+        _config,
         _line
       ) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.Empty{}}, _line) do
+  def should_interrupting_read?({_, %Content.Message.Empty{}}, _config, _line) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.StoppedTrain{}}, :bottom) do
+  def should_interrupting_read?({_, %Content.Message.StoppedTrain{}}, _config, :bottom) do
     false
   end
 
-  def should_interrupting_read?(_content, _line) do
+  def should_interrupting_read?(_content, _config, _line) do
     true
   end
 
