@@ -1,4 +1,6 @@
 defmodule PaEss.HttpUpdater do
+  use Bitwise
+
   @moduledoc """
   Fetches from the MessageQueue messages from the various signs, and serializes and POSTs
   them to the PA/ESS head-end server.
@@ -94,7 +96,7 @@ defmodule PaEss.HttpUpdater do
         uid: state.uid,
         msg: audio.message,
         typ: audio_type(:audio),
-        sta: "#{station}#{zone_bitmap(zone)}",
+        sta: "#{station}#{zone_bitmap([zone])}",
         pri: priority,
         tim: timeout
       ]
@@ -128,7 +130,7 @@ defmodule PaEss.HttpUpdater do
         mid: message_id,
         var: Enum.join(vars, ","),
         typ: audio_type(type),
-        sta: "#{station}#{zone_bitmap(zone)}",
+        sta: "#{station}#{zone_bitmap([zone])}",
         pri: priority,
         tim: timeout
       ]
@@ -179,13 +181,21 @@ defmodule PaEss.HttpUpdater do
     [last | rest]
   end
 
+  defp zone_bitmap(zones) do
+    zones
+    |> Enum.map(&zone_to_bit/1)
+    |> Enum.reduce(0, fn bit, acc -> bit ||| acc end)
+    |> Integer.to_string(2)
+    |> String.pad_leading(6, "0")
+  end
+
   # bitmap representing zone: m c n s e w
-  defp zone_bitmap("m"), do: "100000"
-  defp zone_bitmap("c"), do: "010000"
-  defp zone_bitmap("n"), do: "001000"
-  defp zone_bitmap("s"), do: "000100"
-  defp zone_bitmap("e"), do: "000010"
-  defp zone_bitmap("w"), do: "000001"
+  defp zone_to_bit("m"), do: 1 <<< 5
+  defp zone_to_bit("c"), do: 1 <<< 4
+  defp zone_to_bit("n"), do: 1 <<< 3
+  defp zone_to_bit("s"), do: 1 <<< 2
+  defp zone_to_bit("e"), do: 1 <<< 1
+  defp zone_to_bit("w"), do: 1 <<< 0
 
   defp audio_type(:audio_visual), do: "0"
   defp audio_type(:audio), do: "1"
