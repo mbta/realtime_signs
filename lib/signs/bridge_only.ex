@@ -36,7 +36,7 @@ defmodule Signs.BridgeOnly do
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
-      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "pa_ess_zone")},
+      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
       bridge_engine: bridge_engine,
       bridge_id: Map.fetch!(config, "bridge_id"),
       sign_updater: sign_updater,

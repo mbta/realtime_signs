@@ -53,11 +53,11 @@ defmodule Signs.Realtime do
     headway_engine = opts[:headway_engine] || Engine.Headways
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
-    pa_ess_zone = Map.fetch!(config, "pa_ess_zone")
+    text_zone = Map.fetch!(config, "text_zone")
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
-      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), pa_ess_zone},
+      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), text_zone},
       source_config: config |> Map.fetch!("source_config") |> Utilities.SourceConfig.parse!(),
       current_content_top: {nil, Content.Message.Empty.new()},
       current_content_bottom: {nil, Content.Message.Empty.new()},
@@ -67,7 +67,7 @@ defmodule Signs.Realtime do
       sign_updater: sign_updater,
       tick_bottom: 130,
       tick_top: 130,
-      tick_read: 240 + offset(pa_ess_zone),
+      tick_read: 240 + offset(text_zone),
       expiration_seconds: 130,
       read_period_seconds: 240
     }

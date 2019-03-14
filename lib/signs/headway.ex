@@ -57,7 +57,7 @@ defmodule Signs.Headway do
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
-      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "pa_ess_zone")},
+      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
       gtfs_stop_id: Map.fetch!(config, "gtfs_stop_id"),
       route_id: Map.fetch!(config, "route_id"),
       headsign: Map.fetch!(config, "headsign"),
