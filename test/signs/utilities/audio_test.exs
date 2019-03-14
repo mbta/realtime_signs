@@ -45,7 +45,7 @@ defmodule Signs.Utilities.AudioTest do
       refute should_interrupting_read?({nil, message}, @sign.source_config, :bottom)
     end
 
-    test "If it's ARR respects config's announce_arriving?" do
+    test "If it's ARR respects config's announce_arriving?, except on the bottom line of a single-source sign" do
       message = %Message.Predictions{headsign: "Alewife", minutes: :arriving}
       src = %{@src | announce_arriving?: false}
       refute should_interrupting_read?({src, message}, @sign.source_config, :top)
