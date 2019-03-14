@@ -32,7 +32,7 @@ defmodule Signs.Utilities.ReaderTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
-    pa_ess_id: {"TEST", "x"},
+    text_id: {"TEST", "x"},
     source_config: {[@src]},
     current_content_top: {@src, %Predictions{headsign: "Alewife", minutes: 4}},
     current_content_bottom: {@src, %Predictions{headsign: "Ashmont", minutes: 3}},

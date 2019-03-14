@@ -11,7 +11,7 @@ defmodule Signs.Realtime do
 
   @enforce_keys [
     :id,
-    :pa_ess_id,
+    :text_id,
     :source_config,
     :current_content_top,
     :current_content_bottom,
@@ -32,7 +32,7 @@ defmodule Signs.Realtime do
 
   @type t :: %__MODULE__{
           id: String.t(),
-          pa_ess_id: PaEss.id(),
+          text_id: PaEss.text_id(),
           source_config: Utilities.SourceConfig.config(),
           current_content_top: line_content(),
           current_content_bottom: line_content(),
@@ -57,7 +57,7 @@ defmodule Signs.Realtime do
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
-      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), text_zone},
+      text_id: {Map.fetch!(config, "pa_ess_loc"), text_zone},
       source_config: config |> Map.fetch!("source_config") |> Utilities.SourceConfig.parse!(),
       current_content_top: {nil, Content.Message.Empty.new()},
       current_content_bottom: {nil, Content.Message.Empty.new()},
@@ -122,7 +122,7 @@ defmodule Signs.Realtime do
     {_src, top} = sign.current_content_top
     {_src, bottom} = sign.current_content_bottom
 
-    sign.sign_updater.update_sign(sign.pa_ess_id, top, bottom, sign.expiration_seconds + 15, :now)
+    sign.sign_updater.update_sign(sign.text_id, top, bottom, sign.expiration_seconds + 15, :now)
 
     %{sign | tick_top: sign.expiration_seconds, tick_bottom: sign.expiration_seconds}
   end
@@ -131,7 +131,7 @@ defmodule Signs.Realtime do
     {_src, top} = sign.current_content_top
 
     sign.sign_updater.update_single_line(
-      sign.pa_ess_id,
+      sign.text_id,
       "1",
       top,
       sign.expiration_seconds + 15,
@@ -145,7 +145,7 @@ defmodule Signs.Realtime do
     {_src, bottom} = sign.current_content_bottom
 
     sign.sign_updater.update_single_line(
-      sign.pa_ess_id,
+      sign.text_id,
       "2",
       bottom,
       sign.expiration_seconds + 15,

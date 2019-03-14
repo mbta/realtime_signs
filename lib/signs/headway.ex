@@ -4,7 +4,7 @@ defmodule Signs.Headway do
 
   @enforce_keys [
     :id,
-    :pa_ess_id,
+    :text_id,
     :gtfs_stop_id,
     :route_id,
     :headsign,
@@ -27,7 +27,7 @@ defmodule Signs.Headway do
 
   @type t :: %{
           id: String.t(),
-          pa_ess_id: PaEss.id(),
+          text_id: PaEss.text_id(),
           gtfs_stop_id: String.t(),
           route_id: String.t(),
           headsign: String.t(),
@@ -57,7 +57,7 @@ defmodule Signs.Headway do
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
-      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
+      text_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
       gtfs_stop_id: Map.fetch!(config, "gtfs_stop_id"),
       route_id: Map.fetch!(config, "route_id"),
       headsign: Map.fetch!(config, "headsign"),
@@ -238,7 +238,7 @@ defmodule Signs.Headway do
          old_sign,
          %{current_content_top: new_top, current_content_bottom: new_bottom} = sign
        ) do
-    sign.sign_updater.update_sign(sign.pa_ess_id, new_top, new_bottom, @default_duration, :now)
+    sign.sign_updater.update_sign(sign.text_id, new_top, new_bottom, @default_duration, :now)
 
     if bridge_is_newly_up?(old_sign, sign) do
       read_bridge_messages(sign)
@@ -288,7 +288,7 @@ defmodule Signs.Headway do
     audios = Content.Audio.VehiclesToDestination.from_headway_message(top, bottom)
 
     if audios do
-      sign.sign_updater.send_audio(sign.pa_ess_id, audios, 5, 120)
+      sign.sign_updater.send_audio(sign.text_id, audios, 5, 120)
     end
   end
 
@@ -299,7 +299,7 @@ defmodule Signs.Headway do
          } = sign
        ) do
     audio = Content.Audio.Closure.from_messages(top, bottom)
-    sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120)
+    sign.sign_updater.send_audio(sign.text_id, audio, 5, 120)
   end
 
   defp read_sign(_), do: nil
@@ -308,7 +308,7 @@ defmodule Signs.Headway do
     {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
 
     for audio <- [english, spanish] do
-      if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120)
+      if audio, do: sign.sign_updater.send_audio(sign.text_id, audio, 5, 120)
     end
   end
 

@@ -54,11 +54,11 @@ defmodule Signs.HeadwayTest do
       {id, line, message, duration, start}
     end
 
-    def send_audio(pa_ess_id, msg, priority, timeout) do
+    def send_audio(text_id, msg, priority, timeout) do
       if Process.whereis(:headway_test_fake_updater_listener) do
         send(
           :headway_test_fake_updater_listener,
-          {:send_audio, {pa_ess_id, msg, priority, timeout}}
+          {:send_audio, {text_id, msg, priority, timeout}}
         )
       end
 
@@ -97,7 +97,7 @@ defmodule Signs.HeadwayTest do
 
   @sign %Signs.Headway{
     id: "SIGN",
-    pa_ess_id: {"ABCD", "n"},
+    text_id: {"ABCD", "n"},
     gtfs_stop_id: "123",
     route_id: "743",
     headsign: "Chelsea",
@@ -227,7 +227,7 @@ defmodule Signs.HeadwayTest do
     test "if the bridge is down, does not update the sign" do
       sign = %{
         @sign
-        | pa_ess_id: "1",
+        | text_id: "1",
           current_content_top: %Content.Message.Headways.Top{
             headsign: "Chelsea",
             vehicle_type: :bus
@@ -288,7 +288,7 @@ defmodule Signs.HeadwayTest do
     test "if there is no bridge id, does not update the sign" do
       sign = %{
         @sign
-        | pa_ess_id: "1",
+        | text_id: "1",
           current_content_top: %Content.Message.Headways.Top{
             headsign: "Chelsea",
             vehicle_type: :bus

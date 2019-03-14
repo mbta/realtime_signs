@@ -333,7 +333,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
-    pa_ess_id: {"TEST", "x"},
+    text_id: {"TEST", "x"},
     source_config: {[], []},
     current_content_top: {nil, Content.Message.Empty.new()},
     current_content_bottom: {nil, Content.Message.Empty.new()},

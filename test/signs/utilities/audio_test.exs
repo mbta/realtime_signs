@@ -23,7 +23,7 @@ defmodule Signs.Utilities.AudioTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
-    pa_ess_id: {"TEST", "x"},
+    text_id: {"TEST", "x"},
     source_config: {[@src]},
     current_content_top: {nil, %Content.Message.Empty{}},
     current_content_bottom: {nil, %Content.Message.Empty{}},

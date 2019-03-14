@@ -9,11 +9,11 @@ defmodule PaEss.Logger do
   require Logger
 
   @impl true
-  def update_single_line(pa_ess_id, line_no, msg, duration, start_secs) do
+  def update_single_line(text_id, line_no, msg, duration, start_secs) do
     line = [
       now(),
       "update_single_line,",
-      inspect(pa_ess_id),
+      inspect(text_id),
       ",",
       "#{line_no}",
       ",",
@@ -31,11 +31,11 @@ defmodule PaEss.Logger do
   end
 
   @impl true
-  def update_sign(pa_ess_id, top_line, bottom_line, duration, start_secs) do
+  def update_sign(text_id, top_line, bottom_line, duration, start_secs) do
     line = [
       now(),
       "update_sign,",
-      inspect(pa_ess_id),
+      inspect(text_id),
       ",",
       inspect(Content.Message.to_string(top_line)),
       ",",
@@ -53,7 +53,7 @@ defmodule PaEss.Logger do
   end
 
   @impl true
-  def send_audio(pa_ess_id, audios, priority, timeout) do
+  def send_audio(text_id, audios, priority, timeout) do
     audio_text =
       case audios do
         {a1, a2} -> inspect([Content.Audio.to_params(a1), Content.Audio.to_params(a2)])
@@ -63,7 +63,7 @@ defmodule PaEss.Logger do
     line = [
       now(),
       "send_audio,",
-      inspect(pa_ess_id),
+      inspect(text_id),
       ",",
       audio_text,
       ",",
@@ -79,11 +79,11 @@ defmodule PaEss.Logger do
   end
 
   @impl true
-  def send_custom_audio(pa_ess_id, msg, priority, timeout) do
+  def send_custom_audio(text_id, msg, priority, timeout) do
     line = [
       now(),
       "send_custom_audio,",
-      inspect(pa_ess_id),
+      inspect(text_id),
       ",",
       inspect(msg.message),
       ",",
