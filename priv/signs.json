@@ -280,7 +280,7 @@
   {
     "id": "bellingham_square_outbound",
     "pa_ess_loc": "SBSQ",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "headsign": "Chelsea",
@@ -304,7 +304,7 @@
   {
     "id": "box_district_outbound",
     "pa_ess_loc": "SBOX",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "headsign": "Chelsea",
@@ -328,7 +328,7 @@
   {
     "id": "eastern_ave_outbound",
     "pa_ess_loc": "SEAV",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "headsign": "Chelsea",
@@ -340,7 +340,7 @@
   {
     "id": "south_station_silver_line_outbound",
     "pa_ess_loc": "SSOU",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "bridge_id": "1",
@@ -349,7 +349,7 @@
   {
     "id": "courthouse_station_outbound",
     "pa_ess_loc": "SCOU",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "bridge_id": "1",
@@ -358,7 +358,7 @@
   {
     "id": "world_trade_center_outbound",
     "pa_ess_loc": "SWTC",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "bridge_id": "1",
@@ -439,7 +439,7 @@
     "id": "revere_beach_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BREV",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "source_config": [
@@ -517,7 +517,7 @@
     "id": "beachmont_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BBEA",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "source_config": [
@@ -561,7 +561,7 @@
     "id": "suffolk_downs_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BSUF",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "source_config": [
@@ -605,7 +605,7 @@
     "id": "orient_heights_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BORH",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "source_config": [
@@ -683,7 +683,7 @@
     "id": "wood_island_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BWOO",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "source_config": [
@@ -761,7 +761,7 @@
     "id": "airport_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BAIR",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "source_config": [
@@ -805,7 +805,7 @@
     "id": "maverick_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BMAV",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "source_config": [
@@ -849,7 +849,7 @@
     "id": "aquarium_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BAQU",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "source_config": [
@@ -927,7 +927,7 @@
     "id": "state_blue_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BSTA",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "source_config": [
@@ -1005,7 +1005,7 @@
     "id": "government_center_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BGOV",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "source_config": [
@@ -1083,7 +1083,7 @@
     "id": "bowdoin_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BBOW",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "source_config": [
@@ -1170,7 +1170,7 @@
     "id": "oak_grove_east_busway",
     "type": "realtime",
     "pa_ess_loc": "OOAK",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "source_config": [
@@ -4517,7 +4517,7 @@
     "id": "jfk_umass_ashmont_platform_northbound",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "source_config": [
@@ -4614,7 +4614,7 @@
   {
     "id": "riverside_track_1",
     "pa_ess_loc": "GRIV",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -4658,7 +4658,7 @@
   {
     "id": "woodland_eastbound",
     "pa_ess_loc": "GWOO",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -4702,7 +4702,7 @@
   {
     "id": "waban_eastbound",
     "pa_ess_loc": "GWAB",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -4746,7 +4746,7 @@
   {
     "id": "eliot_eastbound",
     "pa_ess_loc": "GELI",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -4790,7 +4790,7 @@
   {
     "id": "newton_highlands_eastbound",
     "pa_ess_loc": "GNEH",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -4834,7 +4834,7 @@
   {
     "id": "newton_centre_eastbound",
     "pa_ess_loc": "GNEC",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -4878,7 +4878,7 @@
   {
     "id": "chestnut_hill_eastbound",
     "pa_ess_loc": "GCHE",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -4922,7 +4922,7 @@
   {
     "id": "reservoir_eastbound",
     "pa_ess_loc": "GRES",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -4966,7 +4966,7 @@
   {
     "id": "beaconsfield_eastbound",
     "pa_ess_loc": "GBEA",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5010,7 +5010,7 @@
   {
     "id": "brookline_hills_eastbound",
     "pa_ess_loc": "GBRH",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5054,7 +5054,7 @@
   {
     "id": "brookline_village_eastbound",
     "pa_ess_loc": "GBRV",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5098,7 +5098,7 @@
   {
     "id": "longwood_eastbound",
     "pa_ess_loc": "GLON",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5142,7 +5142,7 @@
   {
     "id": "fenway_eastbound",
     "pa_ess_loc": "GFEN",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5186,7 +5186,7 @@
   {
     "id": "kenmore_b_eastbound",
     "pa_ess_loc": "GKEN",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5348,7 +5348,7 @@
   {
     "id": "hynes_eastbound",
     "pa_ess_loc": "GAUD",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5426,7 +5426,7 @@
   {
     "id": "copley_eastbound",
     "pa_ess_loc": "GCOP",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5470,7 +5470,7 @@
   {
     "id": "arlington_eastbound",
     "pa_ess_loc": "GARL",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5548,7 +5548,7 @@
   {
     "id": "boylston_eastbound",
     "pa_ess_loc": "GBOY",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5592,7 +5592,7 @@
   {
     "id": "symphony_eastbound",
     "pa_ess_loc": "GSYM",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5636,7 +5636,7 @@
   {
     "id": "prudential_eastbound",
     "pa_ess_loc": "GPRU",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5714,7 +5714,7 @@
   {
     "id": "park_st_eastbound",
     "pa_ess_loc": "GPRKE",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5847,7 +5847,7 @@
   {
     "id": "green_government_center_eastbound",
     "pa_ess_loc": "GGOV",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5926,7 +5926,7 @@
   {
     "id": "green_haymarket_eastbound",
     "pa_ess_loc": "GHAY",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -5971,7 +5971,7 @@
   {
     "id": "green_north_station_eastbound",
     "pa_ess_loc": "GNST",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",
@@ -6049,7 +6049,7 @@
   {
     "id": "science_park_eastbound",
     "pa_ess_loc": "GSCI",
-    "read_loop_offset": "30",
+    "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
     "type": "realtime",

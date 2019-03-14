@@ -67,7 +67,7 @@ defmodule Signs.Realtime do
       sign_updater: sign_updater,
       tick_bottom: 130,
       tick_top: 130,
-      tick_read: 240 + offset(text_zone),
+      tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       expiration_seconds: 130,
       read_period_seconds: 240
     }
@@ -116,13 +116,6 @@ defmodule Signs.Realtime do
   def schedule_run_loop(pid) do
     Process.send_after(pid, :run_loop, 1_000)
   end
-
-  defp offset(zone) when zone in ["n"], do: 0
-  defp offset(zone) when zone in ["s"], do: 60
-  defp offset(zone) when zone in ["m"], do: 120
-  defp offset(zone) when zone in ["e"], do: 30
-  defp offset(zone) when zone in ["w"], do: 90
-  defp offset(zone) when zone in ["c"], do: 150
 
   @spec do_expiration(Signs.Realtime.t()) :: Signs.Realtime.t()
   def do_expiration(%{tick_top: 0, tick_bottom: 0} = sign) do
