@@ -11,7 +11,7 @@ defmodule PaEss do
   @type text_zone :: String.t()
   @type audio_zones :: [String.t()]
   @type text_id :: {sign_loc_code(), text_zone()}
-  @type audio_id :: {text_zone(), audio_zones()}
+  @type audio_id :: {sign_loc_code(), audio_zones()}
   @type terminal_station ::
           :ashmont
           | :mattapan
