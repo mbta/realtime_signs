@@ -53,7 +53,7 @@ defmodule PaEss.Logger do
   end
 
   @impl true
-  def send_audio(text_id, audios, priority, timeout) do
+  def send_audio(audio_id, audios, priority, timeout) do
     audio_text =
       case audios do
         {a1, a2} -> inspect([Content.Audio.to_params(a1), Content.Audio.to_params(a2)])
@@ -63,7 +63,7 @@ defmodule PaEss.Logger do
     line = [
       now(),
       "send_audio,",
-      inspect(text_id),
+      inspect(audio_id),
       ",",
       audio_text,
       ",",
@@ -79,11 +79,11 @@ defmodule PaEss.Logger do
   end
 
   @impl true
-  def send_custom_audio(text_id, msg, priority, timeout) do
+  def send_custom_audio(audio_id, msg, priority, timeout) do
     line = [
       now(),
       "send_custom_audio,",
-      inspect(text_id),
+      inspect(audio_id),
       ",",
       inspect(msg.message),
       ",",

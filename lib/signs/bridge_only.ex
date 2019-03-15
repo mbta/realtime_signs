@@ -63,7 +63,7 @@ defmodule Signs.BridgeOnly do
         {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
 
         for audio <- [english, spanish] do
-          if audio, do: sign.sign_updater.send_audio(sign.text_id, audio, 5, 120)
+          if audio, do: sign.sign_updater.send_audio(sign.audio_id, audio, 5, 120)
         end
 
       _ ->

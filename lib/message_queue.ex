@@ -51,15 +51,15 @@ defmodule MessageQueue do
   end
 
   @impl PaEss.Updater
-  def send_audio(pid \\ __MODULE__, text_id, audios, priority, timeout) do
-    GenServer.call(pid, {:queue_update, {:send_audio, [text_id, audios, priority, timeout]}})
+  def send_audio(pid \\ __MODULE__, audio_id, audios, priority, timeout) do
+    GenServer.call(pid, {:queue_update, {:send_audio, [audio_id, audios, priority, timeout]}})
   end
 
   @impl PaEss.Updater
-  def send_custom_audio(pid \\ __MODULE__, text_id, audio, priority, timeout) do
+  def send_custom_audio(pid \\ __MODULE__, audio_id, audio, priority, timeout) do
     GenServer.call(
       pid,
-      {:queue_update, {:send_custom_audio, [text_id, audio, priority, timeout]}}
+      {:queue_update, {:send_custom_audio, [audio_id, audio, priority, timeout]}}
     )
   end
 

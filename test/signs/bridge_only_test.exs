@@ -28,7 +28,7 @@ defmodule Signs.BridgeOnlyTest do
       {:ok, :sent}
     end
 
-    def send_audio(_text_id, msg, _priority, _timeout) do
+    def send_audio(_audio_id, msg, _priority, _timeout) do
       send(:bridge_only_test_fake_sign_updater_listener, {:send_audio, msg})
       {:ok, :sent}
     end

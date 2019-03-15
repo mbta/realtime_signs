@@ -89,14 +89,14 @@ defmodule PaEss.HttpUpdater do
     send_post(state.http_poster, encoded)
   end
 
-  def process({:send_custom_audio, [{station, zone}, audio, priority, timeout]}, state) do
+  def process({:send_custom_audio, [{station, zones}, audio, priority, timeout]}, state) do
     encoded =
       [
         MsgType: "AdHoc",
         uid: state.uid,
         msg: audio.message,
         typ: audio_type(:audio),
-        sta: "#{station}#{zone_bitmap([zone])}",
+        sta: "#{station}#{zone_bitmap(zones)}",
         pri: priority,
         tim: timeout
       ]
@@ -107,20 +107,20 @@ defmodule PaEss.HttpUpdater do
     send_post(state.http_poster, encoded)
   end
 
-  def process({:send_audio, [{station, zone}, audios, priority, timeout]}, state) do
+  def process({:send_audio, [{station, zones}, audios, priority, timeout]}, state) do
     case audios do
       {a1, a2} ->
-        process_send_audio(station, zone, a1, priority, timeout, state)
-        process_send_audio(station, zone, a2, priority, timeout, state)
+        process_send_audio(station, zones, a1, priority, timeout, state)
+        process_send_audio(station, zones, a2, priority, timeout, state)
 
       a ->
-        process_send_audio(station, zone, a, priority, timeout, state)
+        process_send_audio(station, zones, a, priority, timeout, state)
     end
   end
 
   @spec process_send_audio(String.t(), String.t(), Content.Audio.t(), integer(), integer(), t()) ::
           {:ok, :sent} | {:error, :bad_status} | {:error, :post_error}
-  defp process_send_audio(station, zone, audio, priority, timeout, state) do
+  defp process_send_audio(station, zones, audio, priority, timeout, state) do
     {message_id, vars, type} = Content.Audio.to_params(audio)
 
     encoded =
@@ -130,7 +130,7 @@ defmodule PaEss.HttpUpdater do
         mid: message_id,
         var: Enum.join(vars, ","),
         typ: audio_type(type),
-        sta: "#{station}#{zone_bitmap([zone])}",
+        sta: "#{station}#{zone_bitmap(zones)}",
         pri: priority,
         tim: timeout
       ]

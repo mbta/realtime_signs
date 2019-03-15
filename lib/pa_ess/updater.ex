@@ -10,13 +10,13 @@ defmodule PaEss.Updater do
                  duration: integer(),
                  start: integer() | :now
 
-  @callback send_audio(PaEss.text_id(), audios, priority, timeout) ::
+  @callback send_audio(PaEss.audio_id(), audios, priority, timeout) ::
               {:ok, :sent} | {:error, any()}
             when priority: integer(),
                  timeout: integer(),
                  audios: Content.Audio.t() | {Content.Audio.t(), Content.Audio.t()}
 
-  @callback send_custom_audio(PaEss.text_id(), Content.Audio.Custom.t(), priority, timeout) ::
+  @callback send_custom_audio(PaEss.audio_id(), Content.Audio.Custom.t(), priority, timeout) ::
               {:ok, :sent} | {:error, any()}
             when priority: integer(), timeout: integer()
 end

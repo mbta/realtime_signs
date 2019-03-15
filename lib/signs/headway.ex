@@ -291,7 +291,7 @@ defmodule Signs.Headway do
     audios = Content.Audio.VehiclesToDestination.from_headway_message(top, bottom)
 
     if audios do
-      sign.sign_updater.send_audio(sign.text_id, audios, 5, 120)
+      sign.sign_updater.send_audio(sign.audio_id, audios, 5, 120)
     end
   end
 
@@ -302,7 +302,7 @@ defmodule Signs.Headway do
          } = sign
        ) do
     audio = Content.Audio.Closure.from_messages(top, bottom)
-    sign.sign_updater.send_audio(sign.text_id, audio, 5, 120)
+    sign.sign_updater.send_audio(sign.audio_id, audio, 5, 120)
   end
 
   defp read_sign(_), do: nil
@@ -311,7 +311,7 @@ defmodule Signs.Headway do
     {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
 
     for audio <- [english, spanish] do
-      if audio, do: sign.sign_updater.send_audio(sign.text_id, audio, 5, 120)
+      if audio, do: sign.sign_updater.send_audio(sign.audio_id, audio, 5, 120)
     end
   end
 

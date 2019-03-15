@@ -54,11 +54,11 @@ defmodule Signs.HeadwayTest do
       {id, line, message, duration, start}
     end
 
-    def send_audio(text_id, msg, priority, timeout) do
+    def send_audio(audio_id, msg, priority, timeout) do
       if Process.whereis(:headway_test_fake_updater_listener) do
         send(
           :headway_test_fake_updater_listener,
-          {:send_audio, {text_id, msg, priority, timeout}}
+          {:send_audio, {audio_id, msg, priority, timeout}}
         )
       end
 
@@ -434,7 +434,7 @@ defmodule Signs.HeadwayTest do
 
       assert_received(
         {:send_audio,
-         {{"ABCD", "n"},
+         {{"ABCD", ["n"]},
           {%Content.Audio.VehiclesToDestination{
              next_trip_mins: 10,
              later_trip_mins: 12,
@@ -461,7 +461,7 @@ defmodule Signs.HeadwayTest do
 
       assert_received(
         {:send_audio,
-         {{"ABCD", "n"},
+         {{"ABCD", ["n"]},
           %Content.Audio.Closure{
             alert: :suspension_closed_station
           }, 5, 120}}
@@ -525,14 +525,14 @@ defmodule Signs.HeadwayTest do
 
       refute_received(
         {:send_audio,
-         {{"ABCD", "n"}, %Content.Audio.VehiclesToDestination{language: :english}, 5, 120}}
+         {{"ABCD", ["n"]}, %Content.Audio.VehiclesToDestination{language: :english}, 5, 120}}
       )
 
       :timer.sleep(100)
 
       assert_received(
         {:send_audio,
-         {{"ABCD", "n"},
+         {{"ABCD", ["n"]},
           {%Content.Audio.VehiclesToDestination{language: :english},
            %Content.Audio.VehiclesToDestination{language: :spanish}}, 5, 120}}
       )
@@ -541,14 +541,14 @@ defmodule Signs.HeadwayTest do
 
       refute_received(
         {:send_audio,
-         {{"ABCD", "n"}, %Content.Audio.VehiclesToDestination{language: :english}, 5, 120}}
+         {{"ABCD", ["n"]}, %Content.Audio.VehiclesToDestination{language: :english}, 5, 120}}
       )
 
       :timer.sleep(100)
 
       assert_received(
         {:send_audio,
-         {{"ABCD", "n"},
+         {{"ABCD", ["n"]},
           {%Content.Audio.VehiclesToDestination{language: :english},
            %Content.Audio.VehiclesToDestination{language: :spanish}}, 5, 120}}
       )

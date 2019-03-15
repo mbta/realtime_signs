@@ -11,12 +11,12 @@ defmodule Signs.Utilities.ReaderTest do
   end
 
   defmodule FakeUpdater do
-    def send_audio(id, audio, priority, timeout) do
-      send(self(), {:send_audio, id, audio, priority, timeout})
+    def send_audio(audio_id, audio, priority, timeout) do
+      send(self(), {:send_audio, audio_id, audio, priority, timeout})
     end
 
-    def send_custom_audio(id, audio, priority, timeout) do
-      send(self(), {:send_custom_audio, id, audio, priority, timeout})
+    def send_custom_audio(audio_id, audio, priority, timeout) do
+      send(self(), {:send_custom_audio, audio_id, audio, priority, timeout})
     end
   end
 
