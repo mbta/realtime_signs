@@ -3397,7 +3397,7 @@
     "pa_ess_loc": "RPRK",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": ["n"],
+    "audio_zones": ["n", "c"],
     "source_config": [
       [
         {
@@ -3419,7 +3419,7 @@
     "pa_ess_loc": "RPRK",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": ["s"],
+    "audio_zones": ["s", "c"],
     "source_config": [
       [
         {
@@ -3441,7 +3441,7 @@
     "pa_ess_loc": "RPRK",
     "read_loop_offset": 150,
     "text_zone": "c",
-    "audio_zones": ["c"],
+    "audio_zones": [],
     "source_config": [
       [
         {
