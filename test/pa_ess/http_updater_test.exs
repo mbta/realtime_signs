@@ -219,7 +219,7 @@ defmodule PaEss.HttpUpdaterTest do
     audio = %Content.Audio.NextTrainCountdown{
       destination: :ashmont,
       verb: :arrives,
-      stop_id: "70063",
+      stop_id: "70075",
       minutes: 2
     }
 

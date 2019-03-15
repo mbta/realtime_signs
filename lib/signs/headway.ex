@@ -230,6 +230,7 @@ defmodule Signs.Headway do
     {:noreply, sign}
   end
 
+  @spec send_update(__MODULE__.t(), __MODULE__.t()) :: __MODULE__.t()
   defp send_update(
          %{current_content_bottom: same_bottom, current_content_top: same_top},
          %{current_content_bottom: same_bottom, current_content_top: same_top} = sign
@@ -307,6 +308,7 @@ defmodule Signs.Headway do
 
   defp read_sign(_), do: nil
 
+  @spec read_bridge_messages(__MODULE__.t()) :: [Content.Audio.BridgeIsUp.t() | nil]
   defp read_bridge_messages(%{bridge_delay_duration: duration} = sign) do
     {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
 

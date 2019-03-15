@@ -55,11 +55,10 @@ defmodule Signs.Realtime do
     headway_engine = opts[:headway_engine] || Engine.Headways
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
-    text_zone = Map.fetch!(config, "text_zone")
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
-      text_id: {Map.fetch!(config, "pa_ess_loc"), text_zone},
+      text_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
       audio_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "audio_zones")},
       source_config: config |> Map.fetch!("source_config") |> Utilities.SourceConfig.parse!(),
       current_content_top: {nil, Content.Message.Empty.new()},
