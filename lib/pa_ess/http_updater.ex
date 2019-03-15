@@ -60,12 +60,7 @@ defmodule PaEss.HttpUpdater do
   end
 
   @spec process({atom, [any]}, __MODULE__.t()) :: post_result
-  def(
-    process(
-      {:update_single_line, [{station, zone}, line_no, msg, duration, start_secs]},
-      state
-    )
-  ) do
+  def process({:update_single_line, [{station, zone}, line_no, msg, duration, start_secs]}, state) do
     cmd = to_command(msg, duration, start_secs, zone, line_no)
     encoded = URI.encode_query(MsgType: "SignContent", uid: state.uid, sta: station, c: cmd)
     Logger.info(["update_single_line: ", encoded, " pid=", inspect(self())])
