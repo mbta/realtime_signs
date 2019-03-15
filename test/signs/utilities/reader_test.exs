@@ -57,6 +57,14 @@ defmodule Signs.Utilities.ReaderTest do
       refute_received({:send_audio, _id, _, _p, _t})
       refute_received({:send_audio, _id, _, _p, _t})
     end
+
+    test "when the sign is on a read interval, sends next train announcements" do
+      sign = %{@sign | tick_read: 0}
+
+      Reader.read_sign(sign)
+
+      assert_received({:send_audio, _id, _, _p, _t})
+    end
   end
 
   describe "interrupting_read/1" do
