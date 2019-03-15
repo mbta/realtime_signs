@@ -37,6 +37,7 @@ defmodule Signs.Utilities.UpdaterTest do
   @sign %Signs.Realtime{
     id: "sign_id",
     text_id: {"TEST", "x"},
+    audio_id: {"TEST", ["x"]},
     source_config: {[]},
     current_content_top: {@src, %P{headsign: "Alewife", minutes: 4}},
     current_content_bottom: {@src, %P{headsign: "Ashmont", minutes: 3}},

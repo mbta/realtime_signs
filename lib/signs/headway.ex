@@ -5,6 +5,7 @@ defmodule Signs.Headway do
   @enforce_keys [
     :id,
     :text_id,
+    :audio_id,
     :gtfs_stop_id,
     :route_id,
     :headsign,
@@ -28,6 +29,7 @@ defmodule Signs.Headway do
   @type t :: %{
           id: String.t(),
           text_id: PaEss.text_id(),
+          audio_id: PaEss.audio_id(),
           gtfs_stop_id: String.t(),
           route_id: String.t(),
           headsign: String.t(),
@@ -58,6 +60,7 @@ defmodule Signs.Headway do
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
       text_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
+      audio_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "audio_zones")},
       gtfs_stop_id: Map.fetch!(config, "gtfs_stop_id"),
       route_id: Map.fetch!(config, "route_id"),
       headsign: Map.fetch!(config, "headsign"),

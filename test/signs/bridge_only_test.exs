@@ -37,6 +37,7 @@ defmodule Signs.BridgeOnlyTest do
   @sign %Signs.BridgeOnly{
     id: "bridge-only-test",
     text_id: {"SSOU", "m"},
+    audio_id: {"SSOU", ["m"]},
     bridge_engine: FakeBridgeEngine,
     bridge_id: "1",
     sign_updater: FakeSignUpdater,

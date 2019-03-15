@@ -98,6 +98,7 @@ defmodule Signs.HeadwayTest do
   @sign %Signs.Headway{
     id: "SIGN",
     text_id: {"ABCD", "n"},
+    audio_id: {"ABCD", ["n"]},
     gtfs_stop_id: "123",
     route_id: "743",
     headsign: "Chelsea",

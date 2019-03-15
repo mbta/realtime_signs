@@ -50,6 +50,7 @@ defmodule Signs.RealtimeTest do
   @sign %Signs.Realtime{
     id: "sign_id",
     text_id: {"TEST", "x"},
+    audio_id: {"TEST", ["x"]},
     source_config: {[@src]},
     current_content_top: {@src, %HT{headsign: "Southbound", vehicle_type: :train}},
     current_content_bottom: {@src, %HB{range: {1, 5}}},

@@ -12,6 +12,7 @@ defmodule Signs.Realtime do
   @enforce_keys [
     :id,
     :text_id,
+    :audio_id,
     :source_config,
     :current_content_top,
     :current_content_bottom,
@@ -33,6 +34,7 @@ defmodule Signs.Realtime do
   @type t :: %__MODULE__{
           id: String.t(),
           text_id: PaEss.text_id(),
+          audio_id: PaEss.audio_id(),
           source_config: Utilities.SourceConfig.config(),
           current_content_top: line_content(),
           current_content_bottom: line_content(),
@@ -58,6 +60,7 @@ defmodule Signs.Realtime do
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
       text_id: {Map.fetch!(config, "pa_ess_loc"), text_zone},
+      audio_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "audio_zones")},
       source_config: config |> Map.fetch!("source_config") |> Utilities.SourceConfig.parse!(),
       current_content_top: {nil, Content.Message.Empty.new()},
       current_content_bottom: {nil, Content.Message.Empty.new()},
