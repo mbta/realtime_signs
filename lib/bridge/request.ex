@@ -32,7 +32,7 @@ defmodule Bridge.Request do
   end
 
   defp parse_response({:error, %HTTPoison.Error{reason: reason}}, _current_time) do
-    Logger.warn("Could not query bridge API: #{reason}")
+    Logger.warn("Could not query bridge API: #{inspect(reason)}")
     nil
   end
 
