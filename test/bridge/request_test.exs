@@ -26,7 +26,7 @@ defmodule Bridge.RequestTest do
           refute get_status(754, @current_time)
         end)
 
-      assert log =~ "Could not query bridge API: Unknown error"
+      assert log =~ "Could not query bridge API: \"Unknown error\""
     end
 
     test "Logs warning when parsing fails" do
