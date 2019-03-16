@@ -14,6 +14,8 @@ defmodule Bridge.Request do
     |> parse_response(current_time)
   end
 
+  @spec parse_response({:ok | :error, HTTPoison.Response.t()}, DateTime.t()) ::
+          {String.t(), non_neg_integer | nil} | nil
   defp parse_response({:ok, %HTTPoison.Response{status_code: status, body: body}}, current_time)
        when status >= 200 and status < 300 do
     case Poison.decode(body) do
@@ -27,12 +29,12 @@ defmodule Bridge.Request do
   end
 
   defp parse_response({:ok, %HTTPoison.Response{status_code: status}}, _current_time) do
-    Logger.warn("Could not query bridge API: status code #{status}")
+    Logger.warn("Could not query bridge API: status code #{inspect(status)}")
     nil
   end
 
   defp parse_response({:error, %HTTPoison.Error{reason: reason}}, _current_time) do
-    Logger.warn("Could not query bridge API: #{reason}")
+    Logger.warn("Could not query bridge API: #{inspect(reason)}")
     nil
   end
 
