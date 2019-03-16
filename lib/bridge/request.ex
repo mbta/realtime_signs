@@ -27,7 +27,7 @@ defmodule Bridge.Request do
   end
 
   defp parse_response({:ok, %HTTPoison.Response{status_code: status}}, _current_time) do
-    Logger.warn("Could not query bridge API: status code #{inspect status}")
+    Logger.warn("Could not query bridge API: status code #{inspect(status)}")
     nil
   end
 
