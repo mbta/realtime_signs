@@ -1,6 +1,8 @@
 defmodule Signs.Utilities.ReaderTest do
   use ExUnit.Case, async: true
 
+  alias Content.Message.Custom
+  alias Content.Message.Empty
   alias Content.Message.Predictions
   alias Content.Audio.NextTrainCountdown
   alias Signs.Utilities.Reader
@@ -64,6 +66,19 @@ defmodule Signs.Utilities.ReaderTest do
       Reader.read_sign(sign)
 
       assert_received({:send_audio, _id, _, _p, _t})
+    end
+
+    test "when the sign is on a read interval, sends a single-line custom announcement" do
+      sign = %{
+        @sign
+        | tick_read: 0,
+          current_content_top: {@src, %Custom{line: :top, message: "Custom Top"}},
+          current_content_bottom: {nil, %Empty{}}
+      }
+
+      Reader.read_sign(sign)
+
+      assert_received({:send_custom_audio, _id, _audio, _priority, _timeout})
     end
   end
 

@@ -55,10 +55,6 @@ defmodule Signs.Utilities.Reader do
     sign.sign_updater.send_custom_audio(sign.audio_id, audio, 5, 60)
   end
 
-  defp send_audios(sign, {audio1, audio2}) do
-    sign.sign_updater.send_audio(sign.audio_id, {audio1, audio2}, 5, 60)
-  end
-
   defp send_audios(sign, audio) do
     sign.sign_updater.send_audio(sign.audio_id, audio, 5, 60)
   end
