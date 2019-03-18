@@ -35,31 +35,31 @@ defmodule MessageQueue do
   end
 
   @impl PaEss.Updater
-  def update_single_line(pid \\ __MODULE__, pa_ess_id, line_no, msg, duration, start) do
+  def update_single_line(pid \\ __MODULE__, text_id, line_no, msg, duration, start) do
     GenServer.call(
       pid,
-      {:queue_update, {:update_single_line, [pa_ess_id, line_no, msg, duration, start]}}
+      {:queue_update, {:update_single_line, [text_id, line_no, msg, duration, start]}}
     )
   end
 
   @impl PaEss.Updater
-  def update_sign(pid \\ __MODULE__, pa_ess_id, top_line, bottom_line, duration, start) do
+  def update_sign(pid \\ __MODULE__, text_id, top_line, bottom_line, duration, start) do
     GenServer.call(
       pid,
-      {:queue_update, {:update_sign, [pa_ess_id, top_line, bottom_line, duration, start]}}
+      {:queue_update, {:update_sign, [text_id, top_line, bottom_line, duration, start]}}
     )
   end
 
   @impl PaEss.Updater
-  def send_audio(pid \\ __MODULE__, pa_ess_id, audios, priority, timeout) do
-    GenServer.call(pid, {:queue_update, {:send_audio, [pa_ess_id, audios, priority, timeout]}})
+  def send_audio(pid \\ __MODULE__, audio_id, audios, priority, timeout) do
+    GenServer.call(pid, {:queue_update, {:send_audio, [audio_id, audios, priority, timeout]}})
   end
 
   @impl PaEss.Updater
-  def send_custom_audio(pid \\ __MODULE__, pa_ess_id, audio, priority, timeout) do
+  def send_custom_audio(pid \\ __MODULE__, audio_id, audio, priority, timeout) do
     GenServer.call(
       pid,
-      {:queue_update, {:send_custom_audio, [pa_ess_id, audio, priority, timeout]}}
+      {:queue_update, {:send_custom_audio, [audio_id, audio, priority, timeout]}}
     )
   end
 

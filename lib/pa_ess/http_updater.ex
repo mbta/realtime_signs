@@ -1,4 +1,6 @@
 defmodule PaEss.HttpUpdater do
+  use Bitwise
+
   @moduledoc """
   Fetches from the MessageQueue messages from the various signs, and serializes and POSTs
   them to the PA/ESS head-end server.
@@ -9,6 +11,7 @@ defmodule PaEss.HttpUpdater do
           queue_mod: module(),
           uid: integer()
         }
+  @type post_result :: {:ok, :sent} | {:error, :bad_status} | {:error, :post_error}
 
   # Normally an anti-pattern! But we mix compile --force with every deploy
   @max_send_rate_per_sec (32 / Application.get_env(:realtime_signs, :number_of_http_updaters))
@@ -56,6 +59,7 @@ defmodule PaEss.HttpUpdater do
     {:noreply, %{state | uid: state.uid + 1}}
   end
 
+  @spec process({atom, [any]}, __MODULE__.t()) :: post_result
   def process({:update_single_line, [{station, zone}, line_no, msg, duration, start_secs]}, state) do
     cmd = to_command(msg, duration, start_secs, zone, line_no)
     encoded = URI.encode_query(MsgType: "SignContent", uid: state.uid, sta: station, c: cmd)
@@ -87,14 +91,14 @@ defmodule PaEss.HttpUpdater do
     send_post(state.http_poster, encoded)
   end
 
-  def process({:send_custom_audio, [{station, zone}, audio, priority, timeout]}, state) do
+  def process({:send_custom_audio, [{station, zones}, audio, priority, timeout]}, state) do
     encoded =
       [
         MsgType: "AdHoc",
         uid: state.uid,
         msg: audio.message,
         typ: audio_type(:audio),
-        sta: "#{station}#{zone_bitmap(zone)}",
+        sta: "#{station}#{zone_bitmap(zones)}",
         pri: priority,
         tim: timeout
       ]
@@ -105,20 +109,20 @@ defmodule PaEss.HttpUpdater do
     send_post(state.http_poster, encoded)
   end
 
-  def process({:send_audio, [{station, zone}, audios, priority, timeout]}, state) do
+  def process({:send_audio, [{station, zones}, audios, priority, timeout]}, state) do
     case audios do
       {a1, a2} ->
-        process_send_audio(station, zone, a1, priority, timeout, state)
-        process_send_audio(station, zone, a2, priority, timeout, state)
+        process_send_audio(station, zones, a1, priority, timeout, state)
+        process_send_audio(station, zones, a2, priority, timeout, state)
 
       a ->
-        process_send_audio(station, zone, a, priority, timeout, state)
+        process_send_audio(station, zones, a, priority, timeout, state)
     end
   end
 
-  @spec process_send_audio(String.t(), String.t(), Content.Audio.t(), integer(), integer(), t()) ::
+  @spec process_send_audio(String.t(), [String.t()], Content.Audio.t(), integer(), integer(), t()) ::
           {:ok, :sent} | {:error, :bad_status} | {:error, :post_error}
-  defp process_send_audio(station, zone, audio, priority, timeout, state) do
+  defp process_send_audio(station, zones, audio, priority, timeout, state) do
     {message_id, vars, type} = Content.Audio.to_params(audio)
 
     encoded =
@@ -128,7 +132,7 @@ defmodule PaEss.HttpUpdater do
         mid: message_id,
         var: Enum.join(vars, ","),
         typ: audio_type(type),
-        sta: "#{station}#{zone_bitmap(zone)}",
+        sta: "#{station}#{zone_bitmap(zones)}",
         pri: priority,
         tim: timeout
       ]
@@ -179,20 +183,29 @@ defmodule PaEss.HttpUpdater do
     [last | rest]
   end
 
+  @spec zone_bitmap([String.t()]) :: String.t()
+  defp zone_bitmap(zones) do
+    zones
+    |> Enum.map(&zone_to_bit/1)
+    |> Enum.reduce(0, fn bit, acc -> bit ||| acc end)
+    |> Integer.to_string(2)
+    |> String.pad_leading(6, "0")
+  end
+
   # bitmap representing zone: m c n s e w
-  defp zone_bitmap("m"), do: "100000"
-  defp zone_bitmap("c"), do: "010000"
-  defp zone_bitmap("n"), do: "001000"
-  defp zone_bitmap("s"), do: "000100"
-  defp zone_bitmap("e"), do: "000010"
-  defp zone_bitmap("w"), do: "000001"
+  @spec zone_to_bit(String.t()) :: non_neg_integer
+  defp zone_to_bit("m"), do: 1 <<< 5
+  defp zone_to_bit("c"), do: 1 <<< 4
+  defp zone_to_bit("n"), do: 1 <<< 3
+  defp zone_to_bit("s"), do: 1 <<< 2
+  defp zone_to_bit("e"), do: 1 <<< 1
+  defp zone_to_bit("w"), do: 1 <<< 0
 
   defp audio_type(:audio_visual), do: "0"
   defp audio_type(:audio), do: "1"
   defp audio_type(:visual), do: "2"
 
-  @spec send_post(module(), binary()) ::
-          {:ok, :sent} | {:error, :bad_status} | {:error, :post_error}
+  @spec send_post(module(), binary()) :: post_result()
   defp send_post(http_poster, query) do
     case http_poster.post(sign_url(), query, [
            {"Content-type", "application/x-www-form-urlencoded"}

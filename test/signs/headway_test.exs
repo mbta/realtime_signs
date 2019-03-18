@@ -54,11 +54,11 @@ defmodule Signs.HeadwayTest do
       {id, line, message, duration, start}
     end
 
-    def send_audio(pa_ess_id, msg, priority, timeout) do
+    def send_audio(audio_id, msg, priority, timeout) do
       if Process.whereis(:headway_test_fake_updater_listener) do
         send(
           :headway_test_fake_updater_listener,
-          {:send_audio, {pa_ess_id, msg, priority, timeout}}
+          {:send_audio, {audio_id, msg, priority, timeout}}
         )
       end
 
@@ -97,7 +97,8 @@ defmodule Signs.HeadwayTest do
 
   @sign %Signs.Headway{
     id: "SIGN",
-    pa_ess_id: {"ABCD", "n"},
+    text_id: {"ABCD", "n"},
+    audio_id: {"ABCD", ["n"]},
     gtfs_stop_id: "123",
     route_id: "743",
     headsign: "Chelsea",
@@ -227,7 +228,7 @@ defmodule Signs.HeadwayTest do
     test "if the bridge is down, does not update the sign" do
       sign = %{
         @sign
-        | pa_ess_id: "1",
+        | text_id: "1",
           current_content_top: %Content.Message.Headways.Top{
             headsign: "Chelsea",
             vehicle_type: :bus
@@ -288,7 +289,7 @@ defmodule Signs.HeadwayTest do
     test "if there is no bridge id, does not update the sign" do
       sign = %{
         @sign
-        | pa_ess_id: "1",
+        | text_id: "1",
           current_content_top: %Content.Message.Headways.Top{
             headsign: "Chelsea",
             vehicle_type: :bus
@@ -433,7 +434,7 @@ defmodule Signs.HeadwayTest do
 
       assert_received(
         {:send_audio,
-         {{"ABCD", "n"},
+         {{"ABCD", ["n"]},
           {%Content.Audio.VehiclesToDestination{
              next_trip_mins: 10,
              later_trip_mins: 12,
@@ -460,7 +461,7 @@ defmodule Signs.HeadwayTest do
 
       assert_received(
         {:send_audio,
-         {{"ABCD", "n"},
+         {{"ABCD", ["n"]},
           %Content.Audio.Closure{
             alert: :suspension_closed_station
           }, 5, 120}}
@@ -524,14 +525,14 @@ defmodule Signs.HeadwayTest do
 
       refute_received(
         {:send_audio,
-         {{"ABCD", "n"}, %Content.Audio.VehiclesToDestination{language: :english}, 5, 120}}
+         {{"ABCD", ["n"]}, %Content.Audio.VehiclesToDestination{language: :english}, 5, 120}}
       )
 
       :timer.sleep(100)
 
       assert_received(
         {:send_audio,
-         {{"ABCD", "n"},
+         {{"ABCD", ["n"]},
           {%Content.Audio.VehiclesToDestination{language: :english},
            %Content.Audio.VehiclesToDestination{language: :spanish}}, 5, 120}}
       )
@@ -540,14 +541,14 @@ defmodule Signs.HeadwayTest do
 
       refute_received(
         {:send_audio,
-         {{"ABCD", "n"}, %Content.Audio.VehiclesToDestination{language: :english}, 5, 120}}
+         {{"ABCD", ["n"]}, %Content.Audio.VehiclesToDestination{language: :english}, 5, 120}}
       )
 
       :timer.sleep(100)
 
       assert_received(
         {:send_audio,
-         {{"ABCD", "n"},
+         {{"ABCD", ["n"]},
           {%Content.Audio.VehiclesToDestination{language: :english},
            %Content.Audio.VehiclesToDestination{language: :spanish}}, 5, 120}}
       )

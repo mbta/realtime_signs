@@ -11,7 +11,8 @@ defmodule Signs.Realtime do
 
   @enforce_keys [
     :id,
-    :pa_ess_id,
+    :text_id,
+    :audio_id,
     :source_config,
     :current_content_top,
     :current_content_bottom,
@@ -32,7 +33,8 @@ defmodule Signs.Realtime do
 
   @type t :: %__MODULE__{
           id: String.t(),
-          pa_ess_id: PaEss.id(),
+          text_id: PaEss.text_id(),
+          audio_id: PaEss.audio_id(),
           source_config: Utilities.SourceConfig.config(),
           current_content_top: line_content(),
           current_content_bottom: line_content(),
@@ -53,11 +55,11 @@ defmodule Signs.Realtime do
     headway_engine = opts[:headway_engine] || Engine.Headways
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
-    pa_ess_zone = Map.fetch!(config, "pa_ess_zone")
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
-      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), pa_ess_zone},
+      text_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
+      audio_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "audio_zones")},
       source_config: config |> Map.fetch!("source_config") |> Utilities.SourceConfig.parse!(),
       current_content_top: {nil, Content.Message.Empty.new()},
       current_content_bottom: {nil, Content.Message.Empty.new()},
@@ -67,7 +69,7 @@ defmodule Signs.Realtime do
       sign_updater: sign_updater,
       tick_bottom: 130,
       tick_top: 130,
-      tick_read: 240 + offset(pa_ess_zone),
+      tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       expiration_seconds: 130,
       read_period_seconds: 240
     }
@@ -117,19 +119,12 @@ defmodule Signs.Realtime do
     Process.send_after(pid, :run_loop, 1_000)
   end
 
-  defp offset(zone) when zone in ["n"], do: 0
-  defp offset(zone) when zone in ["s"], do: 60
-  defp offset(zone) when zone in ["m"], do: 120
-  defp offset(zone) when zone in ["e"], do: 30
-  defp offset(zone) when zone in ["w"], do: 90
-  defp offset(zone) when zone in ["c"], do: 150
-
   @spec do_expiration(Signs.Realtime.t()) :: Signs.Realtime.t()
   def do_expiration(%{tick_top: 0, tick_bottom: 0} = sign) do
     {_src, top} = sign.current_content_top
     {_src, bottom} = sign.current_content_bottom
 
-    sign.sign_updater.update_sign(sign.pa_ess_id, top, bottom, sign.expiration_seconds + 15, :now)
+    sign.sign_updater.update_sign(sign.text_id, top, bottom, sign.expiration_seconds + 15, :now)
 
     %{sign | tick_top: sign.expiration_seconds, tick_bottom: sign.expiration_seconds}
   end
@@ -138,7 +133,7 @@ defmodule Signs.Realtime do
     {_src, top} = sign.current_content_top
 
     sign.sign_updater.update_single_line(
-      sign.pa_ess_id,
+      sign.text_id,
       "1",
       top,
       sign.expiration_seconds + 15,
@@ -152,7 +147,7 @@ defmodule Signs.Realtime do
     {_src, bottom} = sign.current_content_bottom
 
     sign.sign_updater.update_single_line(
-      sign.pa_ess_id,
+      sign.text_id,
       "2",
       bottom,
       sign.expiration_seconds + 15,
