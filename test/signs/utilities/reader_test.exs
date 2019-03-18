@@ -1,6 +1,8 @@
 defmodule Signs.Utilities.ReaderTest do
   use ExUnit.Case, async: true
 
+  alias Content.Message.Custom
+  alias Content.Message.Empty
   alias Content.Message.Predictions
   alias Content.Audio.NextTrainCountdown
   alias Signs.Utilities.Reader
@@ -11,12 +13,12 @@ defmodule Signs.Utilities.ReaderTest do
   end
 
   defmodule FakeUpdater do
-    def send_audio(id, audio, priority, timeout) do
-      send(self(), {:send_audio, id, audio, priority, timeout})
+    def send_audio(audio_id, audio, priority, timeout) do
+      send(self(), {:send_audio, audio_id, audio, priority, timeout})
     end
 
-    def send_custom_audio(id, audio, priority, timeout) do
-      send(self(), {:send_custom_audio, id, audio, priority, timeout})
+    def send_custom_audio(audio_id, audio, priority, timeout) do
+      send(self(), {:send_custom_audio, audio_id, audio, priority, timeout})
     end
   end
 
@@ -32,7 +34,8 @@ defmodule Signs.Utilities.ReaderTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
-    pa_ess_id: {"TEST", "x"},
+    text_id: {"TEST", "x"},
+    audio_id: {"TEST", ["x"]},
     source_config: {[@src]},
     current_content_top: {@src, %Predictions{headsign: "Alewife", minutes: 4}},
     current_content_bottom: {@src, %Predictions{headsign: "Ashmont", minutes: 3}},
@@ -55,6 +58,27 @@ defmodule Signs.Utilities.ReaderTest do
 
       refute_received({:send_audio, _id, _, _p, _t})
       refute_received({:send_audio, _id, _, _p, _t})
+    end
+
+    test "when the sign is on a read interval, sends next train announcements" do
+      sign = %{@sign | tick_read: 0}
+
+      Reader.read_sign(sign)
+
+      assert_received({:send_audio, _id, _, _p, _t})
+    end
+
+    test "when the sign is on a read interval, sends a single-line custom announcement" do
+      sign = %{
+        @sign
+        | tick_read: 0,
+          current_content_top: {@src, %Custom{line: :top, message: "Custom Top"}},
+          current_content_bottom: {nil, %Empty{}}
+      }
+
+      Reader.read_sign(sign)
+
+      assert_received({:send_custom_audio, _id, _audio, _priority, _timeout})
     end
   end
 

@@ -81,7 +81,8 @@ defmodule Signs.Utilities.MessagesTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
-    pa_ess_id: {"TEST", "x"},
+    text_id: {"TEST", "x"},
+    audio_id: {"TEST", ["x"]},
     source_config: {[@src]},
     current_content_top: {@src, %Content.Message.Predictions{headsign: "Alewife", minutes: 4}},
     current_content_bottom: {@src, %Content.Message.Predictions{headsign: "Ashmont", minutes: 3}},

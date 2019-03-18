@@ -12,7 +12,8 @@ defmodule Signs.BridgeOnly do
 
   @enforce_keys [
     :id,
-    :pa_ess_id,
+    :text_id,
+    :audio_id,
     :bridge_engine,
     :bridge_id,
     :sign_updater,
@@ -23,7 +24,8 @@ defmodule Signs.BridgeOnly do
 
   @type t :: %__MODULE__{
           id: String.t(),
-          pa_ess_id: PaEss.id(),
+          text_id: PaEss.text_id(),
+          audio_id: PaEss.audio_id(),
           bridge_engine: module(),
           bridge_id: String.t(),
           sign_updater: module(),
@@ -36,7 +38,8 @@ defmodule Signs.BridgeOnly do
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
-      pa_ess_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "pa_ess_zone")},
+      text_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
+      audio_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "audio_zones")},
       bridge_engine: bridge_engine,
       bridge_id: Map.fetch!(config, "bridge_id"),
       sign_updater: sign_updater,
@@ -60,7 +63,7 @@ defmodule Signs.BridgeOnly do
         {english, spanish} = Content.Audio.BridgeIsUp.create_bridge_messages(duration)
 
         for audio <- [english, spanish] do
-          if audio, do: sign.sign_updater.send_audio(sign.pa_ess_id, audio, 5, 120)
+          if audio, do: sign.sign_updater.send_audio(sign.audio_id, audio, 5, 120)
         end
 
       _ ->

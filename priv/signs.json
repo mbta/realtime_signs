@@ -3,7 +3,9 @@
     "id": "cedar_grove_outbound",
     "type": "realtime",
     "pa_ess_loc": "MCED",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -23,7 +25,9 @@
     "id": "cedar_grove_inbound",
     "type": "realtime",
     "pa_ess_loc": "MCED",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -43,7 +47,9 @@
     "id": "butler_center",
     "type": "realtime",
     "pa_ess_loc": "MBUT",
-    "pa_ess_zone": "c",
+    "read_loop_offset": 150,
+    "text_zone": "c",
+    "audio_zones": ["c"],
     "source_config": [
       [
         {
@@ -75,7 +81,9 @@
     "id": "milton_outbound",
     "type": "realtime",
     "pa_ess_loc": "MMIL",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -95,7 +103,9 @@
     "id": "milton_inbound",
     "type": "realtime",
     "pa_ess_loc": "MMIL",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -115,7 +125,9 @@
     "id": "central_avenue_outbound",
     "type": "realtime",
     "pa_ess_loc": "MCEN",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -135,7 +147,9 @@
     "id": "central_avenue_inbound",
     "type": "realtime",
     "pa_ess_loc": "MCEN",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -155,7 +169,9 @@
     "id": "valley_road_outbound",
     "type": "realtime",
     "pa_ess_loc": "MVAL",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -175,7 +191,9 @@
     "id": "valley_road_inbound",
     "type": "realtime",
     "pa_ess_loc": "MVAL",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -195,7 +213,9 @@
     "id": "capen_street_outbound",
     "type": "realtime",
     "pa_ess_loc": "MCAP",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -215,7 +235,9 @@
     "id": "capen_street_inbound",
     "type": "realtime",
     "pa_ess_loc": "MCAP",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -234,7 +256,9 @@
   {
     "id": "chelsea_inbound",
     "pa_ess_loc": "SCHS",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "headsign": "South Station",
     "bridge_id": "1",
     "gtfs_stop_id": "74630",
@@ -244,7 +268,9 @@
   {
     "id": "bellingham_square_inbound",
     "pa_ess_loc": "SBSQ",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "headsign": "South Station",
     "bridge_id": "1",
     "gtfs_stop_id": "74632",
@@ -254,7 +280,9 @@
   {
     "id": "bellingham_square_outbound",
     "pa_ess_loc": "SBSQ",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "headsign": "Chelsea",
     "bridge_id": "1",
     "gtfs_stop_id": "74633",
@@ -264,7 +292,9 @@
   {
     "id": "box_district_inbound",
     "pa_ess_loc": "SBOX",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "headsign": "South Station",
     "bridge_id": "1",
     "gtfs_stop_id": "74634",
@@ -274,7 +304,9 @@
   {
     "id": "box_district_outbound",
     "pa_ess_loc": "SBOX",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "headsign": "Chelsea",
     "bridge_id": "1",
     "gtfs_stop_id": "74635",
@@ -284,7 +316,9 @@
   {
     "id": "eastern_ave_inbound",
     "pa_ess_loc": "SEAV",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "headsign": "South Station",
     "bridge_id": "1",
     "gtfs_stop_id": "74636",
@@ -294,7 +328,9 @@
   {
     "id": "eastern_ave_outbound",
     "pa_ess_loc": "SEAV",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "headsign": "Chelsea",
     "bridge_id": "1",
     "gtfs_stop_id": "74637",
@@ -304,42 +340,54 @@
   {
     "id": "south_station_silver_line_outbound",
     "pa_ess_loc": "SSOU",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "bridge_id": "1",
     "type": "bridge_only"
   },
   {
     "id": "courthouse_station_outbound",
     "pa_ess_loc": "SCOU",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "bridge_id": "1",
     "type": "bridge_only"
   },
   {
     "id": "world_trade_center_outbound",
     "pa_ess_loc": "SWTC",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "bridge_id": "1",
     "type": "bridge_only"
   },
   {
     "id": "world_trade_center_mezzanine",
     "pa_ess_loc": "SWTC",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "bridge_id": "1",
     "type": "bridge_only"
   },
   {
     "id": "courthouse_station_mezzanine",
     "pa_ess_loc": "SCOU",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "bridge_id": "1",
     "type": "bridge_only"
   },
   {
     "id": "south_station_mezzanine",
     "pa_ess_loc": "RSOU",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "bridge_id": "1",
     "type": "bridge_only"
   },
@@ -347,7 +395,9 @@
     "id": "wonderland_westbound",
     "type": "realtime",
     "pa_ess_loc": "BWON",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
@@ -367,7 +417,9 @@
     "id": "wonderland_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BWON",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -387,7 +439,9 @@
     "id": "revere_beach_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BREV",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
@@ -407,7 +461,9 @@
     "id": "revere_beach_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BREV",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -439,7 +495,9 @@
     "id": "revere_beach_westbound",
     "type": "realtime",
     "pa_ess_loc": "BREV",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
@@ -459,7 +517,9 @@
     "id": "beachmont_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BBEA",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
@@ -479,7 +539,9 @@
     "id": "beachmont_westbound",
     "type": "realtime",
     "pa_ess_loc": "BBEA",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
@@ -499,7 +561,9 @@
     "id": "suffolk_downs_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BSUF",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
@@ -519,7 +583,9 @@
     "id": "suffolk_downs_westbound",
     "type": "realtime",
     "pa_ess_loc": "BSUF",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
@@ -539,7 +605,9 @@
     "id": "orient_heights_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BORH",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
@@ -559,7 +627,9 @@
     "id": "orient_heights_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BORH",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -591,7 +661,9 @@
     "id": "orient_heights_westbound",
     "type": "realtime",
     "pa_ess_loc": "BORH",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
@@ -611,7 +683,9 @@
     "id": "wood_island_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BWOO",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
@@ -631,7 +705,9 @@
     "id": "wood_island_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BWOO",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -663,7 +739,9 @@
     "id": "wood_island_westbound",
     "type": "realtime",
     "pa_ess_loc": "BWOO",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
@@ -683,7 +761,9 @@
     "id": "airport_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BAIR",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
@@ -703,7 +783,9 @@
     "id": "airport_westbound",
     "type": "realtime",
     "pa_ess_loc": "BAIR",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
@@ -723,7 +805,9 @@
     "id": "maverick_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BMAV",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
@@ -743,7 +827,9 @@
     "id": "maverick_westbound",
     "type": "realtime",
     "pa_ess_loc": "BMAV",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
@@ -763,7 +849,9 @@
     "id": "aquarium_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BAQU",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
@@ -783,7 +871,9 @@
     "id": "aquarium_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BAQU",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -815,7 +905,9 @@
     "id": "aquarium_westbound",
     "type": "realtime",
     "pa_ess_loc": "BAQU",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
@@ -835,7 +927,9 @@
     "id": "state_blue_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BSTA",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
@@ -855,7 +949,9 @@
     "id": "state_blue_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BSTA",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -887,7 +983,9 @@
     "id": "state_blue_westbound",
     "type": "realtime",
     "pa_ess_loc": "BSTA",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
@@ -907,7 +1005,9 @@
     "id": "government_center_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BGOV",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
@@ -927,7 +1027,9 @@
     "id": "government_center_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BGOV",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -959,7 +1061,9 @@
     "id": "government_center_westbound",
     "type": "realtime",
     "pa_ess_loc": "BGOV",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
@@ -979,7 +1083,9 @@
     "id": "bowdoin_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BBOW",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
@@ -999,7 +1105,9 @@
     "id": "bowdoin_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BBOW",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -1019,7 +1127,9 @@
     "id": "oak_grove_mezzanine_southbound",
     "type": "realtime",
     "pa_ess_loc": "OOAK",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -1060,7 +1170,9 @@
     "id": "oak_grove_east_busway",
     "type": "realtime",
     "pa_ess_loc": "OOAK",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
@@ -1101,7 +1213,9 @@
     "id": "oak_grove_northbound",
     "type": "realtime",
     "pa_ess_loc": "OOAK",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -1142,7 +1256,9 @@
     "id": "oak_grove_southbound",
     "type": "realtime",
     "pa_ess_loc": "OOAK",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -1183,7 +1299,9 @@
     "id": "malden_lobby",
     "type": "realtime",
     "pa_ess_loc": "OMAL",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -1215,7 +1333,9 @@
     "id": "malden_center_platform",
     "type": "realtime",
     "pa_ess_loc": "OMAL",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -1247,7 +1367,9 @@
     "id": "wellington_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OWEL",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -1279,7 +1401,9 @@
     "id": "wellington_northbound",
     "type": "realtime",
     "pa_ess_loc": "OWEL",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -1299,7 +1423,9 @@
     "id": "wellington_southbound",
     "type": "realtime",
     "pa_ess_loc": "OWEL",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -1319,7 +1445,9 @@
     "id": "assembly_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OASQ",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -1351,7 +1479,9 @@
     "id": "assembly_northbound",
     "type": "realtime",
     "pa_ess_loc": "OASQ",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -1371,7 +1501,9 @@
     "id": "assembly_southbound",
     "type": "realtime",
     "pa_ess_loc": "OASQ",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -1391,7 +1523,9 @@
     "id": "sullivan_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OSUL",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -1423,7 +1557,9 @@
     "id": "sullivan_northbound",
     "type": "realtime",
     "pa_ess_loc": "OSUL",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -1443,7 +1579,9 @@
     "id": "sullivan_southbound",
     "type": "realtime",
     "pa_ess_loc": "OSUL",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -1463,7 +1601,9 @@
     "id": "community_college_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OCOM",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -1495,7 +1635,9 @@
     "id": "community_college_northbound",
     "type": "realtime",
     "pa_ess_loc": "OCOM",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -1515,7 +1657,9 @@
     "id": "community_college_southbound",
     "type": "realtime",
     "pa_ess_loc": "OCOM",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -1535,7 +1679,9 @@
     "id": "orange_north_station_northbound",
     "type": "realtime",
     "pa_ess_loc": "ONST",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -1555,7 +1701,9 @@
     "id": "orange_north_station_southbound",
     "type": "realtime",
     "pa_ess_loc": "ONST",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -1575,7 +1723,9 @@
     "id": "orange_north_station_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "ONST",
-    "pa_ess_zone": "c",
+    "read_loop_offset": 150,
+    "text_zone": "c",
+    "audio_zones": ["c"],
     "source_config": [
       [
         {
@@ -1607,7 +1757,9 @@
     "id": "orange_north_station_commuter_rail_exit",
     "type": "realtime",
     "pa_ess_loc": "ONST",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -1639,7 +1791,9 @@
     "id": "orange_haymarket_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OHAY",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -1671,7 +1825,9 @@
     "id": "orange_haymarket_northbound",
     "type": "realtime",
     "pa_ess_loc": "OHAY",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -1691,7 +1847,9 @@
     "id": "orange_haymarket_southbound",
     "type": "realtime",
     "pa_ess_loc": "OHAY",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -1711,7 +1869,9 @@
     "id": "orange_state_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OSTN",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -1743,7 +1903,9 @@
     "id": "orange_state_northbound",
     "type": "realtime",
     "pa_ess_loc": "OSTN",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -1763,7 +1925,9 @@
     "id": "orange_state_southbound",
     "type": "realtime",
     "pa_ess_loc": "OSTS",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -1783,7 +1947,9 @@
     "id": "orange_downtown_crossing_northbound",
     "type": "realtime",
     "pa_ess_loc": "ODTN",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -1803,7 +1969,9 @@
     "id": "orange_downtown_crossing_southbound",
     "type": "realtime",
     "pa_ess_loc": "ODTS",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -1823,7 +1991,9 @@
     "id": "chinatown_northbound_lobby",
     "type": "realtime",
     "pa_ess_loc": "OCHN",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -1843,7 +2013,9 @@
     "id": "chinatown_southbound_lobby",
     "type": "realtime",
     "pa_ess_loc": "OCHS",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -1863,7 +2035,9 @@
     "id": "chinatown_northbound",
     "type": "realtime",
     "pa_ess_loc": "OCHN",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -1883,7 +2057,9 @@
     "id": "chinatown_southbound",
     "type": "realtime",
     "pa_ess_loc": "OCHS",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -1903,7 +2079,9 @@
     "id": "tufts_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "ONEM",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -1935,7 +2113,9 @@
     "id": "tufts_northbound",
     "type": "realtime",
     "pa_ess_loc": "ONEM",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -1955,7 +2135,9 @@
     "id": "tufts_southbound",
     "type": "realtime",
     "pa_ess_loc": "ONEM",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -1975,7 +2157,9 @@
     "id": "back_bay_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OBAC",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -2007,7 +2191,9 @@
     "id": "back_bay_northbound",
     "type": "realtime",
     "pa_ess_loc": "OBAC",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -2027,7 +2213,9 @@
     "id": "back_bay_southbound",
     "type": "realtime",
     "pa_ess_loc": "OBAC",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -2047,7 +2235,9 @@
     "id": "mass_ave_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OMAS",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -2079,7 +2269,9 @@
     "id": "mass_ave_northbound",
     "type": "realtime",
     "pa_ess_loc": "OMAS",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -2099,7 +2291,9 @@
     "id": "mass_ave_southbound",
     "type": "realtime",
     "pa_ess_loc": "OMAS",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -2119,7 +2313,9 @@
     "id": "ruggles_northbound",
     "type": "realtime",
     "pa_ess_loc": "ORUG",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -2139,7 +2335,9 @@
     "id": "ruggles_southbound",
     "type": "realtime",
     "pa_ess_loc": "ORUG",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -2159,7 +2357,9 @@
     "id": "ruggles_center",
     "type": "realtime",
     "pa_ess_loc": "ORUG",
-    "pa_ess_zone": "c",
+    "read_loop_offset": 150,
+    "text_zone": "c",
+    "audio_zones": ["c"],
     "source_config": [
       [
         {
@@ -2191,7 +2391,9 @@
     "id": "ruggles_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "ORUG",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -2223,7 +2425,9 @@
     "id": "roxbury_crossing_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OROX",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -2255,7 +2459,9 @@
     "id": "roxbury_crossing_northbound",
     "type": "realtime",
     "pa_ess_loc": "OROX",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -2275,7 +2481,9 @@
     "id": "roxbury_crossing_southbound",
     "type": "realtime",
     "pa_ess_loc": "OROX",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -2295,7 +2503,9 @@
     "id": "jackson_square_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OJAC",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -2327,7 +2537,9 @@
     "id": "jackson_square_northbound",
     "type": "realtime",
     "pa_ess_loc": "OJAC",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -2347,7 +2559,9 @@
     "id": "jackson_square_southbound",
     "type": "realtime",
     "pa_ess_loc": "OJAC",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -2367,7 +2581,9 @@
     "id": "stony_brook_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OSTO",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -2399,7 +2615,9 @@
     "id": "stony_brook_northbound",
     "type": "realtime",
     "pa_ess_loc": "OSTO",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -2419,7 +2637,9 @@
     "id": "stony_brook_southbound",
     "type": "realtime",
     "pa_ess_loc": "OSTO",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -2439,7 +2659,9 @@
     "id": "green_street_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OGRE",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -2471,7 +2693,9 @@
     "id": "green_street_northbound",
     "type": "realtime",
     "pa_ess_loc": "OGRE",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -2491,7 +2715,9 @@
     "id": "green_street_southbound",
     "type": "realtime",
     "pa_ess_loc": "OGRE",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -2511,7 +2737,9 @@
     "id": "forest_hills_main_lobby",
     "type": "realtime",
     "pa_ess_loc": "OFOR",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -2552,7 +2780,9 @@
     "id": "forest_hills_northbound",
     "type": "realtime",
     "pa_ess_loc": "OFOR",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -2593,7 +2823,9 @@
     "id": "forest_hills_southbound",
     "type": "realtime",
     "pa_ess_loc": "OFOR",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -2634,7 +2866,9 @@
     "id": "forest_hills_entrances_from_busways",
     "type": "realtime",
     "pa_ess_loc": "SFOR",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -2675,7 +2909,9 @@
     "id": "ruggles_upper_busway",
     "type": "realtime",
     "pa_ess_loc": "SRUG",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -2707,7 +2943,9 @@
     "id": "alewife_center_southbound",
     "type": "realtime",
     "pa_ess_loc": "RALE",
-    "pa_ess_zone": "c",
+    "read_loop_offset": 150,
+    "text_zone": "c",
+    "audio_zones": ["c"],
     "source_config": [
       [
         {
@@ -2748,7 +2986,9 @@
     "id": "alewife_mezzanine_southbound",
     "type": "realtime",
     "pa_ess_loc": "RALE",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -2789,7 +3029,9 @@
     "id": "davis_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RDAV",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -2821,7 +3063,9 @@
     "id": "davis_northbound",
     "type": "realtime",
     "pa_ess_loc": "RDAV",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -2841,7 +3085,9 @@
     "id": "davis_southbound",
     "type": "realtime",
     "pa_ess_loc": "RDAV",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -2861,7 +3107,9 @@
     "id": "porter_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RPOR",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -2893,7 +3141,9 @@
     "id": "porter_northbound",
     "type": "realtime",
     "pa_ess_loc": "RPOR",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -2913,7 +3163,9 @@
     "id": "porter_southbound",
     "type": "realtime",
     "pa_ess_loc": "RPOR",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -2933,7 +3185,9 @@
     "id": "harvard_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RHAR",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -2965,7 +3219,9 @@
     "id": "harvard_northbound",
     "type": "realtime",
     "pa_ess_loc": "RHAR",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -2985,7 +3241,9 @@
     "id": "harvard_southbound",
     "type": "realtime",
     "pa_ess_loc": "RHAR",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -3005,7 +3263,9 @@
     "id": "central_northbound",
     "type": "realtime",
     "pa_ess_loc": "RCEN",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -3025,7 +3285,9 @@
     "id": "central_southbound",
     "type": "realtime",
     "pa_ess_loc": "RCEN",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -3045,7 +3307,9 @@
     "id": "kendall_mit_northbound",
     "type": "realtime",
     "pa_ess_loc": "RKEN",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -3065,7 +3329,9 @@
     "id": "kendall_mit_southbound",
     "type": "realtime",
     "pa_ess_loc": "RKEN",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -3085,7 +3351,9 @@
     "id": "charles_mgh_northbound",
     "type": "realtime",
     "pa_ess_loc": "RMGH",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -3105,7 +3373,9 @@
     "id": "charles_mgh_southbound",
     "type": "realtime",
     "pa_ess_loc": "RMGH",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -3125,7 +3395,9 @@
     "id": "red_park_st_northbound",
     "type": "realtime",
     "pa_ess_loc": "RPRK",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n", "c"],
     "source_config": [
       [
         {
@@ -3145,7 +3417,9 @@
     "id": "red_park_st_southbound",
     "type": "realtime",
     "pa_ess_loc": "RPRK",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s", "c"],
     "source_config": [
       [
         {
@@ -3165,7 +3439,9 @@
     "id": "red_park_st_center",
     "type": "realtime",
     "pa_ess_loc": "RPRK",
-    "pa_ess_zone": "c",
+    "read_loop_offset": 150,
+    "text_zone": "c",
+    "audio_zones": [],
     "source_config": [
       [
         {
@@ -3197,7 +3473,9 @@
     "id": "red_downtown_crossing_northbound",
     "type": "realtime",
     "pa_ess_loc": "RDTC",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -3217,7 +3495,9 @@
     "id": "red_downtown_crossing_southbound",
     "type": "realtime",
     "pa_ess_loc": "RDTC",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -3237,7 +3517,9 @@
     "id": "red_south_station_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RSOU",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -3269,7 +3551,9 @@
     "id": "red_south_station_northbound",
     "type": "realtime",
     "pa_ess_loc": "RSOU",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -3289,7 +3573,9 @@
     "id": "red_south_station_southbound",
     "type": "realtime",
     "pa_ess_loc": "RSOU",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -3309,7 +3595,9 @@
     "id": "south_station_silver_line_arrival_platform",
     "type": "realtime",
     "pa_ess_loc": "SSOU",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
@@ -3341,7 +3629,9 @@
     "id": "broadway_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RBRO",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -3373,7 +3663,9 @@
     "id": "broadway_northbound",
     "type": "realtime",
     "pa_ess_loc": "RBRO",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -3393,7 +3685,9 @@
     "id": "broadway_southbound",
     "type": "realtime",
     "pa_ess_loc": "RBRO",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -3413,7 +3707,9 @@
     "id": "andrew_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RAND",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -3445,7 +3741,9 @@
     "id": "andrew_northbound",
     "type": "realtime",
     "pa_ess_loc": "RAND",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -3465,7 +3763,9 @@
     "id": "andrew_southbound",
     "type": "realtime",
     "pa_ess_loc": "RAND",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -3485,7 +3785,9 @@
     "id": "savin_hill_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RSAV",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -3517,7 +3819,9 @@
     "id": "savin_hill_northbound",
     "type": "realtime",
     "pa_ess_loc": "RSAV",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -3537,7 +3841,9 @@
     "id": "savin_hill_southbound",
     "type": "realtime",
     "pa_ess_loc": "RSAV",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -3557,7 +3863,9 @@
     "id": "fields_corner_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RFIE",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -3589,7 +3897,9 @@
     "id": "fields_corner_northbound",
     "type": "realtime",
     "pa_ess_loc": "RFIE",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -3609,7 +3919,9 @@
     "id": "fields_corner_southbound",
     "type": "realtime",
     "pa_ess_loc": "RFIE",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -3629,7 +3941,9 @@
     "id": "shawmut_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RSHA",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -3661,7 +3975,9 @@
     "id": "shawmut_northbound",
     "type": "realtime",
     "pa_ess_loc": "RSHA",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -3681,7 +3997,9 @@
     "id": "shawmut_southbound",
     "type": "realtime",
     "pa_ess_loc": "RSHA",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -3701,7 +4019,9 @@
     "id": "ashmont_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RASH",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -3733,7 +4053,9 @@
     "id": "red_ashmont_northbound",
     "type": "realtime",
     "pa_ess_loc": "RASH",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -3753,7 +4075,9 @@
     "id": "north_quincy_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RNQU",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -3785,7 +4109,9 @@
     "id": "north_quincy_northbound",
     "type": "realtime",
     "pa_ess_loc": "RNQU",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -3805,7 +4131,9 @@
     "id": "north_quincy_southbound",
     "type": "realtime",
     "pa_ess_loc": "RNQU",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -3825,7 +4153,9 @@
     "id": "wollaston_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RWOL",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -3857,7 +4187,9 @@
     "id": "wollaston_northbound",
     "type": "realtime",
     "pa_ess_loc": "RWOL",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -3877,7 +4209,9 @@
     "id": "wollaston_southbound",
     "type": "realtime",
     "pa_ess_loc": "RWOL",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -3897,7 +4231,9 @@
     "id": "quincy_center_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RQUC",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -3929,7 +4265,9 @@
     "id": "quincy_center_northbound",
     "type": "realtime",
     "pa_ess_loc": "RQUC",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -3949,7 +4287,9 @@
     "id": "quincy_center_southbound",
     "type": "realtime",
     "pa_ess_loc": "RQUC",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -3969,7 +4309,9 @@
     "id": "quincy_adams_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RQUA",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -4001,7 +4343,9 @@
     "id": "quincy_adams_northbound",
     "type": "realtime",
     "pa_ess_loc": "RQUA",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -4021,7 +4365,9 @@
     "id": "quincy_adams_southbound",
     "type": "realtime",
     "pa_ess_loc": "RQUA",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -4041,7 +4387,9 @@
     "id": "braintree_center_northbound",
     "type": "realtime",
     "pa_ess_loc": "RBRA",
-    "pa_ess_zone": "c",
+    "read_loop_offset": 150,
+    "text_zone": "c",
+    "audio_zones": ["c"],
     "source_config": [
       [
         {
@@ -4082,7 +4430,9 @@
     "id": "braintree_mezzanine_northbound",
     "type": "realtime",
     "pa_ess_loc": "RBRA",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -4123,7 +4473,9 @@
     "id": "jfk_umass_ashmont_platform_southbound",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
@@ -4143,7 +4495,9 @@
     "id": "jfk_umass_braintree_platform_southbound",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -4163,7 +4517,9 @@
     "id": "jfk_umass_ashmont_platform_northbound",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
@@ -4183,7 +4539,9 @@
     "id": "jfk_umass_braintree_platform_northbound",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
@@ -4203,7 +4561,9 @@
     "id": "jfk_umass_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
@@ -4254,7 +4614,9 @@
   {
     "id": "riverside_track_1",
     "pa_ess_loc": "GRIV",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4274,7 +4636,9 @@
   {
     "id": "riverside_track_2",
     "pa_ess_loc": "GRIV",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4294,7 +4658,9 @@
   {
     "id": "woodland_eastbound",
     "pa_ess_loc": "GWOO",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4314,7 +4680,9 @@
   {
     "id": "woodland_westbound",
     "pa_ess_loc": "GWOO",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4334,7 +4702,9 @@
   {
     "id": "waban_eastbound",
     "pa_ess_loc": "GWAB",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4354,7 +4724,9 @@
   {
     "id": "waban_westbound",
     "pa_ess_loc": "GWAB",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4374,7 +4746,9 @@
   {
     "id": "eliot_eastbound",
     "pa_ess_loc": "GELI",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4394,7 +4768,9 @@
   {
     "id": "eliot_westbound",
     "pa_ess_loc": "GELI",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4414,7 +4790,9 @@
   {
     "id": "newton_highlands_eastbound",
     "pa_ess_loc": "GNEH",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4434,7 +4812,9 @@
   {
     "id": "newton_highlands_westbound",
     "pa_ess_loc": "GNEH",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4454,7 +4834,9 @@
   {
     "id": "newton_centre_eastbound",
     "pa_ess_loc": "GNEC",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4474,7 +4856,9 @@
   {
     "id": "newton_centre_westbound",
     "pa_ess_loc": "GNEC",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4494,7 +4878,9 @@
   {
     "id": "chestnut_hill_eastbound",
     "pa_ess_loc": "GCHE",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4514,7 +4900,9 @@
   {
     "id": "chestnut_hill_westbound",
     "pa_ess_loc": "GCHE",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4534,7 +4922,9 @@
   {
     "id": "reservoir_eastbound",
     "pa_ess_loc": "GRES",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4554,7 +4944,9 @@
   {
     "id": "reservoir_westbound",
     "pa_ess_loc": "GRES",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4574,7 +4966,9 @@
   {
     "id": "beaconsfield_eastbound",
     "pa_ess_loc": "GBEA",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4594,7 +4988,9 @@
   {
     "id": "beaconsfield_westbound",
     "pa_ess_loc": "GBEA",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4614,7 +5010,9 @@
   {
     "id": "brookline_hills_eastbound",
     "pa_ess_loc": "GBRH",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4634,7 +5032,9 @@
   {
     "id": "brookline_hills_westbound",
     "pa_ess_loc": "GBRH",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4654,7 +5054,9 @@
   {
     "id": "brookline_village_eastbound",
     "pa_ess_loc": "GBRV",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4674,7 +5076,9 @@
   {
     "id": "brookline_village_westbound",
     "pa_ess_loc": "GBRV",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4694,7 +5098,9 @@
   {
     "id": "longwood_eastbound",
     "pa_ess_loc": "GLON",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4714,7 +5120,9 @@
   {
     "id": "longwood_westbound",
     "pa_ess_loc": "GLON",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4734,7 +5142,9 @@
   {
     "id": "fenway_eastbound",
     "pa_ess_loc": "GFEN",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4754,7 +5164,9 @@
   {
     "id": "fenway_westbound",
     "pa_ess_loc": "GFEN",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4774,7 +5186,9 @@
   {
     "id": "kenmore_b_eastbound",
     "pa_ess_loc": "GKEN",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4804,7 +5218,9 @@
   {
     "id": "kenmore_b_westbound",
     "pa_ess_loc": "GKEN",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4834,7 +5250,9 @@
   {
     "id": "kenmore_c_d_eastbound",
     "pa_ess_loc": "GKEN",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "type": "realtime",
     "source_config": [
       [
@@ -4854,7 +5272,9 @@
   {
     "id": "kenmore_c_d_westbound",
     "pa_ess_loc": "GKEN",
-    "pa_ess_zone": "s",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": ["s"],
     "type": "realtime",
     "source_config": [
       [
@@ -4874,7 +5294,9 @@
   {
     "id": "kenmore_mezzanine",
     "pa_ess_loc": "GKEN",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -4926,7 +5348,9 @@
   {
     "id": "hynes_eastbound",
     "pa_ess_loc": "GAUD",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -4946,7 +5370,9 @@
   {
     "id": "hynes_westbound",
     "pa_ess_loc": "GAUD",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -4966,7 +5392,9 @@
   {
     "id": "hynes_mezzanine",
     "pa_ess_loc": "GAUD",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -4998,7 +5426,9 @@
   {
     "id": "copley_eastbound",
     "pa_ess_loc": "GCOP",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5018,7 +5448,9 @@
   {
     "id": "copley_westbound",
     "pa_ess_loc": "GCOP",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5038,7 +5470,9 @@
   {
     "id": "arlington_eastbound",
     "pa_ess_loc": "GARL",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5058,7 +5492,9 @@
   {
     "id": "arlington_westbound",
     "pa_ess_loc": "GARL",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5078,7 +5514,9 @@
   {
     "id": "arlington_mezzanine",
     "pa_ess_loc": "GARL",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -5110,7 +5548,9 @@
   {
     "id": "boylston_eastbound",
     "pa_ess_loc": "GBOY",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5130,7 +5570,9 @@
   {
     "id": "boylston_westbound",
     "pa_ess_loc": "GBOY",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5150,7 +5592,9 @@
   {
     "id": "symphony_eastbound",
     "pa_ess_loc": "GSYM",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5170,7 +5614,9 @@
   {
     "id": "symphony_westbound",
     "pa_ess_loc": "GSYM",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5190,7 +5636,9 @@
   {
     "id": "prudential_eastbound",
     "pa_ess_loc": "GPRU",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5210,7 +5658,9 @@
   {
     "id": "prudential_westbound",
     "pa_ess_loc": "GPRU",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5230,7 +5680,9 @@
   {
     "id": "prudential_mezzanine",
     "pa_ess_loc": "GPRU",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -5262,7 +5714,9 @@
   {
     "id": "park_st_eastbound",
     "pa_ess_loc": "GPRKE",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5292,7 +5746,9 @@
   {
     "id": "park_st_winter_st_concourse",
     "pa_ess_loc": "GPRKE",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -5322,7 +5778,9 @@
   {
     "id": "park_st_westbound_wall_track",
     "pa_ess_loc": "GPRKW",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5354,7 +5812,9 @@
   {
     "id": "park_st_westbound_fence_track",
     "pa_ess_loc": "GPRKW",
-    "pa_ess_zone": "n",
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": ["n"],
     "type": "realtime",
     "source_config": [
       [
@@ -5387,7 +5847,9 @@
   {
     "id": "green_government_center_eastbound",
     "pa_ess_loc": "GGOV",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5407,7 +5869,9 @@
   {
     "id": "green_government_center_westbound",
     "pa_ess_loc": "GGOV",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5427,7 +5891,9 @@
   {
     "id": "green_government_center_mezzanine",
     "pa_ess_loc": "GGOV",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -5460,7 +5926,9 @@
   {
     "id": "green_haymarket_eastbound",
     "pa_ess_loc": "GHAY",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5480,7 +5948,9 @@
   {
     "id": "green_haymarket_westbound",
     "pa_ess_loc": "GHAY",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5501,7 +5971,9 @@
   {
     "id": "green_north_station_eastbound",
     "pa_ess_loc": "GNST",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5521,7 +5993,9 @@
   {
     "id": "green_north_station_westbound",
     "pa_ess_loc": "GNST",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5541,7 +6015,9 @@
   {
     "id": "green_north_station_commuter_rail_exit",
     "pa_ess_loc": "GNST",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -5573,7 +6049,9 @@
   {
     "id": "science_park_eastbound",
     "pa_ess_loc": "GSCI",
-    "pa_ess_zone": "e",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5593,7 +6071,9 @@
   {
     "id": "science_park_westbound",
     "pa_ess_loc": "GSCI",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5613,7 +6093,9 @@
   {
     "id": "science_park_mezzanine",
     "pa_ess_loc": "GSCI",
-    "pa_ess_zone": "m",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -5645,7 +6127,9 @@
   {
     "id": "lechmere_green_line",
     "pa_ess_loc": "GLEC",
-    "pa_ess_zone": "w",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [

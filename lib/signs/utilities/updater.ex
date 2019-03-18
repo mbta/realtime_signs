@@ -30,7 +30,7 @@ defmodule Signs.Utilities.Updater do
         log_line_update(sign, top_msg, "top")
 
         sign.sign_updater.update_single_line(
-          sign.pa_ess_id,
+          sign.text_id,
           "1",
           top_msg,
           sign.expiration_seconds + 15,
@@ -53,7 +53,7 @@ defmodule Signs.Utilities.Updater do
         log_line_update(sign, bottom_msg, "bottom")
 
         sign.sign_updater.update_single_line(
-          sign.pa_ess_id,
+          sign.text_id,
           "2",
           bottom_msg,
           sign.expiration_seconds + 15,
@@ -80,7 +80,7 @@ defmodule Signs.Utilities.Updater do
         log_line_update(sign, bottom_msg, "bottom")
 
         sign.sign_updater.update_sign(
-          sign.pa_ess_id,
+          sign.text_id,
           top_msg,
           bottom_msg,
           sign.expiration_seconds + 15,
