@@ -1210,50 +1210,7 @@
     ]
   },
   {
-    "id": "oak_grove_northbound",
-    "type": "realtime",
-    "pa_ess_loc": "OOAK",
-    "read_loop_offset": 0,
-    "text_zone": "n",
-    "audio_zones": ["n"],
-    "source_config": [
-      [
-        {
-          "stop_id": "70036",
-          "routes": ["Orange"],
-          "direction_id": 0,
-          "headway_direction_name": "Forest Hills",
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": true,
-          "source_for_headway": true
-        },
-	{
-          "stop_id": "Oak Grove-01",
-          "routes": ["Orange"],
-          "direction_id": 0,
-          "headway_direction_name": "Forest Hills",
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": true
-	},
-	{
-          "stop_id": "Oak Grove-02",
-          "routes": ["Orange"],
-          "direction_id": 0,
-          "headway_direction_name": "Forest Hills",
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": true
-        }
-      ]
-    ]
-  },
-  {
-    "id": "oak_grove_southbound",
+    "id": "oak_grove_platform",
     "type": "realtime",
     "pa_ess_loc": "OOAK",
     "read_loop_offset": 60,
@@ -2777,55 +2734,12 @@
     ]
   },
   {
-    "id": "forest_hills_northbound",
+    "id": "forest_hills_platform",
     "type": "realtime",
     "pa_ess_loc": "OFOR",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
-    "source_config": [
-      [
-        {
-          "stop_id": "70001",
-          "routes": ["Orange"],
-          "direction_id": 1,
-          "headway_direction_name": "Oak Grove",
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": true,
-          "source_for_headway": true
-        },
-	{
-          "stop_id": "Forest Hills-01",
-          "routes": ["Orange"],
-          "direction_id": 1,
-          "headway_direction_name": "Oak Grove",
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": true
-        },
-	{
-          "stop_id": "Forest Hills-02",
-          "routes": ["Orange"],
-          "direction_id": 1,
-          "headway_direction_name": "Oak Grove",
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": true
-        }
-      ]
-    ]
-  },
-  {
-    "id": "forest_hills_southbound",
-    "type": "realtime",
-    "pa_ess_loc": "OFOR",
-    "read_loop_offset": 60,
-    "text_zone": "s",
-    "audio_zones": ["s"],
     "source_config": [
       [
         {
@@ -4612,29 +4526,7 @@
     ]
   },
   {
-    "id": "riverside_track_1",
-    "pa_ess_loc": "GRIV",
-    "read_loop_offset": 30,
-    "text_zone": "e",
-    "audio_zones": ["e"],
-    "type": "realtime",
-    "source_config": [
-      [
-        {
-          "stop_id": "70160",
-          "direction_id": 1,
-          "headway_direction_name": "Govt Ctr",
-          "routes": ["Green-D"],
-          "platform": null,
-          "terminal": false,
-          "announce_arriving": false,
-          "announce_boarding": false
-        }
-      ]
-    ]
-  },
-  {
-    "id": "riverside_track_2",
+    "id": "riverside_entire_station",
     "pa_ess_loc": "GRIV",
     "read_loop_offset": 90,
     "text_zone": "w",
