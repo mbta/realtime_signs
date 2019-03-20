@@ -10,7 +10,7 @@ defmodule Bridge.Request do
 
     @bridge_url
     |> Kernel.<>("#{id}")
-    |> http_client.get(headers, timeout: 2000, recv_timeout: 2000)
+    |> http_client.get(headers, timeout: 2000, recv_timeout: 2000, ssl: [versions: [:"tlsv1.2"]])
     |> parse_response(current_time)
   end
 
