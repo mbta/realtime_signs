@@ -366,6 +366,16 @@ defmodule Fake.HTTPoison do
               }
             ]
           }
+        },
+        %{
+          "attributes" => %{
+            "effect" => "YET_ANOTHER_IRRELEVANT_THING",
+            "informed_entity" => [
+              %{
+                "route" => "Blue"
+              }
+            ]
+          }
         }
       ]
     }

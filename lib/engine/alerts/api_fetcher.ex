@@ -64,7 +64,7 @@ defmodule Engine.Alerts.ApiFetcher do
   @spec determine_stop_statuses([%{}]) ::
           {%{
              Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()
-           }, %{Engine.Alerts.Fetcher.route_id() => :something}}
+           }, %{Engine.Alerts.Fetcher.route_id() => :alert_along_route}}
   defp determine_stop_statuses(alert_data) do
     station_config = StationConfig.load_config()
 
@@ -99,19 +99,24 @@ defmodule Engine.Alerts.ApiFetcher do
   @spec process_alert_for_stations(%{}, %StationConfig{}) ::
           {%{
              Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()
-           }, %{Engine.Alerts.Fetcher.route_id() => :something}}
+           }, %{Engine.Alerts.Fetcher.route_id() => :alert_along_route}}
   defp process_alert_for_stations(alert, station_config) do
     stops = stops_for_alert(alert)
+    alert_effect = get_in(alert, ["attributes", "effect"])
 
     routes =
-      alert
-      |> routes_for_alert()
-      |> Enum.reduce(%{}, fn route, acc ->
-        Map.merge(acc, %{route => :something})
-      end)
+      if alert_effect in ["SHUTTLE", "SUSPENSION"] do
+        alert
+        |> routes_for_alert()
+        |> Enum.reduce(%{}, fn route, acc ->
+          Map.merge(acc, %{route => :alert_along_route})
+        end)
+      else
+        %{}
+      end
 
     stop_alerts =
-      case get_in(alert, ["attributes", "effect"]) do
+      case alert_effect do
         "SHUTTLE" ->
           stops
           |> get_alert_statuses(station_config, :shuttle)
