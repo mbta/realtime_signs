@@ -6,7 +6,7 @@ defmodule Signs.Utilities.HeadwaysTest do
     def max_stop_status(["suspended_transfer"], _routes), do: :suspension_transfer_station
     def max_stop_status(["shuttles"], _routes), do: :shuttles_closed_station
     def max_stop_status(["closure"], _routes), do: :station_closure
-    def max_stop_status(_stops, ["Green-B"]), do: :something
+    def max_stop_status(_stops, ["Green-B"]), do: :alert_along_route
     def max_stop_status(_stops, _routes), do: :none
   end
 

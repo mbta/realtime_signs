@@ -43,8 +43,8 @@ defmodule Engine.Alerts.Fetcher do
   end
 
   def higher_priority_status(status1, status2)
-      when status1 == :something or status2 == :something do
-    :something
+      when status1 == :alert_along_route or status2 == :alert_along_route do
+    :alert_along_route
   end
 
   def higher_priority_status(_status1, _status2) do

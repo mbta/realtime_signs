@@ -3,24 +3,26 @@ defmodule Engine.Alerts.ApiFetcherTest do
 
   describe "get_statuses/1" do
     test "downloads and parses the alerts" do
-      assert {
+      assert Engine.Alerts.ApiFetcher.get_statuses() == {
                :ok,
                %{
                  :stop_statuses => %{
                    "70151" => :shuttles_transfer_station,
                    "70036" => :suspension_transfer_station,
                    "70034" => :suspension_closed_station,
+                   "70033" => :suspension_transfer_station,
                    "70032" => :suspension_transfer_station,
                    "70063" => :station_closure,
                    "74636" => :station_closure
                  },
                  :route_statuses => %{
+                   "Green-B" => :alert_along_route,
                    "Red" => :suspension_closed_station,
-                   "Orange" => :something,
+                   "Orange" => :alert_along_route,
                    "Mattapan" => :shuttles_closed_station
                  }
                }
-             } = Engine.Alerts.ApiFetcher.get_statuses()
+             }
     end
 
     test "gracefully handles HTTP issue" do
