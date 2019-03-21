@@ -306,16 +306,6 @@ defmodule Fake.HTTPoison do
         },
         %{
           "attributes" => %{
-            "effect" => "SUSPENSION",
-            "informed_entity" => [
-              %{
-                "route" => "Red"
-              }
-            ]
-          }
-        },
-        %{
-          "attributes" => %{
             "effect" => "SHUTTLE",
             "informed_entity" => [
               %{
