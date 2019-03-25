@@ -13,6 +13,7 @@ defmodule Content.Message.Predictions do
   require Logger
 
   @thirty_plus_minutes 30 * 60
+  @terminal_brd_seconds 45
 
   @enforce_keys [:headsign, :minutes]
   defstruct [:headsign, :minutes, :route_id, :stop_id, width: 18]
@@ -71,8 +72,8 @@ defmodule Content.Message.Predictions do
 
     minutes =
       case prediction.seconds_until_departure do
-        x when x <= 30 and stopped_at? -> :boarding
-        x when x <= 30 -> 1
+        x when x <= @terminal_brd_seconds and stopped_at? -> :boarding
+        x when x <= @terminal_brd_seconds -> 1
         x when x >= @thirty_plus_minutes -> :thirty_plus
         x -> x |> Kernel./(60) |> round()
       end
