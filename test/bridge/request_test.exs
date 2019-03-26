@@ -17,7 +17,7 @@ defmodule Bridge.RequestTest do
           refute get_status(500, @current_time)
         end)
 
-      assert log =~ "Could not query bridge API: status code 500"
+      assert log =~ "bridge_api_failure: status code 500"
     end
 
     test "Logs warning when request fails" do
@@ -26,7 +26,7 @@ defmodule Bridge.RequestTest do
           refute get_status(754, @current_time)
         end)
 
-      assert log =~ "Could not query bridge API: \"Unknown error\""
+      assert log =~ "bridge_api_failure: \"Unknown error\""
     end
 
     test "Logs warning when parsing fails" do
@@ -35,7 +35,7 @@ defmodule Bridge.RequestTest do
           refute get_status(201, @current_time)
         end)
 
-      assert log =~ "Could not parse json response"
+      assert log =~ "bridge_api_failure: could not parse json response"
     end
   end
 end
