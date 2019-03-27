@@ -23,18 +23,18 @@ defmodule Bridge.Request do
         do_parse_response(response, current_time)
 
       _ ->
-        Logger.warn("Could not parse json response")
+        Logger.warn("bridge_api_failure: could not parse json response")
         nil
     end
   end
 
   defp parse_response({:ok, %HTTPoison.Response{status_code: status}}, _current_time) do
-    Logger.warn("Could not query bridge API: status code #{inspect(status)}")
+    Logger.warn("bridge_api_failure: status code #{inspect(status)}")
     nil
   end
 
   defp parse_response({:error, %HTTPoison.Error{reason: reason}}, _current_time) do
-    Logger.warn("Could not query bridge API: #{inspect(reason)}")
+    Logger.warn("bridge_api_failure: #{inspect(reason)}")
     nil
   end
 
