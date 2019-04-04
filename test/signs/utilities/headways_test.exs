@@ -12,7 +12,7 @@ defmodule Signs.Utilities.HeadwaysTest do
 
   defmodule FakeHeadways do
     def get_headways("a") do
-      {1, 5}
+      {2, 8}
     end
 
     def get_headways("b") do
@@ -36,7 +36,7 @@ defmodule Signs.Utilities.HeadwaysTest do
     end
 
     def get_headways("g") do
-      {1, nil}
+      {2, nil}
     end
   end
 
@@ -88,7 +88,7 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign) ==
                {{source_config_for_stop_id("a"),
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_config_for_stop_id("a"), %Content.Message.Headways.Bottom{range: {1, 5}}}}
+                {source_config_for_stop_id("a"), %Content.Message.Headways.Bottom{range: {2, 8}}}}
     end
 
     test "generates top and bottom messages to display the headway for a sign with headway_stop_id" do
@@ -107,7 +107,7 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign) ==
                {{source_with_headway,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_with_headway, %Content.Message.Headways.Bottom{range: {1, 5}}}}
+                {source_with_headway, %Content.Message.Headways.Bottom{range: {2, 8}}}}
     end
 
     test "increases the headways if there are alerts on the route" do
@@ -121,7 +121,7 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign) ==
                {{source_config,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_config, %Content.Message.Headways.Bottom{range: {4, 8}}}}
+                {source_config, %Content.Message.Headways.Bottom{range: {3, 11}}}}
     end
 
     test "increases the headways if there are alerts on the route and it only gets a bottom end of the range" do
@@ -135,7 +135,7 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign) ==
                {{source_config,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_config, %Content.Message.Headways.Bottom{range: {4, nil}}}}
+                {source_config, %Content.Message.Headways.Bottom{range: {3, nil}}}}
     end
 
     test "increases the headways if there are alerts on the route and it only gets a top end of the range" do
@@ -149,7 +149,7 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign) ==
                {{source_config,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_config, %Content.Message.Headways.Bottom{range: {nil, 8}}}}
+                {source_config, %Content.Message.Headways.Bottom{range: {nil, 7}}}}
     end
 
     test "generates blank messages to display when no headway information present" do
