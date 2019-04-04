@@ -4,7 +4,7 @@ defmodule Signs.Utilities.Headways do
   geneartes the top and bottom lines for the sign
   """
   alias Signs.Utilities.SourceConfig
-  @alert_headway_bump 3
+  @alert_headway_factor 1.4
 
   @spec get_messages(Signs.Realtime.t()) ::
           {{SourceConfig.source() | nil, Content.Message.t()},
@@ -50,7 +50,10 @@ defmodule Signs.Utilities.Headways do
       {bottom, top} ->
         adjusted_range =
           if alert_status != :none do
-            {if(bottom, do: bottom + @alert_headway_bump), if(top, do: top + @alert_headway_bump)}
+            {
+              if(bottom, do: (bottom * @alert_headway_factor) |> Float.round() |> Kernel.trunc()),
+              if(top, do: (top * @alert_headway_factor) |> Float.round() |> Kernel.trunc())
+            }
           else
             {bottom, top}
           end
