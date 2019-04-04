@@ -18,7 +18,7 @@ defmodule MessageQueue do
           length: integer()
         }
 
-  @max_size 200
+  @max_size 300
   @too_full_drop 15
 
   use GenServer
