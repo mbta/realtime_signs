@@ -47,7 +47,7 @@ defmodule Signs.Headway do
         }
 
   @default_duration 120
-  @alert_headway_bump 3
+  @alert_headway_factor 1.4
 
   @spec start_link(map(), Keyword.t()) :: GenServer.on_start()
   def start_link(%{"type" => "headway"} = config, opts \\ []) do
@@ -174,7 +174,10 @@ defmodule Signs.Headway do
                   {bottom, top} ->
                     {adjusted_bottom, adjusted_top} =
                       if alert_status != :none do
-                        {bottom + @alert_headway_bump, top && top + @alert_headway_bump}
+                        {
+                          (bottom * @alert_headway_factor) |> Float.round() |> Kernel.trunc(),
+                          top && (top * @alert_headway_factor) |> Float.round() |> Kernel.trunc()
+                        }
                       else
                         {bottom, top}
                       end

@@ -24,7 +24,7 @@ defmodule Signs.HeadwayTest do
     end
 
     def get_headways("notnil_nil") do
-      {1, nil}
+      {3, nil}
     end
 
     def get_headways(_stop_id) do
@@ -416,7 +416,7 @@ defmodule Signs.HeadwayTest do
 
       {:noreply, sign} = handle_info(:update_content, sign)
 
-      assert sign.current_content_bottom == %Content.Message.Headways.Bottom{range: {4, 5}}
+      assert sign.current_content_bottom == %Content.Message.Headways.Bottom{range: {1, 3}}
     end
   end
 
