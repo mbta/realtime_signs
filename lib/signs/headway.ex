@@ -175,8 +175,8 @@ defmodule Signs.Headway do
                     {adjusted_bottom, adjusted_top} =
                       if alert_status != :none do
                         {
-                          (bottom * @alert_headway_factor) |> Float.round() |> Kernel.trunc(),
-                          top && (top * @alert_headway_factor) |> Float.round() |> Kernel.trunc()
+                          (bottom * @alert_headway_factor) |> round(),
+                          top && (top * @alert_headway_factor) |> round()
                         }
                       else
                         {bottom, top}

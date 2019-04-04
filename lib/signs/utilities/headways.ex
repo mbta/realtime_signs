@@ -51,8 +51,8 @@ defmodule Signs.Utilities.Headways do
         adjusted_range =
           if alert_status != :none do
             {
-              if(bottom, do: (bottom * @alert_headway_factor) |> Float.round() |> Kernel.trunc()),
-              if(top, do: (top * @alert_headway_factor) |> Float.round() |> Kernel.trunc())
+              if(bottom, do: (bottom * @alert_headway_factor) |> round()),
+              if(top, do: (top * @alert_headway_factor) |> round)
             }
           else
             {bottom, top}
