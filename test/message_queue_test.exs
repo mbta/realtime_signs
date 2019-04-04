@@ -14,15 +14,15 @@ defmodule MessageQueueTest do
     end
 
     test "bumps 15 old messages when more than max size" do
-      q = 1..200 |> Enum.to_list() |> :queue.from_list()
-      state = %{queue: q, length: 200}
+      q = 1..300 |> Enum.to_list() |> :queue.from_list()
+      state = %{queue: q, length: 300}
       msg = 201
 
       {:reply, {:ok, :sent}, state} =
         MessageQueue.handle_call({:queue_update, msg}, self(), state)
 
       assert {{:value, 16}, _queue} = :queue.out(state.queue)
-      assert state.length == 186
+      assert state.length == 286
     end
 
     test "logs if message size is multiple of 30" do
