@@ -117,12 +117,7 @@ defmodule Content.Message.Predictions do
           n -> "#{n} min"
         end
 
-      track_number =
-        if minutes != :arriving do
-          Content.Utilities.stop_track_number(stop_id)
-        else
-          nil
-        end
+      track_number = Content.Utilities.stop_track_number(stop_id)
 
       if track_number do
         [
