@@ -13,11 +13,12 @@ defmodule Content.Message.StoppedTrain do
   require Logger
 
   @enforce_keys [:headsign, :stops_away]
-  defstruct @enforce_keys
+  defstruct @enforce_keys ++ [track_number: nil]
 
   @type t :: %__MODULE__{
           headsign: String.t(),
-          stops_away: non_neg_integer()
+          stops_away: non_neg_integer(),
+          track_number: Content.Utilities.track_number() | nil
         }
 
   @spec from_prediction(Predictions.Prediction.t()) :: t()
@@ -38,9 +39,17 @@ defmodule Content.Message.StoppedTrain do
 
     stops_away = parse_stops_away(prediction.boarding_status)
 
+    track_number =
+      if stops_away == 0 do
+        Content.Utilities.stop_track_number(prediction.stop_id)
+      else
+        nil
+      end
+
     %__MODULE__{
       headsign: headsign,
-      stops_away: stops_away
+      stops_away: stops_away,
+      track_number: track_number
     }
   end
 
@@ -56,8 +65,15 @@ defmodule Content.Message.StoppedTrain do
   end
 
   defimpl Content.Message do
-    def to_string(%{headsign: headsign, stops_away: 0}) do
+    def to_string(%{headsign: headsign, stops_away: 0, track_number: nil}) do
       Content.Utilities.width_padded_string(headsign, "BRD", 18)
+    end
+
+    def to_string(%{headsign: headsign, stops_away: 0, track_number: track_number}) do
+      [
+        {Content.Utilities.width_padded_string(headsign, "BRD", 18), 3},
+        {Content.Utilities.width_padded_string(headsign, "Trk #{track_number}", 18), 3}
+      ]
     end
 
     def to_string(%{headsign: headsign, stops_away: n}) do

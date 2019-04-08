@@ -5,13 +5,13 @@ defmodule Content.Audio.TrainIsBoarding do
 
   require Logger
 
-  @enforce_keys [:destination, :route_id, :stop_id]
+  @enforce_keys [:destination, :route_id, :track_number]
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
           destination: PaEss.terminal_station(),
           route_id: String.t(),
-          stop_id: String.t()
+          track_number: Content.Utilities.track_number()
         }
 
   defimpl Content.Audio do
@@ -34,14 +34,14 @@ defmodule Content.Audio.TrainIsBoarding do
       {PaEss.Utilities.take_message_id(vars), vars, :audio}
     end
 
-    def to_params(audio) do
+    def to_params(%{destination: destination, route_id: route_id, track_number: track_number}) do
       {vars, message_type} =
-        case {branch_letter(audio.route_id), Content.Utilities.stop_track_number(audio.stop_id)} do
+        case {branch_letter(route_id), track_number} do
           {nil, nil} ->
             {[
                @the_next,
                @train_to,
-               PaEss.Utilities.destination_var(audio.destination),
+               PaEss.Utilities.destination_var(destination),
                @is_now_boarding
              ], :audio}
 
@@ -51,19 +51,19 @@ defmodule Content.Audio.TrainIsBoarding do
                @space,
                @train_to,
                @space,
-               PaEss.Utilities.destination_var(audio.destination),
+               PaEss.Utilities.destination_var(destination),
                @space,
                @is_now_boarding,
                @space,
                track(track_number)
-             ], :audio_visual}
+             ], :audio}
 
           {branch_letter, _track_number} ->
             {[
                @the_next,
                branch_letter,
                @train_to,
-               PaEss.Utilities.destination_var(audio.destination),
+               PaEss.Utilities.destination_var(destination),
                @is_now_boarding
              ], :audio}
         end

@@ -270,5 +270,23 @@ defmodule Content.Message.PredictionsTest do
 
       assert Content.Message.to_string(msg) == "Ashmont      1 min"
     end
+
+    test "pages track information when available" do
+      prediction = %Predictions.Prediction{
+        stop_id: "Forest Hills-02",
+        seconds_until_departure: 120,
+        direction_id: 1,
+        route_id: "Orange",
+        stopped?: false,
+        stops_away: 0
+      }
+
+      msg = Content.Message.Predictions.terminal(prediction)
+
+      assert Content.Message.to_string(msg) == [
+               {"Oak Grove    2 min", 3},
+               {"Oak Grove    Trk 2", 3}
+             ]
+    end
   end
 end

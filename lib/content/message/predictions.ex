@@ -108,20 +108,25 @@ defmodule Content.Message.Predictions do
     @arriving "ARR"
     @thirty_plus "30+ min"
 
-    def to_string(%{headsign: headsign, minutes: :boarding, width: width}) do
-      Content.Utilities.width_padded_string(headsign, @boarding, width)
-    end
+    def to_string(%{headsign: headsign, minutes: minutes, width: width, stop_id: stop_id}) do
+      duration_string =
+        case minutes do
+          :boarding -> @boarding
+          :arriving -> @arriving
+          :thirty_plus -> @thirty_plus
+          n -> "#{n} min"
+        end
 
-    def to_string(%{headsign: headsign, minutes: :arriving, width: width}) do
-      Content.Utilities.width_padded_string(headsign, @arriving, width)
-    end
+      track_number = Content.Utilities.stop_track_number(stop_id)
 
-    def to_string(%{headsign: headsign, minutes: :thirty_plus, width: width}) do
-      Content.Utilities.width_padded_string(headsign, @thirty_plus, width)
-    end
-
-    def to_string(%{headsign: headsign, minutes: n, width: width}) when n > 0 and n < 1000 do
-      Content.Utilities.width_padded_string(headsign, "#{n} min", width)
+      if track_number do
+        [
+          {Content.Utilities.width_padded_string(headsign, duration_string, width), 3},
+          {Content.Utilities.width_padded_string(headsign, "Trk #{track_number}", width), 3}
+        ]
+      else
+        Content.Utilities.width_padded_string(headsign, duration_string, width)
+      end
     end
 
     def to_string(e) do
