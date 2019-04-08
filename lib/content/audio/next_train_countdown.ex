@@ -3,7 +3,7 @@ defmodule Content.Audio.NextTrainCountdown do
   The next train to [destination] arrives in [n] minutes.
   """
 
-  @enforce_keys [:destination, :verb, :minutes, :stop_id]
+  @enforce_keys [:destination, :verb, :minutes, :track_number]
   defstruct @enforce_keys ++ [platform: nil]
 
   @type verb :: :arrives | :departs
@@ -13,7 +13,7 @@ defmodule Content.Audio.NextTrainCountdown do
           destination: PaEss.terminal_station(),
           verb: verb(),
           minutes: integer(),
-          stop_id: String.t(),
+          track_number: Content.Utilities.track_number(),
           platform: :ashmont | :braintree | nil
         }
 
@@ -30,24 +30,24 @@ defmodule Content.Audio.NextTrainCountdown do
     @minutes "505"
     @space "21000"
 
-    def to_params(%{platform: nil, minutes: 1} = audio) do
-      case Content.Utilities.stop_track_number(audio.stop_id) do
+    def to_params(%{platform: nil, minutes: 1, track_number: track_number} = audio) do
+      case track_number do
         nil ->
           {"141", [Utilities.destination_var(audio.destination), verb_var(audio)], :audio}
 
-        track_number ->
+        _ ->
           terminal_track_params(audio, track_number)
       end
     end
 
-    def to_params(%{platform: nil} = audio) do
-      case Content.Utilities.stop_track_number(audio.stop_id) do
+    def to_params(%{platform: nil, track_number: track_number} = audio) do
+      case track_number do
         nil ->
           {"90",
            [Utilities.destination_var(audio.destination), verb_var(audio), minutes_var(audio)],
            :audio}
 
-        track_number ->
+        _ ->
           terminal_track_params(audio, track_number)
       end
     end
@@ -74,7 +74,7 @@ defmodule Content.Audio.NextTrainCountdown do
     @spec terminal_track_params(
             Content.Audio.NextTrainCountdown.t(),
             Content.Utilities.track_number()
-          ) :: {String.t(), [String.t()], :audio_visual}
+          ) :: {String.t(), [String.t()], :audio}
     defp terminal_track_params(audio, track_number) do
       vars = [
         @the_next,
@@ -94,7 +94,7 @@ defmodule Content.Audio.NextTrainCountdown do
         track(track_number)
       ]
 
-      {Utilities.take_message_id(vars), vars, :audio_visual}
+      {Utilities.take_message_id(vars), vars, :audio}
     end
 
     defp platform_var(%{platform: :ashmont}), do: "4016"

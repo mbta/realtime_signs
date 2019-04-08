@@ -6,7 +6,7 @@ defmodule Content.Audio.TrainIsBoardingTest do
       audio = %Content.Audio.TrainIsBoarding{
         destination: :riverside,
         route_id: "Green-D",
-        stop_id: "70155"
+        track_number: nil
       }
 
       assert Content.Audio.to_params(audio) ==
@@ -17,7 +17,7 @@ defmodule Content.Audio.TrainIsBoardingTest do
       audio = %Content.Audio.TrainIsBoarding{
         destination: :north_station,
         route_id: "Green-C",
-        stop_id: "70150"
+        track_number: nil
       }
 
       assert Content.Audio.to_params(audio) == {"106", ["501", "507", "4027", "544"], :audio}
@@ -27,7 +27,7 @@ defmodule Content.Audio.TrainIsBoardingTest do
       audio = %Content.Audio.TrainIsBoarding{
         destination: :alewife,
         route_id: "Red",
-        stop_id: "70064"
+        track_number: nil
       }
 
       assert Content.Audio.to_params(audio) == {"106", ["501", "507", "4000", "544"], :audio}
@@ -37,12 +37,12 @@ defmodule Content.Audio.TrainIsBoardingTest do
       audio = %Content.Audio.TrainIsBoarding{
         destination: :ashmont,
         route_id: "Red",
-        stop_id: "Alewife-02"
+        track_number: 2
       }
 
       assert Content.Audio.to_params(audio) ==
                {"111", ["501", "21000", "507", "21000", "4016", "21000", "544", "21000", "542"],
-                :audio_visual}
+                :audio}
     end
   end
 end
