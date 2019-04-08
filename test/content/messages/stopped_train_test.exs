@@ -7,6 +7,15 @@ defmodule Content.Message.StoppedTrainTest do
       assert Content.Message.to_string(msg) == "Ashmont        BRD"
     end
 
+    test "returns BRD string with track information if stopped 0 stops away with track number" do
+      msg = %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 0, track_number: 2}
+
+      assert Content.Message.to_string(msg) == [
+               {"Ashmont        BRD", 3},
+               {"Ashmont      Trk 2", 3}
+             ]
+    end
+
     test "returns tuple of stopped away pages otherwise" do
       msg = %Content.Message.StoppedTrain{headsign: "Braintree", stops_away: 2}
 
@@ -96,6 +105,39 @@ defmodule Content.Message.StoppedTrainTest do
                %Content.Message.StoppedTrain{
                  headsign: "",
                  stops_away: 0
+               }
+    end
+
+    test "handles stops with track number" do
+      prediction = %{
+        @boarding_prediction
+        | stop_id: "Alewife-02",
+          direction_id: 0,
+          destination_stop_id: "70093"
+      }
+
+      assert Content.Message.StoppedTrain.from_prediction(prediction) ==
+               %Content.Message.StoppedTrain{
+                 headsign: "Ashmont",
+                 stops_away: 0,
+                 track_number: 2
+               }
+    end
+
+    test "doesn't include track number when not at current stop" do
+      prediction = %{
+        @prediction
+        | stop_id: "Alewife-02",
+          boarding_status: "Stopped 2 stops away",
+          direction_id: 0,
+          destination_stop_id: "70093"
+      }
+
+      assert Content.Message.StoppedTrain.from_prediction(prediction) ==
+               %Content.Message.StoppedTrain{
+                 headsign: "Ashmont",
+                 stops_away: 2,
+                 track_number: nil
                }
     end
   end
