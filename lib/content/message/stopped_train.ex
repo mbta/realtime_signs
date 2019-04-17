@@ -13,12 +13,11 @@ defmodule Content.Message.StoppedTrain do
   require Logger
 
   @enforce_keys [:headsign, :stops_away]
-  defstruct @enforce_keys ++ [track_number: nil]
+  defstruct @enforce_keys
 
   @type t :: %__MODULE__{
           headsign: String.t(),
-          stops_away: non_neg_integer(),
-          track_number: Content.Utilities.track_number() | nil
+          stops_away: non_neg_integer()
         }
 
   @spec from_prediction(Predictions.Prediction.t()) :: t()
@@ -39,17 +38,9 @@ defmodule Content.Message.StoppedTrain do
 
     stops_away = parse_stops_away(prediction.boarding_status)
 
-    track_number =
-      if stops_away == 0 do
-        Content.Utilities.stop_track_number(prediction.stop_id)
-      else
-        nil
-      end
-
     %__MODULE__{
       headsign: headsign,
-      stops_away: stops_away,
-      track_number: track_number
+      stops_away: stops_away
     }
   end
 
