@@ -86,7 +86,7 @@ defmodule Signs.Utilities.Predictions do
 
   defp stopped_train?(prediction) do
     status = prediction.boarding_status
-    status && String.starts_with?(status, "Stopped")
+    status && String.starts_with?(status, "Stopped") && status != "Stopped at station"
   end
 
   defp allowed_multi_berth_platform?(
