@@ -84,6 +84,7 @@ defmodule Signs.Utilities.Predictions do
     end
   end
 
+  @spec stopped_train?(Predictions.Prediction.t()) :: boolean()
   defp stopped_train?(prediction) do
     status = prediction.boarding_status
     status && String.starts_with?(status, "Stopped") && status != "Stopped at station"
