@@ -175,6 +175,32 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("10", 0) do
+      [
+        %Predictions.Prediction{
+          stop_id: "10",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: true,
+          stops_away: 0,
+          destination_stop_id: "123",
+          seconds_until_arrival: 10,
+          seconds_until_departure: 100,
+          boarding_status: "Stopped at station"
+        },
+        %Predictions.Prediction{
+          stop_id: "10",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
+          destination_stop_id: "123",
+          seconds_until_arrival: 360,
+          seconds_until_departure: 400
+        }
+      ]
+    end
+
     def for_stop("stop_with_nil_departure_prediction", 0) do
       [
         %Predictions.Prediction{
@@ -507,6 +533,26 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s, %Content.Message.StoppedTrain{stops_away: 1}},
                {nil, %Content.Message.Empty{}}
+             } = Signs.Utilities.Predictions.get_messages(sign)
+    end
+
+    test "Returns regular prediction message if train is stopped at station" do
+      s = %SourceConfig{
+        stop_id: "10",
+        headway_direction_name: "Mattapan",
+        direction_id: 0,
+        terminal?: false,
+        platform: nil,
+        announce_arriving?: false,
+        announce_boarding?: false
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      assert {
+               {^s, %Content.Message.Predictions{minutes: :boarding}},
+               {^s, %Content.Message.Predictions{minutes: 6}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
