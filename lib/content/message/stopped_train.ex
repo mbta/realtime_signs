@@ -53,10 +53,6 @@ defmodule Content.Message.StoppedTrain do
     }
   end
 
-  defp parse_stops_away("Stopped at station") do
-    0
-  end
-
   defp parse_stops_away(str) do
     ~r/Stopped (?<stops_away>\d+) stops? away/
     |> Regex.named_captures(str)
@@ -65,17 +61,6 @@ defmodule Content.Message.StoppedTrain do
   end
 
   defimpl Content.Message do
-    def to_string(%{headsign: headsign, stops_away: 0, track_number: nil}) do
-      Content.Utilities.width_padded_string(headsign, "BRD", 18)
-    end
-
-    def to_string(%{headsign: headsign, stops_away: 0, track_number: track_number}) do
-      [
-        {Content.Utilities.width_padded_string(headsign, "BRD", 18), 3},
-        {Content.Utilities.width_padded_string(headsign, "Trk #{track_number}", 18), 3}
-      ]
-    end
-
     def to_string(%{headsign: headsign, stops_away: n}) do
       stop_word = if n == 1, do: "stop", else: "stops"
 
