@@ -210,28 +210,6 @@
     ]
   },
   {
-    "id": "capen_street_outbound",
-    "type": "realtime",
-    "pa_ess_loc": "MCAP",
-    "read_loop_offset": 60,
-    "text_zone": "s",
-    "audio_zones": ["s"],
-    "source_config": [
-      [
-        {
-          "stop_id": "70273",
-          "routes": ["Mattapan"],
-          "direction_id": 0,
-          "headway_direction_name": "Mattapan",
-          "platform": null,
-          "terminal": false,
-          "announce_arriving": true,
-          "announce_boarding": false
-        }
-      ]
-    ]
-  },
-  {
     "id": "capen_street_inbound",
     "type": "realtime",
     "pa_ess_loc": "MCAP",
