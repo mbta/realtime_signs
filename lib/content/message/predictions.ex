@@ -20,7 +20,7 @@ defmodule Content.Message.Predictions do
 
   @type t :: %__MODULE__{
           headsign: String.t(),
-          minutes: integer() | :boarding | :arriving | :thirty_plus,
+          minutes: integer() | :boarding | :arriving | :approaching | :thirty_plus,
           route_id: String.t(),
           stop_id: String.t(),
           width: integer()
@@ -37,6 +37,7 @@ defmodule Content.Message.Predictions do
       cond do
         prediction.stops_away == 0 -> :boarding
         predicted_time <= 30 -> :arriving
+        predicted_time <= 60 -> :approaching
         predicted_time >= @thirty_plus_minutes -> :thirty_plus
         true -> predicted_time |> Kernel./(60) |> round()
       end
@@ -113,6 +114,7 @@ defmodule Content.Message.Predictions do
         case minutes do
           :boarding -> @boarding
           :arriving -> @arriving
+          :approaching -> "1 min"
           :thirty_plus -> @thirty_plus
           n -> "#{n} min"
         end
