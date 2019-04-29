@@ -13,7 +13,7 @@ defmodule Signs.Utilities.Audio do
   @spec should_interrupting_read?(
           Signs.Realtime.line_content(),
           SourceConfig.config(),
-          :top | :bottom
+          Content.line()
         ) :: boolean()
   def should_interrupting_read?({_src, %Content.Message.Predictions{minutes: x}}, _config, _line)
       when is_integer(x) do
@@ -107,11 +107,19 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_audio(
+         {_, %Message.Predictions{minutes: :arriving}} = top_content,
+         _bottom_content,
+         _multi_source?
+       ) do
+    Audio.Predictions.from_sign_content(top_content, :top)
+  end
+
+  defp get_audio(
          {_, %Message.Predictions{headsign: same}} = content_top,
          {_, %Message.Predictions{headsign: same}} = content_bottom,
          _multi_source?
        ) do
-    top_audio = Audio.Predictions.from_sign_content(content_top)
+    top_audio = Audio.Predictions.from_sign_content(content_top, :top)
 
     if top_audio do
       case Audio.FollowingTrain.from_predictions_message(content_bottom) do
@@ -150,28 +158,30 @@ defmodule Signs.Utilities.Audio do
          {_, %Message.StoppedTrain{headsign: same}},
          _multi_source?
        ) do
-    Audio.Predictions.from_sign_content(top_content)
+    Audio.Predictions.from_sign_content(top_content, :top)
   end
 
   defp get_audio(top, bottom, _multi_source?) do
-    top_audio = get_audio_for_line(top)
-    bottom_audio = get_audio_for_line(bottom)
+    top_audio = get_audio_for_line(top, :top)
+    bottom_audio = get_audio_for_line(bottom, :bottom)
     normalize(top_audio, bottom_audio)
   end
 
-  defp get_audio_for_line({_, %Message.StoppedTrain{} = message}) do
+  @spec get_audio_for_line(Signs.Realtime.line_content(), Content.line()) ::
+          Content.Audio.t() | nil
+  defp get_audio_for_line({_, %Message.StoppedTrain{} = message}, _line) do
     Audio.StoppedTrain.from_message(message)
   end
 
-  defp get_audio_for_line({_, %Message.Predictions{}} = content) do
-    Audio.Predictions.from_sign_content(content)
+  defp get_audio_for_line({_, %Message.Predictions{}} = content, line) do
+    Audio.Predictions.from_sign_content(content, line)
   end
 
-  defp get_audio_for_line({_, %Message.Empty{}}) do
+  defp get_audio_for_line({_, %Message.Empty{}}, _line) do
     nil
   end
 
-  defp get_audio_for_line(content) do
+  defp get_audio_for_line(content, _line) do
     Logger.error("message_to_audio_error Utilities.Audio unknown_line #{inspect(content)}")
     nil
   end

@@ -193,6 +193,69 @@ defmodule Signs.Utilities.AudioTest do
       assert log =~ "message_to_audio_error"
     end
 
+    test "reads the approaching and bottom line when top line is approaching" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.Predictions{headsign: "Alewife", minutes: :approaching}},
+          current_content_bottom: {@src, %Message.Predictions{headsign: "Alewife", minutes: 5}}
+      }
+
+      assert {
+               {%Audio.Approaching{destination: :alewife},
+                %Audio.FollowingTrain{destination: :alewife, minutes: 5, verb: :arrives}},
+               ^sign
+             } = from_sign(sign)
+    end
+
+    test "does not read approaching if it's the bottom line and a following train" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.Predictions{headsign: "Alewife", minutes: :arriving}},
+          current_content_bottom:
+            {@src, %Message.Predictions{headsign: "Alewife", minutes: :approaching}}
+      }
+
+      assert {
+               %Audio.TrainIsArriving{destination: :alewife},
+               ^sign
+             } = from_sign(sign)
+    end
+
+    test "reads approaching as 1 minute when on the bottom line and a different headsign" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.Predictions{headsign: "Ashmont", minutes: :boarding}},
+          current_content_bottom:
+            {@src, %Message.Predictions{headsign: "Braintree", minutes: :approaching}}
+      }
+
+      assert {
+               {%Audio.TrainIsBoarding{destination: :ashmont},
+                %Audio.NextTrainCountdown{
+                  destination: :braintree,
+                  verb: :arrives,
+                  minutes: 1,
+                  track_number: nil,
+                  platform: nil
+                }},
+               ^sign
+             } = from_sign(sign)
+    end
+
+    test "only reads the top line when the top line is arriving" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.Predictions{headsign: "Alewife", minutes: :arriving}},
+          current_content_bottom: {@src, %Message.Predictions{headsign: "Alewife", minutes: 5}}
+      }
+
+      assert {%Audio.TrainIsArriving{destination: :alewife}, ^sign} = from_sign(sign)
+    end
+
     test "Two stopped train messages only plays once if both same headsign" do
       sign = %{
         @sign

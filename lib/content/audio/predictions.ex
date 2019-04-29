@@ -9,13 +9,16 @@ defmodule Content.Audio.Predictions do
   alias Content.Audio.TrackChange
   alias Content.Audio.TrainIsBoarding
   alias Content.Audio.TrainIsArriving
+  alias Content.Audio.Approaching
   alias Content.Audio.NextTrainCountdown
 
   @spec from_sign_content(
-          {Signs.Utilities.SourceConfig.source(), Content.Message.Predictions.t()}
+          {Signs.Utilities.SourceConfig.source(), Content.Message.Predictions.t()},
+          Content.line()
         ) :: nil | Content.Audio.t()
   def from_sign_content(
-        {%Signs.Utilities.SourceConfig{} = src, %Content.Message.Predictions{} = predictions}
+        {%Signs.Utilities.SourceConfig{} = src, %Content.Message.Predictions{} = predictions},
+        line
       ) do
     case PaEss.Utilities.headsign_to_terminal_station(predictions.headsign) do
       {:ok, headsign} ->
@@ -37,6 +40,18 @@ defmodule Content.Audio.Predictions do
 
           predictions.minutes == :arriving ->
             %TrainIsArriving{destination: headsign}
+
+          predictions.minutes == :approaching and line == :top ->
+            %Approaching{destination: headsign}
+
+          predictions.minutes == :approaching and line == :bottom ->
+            %NextTrainCountdown{
+              destination: headsign,
+              minutes: 1,
+              verb: if(src.terminal?, do: :departs, else: :arrives),
+              track_number: Content.Utilities.stop_track_number(predictions.stop_id),
+              platform: src.platform
+            }
 
           predictions.minutes == :thirty_plus ->
             %NextTrainCountdown{

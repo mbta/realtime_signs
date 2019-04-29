@@ -13,7 +13,7 @@ defmodule Content.Audio.NextTrainCountdown do
           destination: PaEss.terminal_station(),
           verb: verb(),
           minutes: integer(),
-          track_number: Content.Utilities.track_number(),
+          track_number: Content.Utilities.track_number() | nil,
           platform: :ashmont | :braintree | nil
         }
 
