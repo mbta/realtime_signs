@@ -57,7 +57,24 @@ defmodule Signs.Utilities.AudioTest do
       refute should_interrupting_read?({src, message}, {[src]}, :bottom)
     end
 
-    test "If it's ARR respects config's announce_boarding?" do
+    test "If it's Approaching, respects config's announce_arriving?, except on the bottom line of a single-source sign" do
+      message = %Message.Predictions{headsign: "Alewife", minutes: :approaching}
+      src = %{@src | announce_arriving?: false}
+      refute should_interrupting_read?({src, message}, {[src]}, :top)
+      refute should_interrupting_read?({src, message}, {[src]}, :bottom)
+      src = %{@src | announce_arriving?: true}
+      assert should_interrupting_read?({src, message}, {[src]}, :top)
+      assert should_interrupting_read?({src, message}, {[src], [src]}, :bottom)
+      refute should_interrupting_read?({src, message}, {[src]}, :bottom)
+    end
+
+    test "If it's Approaching, does not interrupt when announce_boarding?: true" do
+      message = %Message.Predictions{headsign: "Alewife", minutes: :approaching}
+      src = %{@src | announce_arriving?: false, announce_boarding?: true}
+      refute should_interrupting_read?({src, message}, {[src]}, :top)
+    end
+
+    test "If it's BRD respects config's announce_boarding?" do
       message = %Message.Predictions{headsign: "Alewife", minutes: :boarding}
       src = %{@src | announce_boarding?: false}
       refute should_interrupting_read?({src, message}, {[src]}, :top)

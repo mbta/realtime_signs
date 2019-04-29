@@ -23,22 +23,24 @@ defmodule Signs.Utilities.Audio do
   def should_interrupting_read?(
         {
           %SourceConfig{announce_arriving?: false},
-          %Content.Message.Predictions{minutes: :arriving}
+          %Content.Message.Predictions{minutes: arriving_or_approaching}
         },
         _config,
         _line
-      ) do
+      )
+      when arriving_or_approaching in [:arriving, :approaching] do
     false
   end
 
   def should_interrupting_read?(
         {
           %SourceConfig{announce_arriving?: true},
-          %Content.Message.Predictions{minutes: :arriving}
+          %Content.Message.Predictions{minutes: arriving_or_approaching}
         },
         config,
         :bottom
-      ) do
+      )
+      when arriving_or_approaching in [:arriving, :approaching] do
     SourceConfig.multi_source?(config)
   end
 
