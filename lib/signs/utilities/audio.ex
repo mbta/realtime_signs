@@ -68,42 +68,48 @@ defmodule Signs.Utilities.Audio do
   @spec from_sign(Signs.Realtime.t()) ::
           {nil | Content.Audio.t() | {Content.Audio.t(), Content.Audio.t()}, Signs.Realtime.t()}
   def from_sign(sign) do
-    {get_audio(sign.current_content_top, sign.current_content_bottom), sign}
+    multi_source? = Signs.Utilities.SourceConfig.multi_source?(sign.source_config)
+    {get_audio(sign.current_content_top, sign.current_content_bottom, multi_source?), sign}
   end
 
-  @spec get_audio(Signs.Realtime.line_content(), Signs.Realtime.line_content()) ::
+  @spec get_audio(Signs.Realtime.line_content(), Signs.Realtime.line_content(), boolean()) ::
           nil | Content.Audio.t() | {Content.Audio.t(), Content.Audio.t()}
   defp get_audio(
          {_, %Message.Alert.NoService{} = top},
-         {_, bottom}
+         {_, bottom},
+         _multi_source?
        ) do
     Audio.Closure.from_messages(top, bottom)
   end
 
   defp get_audio(
          {_, %Message.Custom{} = top},
-         {_, bottom}
+         {_, bottom},
+         _multi_source?
        ) do
     Audio.Custom.from_messages(top, bottom)
   end
 
   defp get_audio(
          {_, top},
-         {_, %Message.Custom{} = bottom}
+         {_, %Message.Custom{} = bottom},
+         _multi_source?
        ) do
     Audio.Custom.from_messages(top, bottom)
   end
 
   defp get_audio(
          {_, %Message.Headways.Top{} = top},
-         {_, bottom}
+         {_, bottom},
+         _multi_source?
        ) do
     Audio.VehiclesToDestination.from_headway_message(top, bottom)
   end
 
   defp get_audio(
          {_, %Message.Predictions{headsign: same}} = content_top,
-         {_, %Message.Predictions{headsign: same}} = content_bottom
+         {_, %Message.Predictions{headsign: same}} = content_bottom,
+         _multi_source?
        ) do
     top_audio = Audio.Predictions.from_sign_content(content_top)
 
@@ -125,26 +131,29 @@ defmodule Signs.Utilities.Audio do
 
   defp get_audio(
          {_, %Message.StoppedTrain{headsign: same} = top},
-         {_, %Message.StoppedTrain{headsign: same}}
+         {_, %Message.StoppedTrain{headsign: same}},
+         _multi_source?
        ) do
     Audio.StoppedTrain.from_message(top)
   end
 
   defp get_audio(
          {_, %Message.StoppedTrain{headsign: same} = top},
-         {_, %Message.Predictions{headsign: same}}
+         {_, %Message.Predictions{headsign: same}},
+         _multi_source?
        ) do
     Audio.StoppedTrain.from_message(top)
   end
 
   defp get_audio(
          {_, %Message.Predictions{headsign: same}} = top_content,
-         {_, %Message.StoppedTrain{headsign: same}}
+         {_, %Message.StoppedTrain{headsign: same}},
+         _multi_source?
        ) do
     Audio.Predictions.from_sign_content(top_content)
   end
 
-  defp get_audio(top, bottom) do
+  defp get_audio(top, bottom, _multi_source?) do
     top_audio = get_audio_for_line(top)
     bottom_audio = get_audio_for_line(bottom)
     normalize(top_audio, bottom_audio)
