@@ -27,7 +27,7 @@ defmodule Signs.Realtime do
     :read_period_seconds
   ]
 
-  defstruct @enforce_keys ++ [announced_arrivals: MapSet.new()]
+  defstruct @enforce_keys
 
   @type line_content :: {Utilities.SourceConfig.source() | nil, Content.Message.t()}
 
@@ -46,8 +46,7 @@ defmodule Signs.Realtime do
           tick_top: non_neg_integer(),
           tick_read: non_neg_integer(),
           expiration_seconds: non_neg_integer(),
-          read_period_seconds: non_neg_integer(),
-          announced_arrivals: MapSet.t()
+          read_period_seconds: non_neg_integer()
         }
 
   def start_link(%{"type" => "realtime"} = config, opts \\ []) do
