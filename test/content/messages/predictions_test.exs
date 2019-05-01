@@ -199,6 +199,22 @@ defmodule Content.Message.PredictionsTest do
 
       assert Content.Message.to_string(msg) == "Ashmont      2 min"
     end
+
+    test "Includes the prediction's trip_id" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 91,
+        route_id: "Mattapan",
+        direction_id: 1,
+        stopped?: false,
+        stops_away: 2,
+        destination_stop_id: "70261",
+        trip_id: "trip1"
+      }
+
+      msg = Content.Message.Predictions.non_terminal(prediction)
+
+      assert msg.trip_id == "trip1"
+    end
   end
 
   describe "terminal/3" do
@@ -302,6 +318,22 @@ defmodule Content.Message.PredictionsTest do
                {"Oak Grove    2 min", 3},
                {"Oak Grove    Trk 2", 3}
              ]
+    end
+
+    test "Includes the prediction's trip_id" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 91,
+        route_id: "Mattapan",
+        direction_id: 1,
+        stopped?: false,
+        stops_away: 2,
+        destination_stop_id: "70261",
+        trip_id: "trip1"
+      }
+
+      msg = Content.Message.Predictions.terminal(prediction)
+
+      assert msg.trip_id == "trip1"
     end
   end
 end

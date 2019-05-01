@@ -76,7 +76,8 @@ defmodule Predictions.PredictionsTest do
             route_id: "Mattapan",
             stops_away: 1,
             stopped?: false,
-            destination_stop_id: "70261"
+            destination_stop_id: "70261",
+            trip_id: "32568935"
           }
         ],
         {"70263", 0} => [
@@ -88,7 +89,8 @@ defmodule Predictions.PredictionsTest do
             destination_stop_id: "70261",
             stops_away: 1,
             stopped?: true,
-            boarding_status: "Stopped 1 stop away"
+            boarding_status: "Stopped 1 stop away",
+            trip_id: "32568935"
           }
         ]
       }
@@ -227,7 +229,8 @@ defmodule Predictions.PredictionsTest do
             route_id: "Mattapan",
             stopped?: false,
             stops_away: 1,
-            destination_stop_id: "70261"
+            destination_stop_id: "70261",
+            trip_id: "32568935"
           }
         ],
         {"70263", 0} => [
@@ -238,7 +241,8 @@ defmodule Predictions.PredictionsTest do
             route_id: "Mattapan",
             stopped?: false,
             stops_away: 1,
-            destination_stop_id: "70261"
+            destination_stop_id: "70261",
+            trip_id: "32568935"
           }
         ],
         {"70038", 1} => [
@@ -249,7 +253,8 @@ defmodule Predictions.PredictionsTest do
             route_id: "Blue",
             stopped?: false,
             stops_away: 1,
-            destination_stop_id: "70060"
+            destination_stop_id: "70060",
+            trip_id: "trip_2"
           }
         ],
         {"70060", 1} => [
@@ -260,7 +265,8 @@ defmodule Predictions.PredictionsTest do
             route_id: "Blue",
             stopped?: false,
             stops_away: 1,
-            destination_stop_id: "70060"
+            destination_stop_id: "70060",
+            trip_id: "trip_2"
           }
         ]
       }
@@ -326,7 +332,8 @@ defmodule Predictions.PredictionsTest do
                    route_id: "Mattapan",
                    stopped?: false,
                    stops_away: 1,
-                   destination_stop_id: "70263"
+                   destination_stop_id: "70263",
+                   trip_id: "32568935"
                  }
                ]
              }

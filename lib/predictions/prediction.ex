@@ -4,10 +4,13 @@ defmodule Predictions.Prediction do
             seconds_until_departure: nil,
             direction_id: nil,
             route_id: nil,
+            trip_id: nil,
             destination_stop_id: nil,
             stopped?: false,
             stops_away: 0,
             boarding_status: nil
+
+  @type trip_id :: String.t()
 
   @type t :: %__MODULE__{
           stop_id: String.t(),
@@ -15,6 +18,7 @@ defmodule Predictions.Prediction do
           seconds_until_departure: non_neg_integer() | nil,
           direction_id: 0 | 1,
           route_id: String.t(),
+          trip_id: trip_id() | nil,
           destination_stop_id: String.t(),
           stopped?: boolean(),
           stops_away: integer(),

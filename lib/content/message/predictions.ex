@@ -16,13 +16,14 @@ defmodule Content.Message.Predictions do
   @terminal_brd_seconds 45
 
   @enforce_keys [:headsign, :minutes]
-  defstruct [:headsign, :minutes, :route_id, :stop_id, width: 18]
+  defstruct [:headsign, :minutes, :route_id, :stop_id, :trip_id, width: 18]
 
   @type t :: %__MODULE__{
           headsign: String.t(),
           minutes: integer() | :boarding | :arriving | :approaching | :thirty_plus,
           route_id: String.t(),
           stop_id: String.t(),
+          trip_id: Predictions.Prediction.trip_id() | nil,
           width: integer()
         }
 
@@ -61,6 +62,7 @@ defmodule Content.Message.Predictions do
       minutes: minutes,
       route_id: prediction.route_id,
       stop_id: prediction.stop_id,
+      trip_id: prediction.trip_id,
       width: width
     }
   end
@@ -98,6 +100,7 @@ defmodule Content.Message.Predictions do
       minutes: minutes,
       route_id: prediction.route_id,
       stop_id: prediction.stop_id,
+      trip_id: prediction.trip_id,
       width: width
     }
   end
