@@ -76,10 +76,11 @@ defmodule Content.Audio.PredictionsTest do
         headsign: "Ashmont",
         minutes: :approaching,
         route_id: "Red",
-        stop_id: "70065"
+        stop_id: "70065",
+        trip_id: "trip1"
       }
 
-      assert %Audio.Approaching{destination: :ashmont} =
+      assert %Audio.Approaching{destination: :ashmont, trip_id: "trip1"} =
                from_sign_content({src, predictions}, :top)
     end
 
@@ -123,10 +124,11 @@ defmodule Content.Audio.PredictionsTest do
         headsign: "Ashmont",
         minutes: :arriving,
         route_id: "Red",
-        stop_id: "70065"
+        stop_id: "70065",
+        trip_id: "trip1"
       }
 
-      assert %Audio.TrainIsArriving{destination: :ashmont} =
+      assert %Audio.TrainIsArriving{destination: :ashmont, trip_id: "trip1"} =
                from_sign_content({src, predictions}, :top)
     end
 
