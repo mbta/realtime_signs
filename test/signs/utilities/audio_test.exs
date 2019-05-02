@@ -462,5 +462,23 @@ defmodule Signs.Utilities.AudioTest do
 
       assert {nil, ^new_sign} = from_sign(new_sign)
     end
+
+    test "Announces higher priority message first even on bottom of multi-source sign" do
+      sign = %{
+        @sign
+        | current_content_top: {@src, %Message.Predictions{minutes: 5, headsign: "Alewife"}},
+          current_content_bottom:
+            {@src, %Message.Predictions{minutes: :approaching, headsign: "Ashmont"}},
+          source_config: {[@src], [@src]}
+      }
+
+      assert {
+               {
+                 %Content.Audio.Approaching{destination: :ashmont},
+                 %Content.Audio.NextTrainCountdown{minutes: 5, destination: :alewife}
+               },
+               ^sign
+             } = from_sign(sign)
+    end
   end
 end

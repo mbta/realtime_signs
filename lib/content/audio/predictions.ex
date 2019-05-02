@@ -14,11 +14,13 @@ defmodule Content.Audio.Predictions do
 
   @spec from_sign_content(
           {Signs.Utilities.SourceConfig.source(), Content.Message.Predictions.t()},
-          Content.line()
+          Content.line(),
+          boolean()
         ) :: nil | Content.Audio.t()
   def from_sign_content(
         {%Signs.Utilities.SourceConfig{} = src, %Content.Message.Predictions{} = predictions},
-        line
+        line,
+        multi_source?
       ) do
     case PaEss.Utilities.headsign_to_terminal_station(predictions.headsign) do
       {:ok, headsign} ->
@@ -41,7 +43,7 @@ defmodule Content.Audio.Predictions do
           predictions.minutes == :arriving ->
             %TrainIsArriving{destination: headsign, trip_id: predictions.trip_id}
 
-          predictions.minutes == :approaching and line == :top ->
+          predictions.minutes == :approaching and (line == :top or multi_source?) ->
             %Approaching{destination: headsign, trip_id: predictions.trip_id}
 
           predictions.minutes == :approaching and line == :bottom ->
