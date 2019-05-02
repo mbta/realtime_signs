@@ -9,6 +9,8 @@ defmodule Signs.Utilities.Audio do
   alias Signs.Utilities.SourceConfig
   require Logger
 
+  @announced_history_length 5
+
   @doc "Takes a changed line, and returns if it should read immediately"
   @spec should_interrupting_read?(
           Signs.Realtime.line_content(),
@@ -71,7 +73,56 @@ defmodule Signs.Utilities.Audio do
           {nil | Content.Audio.t() | {Content.Audio.t(), Content.Audio.t()}, Signs.Realtime.t()}
   def from_sign(sign) do
     multi_source? = Signs.Utilities.SourceConfig.multi_source?(sign.source_config)
-    {get_audio(sign.current_content_top, sign.current_content_bottom, multi_source?), sign}
+    audio = get_audio(sign.current_content_top, sign.current_content_bottom, multi_source?)
+
+    audio_list =
+      case audio do
+        as when is_tuple(as) -> Tuple.to_list(as)
+        a -> List.wrap(a)
+      end
+
+    {new_audios, new_approaching_trips, new_arriving_trips} =
+      Enum.reduce(
+        audio_list,
+        {[], sign.announced_approachings, sign.announced_arrivals},
+        fn audio, {new_audios, new_approaching_trips, new_arriving_trips} ->
+          case audio do
+            %Audio.TrainIsArriving{trip_id: trip_id} when not is_nil(trip_id) ->
+              if audio.trip_id in sign.announced_arrivals do
+                {new_audios, new_approaching_trips, new_arriving_trips}
+              else
+                {new_audios ++ [audio], new_approaching_trips,
+                 [audio.trip_id | new_arriving_trips]}
+              end
+
+            %Audio.Approaching{trip_id: trip_id} when not is_nil(trip_id) ->
+              if audio.trip_id in sign.announced_approachings do
+                {new_audios, new_approaching_trips, new_arriving_trips}
+              else
+                {new_audios ++ [audio], [audio.trip_id | new_approaching_trips],
+                 new_arriving_trips}
+              end
+
+            _ ->
+              {new_audios ++ [audio], new_approaching_trips, new_arriving_trips}
+          end
+        end
+      )
+
+    sign = %{
+      sign
+      | announced_approachings: Enum.take(new_approaching_trips, @announced_history_length),
+        announced_arrivals: Enum.take(new_arriving_trips, @announced_history_length)
+    }
+
+    audio =
+      case new_audios do
+        [] -> nil
+        [audio1] -> audio1
+        [audio1, audio2] -> {audio1, audio2}
+      end
+
+    {audio, sign}
   end
 
   @spec get_audio(Signs.Realtime.line_content(), Signs.Realtime.line_content(), boolean()) ::

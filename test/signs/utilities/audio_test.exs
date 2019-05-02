@@ -428,5 +428,39 @@ defmodule Signs.Utilities.AudioTest do
 
       assert log =~ "message_to_audio_error"
     end
+
+    test "announces arriving, then skips arriving for the same trip" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src,
+             %Message.Predictions{minutes: :arriving, trip_id: "trip1", headsign: "Alewife"}},
+          current_content_bottom: {nil, %Message.Empty{}}
+      }
+
+      {audio, new_sign} = from_sign(sign)
+
+      assert %Content.Audio.TrainIsArriving{} = audio
+      assert new_sign.announced_arrivals == ["trip1"]
+
+      assert {nil, ^new_sign} = from_sign(new_sign)
+    end
+
+    test "announces approaching, then skips approaching for the same trip" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src,
+             %Message.Predictions{minutes: :approaching, trip_id: "trip1", headsign: "Alewife"}},
+          current_content_bottom: {nil, %Message.Empty{}}
+      }
+
+      {audio, new_sign} = from_sign(sign)
+
+      assert %Content.Audio.Approaching{} = audio
+      assert new_sign.announced_approachings == ["trip1"]
+
+      assert {nil, ^new_sign} = from_sign(new_sign)
+    end
   end
 end
