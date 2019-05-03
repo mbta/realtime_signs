@@ -14,7 +14,7 @@ defmodule PaEss.HttpUpdaterTest do
     end
   end
 
-  describe "update_single_line/5" do
+  describe "process/2" do
     test "replys with {:ok, :sent} when successful" do
       state = make_state()
 
@@ -56,9 +56,7 @@ defmodule PaEss.HttpUpdaterTest do
                  state
                )
     end
-  end
 
-  describe "update_sign/5" do
     test "Posts both lines of the sign at the same time" do
       state = make_state()
       top = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: :boarding}
@@ -71,7 +69,7 @@ defmodule PaEss.HttpUpdaterTest do
                )
     end
 
-    test "replys with {:ok, :sent} when successful" do
+    test "replies with {:ok, :sent} when successful" do
       state = make_state()
 
       assert PaEss.HttpUpdater.process(
@@ -79,6 +77,15 @@ defmodule PaEss.HttpUpdaterTest do
                 [{"SBOX", "c"}, %Content.Message.Empty{}, %Content.Message.Empty{}, 60, :now]},
                state
              ) == {:ok, :sent}
+    end
+
+    test "replies with {:ok, :no_audio} when to_params returns nil" do
+      state = make_state()
+
+      audio = %Fake.UnknownAudio{}
+
+      assert {:ok, :no_audio} ==
+               PaEss.HttpUpdater.process({:send_audio, [{"GKEN", ["m"]}, audio, 5, 60]}, state)
     end
   end
 
