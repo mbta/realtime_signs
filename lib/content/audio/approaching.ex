@@ -20,7 +20,9 @@ defmodule Content.Audio.Approaching do
       case destination_var(audio.destination, audio.platform, audio.route_id) do
         nil ->
           Logger.info(
-            "unknown_approaching_audio: #{audio.destination}, #{audio.platform}, #{audio.route_id}"
+            "unknown_approaching_audio: destination=#{audio.destination} route_id=#{
+              audio.route_id
+            } platform=#{audio.platform}"
           )
 
           nil
