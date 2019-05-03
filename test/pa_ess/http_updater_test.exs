@@ -173,7 +173,8 @@ defmodule PaEss.HttpUpdaterTest do
       state = make_state(%{uid: 1006})
 
       audio = %Content.Audio.TrainIsArriving{
-        destination: :ashmont
+        destination: :ashmont,
+        route_id: "Mattapan"
       }
 
       assert {:ok, :sent} ==

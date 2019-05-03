@@ -144,8 +144,12 @@ defmodule Content.Audio.PredictionsTest do
         trip_id: "trip1"
       }
 
-      assert %Audio.TrainIsArriving{destination: :ashmont, trip_id: "trip1", platform: :ashmont} =
-               from_sign_content({src, predictions}, :top, false)
+      assert %Audio.TrainIsArriving{
+               destination: :ashmont,
+               trip_id: "trip1",
+               platform: :ashmont,
+               route_id: "Red"
+             } = from_sign_content({src, predictions}, :top, false)
     end
 
     test "returns a NextTrainCountdown arriving audio if prediction is minutes away and non-terminal source" do

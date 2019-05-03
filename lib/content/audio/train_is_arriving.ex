@@ -6,37 +6,42 @@ defmodule Content.Audio.TrainIsArriving do
   require Logger
 
   @enforce_keys [:destination]
-  defstruct @enforce_keys ++ [:trip_id, :platform]
+  defstruct @enforce_keys ++ [:trip_id, :platform, :route_id]
 
   @type t :: %__MODULE__{
           destination: PaEss.terminal_station(),
           trip_id: Predictions.Prediction.trip_id() | nil,
-          platform: Content.platform() | nil
+          platform: Content.platform() | nil,
+          route_id: String.t() | nil
         }
 
   defimpl Content.Audio do
     def to_params(audio) do
-      {message_id(audio), [], :audio_visual}
+      {message_id, vars} = audio_params(audio)
+      {message_id, vars, :audio_visual}
     end
 
-    @spec message_id(Content.Audio.TrainIsArriving.t()) :: String.t()
-    defp message_id(%{destination: :ashmont}), do: "90129"
-    defp message_id(%{destination: :mattapan}), do: "90128"
-    defp message_id(%{destination: :wonderland}), do: "90039"
-    defp message_id(%{destination: :bowdoin}), do: "90040"
-    defp message_id(%{destination: :forest_hills}), do: "90036"
-    defp message_id(%{destination: :oak_grove}), do: "90038"
-    defp message_id(%{destination: :braintree}), do: "90030"
-    defp message_id(%{destination: :alewife}), do: "90029"
-    defp message_id(%{destination: :boston_college}), do: "90005"
-    defp message_id(%{destination: :cleveland_circle}), do: "90007"
-    defp message_id(%{destination: :riverside}), do: "90008"
-    defp message_id(%{destination: :heath_st}), do: "90011"
-    defp message_id(%{destination: :reservoir}), do: "90009"
-    defp message_id(%{destination: :lechmere}), do: "90016"
-    defp message_id(%{destination: :north_station}), do: "90017"
-    defp message_id(%{destination: :government_center}), do: "90015"
-    defp message_id(%{destination: :park_st}), do: "90014"
-    defp message_id(%{destination: :kenmore}), do: "90013"
+    @spec audio_params(Content.Audio.TrainIsArriving.t()) :: {String.t(), [String.t()]}
+    defp audio_params(%{destination: :ashmont, route_id: "Mattapan"}), do: {"90129", []}
+    defp audio_params(%{destination: :mattapan}), do: {"90128", []}
+    defp audio_params(%{destination: :boston_college}), do: {"90005", []}
+    defp audio_params(%{destination: :cleveland_circle}), do: {"90007", []}
+    defp audio_params(%{destination: :riverside}), do: {"90008", []}
+    defp audio_params(%{destination: :heath_st}), do: {"90011", []}
+    defp audio_params(%{destination: :reservoir}), do: {"90009", []}
+    defp audio_params(%{destination: :lechmere}), do: {"90016", []}
+    defp audio_params(%{destination: :north_station}), do: {"90017", []}
+    defp audio_params(%{destination: :government_center}), do: {"90015", []}
+    defp audio_params(%{destination: :park_st}), do: {"90014", []}
+    defp audio_params(%{destination: :kenmore}), do: {"90013", []}
+    defp audio_params(%{destination: :wonderland}), do: {"103", ["32100"]}
+    defp audio_params(%{destination: :bowdoin}), do: {"103", ["32101"]}
+    defp audio_params(%{destination: :oak_grove}), do: {"103", ["32102"]}
+    defp audio_params(%{destination: :forest_hills}), do: {"103", ["32103"]}
+    defp audio_params(%{destination: :alewife, platform: nil}), do: {"103", ["32104"]}
+    defp audio_params(%{destination: :alewife, platform: :ashmont}), do: {"103", ["32105"]}
+    defp audio_params(%{destination: :alewife, platform: :braintree}), do: {"103", ["32106"]}
+    defp audio_params(%{destination: :ashmont}), do: {"103", ["32107"]}
+    defp audio_params(%{destination: :braintree}), do: {"103", ["32108"]}
   end
 end
