@@ -41,10 +41,18 @@ defmodule Content.Audio.Predictions do
             }
 
           predictions.minutes == :arriving ->
-            %TrainIsArriving{destination: headsign, trip_id: predictions.trip_id}
+            %TrainIsArriving{
+              destination: headsign,
+              trip_id: predictions.trip_id,
+              platform: src.platform
+            }
 
           predictions.minutes == :approaching and (line == :top or multi_source?) ->
-            %Approaching{destination: headsign, trip_id: predictions.trip_id}
+            %Approaching{
+              destination: headsign,
+              trip_id: predictions.trip_id,
+              platform: src.platform
+            }
 
           predictions.minutes == :approaching and line == :bottom ->
             %NextTrainCountdown{

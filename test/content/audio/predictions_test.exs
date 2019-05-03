@@ -70,17 +70,23 @@ defmodule Content.Audio.PredictionsTest do
     end
 
     test "returns an Approaching audio if predictions say it's approaching on the top line" do
-      src = %{@src | stop_id: "70065", direction_id: 0, headway_direction_name: "Southbound"}
+      src = %{
+        @src
+        | stop_id: "70085",
+          direction_id: 0,
+          headway_direction_name: "Southbound",
+          platform: :ashmont
+      }
 
       predictions = %Message.Predictions{
         headsign: "Ashmont",
         minutes: :approaching,
         route_id: "Red",
-        stop_id: "70065",
+        stop_id: "70085",
         trip_id: "trip1"
       }
 
-      assert %Audio.Approaching{destination: :ashmont, trip_id: "trip1"} =
+      assert %Audio.Approaching{destination: :ashmont, trip_id: "trip1", platform: :ashmont} =
                from_sign_content({src, predictions}, :top, false)
     end
 
@@ -118,17 +124,23 @@ defmodule Content.Audio.PredictionsTest do
     end
 
     test "returns a TrainIsArriving audio if predictions say it's arriving" do
-      src = %{@src | stop_id: "70065", direction_id: 0, headway_direction_name: "Southbound"}
+      src = %{
+        @src
+        | stop_id: "70085",
+          direction_id: 0,
+          headway_direction_name: "Southbound",
+          platform: :ashmont
+      }
 
       predictions = %Message.Predictions{
         headsign: "Ashmont",
         minutes: :arriving,
         route_id: "Red",
-        stop_id: "70065",
+        stop_id: "70085",
         trip_id: "trip1"
       }
 
-      assert %Audio.TrainIsArriving{destination: :ashmont, trip_id: "trip1"} =
+      assert %Audio.TrainIsArriving{destination: :ashmont, trip_id: "trip1", platform: :ashmont} =
                from_sign_content({src, predictions}, :top, false)
     end
 
