@@ -112,8 +112,7 @@ defmodule Signs.Utilities.Updater do
   end
 
   defp same_content?({_sign_src, sign_msg}, {_new_src, new_msg}) do
-    Content.Message.to_string(sign_msg) == Content.Message.to_string(new_msg) or
-      countup?(sign_msg, new_msg)
+    sign_msg == new_msg or countup?(sign_msg, new_msg)
   end
 
   defp countup?(

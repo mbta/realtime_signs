@@ -66,30 +66,6 @@ defmodule Signs.Utilities.UpdaterTest do
       assert sign.tick_bottom == 1
     end
 
-    test "doesn't do anything if both lines render the same" do
-      same_top = {@src, %P{headsign: "Alewife", minutes: 4, trip_id: "trip1"}}
-      same_bottom = {@src, %P{headsign: "Ashmont", minutes: 3, trip_id: "trip2"}}
-
-      sign = %{
-        @sign
-        | current_content_top: {@src, %P{headsign: "Alewife", minutes: 4, trip_id: "trip3"}},
-          current_content_bottom: {@src, %P{headsign: "Ashmont", minutes: 3, trip_id: "trip4"}}
-      }
-
-      sign =
-        Updater.update_sign(
-          sign,
-          same_top,
-          same_bottom
-        )
-
-      refute_received({:send_audio, _, _, _, _})
-      refute_received({:update_single_line, _, _, _, _, _})
-      refute_received({:update_sign, _, _, _, _, _})
-      assert sign.tick_top == 1
-      assert sign.tick_bottom == 1
-    end
-
     test "changes the top line if necessary" do
       diff_top = {@src, %P{headsign: "Alewife", minutes: 3}}
       same_bottom = {@src, %P{headsign: "Ashmont", minutes: 3}}
