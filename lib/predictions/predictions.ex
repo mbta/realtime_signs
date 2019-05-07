@@ -8,17 +8,17 @@ defmodule Predictions.Predictions do
   def get_all(feed_message, current_time) do
     feed_message["entity"]
     |> Enum.map(& &1["trip_update"])
-    |> Enum.flat_map(&group_stop_time_updates/1)
-    |> Enum.filter(fn {update, _, _, _} -> update["arrival"] || update["departure"] end)
+    |> Enum.flat_map(&transform_stop_time_updates/1)
+    |> Enum.filter(fn {update, _, _, _, _} -> update["arrival"] || update["departure"] end)
     |> Enum.group_by(
-      fn {update, _last_stop_id, _route_id, direction_id} ->
+      fn {update, _last_stop_id, _route_id, direction_id, _trip_id} ->
         {update["stop_id"], direction_id}
       end,
       &prediction_from_update(&1, current_time)
     )
   end
 
-  defp group_stop_time_updates(trip_update) do
+  defp transform_stop_time_updates(trip_update) do
     last_stop_id =
       Enum.max_by(trip_update["stop_time_update"], fn update ->
         if update["arrival"], do: update["arrival"]["time"], else: 0
@@ -27,16 +27,18 @@ defmodule Predictions.Predictions do
 
     Enum.map(
       trip_update["stop_time_update"],
-      &{&1, last_stop_id, trip_update["trip"]["route_id"], trip_update["trip"]["direction_id"]}
+      &{&1, last_stop_id, trip_update["trip"]["route_id"], trip_update["trip"]["direction_id"],
+       trip_update["trip"]["trip_id"]}
     )
   end
 
   @spec prediction_from_update(
-          {GTFS.Realtime.trip_update_stop_time_update(), String.t(), String.t(), integer()},
+          {GTFS.Realtime.trip_update_stop_time_update(), String.t(), String.t(), integer(),
+           Predictions.Prediction.trip_id()},
           DateTime.t()
         ) :: Prediction.t()
   defp prediction_from_update(
-         {stop_time_update, last_stop_id, route_id, direction_id},
+         {stop_time_update, last_stop_id, route_id, direction_id, trip_id},
          current_time
        ) do
     current_time_seconds = DateTime.to_unix(current_time)
@@ -57,6 +59,7 @@ defmodule Predictions.Predictions do
       seconds_until_arrival: max(0, seconds_until_arrival),
       seconds_until_departure: max(0, seconds_until_departure),
       route_id: route_id,
+      trip_id: trip_id,
       destination_stop_id: last_stop_id,
       stopped?: stop_time_update["stopped?"],
       stops_away: stop_time_update["stops_away"],

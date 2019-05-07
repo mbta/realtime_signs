@@ -57,7 +57,35 @@ defmodule Signs.Utilities.AudioTest do
       refute should_interrupting_read?({src, message}, {[src]}, :bottom)
     end
 
-    test "If it's ARR respects config's announce_boarding?" do
+    test "If it's Approaching, respects config's announce_arriving? for heavy rail, except on the bottom line of a single-source sign" do
+      message = %Message.Predictions{headsign: "Alewife", minutes: :approaching, route_id: "Red"}
+      src = %{@src | announce_arriving?: false}
+      refute should_interrupting_read?({src, message}, {[src]}, :top)
+      refute should_interrupting_read?({src, message}, {[src]}, :bottom)
+      src = %{@src | announce_arriving?: true}
+      assert should_interrupting_read?({src, message}, {[src]}, :top)
+      assert should_interrupting_read?({src, message}, {[src], [src]}, :bottom)
+      refute should_interrupting_read?({src, message}, {[src]}, :bottom)
+    end
+
+    test "If it's Approaching, does not interrupt for light rail" do
+      message = %Message.Predictions{
+        headsign: "Riverside",
+        minutes: :approaching,
+        route_id: "Green-D"
+      }
+
+      src = %{@src | announce_arriving?: true}
+      refute should_interrupting_read?({src, message}, {[src]}, :top)
+    end
+
+    test "If it's Approaching, does not interrupt when announce_boarding?: true" do
+      message = %Message.Predictions{headsign: "Alewife", minutes: :approaching}
+      src = %{@src | announce_arriving?: false, announce_boarding?: true}
+      refute should_interrupting_read?({src, message}, {[src]}, :top)
+    end
+
+    test "If it's BRD respects config's announce_boarding?" do
       message = %Message.Predictions{headsign: "Alewife", minutes: :boarding}
       src = %{@src | announce_boarding?: false}
       refute should_interrupting_read?({src, message}, {[src]}, :top)
@@ -191,6 +219,116 @@ defmodule Signs.Utilities.AudioTest do
         end)
 
       assert log =~ "message_to_audio_error"
+    end
+
+    test "reads the approaching and bottom line when top line is approaching" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src,
+             %Message.Predictions{headsign: "Alewife", minutes: :approaching, route_id: "Red"}},
+          current_content_bottom:
+            {@src, %Message.Predictions{headsign: "Alewife", minutes: 5, route_id: "Red"}}
+      }
+
+      assert {
+               {%Audio.Approaching{destination: :alewife},
+                %Audio.FollowingTrain{destination: :alewife, minutes: 5, verb: :arrives}},
+               ^sign
+             } = from_sign(sign)
+    end
+
+    test "does not read approaching if it's the bottom line and a following train" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.Predictions{headsign: "Alewife", minutes: :arriving}},
+          current_content_bottom:
+            {@src, %Message.Predictions{headsign: "Alewife", minutes: :approaching}}
+      }
+
+      assert {
+               %Audio.TrainIsArriving{destination: :alewife},
+               ^sign
+             } = from_sign(sign)
+    end
+
+    test "reads approaching as 1 minute when on the bottom line and a different headsign" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.Predictions{headsign: "Ashmont", minutes: :boarding}},
+          current_content_bottom:
+            {@src, %Message.Predictions{headsign: "Braintree", minutes: :approaching}}
+      }
+
+      assert {
+               {%Audio.TrainIsBoarding{destination: :ashmont},
+                %Audio.NextTrainCountdown{
+                  destination: :braintree,
+                  verb: :arrives,
+                  minutes: 1,
+                  track_number: nil,
+                  platform: nil
+                }},
+               ^sign
+             } = from_sign(sign)
+    end
+
+    test "only reads the top line when the top line is arriving and heavy rail" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.Predictions{headsign: "Alewife", minutes: :arriving, route_id: "Red"}},
+          current_content_bottom:
+            {@src, %Message.Predictions{headsign: "Alewife", minutes: 5, route_id: "Red"}}
+      }
+
+      assert {%Audio.TrainIsArriving{destination: :alewife}, ^sign} = from_sign(sign)
+    end
+
+    test "reads both lines when the top line is arriving and light rail" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src,
+             %Message.Predictions{headsign: "Ashmont", minutes: :arriving, route_id: "Mattapan"}},
+          current_content_bottom:
+            {@src, %Message.Predictions{headsign: "Ashmont", minutes: 5, route_id: "Mattapan"}}
+      }
+
+      assert {{%Audio.TrainIsArriving{destination: :ashmont, route_id: "Mattapan"},
+               %Audio.FollowingTrain{destination: :ashmont, minutes: 5}}, ^sign} = from_sign(sign)
+    end
+
+    test "only reads the bottom line when the bottom line is arriving on a multi_source sign for heavy rail" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.Predictions{headsign: "Alewife", minutes: 3, route_id: "Red"}},
+          current_content_bottom:
+            {@src,
+             %Message.Predictions{headsign: "Braintree", minutes: :arriving, route_id: "Red"}},
+          source_config: {[@src], [@src]}
+      }
+
+      assert {%Audio.TrainIsArriving{destination: :braintree}, ^sign} = from_sign(sign)
+    end
+
+    test "reads both lines in order when the bottom line is arriving on a multi_source sign for light rail" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.Predictions{headsign: "Lechmere", minutes: 3, route_id: "Green-E"}},
+          current_content_bottom:
+            {@src,
+             %Message.Predictions{headsign: "Riverside", minutes: :arriving, route_id: "Green-D"}},
+          source_config: {[@src], [@src]}
+      }
+
+      assert {{%Audio.TrainIsArriving{destination: :riverside},
+               %Audio.NextTrainCountdown{destination: :lechmere, minutes: 3}},
+              ^sign} = from_sign(sign)
     end
 
     test "Two stopped train messages only plays once if both same headsign" do
@@ -347,6 +485,65 @@ defmodule Signs.Utilities.AudioTest do
         end)
 
       assert log =~ "message_to_audio_error"
+    end
+
+    test "announces arriving, then skips arriving for the same trip" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src,
+             %Message.Predictions{minutes: :arriving, trip_id: "trip1", headsign: "Alewife"}},
+          current_content_bottom: {nil, %Message.Empty{}}
+      }
+
+      {audio, new_sign} = from_sign(sign)
+
+      assert %Content.Audio.TrainIsArriving{} = audio
+      assert new_sign.announced_arrivals == ["trip1"]
+
+      assert {nil, ^new_sign} = from_sign(new_sign)
+    end
+
+    test "announces approaching, then skips approaching for the same trip" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src,
+             %Message.Predictions{
+               minutes: :approaching,
+               trip_id: "trip1",
+               headsign: "Alewife",
+               route_id: "Red"
+             }},
+          current_content_bottom: {nil, %Message.Empty{}}
+      }
+
+      {audio, new_sign} = from_sign(sign)
+
+      assert %Content.Audio.Approaching{} = audio
+      assert new_sign.announced_approachings == ["trip1"]
+
+      assert {nil, ^new_sign} = from_sign(new_sign)
+    end
+
+    test "Announces higher priority message first even on bottom of multi-source sign" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.Predictions{minutes: 5, headsign: "Alewife", route_id: "Red"}},
+          current_content_bottom:
+            {@src,
+             %Message.Predictions{minutes: :approaching, headsign: "Ashmont", route_id: "Red"}},
+          source_config: {[@src], [@src]}
+      }
+
+      assert {
+               {
+                 %Content.Audio.Approaching{destination: :ashmont},
+                 %Content.Audio.NextTrainCountdown{minutes: 5, destination: :alewife}
+               },
+               ^sign
+             } = from_sign(sign)
     end
   end
 end

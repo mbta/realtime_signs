@@ -66,9 +66,24 @@ defmodule Content.Message.PredictionsTest do
       assert Content.Message.to_string(msg) == "Mattapan       ARR"
     end
 
-    test "puts minutes on the sign when train is 31 seconds away" do
+    test "puts minutes on the sign when train is 31 seconds away (approaching)" do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 31,
+        direction_id: 0,
+        route_id: "Mattapan",
+        stopped?: false,
+        stops_away: 1,
+        destination_stop_id: "70275"
+      }
+
+      msg = Content.Message.Predictions.non_terminal(prediction)
+
+      assert Content.Message.to_string(msg) == "Mattapan     1 min"
+    end
+
+    test "puts minutes on the sign when train is 61 seconds away" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 61,
         direction_id: 0,
         route_id: "Mattapan",
         stopped?: false,
@@ -184,6 +199,22 @@ defmodule Content.Message.PredictionsTest do
 
       assert Content.Message.to_string(msg) == "Ashmont      2 min"
     end
+
+    test "Includes the prediction's trip_id" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 91,
+        route_id: "Mattapan",
+        direction_id: 1,
+        stopped?: false,
+        stops_away: 2,
+        destination_stop_id: "70261",
+        trip_id: "trip1"
+      }
+
+      msg = Content.Message.Predictions.non_terminal(prediction)
+
+      assert msg.trip_id == "trip1"
+    end
   end
 
   describe "terminal/3" do
@@ -287,6 +318,22 @@ defmodule Content.Message.PredictionsTest do
                {"Oak Grove    2 min", 3},
                {"Oak Grove    Trk 2", 3}
              ]
+    end
+
+    test "Includes the prediction's trip_id" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 91,
+        route_id: "Mattapan",
+        direction_id: 1,
+        stopped?: false,
+        stops_away: 2,
+        destination_stop_id: "70261",
+        trip_id: "trip1"
+      }
+
+      msg = Content.Message.Predictions.terminal(prediction)
+
+      assert msg.trip_id == "trip1"
     end
   end
 end

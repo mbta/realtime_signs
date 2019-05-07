@@ -15,11 +15,6 @@ defmodule Signs.Utilities.Updater do
           Signs.Realtime.line_content()
         ) :: Signs.Realtime.t()
   def update_sign(sign, {_top_src, top_msg} = top, {_bottom_src, bottom_msg} = bottom) do
-    sign =
-      sign
-      |> clear_announced_arrivals(sign.current_content_top, top)
-      |> clear_announced_arrivals(sign.current_content_bottom, bottom)
-
     case {same_content?(sign.current_content_top, top),
           same_content?(sign.current_content_bottom, bottom)} do
       {true, true} ->
@@ -122,6 +117,13 @@ defmodule Signs.Utilities.Updater do
 
   defp countup?(
          %Content.Message.Predictions{headsign: same, minutes: :arriving},
+         %Content.Message.Predictions{headsign: same, minutes: :approaching}
+       ) do
+    true
+  end
+
+  defp countup?(
+         %Content.Message.Predictions{headsign: same, minutes: :approaching},
          %Content.Message.Predictions{headsign: same, minutes: 1}
        ) do
     true
@@ -211,39 +213,5 @@ defmodule Signs.Utilities.Updater do
       _ ->
         :ok
     end
-  end
-
-  defp clear_announced_arrivals(
-         sign,
-         {_src, %Content.Message.Predictions{minutes: :boarding, headsign: hs}} = current_content,
-         new_content
-       )
-       when current_content != new_content do
-    case PaEss.Utilities.headsign_to_terminal_station(hs) do
-      {:ok, terminal} ->
-        %{sign | announced_arrivals: MapSet.delete(sign.announced_arrivals, terminal)}
-
-      _ ->
-        sign
-    end
-  end
-
-  defp clear_announced_arrivals(
-         sign,
-         {_src, %Content.Message.StoppedTrain{headsign: hs}} = current_content,
-         new_content
-       )
-       when current_content != new_content do
-    case PaEss.Utilities.headsign_to_terminal_station(hs) do
-      {:ok, terminal} ->
-        %{sign | announced_arrivals: MapSet.delete(sign.announced_arrivals, terminal)}
-
-      _ ->
-        sign
-    end
-  end
-
-  defp clear_announced_arrivals(sign, _old_msg, _new_msg) do
-    sign
   end
 end

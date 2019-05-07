@@ -7,7 +7,7 @@ defmodule Content.Message.Custom do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          line: :top | :bottom,
+          line: Content.line_location(),
           message: String.t()
         }
   @spec new(String.t(), :top | :bottom) :: t()

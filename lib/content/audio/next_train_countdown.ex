@@ -7,14 +7,13 @@ defmodule Content.Audio.NextTrainCountdown do
   defstruct @enforce_keys ++ [platform: nil]
 
   @type verb :: :arrives | :departs
-  @type platform :: :ashmont | :braintree | nil
 
   @type t :: %__MODULE__{
           destination: PaEss.terminal_station(),
           verb: verb(),
           minutes: integer(),
-          track_number: Content.Utilities.track_number(),
-          platform: :ashmont | :braintree | nil
+          track_number: Content.Utilities.track_number() | nil,
+          platform: Content.platform() | nil
         }
 
   require Logger
