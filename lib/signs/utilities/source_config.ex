@@ -55,7 +55,7 @@ defmodule Signs.Utilities.SourceConfig do
           headway_direction_name: String.t(),
           direction_id: 0 | 1,
           routes: [String.t()] | nil,
-          platform: :ashmont | :braintree | nil,
+          platform: Content.platform() | nil,
           terminal?: boolean(),
           announce_arriving?: boolean(),
           announce_boarding?: boolean(),

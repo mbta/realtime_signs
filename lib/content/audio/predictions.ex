@@ -9,13 +9,20 @@ defmodule Content.Audio.Predictions do
   alias Content.Audio.TrackChange
   alias Content.Audio.TrainIsBoarding
   alias Content.Audio.TrainIsArriving
+  alias Content.Audio.Approaching
   alias Content.Audio.NextTrainCountdown
 
+  @heavy_rail_routes ["Red", "Orange", "Blue"]
+
   @spec from_sign_content(
-          {Signs.Utilities.SourceConfig.source(), Content.Message.Predictions.t()}
+          {Signs.Utilities.SourceConfig.source(), Content.Message.Predictions.t()},
+          Content.line_location(),
+          boolean()
         ) :: nil | Content.Audio.t()
   def from_sign_content(
-        {%Signs.Utilities.SourceConfig{} = src, %Content.Message.Predictions{} = predictions}
+        {%Signs.Utilities.SourceConfig{} = src, %Content.Message.Predictions{} = predictions},
+        line,
+        multi_source?
       ) do
     case PaEss.Utilities.headsign_to_terminal_station(predictions.headsign) do
       {:ok, headsign} ->
@@ -36,7 +43,30 @@ defmodule Content.Audio.Predictions do
             }
 
           predictions.minutes == :arriving ->
-            %TrainIsArriving{destination: headsign}
+            %TrainIsArriving{
+              destination: headsign,
+              trip_id: predictions.trip_id,
+              platform: src.platform,
+              route_id: predictions.route_id
+            }
+
+          predictions.minutes == :approaching and (line == :top or multi_source?) and
+              predictions.route_id in @heavy_rail_routes ->
+            %Approaching{
+              destination: headsign,
+              trip_id: predictions.trip_id,
+              platform: src.platform,
+              route_id: predictions.route_id
+            }
+
+          predictions.minutes == :approaching ->
+            %NextTrainCountdown{
+              destination: headsign,
+              minutes: 1,
+              verb: if(src.terminal?, do: :departs, else: :arrives),
+              track_number: Content.Utilities.stop_track_number(predictions.stop_id),
+              platform: src.platform
+            }
 
           predictions.minutes == :thirty_plus ->
             %NextTrainCountdown{

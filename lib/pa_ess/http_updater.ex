@@ -11,7 +11,8 @@ defmodule PaEss.HttpUpdater do
           queue_mod: module(),
           uid: integer()
         }
-  @type post_result :: {:ok, :sent} | {:error, :bad_status} | {:error, :post_error}
+  @type post_result ::
+          {:ok, :sent} | {:ok, :no_audio} | {:error, :bad_status} | {:error, :post_error}
 
   # Normally an anti-pattern! But we mix compile --force with every deploy
   @max_send_rate_per_sec (32 / Application.get_env(:realtime_signs, :number_of_http_updaters))
@@ -121,26 +122,30 @@ defmodule PaEss.HttpUpdater do
   end
 
   @spec process_send_audio(String.t(), [String.t()], Content.Audio.t(), integer(), integer(), t()) ::
-          {:ok, :sent} | {:error, :bad_status} | {:error, :post_error}
+          post_result()
   defp process_send_audio(station, zones, audio, priority, timeout, state) do
-    {message_id, vars, type} = Content.Audio.to_params(audio)
+    case Content.Audio.to_params(audio) do
+      {message_id, vars, type} ->
+        encoded =
+          [
+            MsgType: "Canned",
+            uid: state.uid,
+            mid: message_id,
+            var: Enum.join(vars, ","),
+            typ: audio_type(type),
+            sta: "#{station}#{zone_bitmap(zones)}",
+            pri: priority,
+            tim: timeout
+          ]
+          |> URI.encode_query()
 
-    encoded =
-      [
-        MsgType: "Canned",
-        uid: state.uid,
-        mid: message_id,
-        var: Enum.join(vars, ","),
-        typ: audio_type(type),
-        sta: "#{station}#{zone_bitmap(zones)}",
-        pri: priority,
-        tim: timeout
-      ]
-      |> URI.encode_query()
+        Logger.info(["send_audio: ", encoded, " pid=", inspect(self())])
 
-    Logger.info(["send_audio: ", encoded, " pid=", inspect(self())])
+        send_post(state.http_poster, encoded)
 
-    send_post(state.http_poster, encoded)
+      nil ->
+        {:ok, :no_audio}
+    end
   end
 
   @spec to_command(
