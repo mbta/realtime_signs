@@ -36,6 +36,15 @@ defmodule Signs.Utilities.Audio do
   end
 
   def should_interrupting_read?(
+        {_src, %Content.Message.Predictions{minutes: :approaching, route_id: route_id}},
+        _config,
+        _line
+      )
+      when route_id not in @heavy_rail_routes do
+    false
+  end
+
+  def should_interrupting_read?(
         {
           %SourceConfig{announce_arriving?: true},
           %Content.Message.Predictions{minutes: arriving_or_approaching}
