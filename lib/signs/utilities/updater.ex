@@ -117,6 +117,13 @@ defmodule Signs.Utilities.Updater do
 
   defp countup?(
          %Content.Message.Predictions{headsign: same, minutes: :arriving},
+         %Content.Message.Predictions{headsign: same, minutes: :approaching}
+       ) do
+    true
+  end
+
+  defp countup?(
+         %Content.Message.Predictions{headsign: same, minutes: :approaching},
          %Content.Message.Predictions{headsign: same, minutes: 1}
        ) do
     true
