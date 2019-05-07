@@ -10,6 +10,7 @@ defmodule Signs.Utilities.Audio do
   require Logger
 
   @announced_history_length 5
+  @heavy_rail_routes ["Red", "Orange", "Blue"]
 
   @doc "Takes a changed line, and returns if it should read immediately"
   @spec should_interrupting_read?(
@@ -179,19 +180,20 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_audio(
-         {_, %Message.Predictions{minutes: :arriving}} = top_content,
+         {_, %Message.Predictions{minutes: :arriving, route_id: route_id}} = top_content,
          _bottom_content,
          multi_source?
-       ) do
+       )
+       when route_id in @heavy_rail_routes do
     Audio.Predictions.from_sign_content(top_content, :top, multi_source?)
   end
 
   defp get_audio(
          _top_content,
-         {_, %Message.Predictions{minutes: :arriving}} = bottom_content,
+         {_, %Message.Predictions{minutes: :arriving, route_id: route_id}} = bottom_content,
          multi_source?
        )
-       when multi_source? do
+       when multi_source? and route_id in @heavy_rail_routes do
     Audio.Predictions.from_sign_content(bottom_content, :bottom, multi_source?)
   end
 
