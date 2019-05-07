@@ -94,6 +94,28 @@ defmodule Content.Audio.PredictionsTest do
              } = from_sign_content({src, predictions}, :top, false)
     end
 
+    test "returns a NextTrainCountdown audio for 'minutes: :approaching' and top line, but light rail" do
+      src = %{
+        @src
+        | stop_id: "70155",
+          direction_id: 0,
+          headway_direction_name: "Westbound"
+      }
+
+      predictions = %Message.Predictions{
+        headsign: "Riverside",
+        minutes: :approaching,
+        route_id: "Green-D",
+        stop_id: "70155",
+        trip_id: "trip1"
+      }
+
+      assert %Audio.NextTrainCountdown{
+               destination: :riverside,
+               minutes: 1
+             } = from_sign_content({src, predictions}, :top, false)
+    end
+
     test "returns a NextTrainCountdown audio if predictions say it's approaching on the bottom line" do
       src = %{@src | stop_id: "70065", direction_id: 0, headway_direction_name: "Southbound"}
 

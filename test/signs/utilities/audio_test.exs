@@ -214,8 +214,10 @@ defmodule Signs.Utilities.AudioTest do
       sign = %{
         @sign
         | current_content_top:
-            {@src, %Message.Predictions{headsign: "Alewife", minutes: :approaching}},
-          current_content_bottom: {@src, %Message.Predictions{headsign: "Alewife", minutes: 5}}
+            {@src,
+             %Message.Predictions{headsign: "Alewife", minutes: :approaching, route_id: "Red"}},
+          current_content_bottom:
+            {@src, %Message.Predictions{headsign: "Alewife", minutes: 5, route_id: "Red"}}
       }
 
       assert {
@@ -496,7 +498,12 @@ defmodule Signs.Utilities.AudioTest do
         @sign
         | current_content_top:
             {@src,
-             %Message.Predictions{minutes: :approaching, trip_id: "trip1", headsign: "Alewife"}},
+             %Message.Predictions{
+               minutes: :approaching,
+               trip_id: "trip1",
+               headsign: "Alewife",
+               route_id: "Red"
+             }},
           current_content_bottom: {nil, %Message.Empty{}}
       }
 
@@ -511,9 +518,11 @@ defmodule Signs.Utilities.AudioTest do
     test "Announces higher priority message first even on bottom of multi-source sign" do
       sign = %{
         @sign
-        | current_content_top: {@src, %Message.Predictions{minutes: 5, headsign: "Alewife"}},
+        | current_content_top:
+            {@src, %Message.Predictions{minutes: 5, headsign: "Alewife", route_id: "Red"}},
           current_content_bottom:
-            {@src, %Message.Predictions{minutes: :approaching, headsign: "Ashmont"}},
+            {@src,
+             %Message.Predictions{minutes: :approaching, headsign: "Ashmont", route_id: "Red"}},
           source_config: {[@src], [@src]}
       }
 

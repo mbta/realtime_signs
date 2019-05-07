@@ -12,6 +12,8 @@ defmodule Content.Audio.Predictions do
   alias Content.Audio.Approaching
   alias Content.Audio.NextTrainCountdown
 
+  @heavy_rail_routes ["Red", "Orange", "Blue"]
+
   @spec from_sign_content(
           {Signs.Utilities.SourceConfig.source(), Content.Message.Predictions.t()},
           Content.line_location(),
@@ -48,7 +50,8 @@ defmodule Content.Audio.Predictions do
               route_id: predictions.route_id
             }
 
-          predictions.minutes == :approaching and (line == :top or multi_source?) ->
+          predictions.minutes == :approaching and (line == :top or multi_source?) and
+              predictions.route_id in @heavy_rail_routes ->
             %Approaching{
               destination: headsign,
               trip_id: predictions.trip_id,
@@ -56,7 +59,7 @@ defmodule Content.Audio.Predictions do
               route_id: predictions.route_id
             }
 
-          predictions.minutes == :approaching and line == :bottom ->
+          predictions.minutes == :approaching ->
             %NextTrainCountdown{
               destination: headsign,
               minutes: 1,
