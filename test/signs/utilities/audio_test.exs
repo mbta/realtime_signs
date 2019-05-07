@@ -273,6 +273,18 @@ defmodule Signs.Utilities.AudioTest do
       assert {%Audio.TrainIsArriving{destination: :alewife}, ^sign} = from_sign(sign)
     end
 
+    test "only reads the bottom line when the bottom line is arriving on a multi_source sign" do
+      sign = %{
+        @sign
+        | current_content_top: {@src, %Message.Predictions{headsign: "Alewife", minutes: 3}},
+          current_content_bottom:
+            {@src, %Message.Predictions{headsign: "Braintree", minutes: :arriving}},
+          source_config: {[@src], [@src]}
+      }
+
+      assert {%Audio.TrainIsArriving{destination: :braintree}, ^sign} = from_sign(sign)
+    end
+
     test "Two stopped train messages only plays once if both same headsign" do
       sign = %{
         @sign

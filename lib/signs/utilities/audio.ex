@@ -187,6 +187,15 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_audio(
+         _top_content,
+         {_, %Message.Predictions{minutes: :arriving}} = bottom_content,
+         multi_source?
+       )
+       when multi_source? do
+    Audio.Predictions.from_sign_content(bottom_content, :bottom, multi_source?)
+  end
+
+  defp get_audio(
          {_, %Message.Predictions{headsign: same}} = content_top,
          {_, %Message.Predictions{headsign: same}} = content_bottom,
          multi_source?
