@@ -14,7 +14,7 @@ defmodule Content.Audio.Predictions do
 
   @spec from_sign_content(
           {Signs.Utilities.SourceConfig.source(), Content.Message.Predictions.t()},
-          Content.line(),
+          Content.line_location(),
           boolean()
         ) :: nil | Content.Audio.t()
   def from_sign_content(

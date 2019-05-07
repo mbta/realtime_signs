@@ -15,7 +15,7 @@ defmodule Signs.Utilities.Audio do
   @spec should_interrupting_read?(
           Signs.Realtime.line_content(),
           SourceConfig.config(),
-          Content.line()
+          Content.line_location()
         ) :: boolean()
   def should_interrupting_read?({_src, %Content.Message.Predictions{minutes: x}}, _config, _line)
       when is_integer(x) do
@@ -77,8 +77,8 @@ defmodule Signs.Utilities.Audio do
 
     audio_list =
       case audio do
-        as when is_tuple(as) -> Tuple.to_list(as)
-        a -> List.wrap(a)
+        multi_audios when is_tuple(multi_audios) -> Tuple.to_list(multi_audios)
+        single_audio -> List.wrap(single_audio)
       end
 
     {new_audios, new_approaching_trips, new_arriving_trips} =
@@ -239,7 +239,7 @@ defmodule Signs.Utilities.Audio do
     normalize(top_audio, bottom_audio)
   end
 
-  @spec get_audio_for_line(Signs.Realtime.line_content(), Content.line(), boolean()) ::
+  @spec get_audio_for_line(Signs.Realtime.line_content(), Content.line_location(), boolean()) ::
           Content.Audio.t() | nil
   defp get_audio_for_line({_, %Message.StoppedTrain{} = message}, _line, _multi_source?) do
     Audio.StoppedTrain.from_message(message)
