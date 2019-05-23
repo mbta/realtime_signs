@@ -503,7 +503,7 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^src, %Content.Message.Predictions{headsign: "Mattapan", minutes: :thirty_plus}},
+               {^src, %Content.Message.Predictions{headsign: "Mattapan", minutes: :max_time}},
                {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
@@ -523,7 +523,7 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^src, %Content.Message.Predictions{headsign: "Mattapan", minutes: :thirty_plus}},
+               {^src, %Content.Message.Predictions{headsign: "Mattapan", minutes: :max_time}},
                {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end

@@ -5,6 +5,7 @@ defmodule Signs.Utilities.Predictions do
   for the top and bottom lines.
   """
 
+  require Content.Utilities
   alias Signs.Utilities.SourceConfig
 
   @spec get_messages(Signs.Realtime.t()) ::
@@ -89,7 +90,8 @@ defmodule Signs.Utilities.Predictions do
          seconds_until_arrival: arrival_seconds,
          seconds_until_departure: departure_seconds
        })
-       when arrival_seconds >= 1800 or departure_seconds >= 1800 do
+       when arrival_seconds >= Content.Utilities.max_time_seconds() or
+              departure_seconds >= Content.Utilities.max_time_seconds() do
     false
   end
 
