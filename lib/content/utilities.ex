@@ -2,7 +2,7 @@ defmodule Content.Utilities do
   @type track_number :: non_neg_integer()
 
   defmacro max_time_seconds do
-    quote do: 30 * 60
+    quote do: 20 * 60
   end
 
   def width_padded_string(left, right, width) do
