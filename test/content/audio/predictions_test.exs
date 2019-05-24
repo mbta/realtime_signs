@@ -238,7 +238,7 @@ defmodule Content.Audio.PredictionsTest do
              } = from_sign_content({src, predictions}, :top, false)
     end
 
-    test "returns a NextTrainCountdown with 30 mins if predictions is :thirty_plus" do
+    test "returns a NextTrainCountdown with 30 mins if predictions is :max_time" do
       src = %{
         @src
         | stop_id: "70065",
@@ -249,7 +249,7 @@ defmodule Content.Audio.PredictionsTest do
 
       predictions = %Message.Predictions{
         headsign: "Ashmont",
-        minutes: :thirty_plus,
+        minutes: :max_time,
         route_id: "Red",
         stop_id: "70065"
       }

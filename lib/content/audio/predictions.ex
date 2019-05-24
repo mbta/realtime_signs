@@ -68,7 +68,7 @@ defmodule Content.Audio.Predictions do
               platform: src.platform
             }
 
-          predictions.minutes == :thirty_plus ->
+          predictions.minutes == :max_time ->
             %NextTrainCountdown{
               destination: headsign,
               minutes: 30,
