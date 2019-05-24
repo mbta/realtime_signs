@@ -349,6 +349,22 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("stopped_not_too_long_away", 0) do
+      [
+        %Predictions.Prediction{
+          stop_id: "stopped_a_long_time_away",
+          direction_id: 0,
+          route_id: "Mattapan",
+          stopped?: false,
+          stops_away: 8,
+          boarding_status: "Stopped 8 stop away",
+          destination_stop_id: "123",
+          seconds_until_arrival: 1100,
+          seconds_until_departure: 10
+        }
+      ]
+    end
+
     def for_stop("stopped_a_long_time_away", 0) do
       [
         %Predictions.Prediction{
@@ -359,7 +375,7 @@ defmodule Signs.Utilities.PredictionsTest do
           stops_away: 8,
           boarding_status: "Stopped 8 stop away",
           destination_stop_id: "123",
-          seconds_until_arrival: 2000,
+          seconds_until_arrival: 1200,
           seconds_until_departure: 10
         }
       ]
@@ -488,7 +504,27 @@ defmodule Signs.Utilities.PredictionsTest do
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
-    test "When the train is stopped a long time away from a terminal, shows 30 minutes instead of stopped" do
+    test "When the train is stopped a long time away, but not quite max time, shows stopped" do
+      src = %SourceConfig{
+        stop_id: "stopped_not_too_long_away",
+        headway_direction_name: "Mattapan",
+        direction_id: 0,
+        terminal?: false,
+        platform: nil,
+        announce_arriving?: false,
+        announce_boarding?: false
+      }
+
+      config = {[src]}
+      sign = %{@sign | source_config: config}
+
+      assert {
+               {^src, %Content.Message.StoppedTrain{stops_away: 8}},
+               {nil, %Content.Message.Empty{}}
+             } = Signs.Utilities.Predictions.get_messages(sign)
+    end
+
+    test "When the train is stopped a long time away from a terminal, shows max time instead of stopped" do
       src = %SourceConfig{
         stop_id: "stopped_a_long_time_away_terminal",
         headway_direction_name: "Mattapan",
@@ -508,7 +544,7 @@ defmodule Signs.Utilities.PredictionsTest do
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
-    test "When the train is stopped a long time away, shows 30 minutes instead of stopped" do
+    test "When the train is stopped a long time away, shows max time instead of stopped" do
       src = %SourceConfig{
         stop_id: "stopped_a_long_time_away",
         headway_direction_name: "Mattapan",
