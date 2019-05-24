@@ -11,8 +11,9 @@ defmodule Content.Message.Predictions do
   """
 
   require Logger
+  require Content.Utilities
 
-  @thirty_plus_minutes 30 * 60
+  @max_time Content.Utilities.max_time_seconds()
   @terminal_brd_seconds 45
 
   @enforce_keys [:headsign, :minutes]
@@ -20,7 +21,7 @@ defmodule Content.Message.Predictions do
 
   @type t :: %__MODULE__{
           headsign: String.t(),
-          minutes: integer() | :boarding | :arriving | :approaching | :thirty_plus,
+          minutes: integer() | :boarding | :arriving | :approaching | :max_time,
           route_id: String.t(),
           stop_id: String.t(),
           trip_id: Predictions.Prediction.trip_id() | nil,
@@ -39,7 +40,7 @@ defmodule Content.Message.Predictions do
         prediction.stops_away == 0 -> :boarding
         predicted_time <= 30 -> :arriving
         predicted_time <= 60 -> :approaching
-        predicted_time >= @thirty_plus_minutes -> :thirty_plus
+        predicted_time >= @max_time -> :max_time
         true -> predicted_time |> Kernel./(60) |> round()
       end
 
@@ -77,7 +78,7 @@ defmodule Content.Message.Predictions do
       case prediction.seconds_until_departure do
         x when x <= @terminal_brd_seconds and stopped_at? -> :boarding
         x when x <= @terminal_brd_seconds -> 1
-        x when x >= @thirty_plus_minutes -> :thirty_plus
+        x when x >= @max_time -> :max_time
         x -> x |> Kernel./(60) |> round()
       end
 
@@ -110,7 +111,7 @@ defmodule Content.Message.Predictions do
 
     @boarding "BRD"
     @arriving "ARR"
-    @thirty_plus "30+ min"
+    @max_time "30+ min"
 
     def to_string(%{headsign: headsign, minutes: minutes, width: width, stop_id: stop_id}) do
       duration_string =
@@ -118,7 +119,7 @@ defmodule Content.Message.Predictions do
           :boarding -> @boarding
           :arriving -> @arriving
           :approaching -> "1 min"
-          :thirty_plus -> @thirty_plus
+          :max_time -> @max_time
           n -> "#{n} min"
         end
 

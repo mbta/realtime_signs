@@ -1,6 +1,10 @@
 defmodule Content.Utilities do
   @type track_number :: non_neg_integer()
 
+  defmacro max_time_seconds do
+    quote do: 30 * 60
+  end
+
   def width_padded_string(left, right, width) do
     max_left_length = width - (String.length(right) + 1)
     left = String.slice(left, 0, max_left_length)
