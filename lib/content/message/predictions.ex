@@ -14,7 +14,8 @@ defmodule Content.Message.Predictions do
   require Content.Utilities
 
   @max_time Content.Utilities.max_time_seconds()
-  @terminal_brd_seconds 45
+  @terminal_brd_seconds 30
+  @terminal_prediction_offset_seconds -60
 
   @enforce_keys [:headsign, :minutes]
   defstruct [:headsign, :minutes, :route_id, :stop_id, :trip_id, width: 18]
@@ -75,7 +76,7 @@ defmodule Content.Message.Predictions do
     stopped_at? = prediction.stops_away == 0
 
     minutes =
-      case prediction.seconds_until_departure do
+      case prediction.seconds_until_departure + @terminal_prediction_offset_seconds do
         x when x <= @terminal_brd_seconds and stopped_at? -> :boarding
         x when x <= @terminal_brd_seconds -> 1
         x when x >= @max_time -> :max_time
