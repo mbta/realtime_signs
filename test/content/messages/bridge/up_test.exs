@@ -3,7 +3,7 @@ defmodule Content.Message.Bridge.UpTest do
 
   describe "to_string/1" do
     test "says bridge is up" do
-      msg = Content.Message.Bridge.Up.new()
+      msg = Content.Message.Bridge.Up.new(nil)
       assert Content.Message.to_string(msg) == "Bridge is up"
     end
   end

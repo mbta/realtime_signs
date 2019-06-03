@@ -9,11 +9,12 @@ defmodule Signs.Utilities.Messages do
           boolean(),
           Engine.Alerts.Fetcher.stop_status(),
           {String.t(), String.t()} | nil,
-          Content.Message.Alert.NoService.transit_mode()
+          Content.Message.Alert.NoService.transit_mode(),
+          {Engine.Bridge.status(), Engine.Bridge.duration()} | nil
         ) ::
           {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
            {Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()}}
-  def get_messages(sign, enabled?, alert_status, custom_text, mode) do
+  def get_messages(sign, enabled?, alert_status, custom_text, mode, bridge_state) do
     cond do
       custom_text != nil ->
         {line1, line2} = custom_text
@@ -23,6 +24,12 @@ defmodule Signs.Utilities.Messages do
 
       !enabled? ->
         {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+
+      alert_status == :none and match?({"Raised", _}, bridge_state) ->
+        {"Raised", duration} = bridge_state
+
+        {{nil, duration |> clean_duration |> Content.Message.Bridge.Up.new()},
+         {nil, %Content.Message.Bridge.Delays{}}}
 
       true ->
         case Signs.Utilities.Predictions.get_messages(sign) do
@@ -55,4 +62,8 @@ defmodule Signs.Utilities.Messages do
         end
     end
   end
+
+  @spec clean_duration(integer() | nil) :: integer() | nil
+  defp clean_duration(n) when is_integer(n) and n >= 1, do: n
+  defp clean_duration(_), do: nil
 end

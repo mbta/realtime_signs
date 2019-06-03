@@ -54,6 +54,7 @@ defmodule Signs.Utilities.HeadwaysTest do
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     alerts_engine: FakeAlerts,
+    bridge_engine: nil,
     sign_updater: FakeUpdater,
     tick_bottom: 130,
     tick_top: 130,

@@ -42,6 +42,7 @@ defmodule Signs.Utilities.ReaderTest do
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     alerts_engine: nil,
+    bridge_engine: nil,
     sign_updater: FakeUpdater,
     tick_bottom: 1,
     tick_top: 1,
