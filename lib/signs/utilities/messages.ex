@@ -8,11 +8,12 @@ defmodule Signs.Utilities.Messages do
           Signs.Realtime.t(),
           boolean(),
           Engine.Alerts.Fetcher.stop_status(),
-          {String.t(), String.t()} | nil
+          {String.t(), String.t()} | nil,
+          Content.Message.Alert.NoService.transit_mode()
         ) ::
           {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
            {Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()}}
-  def get_messages(sign, enabled?, alert_status, custom_text) do
+  def get_messages(sign, enabled?, alert_status, custom_text, mode) do
     cond do
       custom_text != nil ->
         {line1, line2} = custom_text
@@ -31,18 +32,18 @@ defmodule Signs.Utilities.Messages do
                 {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
 
               :shuttles_closed_station ->
-                {{nil, %Content.Message.Alert.NoService{mode: :train}},
+                {{nil, %Content.Message.Alert.NoService{mode: mode}},
                  {nil, %Content.Message.Alert.UseShuttleBus{}}}
 
               :suspension_transfer_station ->
                 {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
 
               :suspension_closed_station ->
-                {{nil, %Content.Message.Alert.NoService{mode: :train}},
+                {{nil, %Content.Message.Alert.NoService{mode: mode}},
                  {nil, Content.Message.Empty.new()}}
 
               :station_closure ->
-                {{nil, %Content.Message.Alert.NoService{mode: :train}},
+                {{nil, %Content.Message.Alert.NoService{mode: mode}},
                  {nil, Content.Message.Empty.new()}}
 
               _ ->
