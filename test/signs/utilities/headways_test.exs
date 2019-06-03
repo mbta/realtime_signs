@@ -24,18 +24,22 @@ defmodule Signs.Utilities.HeadwaysTest do
     end
 
     def get_headways("d") do
-      {:first_departure, {1, 5}, DateTime.utc_now()}
+      {:first_departure, {1, 5}, DateTime.utc_now() |> Timex.shift(minutes: 10)}
     end
 
     def get_headways("e") do
-      {nil, nil}
+      {:first_departure, {1, 5}, DateTime.utc_now()}
     end
 
     def get_headways("f") do
-      {nil, 5}
+      {nil, nil}
     end
 
     def get_headways("g") do
+      {nil, 5}
+    end
+
+    def get_headways("h") do
       {2, nil}
     end
   end
@@ -98,7 +102,7 @@ defmodule Signs.Utilities.HeadwaysTest do
         @sign
         | source_config:
             {[
-               source_config_for_stop_id("e"),
+               source_config_for_stop_id("f"),
                source_with_headway,
                source_config_for_stop_id("c")
              ]}
@@ -125,7 +129,7 @@ defmodule Signs.Utilities.HeadwaysTest do
     end
 
     test "increases the headways if there are alerts on the route and it only gets a bottom end of the range" do
-      source_config = %{source_config_for_stop_id("g") | routes: ["Green-B"]}
+      source_config = %{source_config_for_stop_id("h") | routes: ["Green-B"]}
 
       sign = %{
         @sign
@@ -139,7 +143,7 @@ defmodule Signs.Utilities.HeadwaysTest do
     end
 
     test "increases the headways if there are alerts on the route and it only gets a top end of the range" do
-      source_config = %{source_config_for_stop_id("f") | routes: ["Green-B"]}
+      source_config = %{source_config_for_stop_id("g") | routes: ["Green-B"]}
 
       sign = %{
         @sign
@@ -174,7 +178,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                 {source_config_for_stop_id("c"), %Content.Message.Empty{}}}
     end
 
-    test "generates blank messages to display prior to first departure of the day" do
+    test "generates blank messages to display more than one headway earlier than the first departure of the day" do
       sign = %{
         @sign
         | source_config: {[source_config_for_stop_id("d")]}
@@ -183,6 +187,18 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign) ==
                {{source_config_for_stop_id("d"), %Content.Message.Empty{}},
                 {source_config_for_stop_id("d"), %Content.Message.Empty{}}}
+    end
+
+    test "generates a headway message to display immediately before the first departure of the day" do
+      sign = %{
+        @sign
+        | source_config: {[source_config_for_stop_id("e")]}
+      }
+
+      assert Signs.Utilities.Headways.get_messages(sign) ==
+               {{source_config_for_stop_id("e"),
+                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
+                {source_config_for_stop_id("e"), %Content.Message.Headways.Bottom{range: {1, 5}}}}
     end
   end
 end

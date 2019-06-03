@@ -98,7 +98,10 @@ defmodule Signs.Realtime do
 
     custom_text = Engine.Config.custom_text(sign.id)
 
-    {top, bottom} = Utilities.Messages.get_messages(sign, enabled?, alert_status, custom_text)
+    mode = Content.Message.Alert.NoService.transit_mode_for_routes(sign_routes)
+
+    {top, bottom} =
+      Utilities.Messages.get_messages(sign, enabled?, alert_status, custom_text, mode)
 
     sign =
       sign
