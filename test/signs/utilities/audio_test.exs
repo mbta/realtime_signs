@@ -108,7 +108,7 @@ defmodule Signs.Utilities.AudioTest do
     end
 
     test "returns false if it's the bottom line and a bridge delay message" do
-      message = %Message.Bridge.Delays{}
+      message = %Message.Bridge.Up{}
       refute should_interrupting_read?({@src, message}, {[@src]}, :bottom)
     end
 
@@ -192,8 +192,8 @@ defmodule Signs.Utilities.AudioTest do
     test "Bridge up" do
       sign = %{
         @sign
-        | current_content_top: {@src, %Message.Bridge.Up{duration: 5}},
-          current_content_bottom: {@src, %Message.Bridge.Delays{}}
+        | current_content_top: {@src, %Message.Bridge.Delays{}},
+          current_content_bottom: {@src, %Message.Bridge.Up{duration: 5}}
       }
 
       assert {{%Audio.BridgeIsUp{language: :english, time_estimate_mins: 5},

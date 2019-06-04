@@ -397,8 +397,8 @@ defmodule Signs.Utilities.MessagesTest do
                :none,
                {"Raised", 5}
              ) ==
-               {{nil, %Content.Message.Bridge.Up{duration: 5}},
-                {nil, %Content.Message.Bridge.Delays{}}}
+               {{nil, %Content.Message.Bridge.Delays{}},
+                {nil, %Content.Message.Bridge.Up{duration: 5}}}
     end
 
     test "when there are no alerts and the bridge is up, displays the bridge up message without estimate" do
@@ -416,8 +416,8 @@ defmodule Signs.Utilities.MessagesTest do
                :none,
                {"Raised", -2}
              ) ==
-               {{nil, %Content.Message.Bridge.Up{duration: nil}},
-                {nil, %Content.Message.Bridge.Delays{}}}
+               {{nil, %Content.Message.Bridge.Delays{}},
+                {nil, %Content.Message.Bridge.Up{duration: nil}}}
     end
 
     test "when there are alerts and the bridge is up, defer to the alerts" do
