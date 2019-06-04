@@ -28,8 +28,8 @@ defmodule Signs.Utilities.Messages do
       alert_status == :none and match?({"Raised", _}, bridge_state) ->
         {"Raised", duration} = bridge_state
 
-        {{nil, duration |> clean_duration |> Content.Message.Bridge.Up.new()},
-         {nil, %Content.Message.Bridge.Delays{}}}
+        {{nil, %Content.Message.Bridge.Delays{}},
+         {nil, duration |> clean_duration |> Content.Message.Bridge.Up.new()}}
 
       true ->
         case Signs.Utilities.Predictions.get_messages(sign) do
