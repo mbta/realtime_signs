@@ -1,4 +1,6 @@
 defmodule Fake.Bridge.Request do
+  require Logger
+
   def get_status("down", _time) do
     {"Lowered", nil}
   end
@@ -8,6 +10,7 @@ defmodule Fake.Bridge.Request do
   end
 
   def get_status(_id, _time) do
+    Logger.info("requesting_bridge_status")
     {"Raised", 4}
   end
 end
