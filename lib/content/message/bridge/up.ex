@@ -14,12 +14,12 @@ defmodule Content.Message.Bridge.Up do
 
   defimpl Content.Message do
     def to_string(%Content.Message.Bridge.Up{duration: nil}) do
-      "Chelsea bridge is up"
+      "Chelsea St Bridge is up"
     end
 
     def to_string(%Content.Message.Bridge.Up{duration: duration}) do
       unit = if duration == 1, do: "minute", else: "minutes"
-      [{"Chelsea bridge is up", 2}, {"for #{duration} more #{unit}", 2}]
+      [{"Chelsea St Bridge is up", 2}, {"for #{duration} more #{unit}", 2}]
     end
   end
 end
