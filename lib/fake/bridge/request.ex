@@ -10,7 +10,6 @@ defmodule Fake.Bridge.Request do
   end
 
   def get_status(_id, _time) do
-    Logger.info("requesting_bridge_status")
     {"Raised", 4}
   end
 end

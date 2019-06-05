@@ -241,16 +241,16 @@
     "bridge_id": "1",
     "source_config": [
       [
-	{
-	  "stop_id": "74630",
-	  "routes": ["743"],
-	  "direction_id": 1,
-	  "headway_direction_name": "South Station",
-	  "platform": null,
+        {
+          "stop_id": "74630",
+          "routes": ["743"],
+          "direction_id": 1,
+          "headway_direction_name": "South Station",
+          "platform": null,
           "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
-	}
+        }
       ]
     ]
   },
@@ -264,16 +264,16 @@
     "bridge_id": "1",
     "source_config": [
       [
-	{
-	  "stop_id": "74632",
-	  "routes": ["743"],
-	  "direction_id": 1,
-	  "headway_direction_name": "South Station",
-	  "platform": null,
+        {
+          "stop_id": "74632",
+          "routes": ["743"],
+          "direction_id": 1,
+          "headway_direction_name": "South Station",
+          "platform": null,
           "terminal": false,
           "announce_arriving": false,
           "announce_boarding": false
-	}
+        }
       ]
     ]
   },
@@ -287,16 +287,16 @@
     "bridge_id": "1",
     "source_config": [
       [
-	{
-	  "stop_id": "74633",
-	  "routes": ["743"],
-	  "direction_id": 0,
-	  "headway_direction_name": "Chelsea",
-	  "platform": null,
+        {
+          "stop_id": "74633",
+          "routes": ["743"],
+          "direction_id": 0,
+          "headway_direction_name": "Chelsea",
+          "platform": null,
           "terminal": false,
           "announce_arriving": false,
           "announce_boarding": false
-	}
+        }
       ]
     ]
   },
@@ -310,16 +310,16 @@
     "bridge_id": "1",
     "source_config": [
       [
-	{
-	  "stop_id": "74634",
-	  "routes": ["743"],
-	  "direction_id": 1,
-	  "headway_direction_name": "South Station",
-	  "platform": null,
+        {
+          "stop_id": "74634",
+          "routes": ["743"],
+          "direction_id": 1,
+          "headway_direction_name": "South Station",
+          "platform": null,
           "terminal": false,
           "announce_arriving": false,
           "announce_boarding": false
-	}
+        }
       ]
     ]
   },
@@ -333,16 +333,16 @@
     "bridge_id": "1",
     "source_config": [
       [
-	{
-	  "stop_id": "74635",
-	  "routes": ["743"],
-	  "direction_id": 0,
-	  "headway_direction_name": "Chelsea",
-	  "platform": null,
+        {
+          "stop_id": "74635",
+          "routes": ["743"],
+          "direction_id": 0,
+          "headway_direction_name": "Chelsea",
+          "platform": null,
           "terminal": false,
           "announce_arriving": false,
           "announce_boarding": false
-	}
+        }
       ]
     ]
   },
@@ -356,16 +356,16 @@
     "bridge_id": "1",
     "source_config": [
       [
-	{
-	  "stop_id": "74636",
-	  "routes": ["743"],
-	  "direction_id": 1,
-	  "headway_direction_name": "South Station",
-	  "platform": null,
+        {
+          "stop_id": "74636",
+          "routes": ["743"],
+          "direction_id": 1,
+          "headway_direction_name": "South Station",
+          "platform": null,
           "terminal": false,
           "announce_arriving": false,
           "announce_boarding": false
-	}
+        }
       ]
     ]
   },
@@ -379,16 +379,16 @@
     "bridge_id": "1",
     "source_config": [
       [
-	{
-	  "stop_id": "74637",
-	  "routes": ["743"],
-	  "direction_id": 0,
-	  "headway_direction_name": "Chelsea",
-	  "platform": null,
+        {
+          "stop_id": "74637",
+          "routes": ["743"],
+          "direction_id": 0,
+          "headway_direction_name": "Chelsea",
+          "platform": null,
           "terminal": false,
           "announce_arriving": false,
           "announce_boarding": false
-	}
+        }
       ]
     ]
   },

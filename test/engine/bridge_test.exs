@@ -9,9 +9,9 @@ defmodule Engine.BridgeTest do
       {:ok, %{ets_table_name: ^ets_table_name}} =
         Engine.Bridge.init(ets_table_name: ets_table_name)
 
-      :ets.insert(ets_table_name, [{"1", {"Raised", 4}}])
+      :ets.insert(ets_table_name, [{"1", {"Lowered", nil}}])
 
-      assert Engine.Bridge.status(ets_table_name, "1") == {"Raised", 4}
+      assert Engine.Bridge.status(ets_table_name, "1") == {"Lowered", nil}
     end
 
     test "handles a bridge id for which we don't have information" do
@@ -33,9 +33,9 @@ defmodule Engine.BridgeTest do
       {:ok, %{ets_table_name: ^ets_table_name} = state} =
         Engine.Bridge.init(ets_table_name: ets_table_name)
 
-      log = capture_log([level: :info], fn -> Engine.Bridge.handle_info(:update, state) end)
+      Engine.Bridge.handle_info(:update, state)
 
-      assert log =~ "requesting_bridge_status"
+      assert Engine.Bridge.status(ets_table_name, "1") == {"Raised", 4}
     end
   end
 end
