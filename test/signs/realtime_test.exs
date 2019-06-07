@@ -37,6 +37,10 @@ defmodule Signs.RealtimeTest do
     def max_stop_status(_stops, _routes), do: :none
   end
 
+  defmodule FakeBridge do
+    def status(_bridge_id), do: {"Raised", 5}
+  end
+
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     headway_direction_name: "Southbound",
@@ -57,6 +61,7 @@ defmodule Signs.RealtimeTest do
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     alerts_engine: FakeAlerts,
+    bridge_engine: nil,
     sign_updater: FakeUpdater,
     tick_bottom: 1,
     tick_top: 1,
@@ -81,6 +86,22 @@ defmodule Signs.RealtimeTest do
 
     test "decrements ticks and doesn't send audio or text when sign is not expired" do
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, @sign)
+      refute_received({:send_audio, _, _, _, _})
+      refute_received({:update_single_line, _, _, _, _, _})
+      refute_received({:update_sign, _, _, _, _, _})
+      assert sign.tick_top == 0
+      assert sign.tick_bottom == 0
+      assert sign.tick_read == 0
+    end
+
+    test "decrements ticks and doesn't send audio or text when sign is not expired, bridge case" do
+      assert {:noreply, sign} =
+               Signs.Realtime.handle_info(:run_loop, %{
+                 @sign
+                 | bridge_engine: FakeBridge,
+                   bridge_id: "1"
+               })
+
       refute_received({:send_audio, _, _, _, _})
       refute_received({:update_single_line, _, _, _, _, _})
       refute_received({:update_sign, _, _, _, _, _})

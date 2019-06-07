@@ -75,6 +75,10 @@ defmodule Signs.Utilities.Audio do
     false
   end
 
+  def should_interrupting_read?({_, %Content.Message.Bridge.Up{}}, _config, :bottom) do
+    false
+  end
+
   def should_interrupting_read?(_content, _config, _line) do
     true
   end
@@ -251,6 +255,14 @@ defmodule Signs.Utilities.Audio do
          multi_source?
        ) do
     Audio.Predictions.from_sign_content(top_content, :top, multi_source?)
+  end
+
+  defp get_audio(
+         {_, %Message.Bridge.Delays{}},
+         {_, %Message.Bridge.Up{duration: duration}},
+         _multi_source?
+       ) do
+    Audio.BridgeIsUp.create_bridge_messages(duration)
   end
 
   defp get_audio(top, bottom, multi_source?) do

@@ -415,6 +415,7 @@ defmodule Signs.Utilities.PredictionsTest do
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     alerts_engine: nil,
+    bridge_engine: nil,
     sign_updater: FakeUpdater,
     tick_bottom: 130,
     tick_top: 130,
