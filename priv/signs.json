@@ -233,87 +233,164 @@
   },
   {
     "id": "chelsea_inbound",
+    "type": "realtime",
     "pa_ess_loc": "SCHS",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": ["w"],
-    "headsign": "South Station",
     "bridge_id": "1",
-    "gtfs_stop_id": "74630",
-    "route_id": "743",
-    "type": "headway"
+    "source_config": [
+      [
+        {
+          "stop_id": "74630",
+          "routes": ["743"],
+          "direction_id": 1,
+          "headway_direction_name": "South Station",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "bellingham_square_inbound",
+    "type": "realtime",
     "pa_ess_loc": "SBSQ",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": ["w"],
-    "headsign": "South Station",
     "bridge_id": "1",
-    "gtfs_stop_id": "74632",
-    "route_id": "743",
-    "type": "headway"
+    "source_config": [
+      [
+        {
+          "stop_id": "74632",
+          "routes": ["743"],
+          "direction_id": 1,
+          "headway_direction_name": "South Station",
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "bellingham_square_outbound",
+    "type": "realtime",
     "pa_ess_loc": "SBSQ",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
-    "headsign": "Chelsea",
     "bridge_id": "1",
-    "gtfs_stop_id": "74633",
-    "route_id": "743",
-    "type": "headway"
+    "source_config": [
+      [
+        {
+          "stop_id": "74633",
+          "routes": ["743"],
+          "direction_id": 0,
+          "headway_direction_name": "Chelsea",
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "box_district_inbound",
+    "type": "realtime",
     "pa_ess_loc": "SBOX",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": ["w"],
-    "headsign": "South Station",
     "bridge_id": "1",
-    "gtfs_stop_id": "74634",
-    "route_id": "743",
-    "type": "headway"
+    "source_config": [
+      [
+        {
+          "stop_id": "74634",
+          "routes": ["743"],
+          "direction_id": 1,
+          "headway_direction_name": "South Station",
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "box_district_outbound",
+    "type": "realtime",
     "pa_ess_loc": "SBOX",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
-    "headsign": "Chelsea",
     "bridge_id": "1",
-    "gtfs_stop_id": "74635",
-    "route_id": "743",
-    "type": "headway"
+    "source_config": [
+      [
+        {
+          "stop_id": "74635",
+          "routes": ["743"],
+          "direction_id": 0,
+          "headway_direction_name": "Chelsea",
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "eastern_ave_inbound",
+    "type": "realtime",
     "pa_ess_loc": "SEAV",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": ["w"],
-    "headsign": "South Station",
     "bridge_id": "1",
-    "gtfs_stop_id": "74636",
-    "route_id": "743",
-    "type": "headway"
+    "source_config": [
+      [
+        {
+          "stop_id": "74636",
+          "routes": ["743"],
+          "direction_id": 1,
+          "headway_direction_name": "South Station",
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "eastern_ave_outbound",
+    "type": "realtime",
     "pa_ess_loc": "SEAV",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
-    "headsign": "Chelsea",
     "bridge_id": "1",
-    "gtfs_stop_id": "74637",
-    "route_id": "743",
-    "type": "headway"
+    "source_config": [
+      [
+        {
+          "stop_id": "74637",
+          "routes": ["743"],
+          "direction_id": 0,
+          "headway_direction_name": "Chelsea",
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
   },
   {
     "id": "south_station_silver_line_outbound",

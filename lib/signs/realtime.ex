@@ -19,6 +19,7 @@ defmodule Signs.Realtime do
     :prediction_engine,
     :headway_engine,
     :alerts_engine,
+    :bridge_engine,
     :sign_updater,
     :tick_top,
     :tick_bottom,
@@ -27,7 +28,7 @@ defmodule Signs.Realtime do
     :read_period_seconds
   ]
 
-  defstruct @enforce_keys ++ [announced_arrivals: [], announced_approachings: []]
+  defstruct @enforce_keys ++ [:bridge_id, announced_arrivals: [], announced_approachings: []]
 
   @type line_content :: {Utilities.SourceConfig.source() | nil, Content.Message.t()}
 
@@ -41,12 +42,14 @@ defmodule Signs.Realtime do
           prediction_engine: module(),
           headway_engine: module(),
           alerts_engine: module(),
+          bridge_engine: module(),
           sign_updater: module(),
           tick_bottom: non_neg_integer(),
           tick_top: non_neg_integer(),
           tick_read: non_neg_integer(),
           expiration_seconds: non_neg_integer(),
           read_period_seconds: non_neg_integer(),
+          bridge_id: Engine.Bridge.bridge_id() | nil,
           announced_arrivals: [Predictions.Prediction.trip_id()],
           announced_approachings: [Predictions.Prediction.trip_id()]
         }
@@ -55,6 +58,7 @@ defmodule Signs.Realtime do
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
     headway_engine = opts[:headway_engine] || Engine.Headways
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
+    bridge_engine = opts[:bridge_engine] || Engine.Bridge
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
 
     sign = %__MODULE__{
@@ -67,12 +71,14 @@ defmodule Signs.Realtime do
       prediction_engine: prediction_engine,
       headway_engine: headway_engine,
       alerts_engine: alerts_engine,
+      bridge_engine: bridge_engine,
       sign_updater: sign_updater,
       tick_bottom: 130,
       tick_top: 130,
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       expiration_seconds: 130,
-      read_period_seconds: 240
+      read_period_seconds: 240,
+      bridge_id: Map.get(config, "bridge_id")
     }
 
     GenServer.start_link(__MODULE__, sign)
@@ -98,7 +104,24 @@ defmodule Signs.Realtime do
 
     custom_text = Engine.Config.custom_text(sign.id)
 
-    {top, bottom} = Utilities.Messages.get_messages(sign, enabled?, alert_status, custom_text)
+    mode = Content.Message.Alert.NoService.transit_mode_for_routes(sign_routes)
+
+    bridge_state =
+      if sign.bridge_id do
+        Engine.Bridge.status(sign.bridge_id)
+      else
+        nil
+      end
+
+    {top, bottom} =
+      Utilities.Messages.get_messages(
+        sign,
+        enabled?,
+        alert_status,
+        custom_text,
+        mode,
+        bridge_state
+      )
 
     sign =
       sign

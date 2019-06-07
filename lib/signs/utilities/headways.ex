@@ -44,8 +44,26 @@ defmodule Signs.Utilities.Headways do
       {nil, nil} ->
         {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
 
-      {:first_departure, _, _} ->
-        {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
+      {:first_departure, range, first_departure} ->
+        max_headway = Headway.ScheduleHeadway.max_headway(range)
+        time_buffer = if max_headway, do: max_headway, else: 0
+
+        if Headway.ScheduleHeadway.show_first_departure?(
+             first_departure,
+             Timex.now(),
+             time_buffer
+           ) do
+          {
+            {config,
+             %Content.Message.Headways.Top{
+               headsign: config.headway_direction_name,
+               vehicle_type: vehicle_type(config.routes)
+             }},
+            {config, %Content.Message.Headways.Bottom{range: range}}
+          }
+        else
+          {{config, Content.Message.Empty.new()}, {config, Content.Message.Empty.new()}}
+        end
 
       {bottom, top} ->
         adjusted_range =
