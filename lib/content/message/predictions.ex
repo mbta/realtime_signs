@@ -112,7 +112,7 @@ defmodule Content.Message.Predictions do
 
     @boarding "BRD"
     @arriving "ARR"
-    @max_time "30+ min"
+    @max_time "20+ min"
 
     def to_string(%{headsign: headsign, minutes: minutes, width: width, stop_id: stop_id}) do
       duration_string =

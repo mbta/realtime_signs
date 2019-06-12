@@ -96,7 +96,7 @@ defmodule Content.Message.PredictionsTest do
       assert Content.Message.to_string(msg) == "Mattapan     1 min"
     end
 
-    test "Says 30+ min when train is 30 or more minutes away" do
+    test "Says 20+ min when train is 30 or more minutes away" do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 45 * 60,
         direction_id: 0,
@@ -108,7 +108,7 @@ defmodule Content.Message.PredictionsTest do
 
       msg = Content.Message.Predictions.non_terminal(prediction)
 
-      assert Content.Message.to_string(msg) == "Mattapan   30+ min"
+      assert Content.Message.to_string(msg) == "Mattapan   20+ min"
     end
 
     test "can use a shorter line length" do
