@@ -113,7 +113,7 @@ defmodule Signs.Utilities.PredictionsTest do
           stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: nil,
-          seconds_until_departure: 600
+          seconds_until_departure: 480
         }
       ]
     end
@@ -533,7 +533,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       assert {
                {^src, %Content.Message.Predictions{headsign: "Alewife", minutes: 4}},
-               {^src, %Content.Message.Predictions{headsign: "Alewife", minutes: 10}}
+               {^src, %Content.Message.Predictions{headsign: "Alewife", minutes: 8}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 

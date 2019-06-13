@@ -106,7 +106,7 @@ defmodule Signs.Utilities.Predictions do
   @spec red_line_stops_away?(Predictions.Prediction.t()) :: boolean()
   defp red_line_stops_away?(prediction) do
     prediction.route_id == "Red" and
-      (prediction.seconds_until_arrival || prediction.seconds_until_departure) > 600 and
+      (prediction.seconds_until_arrival || prediction.seconds_until_departure) > 60 * 8 and
       prediction.stops_away > 0
   end
 
