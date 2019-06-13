@@ -53,6 +53,9 @@ defmodule Signs.Utilities.Predictions do
     |> Enum.take(2)
     |> Enum.map(fn {source, prediction} ->
       cond do
+        red_line_stops_away?(prediction) ->
+          {source, Content.Message.StopsAway.from_prediction(prediction)}
+
         stopped_train?(prediction) ->
           {source, Content.Message.StoppedTrain.from_prediction(prediction)}
 
@@ -98,6 +101,13 @@ defmodule Signs.Utilities.Predictions do
   defp stopped_train?(prediction) do
     status = prediction.boarding_status
     status && String.starts_with?(status, "Stopped") && status != "Stopped at station"
+  end
+
+  @spec red_line_stops_away?(Predictions.Prediction.t()) :: boolean()
+  defp red_line_stops_away?(prediction) do
+    prediction.route_id == "Red" and
+      (prediction.seconds_until_arrival || prediction.seconds_until_departure) > 600 and
+      prediction.stops_away > 0
   end
 
   defp allowed_multi_berth_platform?(
