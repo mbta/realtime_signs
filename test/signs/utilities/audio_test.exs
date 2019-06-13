@@ -112,6 +112,12 @@ defmodule Signs.Utilities.AudioTest do
       refute should_interrupting_read?({@src, message}, {[@src]}, :bottom)
     end
 
+    test "returns false if it's a stops away message" do
+      message = %Message.StopsAway{headsign: "Alewife", stops_away: 2}
+      refute should_interrupting_read?({@src, message}, {[@src]}, :top)
+      refute should_interrupting_read?({@src, message}, {[@src]}, :bottom)
+    end
+
     test "returns true if it's a different kind of message" do
       message = %Message.Headways.Top{headsign: "Alewife", vehicle_type: :train}
       assert should_interrupting_read?({@src, message}, {[@src]}, :top)

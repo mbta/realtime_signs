@@ -79,6 +79,10 @@ defmodule Signs.Utilities.Audio do
     false
   end
 
+  def should_interrupting_read?({_, %Content.Message.StopsAway{}}, _config, _line) do
+    false
+  end
+
   def should_interrupting_read?(_content, _config, _line) do
     true
   end
