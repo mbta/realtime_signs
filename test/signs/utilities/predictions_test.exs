@@ -113,7 +113,7 @@ defmodule Signs.Utilities.PredictionsTest do
           stops_away: 1,
           destination_stop_id: "123",
           seconds_until_arrival: nil,
-          seconds_until_departure: 600
+          seconds_until_departure: 480
         }
       ]
     end
@@ -397,6 +397,38 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("stops_away_message", 1) do
+      [
+        %Predictions.Prediction{
+          stop_id: "stops_away_message",
+          direction_id: 1,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 2,
+          boarding_status: nil,
+          destination_stop_id: "70061",
+          seconds_until_arrival: 800,
+          seconds_until_departure: 2020
+        }
+      ]
+    end
+
+    def for_stop("no_stops_away_message_short", 1) do
+      [
+        %Predictions.Prediction{
+          stop_id: "stops_away_message",
+          direction_id: 1,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 2,
+          boarding_status: nil,
+          destination_stop_id: "70061",
+          seconds_until_arrival: 80,
+          seconds_until_departure: 100
+        }
+      ]
+    end
+
     def for_stop(_stop_id, _direction_id) do
       []
     end
@@ -501,7 +533,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       assert {
                {^src, %Content.Message.Predictions{headsign: "Alewife", minutes: 4}},
-               {^src, %Content.Message.Predictions{headsign: "Alewife", minutes: 10}}
+               {^src, %Content.Message.Predictions{headsign: "Alewife", minutes: 8}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
@@ -641,6 +673,46 @@ defmodule Signs.Utilities.PredictionsTest do
 
       assert {
                {^s, %Content.Message.StoppedTrain{stops_away: 1}},
+               {nil, %Content.Message.Empty{}}
+             } = Signs.Utilities.Predictions.get_messages(sign)
+    end
+
+    test "Returns stops away message" do
+      s = %SourceConfig{
+        stop_id: "stops_away_message",
+        headway_direction_name: "Alewife",
+        direction_id: 1,
+        terminal?: false,
+        platform: nil,
+        announce_arriving?: true,
+        announce_boarding?: false
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      assert {
+               {^s, %Content.Message.StopsAway{headsign: "Alewife", stops_away: 2}},
+               {nil, %Content.Message.Empty{}}
+             } = Signs.Utilities.Predictions.get_messages(sign)
+    end
+
+    test "Does not return stops away message for short predictions" do
+      s = %SourceConfig{
+        stop_id: "no_stops_away_message_short",
+        headway_direction_name: "Alewife",
+        direction_id: 1,
+        terminal?: false,
+        platform: nil,
+        announce_arriving?: true,
+        announce_boarding?: false
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      assert {
+               {^s, %Content.Message.Predictions{headsign: "Alewife"}},
                {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end

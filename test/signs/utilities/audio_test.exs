@@ -112,6 +112,12 @@ defmodule Signs.Utilities.AudioTest do
       refute should_interrupting_read?({@src, message}, {[@src]}, :bottom)
     end
 
+    test "returns false if it's a stops away message" do
+      message = %Message.StopsAway{headsign: "Alewife", stops_away: 2}
+      refute should_interrupting_read?({@src, message}, {[@src]}, :top)
+      refute should_interrupting_read?({@src, message}, {[@src]}, :bottom)
+    end
+
     test "returns true if it's a different kind of message" do
       message = %Message.Headways.Top{headsign: "Alewife", vehicle_type: :train}
       assert should_interrupting_read?({@src, message}, {[@src]}, :top)
@@ -386,6 +392,47 @@ defmodule Signs.Utilities.AudioTest do
 
       assert {
                %Audio.NextTrainCountdown{destination: :alewife, minutes: 4},
+               ^sign
+             } = from_sign(sign)
+    end
+
+    test "Don't read second line 'stopped train' if same headsign as top line stops away message" do
+      sign = %{
+        @sign
+        | current_content_top: {@src, %Message.StopsAway{headsign: "Alewife", stops_away: 4}},
+          current_content_bottom:
+            {@src, %Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
+      }
+
+      assert {
+               %Audio.StopsAway{destination: :alewife, stops_away: 4},
+               ^sign
+             } = from_sign(sign)
+    end
+
+    test "Don't read second line 'stops away' if same headsign as top line message" do
+      sign = %{
+        @sign
+        | current_content_top: {@src, %Message.StoppedTrain{headsign: "Alewife", stops_away: 4}},
+          current_content_bottom: {@src, %Message.StopsAway{headsign: "Alewife", stops_away: 2}}
+      }
+
+      assert {
+               %Audio.StoppedTrain{destination: :alewife, stops_away: 4},
+               ^sign
+             } = from_sign(sign)
+    end
+
+    test "'Stops Away' with different headsifns" do
+      sign = %{
+        @sign
+        | current_content_top: {@src, %Message.StopsAway{headsign: "Braintree", stops_away: 4}},
+          current_content_bottom: {@src, %Message.StopsAway{headsign: "Alewife", stops_away: 2}}
+      }
+
+      assert {
+               {%Audio.StopsAway{destination: :braintree, stops_away: 4},
+                %Audio.StopsAway{destination: :alewife, stops_away: 2}},
                ^sign
              } = from_sign(sign)
     end
