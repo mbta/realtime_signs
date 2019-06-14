@@ -557,12 +557,16 @@ defmodule Signs.Utilities.MessagesTest do
       Application.put_env(:realtime_signs, :no_headway_on_rl, true)
       on_exit(fn -> Application.put_env(:realtime_signs, :no_headway_on_rl, old_env) end)
 
-      sign = %{@sign | source_config: {[%{@src | stop_id: "no_preds", routes: ["Red"]}]}}
+      sign1 = %{@sign | source_config: {[%{@src | stop_id: "no_preds", routes: ["Red"]}]}}
+      sign2 = %{@sign | source_config: {[%{@src | stop_id: "no_preds", routes: ["Red"]}], []}}
       enabled? = true
       alert_status = :none
       custom_text = nil
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign1, enabled?, alert_status, custom_text, :train, nil) ==
+               {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+
+      assert Messages.get_messages(sign2, enabled?, alert_status, custom_text, :train, nil) ==
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
