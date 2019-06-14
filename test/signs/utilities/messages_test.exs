@@ -553,6 +553,10 @@ defmodule Signs.Utilities.MessagesTest do
     end
 
     test "when there are no predictions and the sign shows Red Line content, puts nothing on the sign" do
+      old_env = Application.get_env(:realtime_signs, :no_headway_on_rl)
+      Application.put_env(:realtime_signs, :no_headway_on_rl, true)
+      on_exit(fn -> Application.put_env(:realtime_signs, :no_headway_on_rl, old_env) end)
+
       sign = %{@sign | source_config: {[%{@src | stop_id: "no_preds", routes: ["Red"]}]}}
       enabled? = true
       alert_status = :none

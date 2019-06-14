@@ -54,7 +54,7 @@ defmodule Signs.Utilities.Messages do
                  {nil, Content.Message.Empty.new()}}
 
               _ ->
-                if on_red_line?(sign) do
+                if Application.get_env(:realtime_signs, :no_headway_on_rl) && on_red_line?(sign) do
                   {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
                 else
                   Signs.Utilities.Headways.get_messages(sign)
