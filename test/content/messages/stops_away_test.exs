@@ -41,8 +41,8 @@ defmodule Content.Message.StopsAwayTest do
       message = %StopsAway{headsign: "Alewife", stops_away: 2}
 
       assert Content.Message.to_string(message) == [
-               {"Alewife    2 stops", 3},
-               {"Alewife       away", 3}
+               {"Alewife       away", 3},
+               {"Alewife    2 stops", 3}
              ]
     end
 
@@ -50,8 +50,8 @@ defmodule Content.Message.StopsAwayTest do
       message = %StopsAway{headsign: "Alewife", stops_away: 1}
 
       assert Content.Message.to_string(message) == [
-               {"Alewife     1 stop", 3},
-               {"Alewife       away", 3}
+               {"Alewife       away", 3},
+               {"Alewife     1 stop", 3}
              ]
     end
   end

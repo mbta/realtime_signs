@@ -37,8 +37,8 @@ defmodule Content.Message.StopsAway do
       stop_word = if n == 1, do: "stop", else: "stops"
 
       [
-        {Content.Utilities.width_padded_string(headsign, "#{n} #{stop_word}", 18), 3},
-        {Content.Utilities.width_padded_string(headsign, "away", 18), 3}
+        {Content.Utilities.width_padded_string(headsign, "away", 18), 3},
+        {Content.Utilities.width_padded_string(headsign, "#{n} #{stop_word}", 18), 3}
       ]
     end
   end
