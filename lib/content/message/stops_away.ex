@@ -7,7 +7,7 @@ defmodule Content.Message.StopsAway do
 
   @type t :: %__MODULE__{
           headsign: String.t(),
-          stops_away: integer()
+          stops_away: non_neg_integer()
         }
 
   @spec from_prediction(Predictions.Prediction.t()) :: t()
@@ -33,12 +33,16 @@ defmodule Content.Message.StopsAway do
   end
 
   defimpl Content.Message do
+    @message_width 18
+    @page_seconds 3
+
     def to_string(%Content.Message.StopsAway{headsign: headsign, stops_away: n}) do
       stop_word = if n == 1, do: "stop", else: "stops"
 
       [
-        {Content.Utilities.width_padded_string(headsign, "away", 18), 3},
-        {Content.Utilities.width_padded_string(headsign, "#{n} #{stop_word}", 18), 3}
+        {Content.Utilities.width_padded_string(headsign, "away", @message_width), @page_seconds},
+        {Content.Utilities.width_padded_string(headsign, "#{n} #{stop_word}", @message_width),
+         @page_seconds}
       ]
     end
   end
