@@ -552,7 +552,7 @@ defmodule Signs.Utilities.MessagesTest do
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
-    test "when there are no predictions and the sign shows Red Line content, puts nothing on the sign" do
+    test "when there are no predictions and the sign shows Red Line content and the appropriate env var is set, puts nothing on the sign" do
       old_env = Application.get_env(:realtime_signs, :no_headway_on_rl)
       Application.put_env(:realtime_signs, :no_headway_on_rl, true)
       on_exit(fn -> Application.put_env(:realtime_signs, :no_headway_on_rl, old_env) end)
@@ -564,6 +564,17 @@ defmodule Signs.Utilities.MessagesTest do
 
       assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+    end
+
+    test "when there are no predictions and the sign shows Red Line content and the appropriate env var is not set, show headways" do
+      sign = %{@sign | source_config: {[%{@src | stop_id: "no_preds", routes: ["Red"]}]}}
+      enabled? = true
+      alert_status = :none
+      custom_text = nil
+
+      assert {{%Signs.Utilities.SourceConfig{}, %Content.Message.Headways.Top{}},
+              {%Signs.Utilities.SourceConfig{}, %Content.Message.Headways.Bottom{range: {1, 4}}}} =
+               Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil)
     end
   end
 end
