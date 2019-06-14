@@ -73,8 +73,18 @@ defmodule Signs.Utilities.Messages do
 
   @spec on_red_line?(Signs.Realtime.t()) :: boolean
   defp on_red_line?(sign) do
-    first_source = sign.source_config |> Tuple.to_list() |> hd |> hd
-    routes = first_source.routes || []
-    Enum.member?(routes, "Red")
+    first_source =
+      case sign.source_config do
+        {[first_source | _]} -> first_source
+        {[first_source | _], []} -> first_source
+        _ -> nil
+      end
+
+    if first_source do
+      routes = first_source.routes || []
+      Enum.member?(routes, "Red")
+    else
+      false
+    end
   end
 end
