@@ -54,7 +54,11 @@ defmodule Signs.Utilities.Messages do
                  {nil, Content.Message.Empty.new()}}
 
               _ ->
-                Signs.Utilities.Headways.get_messages(sign)
+                if Application.get_env(:realtime_signs, :no_headway_on_rl) && on_red_line?(sign) do
+                  {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+                else
+                  Signs.Utilities.Headways.get_messages(sign)
+                end
             end
 
           messages ->
@@ -66,4 +70,21 @@ defmodule Signs.Utilities.Messages do
   @spec clean_duration(integer() | nil) :: integer() | nil
   defp clean_duration(n) when is_integer(n) and n >= 1, do: n
   defp clean_duration(_), do: nil
+
+  @spec on_red_line?(Signs.Realtime.t()) :: boolean
+  defp on_red_line?(sign) do
+    first_source =
+      case sign.source_config do
+        {[first_source | _]} -> first_source
+        {[first_source | _], []} -> first_source
+        _ -> nil
+      end
+
+    if first_source do
+      routes = first_source.routes || []
+      Enum.member?(routes, "Red")
+    else
+      false
+    end
+  end
 end
