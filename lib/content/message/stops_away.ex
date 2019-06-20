@@ -34,16 +34,11 @@ defmodule Content.Message.StopsAway do
 
   defimpl Content.Message do
     @message_width 18
-    @page_seconds 3
 
     def to_string(%Content.Message.StopsAway{headsign: headsign, stops_away: n}) do
       stop_word = if n == 1, do: "stop", else: "stops"
 
-      [
-        {Content.Utilities.width_padded_string(headsign, "away", @message_width), @page_seconds},
-        {Content.Utilities.width_padded_string(headsign, "#{n} #{stop_word}", @message_width),
-         @page_seconds}
-      ]
+      Content.Utilities.width_padded_string(headsign, "#{n} #{stop_word}", @message_width)
     end
   end
 end

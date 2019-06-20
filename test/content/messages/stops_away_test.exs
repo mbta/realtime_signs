@@ -40,19 +40,13 @@ defmodule Content.Message.StopsAwayTest do
     test "Serializes struct to paginated strings when multiple stops away" do
       message = %StopsAway{headsign: "Alewife", stops_away: 2}
 
-      assert Content.Message.to_string(message) == [
-               {"Alewife       away", 3},
-               {"Alewife    2 stops", 3}
-             ]
+      assert Content.Message.to_string(message) == "Alewife    2 stops"
     end
 
     test "Serializes struct to paginated strings when one stop away" do
       message = %StopsAway{headsign: "Alewife", stops_away: 1}
 
-      assert Content.Message.to_string(message) == [
-               {"Alewife       away", 3},
-               {"Alewife     1 stop", 3}
-             ]
+      assert Content.Message.to_string(message) == "Alewife     1 stop"
     end
   end
 end
