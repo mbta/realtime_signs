@@ -63,7 +63,7 @@ defmodule Signs.Realtime do
 
   def start_link(%{"type" => "realtime"} = config, opts \\ []) do
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
-    headway_engine = opts[:headway_engine] || Engine.ScheduledHeadways
+    headway_engine = opts[:headway_engine] || default_headway_engine(config)
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
     bridge_engine = opts[:bridge_engine] || Engine.Bridge
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
@@ -199,5 +199,14 @@ defmodule Signs.Realtime do
         tick_top: sign.tick_top - 1,
         tick_read: sign.tick_read - 1
     }
+  end
+
+  @spec default_headway_engine(map()) :: module()
+  defp default_headway_engine(config) do
+    if Map.has_key?(config, "headway_terminal_ids") do
+      Engine.ObservedHeadways
+    else
+      Engine.ScheduledHeadways
+    end
   end
 end
