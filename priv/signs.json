@@ -3635,6 +3635,7 @@
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
+    "headway_terminal_ids": ["ashmont", "braintree"],
     "source_config": [
       [
         {
@@ -3713,6 +3714,7 @@
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
+    "headway_terminal_ids": ["ashmont", "braintree"],
     "source_config": [
       [
         {
@@ -3735,6 +3737,7 @@
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": ["s"],
+    "headway_terminal_ids": ["alewife"],
     "source_config": [
       [
         {
@@ -3791,6 +3794,7 @@
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
+    "headway_terminal_ids": ["ashmont"],
     "source_config": [
       [
         {
@@ -3813,6 +3817,7 @@
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": ["s"],
+    "headway_terminal_ids": ["alewife"],
     "source_config": [
       [
         {
@@ -3869,6 +3874,7 @@
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
+    "headway_terminal_ids": ["ashmont"],
     "source_config": [
       [
         {
@@ -3891,6 +3897,7 @@
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": ["s"],
+    "headway_terminal_ids": ["alewife"],
     "source_config": [
       [
         {
@@ -4445,6 +4452,7 @@
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": ["w"],
+    "headway_terminal_ids": ["alewife"],
     "source_config": [
       [
         {
@@ -4467,6 +4475,7 @@
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": ["s"],
+    "headway_terminal_ids": ["alewife"],
     "source_config": [
       [
         {
@@ -4489,6 +4498,7 @@
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
+    "headway_terminal_ids": ["ashmont"],
     "source_config": [
       [
         {
@@ -4511,6 +4521,7 @@
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
+    "headway_terminal_ids": ["braintree"],
     "source_config": [
       [
         {
