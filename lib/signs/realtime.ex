@@ -56,7 +56,7 @@ defmodule Signs.Realtime do
 
   def start_link(%{"type" => "realtime"} = config, opts \\ []) do
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
-    headway_engine = opts[:headway_engine] || Engine.Headways
+    headway_engine = opts[:headway_engine] || Engine.ScheduledHeadways
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
     bridge_engine = opts[:bridge_engine] || Engine.Bridge
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)

@@ -1,4 +1,4 @@
-defmodule Engine.Headways do
+defmodule Engine.ScheduledHeadways do
   @moduledoc """
   Maintains the current schedules for any gtfs_stop_id that has been registered with this engine.
   Initially we will quickly update any newly registered stop so that we have something to show,
