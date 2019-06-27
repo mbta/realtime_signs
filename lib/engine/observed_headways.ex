@@ -5,6 +5,7 @@ defmodule Engine.ObservedHeadways do
   @max_headway 20
   @max_spread 10
   @default_recent_headway 3600
+  @fetch_ms 300_000
 
   @type t :: %__MODULE__{
           recent_headways: %{String.t() => non_neg_integer()},
@@ -52,6 +53,7 @@ defmodule Engine.ObservedHeadways do
       }
     }
 
+    schedule_fetch()
     {:ok, initial_state}
   end
 
@@ -80,5 +82,23 @@ defmodule Engine.ObservedHeadways do
       end
 
     {:reply, {pessimistic_min, pessimistic_max}, state}
+  end
+
+  def handle_info(:fetch_headways, state) do
+    schedule_fetch(@fetch_ms)
+
+    fetcher = Application.get_env(:realtime_signs, :observed_headway_fetcher)
+
+    state =
+      case fetcher.fetch() do
+        {:ok, new_headways} -> %__MODULE__{state | recent_headways: new_headways}
+        :error -> state
+      end
+
+    {:noreply, state}
+  end
+
+  defp schedule_fetch(ms \\ 0) do
+    Process.send_after(self(), :fetch_headways, ms)
   end
 end

@@ -373,5 +373,27 @@ defmodule Fake.HTTPoison do
     {:ok, %HTTPoison.Response{status_code: 200, body: Poison.encode!(response)}}
   end
 
+  def mock_response("https://s3.amazonaws.com/mbta-gtfs-s3/rtr/LastHeadways.json") do
+    response = %{
+      alewife: [12, 34],
+      ashmont: [56, 78],
+      bowdoin: [90, 1011],
+      braintree: [1213, 1415],
+      forest_hills: [1617, 1819],
+      oak_grove: [2021, 2223],
+      wonderland: [2425, 2627]
+    }
+
+    {:ok, %HTTPoison.Response{status_code: 200, body: Poison.encode!(response)}}
+  end
+
+  def mock_response("https://www.example.com/bad-headways-300.json") do
+    {:ok, %HTTPoison.Response{status_code: 300}}
+  end
+
+  def mock_response("https://www.nonexistent_domain.com/headways.json") do
+    {:error, %HTTPoison.Error{reason: "This domain doesn't exist"}}
+  end
+
   def mock_response(_), do: {:ok, %HTTPoison.Response{status_code: 200, body: ""}}
 end

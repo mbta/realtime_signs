@@ -1,12 +1,13 @@
 defmodule Engine.ObservedHeadwaysTest do
   use ExUnit.Case
+  import Test.Support.Helpers
+  alias Engine.ObservedHeadways
 
   describe "GenServer initialization" do
     test "has reasonable starting state" do
-      {:ok, pid} =
-        Engine.ObservedHeadways.start_link(gen_server_name: :new_observed_headways_server)
+      {:ok, pid} = ObservedHeadways.start_link(gen_server_name: :new_observed_headways_server)
 
-      assert :sys.get_state(pid) == %Engine.ObservedHeadways{
+      assert :sys.get_state(pid) == %ObservedHeadways{
                recent_headways: %{
                  "alewife" => [3600],
                  "ashmont" => [3600],
@@ -35,12 +36,12 @@ defmodule Engine.ObservedHeadwaysTest do
 
   describe "get_headways/1" do
     setup do
-      original_state = :sys.get_state(Engine.ObservedHeadways)
-      on_exit(fn -> :sys.replace_state(Engine.ObservedHeadways, fn _ -> original_state end) end)
+      original_state = :sys.get_state(ObservedHeadways)
+      on_exit(fn -> :sys.replace_state(ObservedHeadways, fn _ -> original_state end) end)
     end
 
     test "bases min and max on last 5 headways at pertinent terminal" do
-      :sys.replace_state(Engine.ObservedHeadways, fn _ ->
+      :sys.replace_state(ObservedHeadways, fn _ ->
         %{
           recent_headways: %{
             "alewife" => [621, 475, 739, 740, 530],
@@ -54,11 +55,11 @@ defmodule Engine.ObservedHeadwaysTest do
         }
       end)
 
-      assert Engine.ObservedHeadways.get_headways("123") == {8, 12}
+      assert ObservedHeadways.get_headways("123") == {8, 12}
     end
 
     test "behaves correctly if just one headway recorded" do
-      :sys.replace_state(Engine.ObservedHeadways, fn _ ->
+      :sys.replace_state(ObservedHeadways, fn _ ->
         %{
           recent_headways: %{
             "ashmont" => [620]
@@ -69,11 +70,11 @@ defmodule Engine.ObservedHeadwaysTest do
         }
       end)
 
-      assert Engine.ObservedHeadways.get_headways("123") == {10, 10}
+      assert ObservedHeadways.get_headways("123") == {10, 10}
     end
 
     test "bases min and max on most pessimistic of last headways when multiple pertinent terminals" do
-      :sys.replace_state(Engine.ObservedHeadways, fn _ ->
+      :sys.replace_state(ObservedHeadways, fn _ ->
         %{
           recent_headways: %{
             "ashmont" => [621, 475, 739, 740, 1035],
@@ -85,11 +86,11 @@ defmodule Engine.ObservedHeadwaysTest do
         }
       end)
 
-      assert Engine.ObservedHeadways.get_headways("456") == {9, 17}
+      assert ObservedHeadways.get_headways("456") == {9, 17}
     end
 
     test "shows spread of 10 minutes maximum" do
-      :sys.replace_state(Engine.ObservedHeadways, fn _ ->
+      :sys.replace_state(ObservedHeadways, fn _ ->
         %{
           recent_headways: %{
             "ashmont" => [450, 783, 942, 623, 1130]
@@ -100,11 +101,11 @@ defmodule Engine.ObservedHeadwaysTest do
         }
       end)
 
-      assert Engine.ObservedHeadways.get_headways("456") == {9, 19}
+      assert ObservedHeadways.get_headways("456") == {9, 19}
     end
 
     test "bounds are never lower than 6 minutes" do
-      :sys.replace_state(Engine.ObservedHeadways, fn _ ->
+      :sys.replace_state(ObservedHeadways, fn _ ->
         %{
           recent_headways: %{
             "ashmont" => [300, 783, 842, 623, 920],
@@ -117,12 +118,12 @@ defmodule Engine.ObservedHeadwaysTest do
         }
       end)
 
-      assert Engine.ObservedHeadways.get_headways("123") == {6, 15}
-      assert Engine.ObservedHeadways.get_headways("456") == {6, 6}
+      assert ObservedHeadways.get_headways("123") == {6, 15}
+      assert ObservedHeadways.get_headways("456") == {6, 6}
     end
 
     test "bounds are never higher than 20 minutes" do
-      :sys.replace_state(Engine.ObservedHeadways, fn _ ->
+      :sys.replace_state(ObservedHeadways, fn _ ->
         %{
           recent_headways: %{
             "ashmont" => [620, 1200, 842, 623, 920],
@@ -135,8 +136,56 @@ defmodule Engine.ObservedHeadwaysTest do
         }
       end)
 
-      assert Engine.ObservedHeadways.get_headways("123") == {10, 20}
-      assert Engine.ObservedHeadways.get_headways("456") == {20, 20}
+      assert ObservedHeadways.get_headways("123") == {10, 20}
+      assert ObservedHeadways.get_headways("456") == {20, 20}
+    end
+  end
+
+  defmodule FakeHeadwayFetcherHappy do
+    def fetch() do
+      new_headways = %{
+        "alewife" => [1, 4, 9],
+        "ashmont" => [2, 3, 5],
+        "bowdoin" => [99, 100, 101],
+        "braintree" => [31, 41, 519],
+        "forest_hills" => [27, 181],
+        "oak_grove" => [42, 666],
+        "wonderland" => [37]
+      }
+
+      {:ok, new_headways}
+    end
+  end
+
+  defmodule FakeHeadwayFetcherSad do
+    def fetch(), do: :error
+  end
+
+  describe "headway fetching" do
+    test "overwrites old headway information when successful" do
+      reassign_env(:observed_headway_fetcher, FakeHeadwayFetcherHappy)
+
+      {:noreply, new_state} =
+        ObservedHeadways.handle_info(:fetch_headways, :sys.get_state(ObservedHeadways))
+
+      assert new_state.recent_headways == %{
+               "alewife" => [1, 4, 9],
+               "ashmont" => [2, 3, 5],
+               "bowdoin" => [99, 100, 101],
+               "braintree" => [31, 41, 519],
+               "forest_hills" => [27, 181],
+               "oak_grove" => [42, 666],
+               "wonderland" => [37]
+             }
+    end
+
+    test "does not overwrite old headway information when not successful" do
+      reassign_env(:observed_headway_fetcher, FakeHeadwayFetcherSad)
+
+      original_state = :sys.get_state(ObservedHeadways)
+      {:noreply, new_state} = ObservedHeadways.handle_info(:fetch_headways, original_state)
+
+      assert new_state == original_state
     end
   end
 end

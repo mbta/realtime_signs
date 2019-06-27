@@ -9,6 +9,7 @@ defmodule RealtimeSigns.Mixfile do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
+      elixirc_paths: elixirc_paths(Mix.env()),
       dialyzer: [
         plt_add_apps: [:mix],
         plt_add_deps: true,
@@ -43,4 +44,7 @@ defmodule RealtimeSigns.Mixfile do
       {:timex, "~> 3.1"}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 end
