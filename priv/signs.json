@@ -3817,7 +3817,6 @@
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": ["s"],
-    "headway_terminal_ids": ["alewife"],
     "source_config": [
       [
         {
@@ -3897,7 +3896,6 @@
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": ["s"],
-    "headway_terminal_ids": ["alewife"],
     "source_config": [
       [
         {
@@ -4452,7 +4450,6 @@
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": ["w"],
-    "headway_terminal_ids": ["alewife"],
     "source_config": [
       [
         {
@@ -4475,7 +4472,6 @@
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": ["s"],
-    "headway_terminal_ids": ["alewife"],
     "source_config": [
       [
         {

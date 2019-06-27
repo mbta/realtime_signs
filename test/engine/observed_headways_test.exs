@@ -21,13 +21,9 @@ defmodule Engine.ObservedHeadwaysTest do
                  "70082" => ["ashmont", "braintree"],
                  "70083" => ["alewife"],
                  "70084" => ["ashmont", "braintree"],
-                 "70085" => ["alewife"],
                  "70086" => ["ashmont"],
-                 "70087" => ["alewife"],
                  "70088" => ["ashmont"],
-                 "70089" => ["alewife"],
                  "70090" => ["ashmont"],
-                 "70095" => ["alewife"],
                  "70096" => ["braintree"]
                }
              }
