@@ -39,7 +39,7 @@ defmodule Engine.ScheduledHeadways do
   @spec init(Keyword.t()) :: {:ok, state()}
   def init(opts) do
     ets_table_name = opts[:ets_table_name] || __MODULE__
-    fetcher = opts[:fetcher] || Application.get_env(:realtime_signs, :headway_requester)
+    fetcher = opts[:fetcher] || Application.get_env(:realtime_signs, :scheduled_headway_requester)
     fetch_ms = opts[:fetch_ms] || 60 * 60 * 1_000
     headway_calc_ms = opts[:headway_calc_ms] || 5 * 60 * 1_000
 

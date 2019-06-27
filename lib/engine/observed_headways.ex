@@ -5,7 +5,16 @@ defmodule Engine.ObservedHeadways do
   @max_headway 20
   @max_spread 10
   @default_recent_headway 3600
-  @fetch_ms 300_000
+  @fetch_ms 60_000
+  @terminal_ids [
+    "alewife",
+    "ashmont",
+    "bowdoin",
+    "braintree",
+    "forest_hills",
+    "oak_grove",
+    "wonderland"
+  ]
 
   @type t :: %__MODULE__{
           recent_headways: %{String.t() => non_neg_integer()},
@@ -32,25 +41,16 @@ defmodule Engine.ObservedHeadways do
 
     stop_ids_to_terminals =
       signs_using_observed_headway
-      |> Enum.map(fn sign ->
+      |> Map.new(fn sign ->
         {
-          sign["source_config"] |> hd |> hd |> Map.fetch!("stop_id"),
+          Signs.Utilities.SignsConfig.get_stop_ids_for_sign(sign) |> hd,
           sign["headway_terminal_ids"]
         }
       end)
-      |> Map.new()
 
     initial_state = %__MODULE__{
       stops: stop_ids_to_terminals,
-      recent_headways: %{
-        "alewife" => [@default_recent_headway],
-        "ashmont" => [@default_recent_headway],
-        "bowdoin" => [@default_recent_headway],
-        "braintree" => [@default_recent_headway],
-        "forest_hills" => [@default_recent_headway],
-        "oak_grove" => [@default_recent_headway],
-        "wonderland" => [@default_recent_headway]
-      }
+      recent_headways: Map.new(@terminal_ids, &{&1, [@default_recent_headway]})
     }
 
     schedule_fetch()

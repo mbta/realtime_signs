@@ -45,7 +45,7 @@ defmodule Headway.Request do
         Map.get(response, "data")
 
       {:error, reason} ->
-        Logger.warn("Could not decode response: #{inspect(reason)}")
+        Logger.warn("Could not decode response for scheduled headways: #{inspect(reason)}")
         []
     end
   end

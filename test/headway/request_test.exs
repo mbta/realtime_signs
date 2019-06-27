@@ -24,7 +24,7 @@ defmodule Headway.RequestTest do
         assert get_schedules(["parse_error"]) == []
       end)
 
-    assert log =~ "Could not decode response:"
+    assert log =~ "Could not decode response for scheduled headways:"
   end
 
   test "parses valid json" do

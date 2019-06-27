@@ -33,7 +33,7 @@ defmodule Headway.ObservedHeadwayFetcher do
         {:ok, response}
 
       {:error, reason} ->
-        Logger.warn("Could not decode response: #{inspect(reason)}")
+        Logger.warn("Could not decode response for observed headways: #{inspect(reason)}")
         :error
     end
   end
