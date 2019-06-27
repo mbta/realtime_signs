@@ -36,5 +36,14 @@ defmodule Headway.ObservedHeadwayFetcherTest do
 
       assert ObservedHeadwayFetcher.fetch() == :error
     end
+
+    test "returns an error when JSON parsing fails" do
+      reassign_env(
+        :recent_headways_url,
+        "https://www.example.com/malformed_headways.json"
+      )
+
+      assert ObservedHeadwayFetcher.fetch() == :error
+    end
   end
 end

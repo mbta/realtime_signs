@@ -395,5 +395,9 @@ defmodule Fake.HTTPoison do
     {:error, %HTTPoison.Error{reason: "This domain doesn't exist"}}
   end
 
+  def mock_response("https://www.example.com/malformed_headways.json") do
+    {:ok, %HTTPoison.Response{status_code: 200, body: "what is this I don't even"}}
+  end
+
   def mock_response(_), do: {:ok, %HTTPoison.Response{status_code: 200, body: ""}}
 end
