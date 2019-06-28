@@ -1,11 +1,11 @@
-defmodule Engine.HeadwaysTest do
+defmodule Engine.ScheduledHeadwaysTest do
   use ExUnit.Case
   import ExUnit.CaptureLog
 
   describe "GenServer initialization" do
     test "GenServer starts up successfully" do
       {:ok, pid} =
-        Engine.Headways.start_link(
+        Engine.ScheduledHeadways.start_link(
           gen_server_name: __MODULE__,
           ets_table_name: __MODULE__,
           time_fetcher: fn -> Timex.to_datetime(~N[2017-07-04 09:00:00], "America/New_York") end
@@ -67,10 +67,10 @@ defmodule Engine.HeadwaysTest do
         time_fetcher: fn -> Timex.to_datetime(~N[2017-07-04 09:00:00], "America/New_York") end
       }
 
-      {:noreply, state} = Engine.Headways.handle_info(:data_update, state)
-      {:noreply, state} = Engine.Headways.handle_info(:calculation_update, state)
+      {:noreply, state} = Engine.ScheduledHeadways.handle_info(:data_update, state)
+      {:noreply, state} = Engine.ScheduledHeadways.handle_info(:calculation_update, state)
 
-      assert Engine.Headways.get_headways(state.ets_table_name, "123") == {10, 17}
+      assert Engine.ScheduledHeadways.get_headways(state.ets_table_name, "123") == {10, 17}
     end
   end
 
@@ -94,7 +94,7 @@ defmodule Engine.HeadwaysTest do
         stop_ids: ["123"]
       }
 
-      {:noreply, updated_state} = Engine.Headways.handle_info(:data_update, state)
+      {:noreply, updated_state} = Engine.ScheduledHeadways.handle_info(:data_update, state)
       updated_schedule = updated_state.schedule_data
 
       for {state_schedule, index} <-
