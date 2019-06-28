@@ -98,6 +98,7 @@ defmodule Engine.ObservedHeadways do
     {:noreply, state}
   end
 
+  @spec schedule_fetch(non_neg_integer()) :: reference()
   defp schedule_fetch(ms \\ 0) do
     Process.send_after(self(), :fetch_headways, ms)
   end

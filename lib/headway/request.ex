@@ -18,7 +18,7 @@ defmodule Headway.Request do
 
   @spec validate_and_parse_response({atom, %HTTPoison.Response{}} | {atom, %HTTPoison.Error{}}) ::
           [
-            %{}
+            map()
           ]
   defp validate_and_parse_response(response) do
     case response do
@@ -39,7 +39,8 @@ defmodule Headway.Request do
     end
   end
 
-  defp parse_body(body) do
+  @spec parse_body(String.t()) :: [map()]
+  defp(parse_body(body)) do
     case Poison.decode(body) do
       {:ok, response} ->
         Map.get(response, "data")
