@@ -100,12 +100,12 @@ defmodule Engine.ObservedHeadwaysTest do
       assert ObservedHeadways.get_headways("456") == {9, 19}
     end
 
-    test "bounds are never lower than 6 minutes" do
+    test "bounds are never lower than 4 minutes" do
       :sys.replace_state(ObservedHeadways, fn _ ->
         %{
           recent_headways: %{
-            "ashmont" => [300, 783, 842, 623, 920],
-            "braintree" => [280, 183, 242, 123, 320]
+            "ashmont" => [121, 783, 842, 623, 820],
+            "braintree" => [180, 183, 142, 123, 220]
           },
           stops: %{
             "123" => ["ashmont"],
@@ -114,8 +114,8 @@ defmodule Engine.ObservedHeadwaysTest do
         }
       end)
 
-      assert ObservedHeadways.get_headways("123") == {6, 15}
-      assert ObservedHeadways.get_headways("456") == {6, 6}
+      assert ObservedHeadways.get_headways("123") == {4, 14}
+      assert ObservedHeadways.get_headways("456") == {4, 4}
     end
 
     test "bounds are never higher than 20 minutes" do

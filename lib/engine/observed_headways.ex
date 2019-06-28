@@ -1,7 +1,7 @@
 defmodule Engine.ObservedHeadways do
   use GenServer
 
-  @min_headway 6
+  @min_headway 4
   @max_headway 20
   @max_spread 10
   @default_recent_headway 3600
