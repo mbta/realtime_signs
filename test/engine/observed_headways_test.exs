@@ -17,7 +17,7 @@ defmodule Engine.ObservedHeadwaysTest do
                  "oak_grove" => [3600],
                  "wonderland" => [3600]
                },
-               stops: %{
+               stops_to_terminal_ids: %{
                  "70082" => ["ashmont", "braintree"],
                  "70083" => ["alewife"],
                  "70084" => ["ashmont", "braintree"],
@@ -43,7 +43,7 @@ defmodule Engine.ObservedHeadwaysTest do
             "alewife" => [621, 475, 739, 740, 530],
             "ashmont" => [540, 783, 942, 623, 673]
           },
-          stops: %{
+          stops_to_terminal_ids: %{
             "123" => ["alewife"],
             "456" => ["ashmont"],
             "789" => ["alewife"]
@@ -60,7 +60,7 @@ defmodule Engine.ObservedHeadwaysTest do
           recent_headways: %{
             "ashmont" => [620]
           },
-          stops: %{
+          stops_to_terminal_ids: %{
             "123" => ["ashmont"]
           }
         }
@@ -76,7 +76,7 @@ defmodule Engine.ObservedHeadwaysTest do
             "ashmont" => [621, 475, 739, 740, 1035],
             "braintree" => [540, 783, 942, 623, 673]
           },
-          stops: %{
+          stops_to_terminal_ids: %{
             "456" => ["ashmont", "braintree"]
           }
         }
@@ -91,7 +91,7 @@ defmodule Engine.ObservedHeadwaysTest do
           recent_headways: %{
             "ashmont" => [450, 783, 942, 623, 1130]
           },
-          stops: %{
+          stops_to_terminal_ids: %{
             "456" => ["ashmont"]
           }
         }
@@ -107,7 +107,7 @@ defmodule Engine.ObservedHeadwaysTest do
             "ashmont" => [121, 783, 842, 623, 820],
             "braintree" => [180, 183, 142, 123, 220]
           },
-          stops: %{
+          stops_to_terminal_ids: %{
             "123" => ["ashmont"],
             "456" => ["braintree"]
           }
@@ -125,7 +125,7 @@ defmodule Engine.ObservedHeadwaysTest do
             "ashmont" => [620, 1200, 842, 623, 920],
             "braintree" => [1300, 1400, 1500, 1600, 1700]
           },
-          stops: %{
+          stops_to_terminal_ids: %{
             "123" => ["ashmont"],
             "456" => ["braintree"]
           }

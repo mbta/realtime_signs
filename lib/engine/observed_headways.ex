@@ -18,10 +18,10 @@ defmodule Engine.ObservedHeadways do
 
   @type t :: %__MODULE__{
           recent_headways: %{String.t() => non_neg_integer()},
-          stops: %{String.t() => String.t()}
+          stops_to_terminal_ids: %{String.t() => String.t()}
         }
 
-  @enforce_keys [:recent_headways, :stops]
+  @enforce_keys [:recent_headways, :stops_to_terminal_ids]
   defstruct @enforce_keys
 
   @spec get_headways(String.t()) :: {non_neg_integer(), non_neg_integer()}
@@ -49,7 +49,7 @@ defmodule Engine.ObservedHeadways do
       end)
 
     initial_state = %__MODULE__{
-      stops: stop_ids_to_terminals,
+      stops_to_terminal_ids: stop_ids_to_terminals,
       recent_headways: Map.new(@terminal_ids, &{&1, [@default_recent_headway]})
     }
 
@@ -58,7 +58,7 @@ defmodule Engine.ObservedHeadways do
   end
 
   def handle_call({:get_headways, stop_id}, _from, state) do
-    terminal_ids = Map.fetch!(state.stops, stop_id)
+    terminal_ids = Map.fetch!(state.stops_to_terminal_ids, stop_id)
 
     headways =
       Enum.map(terminal_ids, fn terminal_id -> Map.fetch!(state.recent_headways, terminal_id) end)
