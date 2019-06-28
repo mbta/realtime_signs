@@ -28,7 +28,13 @@ defmodule Signs.Realtime do
     :read_period_seconds
   ]
 
-  defstruct @enforce_keys ++ [:bridge_id, announced_arrivals: [], announced_approachings: []]
+  defstruct @enforce_keys ++
+              [
+                :bridge_id,
+                :headway_terminal_ids,
+                announced_arrivals: [],
+                announced_approachings: []
+              ]
 
   @type line_content :: {Utilities.SourceConfig.source() | nil, Content.Message.t()}
 
@@ -51,12 +57,13 @@ defmodule Signs.Realtime do
           read_period_seconds: non_neg_integer(),
           bridge_id: Engine.Bridge.bridge_id() | nil,
           announced_arrivals: [Predictions.Prediction.trip_id()],
-          announced_approachings: [Predictions.Prediction.trip_id()]
+          announced_approachings: [Predictions.Prediction.trip_id()],
+          headway_terminal_ids: [String.t()] | nil
         }
 
   def start_link(%{"type" => "realtime"} = config, opts \\ []) do
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
-    headway_engine = opts[:headway_engine] || Engine.Headways
+    headway_engine = opts[:headway_engine] || default_headway_engine(config)
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
     bridge_engine = opts[:bridge_engine] || Engine.Bridge
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
@@ -78,7 +85,8 @@ defmodule Signs.Realtime do
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       expiration_seconds: 130,
       read_period_seconds: 240,
-      bridge_id: Map.get(config, "bridge_id")
+      bridge_id: Map.get(config, "bridge_id"),
+      headway_terminal_ids: Map.get(config, "headway_terminal_ids")
     }
 
     GenServer.start_link(__MODULE__, sign)
@@ -191,5 +199,14 @@ defmodule Signs.Realtime do
         tick_top: sign.tick_top - 1,
         tick_read: sign.tick_read - 1
     }
+  end
+
+  @spec default_headway_engine(map()) :: module()
+  defp default_headway_engine(config) do
+    if Map.has_key?(config, "headway_terminal_ids") do
+      Engine.ObservedHeadways
+    else
+      Engine.ScheduledHeadways
+    end
   end
 end

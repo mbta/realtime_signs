@@ -24,7 +24,7 @@ defmodule Signs.Utilities.SignsConfig do
   end
 
   @spec get_stop_ids_for_sign(map()) :: [String.t()]
-  defp get_stop_ids_for_sign(sign) do
+  def get_stop_ids_for_sign(sign) do
     case sign["type"] do
       "realtime" ->
         sign["source_config"]

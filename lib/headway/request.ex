@@ -18,7 +18,7 @@ defmodule Headway.Request do
 
   @spec validate_and_parse_response({atom, %HTTPoison.Response{}} | {atom, %HTTPoison.Error{}}) ::
           [
-            %{}
+            map()
           ]
   defp validate_and_parse_response(response) do
     case response do
@@ -39,13 +39,14 @@ defmodule Headway.Request do
     end
   end
 
+  @spec parse_body(String.t()) :: [map()]
   defp parse_body(body) do
     case Poison.decode(body) do
       {:ok, response} ->
         Map.get(response, "data")
 
       {:error, reason} ->
-        Logger.warn("Could not decode response: #{inspect(reason)}")
+        Logger.warn("Could not decode response for scheduled headways: #{inspect(reason)}")
         []
     end
   end
