@@ -63,25 +63,25 @@ defmodule Engine.ObservedHeadways do
     headways =
       Enum.map(terminal_ids, fn terminal_id -> Map.fetch!(state.recent_headways, terminal_id) end)
 
-    pessimistic_min =
-      headways |> Enum.map(&Enum.min/1) |> Enum.max() |> Kernel./(60.0) |> Kernel.round()
+    optimistic_min =
+      headways |> Enum.map(&Enum.min/1) |> Enum.min() |> Kernel./(60.0) |> Kernel.round()
 
     pessimistic_max =
       headways |> Enum.map(&Enum.max/1) |> Enum.max() |> Kernel./(60.0) |> Kernel.round()
 
-    pessimistic_min = Enum.max([pessimistic_min, @min_headway])
-    pessimistic_min = Enum.min([pessimistic_min, @max_headway])
+    optimistic_min = Enum.max([optimistic_min, @min_headway])
+    optimistic_min = Enum.min([optimistic_min, @max_headway])
     pessimistic_max = Enum.max([pessimistic_max, @min_headway])
     pessimistic_max = Enum.min([pessimistic_max, @max_headway])
 
-    pessimistic_min =
-      if pessimistic_min < pessimistic_max - @max_spread do
+    optimistic_min =
+      if optimistic_min < pessimistic_max - @max_spread do
         pessimistic_max - @max_spread
       else
-        pessimistic_min
+        optimistic_min
       end
 
-    {:reply, {pessimistic_min, pessimistic_max}, state}
+    {:reply, {optimistic_min, pessimistic_max}, state}
   end
 
   def handle_info(:fetch_headways, state) do

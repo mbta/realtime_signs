@@ -69,7 +69,7 @@ defmodule Engine.ObservedHeadwaysTest do
       assert ObservedHeadways.get_headways("123") == {10, 10}
     end
 
-    test "bases min and max on most pessimistic of last headways when multiple pertinent terminals" do
+    test "bases min and max on most optimistic and pessimistic respectively of last headways when multiple pertinent terminals" do
       :sys.replace_state(ObservedHeadways, fn _ ->
         %{
           recent_headways: %{
@@ -82,7 +82,7 @@ defmodule Engine.ObservedHeadwaysTest do
         }
       end)
 
-      assert ObservedHeadways.get_headways("456") == {9, 17}
+      assert ObservedHeadways.get_headways("456") == {8, 17}
     end
 
     test "shows spread of 10 minutes maximum" do
