@@ -16,7 +16,7 @@ defmodule Engine.ObservedHeadways do
     "wonderland"
   ]
 
-  @type t :: %__MODULE__{
+  @type state :: %__MODULE__{
           recent_headways: %{String.t() => non_neg_integer()},
           stops_to_terminal_ids: %{String.t() => String.t()}
         }
@@ -30,9 +30,9 @@ defmodule Engine.ObservedHeadways do
   end
 
   def start_link(opts \\ []) do
-    name = opts[:gen_server_name] || __MODULE__
+    gen_server_name = opts[:gen_server_name] || __MODULE__
     engine_opts = Keyword.delete(opts, :gen_server_name)
-    GenServer.start_link(__MODULE__, engine_opts, name: name)
+    GenServer.start_link(__MODULE__, engine_opts, name: gen_server_name)
   end
 
   def init(_opts \\ []) do
@@ -58,10 +58,26 @@ defmodule Engine.ObservedHeadways do
   end
 
   def handle_call({:get_headways, stop_id}, _from, state) do
-    terminal_ids = Map.fetch!(state.stops_to_terminal_ids, stop_id)
+    {:reply, estimate_headways_for_stop(stop_id, state), state}
+  end
 
-    headways =
-      Enum.map(terminal_ids, fn terminal_id -> Map.fetch!(state.recent_headways, terminal_id) end)
+  def handle_info(:fetch_headways, state) do
+    schedule_fetch(@fetch_ms)
+
+    fetcher = Application.get_env(:realtime_signs, :observed_headway_fetcher)
+
+    state =
+      case fetcher.fetch() do
+        {:ok, new_headways} -> %__MODULE__{state | recent_headways: new_headways}
+        :error -> state
+      end
+
+    {:noreply, state}
+  end
+
+  @spec estimate_headways_for_stop(String.t(), state()) :: {non_neg_integer, non_neg_integer}
+  defp estimate_headways_for_stop(stop_id, state) do
+    headways = terminal_headways_for_stop(stop_id, state)
 
     optimistic_min =
       headways |> Enum.map(&Enum.min/1) |> Enum.min() |> Kernel./(60.0) |> Kernel.round()
@@ -81,25 +97,17 @@ defmodule Engine.ObservedHeadways do
         optimistic_min
       end
 
-    {:reply, {optimistic_min, pessimistic_max}, state}
-  end
-
-  def handle_info(:fetch_headways, state) do
-    schedule_fetch(@fetch_ms)
-
-    fetcher = Application.get_env(:realtime_signs, :observed_headway_fetcher)
-
-    state =
-      case fetcher.fetch() do
-        {:ok, new_headways} -> %__MODULE__{state | recent_headways: new_headways}
-        :error -> state
-      end
-
-    {:noreply, state}
+    {optimistic_min, pessimistic_max}
   end
 
   @spec schedule_fetch(non_neg_integer()) :: reference()
   defp schedule_fetch(ms \\ 0) do
     Process.send_after(self(), :fetch_headways, ms)
+  end
+
+  @spec terminal_headways_for_stop(String.t(), state()) :: [non_neg_integer]
+  defp terminal_headways_for_stop(stop_id, state) do
+    terminal_ids = Map.fetch!(state.stops_to_terminal_ids, stop_id)
+    Enum.map(terminal_ids, fn terminal_id -> Map.fetch!(state.recent_headways, terminal_id) end)
   end
 end
