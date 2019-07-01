@@ -37,100 +37,88 @@ defmodule Engine.ObservedHeadwaysTest do
     end
 
     test "bases min and max on last 5 headways at pertinent terminal" do
-      :sys.replace_state(ObservedHeadways, fn _ ->
-        %{
-          recent_headways: %{
-            "alewife" => [621, 475, 739, 740, 530],
-            "ashmont" => [540, 783, 942, 623, 673]
-          },
-          stops_to_terminal_ids: %{
-            "123" => ["alewife"],
-            "456" => ["ashmont"],
-            "789" => ["alewife"]
-          }
+      update_state(%{
+        recent_headways: %{
+          "alewife" => [621, 475, 739, 740, 530],
+          "ashmont" => [540, 783, 942, 623, 673]
+        },
+        stops_to_terminal_ids: %{
+          "123" => ["alewife"],
+          "456" => ["ashmont"],
+          "789" => ["alewife"]
         }
-      end)
+      })
 
       assert ObservedHeadways.get_headways("123") == {8, 12}
     end
 
     test "behaves correctly if just one headway recorded" do
-      :sys.replace_state(ObservedHeadways, fn _ ->
-        %{
-          recent_headways: %{
-            "ashmont" => [620]
-          },
-          stops_to_terminal_ids: %{
-            "123" => ["ashmont"]
-          }
+      update_state(%{
+        recent_headways: %{
+          "ashmont" => [620]
+        },
+        stops_to_terminal_ids: %{
+          "123" => ["ashmont"]
         }
-      end)
+      })
 
       assert ObservedHeadways.get_headways("123") == {10, 10}
     end
 
     test "bases min and max on most optimistic and pessimistic respectively of last headways when multiple pertinent terminals" do
-      :sys.replace_state(ObservedHeadways, fn _ ->
-        %{
-          recent_headways: %{
-            "ashmont" => [621, 475, 739, 740, 1035],
-            "braintree" => [540, 783, 942, 623, 673]
-          },
-          stops_to_terminal_ids: %{
-            "456" => ["ashmont", "braintree"]
-          }
+      update_state(%{
+        recent_headways: %{
+          "ashmont" => [621, 475, 739, 740, 1035],
+          "braintree" => [540, 783, 942, 623, 673]
+        },
+        stops_to_terminal_ids: %{
+          "456" => ["ashmont", "braintree"]
         }
-      end)
+      })
 
       assert ObservedHeadways.get_headways("456") == {8, 17}
     end
 
     test "shows spread of 10 minutes maximum" do
-      :sys.replace_state(ObservedHeadways, fn _ ->
-        %{
-          recent_headways: %{
-            "ashmont" => [450, 783, 942, 623, 1130]
-          },
-          stops_to_terminal_ids: %{
-            "456" => ["ashmont"]
-          }
+      update_state(%{
+        recent_headways: %{
+          "ashmont" => [450, 783, 942, 623, 1130]
+        },
+        stops_to_terminal_ids: %{
+          "456" => ["ashmont"]
         }
-      end)
+      })
 
       assert ObservedHeadways.get_headways("456") == {9, 19}
     end
 
     test "bounds are never lower than 4 minutes" do
-      :sys.replace_state(ObservedHeadways, fn _ ->
-        %{
-          recent_headways: %{
-            "ashmont" => [121, 783, 842, 623, 820],
-            "braintree" => [180, 183, 142, 123, 220]
-          },
-          stops_to_terminal_ids: %{
-            "123" => ["ashmont"],
-            "456" => ["braintree"]
-          }
+      update_state(%{
+        recent_headways: %{
+          "ashmont" => [121, 783, 842, 623, 820],
+          "braintree" => [180, 183, 142, 123, 220]
+        },
+        stops_to_terminal_ids: %{
+          "123" => ["ashmont"],
+          "456" => ["braintree"]
         }
-      end)
+      })
 
       assert ObservedHeadways.get_headways("123") == {4, 14}
       assert ObservedHeadways.get_headways("456") == {4, 4}
     end
 
     test "bounds are never higher than 20 minutes" do
-      :sys.replace_state(ObservedHeadways, fn _ ->
-        %{
-          recent_headways: %{
-            "ashmont" => [620, 1200, 842, 623, 920],
-            "braintree" => [1300, 1400, 1500, 1600, 1700]
-          },
-          stops_to_terminal_ids: %{
-            "123" => ["ashmont"],
-            "456" => ["braintree"]
-          }
+      update_state(%{
+        recent_headways: %{
+          "ashmont" => [620, 1200, 842, 623, 920],
+          "braintree" => [1300, 1400, 1500, 1600, 1700]
+        },
+        stops_to_terminal_ids: %{
+          "123" => ["ashmont"],
+          "456" => ["braintree"]
         }
-      end)
+      })
 
       assert ObservedHeadways.get_headways("123") == {10, 20}
       assert ObservedHeadways.get_headways("456") == {20, 20}
@@ -183,5 +171,9 @@ defmodule Engine.ObservedHeadwaysTest do
 
       assert new_state == original_state
     end
+  end
+
+  defp update_state(new_state) do
+    :sys.replace_state(ObservedHeadways, fn _ -> new_state end)
   end
 end
