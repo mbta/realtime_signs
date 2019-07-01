@@ -529,5 +529,28 @@ defmodule Signs.Utilities.MessagesTest do
       assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
+
+    test "when sign is forced into headway mode but no alerts are present, displays headways" do
+      sign = @sign
+      sign_config = :headway
+      alert_status = :none
+
+      assert {{_,
+               %Content.Message.Headways.Top{
+                 headsign: "Mattapan",
+                 vehicle_type: :train
+               }},
+              {_, %Content.Message.Headways.Bottom{range: {1, 4}}}} =
+               Messages.get_messages(sign, sign_config, alert_status, :train, nil)
+    end
+
+    test "when sign is forced into headway mode but alerts are present, alert takes precedence" do
+      sign = @sign
+      sign_config = :headway
+      alert_status = :station_closure
+
+      assert {{_, %Content.Message.Alert.NoService{mode: mode}}, {_, %Content.Message.Empty{}}} =
+               Messages.get_messages(sign, sign_config, alert_status, :train, nil)
+    end
   end
 end
