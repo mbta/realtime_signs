@@ -1,38 +1,36 @@
 defmodule Engine.ConfigTest do
   use ExUnit.Case, async: false
 
-  describe "enabled?/1" do
-    test "is true when the sign is enabled" do
+  describe "sign_config/2" do
+    test "is auto when the sign is enabled" do
       Engine.Config.update()
 
       :timer.sleep(100)
-      assert Engine.Config.enabled?("chelsea_inbound") == true
+      assert Engine.Config.sign_config("chelsea_inbound") == :auto
     end
 
-    test "is false when the sign is disabled" do
+    test "is off when the sign is disabled" do
       Engine.Config.update()
 
       :timer.sleep(100)
-      assert Engine.Config.enabled?("chelsea_outbound") == false
+      assert Engine.Config.sign_config("chelsea_outbound") == :off
     end
 
-    test "is true when the sign is unspecified" do
+    test "is auto when the sign is unspecified" do
       Engine.Config.update()
 
       :timer.sleep(100)
-      assert Engine.Config.enabled?("unspecified_sign") == true
+      assert Engine.Config.sign_config("unspecified_sign") == :auto
     end
-  end
 
-  describe "custom_text" do
     test "returns custom text when it's not expired" do
       state =
         initialize_test_state(:config_test_non_expired, fn ->
           Timex.to_datetime(~N[2017-07-04 07:00:00], "America/New_York")
         end)
 
-      assert Engine.Config.custom_text(state.ets_table_name, "custom_text_test") ==
-               {"Test message", "Please ignore"}
+      assert Engine.Config.sign_config(state.ets_table_name, "custom_text_test") ==
+               {:static_text, {"Test message", "Please ignore"}}
     end
 
     test "does not return custom text when it's expired" do
@@ -41,7 +39,14 @@ defmodule Engine.ConfigTest do
           Timex.to_datetime(~N[2017-07-04 09:00:00], "America/New_York")
         end)
 
-      assert Engine.Config.custom_text(state.ets_table_name, "custom_text_test") == nil
+      assert Engine.Config.sign_config(state.ets_table_name, "custom_text_test") == :auto
+    end
+
+    test "properly returns headway mode" do
+      Engine.Config.update()
+
+      :timer.sleep(100)
+      assert Engine.Config.sign_config("headway_test") == :headway
     end
   end
 
