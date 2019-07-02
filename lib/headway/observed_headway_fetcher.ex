@@ -1,7 +1,7 @@
 defmodule Headway.ObservedHeadwayFetcher do
   require Logger
 
-  @spec fetch() :: {:ok, map()} | :error
+  @spec fetch() :: {:ok, map()} | {:error, String.t()}
   def fetch() do
     http_client = Application.get_env(:realtime_signs, :http_client)
     url = Application.get_env(:realtime_signs, :recent_headways_url)
