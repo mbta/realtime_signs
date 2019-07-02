@@ -25,7 +25,9 @@ defmodule Headway.ObservedHeadwayFetcherTest do
         "https://www.example.com/bad-headways-300.json"
       )
 
-      assert ObservedHeadwayFetcher.fetch() == :error
+      assert ObservedHeadwayFetcher.fetch() ==
+               {:error,
+                "Could not load recent observed headways. Response returned with status code 300"}
     end
 
     test "returns an error when request fails for miscellaneous reaasons" do
@@ -34,7 +36,8 @@ defmodule Headway.ObservedHeadwayFetcherTest do
         "https://www.nonexistent_domain.com/headways.json"
       )
 
-      assert ObservedHeadwayFetcher.fetch() == :error
+      assert ObservedHeadwayFetcher.fetch() ==
+               {:error, "Could not load recent observed headways: \"This domain doesn't exist\""}
     end
 
     test "returns an error when JSON parsing fails" do

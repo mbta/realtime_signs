@@ -1,7 +1,7 @@
 defmodule Headway.ObservedHeadwayFetcher do
   require Logger
 
-  @spec fetch() :: {:ok, map()} | :error
+  @spec fetch() :: {:ok, map()} | {:error, String.t()}
   def fetch() do
     http_client = Application.get_env(:realtime_signs, :http_client)
     url = Application.get_env(:realtime_signs, :recent_headways_url)
@@ -12,17 +12,15 @@ defmodule Headway.ObservedHeadwayFetcher do
         parse_body(body)
 
       {:ok, %HTTPoison.Response{status_code: status}} ->
-        Logger.warn(
+        error_message =
           "Could not load recent observed headways. Response returned with status code #{
             inspect(status)
           }"
-        )
 
-        :error
+        {:error, error_message}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("Could not load recent observed headways: #{inspect(reason)}")
-        :error
+        {:error, "Could not load recent observed headways: #{inspect(reason)}"}
     end
   end
 
