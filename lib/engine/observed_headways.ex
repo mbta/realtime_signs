@@ -25,9 +25,9 @@ defmodule Engine.ObservedHeadways do
   @enforce_keys [:recent_headways, :stop_ids_to_terminal_ids]
   defstruct @enforce_keys
 
-  @spec get_headways(String.t(), :ets.tab()) :: {non_neg_integer(), non_neg_integer()}
-  def get_headways(stop_id, ets_table_name \\ __MODULE__) do
-    headways = terminal_headways_for_stop(stop_id, ets_table_name)
+  @spec get_headways(:ets.tab(), String.t()) :: {non_neg_integer(), non_neg_integer()}
+  def get_headways(ets_table_name \\ __MODULE__, stop_id) do
+    headways = terminal_headways_for_stop(ets_table_name, stop_id)
 
     optimistic_min =
       headways |> Enum.map(&Enum.min/1) |> Enum.min() |> Kernel./(60.0) |> Kernel.round()
@@ -104,8 +104,8 @@ defmodule Engine.ObservedHeadways do
     Process.send_after(self(), :fetch_headways, ms)
   end
 
-  @spec terminal_headways_for_stop(String.t(), :ets.tab()) :: [non_neg_integer]
-  defp terminal_headways_for_stop(stop_id, ets_table_name) do
+  @spec terminal_headways_for_stop(:ets.tab(), String.t()) :: [non_neg_integer]
+  defp terminal_headways_for_stop(ets_table_name, stop_id) do
     terminal_id_hash = :ets.lookup_element(ets_table_name, :stop_ids_to_terminal_ids, 2)
     recent_headways_hash = :ets.lookup_element(ets_table_name, :recent_headways, 2)
 

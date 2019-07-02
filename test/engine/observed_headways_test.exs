@@ -56,7 +56,7 @@ defmodule Engine.ObservedHeadwaysTest do
           }
         })
 
-      assert ObservedHeadways.get_headways("123", new_table_name) == {8, 12}
+      assert ObservedHeadways.get_headways(new_table_name, "123") == {8, 12}
     end
 
     test "behaves correctly if just one headway recorded" do
@@ -70,7 +70,7 @@ defmodule Engine.ObservedHeadwaysTest do
           }
         })
 
-      assert ObservedHeadways.get_headways("123", new_table_name) == {10, 10}
+      assert ObservedHeadways.get_headways(new_table_name, "123") == {10, 10}
     end
 
     test "bases min and max on most optimistic and pessimistic respectively of last headways when multiple pertinent terminals" do
@@ -85,7 +85,7 @@ defmodule Engine.ObservedHeadwaysTest do
           }
         })
 
-      assert ObservedHeadways.get_headways("456", new_table_name) == {8, 17}
+      assert ObservedHeadways.get_headways(new_table_name, "456") == {8, 17}
     end
 
     test "shows spread of 10 minutes maximum" do
@@ -99,7 +99,7 @@ defmodule Engine.ObservedHeadwaysTest do
           }
         })
 
-      assert ObservedHeadways.get_headways("456", new_table_name) == {9, 19}
+      assert ObservedHeadways.get_headways(new_table_name, "456") == {9, 19}
     end
 
     test "bounds are never lower than 4 minutes" do
@@ -115,8 +115,8 @@ defmodule Engine.ObservedHeadwaysTest do
           }
         })
 
-      assert ObservedHeadways.get_headways("123", new_table_name) == {4, 14}
-      assert ObservedHeadways.get_headways("456", new_table_name) == {4, 4}
+      assert ObservedHeadways.get_headways(new_table_name, "123") == {4, 14}
+      assert ObservedHeadways.get_headways(new_table_name, "456") == {4, 4}
     end
 
     test "bounds are never higher than 20 minutes" do
@@ -132,8 +132,8 @@ defmodule Engine.ObservedHeadwaysTest do
           }
         })
 
-      assert ObservedHeadways.get_headways("123", new_table_name) == {10, 20}
-      assert ObservedHeadways.get_headways("456", new_table_name) == {20, 20}
+      assert ObservedHeadways.get_headways(new_table_name, "123") == {10, 20}
+      assert ObservedHeadways.get_headways(new_table_name, "456") == {20, 20}
     end
   end
 
