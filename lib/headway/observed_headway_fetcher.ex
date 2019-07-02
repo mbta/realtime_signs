@@ -12,17 +12,15 @@ defmodule Headway.ObservedHeadwayFetcher do
         parse_body(body)
 
       {:ok, %HTTPoison.Response{status_code: status}} ->
-        Logger.warn(
+        error_message =
           "Could not load recent observed headways. Response returned with status code #{
             inspect(status)
           }"
-        )
 
-        :error
+        {:error, error_message}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("Could not load recent observed headways: #{inspect(reason)}")
-        :error
+        {:error, "Could not load recent observed headways: #{inspect(reason)}"}
     end
   end
 

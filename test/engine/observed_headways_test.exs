@@ -154,7 +154,7 @@ defmodule Engine.ObservedHeadwaysTest do
   end
 
   defmodule FakeHeadwayFetcherSad do
-    def fetch(), do: :error
+    def fetch(), do: {:error, "Everything is terrible"}
   end
 
   describe "headway fetching" do

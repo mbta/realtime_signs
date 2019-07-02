@@ -1,5 +1,6 @@
 defmodule Engine.ObservedHeadways do
   use GenServer
+  require Logger
 
   @min_headway 4
   @max_headway 20
@@ -87,8 +88,12 @@ defmodule Engine.ObservedHeadways do
 
     fetcher = Application.get_env(:realtime_signs, :observed_headway_fetcher)
 
-    with {:ok, new_headways} <- fetcher.fetch() do
-      :ets.insert(ets_table_name, {:recent_headways, new_headways})
+    case fetcher.fetch() do
+      {:ok, new_headways} ->
+        :ets.insert(ets_table_name, {:recent_headways, new_headways})
+
+      {:error, message} ->
+        Logger.warn(message)
     end
 
     {:noreply, ets_table_name}
