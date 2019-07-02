@@ -18,66 +18,15 @@ defmodule Engine.ObservedHeadways do
 
   @type state :: %__MODULE__{
           recent_headways: %{String.t() => non_neg_integer()},
-          stops_to_terminal_ids: %{String.t() => String.t()}
+          stop_ids_to_terminal_ids: %{String.t() => String.t()}
         }
 
-  @enforce_keys [:recent_headways, :stops_to_terminal_ids]
+  @enforce_keys [:recent_headways, :stop_ids_to_terminal_ids]
   defstruct @enforce_keys
 
-  @spec get_headways(String.t()) :: {non_neg_integer(), non_neg_integer()}
-  def get_headways(stop_id) do
-    GenServer.call(__MODULE__, {:get_headways, stop_id})
-  end
-
-  def start_link(opts \\ []) do
-    gen_server_name = opts[:gen_server_name] || __MODULE__
-    engine_opts = Keyword.delete(opts, :gen_server_name)
-    GenServer.start_link(__MODULE__, engine_opts, name: gen_server_name)
-  end
-
-  def init(_opts \\ []) do
-    signs_using_observed_headway =
-      Signs.Utilities.SignsConfig.children_config() |> Enum.filter(& &1["headway_terminal_ids"])
-
-    stop_ids_to_terminals =
-      signs_using_observed_headway
-      |> Map.new(fn sign ->
-        {
-          Signs.Utilities.SignsConfig.get_stop_ids_for_sign(sign) |> hd,
-          sign["headway_terminal_ids"]
-        }
-      end)
-
-    initial_state = %__MODULE__{
-      stops_to_terminal_ids: stop_ids_to_terminals,
-      recent_headways: Map.new(@terminal_ids, &{&1, [@default_recent_headway]})
-    }
-
-    schedule_fetch()
-    {:ok, initial_state}
-  end
-
-  def handle_call({:get_headways, stop_id}, _from, state) do
-    {:reply, estimate_headways_for_stop(stop_id, state), state}
-  end
-
-  def handle_info(:fetch_headways, state) do
-    schedule_fetch(@fetch_ms)
-
-    fetcher = Application.get_env(:realtime_signs, :observed_headway_fetcher)
-
-    state =
-      case fetcher.fetch() do
-        {:ok, new_headways} -> %__MODULE__{state | recent_headways: new_headways}
-        :error -> state
-      end
-
-    {:noreply, state}
-  end
-
-  @spec estimate_headways_for_stop(String.t(), state()) :: {non_neg_integer, non_neg_integer}
-  defp estimate_headways_for_stop(stop_id, state) do
-    headways = terminal_headways_for_stop(stop_id, state)
+  @spec get_headways(String.t(), atom()) :: {non_neg_integer(), non_neg_integer()}
+  def get_headways(stop_id, ets_table_name \\ __MODULE__) do
+    headways = terminal_headways_for_stop(stop_id, ets_table_name)
 
     optimistic_min =
       headways |> Enum.map(&Enum.min/1) |> Enum.min() |> Kernel./(60.0) |> Kernel.round()
@@ -100,14 +49,62 @@ defmodule Engine.ObservedHeadways do
     {optimistic_min, pessimistic_max}
   end
 
+  def start_link(opts \\ []) do
+    gen_server_name = opts[:gen_server_name] || __MODULE__
+    engine_opts = Keyword.delete(opts, :gen_server_name)
+    GenServer.start_link(__MODULE__, engine_opts, name: gen_server_name)
+  end
+
+  def init(opts \\ []) do
+    ets_table_name = opts[:ets_table_name] || __MODULE__
+
+    ^ets_table_name =
+      :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+
+    signs_using_observed_headway =
+      Signs.Utilities.SignsConfig.children_config() |> Enum.filter(& &1["headway_terminal_ids"])
+
+    stop_ids_to_terminal_ids =
+      signs_using_observed_headway
+      |> Map.new(fn sign ->
+        {
+          Signs.Utilities.SignsConfig.get_stop_ids_for_sign(sign) |> hd,
+          sign["headway_terminal_ids"]
+        }
+      end)
+
+    recent_headways = Map.new(@terminal_ids, &{&1, [@default_recent_headway]})
+
+    :ets.insert(ets_table_name, {:stop_ids_to_terminal_ids, stop_ids_to_terminal_ids})
+    :ets.insert(ets_table_name, {:recent_headways, recent_headways})
+
+    schedule_fetch()
+    {:ok, ets_table_name}
+  end
+
+  def handle_info(:fetch_headways, ets_table_name) do
+    schedule_fetch(@fetch_ms)
+
+    fetcher = Application.get_env(:realtime_signs, :observed_headway_fetcher)
+
+    with {:ok, new_headways} <- fetcher.fetch() do
+      :ets.insert(ets_table_name, {:recent_headways, new_headways})
+    end
+
+    {:noreply, ets_table_name}
+  end
+
   @spec schedule_fetch(non_neg_integer()) :: reference()
   defp schedule_fetch(ms \\ 0) do
     Process.send_after(self(), :fetch_headways, ms)
   end
 
-  @spec terminal_headways_for_stop(String.t(), state()) :: [non_neg_integer]
-  defp terminal_headways_for_stop(stop_id, state) do
-    terminal_ids = Map.fetch!(state.stops_to_terminal_ids, stop_id)
-    Enum.map(terminal_ids, fn terminal_id -> Map.fetch!(state.recent_headways, terminal_id) end)
+  @spec terminal_headways_for_stop(String.t(), atom()) :: [non_neg_integer]
+  defp terminal_headways_for_stop(stop_id, ets_table_name) do
+    terminal_id_hash = :ets.lookup_element(ets_table_name, :stop_ids_to_terminal_ids, 2)
+    recent_headways_hash = :ets.lookup_element(ets_table_name, :recent_headways, 2)
+
+    terminal_ids = Map.fetch!(terminal_id_hash, stop_id)
+    Enum.map(terminal_ids, fn terminal_id -> Map.fetch!(recent_headways_hash, terminal_id) end)
   end
 end

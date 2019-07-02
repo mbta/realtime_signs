@@ -5,123 +5,135 @@ defmodule Engine.ObservedHeadwaysTest do
 
   describe "GenServer initialization" do
     test "has reasonable starting state" do
-      {:ok, pid} = ObservedHeadways.start_link(gen_server_name: :new_observed_headways_server)
+      {:ok, _pid} =
+        ObservedHeadways.start_link(
+          gen_server_name: :new_observed_headways_server,
+          ets_table_name: :initial_state_table
+        )
 
-      assert :sys.get_state(pid) == %ObservedHeadways{
-               recent_headways: %{
-                 "alewife" => [3600],
-                 "ashmont" => [3600],
-                 "bowdoin" => [3600],
-                 "braintree" => [3600],
-                 "forest_hills" => [3600],
-                 "oak_grove" => [3600],
-                 "wonderland" => [3600]
-               },
-               stops_to_terminal_ids: %{
-                 "70082" => ["ashmont", "braintree"],
-                 "70083" => ["alewife"],
-                 "70084" => ["ashmont", "braintree"],
-                 "70086" => ["ashmont"],
-                 "70088" => ["ashmont"],
-                 "70090" => ["ashmont"],
-                 "70096" => ["braintree"]
-               }
-             }
+      expected_recent_headways = %{
+        "alewife" => [3600],
+        "ashmont" => [3600],
+        "bowdoin" => [3600],
+        "braintree" => [3600],
+        "forest_hills" => [3600],
+        "oak_grove" => [3600],
+        "wonderland" => [3600]
+      }
+
+      expected_stop_ids_to_terminal_ids = %{
+        "70082" => ["ashmont", "braintree"],
+        "70083" => ["alewife"],
+        "70084" => ["ashmont", "braintree"],
+        "70086" => ["ashmont"],
+        "70088" => ["ashmont"],
+        "70090" => ["ashmont"],
+        "70096" => ["braintree"]
+      }
+
+      actual_recent_headways = :ets.lookup_element(:initial_state_table, :recent_headways, 2)
+
+      actual_stop_ids_to_terminal_ids =
+        :ets.lookup_element(:initial_state_table, :stop_ids_to_terminal_ids, 2)
+
+      assert actual_recent_headways == expected_recent_headways
+      assert actual_stop_ids_to_terminal_ids == expected_stop_ids_to_terminal_ids
     end
   end
 
   describe "get_headways/1" do
-    setup do
-      original_state = :sys.get_state(ObservedHeadways)
-      on_exit(fn -> :sys.replace_state(ObservedHeadways, fn _ -> original_state end) end)
-    end
-
     test "bases min and max on last 5 headways at pertinent terminal" do
-      update_state(%{
-        recent_headways: %{
-          "alewife" => [621, 475, 739, 740, 530],
-          "ashmont" => [540, 783, 942, 623, 673]
-        },
-        stops_to_terminal_ids: %{
-          "123" => ["alewife"],
-          "456" => ["ashmont"],
-          "789" => ["alewife"]
-        }
-      })
+      new_table_name =
+        update_state(%{
+          recent_headways: %{
+            "alewife" => [621, 475, 739, 740, 530],
+            "ashmont" => [540, 783, 942, 623, 673]
+          },
+          stop_ids_to_terminal_ids: %{
+            "123" => ["alewife"],
+            "456" => ["ashmont"],
+            "789" => ["alewife"]
+          }
+        })
 
-      assert ObservedHeadways.get_headways("123") == {8, 12}
+      assert ObservedHeadways.get_headways("123", new_table_name) == {8, 12}
     end
 
     test "behaves correctly if just one headway recorded" do
-      update_state(%{
-        recent_headways: %{
-          "ashmont" => [620]
-        },
-        stops_to_terminal_ids: %{
-          "123" => ["ashmont"]
-        }
-      })
+      new_table_name =
+        update_state(%{
+          recent_headways: %{
+            "ashmont" => [620]
+          },
+          stop_ids_to_terminal_ids: %{
+            "123" => ["ashmont"]
+          }
+        })
 
-      assert ObservedHeadways.get_headways("123") == {10, 10}
+      assert ObservedHeadways.get_headways("123", new_table_name) == {10, 10}
     end
 
     test "bases min and max on most optimistic and pessimistic respectively of last headways when multiple pertinent terminals" do
-      update_state(%{
-        recent_headways: %{
-          "ashmont" => [621, 475, 739, 740, 1035],
-          "braintree" => [540, 783, 942, 623, 673]
-        },
-        stops_to_terminal_ids: %{
-          "456" => ["ashmont", "braintree"]
-        }
-      })
+      new_table_name =
+        update_state(%{
+          recent_headways: %{
+            "ashmont" => [621, 475, 739, 740, 1035],
+            "braintree" => [540, 783, 942, 623, 673]
+          },
+          stop_ids_to_terminal_ids: %{
+            "456" => ["ashmont", "braintree"]
+          }
+        })
 
-      assert ObservedHeadways.get_headways("456") == {8, 17}
+      assert ObservedHeadways.get_headways("456", new_table_name) == {8, 17}
     end
 
     test "shows spread of 10 minutes maximum" do
-      update_state(%{
-        recent_headways: %{
-          "ashmont" => [450, 783, 942, 623, 1130]
-        },
-        stops_to_terminal_ids: %{
-          "456" => ["ashmont"]
-        }
-      })
+      new_table_name =
+        update_state(%{
+          recent_headways: %{
+            "ashmont" => [450, 783, 942, 623, 1130]
+          },
+          stop_ids_to_terminal_ids: %{
+            "456" => ["ashmont"]
+          }
+        })
 
-      assert ObservedHeadways.get_headways("456") == {9, 19}
+      assert ObservedHeadways.get_headways("456", new_table_name) == {9, 19}
     end
 
     test "bounds are never lower than 4 minutes" do
-      update_state(%{
-        recent_headways: %{
-          "ashmont" => [121, 783, 842, 623, 820],
-          "braintree" => [180, 183, 142, 123, 220]
-        },
-        stops_to_terminal_ids: %{
-          "123" => ["ashmont"],
-          "456" => ["braintree"]
-        }
-      })
+      new_table_name =
+        update_state(%{
+          recent_headways: %{
+            "ashmont" => [121, 783, 842, 623, 820],
+            "braintree" => [180, 183, 142, 123, 220]
+          },
+          stop_ids_to_terminal_ids: %{
+            "123" => ["ashmont"],
+            "456" => ["braintree"]
+          }
+        })
 
-      assert ObservedHeadways.get_headways("123") == {4, 14}
-      assert ObservedHeadways.get_headways("456") == {4, 4}
+      assert ObservedHeadways.get_headways("123", new_table_name) == {4, 14}
+      assert ObservedHeadways.get_headways("456", new_table_name) == {4, 4}
     end
 
     test "bounds are never higher than 20 minutes" do
-      update_state(%{
-        recent_headways: %{
-          "ashmont" => [620, 1200, 842, 623, 920],
-          "braintree" => [1300, 1400, 1500, 1600, 1700]
-        },
-        stops_to_terminal_ids: %{
-          "123" => ["ashmont"],
-          "456" => ["braintree"]
-        }
-      })
+      new_table_name =
+        update_state(%{
+          recent_headways: %{
+            "ashmont" => [620, 1200, 842, 623, 920],
+            "braintree" => [1300, 1400, 1500, 1600, 1700]
+          },
+          stop_ids_to_terminal_ids: %{
+            "123" => ["ashmont"],
+            "456" => ["braintree"]
+          }
+        })
 
-      assert ObservedHeadways.get_headways("123") == {10, 20}
-      assert ObservedHeadways.get_headways("456") == {20, 20}
+      assert ObservedHeadways.get_headways("123", new_table_name) == {10, 20}
+      assert ObservedHeadways.get_headways("456", new_table_name) == {20, 20}
     end
   end
 
@@ -149,10 +161,18 @@ defmodule Engine.ObservedHeadwaysTest do
     test "overwrites old headway information when successful" do
       reassign_env(:observed_headway_fetcher, FakeHeadwayFetcherHappy)
 
-      {:noreply, new_state} =
-        ObservedHeadways.handle_info(:fetch_headways, :sys.get_state(ObservedHeadways))
+      :table_for_overwrite_test =
+        :ets.new(:table_for_overwrite_test, [
+          :set,
+          :protected,
+          :named_table,
+          read_concurrency: true
+        ])
 
-      assert new_state.recent_headways == %{
+      {:noreply, :table_for_overwrite_test} =
+        ObservedHeadways.handle_info(:fetch_headways, :table_for_overwrite_test)
+
+      assert :ets.lookup_element(:table_for_overwrite_test, :recent_headways, 2) == %{
                "alewife" => [1, 4, 9],
                "ashmont" => [2, 3, 5],
                "bowdoin" => [99, 100, 101],
@@ -174,6 +194,19 @@ defmodule Engine.ObservedHeadwaysTest do
   end
 
   defp update_state(new_state) do
-    :sys.replace_state(ObservedHeadways, fn _ -> new_state end)
+    new_table_name = UUID.uuid1() |> String.to_atom()
+
+    ^new_table_name =
+      :ets.new(new_table_name, [:set, :protected, :named_table, read_concurrency: true])
+
+    for pair <- new_state do
+      :ets.insert(new_table_name, pair)
+    end
+
+    :ets.lookup(new_table_name, :recent_headways)
+    :ets.lookup(new_table_name, :stop_ids_to_terminal_ids)
+    :sys.replace_state(ObservedHeadways, fn _ -> new_table_name end)
+
+    new_table_name
   end
 end
