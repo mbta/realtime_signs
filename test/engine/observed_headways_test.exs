@@ -205,7 +205,6 @@ defmodule Engine.ObservedHeadwaysTest do
 
     :ets.lookup(new_table_name, :recent_headways)
     :ets.lookup(new_table_name, :stop_ids_to_terminal_ids)
-    :sys.replace_state(ObservedHeadways, fn _ -> new_table_name end)
 
     new_table_name
   end
