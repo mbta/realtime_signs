@@ -108,9 +108,7 @@ defmodule Signs.Realtime do
 
     alert_status = sign.alerts_engine.max_stop_status(sign_stop_ids, sign_routes)
 
-    enabled? = Engine.Config.enabled?(sign.id)
-
-    custom_text = Engine.Config.custom_text(sign.id)
+    sign_config = Engine.Config.sign_config(sign.id)
 
     mode = Content.Message.Alert.NoService.transit_mode_for_routes(sign_routes)
 
@@ -124,9 +122,8 @@ defmodule Signs.Realtime do
     {top, bottom} =
       Utilities.Messages.get_messages(
         sign,
-        enabled?,
+        sign_config,
         alert_status,
-        custom_text,
         mode,
         bridge_state
       )
