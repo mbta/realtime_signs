@@ -101,22 +101,20 @@ defmodule Signs.Utilities.MessagesTest do
   describe "get_messages" do
     test "when custom text is present, display it, overriding alerts or disabled status" do
       sign = @sign
-      enabled? = false
+      sign_config = {:static_text, {"Test message", "Please ignore"}}
       alert_status = :suspension
-      custom_text = {"Test message", "Please ignore"}
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{nil, Content.Message.Custom.new("Test message", :top)},
                 {nil, Content.Message.Custom.new("Please ignore", :bottom)}}
     end
 
     test "when sign is disabled, it's empty" do
       sign = @sign
-      enabled? = false
+      sign_config = :off
       alert_status = :none
-      custom_text = nil
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
@@ -130,11 +128,10 @@ defmodule Signs.Utilities.MessagesTest do
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
 
-      enabled? = true
+      sign_config = :auto
       alert_status = :shuttles_transfer_station
-      custom_text = nil
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
@@ -148,11 +145,10 @@ defmodule Signs.Utilities.MessagesTest do
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
 
-      enabled? = true
+      sign_config = :auto
       alert_status = :suspension_transfer_station
-      custom_text = nil
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
@@ -166,21 +162,19 @@ defmodule Signs.Utilities.MessagesTest do
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
 
-      enabled? = true
+      sign_config = :auto
       alert_status = :shuttles_transfer_station
-      custom_text = nil
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
     test "when sign is at a transfer station, but there are departure predictions it shows them" do
       sign = @sign
-      enabled? = true
+      sign_config = :auto
       alert_status = :shuttles_transfer_station
-      custom_text = nil
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
                    announce_boarding?: false,
@@ -229,11 +223,10 @@ defmodule Signs.Utilities.MessagesTest do
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
 
-      enabled? = true
+      sign_config = :auto
       alert_status = :shuttles_closed_station
-      custom_text = nil
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{nil, %Content.Message.Alert.NoService{mode: :train}},
                 {nil, %Content.Message.Alert.UseShuttleBus{}}}
     end
@@ -248,11 +241,10 @@ defmodule Signs.Utilities.MessagesTest do
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
 
-      enabled? = true
+      sign_config = :auto
       alert_status = :shuttles_closed_station
-      custom_text = nil
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
                    announce_boarding?: false,
@@ -302,10 +294,9 @@ defmodule Signs.Utilities.MessagesTest do
       }
 
       alert_status = :suspension_closed_station
-      enabled? = true
-      custom_text = nil
+      sign_config = :auto
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{nil, %Content.Message.Alert.NoService{mode: :train}},
                 {nil, Content.Message.Empty.new()}}
     end
@@ -321,10 +312,9 @@ defmodule Signs.Utilities.MessagesTest do
       }
 
       alert_status = :station_closure
-      enabled? = true
-      custom_text = nil
+      sign_config = :auto
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{nil, %Content.Message.Alert.NoService{mode: :train}},
                 {nil, Content.Message.Empty.new()}}
     end
@@ -340,10 +330,9 @@ defmodule Signs.Utilities.MessagesTest do
       }
 
       alert_status = :suspension
-      enabled? = true
-      custom_text = nil
+      sign_config = :auto
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
                    announce_boarding?: false,
@@ -385,15 +374,13 @@ defmodule Signs.Utilities.MessagesTest do
     test "when there are no alerts and the bridge is up, displays the bridge up message with estimate" do
       sign = %{@sign | source_config: {[%{@src | stop_id: "no_preds"}]}}
 
-      enabled? = true
+      sign_config = :auto
       alert_status = :none
-      custom_text = nil
 
       assert Messages.get_messages(
                sign,
-               enabled?,
+               sign_config,
                alert_status,
-               custom_text,
                :none,
                {"Raised", 5}
              ) ==
@@ -404,15 +391,13 @@ defmodule Signs.Utilities.MessagesTest do
     test "when there are no alerts and the bridge is up, displays the bridge up message without estimate" do
       sign = %{@sign | source_config: {[%{@src | stop_id: "no_preds"}]}}
 
-      enabled? = true
+      sign_config = :auto
       alert_status = :none
-      custom_text = nil
 
       assert Messages.get_messages(
                sign,
-               enabled?,
+               sign_config,
                alert_status,
-               custom_text,
                :none,
                {"Raised", -2}
              ) ==
@@ -423,15 +408,13 @@ defmodule Signs.Utilities.MessagesTest do
     test "when there are alerts and the bridge is up, defer to the alerts" do
       sign = %{@sign | source_config: {[%{@src | stop_id: "no_preds"}]}}
 
-      enabled? = true
+      sign_config = :auto
       alert_status = :station_closure
-      custom_text = nil
 
       assert Messages.get_messages(
                sign,
-               enabled?,
+               sign_config,
                alert_status,
-               custom_text,
                :none,
                {"Raised", 5}
              ) ==
@@ -442,17 +425,15 @@ defmodule Signs.Utilities.MessagesTest do
     test "when there is a bridge configured for the sign but it is lowered, display headways as usual" do
       sign = %{@sign | source_config: {[%{@src | stop_id: "no_preds"}]}}
 
-      enabled? = true
+      sign_config = :auto
       alert_status = :none
-      custom_text = nil
 
       assert {{%Signs.Utilities.SourceConfig{}, %Content.Message.Headways.Top{}},
               {%Signs.Utilities.SourceConfig{}, %Content.Message.Headways.Bottom{range: {1, 4}}}} =
                Messages.get_messages(
                  sign,
-                 enabled?,
+                 sign_config,
                  alert_status,
-                 custom_text,
                  :none,
                  {"Lowered", nil}
                )
@@ -460,11 +441,10 @@ defmodule Signs.Utilities.MessagesTest do
 
     test "when there are predictions, puts predictions on the sign" do
       sign = @sign
-      enabled? = true
+      sign_config = :auto
       alert_status = :none
-      custom_text = nil
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
                    announce_boarding?: false,
@@ -505,11 +485,10 @@ defmodule Signs.Utilities.MessagesTest do
 
     test "when there are no predictions and only one source config, puts headways on the sign" do
       sign = %{@sign | source_config: {[%{@src | stop_id: "no_preds"}]}}
-      enabled? = true
+      sign_config = :auto
       alert_status = :none
-      custom_text = nil
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
                    announce_boarding?: false,
@@ -544,12 +523,34 @@ defmodule Signs.Utilities.MessagesTest do
         | source_config: {[%{@src | stop_id: "no_preds"}, %{@src | stop_id: "no_preds"}]}
       }
 
-      enabled? = true
+      sign_config = :auto
       alert_status = :none
-      custom_text = nil
 
-      assert Messages.get_messages(sign, enabled?, alert_status, custom_text, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+    end
+
+    test "when sign is forced into headway mode but no alerts are present, displays headways" do
+      sign = @sign
+      sign_config = :headway
+      alert_status = :none
+
+      assert {{_,
+               %Content.Message.Headways.Top{
+                 headsign: "Mattapan",
+                 vehicle_type: :train
+               }},
+              {_, %Content.Message.Headways.Bottom{range: {1, 4}}}} =
+               Messages.get_messages(sign, sign_config, alert_status, :train, nil)
+    end
+
+    test "when sign is forced into headway mode but alerts are present, alert takes precedence" do
+      sign = @sign
+      sign_config = :headway
+      alert_status = :station_closure
+
+      assert {{_, %Content.Message.Alert.NoService{mode: mode}}, {_, %Content.Message.Empty{}}} =
+               Messages.get_messages(sign, sign_config, alert_status, :train, nil)
     end
   end
 end
