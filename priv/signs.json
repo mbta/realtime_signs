@@ -3952,6 +3952,7 @@
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
+    "headway_terminal_ids": ["ashmont"],
     "source_config": [
       [
         {
@@ -4030,6 +4031,7 @@
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
+    "headway_terminal_ids": ["ashmont"],
     "source_config": [
       [
         {
@@ -4364,6 +4366,7 @@
     "read_loop_offset": 150,
     "text_zone": "c",
     "audio_zones": ["c"],
+    "headway_terminal_ids": ["braintree"],
     "source_config": [
       [
         {
@@ -4407,6 +4410,7 @@
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": ["m"],
+    "headway_terminal_ids": ["braintree"],
     "source_config": [
       [
         {
