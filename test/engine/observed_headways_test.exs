@@ -28,7 +28,10 @@ defmodule Engine.ObservedHeadwaysTest do
         "70086" => ["ashmont"],
         "70088" => ["ashmont"],
         "70090" => ["ashmont"],
-        "70096" => ["braintree"]
+        "70096" => ["braintree"],
+        "70092" => ["ashmont"],
+        "70094" => ["ashmont"],
+        "70105" => ["braintree"]
       }
 
       actual_recent_headways = :ets.lookup_element(:initial_state_table, :recent_headways, 2)
