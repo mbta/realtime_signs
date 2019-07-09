@@ -32,4 +32,14 @@ defmodule Content.Message.CustomTest do
 
     assert log =~ "Invalid custom message"
   end
+
+  test "allows comma, slash, bang, at, and single quotes" do
+    log =
+      capture_log([level: :error], fn ->
+        msg = Content.Message.Custom.new(",/!@'", :top)
+        assert Content.Message.to_string(msg) == ",/!@'"
+      end)
+
+    refute log =~ "Invalid custom message"
+  end
 end
