@@ -12,13 +12,8 @@ defmodule Content.Message.Headways.Top do
     def to_string(%Content.Message.Headways.Top{
           headsign: headsign,
           vehicle_type: type
-        })
-        when headsign in ["Northbound", "Southbound", "Eastbound", "Westbound"] do
+        }) do
       "#{headsign} #{signify_vehicle_type(type)}"
-    end
-
-    def to_string(%Content.Message.Headways.Top{headsign: headsign, vehicle_type: type}) do
-      "#{signify_vehicle_type(type)} to #{signify_headsign(headsign)}"
     end
 
     defp signify_vehicle_type(:train) do
