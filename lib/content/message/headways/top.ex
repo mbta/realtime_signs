@@ -12,12 +12,20 @@ defmodule Content.Message.Headways.Top do
     def to_string(%Content.Message.Headways.Top{
           headsign: headsign,
           vehicle_type: type
+        })
+        when type in [:bus] do
+      "#{signify_vehicle_type(type)} to #{signify_headsign(headsign)}"
+    end
+
+    def to_string(%Content.Message.Headways.Top{
+          headsign: headsign,
+          vehicle_type: type
         }) do
       "#{headsign} #{signify_vehicle_type(type)}"
     end
 
     defp signify_vehicle_type(:train) do
-      "Trains"
+      "trains"
     end
 
     defp signify_vehicle_type(:bus) do
