@@ -58,6 +58,87 @@ defmodule Content.Audio.VehiclesToDestinationTest do
              } = from_headway_message(%Content.Message.Headways.Top{headsign: "Chelsea"}, @msg)
     end
 
+    test "returns an audio message from a headway message to red/orange/blue/green line terminals" do
+      # green line
+      assert %Content.Audio.VehiclesToDestination{
+               language: :english,
+               destination: :lechmere
+             } = from_headway_message(%Content.Message.Headways.Top{headsign: "Lechmere"}, @msg)
+
+      assert %Content.Audio.VehiclesToDestination{
+               language: :english,
+               destination: :govt_ctr
+             } = from_headway_message(%Content.Message.Headways.Top{headsign: "Govt Ctr"}, @msg)
+
+      assert %Content.Audio.VehiclesToDestination{
+               language: :english,
+               destination: :north_sta
+             } =
+               from_headway_message(
+                 %Content.Message.Headways.Top{headsign: "North Station"},
+                 @msg
+               )
+
+      assert %Content.Audio.VehiclesToDestination{language: :english, destination: :park_street} =
+               from_headway_message(%Content.Message.Headways.Top{headsign: "Park Street"}, @msg)
+
+      assert %Content.Audio.VehiclesToDestination{
+               language: :english,
+               destination: :heath_street
+             } = from_headway_message(%Content.Message.Headways.Top{headsign: "Heath St"}, @msg)
+
+      assert %Content.Audio.VehiclesToDestination{
+               language: :english,
+               destination: :riverside
+             } = from_headway_message(%Content.Message.Headways.Top{headsign: "Riverside"}, @msg)
+
+      assert %Content.Audio.VehiclesToDestination{
+               language: :english,
+               destination: :boston_college
+             } =
+               from_headway_message(
+                 %Content.Message.Headways.Top{headsign: "Boston College"},
+                 @msg
+               )
+
+      assert %Content.Audio.VehiclesToDestination{
+               language: :english,
+               destination: :cleveland_circle
+             } =
+               from_headway_message(
+                 %Content.Message.Headways.Top{headsign: "Cleveland Circle"},
+                 @msg
+               )
+
+      # blue line
+      assert %Content.Audio.VehiclesToDestination{
+               language: :english,
+               destination: :bowdoin
+             } = from_headway_message(%Content.Message.Headways.Top{headsign: "Bowdoin"}, @msg)
+
+      assert %Content.Audio.VehiclesToDestination{language: :english, destination: :wonderland} =
+               from_headway_message(%Content.Message.Headways.Top{headsign: "Wonderland"}, @msg)
+
+      # orange line
+      assert %Content.Audio.VehiclesToDestination{
+               language: :english,
+               destination: :forest_hills
+             } = from_headway_message(%Content.Message.Headways.Top{headsign: "Frst Hills"}, @msg)
+
+      assert %Content.Audio.VehiclesToDestination{language: :english, destination: :oak_grove} =
+               from_headway_message(%Content.Message.Headways.Top{headsign: "Oak Grove"}, @msg)
+
+      # red line
+      assert %Content.Audio.VehiclesToDestination{language: :english, destination: :alewife} =
+               from_headway_message(%Content.Message.Headways.Top{headsign: "Alewife"}, @msg)
+
+      assert %Content.Audio.VehiclesToDestination{language: :english, destination: :ashmont} =
+               from_headway_message(%Content.Message.Headways.Top{headsign: "Ashmont"}, @msg)
+
+      assert %Content.Audio.VehiclesToDestination{language: :english, destination: :braintree} =
+               from_headway_message(%Content.Message.Headways.Top{headsign: "Braintree"}, @msg)
+    end
+
     test "returns an audio message from a headway message to south station" do
       assert {
                %Content.Audio.VehiclesToDestination{
