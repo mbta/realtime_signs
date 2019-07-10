@@ -429,6 +429,33 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("stops_away_message_reverse_order", 1) do
+      [
+        %Predictions.Prediction{
+          stop_id: "stops_away_message",
+          direction_id: 1,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 5,
+          boarding_status: nil,
+          destination_stop_id: "70061",
+          seconds_until_arrival: 800,
+          seconds_until_departure: 830
+        },
+        %Predictions.Prediction{
+          stop_id: "stops_away_message",
+          direction_id: 1,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 4,
+          boarding_status: nil,
+          destination_stop_id: "70061",
+          seconds_until_arrival: 900,
+          seconds_until_departure: 930
+        }
+      ]
+    end
+
     def for_stop(_stop_id, _direction_id) do
       []
     end
@@ -714,6 +741,26 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s, %Content.Message.Predictions{headsign: "Alewife"}},
                {nil, %Content.Message.Empty{}}
+             } = Signs.Utilities.Predictions.get_messages(sign)
+    end
+
+    test "Returns stops away messages reordered by number of stops" do
+      s = %SourceConfig{
+        stop_id: "stops_away_message_reverse_order",
+        headway_direction_name: "Alewife",
+        direction_id: 1,
+        terminal?: false,
+        platform: nil,
+        announce_arriving?: true,
+        announce_boarding?: false
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      assert {
+               {^s, %Content.Message.StopsAway{headsign: "Alewife", stops_away: 4}},
+               {^s, %Content.Message.StopsAway{headsign: "Alewife", stops_away: 5}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 

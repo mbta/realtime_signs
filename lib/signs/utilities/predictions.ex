@@ -21,6 +21,9 @@ defmodule Signs.Utilities.Predictions do
     get_predictions(sign.prediction_engine, both_lines_sources)
   end
 
+  @spec get_predictions(module(), [Signs.Utilities.SourceConfig.source()]) ::
+          {{SourceConfig.source() | nil, Content.Message.t()},
+           {SourceConfig.source() | nil, Content.Message.t()}}
   defp get_predictions(prediction_engine, source_list) do
     source_list
     |> Enum.flat_map(fn source ->
@@ -66,6 +69,7 @@ defmodule Signs.Utilities.Predictions do
           {source, Content.Message.Predictions.non_terminal(prediction)}
       end
     end)
+    |> sort_messages_by_stops_away()
     |> case do
       [] ->
         {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
@@ -120,5 +124,20 @@ defmodule Signs.Utilities.Predictions do
 
   defp allowed_multi_berth_platform?(_, _) do
     false
+  end
+
+  @spec sort_messages_by_stops_away([{SourceConfig.source() | nil, Content.Message.t()}]) :: [
+          {SourceConfig.source() | nil, Content.Message.t()}
+        ]
+  defp sort_messages_by_stops_away([
+         {s1, %Content.Message.StopsAway{stops_away: stops_away1} = m1},
+         {s2, %Content.Message.StopsAway{stops_away: stops_away2} = m2}
+       ])
+       when stops_away2 < stops_away1 do
+    [{s2, m2}, {s1, m1}]
+  end
+
+  defp sort_messages_by_stops_away(msgs) do
+    msgs
   end
 end
