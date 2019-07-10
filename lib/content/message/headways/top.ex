@@ -14,7 +14,7 @@ defmodule Content.Message.Headways.Top do
           vehicle_type: type
         })
         when type in [:bus] do
-      "#{signify_vehicle_type(type)} to #{signify_headsign(headsign)}"
+      "#{type |> signify_vehicle_type() |> String.capitalize()} to #{signify_headsign(headsign)}"
     end
 
     def to_string(%Content.Message.Headways.Top{
@@ -24,16 +24,17 @@ defmodule Content.Message.Headways.Top do
       "#{headsign} #{signify_vehicle_type(type)}"
     end
 
+    @spec signify_vehicle_type(atom()) :: String.t()
     defp signify_vehicle_type(:train) do
       "trains"
     end
 
     defp signify_vehicle_type(:bus) do
-      "Buses"
+      "buses"
     end
 
     defp signify_vehicle_type(:trolley) do
-      "Trolleys"
+      "trolleys"
     end
 
     defp signify_headsign("South Station") do
