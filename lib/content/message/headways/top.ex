@@ -24,7 +24,7 @@ defmodule Content.Message.Headways.Top do
       "#{headsign} #{signify_vehicle_type(type)}"
     end
 
-    @spec signify_vehicle_type(vehicle_type()) :: String.t()
+    @spec signify_vehicle_type(Content.Message.Headways.Top.vehicle_type()) :: String.t()
     defp signify_vehicle_type(:train) do
       "trains"
     end
