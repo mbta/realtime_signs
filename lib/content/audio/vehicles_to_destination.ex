@@ -72,7 +72,7 @@ defmodule Content.Audio.VehiclesToDestination do
   defp convert_destination("Bowdoin"), do: {:ok, :bowdoin}
   defp convert_destination("Frst Hills"), do: {:ok, :forest_hills}
   defp convert_destination("Oak Grove"), do: {:ok, :oak_grove}
-  defp convert_destination("Park Sreet"), do: {:ok, :park_street}
+  defp convert_destination("Park Street"), do: {:ok, :park_street}
   defp convert_destination("Govt Ctr"), do: {:ok, :govt_ctr}
   defp convert_destination("North Station"), do: {:ok, :north_sta}
   defp convert_destination("Lechmere"), do: {:ok, :lechmere}
