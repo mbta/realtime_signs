@@ -9,7 +9,7 @@ defmodule Content.Message.Alert.UseShuttleBus do
 
   defimpl Content.Message do
     def to_string(_) do
-      "Use shuttle bus."
+      "Use shuttle bus"
     end
   end
 end
