@@ -8,6 +8,7 @@ defmodule Headway.ScheduleHeadway do
 
   @min_headway 5
   @headway_padding 2
+  @max_headway_to_consider 30
 
   @spec build_request({[String.t()], [GTFS.station_id()]}) :: String.t()
   def build_request({direction_ids, station_ids}) do
@@ -49,7 +50,7 @@ defmodule Headway.ScheduleHeadway do
   end
 
   defp do_headway_for_station({previous_times, later_times}) do
-    calculate_headway_range([List.last(previous_times) | Enum.take(later_times, 2)])
+    calculate_headway_range([List.last(previous_times) | Enum.take(later_times, 3)])
   end
 
   @spec calculate_headway_range([DateTime.t()]) :: headway_range
@@ -64,6 +65,33 @@ defmodule Headway.ScheduleHeadway do
        Timex.diff(second_upcoming_time, upcoming_time, :minutes)}
 
     pad_headway_range(actual_headway)
+  end
+
+  defp calculate_headway_range([
+         previous_time,
+         upcoming_time,
+         second_upcoming_time,
+         third_upcoming_time
+       ]) do
+    minute_headways = [
+      Timex.diff(upcoming_time, previous_time, :minutes),
+      Timex.diff(second_upcoming_time, upcoming_time, :minutes),
+      Timex.diff(third_upcoming_time, second_upcoming_time, :minutes)
+    ]
+
+    {_dropped?, usable_headways} =
+      Enum.reduce(minute_headways, {false, []}, fn headway, {dropped?, acc} ->
+        if headway <= @max_headway_to_consider or dropped? do
+          {dropped?, acc ++ [headway]}
+        else
+          {true, acc}
+        end
+      end)
+
+    usable_headways
+    |> Enum.take(2)
+    |> List.to_tuple()
+    |> pad_headway_range()
   end
 
   @spec schedule_time(map) :: [DateTime.t()]
