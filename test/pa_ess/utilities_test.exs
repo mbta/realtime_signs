@@ -19,6 +19,8 @@ defmodule Content.Audio.UtilitiesTest do
   test "number_var/2" do
     assert number_var(10, :english) == "5510"
     assert number_var(10, :spanish) == "37010"
+    assert number_var(61, :english) == nil
+    assert number_var(21, :spanish) == nil
   end
 
   test "time_var/1" do
