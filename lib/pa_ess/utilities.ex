@@ -19,16 +19,20 @@ defmodule PaEss.Utilities do
     language == :english or destination in [:chelsea, :south_station]
   end
 
-  @spec number_var(integer(), Content.Audio.language()) :: String.t() | no_return()
+  @spec number_var(integer(), Content.Audio.language()) :: String.t() | nil
   def number_var(n, :english) do
-    cond do
-      valid_range?(n, :english) -> Integer.to_string(5500 + n)
+    if valid_range?(n, :english) do
+      Integer.to_string(5500 + n)
+    else
+      nil
     end
   end
 
   def number_var(n, :spanish) do
-    cond do
-      valid_range?(n, :spanish) -> Integer.to_string(37000 + n)
+    if valid_range?(n, :spanish) do
+      Integer.to_string(37000 + n)
+    else
+      nil
     end
   end
 

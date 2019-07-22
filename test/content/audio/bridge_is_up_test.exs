@@ -39,6 +39,15 @@ defmodule Content.Audio.BridgeIsUpTest do
     assert Content.Audio.to_params(audio) == {"152", ["37005"], :audio_visual}
   end
 
+  test "When bridge is up with an estimate of 21 minutes, exclude time in Spanish audio" do
+    audio = %Content.Audio.BridgeIsUp{
+      language: :spanish,
+      time_estimate_mins: 21
+    }
+
+    assert Content.Audio.to_params(audio) == {"152", [], :audio_visual}
+  end
+
   describe "create_bridge_messages/1" do
     test "returns an audio message from a headway message to chelsea" do
       assert {
