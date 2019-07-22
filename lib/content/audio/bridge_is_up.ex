@@ -48,7 +48,10 @@ defmodule Content.Audio.BridgeIsUp do
     defp vars(%{language: _language, time_estimate_mins: nil}), do: []
 
     defp vars(%{language: language, time_estimate_mins: mins}) do
-      [Utilities.number_var(mins, language)]
+      case Utilities.number_var(mins, language) do
+        nil -> []
+        var -> [var]
+      end
     end
   end
 end

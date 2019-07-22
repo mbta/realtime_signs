@@ -96,7 +96,14 @@ defmodule Content.Audio.VehiclesToDestination do
     alias PaEss.Utilities
 
     def to_params(audio) do
-      {message_id(audio), vars(audio), :audio}
+      case vars(audio) do
+        nil ->
+          Logger.warn("no_audio_for_headway_range #{inspect(audio)}")
+          nil
+
+        vars ->
+          {message_id(audio), vars, :audio}
+      end
     end
 
     @spec message_id(Content.Audio.VehiclesToDestination.t()) :: String.t()
@@ -128,8 +135,16 @@ defmodule Content.Audio.VehiclesToDestination do
     defp message_id(%{language: :spanish, destination: :chelsea}), do: "150"
     defp message_id(%{language: :spanish, destination: :south_station}), do: "151"
 
+    @spec vars(Content.Audio.VehiclesToDestination.t()) :: [String.t()] | nil
     defp vars(%{language: language, next_trip_mins: next, later_trip_mins: later}) do
-      [Utilities.number_var(next, language), Utilities.number_var(later, language)]
+      next_trip_var = Utilities.number_var(next, language)
+      later_trip_var = Utilities.number_var(later, language)
+
+      if next_trip_var && later_trip_var do
+        [next_trip_var, later_trip_var]
+      else
+        nil
+      end
     end
   end
 end
