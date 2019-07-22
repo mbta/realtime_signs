@@ -48,6 +48,22 @@ defmodule Content.Audio.VehiclesToDestinationTest do
     assert Content.Audio.to_params(audio) == {"151", ["37007", "37010"], :audio}
   end
 
+  test "Buses to South Station in Spanish, headway out of range" do
+    audio = %Content.Audio.VehiclesToDestination{
+      destination: :south_station,
+      language: :spanish,
+      next_trip_mins: 7,
+      later_trip_mins: 21
+    }
+
+    log =
+      capture_log([level: :warn], fn ->
+        assert Content.Audio.to_params(audio) == nil
+      end)
+
+    assert log =~ "no_audio_for_headway_range"
+  end
+
   describe "from_headway_message/2" do
     @msg %Content.Message.Headways.Bottom{range: {5, 7}}
 
