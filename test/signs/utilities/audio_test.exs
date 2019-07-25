@@ -133,17 +133,16 @@ defmodule Signs.Utilities.AudioTest do
       message = %Message.Predictions{headsign: "Alewife", minutes: :boarding, trip_id: "trip1"}
       src = %{@src | announce_boarding?: false}
 
-      assert should_interrupting_read?(
-               {src, message},
-               %{@sign | source_config: {[src]}, announced_arrivals: []},
-               :top
-             )
+      log =
+        capture_log([level: :info], fn ->
+          assert should_interrupting_read?(
+                   {src, message},
+                   %{@sign | source_config: {[src]}, announced_arrivals: []},
+                   :top
+                 )
+        end)
 
-      assert should_interrupting_read?(
-               {src, message},
-               %{@sign | source_config: {[src]}, announced_arrivals: []},
-               :bottom
-             )
+      assert log =~ "announced_brd_when_arr_skipped trip_id=\"trip1\" sign_id=\"sign_id\""
     end
 
     test "returns false if it's empty" do

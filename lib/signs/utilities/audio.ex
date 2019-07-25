@@ -61,10 +61,18 @@ defmodule Signs.Utilities.Audio do
           %SourceConfig{announce_boarding?: false},
           %Content.Message.Predictions{minutes: :boarding, trip_id: trip_id}
         },
-        %Signs.Realtime{announced_arrivals: announced_arrivals},
+        %Signs.Realtime{id: sign_id, announced_arrivals: announced_arrivals},
         _line
       ) do
-    trip_id not in announced_arrivals
+    if trip_id not in announced_arrivals do
+      Logger.info(
+        "announced_brd_when_arr_skipped trip_id=#{inspect(trip_id)} sign_id=#{inspect(sign_id)}"
+      )
+
+      true
+    else
+      false
+    end
   end
 
   def should_interrupting_read?({_, %Content.Message.Empty{}}, _sign, _line) do
