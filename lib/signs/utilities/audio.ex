@@ -15,10 +15,10 @@ defmodule Signs.Utilities.Audio do
   @doc "Takes a changed line, and returns if it should read immediately"
   @spec should_interrupting_read?(
           Signs.Realtime.line_content(),
-          SourceConfig.config(),
+          Signs.Realtime.t(),
           Content.line_location()
         ) :: boolean()
-  def should_interrupting_read?({_src, %Content.Message.Predictions{minutes: x}}, _config, _line)
+  def should_interrupting_read?({_src, %Content.Message.Predictions{minutes: x}}, _sign, _line)
       when is_integer(x) do
     false
   end
@@ -28,7 +28,7 @@ defmodule Signs.Utilities.Audio do
           %SourceConfig{announce_arriving?: false},
           %Content.Message.Predictions{minutes: arriving_or_approaching}
         },
-        _config,
+        _sign,
         _line
       )
       when arriving_or_approaching in [:arriving, :approaching] do
@@ -37,7 +37,7 @@ defmodule Signs.Utilities.Audio do
 
   def should_interrupting_read?(
         {_src, %Content.Message.Predictions{minutes: :approaching, route_id: route_id}},
-        _config,
+        _sign,
         _line
       )
       when route_id not in @heavy_rail_routes do
@@ -49,7 +49,7 @@ defmodule Signs.Utilities.Audio do
           %SourceConfig{announce_arriving?: true},
           %Content.Message.Predictions{minutes: arriving_or_approaching}
         },
-        config,
+        %Signs.Realtime{source_config: config},
         :bottom
       )
       when arriving_or_approaching in [:arriving, :approaching] do
@@ -61,29 +61,29 @@ defmodule Signs.Utilities.Audio do
           %SourceConfig{announce_boarding?: false},
           %Content.Message.Predictions{minutes: :boarding}
         },
-        _config,
+        _sign,
         _line
       ) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.Empty{}}, _config, _line) do
+  def should_interrupting_read?({_, %Content.Message.Empty{}}, _sign, _line) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.StoppedTrain{}}, _config, :bottom) do
+  def should_interrupting_read?({_, %Content.Message.StoppedTrain{}}, _sign, :bottom) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.Bridge.Up{}}, _config, :bottom) do
+  def should_interrupting_read?({_, %Content.Message.Bridge.Up{}}, _sign, :bottom) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.StopsAway{}}, _config, _line) do
+  def should_interrupting_read?({_, %Content.Message.StopsAway{}}, _sign, _line) do
     false
   end
 
-  def should_interrupting_read?(_content, _config, _line) do
+  def should_interrupting_read?(_content, _sign, _line) do
     true
   end
 
