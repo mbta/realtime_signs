@@ -98,14 +98,52 @@ defmodule Signs.Utilities.AudioTest do
       refute should_interrupting_read?({src, message}, %{@sign | source_config: {[src]}}, :top)
     end
 
-    test "If it's BRD respects config's announce_boarding?" do
-      message = %Message.Predictions{headsign: "Alewife", minutes: :boarding}
+    test "If it's BRD respects config's announce_boarding? when arrival was already announced" do
+      message = %Message.Predictions{headsign: "Alewife", minutes: :boarding, trip_id: "trip1"}
       src = %{@src | announce_boarding?: false}
-      refute should_interrupting_read?({src, message}, %{@sign | source_config: {[src]}}, :top)
-      refute should_interrupting_read?({src, message}, %{@sign | source_config: {[src]}}, :bottom)
+
+      refute should_interrupting_read?(
+               {src, message},
+               %{@sign | source_config: {[src]}, announced_arrivals: ["trip1"]},
+               :top
+             )
+
+      refute should_interrupting_read?(
+               {src, message},
+               %{@sign | source_config: {[src]}, announced_arrivals: ["trip1"]},
+               :bottom
+             )
+
       src = %{@src | announce_boarding?: true}
-      assert should_interrupting_read?({src, message}, %{@sign | source_config: {[src]}}, :top)
-      assert should_interrupting_read?({src, message}, %{@sign | source_config: {[src]}}, :bottom)
+
+      assert should_interrupting_read?(
+               {src, message},
+               %{@sign | source_config: {[src]}, announced_arrivals: ["trip1"]},
+               :top
+             )
+
+      assert should_interrupting_read?(
+               {src, message},
+               %{@sign | source_config: {[src]}, announced_arrivals: ["trip1"]},
+               :bottom
+             )
+    end
+
+    test "If it's BRD and announce_boarding? is false, but arrival for trip was not announced, still read" do
+      message = %Message.Predictions{headsign: "Alewife", minutes: :boarding, trip_id: "trip1"}
+      src = %{@src | announce_boarding?: false}
+
+      assert should_interrupting_read?(
+               {src, message},
+               %{@sign | source_config: {[src]}, announced_arrivals: []},
+               :top
+             )
+
+      assert should_interrupting_read?(
+               {src, message},
+               %{@sign | source_config: {[src]}, announced_arrivals: []},
+               :bottom
+             )
     end
 
     test "returns false if it's empty" do
