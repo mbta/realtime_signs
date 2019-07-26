@@ -38,6 +38,7 @@ defmodule Content.Audio.Predictions do
           predictions.minutes == :boarding ->
             %TrainIsBoarding{
               destination: headsign,
+              trip_id: predictions.trip_id,
               route_id: predictions.route_id,
               track_number: Content.Utilities.stop_track_number(predictions.stop_id)
             }
