@@ -15,10 +15,10 @@ defmodule Signs.Utilities.Audio do
   @doc "Takes a changed line, and returns if it should read immediately"
   @spec should_interrupting_read?(
           Signs.Realtime.line_content(),
-          SourceConfig.config(),
+          Signs.Realtime.t(),
           Content.line_location()
         ) :: boolean()
-  def should_interrupting_read?({_src, %Content.Message.Predictions{minutes: x}}, _config, _line)
+  def should_interrupting_read?({_src, %Content.Message.Predictions{minutes: x}}, _sign, _line)
       when is_integer(x) do
     false
   end
@@ -28,7 +28,7 @@ defmodule Signs.Utilities.Audio do
           %SourceConfig{announce_arriving?: false},
           %Content.Message.Predictions{minutes: arriving_or_approaching}
         },
-        _config,
+        _sign,
         _line
       )
       when arriving_or_approaching in [:arriving, :approaching] do
@@ -37,7 +37,7 @@ defmodule Signs.Utilities.Audio do
 
   def should_interrupting_read?(
         {_src, %Content.Message.Predictions{minutes: :approaching, route_id: route_id}},
-        _config,
+        _sign,
         _line
       )
       when route_id not in @heavy_rail_routes do
@@ -49,7 +49,7 @@ defmodule Signs.Utilities.Audio do
           %SourceConfig{announce_arriving?: true},
           %Content.Message.Predictions{minutes: arriving_or_approaching}
         },
-        config,
+        %Signs.Realtime{source_config: config},
         :bottom
       )
       when arriving_or_approaching in [:arriving, :approaching] do
@@ -59,31 +59,39 @@ defmodule Signs.Utilities.Audio do
   def should_interrupting_read?(
         {
           %SourceConfig{announce_boarding?: false},
-          %Content.Message.Predictions{minutes: :boarding}
+          %Content.Message.Predictions{minutes: :boarding, trip_id: trip_id}
         },
-        _config,
+        %Signs.Realtime{id: sign_id, announced_arrivals: announced_arrivals},
         _line
       ) do
+    if trip_id not in announced_arrivals do
+      Logger.info(
+        "announced_brd_when_arr_skipped trip_id=#{inspect(trip_id)} sign_id=#{inspect(sign_id)}"
+      )
+
+      true
+    else
+      false
+    end
+  end
+
+  def should_interrupting_read?({_, %Content.Message.Empty{}}, _sign, _line) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.Empty{}}, _config, _line) do
+  def should_interrupting_read?({_, %Content.Message.StoppedTrain{}}, _sign, :bottom) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.StoppedTrain{}}, _config, :bottom) do
+  def should_interrupting_read?({_, %Content.Message.Bridge.Up{}}, _sign, :bottom) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.Bridge.Up{}}, _config, :bottom) do
+  def should_interrupting_read?({_, %Content.Message.StopsAway{}}, _sign, _line) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.StopsAway{}}, _config, _line) do
-    false
-  end
-
-  def should_interrupting_read?(_content, _config, _line) do
+  def should_interrupting_read?(_content, _sign, _line) do
     true
   end
 

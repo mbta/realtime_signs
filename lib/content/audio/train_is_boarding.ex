@@ -6,10 +6,11 @@ defmodule Content.Audio.TrainIsBoarding do
   require Logger
 
   @enforce_keys [:destination, :route_id, :track_number]
-  defstruct @enforce_keys
+  defstruct @enforce_keys ++ [:trip_id]
 
   @type t :: %__MODULE__{
           destination: PaEss.terminal_station(),
+          trip_id: Predictions.Prediction.trip_id() | nil,
           route_id: String.t(),
           track_number: Content.Utilities.track_number()
         }

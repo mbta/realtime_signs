@@ -142,11 +142,16 @@ defmodule Content.Audio.PredictionsTest do
         headsign: "Ashmont",
         minutes: :boarding,
         route_id: "Red",
-        stop_id: "70065"
+        stop_id: "70065",
+        trip_id: "trip1"
       }
 
-      assert %Audio.TrainIsBoarding{destination: :ashmont, route_id: "Red", track_number: nil} =
-               from_sign_content({src, predictions}, :top, false)
+      assert %Audio.TrainIsBoarding{
+               destination: :ashmont,
+               trip_id: "trip1",
+               route_id: "Red",
+               track_number: nil
+             } = from_sign_content({src, predictions}, :top, false)
     end
 
     test "returns a TrainIsArriving audio if predictions say it's arriving" do
