@@ -456,6 +456,48 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("multiple_brd_some_first_stop_1", 0) do
+      # when both are 0 stops away, sorts by time
+      [
+        %Predictions.Prediction{
+          stop_id: "multiple_brd_some_first_stop_1",
+          direction_id: 0,
+          route_id: "Green-D",
+          stopped?: false,
+          stops_away: 0,
+          destination_stop_id: "123",
+          seconds_until_arrival: -30,
+          seconds_until_departure: 60
+        },
+        %Predictions.Prediction{
+          stop_id: "multiple_brd_some_first_stop_1",
+          direction_id: 0,
+          route_id: "Green-D",
+          stopped?: false,
+          stops_away: 0,
+          destination_stop_id: "123",
+          seconds_until_arrival: -15,
+          seconds_until_departure: 75
+        }
+      ]
+    end
+
+    def for_stop("multiple_brd_some_first_stop_2", 0) do
+      # when both are 0 stops away, sorts by time
+      [
+        %Predictions.Prediction{
+          stop_id: "multiple_brd_some_first_stop_2",
+          direction_id: 0,
+          route_id: "Green-B",
+          stopped?: false,
+          stops_away: 0,
+          destination_stop_id: "123",
+          seconds_until_arrival: nil,
+          seconds_until_departure: 60
+        }
+      ]
+    end
+
     def for_stop(_stop_id, _direction_id) do
       []
     end
@@ -905,6 +947,30 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s1, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :arriving}},
                {^s2, %Content.Message.Predictions{headsign: "Riverside", minutes: 1}}
+             } = Signs.Utilities.Predictions.get_messages(sign)
+    end
+
+    test "Correctly orders BRD predictions between trains mid-trip and those starting their trip" do
+      s1 = %SourceConfig{
+        stop_id: "multiple_brd_some_first_stop_1",
+        headway_direction_name: "Westbound",
+        direction_id: 0,
+        terminal?: false,
+        platform: nil,
+        routes: nil,
+        announce_arriving?: false,
+        announce_boarding?: false,
+        multi_berth?: true
+      }
+
+      s2 = %{s1 | stop_id: "multiple_brd_some_first_stop_2"}
+
+      config = {[s1, s2]}
+      sign = %{@sign | source_config: config}
+
+      assert {
+               {^s1, %Content.Message.Predictions{headsign: "Riverside", minutes: :boarding}},
+               {^s2, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
   end
