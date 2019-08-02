@@ -36,8 +36,10 @@ defmodule Signs.Utilities.Predictions do
       p.seconds_until_departure
     end)
     |> Enum.sort_by(fn {_source_config, prediction} ->
-      {prediction.stops_away, prediction.seconds_until_departure,
-       prediction.seconds_until_arrival}
+      {case prediction.stops_away do
+         0 -> 0
+         _ -> 1
+       end, prediction.seconds_until_departure, prediction.seconds_until_arrival}
     end)
     |> Enum.take(2)
     |> Enum.map(fn {source, prediction} ->

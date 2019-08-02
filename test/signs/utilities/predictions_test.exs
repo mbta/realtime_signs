@@ -498,6 +498,31 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("stops_away_ordering_different_from_minutes", 1) do
+      [
+        %Predictions.Prediction{
+          stop_id: "stops_away_ordering_different_from_minutes",
+          direction_id: 1,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 4,
+          destination_stop_id: "70061",
+          seconds_until_arrival: 60,
+          seconds_until_departure: 70
+        },
+        %Predictions.Prediction{
+          stop_id: "stops_away_ordering_different_from_minutes",
+          direction_id: 1,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 3,
+          destination_stop_id: "70061",
+          seconds_until_arrival: 120,
+          seconds_until_departure: 130
+        }
+      ]
+    end
+
     def for_stop(_stop_id, _direction_id) do
       []
     end
@@ -971,6 +996,27 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s1, %Content.Message.Predictions{headsign: "Riverside", minutes: :boarding}},
                {^s2, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}}
+             } = Signs.Utilities.Predictions.get_messages(sign)
+    end
+
+    test "Sorts by minutes rather than stops away when minutes will be displayed" do
+      s = %SourceConfig{
+        stop_id: "stops_away_ordering_different_from_minutes",
+        headway_direction_name: "Alewife",
+        direction_id: 1,
+        terminal?: false,
+        platform: nil,
+        routes: nil,
+        announce_arriving?: true,
+        announce_boarding?: false
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      assert {
+               {^s, %Content.Message.Predictions{headsign: "Alewife", minutes: :approaching}},
+               {^s, %Content.Message.Predictions{headsign: "Alewife", minutes: 2}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
   end
