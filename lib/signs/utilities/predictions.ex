@@ -35,23 +35,11 @@ defmodule Signs.Utilities.Predictions do
     |> Enum.filter(fn {_, p} ->
       p.seconds_until_departure
     end)
-    |> Enum.sort(fn {_s1, p1}, {_s2, p2} ->
-      p1_time = p1.seconds_until_arrival || p1.seconds_until_departure
-      p2_time = p2.seconds_until_arrival || p2.seconds_until_departure
-
-      case {p1.stops_away, p2.stops_away} do
-        {0, 0} ->
-          p1_time < p2_time
-
-        {0, _} ->
-          true
-
-        {_, 0} ->
-          false
-
-        {_, _} ->
-          p1_time < p2_time
-      end
+    |> Enum.sort_by(fn {_source_config, prediction} ->
+      {case prediction.stops_away do
+         0 -> 0
+         _ -> 1
+       end, prediction.seconds_until_departure, prediction.seconds_until_arrival}
     end)
     |> Enum.take(2)
     |> Enum.map(fn {source, prediction} ->
