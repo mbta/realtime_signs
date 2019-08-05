@@ -5,6 +5,7 @@ defmodule Signs.Utilities.Predictions do
   for the top and bottom lines.
   """
 
+  require Logger
   require Content.Utilities
   alias Signs.Utilities.SourceConfig
 
@@ -26,12 +27,7 @@ defmodule Signs.Utilities.Predictions do
            {SourceConfig.source() | nil, Content.Message.t()}}
   defp get_predictions(prediction_engine, source_list) do
     source_list
-    |> Enum.flat_map(fn source ->
-      source.stop_id
-      |> prediction_engine.for_stop(source.direction_id)
-      |> Enum.filter(&(source.routes == nil or &1.route_id in source.routes))
-      |> Enum.map(&{source, &1})
-    end)
+    |> get_source_list_predictions(prediction_engine)
     |> Enum.filter(fn {_, p} ->
       p.seconds_until_departure
     end)
@@ -78,6 +74,53 @@ defmodule Signs.Utilities.Predictions do
       [msg1, msg2] ->
         {msg1, msg2}
     end
+  end
+
+  @spec get_passthrough_train_audio(Signs.Realtime.t()) :: Content.Audio.t() | nil
+  def get_passthrough_train_audio(%Signs.Realtime{source_config: {single_source}} = sign) do
+    single_source
+    |> get_source_list_predictions(sign.prediction_engine)
+    |> Enum.filter(fn {_source, prediction} ->
+      prediction.seconds_until_passthrough && prediction.seconds_until_passthrough <= 60
+    end)
+    |> Enum.sort_by(fn {_source, prediction} -> prediction.seconds_until_passthrough end)
+    |> Enum.map(fn {_source, prediction} ->
+      with {:ok, headsign} <-
+             Content.Utilities.headsign_for_prediction(
+               prediction.route_id,
+               prediction.direction_id,
+               prediction.destination_stop_id
+             ),
+           {:ok, destination} <- PaEss.Utilities.headsign_to_terminal_station(headsign) do
+        %Content.Audio.Passthrough{
+          destination: destination,
+          trip_id: prediction.trip_id,
+          route_id: prediction.route_id
+        }
+      else
+        _ ->
+          Logger.info("no_passthrough_audio_for_prediction prediction=#{inspect(prediction)}")
+          nil
+      end
+    end)
+    |> Enum.reject(&is_nil(&1))
+    |> Enum.at(0)
+  end
+
+  def get_passthrough_train_audio(_multi_source_sign) do
+    nil
+  end
+
+  @spec get_source_list_predictions([Signs.Utilities.SourceConfig.source()], module()) :: [
+          Predictions.Prediction.t()
+        ]
+  defp get_source_list_predictions(source_list, prediction_engine) do
+    Enum.flat_map(source_list, fn source ->
+      source.stop_id
+      |> prediction_engine.for_stop(source.direction_id)
+      |> Enum.filter(&(source.routes == nil or &1.route_id in source.routes))
+      |> Enum.map(&{source, &1})
+    end)
   end
 
   @spec stopped_train?(Predictions.Prediction.t()) :: boolean()
