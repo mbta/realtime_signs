@@ -14,6 +14,16 @@ defmodule Predictions.PredictionsTest do
           "stop_time_update" => [
             %{
               "arrival" => nil,
+              "departure" => nil,
+              "schedule_relationship" => "SKIPPED",
+              "stop_id" => "70265",
+              "stop_sequence" => 1,
+              "stops_away" => 1,
+              "stopped?" => false,
+              "passthrough_time" => 1_491_570_110
+            },
+            %{
+              "arrival" => nil,
               "departure" => %{
                 "delay" => nil,
                 "time" => 1_491_570_120,
@@ -90,6 +100,18 @@ defmodule Predictions.PredictionsTest do
             stops_away: 1,
             stopped?: true,
             boarding_status: "Stopped 1 stop away",
+            trip_id: "32568935"
+          }
+        ],
+        {"70265", 0} => [
+          %Predictions.Prediction{
+            stop_id: "70265",
+            seconds_until_passthrough: 110,
+            direction_id: 0,
+            route_id: "Mattapan",
+            destination_stop_id: "70261",
+            stops_away: 1,
+            stopped?: false,
             trip_id: "32568935"
           }
         ]
