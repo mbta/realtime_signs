@@ -9,6 +9,8 @@ defmodule Signs.Realtime do
 
   alias Signs.Utilities
 
+  @announced_history_length 5
+
   @enforce_keys [
     :id,
     :text_id,
@@ -33,7 +35,8 @@ defmodule Signs.Realtime do
                 :bridge_id,
                 :headway_terminal_ids,
                 announced_arrivals: [],
-                announced_approachings: []
+                announced_approachings: [],
+                announced_passthroughs: []
               ]
 
   @type line_content :: {Utilities.SourceConfig.source() | nil, Content.Message.t()}
@@ -58,6 +61,7 @@ defmodule Signs.Realtime do
           bridge_id: Engine.Bridge.bridge_id() | nil,
           announced_arrivals: [Predictions.Prediction.trip_id()],
           announced_approachings: [Predictions.Prediction.trip_id()],
+          announced_passthroughs: [Predictions.Prediction.trip_id()],
           headway_terminal_ids: [String.t()] | nil
         }
 
@@ -130,6 +134,7 @@ defmodule Signs.Realtime do
 
     sign =
       sign
+      |> announce_passthrough_trains()
       |> Utilities.Updater.update_sign(top, bottom)
       |> Utilities.Reader.read_sign()
       |> do_expiration()
@@ -146,6 +151,23 @@ defmodule Signs.Realtime do
 
   def schedule_run_loop(pid) do
     Process.send_after(pid, :run_loop, 1_000)
+  end
+
+  @spec announce_passthrough_trains(Signs.Realtime.t()) :: Signs.Realtime.t()
+  defp announce_passthrough_trains(sign) do
+    audio = Utilities.Predictions.get_passthrough_train_audio(sign)
+
+    if audio && audio.trip_id not in sign.announced_passthroughs do
+      sign.sign_updater.send_audio(sign.audio_id, audio, 5, 60)
+
+      %__MODULE__{
+        sign
+        | announced_passthroughs:
+            Enum.take([audio.trip_id | sign.announced_passthroughs], @announced_history_length)
+      }
+    else
+      sign
+    end
   end
 
   @spec do_expiration(Signs.Realtime.t()) :: Signs.Realtime.t()
