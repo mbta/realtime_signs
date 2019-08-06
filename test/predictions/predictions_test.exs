@@ -87,7 +87,8 @@ defmodule Predictions.PredictionsTest do
             stops_away: 1,
             stopped?: false,
             destination_stop_id: "70261",
-            trip_id: "32568935"
+            trip_id: "32568935",
+            new_cars?: false
           }
         ],
         {"70263", 0} => [
@@ -100,7 +101,8 @@ defmodule Predictions.PredictionsTest do
             stops_away: 1,
             stopped?: true,
             boarding_status: "Stopped 1 stop away",
-            trip_id: "32568935"
+            trip_id: "32568935",
+            new_cars?: false
           }
         ],
         {"70265", 0} => [
@@ -112,7 +114,8 @@ defmodule Predictions.PredictionsTest do
             destination_stop_id: "70261",
             stops_away: 1,
             stopped?: false,
-            trip_id: "32568935"
+            trip_id: "32568935",
+            new_cars?: false
           }
         ]
       }
@@ -252,7 +255,8 @@ defmodule Predictions.PredictionsTest do
             stopped?: false,
             stops_away: 1,
             destination_stop_id: "70261",
-            trip_id: "32568935"
+            trip_id: "32568935",
+            new_cars?: false
           }
         ],
         {"70263", 0} => [
@@ -264,7 +268,8 @@ defmodule Predictions.PredictionsTest do
             stopped?: false,
             stops_away: 1,
             destination_stop_id: "70261",
-            trip_id: "32568935"
+            trip_id: "32568935",
+            new_cars?: false
           }
         ],
         {"70038", 1} => [
@@ -276,7 +281,8 @@ defmodule Predictions.PredictionsTest do
             stopped?: false,
             stops_away: 1,
             destination_stop_id: "70060",
-            trip_id: "trip_2"
+            trip_id: "trip_2",
+            new_cars?: false
           }
         ],
         {"70060", 1} => [
@@ -288,7 +294,8 @@ defmodule Predictions.PredictionsTest do
             stopped?: false,
             stops_away: 1,
             destination_stop_id: "70060",
-            trip_id: "trip_2"
+            trip_id: "trip_2",
+            new_cars?: false
           }
         ]
       }
@@ -355,10 +362,143 @@ defmodule Predictions.PredictionsTest do
                    stopped?: false,
                    stops_away: 1,
                    destination_stop_id: "70263",
-                   trip_id: "32568935"
+                   trip_id: "32568935",
+                   new_cars?: false
                  }
                ]
              }
+    end
+
+    test "identifies new Orange Line cars" do
+      feed_message = %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783458_32568935",
+            "is_deleted" => false,
+            "trip_update" => %{
+              "delay" => nil,
+              "stop_time_update" => [
+                %{
+                  "arrival" => %{
+                    "delay" => nil,
+                    "time" => 1_491_570_180,
+                    "uncertainty" => nil
+                  },
+                  "departure" => nil,
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70001",
+                  "stops_away" => 1,
+                  "stopped?" => false,
+                  "stop_sequence" => 1
+                }
+              ],
+              "timestamp" => nil,
+              "trip" => %{
+                "direction_id" => 0,
+                "route_id" => "Orange",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
+              },
+              "vehicle" => %{
+                "id" => "O-545EF880",
+                "label" => "1400",
+                "license_plate" => nil,
+                "consist" => [
+                  %{"label" => "1400"},
+                  %{"label" => "1401"},
+                  %{"label" => "1402"},
+                  %{"label" => "1403"},
+                  %{"label" => "1404"},
+                  %{"label" => "1405"}
+                ]
+              }
+            },
+            "vehicle" => nil
+          }
+        ],
+        "header" => %{
+          "gtfs_realtime_version" => "1.0",
+          "incrementality" => "FULL_DATASET",
+          "timestamp" => 1_490_783_458
+        }
+      }
+
+      assert %{
+               {"70001", 0} => [
+                 %Predictions.Prediction{
+                   new_cars?: true
+                 }
+               ]
+             } = get_all(feed_message, @current_time)
+    end
+
+    test "identifies old Orange Line cars" do
+      feed_message = %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783458_32568935",
+            "is_deleted" => false,
+            "trip_update" => %{
+              "delay" => nil,
+              "stop_time_update" => [
+                %{
+                  "arrival" => %{
+                    "delay" => nil,
+                    "time" => 1_491_570_180,
+                    "uncertainty" => nil
+                  },
+                  "departure" => nil,
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70001",
+                  "stops_away" => 1,
+                  "stopped?" => false,
+                  "stop_sequence" => 1
+                }
+              ],
+              "timestamp" => nil,
+              "trip" => %{
+                "direction_id" => 0,
+                "route_id" => "Orange",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
+              },
+              "vehicle" => %{
+                "id" => "O-545EF880",
+                "label" => "1400",
+                "license_plate" => nil,
+                "consist" => [
+                  %{"label" => "1294"},
+                  %{"label" => "1295"},
+                  %{"label" => "1223"},
+                  %{"label" => "1222"},
+                  %{"label" => "1270"},
+                  %{"label" => "1271"}
+                ]
+              }
+            },
+            "vehicle" => nil
+          }
+        ],
+        "header" => %{
+          "gtfs_realtime_version" => "1.0",
+          "incrementality" => "FULL_DATASET",
+          "timestamp" => 1_490_783_458
+        }
+      }
+
+      assert %{
+               {"70001", 0} => [
+                 %Predictions.Prediction{
+                   new_cars?: false
+                 }
+               ]
+             } = get_all(feed_message, @current_time)
     end
   end
 
