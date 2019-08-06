@@ -9,7 +9,8 @@ defmodule Predictions.Prediction do
             destination_stop_id: nil,
             stopped?: false,
             stops_away: 0,
-            boarding_status: nil
+            boarding_status: nil,
+            new_cars?: false
 
   @type trip_id :: String.t()
 
@@ -24,6 +25,7 @@ defmodule Predictions.Prediction do
           destination_stop_id: String.t(),
           stopped?: boolean(),
           stops_away: integer(),
-          boarding_status: String.t() | nil
+          boarding_status: String.t() | nil,
+          new_cars?: boolean()
         }
 end
