@@ -57,7 +57,8 @@ defmodule Content.Audio.Predictions do
               destination: headsign,
               trip_id: predictions.trip_id,
               platform: src.platform,
-              route_id: predictions.route_id
+              route_id: predictions.route_id,
+              new_cars?: predictions.new_cars?
             }
 
           predictions.minutes == :approaching ->
