@@ -83,14 +83,43 @@ defmodule Content.Audio.PredictionsTest do
         minutes: :approaching,
         route_id: "Red",
         stop_id: "70085",
-        trip_id: "trip1"
+        trip_id: "trip1",
+        new_cars?: false
       }
 
       assert %Audio.Approaching{
                destination: :ashmont,
                trip_id: "trip1",
                platform: :ashmont,
-               route_id: "Red"
+               route_id: "Red",
+               new_cars?: false
+             } = from_sign_content({src, predictions}, :top, false)
+    end
+
+    test "returns an Approaching audio with new cars flag set" do
+      src = %{
+        @src
+        | stop_id: "70085",
+          direction_id: 0,
+          headway_direction_name: "Southbound",
+          platform: :ashmont
+      }
+
+      predictions = %Message.Predictions{
+        headsign: "Ashmont",
+        minutes: :approaching,
+        route_id: "Red",
+        stop_id: "70085",
+        trip_id: "trip1",
+        new_cars?: true
+      }
+
+      assert %Audio.Approaching{
+               destination: :ashmont,
+               trip_id: "trip1",
+               platform: :ashmont,
+               route_id: "Red",
+               new_cars?: true
              } = from_sign_content({src, predictions}, :top, false)
     end
 

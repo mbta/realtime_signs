@@ -6,13 +6,14 @@ defmodule Content.Audio.Approaching do
   require Logger
 
   @enforce_keys [:destination]
-  defstruct @enforce_keys ++ [:trip_id, :platform, :route_id]
+  defstruct @enforce_keys ++ [:trip_id, :platform, :route_id, new_cars?: false]
 
   @type t :: %__MODULE__{
           destination: PaEss.terminal_station(),
           trip_id: Predictions.Prediction.trip_id() | nil,
           platform: Content.platform() | nil,
-          route_id: String.t() | nil
+          route_id: String.t() | nil,
+          new_cars?: boolean
         }
 
   defimpl Content.Audio do
