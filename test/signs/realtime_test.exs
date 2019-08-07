@@ -10,6 +10,27 @@ defmodule Signs.RealtimeTest do
     def stopped_at?(_stop_id), do: false
   end
 
+  defmodule FakePassthroughPredictions do
+    def for_stop("1", 0) do
+      [
+        %Predictions.Prediction{
+          stop_id: "1",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 4,
+          destination_stop_id: "70105",
+          seconds_until_arrival: nil,
+          seconds_until_departure: nil,
+          seconds_until_passthrough: 30,
+          trip_id: "123"
+        }
+      ]
+    end
+
+    def for_stop(_stop_id, _direction_id), do: []
+  end
+
   defmodule FakeHeadways do
     def get_headways(_stop_id), do: {1, 5}
   end
@@ -165,6 +186,17 @@ defmodule Signs.RealtimeTest do
 
       assert sign.tick_top == 59
       assert sign.tick_bottom == 99
+    end
+
+    test "announces train passing through station" do
+      sign = %{
+        @sign
+        | prediction_engine: FakePassthroughPredictions
+      }
+
+      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
+      assert sign.announced_passthroughs == ["123"]
+      assert_received({:send_audio, _, %Content.Audio.Passthrough{}, _, _})
     end
   end
 

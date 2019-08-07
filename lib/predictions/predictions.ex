@@ -9,7 +9,9 @@ defmodule Predictions.Predictions do
     feed_message["entity"]
     |> Enum.map(& &1["trip_update"])
     |> Enum.flat_map(&transform_stop_time_updates/1)
-    |> Enum.filter(fn {update, _, _, _, _} -> update["arrival"] || update["departure"] end)
+    |> Enum.filter(fn {update, _, _, _, _} ->
+      update["arrival"] || update["departure"] || update["passthrough_time"]
+    end)
     |> Enum.group_by(
       fn {update, _last_stop_id, _route_id, direction_id, _trip_id} ->
         {update["stop_id"], direction_id}
@@ -53,11 +55,17 @@ defmodule Predictions.Predictions do
         do: stop_time_update["departure"]["time"] - current_time_seconds,
         else: nil
 
+    seconds_until_passthrough =
+      if stop_time_update["passthrough_time"],
+        do: stop_time_update["passthrough_time"] - current_time_seconds,
+        else: nil
+
     %Prediction{
       stop_id: stop_time_update["stop_id"],
       direction_id: direction_id,
       seconds_until_arrival: max(0, seconds_until_arrival),
       seconds_until_departure: max(0, seconds_until_departure),
+      seconds_until_passthrough: max(0, seconds_until_passthrough),
       route_id: route_id,
       trip_id: trip_id,
       destination_stop_id: last_stop_id,
