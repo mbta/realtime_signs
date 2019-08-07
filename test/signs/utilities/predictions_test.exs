@@ -1,5 +1,6 @@
 defmodule Signs.Utilities.PredictionsTest do
   use ExUnit.Case
+  import ExUnit.CaptureLog
   alias Signs.Utilities.SourceConfig
 
   defmodule FakePredictions do
@@ -523,6 +524,75 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("passthrough_trains", 0) do
+      [
+        %Predictions.Prediction{
+          stop_id: "passthrough_trains",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 4,
+          destination_stop_id: "70105",
+          seconds_until_arrival: nil,
+          seconds_until_departure: nil,
+          seconds_until_passthrough: 30,
+          trip_id: "123"
+        },
+        %Predictions.Prediction{
+          stop_id: "passthrough_trains",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 4,
+          destination_stop_id: "70093",
+          seconds_until_arrival: nil,
+          seconds_until_departure: nil,
+          seconds_until_passthrough: 60,
+          trip_id: "123"
+        },
+        %Predictions.Prediction{
+          stop_id: "passthrough_trains",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 4,
+          destination_stop_id: "70105",
+          seconds_until_arrival: nil,
+          seconds_until_departure: nil,
+          seconds_until_passthrough: 90,
+          trip_id: "456"
+        },
+        %Predictions.Prediction{
+          stop_id: "passthrough_trains",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 3,
+          destination_stop_id: "70093",
+          seconds_until_arrival: 120,
+          seconds_until_departure: 130,
+          trip_id: "789"
+        }
+      ]
+    end
+
+    def for_stop("passthrough_trains_bad_destination", 1) do
+      [
+        %Predictions.Prediction{
+          stop_id: "passthrough_trains_bad_destination",
+          direction_id: 1,
+          route_id: "Foo",
+          stopped?: false,
+          stops_away: 4,
+          destination_stop_id: "bar",
+          seconds_until_arrival: nil,
+          seconds_until_departure: nil,
+          seconds_until_passthrough: 60,
+          trip_id: "123"
+        }
+      ]
+    end
+
     def for_stop(_stop_id, _direction_id) do
       []
     end
@@ -1018,6 +1088,83 @@ defmodule Signs.Utilities.PredictionsTest do
                {^s, %Content.Message.Predictions{headsign: "Alewife", minutes: :approaching}},
                {^s, %Content.Message.Predictions{headsign: "Alewife", minutes: 2}}
              } = Signs.Utilities.Predictions.get_messages(sign)
+    end
+  end
+
+  describe "get_passthrough_train_audio/1" do
+    test "returns empty list for multi-source sign" do
+      s1 = %SourceConfig{
+        stop_id: "passthrough_trains",
+        headway_direction_name: "Southbound",
+        direction_id: 0,
+        terminal?: false,
+        platform: nil,
+        routes: nil,
+        announce_arriving?: true,
+        announce_boarding?: false
+      }
+
+      s2 = %SourceConfig{
+        stop_id: "passthrough_trains",
+        headway_direction_name: "Alewife",
+        direction_id: 1,
+        terminal?: false,
+        platform: nil,
+        routes: nil,
+        announce_arriving?: true,
+        announce_boarding?: false
+      }
+
+      config = {[s1], [s2]}
+      sign = %{@sign | source_config: config}
+
+      assert Signs.Utilities.Predictions.get_passthrough_train_audio(sign) == nil
+    end
+
+    test "returns appropriate audio structs for single-source sign" do
+      s = %SourceConfig{
+        stop_id: "passthrough_trains",
+        headway_direction_name: "Southbound",
+        direction_id: 0,
+        terminal?: false,
+        platform: nil,
+        routes: nil,
+        announce_arriving?: true,
+        announce_boarding?: false
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      assert Signs.Utilities.Predictions.get_passthrough_train_audio(sign) ==
+               %Content.Audio.Passthrough{
+                 destination: :braintree,
+                 trip_id: "123",
+                 route_id: "Red"
+               }
+    end
+
+    test "handles case where headsign can't be determined" do
+      s = %SourceConfig{
+        stop_id: "passthrough_trains_bad_destination",
+        headway_direction_name: "Alewife",
+        direction_id: 1,
+        terminal?: false,
+        platform: nil,
+        routes: nil,
+        announce_arriving?: true,
+        announce_boarding?: false
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      log =
+        capture_log([level: :info], fn ->
+          assert Signs.Utilities.Predictions.get_passthrough_train_audio(sign) == nil
+        end)
+
+      assert log =~ "no_passthrough_audio_for_prediction"
     end
   end
 end
