@@ -23,5 +23,15 @@ defmodule Content.Audio.ApproachingTest do
       audio = %Approaching{destination: :ashmont, route_id: "Mattapan"}
       assert Content.Audio.to_params(audio) == nil
     end
+
+    test "Returns params for new Orange Line cars" do
+      audio = %Approaching{destination: :oak_grove, route_id: "Orange", new_cars?: true}
+      assert Content.Audio.to_params(audio) == {"105", ["783", "4022", "785"], :audio_visual}
+    end
+
+    test "Falls back on audio without new cars message if needed" do
+      audio = %Approaching{destination: :alewife, route_id: "Red", new_cars?: true}
+      assert Content.Audio.to_params(audio) == {"103", ["32124"], :audio_visual}
+    end
   end
 end

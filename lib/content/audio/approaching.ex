@@ -6,17 +6,21 @@ defmodule Content.Audio.Approaching do
   require Logger
 
   @enforce_keys [:destination]
-  defstruct @enforce_keys ++ [:trip_id, :platform, :route_id]
+  defstruct @enforce_keys ++ [:trip_id, :platform, :route_id, new_cars?: false]
 
   @type t :: %__MODULE__{
           destination: PaEss.terminal_station(),
           trip_id: Predictions.Prediction.trip_id() | nil,
           platform: Content.platform() | nil,
-          route_id: String.t() | nil
+          route_id: String.t() | nil,
+          new_cars?: boolean
         }
 
   defimpl Content.Audio do
-    def to_params(audio) do
+    @attention_passengers "783"
+    @now_approaching_new_ol_cars "785"
+
+    def to_params(%Content.Audio.Approaching{new_cars?: false} = audio) do
       case destination_var(audio.destination, audio.platform, audio.route_id) do
         nil ->
           Logger.info(
@@ -32,6 +36,17 @@ defmodule Content.Audio.Approaching do
       end
     end
 
+    def to_params(%Content.Audio.Approaching{new_cars?: true} = audio) do
+      case new_cars_destination_var(audio.destination) do
+        nil ->
+          to_params(%Content.Audio.Approaching{audio | new_cars?: false})
+
+        var ->
+          vars = [@attention_passengers, var, @now_approaching_new_ol_cars]
+          {PaEss.Utilities.take_message_id(vars), vars, :audio_visual}
+      end
+    end
+
     @spec destination_var(PaEss.terminal_station(), Content.platform(), String.t()) ::
             String.t() | nil
     defp destination_var(:wonderland, nil, _route_id), do: "32120"
@@ -44,5 +59,10 @@ defmodule Content.Audio.Approaching do
     defp destination_var(:ashmont, nil, "Red"), do: "32127"
     defp destination_var(:braintree, nil, _route_id), do: "32128"
     defp destination_var(_destination, _platform, _route_id), do: nil
+
+    @spec new_cars_destination_var(PaEss.terminal_station()) :: String.t() | nil
+    defp new_cars_destination_var(:oak_grove), do: "4022"
+    defp new_cars_destination_var(:forest_hills), do: "4043"
+    defp new_cars_destination_var(_destination), do: nil
   end
 end

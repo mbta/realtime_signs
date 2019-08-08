@@ -18,7 +18,7 @@ defmodule Content.Message.Predictions do
   @terminal_prediction_offset_seconds -60
 
   @enforce_keys [:headsign, :minutes]
-  defstruct [:headsign, :minutes, :route_id, :stop_id, :trip_id, width: 18]
+  defstruct [:headsign, :minutes, :route_id, :stop_id, :trip_id, width: 18, new_cars?: false]
 
   @type t :: %__MODULE__{
           headsign: String.t(),
@@ -26,7 +26,8 @@ defmodule Content.Message.Predictions do
           route_id: String.t(),
           stop_id: String.t(),
           trip_id: Predictions.Prediction.trip_id() | nil,
-          width: integer()
+          width: integer(),
+          new_cars?: boolean()
         }
 
   @spec non_terminal(Predictions.Prediction.t(), integer()) :: t()
@@ -65,7 +66,8 @@ defmodule Content.Message.Predictions do
       route_id: prediction.route_id,
       stop_id: prediction.stop_id,
       trip_id: prediction.trip_id,
-      width: width
+      width: width,
+      new_cars?: prediction.new_cars?
     }
   end
 
@@ -103,7 +105,8 @@ defmodule Content.Message.Predictions do
       route_id: prediction.route_id,
       stop_id: prediction.stop_id,
       trip_id: prediction.trip_id,
-      width: width
+      width: width,
+      new_cars?: prediction.new_cars?
     }
   end
 

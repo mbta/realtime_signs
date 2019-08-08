@@ -215,6 +215,22 @@ defmodule Content.Message.PredictionsTest do
 
       assert msg.trip_id == "trip1"
     end
+
+    test "Includes new_cars? flag" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 125,
+        direction_id: 0,
+        route_id: "Orange",
+        stopped?: false,
+        stops_away: 2,
+        destination_stop_id: "70001",
+        new_cars?: true
+      }
+
+      msg = Content.Message.Predictions.non_terminal(prediction)
+
+      assert msg.new_cars?
+    end
   end
 
   describe "terminal/3" do
@@ -350,6 +366,22 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.terminal(prediction)
 
       assert msg.trip_id == "trip1"
+    end
+
+    test "Includes new_cars? flag" do
+      prediction = %Predictions.Prediction{
+        seconds_until_arrival: 125,
+        direction_id: 0,
+        route_id: "Orange",
+        stopped?: false,
+        stops_away: 2,
+        destination_stop_id: "70001",
+        new_cars?: true
+      }
+
+      msg = Content.Message.Predictions.non_terminal(prediction)
+
+      assert msg.new_cars?
     end
   end
 end

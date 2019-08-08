@@ -9,17 +9,20 @@ defmodule Predictions.Predictions do
     feed_message["entity"]
     |> Enum.map(& &1["trip_update"])
     |> Enum.flat_map(&transform_stop_time_updates/1)
-    |> Enum.filter(fn {update, _, _, _, _} ->
+    |> Enum.filter(fn {update, _, _, _, _, _} ->
       update["arrival"] || update["departure"] || update["passthrough_time"]
     end)
     |> Enum.group_by(
-      fn {update, _last_stop_id, _route_id, direction_id, _trip_id} ->
+      fn {update, _last_stop_id, _route_id, direction_id, _trip_id, _consist} ->
         {update["stop_id"], direction_id}
       end,
       &prediction_from_update(&1, current_time)
     )
   end
 
+  @spec transform_stop_time_updates(map()) :: [
+          {map(), String.t(), String.t(), integer(), String.t(), [String.t()] | nil}
+        ]
   defp transform_stop_time_updates(trip_update) do
     last_stop_id =
       Enum.max_by(trip_update["stop_time_update"], fn update ->
@@ -27,20 +30,27 @@ defmodule Predictions.Predictions do
       end)
       |> Map.get("stop_id")
 
+    consist =
+      if trip_update["vehicle"] && trip_update["vehicle"]["consist"] do
+        Enum.map(trip_update["vehicle"]["consist"], & &1["label"])
+      else
+        nil
+      end
+
     Enum.map(
       trip_update["stop_time_update"],
       &{&1, last_stop_id, trip_update["trip"]["route_id"], trip_update["trip"]["direction_id"],
-       trip_update["trip"]["trip_id"]}
+       trip_update["trip"]["trip_id"], consist}
     )
   end
 
   @spec prediction_from_update(
           {GTFS.Realtime.trip_update_stop_time_update(), String.t(), String.t(), integer(),
-           Predictions.Prediction.trip_id()},
+           Predictions.Prediction.trip_id(), [String.t()] | nil},
           DateTime.t()
         ) :: Prediction.t()
   defp prediction_from_update(
-         {stop_time_update, last_stop_id, route_id, direction_id, trip_id},
+         {stop_time_update, last_stop_id, route_id, direction_id, trip_id, consist},
          current_time
        ) do
     current_time_seconds = DateTime.to_unix(current_time)
@@ -71,7 +81,8 @@ defmodule Predictions.Predictions do
       destination_stop_id: last_stop_id,
       stopped?: stop_time_update["stopped?"],
       stops_away: stop_time_update["stops_away"],
-      boarding_status: stop_time_update["boarding_status"]
+      boarding_status: stop_time_update["boarding_status"],
+      new_cars?: consist_is_new?(consist)
     }
   end
 
@@ -81,5 +92,19 @@ defmodule Predictions.Predictions do
 
   def parse_json_response(body) do
     Poison.Parser.parse!(body)
+  end
+
+  @spec consist_is_new?([String.t()] | nil) :: boolean()
+  defp consist_is_new?(nil) do
+    false
+  end
+
+  defp consist_is_new?(consist) do
+    Enum.any?(consist, fn car ->
+      case Integer.parse(car) do
+        :error -> false
+        {n, _remaining} -> 1400 <= n and n <= 1551
+      end
+    end)
   end
 end
