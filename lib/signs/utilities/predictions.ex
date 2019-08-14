@@ -40,7 +40,7 @@ defmodule Signs.Utilities.Predictions do
     |> Enum.take(2)
     |> Enum.map(fn {source, prediction} ->
       cond do
-        red_line_stops_away?(prediction) ->
+        !source.terminal? && red_line_stops_away?(prediction) ->
           {source, Content.Message.StopsAway.from_prediction(prediction)}
 
         stopped_train?(prediction) ->
