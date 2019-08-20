@@ -116,7 +116,7 @@ defmodule Engine.ScheduledHeadwaysTest do
       end
     end
 
-    test "when the schedule fetch does not get new data, keeps th eold data" do
+    test "when the schedule fetch does not get new data, keeps the old data" do
       schedules =
         Enum.map(FakeScheduleFetcher.get_test_times(), fn time ->
           %{
@@ -133,6 +133,53 @@ defmodule Engine.ScheduledHeadwaysTest do
         fetcher: FakeScheduleFetcher,
         fetch_ms: 30_000,
         stop_ids: ["bad_response"]
+      }
+
+      {:noreply, updated_state} = Engine.ScheduledHeadways.handle_info(:data_update, state)
+      updated_schedule = updated_state.schedule_data
+
+      assert updated_schedule["123"] == schedules
+    end
+
+    test "when the schedule fetch only gets some new data, keeps the old data" do
+      schedules =
+        Enum.map(FakeScheduleFetcher.get_test_times(), fn time ->
+          %{
+            "relationships" => %{"stop" => %{"data" => %{"id" => "123"}}},
+            "attributes" => %{
+              "departure_time" =>
+                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+            }
+          }
+        end)
+
+      state = %{
+        schedule_data: %{"123" => schedules},
+        fetcher: FakeScheduleFetcher,
+        fetch_ms: 30_000,
+        stop_ids: [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "20",
+          "bad_response"
+        ]
       }
 
       {:noreply, updated_state} = Engine.ScheduledHeadways.handle_info(:data_update, state)

@@ -107,11 +107,16 @@ defmodule Engine.ScheduledHeadways do
   defp update_schedule_data(state) do
     schedule_updater = state[:fetcher]
 
-    new_schedule =
+    new_schedule_raw =
       state.stop_ids
       |> Enum.chunk_every(20)
       |> Enum.map(&schedule_updater.get_schedules(&1))
-      |> Enum.concat()
+
+    new_schedule =
+      case Enum.any?(new_schedule_raw, &(&1 == [])) do
+        true -> []
+        false -> Enum.concat(new_schedule_raw)
+      end
 
     case new_schedule do
       [] ->
