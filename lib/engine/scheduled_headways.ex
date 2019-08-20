@@ -107,14 +107,23 @@ defmodule Engine.ScheduledHeadways do
   defp update_schedule_data(state) do
     schedule_updater = state[:fetcher]
 
-    Map.put(
-      state,
-      :schedule_data,
+    new_schedule =
       state.stop_ids
       |> Enum.chunk_every(20)
       |> Enum.map(&schedule_updater.get_schedules(&1))
       |> Enum.concat()
-    )
+
+    case new_schedule do
+      [] ->
+        state
+
+      schedule ->
+        Map.put(
+          state,
+          :schedule_data,
+          schedule
+        )
+    end
   end
 
   @spec update_headway_data(state()) :: state()
