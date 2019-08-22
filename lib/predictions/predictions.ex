@@ -8,6 +8,7 @@ defmodule Predictions.Predictions do
   def get_all(feed_message, current_time) do
     feed_message["entity"]
     |> Enum.map(& &1["trip_update"])
+    |> Enum.reject(&(&1["trip"]["schedule_relationship"] == "CANCELED"))
     |> Enum.flat_map(&transform_stop_time_updates/1)
     |> Enum.filter(fn {update, _, _, _, _, _} ->
       update["arrival"] || update["departure"] || update["passthrough_time"]

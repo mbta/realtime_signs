@@ -123,7 +123,7 @@ defmodule Predictions.PredictionsTest do
       assert get_all(@feed_message, @current_time) == expected
     end
 
-    test "finds predictions for multiple trips" do
+    test "finds predictions for multiple trips, excluding canceled trips" do
       feed_message = %{
         "entity" => [
           %{
@@ -232,6 +232,31 @@ defmodule Predictions.PredictionsTest do
               "vehicle" => %{
                 "id" => "vehicle_2",
                 "label" => "3261",
+                "license_plate" => nil
+              }
+            },
+            "vehicle" => nil
+          },
+          %{
+            "alert" => nil,
+            "id" => "1566418052_40826503",
+            "is_deleted" => false,
+            "trip_update" => %{
+              "delay" => nil,
+              "stop_time_update" => [],
+              "timestamp" => nil,
+              "trip" => %{
+                "direction_id" => nil,
+                "route_id" => nil,
+                "schedule_relationship" => "CANCELED",
+                "start_date" => "20190821",
+                "start_time" => nil,
+                "trip_id" => "40826503"
+              },
+              "vehicle" => %{
+                "consist" => [],
+                "id" => nil,
+                "label" => nil,
                 "license_plate" => nil
               }
             },
