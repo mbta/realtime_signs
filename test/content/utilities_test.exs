@@ -26,6 +26,10 @@ defmodule Content.UtilitiesTest do
       assert headsign_for_prediction("Red", 0, "70093") == {:ok, "Ashmont"}
       assert headsign_for_prediction("Red", 0, "70105") == {:ok, "Braintree"}
     end
+
+    test "Dont show kenmore on signs when the destination is blandford st" do
+      assert headsign_for_prediction("Green-B", 0, "70149") == {:ok, "Boston Col"}
+    end
   end
 
   describe "width_padded_string/3" do
