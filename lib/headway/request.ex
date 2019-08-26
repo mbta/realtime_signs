@@ -10,7 +10,7 @@ defmodule Headway.Request do
     Enum.group_by(station_ids, &directions_for_station_id/1)
     |> Enum.map(&ScheduleHeadway.build_request/1)
     |> Enum.map(
-      &http_client.get(&1, api_key_header(api_v3_key), timeout: 2000, recv_timeout: 2000)
+      &http_client.get(&1, api_key_header(api_v3_key), timeout: 5000, recv_timeout: 5000)
     )
     |> Enum.map(&validate_and_parse_response/1)
     |> Enum.concat()
