@@ -26,6 +26,7 @@ defmodule Signs.Utilities.Headways do
           {{map(), Content.Message.t()}, {map(), Content.Message.t()}}
   defp do_headway_messages(sign, config) do
     headway_range = sign.headway_engine.get_headways(config.stop_id)
+    last_departure = sign.last_departure_engine.get_last_departure(config.stop_id)
 
     sign_stop_ids =
       sign.source_config
@@ -80,7 +81,9 @@ defmodule Signs.Utilities.Headways do
           %Content.Message.Headways.Top{
             headsign: config.headway_direction_name,
             vehicle_type: vehicle_type(config.routes)
-          }}, {config, %Content.Message.Headways.Bottom{range: adjusted_range}}}
+          }},
+         {config,
+          %Content.Message.Headways.Bottom{range: adjusted_range, last_departure: last_departure}}}
     end
   end
 

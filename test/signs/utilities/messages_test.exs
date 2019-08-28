@@ -65,6 +65,10 @@ defmodule Signs.Utilities.MessagesTest do
     def stopped_at?(_stop_id), do: false
   end
 
+  defmodule FakeLastDepartures do
+    def get_last_departure(_stop_id), do: Timex.now()
+  end
+
   defmodule FakeHeadways do
     def get_headways(_stop_id), do: {1, 4}
   end
@@ -88,6 +92,7 @@ defmodule Signs.Utilities.MessagesTest do
     current_content_bottom: {@src, %Content.Message.Predictions{headsign: "Ashmont", minutes: 3}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
+    last_departure_engine: FakeLastDepartures,
     alerts_engine: FakeAlerts,
     bridge_engine: nil,
     sign_updater: FakeUpdater,

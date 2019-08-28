@@ -31,6 +31,10 @@ defmodule Signs.RealtimeTest do
     def for_stop(_stop_id, _direction_id), do: []
   end
 
+  defmodule FakeLastDepartureEngine do
+    def get_last_departure(_stop_id), do: Timex.now()
+  end
+
   defmodule FakeHeadways do
     def get_headways(_stop_id), do: {1, 5}
   end
@@ -81,6 +85,7 @@ defmodule Signs.RealtimeTest do
     current_content_bottom: {@src, %HB{range: {1, 5}}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
+    last_departure_engine: FakeLastDepartureEngine,
     alerts_engine: FakeAlerts,
     bridge_engine: nil,
     sign_updater: FakeUpdater,

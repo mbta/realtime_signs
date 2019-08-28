@@ -390,4 +390,18 @@ defmodule Headway.ScheduleHeadwayTest do
       assert show_first_departure?(first_departure, current_time, 10)
     end
   end
+
+  describe "format_headway_range/2" do
+    test "shows how long ago the last departure was" do
+      now = Timex.now()
+      five_minutes_ago = Timex.shift(now, minutes: -5)
+      assert format_last_departure(now, five_minutes_ago) == "Departed 5 min ago"
+    end
+
+    test "does not show 0 minutes ago when the train departed recently" do
+      now = Timex.now()
+      recent_departure = Timex.shift(now, seconds: -20)
+      assert format_last_departure(now, recent_departure) == "Departed 1 min ago"
+    end
+  end
 end

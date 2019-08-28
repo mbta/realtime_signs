@@ -20,6 +20,7 @@ defmodule Signs.Realtime do
     :current_content_bottom,
     :prediction_engine,
     :headway_engine,
+    :last_departure_engine,
     :alerts_engine,
     :bridge_engine,
     :sign_updater,
@@ -50,6 +51,7 @@ defmodule Signs.Realtime do
           current_content_bottom: line_content(),
           prediction_engine: module(),
           headway_engine: module(),
+          last_departure_engine: module(),
           alerts_engine: module(),
           bridge_engine: module(),
           sign_updater: module(),
@@ -68,6 +70,7 @@ defmodule Signs.Realtime do
   def start_link(%{"type" => "realtime"} = config, opts \\ []) do
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
     headway_engine = opts[:headway_engine] || default_headway_engine(config)
+    last_departure_engine = opts[:last_departure_engine] || Engine.LastDepartures
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
     bridge_engine = opts[:bridge_engine] || Engine.Bridge
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
@@ -81,6 +84,7 @@ defmodule Signs.Realtime do
       current_content_bottom: {nil, Content.Message.Empty.new()},
       prediction_engine: prediction_engine,
       headway_engine: headway_engine,
+      last_departure_engine: last_departure_engine,
       alerts_engine: alerts_engine,
       bridge_engine: bridge_engine,
       sign_updater: sign_updater,

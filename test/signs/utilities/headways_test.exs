@@ -10,6 +10,12 @@ defmodule Signs.Utilities.HeadwaysTest do
     def max_stop_status(_stops, _routes), do: :none
   end
 
+  defmodule FakeLastDepartures do
+    def get_last_departure(_) do
+      Timex.now()
+    end
+  end
+
   defmodule FakeHeadways do
     def get_headways("a") do
       {2, 8}
@@ -53,6 +59,7 @@ defmodule Signs.Utilities.HeadwaysTest do
     current_content_bottom: {nil, Content.Message.Empty.new()},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
+    last_departure_engine: FakeLastDepartures,
     alerts_engine: FakeAlerts,
     bridge_engine: nil,
     sign_updater: FakeUpdater,

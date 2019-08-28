@@ -145,6 +145,22 @@ defmodule Headway.ScheduleHeadway do
   def format_headway_range({x, y}) when x > y, do: "Every #{y} to #{x} min"
   def format_headway_range({x, y}), do: "Every #{x} to #{y} min"
 
+  @spec format_last_departure(DateTime.t(), DateTime.t()) :: String.t()
+  def format_last_departure(nil, _current_time) do
+    nil
+  end
+
+  def format_last_departure(time, current_time) do
+    display =
+      time
+      |> DateTime.diff(current_time)
+      |> Kernel./(60)
+      |> Float.ceil(0)
+      |> Kernel.trunc()
+
+    "Departed #{display} min ago"
+  end
+
   @spec max_headway(headway_range) :: non_neg_integer | nil
   def max_headway({nil, nil}), do: nil
   def max_headway({nil, y}), do: y

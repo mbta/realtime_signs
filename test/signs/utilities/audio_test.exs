@@ -30,6 +30,7 @@ defmodule Signs.Utilities.AudioTest do
     current_content_bottom: {nil, %Content.Message.Empty{}},
     prediction_engine: nil,
     headway_engine: nil,
+    last_departure_engine: nil,
     alerts_engine: nil,
     bridge_engine: nil,
     sign_updater: nil,
