@@ -33,7 +33,7 @@ defmodule Engine.ScheduledHeadwaysTest do
       ~N[2017-07-04 09:20:00]
     ]
 
-    def get_schedules(_station_ids) do
+    def get_schedules(["123"]) do
       Enum.map(@times, fn time ->
         %{
           "relationships" => %{"stop" => %{"data" => %{"id" => "123"}}},
@@ -43,6 +43,14 @@ defmodule Engine.ScheduledHeadwaysTest do
           }
         }
       end)
+    end
+
+    def get_schedules(["456"]) do
+      []
+    end
+
+    def get_schedules(["789"]) do
+      :error
     end
 
     def get_test_times() do
@@ -62,6 +70,7 @@ defmodule Engine.ScheduledHeadwaysTest do
         schedule_data: %{},
         fetcher: FakeScheduleFetcher,
         fetch_ms: 30_000,
+        fetch_chunk_size: 20,
         headway_calc_ms: 30_000,
         stop_ids: ["123"],
         time_fetcher: fn -> Timex.to_datetime(~N[2017-07-04 09:00:00], "America/New_York") end
@@ -91,6 +100,7 @@ defmodule Engine.ScheduledHeadwaysTest do
         schedule_data: %{"123" => schedules},
         fetcher: FakeScheduleFetcher,
         fetch_ms: 30_000,
+        fetch_chunk_size: 20,
         stop_ids: ["123"]
       }
 
@@ -106,6 +116,77 @@ defmodule Engine.ScheduledHeadwaysTest do
         id_path = ["relationships", "stop", "data", "id"]
         assert get_in(schedule, id_path) == get_in(state_schedule, id_path)
       end
+    end
+
+    test "handles empty results from request" do
+      schedules_123 =
+        Enum.map(FakeScheduleFetcher.get_test_times(), fn time ->
+          %{
+            "relationships" => %{"stop" => %{"data" => %{"id" => "123"}}},
+            "attributes" => %{
+              "departure_time" =>
+                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+            }
+          }
+        end)
+
+      schedules_456 =
+        Enum.map(FakeScheduleFetcher.get_test_times(), fn time ->
+          %{
+            "relationships" => %{"stop" => %{"data" => %{"id" => "456"}}},
+            "attributes" => %{
+              "departure_time" =>
+                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+            }
+          }
+        end)
+
+      state = %{
+        schedule_data: %{"123" => schedules_123, "456" => schedules_456},
+        fetcher: FakeScheduleFetcher,
+        fetch_ms: 30_000,
+        fetch_chunk_size: 1,
+        stop_ids: ["123", "456"]
+      }
+
+      {:noreply, updated_state} = Engine.ScheduledHeadways.handle_info(:data_update, state)
+      assert updated_state.schedule_data == %{"123" => schedules_123, "456" => []}
+    end
+
+    test "handles errors in the request" do
+      schedules_123 =
+        Enum.map(FakeScheduleFetcher.get_test_times(), fn time ->
+          %{
+            "relationships" => %{"stop" => %{"data" => %{"id" => "123"}}},
+            "attributes" => %{
+              "departure_time" =>
+                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+            }
+          }
+        end)
+
+      schedules_789 =
+        Enum.map(FakeScheduleFetcher.get_test_times(), fn time ->
+          %{
+            "relationships" => %{"stop" => %{"data" => %{"id" => "789"}}},
+            "attributes" => %{
+              "departure_time" =>
+                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+            }
+          }
+        end)
+
+      state = %{
+        schedule_data: %{"123" => schedules_123, "789" => schedules_789},
+        fetcher: FakeScheduleFetcher,
+        fetch_ms: 30_000,
+        fetch_chunk_size: 1,
+        stop_ids: ["123", "789"]
+      }
+
+      {:noreply, updated_state} = Engine.ScheduledHeadways.handle_info(:data_update, state)
+
+      assert state.schedule_data == updated_state.schedule_data
     end
   end
 end
