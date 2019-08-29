@@ -8,8 +8,8 @@ defmodule Headway.RequestTest do
     test "gracefully handles bad responses and logs warning" do
       log =
         capture_log([level: :warn], fn ->
-          assert get_schedules(["500_error"]) == []
-          assert get_schedules(["unknown_error"]) == []
+          assert get_schedules(["500_error"]) == :error
+          assert get_schedules(["unknown_error"]) == :error
         end)
 
       assert log =~ "Response returned with status code 500"
