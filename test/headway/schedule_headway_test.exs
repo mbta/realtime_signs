@@ -23,16 +23,18 @@ defmodule Headway.ScheduleHeadwayTest do
     ]
 
     test "adjacent times to current time are used for calculation" do
-      schedules =
-        Enum.map(@times, fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-            "attributes" => %{
-              "departure_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+      schedules = %{
+        "111" =>
+          Enum.map(@times, fn time ->
+            %{
+              "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+              "attributes" => %{
+                "departure_time" =>
+                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+              }
             }
-          }
-        end)
+          end)
+      }
 
       headways =
         group_headways_for_stations(
@@ -45,10 +47,12 @@ defmodule Headway.ScheduleHeadwayTest do
     end
 
     test "filters out attributes that don't have times" do
-      schedules =
-        Enum.map(@times, fn _time ->
-          %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}}, "attributes" => %{}}
-        end)
+      schedules = %{
+        "111" =>
+          Enum.map(@times, fn _time ->
+            %{"relationships" => %{"stop" => %{"data" => %{"id" => "111"}}}, "attributes" => %{}}
+          end)
+      }
 
       headways =
         group_headways_for_stations(
@@ -61,16 +65,18 @@ defmodule Headway.ScheduleHeadwayTest do
     end
 
     test "Returns first departure and headway range when no departures have left yet" do
-      schedules =
-        Enum.map(@times, fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-            "attributes" => %{
-              "departure_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+      schedules = %{
+        "111" =>
+          Enum.map(@times, fn time ->
+            %{
+              "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+              "attributes" => %{
+                "departure_time" =>
+                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+              }
             }
-          }
-        end)
+          end)
+      }
 
       headways =
         group_headways_for_stations(
@@ -87,12 +93,14 @@ defmodule Headway.ScheduleHeadwayTest do
     end
 
     test "gracefully handles bad time string and logs warning" do
-      schedules = [
-        %{
-          "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-          "attributes" => %{"departure_time" => "This is a bad time string"}
-        }
-      ]
+      schedules = %{
+        "111" => [
+          %{
+            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+            "attributes" => %{"departure_time" => "This is a bad time string"}
+          }
+        ]
+      }
 
       log =
         capture_log([level: :warn], fn ->
@@ -116,31 +124,35 @@ defmodule Headway.ScheduleHeadwayTest do
         ~N[2017-07-04 09:14:00]
       ]
 
-      schedules1 =
-        Enum.map(@times, fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-            "attributes" => %{
-              "departure_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+      schedules1 = %{
+        "111" =>
+          Enum.map(@times, fn time ->
+            %{
+              "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+              "attributes" => %{
+                "departure_time" =>
+                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+              }
             }
-          }
-        end)
+          end)
+      }
 
-      schedules2 =
-        Enum.map(times2, fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "222"}}},
-            "attributes" => %{
-              "arrival_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+      schedules2 = %{
+        "222" =>
+          Enum.map(times2, fn time ->
+            %{
+              "relationships" => %{"stop" => %{"data" => %{"id" => "222"}}},
+              "attributes" => %{
+                "arrival_time" =>
+                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+              }
             }
-          }
-        end)
+          end)
+      }
 
       headways =
         group_headways_for_stations(
-          schedules1 ++ schedules2,
+          Map.merge(schedules1, schedules2),
           ["111", "222"],
           Timex.to_datetime(@current_time, "America/New_York")
         )
@@ -155,16 +167,18 @@ defmodule Headway.ScheduleHeadwayTest do
         ~N[2017-07-04 09:05:00]
       ]
 
-      schedules =
-        Enum.map(times, fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-            "attributes" => %{
-              "departure_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+      schedules = %{
+        "111" =>
+          Enum.map(times, fn time ->
+            %{
+              "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+              "attributes" => %{
+                "departure_time" =>
+                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+              }
             }
-          }
-        end)
+          end)
+      }
 
       headways =
         group_headways_for_stations(
@@ -183,16 +197,18 @@ defmodule Headway.ScheduleHeadwayTest do
         ~N[2017-07-04 09:10:00]
       ]
 
-      schedules =
-        Enum.map(times, fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-            "attributes" => %{
-              "departure_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+      schedules = %{
+        "111" =>
+          Enum.map(times, fn time ->
+            %{
+              "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+              "attributes" => %{
+                "departure_time" =>
+                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+              }
             }
-          }
-        end)
+          end)
+      }
 
       headways =
         group_headways_for_stations(
@@ -211,16 +227,18 @@ defmodule Headway.ScheduleHeadwayTest do
         ~N[2017-07-04 09:02:00]
       ]
 
-      schedules =
-        Enum.map(times, fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-            "attributes" => %{
-              "departure_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+      schedules = %{
+        "111" =>
+          Enum.map(times, fn time ->
+            %{
+              "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+              "attributes" => %{
+                "departure_time" =>
+                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+              }
             }
-          }
-        end)
+          end)
+      }
 
       headways =
         group_headways_for_stations(
@@ -238,16 +256,18 @@ defmodule Headway.ScheduleHeadwayTest do
         ~N[2017-07-04 09:02:00]
       ]
 
-      schedules =
-        Enum.map(times, fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-            "attributes" => %{
-              "departure_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+      schedules = %{
+        "111" =>
+          Enum.map(times, fn time ->
+            %{
+              "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+              "attributes" => %{
+                "departure_time" =>
+                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+              }
             }
-          }
-        end)
+          end)
+      }
 
       headways =
         group_headways_for_stations(
@@ -268,16 +288,18 @@ defmodule Headway.ScheduleHeadwayTest do
         ~N[2017-07-04 10:05:00]
       ]
 
-      schedules =
-        Enum.map(times, fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-            "attributes" => %{
-              "departure_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+      schedules = %{
+        "111" =>
+          Enum.map(times, fn time ->
+            %{
+              "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+              "attributes" => %{
+                "departure_time" =>
+                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+              }
             }
-          }
-        end)
+          end)
+      }
 
       headways =
         group_headways_for_stations(
@@ -297,16 +319,18 @@ defmodule Headway.ScheduleHeadwayTest do
         ~N[2017-07-04 10:30:00]
       ]
 
-      schedules =
-        Enum.map(times, fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-            "attributes" => %{
-              "departure_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+      schedules = %{
+        "111" =>
+          Enum.map(times, fn time ->
+            %{
+              "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
+              "attributes" => %{
+                "departure_time" =>
+                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+              }
             }
-          }
-        end)
+          end)
+      }
 
       headways =
         group_headways_for_stations(
