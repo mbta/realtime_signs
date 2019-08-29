@@ -18,7 +18,11 @@ defmodule Headway.ScheduleHeadway do
     schedule_api_url <> "?filter[stop]=#{id_filter}&filter[direction_id]=#{direction_filter}"
   end
 
-  @spec group_headways_for_stations([map], [GTFS.station_id()], DateTime.t()) :: %{
+  @spec group_headways_for_stations(
+          %{String.t() => schedule_map()},
+          [GTFS.station_id()],
+          DateTime.t()
+        ) :: %{
           String.t() => t
         }
   def group_headways_for_stations(schedules, station_ids, current_time) do
@@ -27,12 +31,9 @@ defmodule Headway.ScheduleHeadway do
     end)
   end
 
-  @spec headway_for_station([map], GTFS.station_id(), DateTime.t()) :: t
+  @spec headway_for_station(%{String.t() => schedule_map()}, GTFS.station_id(), DateTime.t()) :: t
   defp headway_for_station(schedules, station_id, current_time) do
-    schedules
-    |> Enum.filter(fn schedule ->
-      get_in(schedule, ["relationships", "stop", "data", "id"]) == station_id
-    end)
+    (schedules[station_id] || [])
     |> Enum.flat_map(&schedule_time/1)
     |> Enum.sort(&(Timex.compare(&1, &2) <= 0))
     |> Enum.split_with(fn schedule_time ->

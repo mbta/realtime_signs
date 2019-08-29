@@ -8,13 +8,9 @@ defmodule Engine.ScheduledHeadways do
   require Logger
   require Signs.Utilities.SignsConfig
 
-  @type t :: %{
-          String.t() => [Headway.ScheduleHeadway.schedule_map()]
-        }
-
   @type state :: %{
           ets_table_name: term(),
-          schedule_data: list(),
+          schedule_data: %{String.t() => [Headway.ScheduleHeadway.schedule_map()]},
           fetcher: module(),
           fetch_ms: integer(),
           headway_calc_ms: integer(),
@@ -52,7 +48,7 @@ defmodule Engine.ScheduledHeadways do
 
     state = %{
       ets_table_name: ets_table_name,
-      schedule_data: [],
+      schedule_data: %{},
       fetcher: fetcher,
       fetch_ms: fetch_ms,
       headway_calc_ms: headway_calc_ms,
@@ -75,7 +71,7 @@ defmodule Engine.ScheduledHeadways do
     headways
   end
 
-  @spec handle_info(:data_update, t) :: {:noreply, t}
+  @spec handle_info(:data_update, state) :: {:noreply, state}
   def handle_info(:data_update, state) do
     schedule_data_update(self(), state.fetch_ms)
 
@@ -112,8 +108,12 @@ defmodule Engine.ScheduledHeadways do
       :schedule_data,
       state.stop_ids
       |> Enum.chunk_every(20)
-      |> Enum.map(&schedule_updater.get_schedules(&1))
-      |> Enum.concat()
+      |> Enum.map(fn stop_ids ->
+        stop_ids
+        |> schedule_updater.get_schedules()
+        |> Enum.group_by(&get_in(&1, ["relationships", "stop", "data", "id"]))
+      end)
+      |> Enum.reduce(%{}, fn m, acc -> Map.merge(acc, m) end)
     )
   end
 

@@ -97,11 +97,7 @@ defmodule Engine.ScheduledHeadwaysTest do
       {:noreply, updated_state} = Engine.ScheduledHeadways.handle_info(:data_update, state)
       updated_schedule = updated_state.schedule_data
 
-      for {state_schedule, index} <-
-            updated_schedule
-            |> Enum.group_by(fn schedule -> schedule["relationships"]["stop"]["data"]["id"] end)
-            |> Map.get("123")
-            |> Enum.with_index() do
+      for {state_schedule, index} <- Enum.with_index(updated_schedule["123"]) do
         schedule = Enum.at(schedules, index)
 
         assert get_in(schedule, ["attributes", "departure_time"]) ==
