@@ -2,24 +2,31 @@ defmodule Headway.Request do
   require Logger
   alias Headway.ScheduleHeadway
 
-  @spec get_schedules([GTFS.station_id()]) :: [%{}]
+  @spec get_schedules([GTFS.station_id()]) :: [%{}] | :error
   def get_schedules(station_ids) do
     http_client = Application.get_env(:realtime_signs, :http_client)
     api_v3_key = Application.get_env(:realtime_signs, :api_v3_key)
 
-    Enum.group_by(station_ids, &directions_for_station_id/1)
-    |> Enum.map(&ScheduleHeadway.build_request/1)
-    |> Enum.map(
-      &http_client.get(&1, api_key_header(api_v3_key), timeout: 5000, recv_timeout: 5000)
-    )
-    |> Enum.map(&validate_and_parse_response/1)
-    |> Enum.concat()
+    results =
+      Enum.group_by(station_ids, &directions_for_station_id/1)
+      |> Enum.map(&ScheduleHeadway.build_request/1)
+      |> Enum.map(
+        &http_client.get(&1, api_key_header(api_v3_key), timeout: 5000, recv_timeout: 5000)
+      )
+      |> Enum.map(&validate_and_parse_response/1)
+
+    if Enum.any?(results, &(&1 == :error)) do
+      :error
+    else
+      Enum.concat(results)
+    end
   end
 
   @spec validate_and_parse_response({atom, %HTTPoison.Response{}} | {atom, %HTTPoison.Error{}}) ::
           [
             map()
           ]
+          | :error
   defp validate_and_parse_response(response) do
     case response do
       {:ok, %HTTPoison.Response{status_code: status, body: body}}
@@ -31,11 +38,11 @@ defmodule Headway.Request do
           "Could not load schedules. Response returned with status code #{inspect(status)}"
         )
 
-        []
+        :error
 
       {:error, %HTTPoison.Error{reason: reason}} ->
         Logger.warn("Could not load schedules: #{inspect(reason)}")
-        []
+        :error
     end
   end
 
