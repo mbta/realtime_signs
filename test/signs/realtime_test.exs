@@ -32,7 +32,15 @@ defmodule Signs.RealtimeTest do
   end
 
   defmodule FakeLastDepartureEngine do
-    def get_last_departure(_stop_id), do: Timex.now()
+    @test_departure_time Timex.to_datetime(~N[2019-08-29 15:41:31], "America/New_York")
+
+    def get_last_departure(_) do
+      @test_departure_time
+    end
+
+    def test_departure_time() do
+      @test_departure_time
+    end
   end
 
   defmodule FakeHeadways do
@@ -82,7 +90,8 @@ defmodule Signs.RealtimeTest do
     audio_id: {"TEST", ["x"]},
     source_config: {[@src]},
     current_content_top: {@src, %HT{headsign: "Southbound", vehicle_type: :train}},
-    current_content_bottom: {@src, %HB{range: {1, 5}}},
+    current_content_bottom:
+      {@src, %HB{range: {1, 5}, last_departure: FakeLastDepartureEngine.test_departure_time()}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeLastDepartureEngine,

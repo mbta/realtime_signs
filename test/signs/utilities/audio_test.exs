@@ -192,6 +192,11 @@ defmodule Signs.Utilities.AudioTest do
              )
     end
 
+    test "returns false for bottom headway message" do
+      message = %Message.Headways.Bottom{range: {1, 5}, last_departure: nil}
+      refute should_interrupting_read?({@src, message}, %{@sign | source_config: {[@src]}}, :top)
+    end
+
     test "returns true if it's a different kind of message" do
       message = %Message.Headways.Top{headsign: "Alewife", vehicle_type: :train}
       assert should_interrupting_read?({@src, message}, %{@sign | source_config: {[@src]}}, :top)

@@ -66,7 +66,11 @@ defmodule Signs.Utilities.MessagesTest do
   end
 
   defmodule FakeLastDepartures do
-    def get_last_departure(_stop_id), do: Timex.now()
+    @test_departure_time Timex.to_datetime(~N[2019-08-29 15:41:31], "America/New_York")
+
+    def get_last_departure(_stop_id), do: @test_departure_time
+
+    def test_departure_time(), do: @test_departure_time
   end
 
   defmodule FakeHeadways do
@@ -519,7 +523,11 @@ defmodule Signs.Utilities.MessagesTest do
                    routes: nil,
                    stop_id: "no_preds",
                    terminal?: false
-                 }, %Content.Message.Headways.Bottom{range: {1, 4}}}}
+                 },
+                 %Content.Message.Headways.Bottom{
+                   range: {1, 4},
+                   last_departure: FakeLastDepartures.test_departure_time()
+                 }}}
     end
 
     test "when there are no predictions and more than one source config, puts nothing on the sign" do
