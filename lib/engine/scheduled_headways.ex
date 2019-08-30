@@ -8,15 +8,12 @@ defmodule Engine.ScheduledHeadways do
   require Logger
   require Signs.Utilities.SignsConfig
 
-  @type t :: %{
-          String.t() => [Headway.ScheduleHeadway.schedule_map()]
-        }
-
   @type state :: %{
           ets_table_name: term(),
-          schedule_data: list(),
+          schedule_data: %{String.t() => [Headway.ScheduleHeadway.schedule_map()]},
           fetcher: module(),
           fetch_ms: integer(),
+          fetch_chunk_size: integer(),
           headway_calc_ms: integer(),
           stop_ids: [String.t()],
           time_fetcher: (() -> DateTime.t())
@@ -41,6 +38,7 @@ defmodule Engine.ScheduledHeadways do
     ets_table_name = opts[:ets_table_name] || __MODULE__
     fetcher = opts[:fetcher] || Application.get_env(:realtime_signs, :scheduled_headway_requester)
     fetch_ms = opts[:fetch_ms] || 60 * 60 * 1_000
+    fetch_chunk_size = opts[:fetch_chunks_size] || 20
     headway_calc_ms = opts[:headway_calc_ms] || 5 * 60 * 1_000
 
     time_fetcher =
@@ -52,9 +50,10 @@ defmodule Engine.ScheduledHeadways do
 
     state = %{
       ets_table_name: ets_table_name,
-      schedule_data: [],
+      schedule_data: %{},
       fetcher: fetcher,
       fetch_ms: fetch_ms,
+      fetch_chunk_size: fetch_chunk_size,
       headway_calc_ms: headway_calc_ms,
       stop_ids: opts[:stop_ids],
       time_fetcher: time_fetcher
@@ -75,7 +74,7 @@ defmodule Engine.ScheduledHeadways do
     headways
   end
 
-  @spec handle_info(:data_update, t) :: {:noreply, t}
+  @spec handle_info(:data_update, state) :: {:noreply, state}
   def handle_info(:data_update, state) do
     schedule_data_update(self(), state.fetch_ms)
 
@@ -107,13 +106,28 @@ defmodule Engine.ScheduledHeadways do
   defp update_schedule_data(state) do
     schedule_updater = state[:fetcher]
 
+    updated_schedule_data =
+      state.stop_ids
+      |> Enum.chunk_every(state.fetch_chunk_size)
+      |> Enum.map(fn stop_ids ->
+        case schedule_updater.get_schedules(stop_ids) do
+          :error ->
+            nil
+
+          results ->
+            Map.merge(
+              Map.new(stop_ids, fn stop_id -> {stop_id, []} end),
+              Enum.group_by(results, &get_in(&1, ["relationships", "stop", "data", "id"]))
+            )
+        end
+      end)
+      |> Enum.reject(&is_nil(&1))
+      |> Enum.reduce(%{}, fn m, acc -> Map.merge(acc, m) end)
+
     Map.put(
       state,
       :schedule_data,
-      state.stop_ids
-      |> Enum.chunk_every(20)
-      |> Enum.map(&schedule_updater.get_schedules(&1))
-      |> Enum.concat()
+      Map.merge(state.schedule_data, updated_schedule_data)
     )
   end
 
