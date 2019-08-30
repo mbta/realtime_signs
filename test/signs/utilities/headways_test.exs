@@ -11,8 +11,14 @@ defmodule Signs.Utilities.HeadwaysTest do
   end
 
   defmodule FakeLastDepartures do
+    @test_departure_time Timex.to_datetime(~N[2019-08-29 15:41:31], "America/New_York")
+
     def get_last_departure(_) do
-      Timex.now()
+      @test_departure_time
+    end
+
+    def test_departure_time() do
+      @test_departure_time
     end
   end
 
@@ -100,7 +106,11 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign) ==
                {{source_config_for_stop_id("a"),
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_config_for_stop_id("a"), %Content.Message.Headways.Bottom{range: {2, 8}}}}
+                {source_config_for_stop_id("a"),
+                 %Content.Message.Headways.Bottom{
+                   range: {2, 8},
+                   last_departure: FakeLastDepartures.test_departure_time()
+                 }}}
     end
 
     test "generates top and bottom messages to display the headway for a sign with headway_stop_id" do
@@ -119,7 +129,11 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign) ==
                {{source_with_headway,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_with_headway, %Content.Message.Headways.Bottom{range: {2, 8}}}}
+                {source_with_headway,
+                 %Content.Message.Headways.Bottom{
+                   range: {2, 8},
+                   last_departure: FakeLastDepartures.test_departure_time()
+                 }}}
     end
 
     test "increases the headways if there are alerts on the route" do
@@ -133,7 +147,11 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign) ==
                {{source_config,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_config, %Content.Message.Headways.Bottom{range: {3, 11}}}}
+                {source_config,
+                 %Content.Message.Headways.Bottom{
+                   range: {3, 11},
+                   last_departure: FakeLastDepartures.test_departure_time()
+                 }}}
     end
 
     test "increases the headways if there are alerts on the route and it only gets a bottom end of the range" do
@@ -147,7 +165,11 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign) ==
                {{source_config,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_config, %Content.Message.Headways.Bottom{range: {3, nil}}}}
+                {source_config,
+                 %Content.Message.Headways.Bottom{
+                   range: {3, nil},
+                   last_departure: FakeLastDepartures.test_departure_time()
+                 }}}
     end
 
     test "increases the headways if there are alerts on the route and it only gets a top end of the range" do
@@ -161,7 +183,11 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign) ==
                {{source_config,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_config, %Content.Message.Headways.Bottom{range: {nil, 7}}}}
+                {source_config,
+                 %Content.Message.Headways.Bottom{
+                   range: {nil, 7},
+                   last_departure: FakeLastDepartures.test_departure_time()
+                 }}}
     end
 
     test "generates blank messages to display when no headway information present" do
@@ -206,7 +232,11 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign) ==
                {{source_config_for_stop_id("e"),
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_config_for_stop_id("e"), %Content.Message.Headways.Bottom{range: {1, 5}}}}
+                {source_config_for_stop_id("e"),
+                 %Content.Message.Headways.Bottom{
+                   range: {1, 5},
+                   last_departure: nil
+                 }}}
     end
   end
 end
