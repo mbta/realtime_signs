@@ -391,17 +391,25 @@ defmodule Headway.ScheduleHeadwayTest do
     end
   end
 
-  describe "format_headway_range/2" do
+  describe "format_bottom/2" do
     test "shows how long ago the last departure was" do
       now = Timex.now()
       five_minutes_ago = Timex.shift(now, minutes: -5)
-      assert format_last_departure(now, five_minutes_ago) == "Departed 5 min ago"
+
+      assert format_bottom(
+               %Content.Message.Headways.Bottom{last_departure: five_minutes_ago, range: {1, 5}},
+               now
+             ) == [{"Every 1 to 5 min", 3}, {"Departed 5 min ago", 3}]
     end
 
     test "does not show 0 minutes ago when the train departed recently" do
       now = Timex.now()
       recent_departure = Timex.shift(now, seconds: -20)
-      assert format_last_departure(now, recent_departure) == "Departed 1 min ago"
+
+      assert format_bottom(
+               %Content.Message.Headways.Bottom{last_departure: recent_departure, range: {1, 5}},
+               now
+             ) == [{"Every 1 to 5 min", 3}, {"Departed 1 min ago", 3}]
     end
   end
 end

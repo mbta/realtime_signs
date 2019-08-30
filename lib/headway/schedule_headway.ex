@@ -138,27 +138,33 @@ defmodule Headway.ScheduleHeadway do
   @spec pad_upper_value(integer) :: integer
   defp pad_upper_value(y), do: max(y, @min_headway) + @headway_padding
 
-  @spec format_headway_range(headway_range) :: String.t()
+  @spec format_headway_range(headway_range()) :: String.t()
   def format_headway_range(:none), do: ""
   def format_headway_range({nil, nil}), do: ""
   def format_headway_range({x, y}) when x == y or is_nil(y), do: "Every #{x} min"
   def format_headway_range({x, y}) when x > y, do: "Every #{y} to #{x} min"
   def format_headway_range({x, y}), do: "Every #{x} to #{y} min"
 
-  @spec format_last_departure(DateTime.t(), DateTime.t()) :: String.t()
-  def format_last_departure(nil, _current_time) do
-    nil
+  @spec format_bottom(Content.Message.Headways.Bottom.t(), DateTime.t()) :: String.t()
+  def format_bottom(
+        %Content.Message.Headways.Bottom{last_departure: nil, range: range},
+        _current_time
+      ) do
+    format_headway_range(range)
   end
 
-  def format_last_departure(time, current_time) do
+  def format_bottom(
+        %Content.Message.Headways.Bottom{last_departure: time, range: range},
+        current_time
+      ) do
     display =
-      time
-      |> DateTime.diff(current_time)
+      current_time
+      |> DateTime.diff(time)
       |> Kernel./(60)
       |> Float.ceil(0)
       |> Kernel.trunc()
 
-    "Departed #{display} min ago"
+    [{format_headway_range(range), 3}, {"Departed #{display} min ago", 3}]
   end
 
   @spec max_headway(headway_range) :: non_neg_integer | nil

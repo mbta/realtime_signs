@@ -14,19 +14,13 @@ defmodule Content.Message.Headways.Bottom do
       Headway.ScheduleHeadway.format_headway_range(range)
     end
 
-    def to_string(%Content.Message.Headways.Bottom{range: range, last_departure: last_departure}) do
+    def to_string(
+          %Content.Message.Headways.Bottom{range: _range, last_departure: _last_departure} =
+            bottom
+        ) do
       current_time = Timex.now()
 
-      case last_departure do
-        nil ->
-          Headway.ScheduleHeadway.format_headway_range(range)
-
-        _ ->
-          [
-            {Headway.ScheduleHeadway.format_headway_range(range), 3},
-            {Headway.ScheduleHeadway.format_last_departure(last_departure, current_time), 3}
-          ]
-      end
+      Headway.ScheduleHeadway.format_bottom(bottom, current_time)
     end
   end
 end
