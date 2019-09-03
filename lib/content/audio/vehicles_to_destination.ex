@@ -19,6 +19,40 @@ defmodule Content.Audio.VehiclesToDestination do
   @spec from_headway_message(Content.Message.t(), Content.Message.t()) :: t() | {t(), t()} | nil
   def from_headway_message(
         %Content.Message.Headways.Top{headsign: dest},
+        %Content.Message.Headways.Bottom{range: range, last_departure: last_departure}
+      )
+      when not is_nil(last_departure) do
+    case range do
+      :none ->
+        %Content.Audio.Custom{
+          message: ""
+        }
+
+      {nil, nil} ->
+        %Content.Audio.Custom{
+          message: ""
+        }
+
+      {single_number, nil} ->
+        %Content.Audio.Custom{
+          message:
+            "Trains to #{dest} every #{single_number} minutes.  Previous departure #{
+              last_departure
+            } minutes ago"
+        }
+
+      {lower, upper} ->
+        %Content.Audio.Custom{
+          message:
+            "Trains to #{dest} every #{lower} to #{upper} minutes.  Previous departure #{
+              last_departure
+            } minutes ago"
+        }
+    end
+  end
+
+  def from_headway_message(
+        %Content.Message.Headways.Top{headsign: dest},
         %Content.Message.Headways.Bottom{range: range} = msg
       )
       when range != {nil, nil} do

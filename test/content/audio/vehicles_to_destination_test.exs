@@ -250,5 +250,46 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                later_trip_mins: 25
              } = from_headway_message(%Content.Message.Headways.Top{headsign: "Chelsea"}, msg)
     end
+
+    test "returns a robo-voice message for headways with a last departure" do
+      assert %Content.Audio.Custom{
+               message:
+                 "Trains to Lechmere every 5 to 7 minutes.  Previous departure 5 minutes ago"
+             } =
+               from_headway_message(
+                 %Content.Message.Headways.Top{headsign: "Lechmere"},
+                 %Content.Message.Headways.Bottom{@msg | last_departure: 5}
+               )
+    end
+
+    test "returns a robo-voice message for a single-number headway with a last departure" do
+      assert %Content.Audio.Custom{
+               message: "Trains to Lechmere every 8 minutes.  Previous departure 5 minutes ago"
+             } =
+               from_headway_message(
+                 %Content.Message.Headways.Top{headsign: "Lechmere"},
+                 %Content.Message.Headways.Bottom{@msg | range: {8, nil}, last_departure: 5}
+               )
+    end
+
+    test "returns a robo-voice message for a {nil, nil} headway with a last departure" do
+      assert %Content.Audio.Custom{
+               message: ""
+             } =
+               from_headway_message(
+                 %Content.Message.Headways.Top{headsign: "Lechmere"},
+                 %Content.Message.Headways.Bottom{@msg | range: {nil, nil}, last_departure: 5}
+               )
+    end
+
+    test "returns a robo-voice message for a :none headway with a last departure" do
+      assert %Content.Audio.Custom{
+               message: ""
+             } =
+               from_headway_message(
+                 %Content.Message.Headways.Top{headsign: "Lechmere"},
+                 %Content.Message.Headways.Bottom{@msg | range: :none, last_departure: 5}
+               )
+    end
   end
 end
