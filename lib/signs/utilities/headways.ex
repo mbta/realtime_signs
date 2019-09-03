@@ -6,25 +6,25 @@ defmodule Signs.Utilities.Headways do
   alias Signs.Utilities.SourceConfig
   @alert_headway_factor 1.4
 
-  @spec get_messages(Signs.Realtime.t()) ::
+  @spec get_messages(Signs.Realtime.t(), DateTime.t()) ::
           {{SourceConfig.source() | nil, Content.Message.t()},
            {SourceConfig.source() | nil, Content.Message.t()}}
-  def get_messages(sign) do
+  def get_messages(sign, current_time) do
     cond do
       config = single_source_config(sign) ->
-        do_headway_messages(sign, config)
+        do_headway_messages(sign, config, current_time)
 
       config = config_by_headway_id(sign) ->
-        do_headway_messages(sign, config)
+        do_headway_messages(sign, config, current_time)
 
       true ->
         {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
     end
   end
 
-  @spec do_headway_messages(Signs.Realtime.t(), map()) ::
+  @spec do_headway_messages(Signs.Realtime.t(), map(), DateTime.t()) ::
           {{map(), Content.Message.t()}, {map(), Content.Message.t()}}
-  defp do_headway_messages(sign, config) do
+  defp do_headway_messages(sign, config, current_time) do
     headway_range = sign.headway_engine.get_headways(config.stop_id)
     last_departure = sign.last_departure_engine.get_last_departure(config.stop_id)
 
@@ -83,7 +83,10 @@ defmodule Signs.Utilities.Headways do
             vehicle_type: vehicle_type(config.routes)
           }},
          {config,
-          %Content.Message.Headways.Bottom{range: adjusted_range, last_departure: last_departure}}}
+          %Content.Message.Headways.Bottom{
+            range: adjusted_range,
+            last_departure: minutes_ago(last_departure, current_time)
+          }}}
     end
   end
 
@@ -103,5 +106,18 @@ defmodule Signs.Utilities.Headways do
       {[one]} -> one
       _ -> nil
     end
+  end
+
+  @spec minutes_ago(DateTime.t() | nil, DateTime.t()) :: integer() | nil
+  defp minutes_ago(nil, _current_time) do
+    nil
+  end
+
+  defp minutes_ago(departure_time, current_time) do
+    current_time
+    |> DateTime.diff(departure_time)
+    |> Kernel./(60)
+    |> Float.ceil()
+    |> Kernel.trunc()
   end
 end

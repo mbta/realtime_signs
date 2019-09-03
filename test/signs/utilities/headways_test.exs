@@ -93,7 +93,9 @@ defmodule Signs.Utilities.HeadwaysTest do
 
   describe "get_messages/1" do
     test "generates blank messages when the source config has multiple sources and the sign has no headway_stop_id" do
-      assert Signs.Utilities.Headways.get_messages(@sign) ==
+      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+
+      assert Signs.Utilities.Headways.get_messages(@sign, current_time) ==
                {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
     end
 
@@ -103,13 +105,15 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config_for_stop_id("a")]}
       }
 
-      assert Signs.Utilities.Headways.get_messages(sign) ==
+      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+
+      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("a"),
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
                 {source_config_for_stop_id("a"),
                  %Content.Message.Headways.Bottom{
                    range: {2, 8},
-                   last_departure: FakeLastDepartures.test_departure_time()
+                   last_departure: 5
                  }}}
     end
 
@@ -126,13 +130,15 @@ defmodule Signs.Utilities.HeadwaysTest do
              ]}
       }
 
-      assert Signs.Utilities.Headways.get_messages(sign) ==
+      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+
+      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_with_headway,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
                 {source_with_headway,
                  %Content.Message.Headways.Bottom{
                    range: {2, 8},
-                   last_departure: FakeLastDepartures.test_departure_time()
+                   last_departure: 5
                  }}}
     end
 
@@ -144,13 +150,15 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config]}
       }
 
-      assert Signs.Utilities.Headways.get_messages(sign) ==
+      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+
+      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
                 {source_config,
                  %Content.Message.Headways.Bottom{
                    range: {3, 11},
-                   last_departure: FakeLastDepartures.test_departure_time()
+                   last_departure: 5
                  }}}
     end
 
@@ -162,13 +170,15 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config]}
       }
 
-      assert Signs.Utilities.Headways.get_messages(sign) ==
+      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+
+      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
                 {source_config,
                  %Content.Message.Headways.Bottom{
                    range: {3, nil},
-                   last_departure: FakeLastDepartures.test_departure_time()
+                   last_departure: 5
                  }}}
     end
 
@@ -180,13 +190,15 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config]}
       }
 
-      assert Signs.Utilities.Headways.get_messages(sign) ==
+      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+
+      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config,
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
                 {source_config,
                  %Content.Message.Headways.Bottom{
                    range: {nil, 7},
-                   last_departure: FakeLastDepartures.test_departure_time()
+                   last_departure: 5
                  }}}
     end
 
@@ -196,7 +208,9 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config_for_stop_id("b")]}
       }
 
-      assert Signs.Utilities.Headways.get_messages(sign) ==
+      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+
+      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("b"), %Content.Message.Empty{}},
                 {source_config_for_stop_id("b"), %Content.Message.Empty{}}}
     end
@@ -207,7 +221,9 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config_for_stop_id("c")]}
       }
 
-      assert Signs.Utilities.Headways.get_messages(sign) ==
+      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+
+      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("c"), %Content.Message.Empty{}},
                 {source_config_for_stop_id("c"), %Content.Message.Empty{}}}
     end
@@ -218,7 +234,9 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config_for_stop_id("d")]}
       }
 
-      assert Signs.Utilities.Headways.get_messages(sign) ==
+      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+
+      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("d"), %Content.Message.Empty{}},
                 {source_config_for_stop_id("d"), %Content.Message.Empty{}}}
     end
@@ -229,7 +247,9 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config_for_stop_id("e")]}
       }
 
-      assert Signs.Utilities.Headways.get_messages(sign) ==
+      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+
+      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("e"),
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
                 {source_config_for_stop_id("e"),

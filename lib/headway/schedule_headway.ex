@@ -145,26 +145,13 @@ defmodule Headway.ScheduleHeadway do
   def format_headway_range({x, y}) when x > y, do: "Every #{y} to #{x} min"
   def format_headway_range({x, y}), do: "Every #{x} to #{y} min"
 
-  @spec format_bottom(Content.Message.Headways.Bottom.t(), DateTime.t()) :: String.t()
-  def format_bottom(
-        %Content.Message.Headways.Bottom{last_departure: nil, range: range},
-        _current_time
-      ) do
+  @spec format_bottom(Content.Message.Headways.Bottom.t()) :: String.t()
+  def format_bottom(%Content.Message.Headways.Bottom{last_departure: nil, range: range}) do
     format_headway_range(range)
   end
 
-  def format_bottom(
-        %Content.Message.Headways.Bottom{last_departure: time, range: range},
-        current_time
-      ) do
-    display =
-      current_time
-      |> DateTime.diff(time)
-      |> Kernel./(60)
-      |> Float.ceil()
-      |> Kernel.trunc()
-
-    [{format_headway_range(range), 5}, {"Departed #{display} min ago", 5}]
+  def format_bottom(%Content.Message.Headways.Bottom{last_departure: minutes, range: range}) do
+    [{format_headway_range(range), 5}, {"Departed #{minutes} min ago", 5}]
   end
 
   @spec max_headway(headway_range) :: non_neg_integer | nil
@@ -172,4 +159,17 @@ defmodule Headway.ScheduleHeadway do
   def max_headway({nil, y}), do: y
   def max_headway({x, nil}), do: x
   def max_headway({x, y}), do: max(x, y)
+
+  @spec minutes_ago(DateTime.t() | nil, DateTime.t()) :: integer() | nil
+  def minutes_ago(nil, _current_time) do
+    nil
+  end
+
+  def minutes_ago(departure_time, current_time) do
+    current_time
+    |> DateTime.diff(departure_time)
+    |> Kernel./(60)
+    |> Float.ceil()
+    |> Kernel.trunc()
+  end
 end

@@ -4,7 +4,7 @@ defmodule Content.Message.Headways.Bottom do
 
   @type t :: %__MODULE__{
           range: Headway.ScheduleHeadway.headway_range(),
-          last_departure: DateTime.t() | nil
+          last_departure: integer() | nil
         }
 
   defimpl Content.Message do
@@ -18,9 +18,7 @@ defmodule Content.Message.Headways.Bottom do
           %Content.Message.Headways.Bottom{range: _range, last_departure: _last_departure} =
             bottom
         ) do
-      current_time = Timex.now()
-
-      Headway.ScheduleHeadway.format_bottom(bottom, current_time)
+      Headway.ScheduleHeadway.format_bottom(bottom)
     end
   end
 end

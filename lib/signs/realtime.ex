@@ -131,6 +131,7 @@ defmodule Signs.Realtime do
       Utilities.Messages.get_messages(
         sign,
         sign_config,
+        Timex.now(),
         alert_status,
         mode,
         bridge_state
