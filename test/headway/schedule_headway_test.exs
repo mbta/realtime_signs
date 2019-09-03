@@ -399,7 +399,7 @@ defmodule Headway.ScheduleHeadwayTest do
       assert format_bottom(
                %Content.Message.Headways.Bottom{last_departure: five_minutes_ago, range: {1, 5}},
                now
-             ) == [{"Every 1 to 5 min", 3}, {"Departed 5 min ago", 3}]
+             ) == [{"Every 1 to 5 min", 5}, {"Departed 5 min ago", 5}]
     end
 
     test "does not show 0 minutes ago when the train departed recently" do
@@ -409,7 +409,7 @@ defmodule Headway.ScheduleHeadwayTest do
       assert format_bottom(
                %Content.Message.Headways.Bottom{last_departure: recent_departure, range: {1, 5}},
                now
-             ) == [{"Every 1 to 5 min", 3}, {"Departed 1 min ago", 3}]
+             ) == [{"Every 1 to 5 min", 5}, {"Departed 1 min ago", 5}]
     end
   end
 end

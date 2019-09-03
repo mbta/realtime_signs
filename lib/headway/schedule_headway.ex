@@ -161,10 +161,10 @@ defmodule Headway.ScheduleHeadway do
       current_time
       |> DateTime.diff(time)
       |> Kernel./(60)
-      |> Float.ceil(0)
+      |> Float.ceil()
       |> Kernel.trunc()
 
-    [{format_headway_range(range), 3}, {"Departed #{display} min ago", 3}]
+    [{format_headway_range(range), 5}, {"Departed #{display} min ago", 5}]
   end
 
   @spec max_headway(headway_range) :: non_neg_integer | nil
