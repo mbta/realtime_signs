@@ -150,6 +150,10 @@ defmodule Headway.ScheduleHeadway do
     format_headway_range(range)
   end
 
+  def format_bottom(%Content.Message.Headways.Bottom{last_departure: 0, range: range}) do
+    format_headway_range(range)
+  end
+
   def format_bottom(%Content.Message.Headways.Bottom{last_departure: minutes, range: range}) do
     [{format_headway_range(range), 5}, {"Departed #{minutes} min ago", 5}]
   end

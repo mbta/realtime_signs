@@ -114,10 +114,17 @@ defmodule Signs.Utilities.Headways do
   end
 
   defp minutes_ago(departure_time, current_time) do
-    current_time
-    |> DateTime.diff(departure_time)
-    |> Kernel./(60)
-    |> Float.ceil()
-    |> Kernel.trunc()
+    diff =
+      current_time
+      |> DateTime.diff(departure_time)
+
+    if diff < 5 do
+      0
+    else
+      diff
+      |> Kernel./(60)
+      |> Float.ceil()
+      |> Kernel.trunc()
+    end
   end
 end

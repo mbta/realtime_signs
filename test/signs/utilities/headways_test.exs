@@ -91,7 +91,7 @@ defmodule Signs.Utilities.HeadwaysTest do
     }
   end
 
-  describe "get_messages/1" do
+  describe "get_messages/2" do
     test "generates blank messages when the source config has multiple sources and the sign has no headway_stop_id" do
       current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
 
@@ -250,6 +250,19 @@ defmodule Signs.Utilities.HeadwaysTest do
       current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
+               {{source_config_for_stop_id("e"),
+                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
+                {source_config_for_stop_id("e"),
+                 %Content.Message.Headways.Bottom{
+                   range: {1, 5},
+                   last_departure: nil
+                 }}}
+    end
+
+    test "when last departure was recent (<5 seconds), treat it as 0" do
+      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), seconds: 3)
+
+      assert Signs.Utilities.Headways.get_messages(@sign, current_time) ==
                {{source_config_for_stop_id("e"),
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
                 {source_config_for_stop_id("e"),
