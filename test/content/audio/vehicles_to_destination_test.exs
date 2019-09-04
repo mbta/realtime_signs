@@ -272,6 +272,26 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                )
     end
 
+    test "singularizes the minutes when the last departure was one minute ago" do
+      assert %Content.Audio.Custom{
+               message: "Trains to Lechmere every 8 minutes.  Previous departure 1 minute ago"
+             } =
+               from_headway_message(
+                 %Content.Message.Headways.Top{headsign: "Lechmere"},
+                 %Content.Message.Headways.Bottom{@msg | range: {8, nil}, last_departure: 1}
+               )
+    end
+
+    test "unabreviates the headsign before putting it in custom message" do
+      assert %Content.Audio.Custom{
+               message: "Trains to Forest Hills every 8 minutes.  Previous departure 1 minute ago"
+             } =
+               from_headway_message(
+                 %Content.Message.Headways.Top{headsign: "Frst Hills"},
+                 %Content.Message.Headways.Bottom{@msg | range: {8, nil}, last_departure: 1}
+               )
+    end
+
     test "returns a robo-voice message for a {nil, nil} headway with a last departure" do
       assert %Content.Audio.Custom{
                message: ""

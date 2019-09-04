@@ -260,15 +260,20 @@ defmodule Signs.Utilities.HeadwaysTest do
     end
 
     test "when last departure was recent (<5 seconds), treat it as 0" do
+      sign = %{
+        @sign
+        | source_config: {[source_config_for_stop_id("a")]}
+      }
+
       current_time = Timex.shift(FakeLastDepartures.test_departure_time(), seconds: 3)
 
-      assert Signs.Utilities.Headways.get_messages(@sign, current_time) ==
-               {{source_config_for_stop_id("e"),
+      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
+               {{source_config_for_stop_id("a"),
                  %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_config_for_stop_id("e"),
+                {source_config_for_stop_id("a"),
                  %Content.Message.Headways.Bottom{
-                   range: {1, 5},
-                   last_departure: nil
+                   range: {2, 8},
+                   last_departure: 0
                  }}}
     end
   end
