@@ -159,17 +159,4 @@ defmodule Headway.ScheduleHeadway do
   def max_headway({nil, y}), do: y
   def max_headway({x, nil}), do: x
   def max_headway({x, y}), do: max(x, y)
-
-  @spec minutes_ago(DateTime.t() | nil, DateTime.t()) :: integer() | nil
-  def minutes_ago(nil, _current_time) do
-    nil
-  end
-
-  def minutes_ago(departure_time, current_time) do
-    current_time
-    |> DateTime.diff(departure_time)
-    |> Kernel./(60)
-    |> Float.ceil()
-    |> Kernel.trunc()
-  end
 end

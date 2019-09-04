@@ -14,10 +14,7 @@ defmodule Content.Message.Headways.Bottom do
       Headway.ScheduleHeadway.format_headway_range(range)
     end
 
-    def to_string(
-          %Content.Message.Headways.Bottom{range: _range, last_departure: _last_departure} =
-            bottom
-        ) do
+    def to_string(%Content.Message.Headways.Bottom{} = bottom) do
       Headway.ScheduleHeadway.format_bottom(bottom)
     end
   end
