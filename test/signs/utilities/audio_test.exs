@@ -193,7 +193,7 @@ defmodule Signs.Utilities.AudioTest do
     end
 
     test "returns false for bottom headway message" do
-      message = %Message.Headways.Bottom{range: {1, 5}, last_departure: nil}
+      message = %Message.Headways.Bottom{range: {1, 5}, prev_departure_mins: nil}
       refute should_interrupting_read?({@src, message}, %{@sign | source_config: {[@src]}}, :top)
     end
 

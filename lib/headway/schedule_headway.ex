@@ -146,15 +146,15 @@ defmodule Headway.ScheduleHeadway do
   def format_headway_range({x, y}), do: "Every #{x} to #{y} min"
 
   @spec format_bottom(Content.Message.Headways.Bottom.t()) :: String.t()
-  def format_bottom(%Content.Message.Headways.Bottom{last_departure: nil, range: range}) do
+  def format_bottom(%Content.Message.Headways.Bottom{prev_departure_mins: nil, range: range}) do
     format_headway_range(range)
   end
 
-  def format_bottom(%Content.Message.Headways.Bottom{last_departure: 0, range: range}) do
+  def format_bottom(%Content.Message.Headways.Bottom{prev_departure_mins: 0, range: range}) do
     format_headway_range(range)
   end
 
-  def format_bottom(%Content.Message.Headways.Bottom{last_departure: minutes, range: range}) do
+  def format_bottom(%Content.Message.Headways.Bottom{prev_departure_mins: minutes, range: range}) do
     [{format_headway_range(range), 5}, {"Departed #{minutes} min ago", 5}]
   end
 

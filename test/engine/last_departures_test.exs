@@ -4,21 +4,20 @@ defmodule Engine.LastDeparturesTest do
   describe "add_departure/2" do
     test "records the most recent departure at a stop id" do
       time = Timex.now()
-      assert Engine.LastDepartures.add_departure("70001", time) == %{"70001" => time}
-
+      assert %{"70001" => ^time} = Engine.LastDepartures.add_departure("70001", time)
       time2 = Timex.now()
 
-      assert Engine.LastDepartures.add_departure("70003", time2) == %{
-               "70001" => time,
-               "70003" => time2
-             }
+      assert %{
+               "70001" => ^time,
+               "70003" => ^time2
+             } = Engine.LastDepartures.add_departure("70003", time2)
 
       time3 = Timex.now()
 
-      assert Engine.LastDepartures.add_departure("70001", time3) == %{
-               "70001" => time3,
-               "70003" => time2
-             }
+      assert %{
+               "70001" => ^time3,
+               "70003" => ^time2
+             } = Engine.LastDepartures.add_departure("70001", time3)
     end
   end
 

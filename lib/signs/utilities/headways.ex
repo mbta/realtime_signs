@@ -85,7 +85,7 @@ defmodule Signs.Utilities.Headways do
          {config,
           %Content.Message.Headways.Bottom{
             range: adjusted_range,
-            last_departure: minutes_ago(last_departure, current_time)
+            prev_departure_mins: minutes_ago(last_departure, current_time)
           }}}
     end
   end

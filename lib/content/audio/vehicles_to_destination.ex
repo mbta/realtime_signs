@@ -19,7 +19,7 @@ defmodule Content.Audio.VehiclesToDestination do
   @spec from_headway_message(Content.Message.t(), Content.Message.t()) :: t() | {t(), t()} | nil
   def from_headway_message(
         %Content.Message.Headways.Top{headsign: dest},
-        %Content.Message.Headways.Bottom{range: range, last_departure: last_departure}
+        %Content.Message.Headways.Bottom{range: range, prev_departure_mins: last_departure}
       )
       when not is_nil(last_departure) do
     minutes_word = if last_departure > 1, do: "minutes", else: "minute"

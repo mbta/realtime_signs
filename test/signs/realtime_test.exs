@@ -90,7 +90,7 @@ defmodule Signs.RealtimeTest do
     audio_id: {"TEST", ["x"]},
     source_config: {[@src]},
     current_content_top: {@src, %HT{headsign: "Southbound", vehicle_type: :train}},
-    current_content_bottom: {@src, %HB{range: {1, 5}, last_departure: nil}},
+    current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: nil}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeLastDepartureEngine,

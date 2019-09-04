@@ -393,12 +393,12 @@ defmodule Headway.ScheduleHeadwayTest do
 
   describe "format_bottom/2" do
     test "shows how long ago the last departure was" do
-      assert format_bottom(%Content.Message.Headways.Bottom{last_departure: 5, range: {1, 5}}) ==
+      assert format_bottom(%Content.Message.Headways.Bottom{prev_departure_mins: 5, range: {1, 5}}) ==
                [{"Every 1 to 5 min", 5}, {"Departed 5 min ago", 5}]
     end
 
     test "when last departure is 0 minutes, does not show the last departure" do
-      assert format_bottom(%Content.Message.Headways.Bottom{last_departure: 0, range: {1, 5}}) ==
+      assert format_bottom(%Content.Message.Headways.Bottom{prev_departure_mins: 0, range: {1, 5}}) ==
                "Every 1 to 5 min"
     end
   end

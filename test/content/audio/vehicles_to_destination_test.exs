@@ -258,7 +258,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
              } =
                from_headway_message(
                  %Content.Message.Headways.Top{headsign: "Lechmere"},
-                 %Content.Message.Headways.Bottom{@msg | last_departure: 5}
+                 %Content.Message.Headways.Bottom{@msg | prev_departure_mins: 5}
                )
     end
 
@@ -268,7 +268,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
              } =
                from_headway_message(
                  %Content.Message.Headways.Top{headsign: "Lechmere"},
-                 %Content.Message.Headways.Bottom{@msg | range: {8, nil}, last_departure: 5}
+                 %Content.Message.Headways.Bottom{@msg | range: {8, nil}, prev_departure_mins: 5}
                )
     end
 
@@ -278,7 +278,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
              } =
                from_headway_message(
                  %Content.Message.Headways.Top{headsign: "Lechmere"},
-                 %Content.Message.Headways.Bottom{@msg | range: {8, nil}, last_departure: 1}
+                 %Content.Message.Headways.Bottom{@msg | range: {8, nil}, prev_departure_mins: 1}
                )
     end
 
@@ -288,7 +288,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
              } =
                from_headway_message(
                  %Content.Message.Headways.Top{headsign: "Frst Hills"},
-                 %Content.Message.Headways.Bottom{@msg | range: {8, nil}, last_departure: 1}
+                 %Content.Message.Headways.Bottom{@msg | range: {8, nil}, prev_departure_mins: 1}
                )
     end
 
@@ -298,7 +298,11 @@ defmodule Content.Audio.VehiclesToDestinationTest do
              } =
                from_headway_message(
                  %Content.Message.Headways.Top{headsign: "Lechmere"},
-                 %Content.Message.Headways.Bottom{@msg | range: {nil, nil}, last_departure: 5}
+                 %Content.Message.Headways.Bottom{
+                   @msg
+                   | range: {nil, nil},
+                     prev_departure_mins: 5
+                 }
                )
     end
 
@@ -308,7 +312,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
              } =
                from_headway_message(
                  %Content.Message.Headways.Top{headsign: "Lechmere"},
-                 %Content.Message.Headways.Bottom{@msg | range: :none, last_departure: 5}
+                 %Content.Message.Headways.Bottom{@msg | range: :none, prev_departure_mins: 5}
                )
     end
   end

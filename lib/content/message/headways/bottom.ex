@@ -1,10 +1,10 @@
 defmodule Content.Message.Headways.Bottom do
   require Logger
-  defstruct [:range, :last_departure]
+  defstruct [:range, :prev_departure_mins]
 
   @type t :: %__MODULE__{
           range: Headway.ScheduleHeadway.headway_range(),
-          last_departure: integer() | nil
+          prev_departure_mins: integer() | nil
         }
 
   defimpl Content.Message do

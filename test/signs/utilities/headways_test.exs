@@ -113,7 +113,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                 {source_config_for_stop_id("a"),
                  %Content.Message.Headways.Bottom{
                    range: {2, 8},
-                   last_departure: 5
+                   prev_departure_mins: 5
                  }}}
     end
 
@@ -138,7 +138,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                 {source_with_headway,
                  %Content.Message.Headways.Bottom{
                    range: {2, 8},
-                   last_departure: 5
+                   prev_departure_mins: 5
                  }}}
     end
 
@@ -158,7 +158,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                 {source_config,
                  %Content.Message.Headways.Bottom{
                    range: {3, 11},
-                   last_departure: 5
+                   prev_departure_mins: 5
                  }}}
     end
 
@@ -178,7 +178,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                 {source_config,
                  %Content.Message.Headways.Bottom{
                    range: {3, nil},
-                   last_departure: 5
+                   prev_departure_mins: 5
                  }}}
     end
 
@@ -198,7 +198,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                 {source_config,
                  %Content.Message.Headways.Bottom{
                    range: {nil, 7},
-                   last_departure: 5
+                   prev_departure_mins: 5
                  }}}
     end
 
@@ -255,7 +255,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                 {source_config_for_stop_id("e"),
                  %Content.Message.Headways.Bottom{
                    range: {1, 5},
-                   last_departure: nil
+                   prev_departure_mins: nil
                  }}}
     end
 
@@ -273,7 +273,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                 {source_config_for_stop_id("a"),
                  %Content.Message.Headways.Bottom{
                    range: {2, 8},
-                   last_departure: 0
+                   prev_departure_mins: 0
                  }}}
     end
   end
