@@ -138,12 +138,25 @@ defmodule Headway.ScheduleHeadway do
   @spec pad_upper_value(integer) :: integer
   defp pad_upper_value(y), do: max(y, @min_headway) + @headway_padding
 
-  @spec format_headway_range(headway_range) :: String.t()
+  @spec format_headway_range(headway_range()) :: String.t()
   def format_headway_range(:none), do: ""
   def format_headway_range({nil, nil}), do: ""
   def format_headway_range({x, y}) when x == y or is_nil(y), do: "Every #{x} min"
   def format_headway_range({x, y}) when x > y, do: "Every #{y} to #{x} min"
   def format_headway_range({x, y}), do: "Every #{x} to #{y} min"
+
+  @spec format_bottom(Content.Message.Headways.Bottom.t()) :: String.t()
+  def format_bottom(%Content.Message.Headways.Bottom{prev_departure_mins: nil, range: range}) do
+    format_headway_range(range)
+  end
+
+  def format_bottom(%Content.Message.Headways.Bottom{prev_departure_mins: 0, range: range}) do
+    format_headway_range(range)
+  end
+
+  def format_bottom(%Content.Message.Headways.Bottom{prev_departure_mins: minutes, range: range}) do
+    [{format_headway_range(range), 5}, {"Departed #{minutes} min ago", 5}]
+  end
 
   @spec max_headway(headway_range) :: non_neg_integer | nil
   def max_headway({nil, nil}), do: nil

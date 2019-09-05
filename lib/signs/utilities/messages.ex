@@ -7,13 +7,14 @@ defmodule Signs.Utilities.Messages do
   @spec get_messages(
           Signs.Realtime.t(),
           Engine.Config.sign_config(),
+          DateTime.t(),
           Engine.Alerts.Fetcher.stop_status(),
           Content.Message.Alert.NoService.transit_mode(),
           {Engine.Bridge.status(), Engine.Bridge.duration()} | nil
         ) ::
           {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
            {Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()}}
-  def get_messages(sign, sign_config, alert_status, mode, bridge_state) do
+  def get_messages(sign, sign_config, current_time, alert_status, mode, bridge_state) do
     cond do
       match?({:static_text, {_, _}}, sign_config) ->
         {:static_text, {line1, line2}} = sign_config
@@ -31,12 +32,12 @@ defmodule Signs.Utilities.Messages do
          {nil, duration |> clean_duration |> Content.Message.Bridge.Up.new()}}
 
       sign_config == :headway ->
-        get_headway_or_alert_messages(sign, alert_status, mode)
+        get_headway_or_alert_messages(sign, current_time, alert_status, mode)
 
       true ->
         case Signs.Utilities.Predictions.get_messages(sign) do
           {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}} ->
-            get_headway_or_alert_messages(sign, alert_status, mode)
+            get_headway_or_alert_messages(sign, current_time, alert_status, mode)
 
           messages ->
             messages
@@ -46,14 +47,15 @@ defmodule Signs.Utilities.Messages do
 
   @spec get_headway_or_alert_messages(
           Signs.Realtime.t(),
+          DateTime.t(),
           Engine.Alerts.Fetcher.stop_status(),
           Content.Message.Alert.NoService.transit_mode()
         ) ::
           {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
            {Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()}}
-  defp get_headway_or_alert_messages(sign, alert_status, mode) do
+  defp get_headway_or_alert_messages(sign, current_time, alert_status, mode) do
     case get_alert_messages(alert_status, mode) do
-      nil -> Signs.Utilities.Headways.get_messages(sign)
+      nil -> Signs.Utilities.Headways.get_messages(sign, current_time)
       messages -> messages
     end
   end

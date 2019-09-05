@@ -31,6 +31,18 @@ defmodule Signs.RealtimeTest do
     def for_stop(_stop_id, _direction_id), do: []
   end
 
+  defmodule FakeLastDepartureEngine do
+    @test_departure_time nil
+
+    def get_last_departure(_) do
+      @test_departure_time
+    end
+
+    def test_departure_time() do
+      @test_departure_time
+    end
+  end
+
   defmodule FakeHeadways do
     def get_headways(_stop_id), do: {1, 5}
   end
@@ -78,9 +90,10 @@ defmodule Signs.RealtimeTest do
     audio_id: {"TEST", ["x"]},
     source_config: {[@src]},
     current_content_top: {@src, %HT{headsign: "Southbound", vehicle_type: :train}},
-    current_content_bottom: {@src, %HB{range: {1, 5}}},
+    current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: nil}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
+    last_departure_engine: FakeLastDepartureEngine,
     alerts_engine: FakeAlerts,
     bridge_engine: nil,
     sign_updater: FakeUpdater,

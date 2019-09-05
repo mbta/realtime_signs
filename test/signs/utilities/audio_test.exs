@@ -30,6 +30,7 @@ defmodule Signs.Utilities.AudioTest do
     current_content_bottom: {nil, %Content.Message.Empty{}},
     prediction_engine: nil,
     headway_engine: nil,
+    last_departure_engine: nil,
     alerts_engine: nil,
     bridge_engine: nil,
     sign_updater: nil,
@@ -189,6 +190,11 @@ defmodule Signs.Utilities.AudioTest do
                %{@sign | source_config: {[@src]}},
                :bottom
              )
+    end
+
+    test "returns false for bottom headway message" do
+      message = %Message.Headways.Bottom{range: {1, 5}, prev_departure_mins: nil}
+      refute should_interrupting_read?({@src, message}, %{@sign | source_config: {[@src]}}, :top)
     end
 
     test "returns true if it's a different kind of message" do

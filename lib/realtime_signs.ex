@@ -11,6 +11,7 @@ defmodule RealtimeSigns do
         worker(Engine.Predictions, []),
         worker(Engine.ObservedHeadways, []),
         worker(Engine.ScheduledHeadways, []),
+        worker(Engine.LastDepartures, []),
         worker(Engine.Bridge, []),
         worker(Engine.Static, []),
         worker(Engine.Alerts, []),
