@@ -71,6 +71,10 @@ defmodule Predictions.Predictions do
         do: stop_time_update["passthrough_time"] - current_time_seconds,
         else: nil
 
+    if stop_time_update["stops_away"] == 0 do
+      Engine.LastDepartures.add_departure(stop_time_update["stop_id"], current_time)
+    end
+
     %Prediction{
       stop_id: stop_time_update["stop_id"],
       direction_id: direction_id,

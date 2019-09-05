@@ -65,6 +65,14 @@ defmodule Signs.Utilities.MessagesTest do
     def stopped_at?(_stop_id), do: false
   end
 
+  defmodule FakeLastDepartures do
+    @test_departure_time Timex.to_datetime(~N[2019-08-29 15:41:31], "America/New_York")
+
+    def get_last_departure(_stop_id), do: @test_departure_time
+
+    def test_departure_time(), do: @test_departure_time
+  end
+
   defmodule FakeHeadways do
     def get_headways(_stop_id), do: {1, 4}
   end
@@ -88,6 +96,7 @@ defmodule Signs.Utilities.MessagesTest do
     current_content_bottom: {@src, %Content.Message.Predictions{headsign: "Ashmont", minutes: 3}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
+    last_departure_engine: FakeLastDepartures,
     alerts_engine: FakeAlerts,
     bridge_engine: nil,
     sign_updater: FakeUpdater,
@@ -104,7 +113,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = {:static_text, {"Test message", "Please ignore"}}
       alert_status = :suspension
 
-      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil) ==
                {{nil, Content.Message.Custom.new("Test message", :top)},
                 {nil, Content.Message.Custom.new("Please ignore", :bottom)}}
     end
@@ -114,7 +123,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :off
       alert_status = :none
 
-      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil) ==
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
@@ -131,7 +140,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_transfer_station
 
-      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil) ==
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
@@ -148,7 +157,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :suspension_transfer_station
 
-      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil) ==
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
@@ -165,7 +174,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_transfer_station
 
-      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil) ==
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
@@ -174,7 +183,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_transfer_station
 
-      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil) ==
                {{%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
                    announce_boarding?: false,
@@ -226,7 +235,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_closed_station
 
-      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil) ==
                {{nil, %Content.Message.Alert.NoService{mode: :train}},
                 {nil, %Content.Message.Alert.UseShuttleBus{}}}
     end
@@ -244,7 +253,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_closed_station
 
-      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil) ==
                {{%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
                    announce_boarding?: false,
@@ -296,7 +305,7 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :suspension_closed_station
       sign_config = :auto
 
-      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil) ==
                {{nil, %Content.Message.Alert.NoService{mode: :train}},
                 {nil, Content.Message.Empty.new()}}
     end
@@ -314,7 +323,7 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :station_closure
       sign_config = :auto
 
-      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil) ==
                {{nil, %Content.Message.Alert.NoService{mode: :train}},
                 {nil, Content.Message.Empty.new()}}
     end
@@ -332,7 +341,7 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :suspension
       sign_config = :auto
 
-      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil) ==
                {{%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
                    announce_boarding?: false,
@@ -380,6 +389,7 @@ defmodule Signs.Utilities.MessagesTest do
       assert Messages.get_messages(
                sign,
                sign_config,
+               Timex.now(),
                alert_status,
                :none,
                {"Raised", 5}
@@ -397,6 +407,7 @@ defmodule Signs.Utilities.MessagesTest do
       assert Messages.get_messages(
                sign,
                sign_config,
+               Timex.now(),
                alert_status,
                :none,
                {"Raised", -2}
@@ -414,6 +425,7 @@ defmodule Signs.Utilities.MessagesTest do
       assert Messages.get_messages(
                sign,
                sign_config,
+               Timex.now(),
                alert_status,
                :none,
                {"Raised", 5}
@@ -433,6 +445,7 @@ defmodule Signs.Utilities.MessagesTest do
                Messages.get_messages(
                  sign,
                  sign_config,
+                 Timex.now(),
                  alert_status,
                  :none,
                  {"Lowered", nil}
@@ -444,7 +457,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :none
 
-      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil) ==
                {{%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
                    announce_boarding?: false,
@@ -488,7 +501,9 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :none
 
-      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
+      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+
+      assert Messages.get_messages(sign, sign_config, current_time, alert_status, :train, nil) ==
                {{%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
                    announce_boarding?: false,
@@ -514,7 +529,11 @@ defmodule Signs.Utilities.MessagesTest do
                    routes: nil,
                    stop_id: "no_preds",
                    terminal?: false
-                 }, %Content.Message.Headways.Bottom{range: {1, 4}}}}
+                 },
+                 %Content.Message.Headways.Bottom{
+                   range: {1, 4},
+                   prev_departure_mins: 5
+                 }}}
     end
 
     test "when there are no predictions and more than one source config, puts nothing on the sign" do
@@ -526,7 +545,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :none
 
-      assert Messages.get_messages(sign, sign_config, alert_status, :train, nil) ==
+      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil) ==
                {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
     end
 
@@ -541,7 +560,7 @@ defmodule Signs.Utilities.MessagesTest do
                  vehicle_type: :train
                }},
               {_, %Content.Message.Headways.Bottom{range: {1, 4}}}} =
-               Messages.get_messages(sign, sign_config, alert_status, :train, nil)
+               Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil)
     end
 
     test "when sign is forced into headway mode but alerts are present, alert takes precedence" do
@@ -550,7 +569,7 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :station_closure
 
       assert {{_, %Content.Message.Alert.NoService{mode: mode}}, {_, %Content.Message.Empty{}}} =
-               Messages.get_messages(sign, sign_config, alert_status, :train, nil)
+               Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil)
     end
   end
 end

@@ -19,6 +19,42 @@ defmodule Content.Audio.VehiclesToDestination do
   @spec from_headway_message(Content.Message.t(), Content.Message.t()) :: t() | {t(), t()} | nil
   def from_headway_message(
         %Content.Message.Headways.Top{headsign: dest},
+        %Content.Message.Headways.Bottom{range: range, prev_departure_mins: last_departure}
+      )
+      when not is_nil(last_departure) do
+    minutes_word = if last_departure > 1, do: "minutes", else: "minute"
+
+    case range do
+      :none ->
+        %Content.Audio.Custom{
+          message: ""
+        }
+
+      {nil, nil} ->
+        %Content.Audio.Custom{
+          message: ""
+        }
+
+      {single_number, nil} ->
+        %Content.Audio.Custom{
+          message:
+            "Trains to #{unabreviate_headsign(dest)} every #{single_number} minutes.  Previous departure #{
+              last_departure
+            } #{minutes_word} ago"
+        }
+
+      {lower, upper} ->
+        %Content.Audio.Custom{
+          message:
+            "Trains to #{unabreviate_headsign(dest)} every #{lower} to #{upper} minutes.  Previous departure #{
+              last_departure
+            } #{minutes_word} ago"
+        }
+    end
+  end
+
+  def from_headway_message(
+        %Content.Message.Headways.Top{headsign: dest},
         %Content.Message.Headways.Bottom{range: range} = msg
       )
       when range != {nil, nil} do
@@ -91,6 +127,15 @@ defmodule Content.Audio.VehiclesToDestination do
   defp get_mins({x, y}) when x < y, do: {x, y}
   defp get_mins({y, x}), do: {x, y}
   defp get_mins(_), do: :error
+
+  @spec unabreviate_headsign(String.t()) :: String.t()
+  defp unabreviate_headsign("Frst Hills"), do: "Forest Hills"
+  defp unabreviate_headsign("Govt Ctr"), do: "Government Center"
+  defp unabreviate_headsign("Park St"), do: "Park Street"
+  defp unabreviate_headsign("Clvlnd Cir"), do: "Cleveland Circle"
+  defp unabreviate_headsign("Boston Col"), do: "Boston College"
+  defp unabreviate_headsign("Heath St"), do: "Heath Street"
+  defp unabreviate_headsign(dest), do: dest
 
   defimpl Content.Audio do
     alias PaEss.Utilities
