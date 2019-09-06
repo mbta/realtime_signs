@@ -10,7 +10,7 @@ defmodule Signs.Utilities.HeadwaysTest do
     def max_stop_status(_stops, _routes), do: :none
   end
 
-  defmodule FakeLastDepartures do
+  defmodule FakeDepartures do
     @test_departure_time Timex.to_datetime(~N[2019-08-29 15:41:31], "America/New_York")
 
     def get_last_departure(_) do
@@ -65,7 +65,7 @@ defmodule Signs.Utilities.HeadwaysTest do
     current_content_bottom: {nil, Content.Message.Empty.new()},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
-    last_departure_engine: FakeLastDepartures,
+    last_departure_engine: FakeDepartures,
     alerts_engine: FakeAlerts,
     bridge_engine: nil,
     sign_updater: FakeUpdater,
@@ -93,7 +93,7 @@ defmodule Signs.Utilities.HeadwaysTest do
 
   describe "get_messages/2" do
     test "generates blank messages when the source config has multiple sources and the sign has no headway_stop_id" do
-      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
       assert Signs.Utilities.Headways.get_messages(@sign, current_time) ==
                {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
@@ -105,7 +105,7 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config_for_stop_id("a")]}
       }
 
-      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("a"),
@@ -130,7 +130,7 @@ defmodule Signs.Utilities.HeadwaysTest do
              ]}
       }
 
-      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_with_headway,
@@ -150,7 +150,7 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config]}
       }
 
-      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config,
@@ -170,7 +170,7 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config]}
       }
 
-      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config,
@@ -190,7 +190,7 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config]}
       }
 
-      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config,
@@ -208,7 +208,7 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config_for_stop_id("b")]}
       }
 
-      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("b"), %Content.Message.Empty{}},
@@ -221,7 +221,7 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config_for_stop_id("c")]}
       }
 
-      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("c"), %Content.Message.Empty{}},
@@ -234,7 +234,7 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config_for_stop_id("d")]}
       }
 
-      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("d"), %Content.Message.Empty{}},
@@ -247,7 +247,7 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config_for_stop_id("e")]}
       }
 
-      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("e"),
@@ -265,7 +265,7 @@ defmodule Signs.Utilities.HeadwaysTest do
         | source_config: {[source_config_for_stop_id("a")]}
       }
 
-      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), seconds: 3)
+      current_time = Timex.shift(FakeDepartures.test_departure_time(), seconds: 3)
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("a"),

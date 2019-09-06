@@ -626,7 +626,7 @@ defmodule Signs.Utilities.PredictionsTest do
     current_content_bottom: {nil, Content.Message.Empty.new()},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
-    last_departure_engine: FakeLastDepartures,
+    last_departure_engine: FakeDepartures,
     alerts_engine: nil,
     bridge_engine: nil,
     sign_updater: FakeUpdater,

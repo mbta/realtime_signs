@@ -525,60 +525,6 @@ defmodule Predictions.PredictionsTest do
                ]
              } = get_all(feed_message, @current_time)
     end
-
-    test "updates LastDeparture engine when train is stopped at a station" do
-      feed_message = %{
-        "entity" => [
-          %{
-            "alert" => nil,
-            "id" => "1490783458_32568935",
-            "is_deleted" => false,
-            "trip_update" => %{
-              "delay" => nil,
-              "stop_time_update" => [
-                %{
-                  "arrival" => nil,
-                  "departure" => %{
-                    "delay" => nil,
-                    "time" => 1_491_570_124,
-                    "uncertainty" => nil
-                  },
-                  "schedule_relationship" => "SCHEDULED",
-                  "stop_id" => "70267",
-                  "stop_sequence" => 3,
-                  "stops_away" => 0,
-                  "stopped?" => false
-                }
-              ],
-              "timestamp" => nil,
-              "trip" => %{
-                "direction_id" => 0,
-                "route_id" => "Mattapan",
-                "schedule_relationship" => "SCHEDULED",
-                "start_date" => "20170329",
-                "start_time" => nil,
-                "trip_id" => "32568935"
-              },
-              "vehicle" => %{
-                "id" => "G-10040",
-                "label" => "3260",
-                "license_plate" => nil
-              }
-            },
-            "vehicle" => nil
-          }
-        ],
-        "header" => %{
-          "gtfs_realtime_version" => "1.0",
-          "incrementality" => "FULL_DATASET",
-          "timestamp" => 1_490_783_458
-        }
-      }
-
-      get_all(feed_message, @current_time)
-
-      refute is_nil(Engine.LastDepartures.get_last_departure("70267"))
-    end
   end
 
   describe "parse_pb_response/1" do
