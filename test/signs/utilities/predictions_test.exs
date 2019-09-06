@@ -440,8 +440,8 @@ defmodule Signs.Utilities.PredictionsTest do
           stops_away: 2,
           boarding_status: nil,
           destination_stop_id: "70061",
-          seconds_until_arrival: 80,
-          seconds_until_departure: 100
+          seconds_until_arrival: 660,
+          seconds_until_departure: 700
         }
       ]
     end
