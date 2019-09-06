@@ -9,6 +9,8 @@ defmodule Signs.Utilities.Predictions do
   require Content.Utilities
   alias Signs.Utilities.SourceConfig
 
+  @red_line_stops_away_mins 12
+
   @spec get_messages(Signs.Realtime.t()) ::
           {{SourceConfig.source() | nil, Content.Message.t()},
            {SourceConfig.source() | nil, Content.Message.t()}}
@@ -141,8 +143,8 @@ defmodule Signs.Utilities.Predictions do
   @spec red_line_stops_away?(Predictions.Prediction.t()) :: boolean()
   defp red_line_stops_away?(prediction) do
     prediction.route_id == "Red" and
-      (prediction.seconds_until_arrival || prediction.seconds_until_departure) > 60 * 8 and
-      prediction.stops_away > 0
+      (prediction.seconds_until_arrival || prediction.seconds_until_departure) >
+        60 * @red_line_stops_away_mins and prediction.stops_away > 0
   end
 
   defp allowed_multi_berth_platform?(
