@@ -48,10 +48,12 @@ defmodule Signs.Utilities.SourceConfig do
     :announce_arriving?,
     :announce_boarding?
   ]
-  defstruct @enforce_keys ++ [:routes, multi_berth?: false, source_for_headway?: false]
+  defstruct @enforce_keys ++
+              [:routes, :headway_stop_id, multi_berth?: false, source_for_headway?: false]
 
   @type source :: %__MODULE__{
           stop_id: String.t(),
+          headway_stop_id: String.t() | nil,
           headway_direction_name: String.t(),
           direction_id: 0 | 1,
           routes: [String.t()] | nil,
@@ -64,6 +66,10 @@ defmodule Signs.Utilities.SourceConfig do
         }
 
   @type config :: {[source()]} | {[source()], [source()]}
+
+  @bus_routes ["741", "742", "743"]
+
+  @type transit_mode :: :train | :none
 
   @spec parse!([[map()]]) :: config()
   def parse!([both_lines_config]) do
@@ -141,5 +147,14 @@ defmodule Signs.Utilities.SourceConfig do
 
   def sign_routes({s}) do
     Enum.flat_map(s, &(&1.routes || []))
+  end
+
+  @spec transit_mode_for_routes([String.t()]) :: transit_mode()
+  def transit_mode_for_routes(routes) do
+    if Enum.all?(routes, fn route -> route in @bus_routes end) do
+      :none
+    else
+      :train
+    end
   end
 end

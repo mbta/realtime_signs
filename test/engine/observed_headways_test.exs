@@ -3,47 +3,6 @@ defmodule Engine.ObservedHeadwaysTest do
   import Test.Support.Helpers
   alias Engine.ObservedHeadways
 
-  describe "GenServer initialization" do
-    test "has reasonable starting state" do
-      {:ok, _pid} =
-        ObservedHeadways.start_link(
-          gen_server_name: :new_observed_headways_server,
-          ets_table_name: :initial_state_table
-        )
-
-      expected_recent_headways = %{
-        "alewife" => [3600],
-        "ashmont" => [3600],
-        "bowdoin" => [3600],
-        "braintree" => [3600],
-        "forest_hills" => [3600],
-        "oak_grove" => [3600],
-        "wonderland" => [3600]
-      }
-
-      expected_stop_ids_to_terminal_ids = %{
-        "70082" => ["ashmont", "braintree"],
-        "70083" => ["alewife"],
-        "70084" => ["ashmont", "braintree"],
-        "70086" => ["ashmont"],
-        "70088" => ["ashmont"],
-        "70090" => ["ashmont"],
-        "70096" => ["braintree"],
-        "70092" => ["ashmont"],
-        "70094" => ["ashmont"],
-        "70105" => ["braintree"]
-      }
-
-      actual_recent_headways = :ets.lookup_element(:initial_state_table, :recent_headways, 2)
-
-      actual_stop_ids_to_terminal_ids =
-        :ets.lookup_element(:initial_state_table, :stop_ids_to_terminal_ids, 2)
-
-      assert actual_recent_headways == expected_recent_headways
-      assert actual_stop_ids_to_terminal_ids == expected_stop_ids_to_terminal_ids
-    end
-  end
-
   describe "get_headways/1" do
     test "bases min and max on last 5 headways at pertinent terminal" do
       new_table_name =

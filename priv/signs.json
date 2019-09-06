@@ -3635,7 +3635,6 @@
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
-    "headway_terminal_ids": ["ashmont", "braintree"],
     "source_config": [
       [
         {
@@ -3714,7 +3713,7 @@
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
-    "headway_terminal_ids": ["ashmont", "braintree"],
+    "headway_stop_id": "70082",
     "source_config": [
       [
         {
@@ -3737,7 +3736,6 @@
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": ["s"],
-    "headway_terminal_ids": ["alewife"],
     "source_config": [
       [
         {
@@ -3794,7 +3792,7 @@
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
-    "headway_terminal_ids": ["ashmont"],
+    "headway_stop_id": "70092",
     "source_config": [
       [
         {
@@ -3873,7 +3871,7 @@
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
-    "headway_terminal_ids": ["ashmont"],
+    "headway_stop_id": "70092",
     "source_config": [
       [
         {
@@ -3952,7 +3950,6 @@
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
-    "headway_terminal_ids": ["ashmont"],
     "source_config": [
       [
         {
@@ -4031,7 +4028,6 @@
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
-    "headway_terminal_ids": ["ashmont"],
     "source_config": [
       [
         {
@@ -4366,7 +4362,6 @@
     "read_loop_offset": 150,
     "text_zone": "c",
     "audio_zones": ["c"],
-    "headway_terminal_ids": ["braintree"],
     "source_config": [
       [
         {
@@ -4410,7 +4405,6 @@
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": ["m"],
-    "headway_terminal_ids": ["braintree"],
     "source_config": [
       [
         {
@@ -4454,6 +4448,7 @@
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": ["w"],
+    "headway_stop_id": "70091",
     "source_config": [
       [
         {
@@ -4476,6 +4471,7 @@
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": ["s"],
+    "headway_stop_id": "70097",
     "source_config": [
       [
         {
@@ -4498,7 +4494,7 @@
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": ["e"],
-    "headway_terminal_ids": ["ashmont"],
+    "headway_stop_id": "70092",
     "source_config": [
       [
         {
@@ -4521,7 +4517,7 @@
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": ["n"],
-    "headway_terminal_ids": ["braintree"],
+    "headway_stop_id": "70098",
     "source_config": [
       [
         {
