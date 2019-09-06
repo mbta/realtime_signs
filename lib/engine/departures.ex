@@ -32,6 +32,11 @@ defmodule Engine.Departures do
     GenServer.call(pid, {:update_train_state, stops_with_trains, current_time})
   end
 
+  @spec get_headways(GenServer.server(), String.t()) :: Headway.ScheduleHeadway.headway_range()
+  def get_headways(pid \\ __MODULE__, stop_id) do
+    GenServer.call(pid, {:get_headways, stop_id})
+  end
+
   def handle_call({:get_last_departure, stop_id}, _from, state) do
     last_departure = state[:departures][stop_id] |> List.wrap() |> List.first()
     {:reply, last_departure, state}
@@ -54,6 +59,28 @@ defmodule Engine.Departures do
     {:reply, :ok, new_state}
   end
 
+  def handle_call({:get_headways, stop_id}, _from, state) do
+    headways =
+      case state[:departures][stop_id] do
+        [_one_departure] ->
+          {nil, nil}
+
+        [one_departure, two_departure] ->
+          {Timex.diff(one_departure, two_departure, :minutes), nil}
+
+        [one_departure, two_departure, three_departure | _] ->
+          headway_sort(
+            {Timex.diff(one_departure, two_departure, :minutes),
+             Timex.diff(two_departure, three_departure, :minutes)}
+          )
+
+        _ ->
+          :none
+      end
+
+    {:reply, headways, state}
+  end
+
   @spec add_departure(%{String.t() => [DateTime.t()]}, String.t(), DateTime.t()) :: %{
           String.t() => [DateTime.t()]
         }
@@ -65,5 +92,14 @@ defmodule Engine.Departures do
       |> Enum.take(3)
 
     Map.put(departures, stop_id, new_times_for_stop)
+  end
+
+  @spec headway_sort({non_neg_integer, non_neg_integer}) :: {non_neg_integer, non_neg_integer}
+  defp headway_sort({first, second}) when first > second do
+    {second, first}
+  end
+
+  defp headway_sort({first, second}) when first <= second do
+    {first, second}
   end
 end
