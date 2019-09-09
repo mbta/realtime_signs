@@ -88,7 +88,19 @@ defmodule Engine.Departures do
     new_times_for_stop =
       departures[stop_id]
       |> List.wrap()
-      |> (fn stop_departures -> [time | stop_departures] end).()
+      |> (fn stop_departures ->
+            case stop_departures do
+              [first | rest] ->
+                if Timex.diff(time, first, :minutes) > 2 do
+                  [time | stop_departures]
+                else
+                  [time | rest]
+                end
+
+              [] ->
+                [time]
+            end
+          end).()
       |> Enum.take(3)
 
     Map.put(departures, stop_id, new_times_for_stop)

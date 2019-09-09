@@ -27,7 +27,7 @@ defmodule Engine.DeparturesTest do
 
       assert :sys.get_state(departures_pid).departures == %{"b" => [time1]}
 
-      time2 = Timex.now()
+      time2 = Timex.shift(time1, minutes: 3)
 
       :ok =
         Engine.Departures.update_train_state(
@@ -38,7 +38,7 @@ defmodule Engine.DeparturesTest do
 
       assert :sys.get_state(departures_pid).departures == %{"a" => [time2], "b" => [time1]}
 
-      time3 = Timex.now()
+      time3 = Timex.shift(time2, minutes: 3)
 
       :ok =
         Engine.Departures.update_train_state(
@@ -48,6 +48,19 @@ defmodule Engine.DeparturesTest do
         )
 
       assert :sys.get_state(departures_pid).departures == %{"a" => [time2], "b" => [time3, time1]}
+    end
+
+    test "when a departure is very quick assume that it is actually the real version of the previous departure" do
+      {:ok, departures_pid} = Engine.Departures.start_link(gen_server_name: :departures_test)
+
+      time1 = Timex.now()
+
+      insert_test_data(departures_pid, "a", time1)
+
+      time2 = Timex.shift(time1, minutes: 1)
+      insert_test_data(departures_pid, "a", time2)
+
+      assert :sys.get_state(departures_pid).departures == %{"a" => [time2]}
     end
   end
 
