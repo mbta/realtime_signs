@@ -9,7 +9,6 @@ defmodule RealtimeSigns do
       [
         worker(Engine.Config, []),
         worker(Engine.Predictions, []),
-        worker(Engine.ObservedHeadways, []),
         worker(Engine.ScheduledHeadways, []),
         worker(Engine.Departures, []),
         worker(Engine.Bridge, []),
