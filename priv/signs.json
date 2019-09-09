@@ -4594,6 +4594,7 @@
     "text_zone": "w",
     "audio_zones": ["w"],
     "type": "realtime",
+    "headway_stop_id": "70162",
     "source_config": [
       [
         {
@@ -6085,6 +6086,7 @@
     "text_zone": "w",
     "audio_zones": ["w"],
     "type": "realtime",
+    "headway_stop_id": "70208",
     "source_config": [
       [
         {
