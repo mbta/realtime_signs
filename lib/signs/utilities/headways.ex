@@ -25,7 +25,7 @@ defmodule Signs.Utilities.Headways do
   @spec do_headway_messages(Signs.Realtime.t(), map(), DateTime.t()) ::
           {{map(), Content.Message.t()}, {map(), Content.Message.t()}}
   defp do_headway_messages(sign, config, current_time) do
-    stop_id = config.headway_stop_id || config.stop_id
+    stop_id = sign.headway_stop_id || config.stop_id
     headway_range = sign.headway_engine.get_headways(stop_id)
     last_departure = sign.last_departure_engine.get_last_departure(config.stop_id)
 
