@@ -69,7 +69,7 @@ defmodule Signs.Utilities.SourceConfig do
 
   @bus_routes ["741", "742", "743"]
 
-  @type transit_mode :: :train | :none
+  @type transit_mode :: :train | :bus
 
   @spec parse!([[map()]]) :: config()
   def parse!([both_lines_config]) do
@@ -152,7 +152,7 @@ defmodule Signs.Utilities.SourceConfig do
   @spec transit_mode_for_routes([String.t()]) :: transit_mode()
   def transit_mode_for_routes(routes) do
     if Enum.all?(routes, fn route -> route in @bus_routes end) do
-      :none
+      :bus
     else
       :train
     end

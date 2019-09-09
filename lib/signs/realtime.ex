@@ -230,8 +230,8 @@ defmodule Signs.Realtime do
   defp default_headway_engine(config) do
     routes =
       case config do
-        {s1} -> Enum.map(s1, & &1.routes)
-        {s1, s2} -> Enum.map(s1, & &1.routes) ++ Enum.map(s2, & &1.routes)
+        {s1} -> Enum.flat_map(s1, & &1.routes)
+        {s1, s2} -> Enum.flat_map(s1, & &1.routes) ++ Enum.flat_map(s2, & &1.routes)
       end
 
     if Utilities.SourceConfig.transit_mode_for_routes(routes) == :train do

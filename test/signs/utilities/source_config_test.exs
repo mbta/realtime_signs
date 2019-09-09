@@ -150,12 +150,12 @@ defmodule Signs.Utilities.SourceConfigTest do
       assert SourceConfig.transit_mode_for_routes(["Orange", "741"]) == :train
     end
 
-    test "Returns :none when all routes are Silver Line" do
-      assert SourceConfig.transit_mode_for_routes(["741", "742"]) == :none
+    test "Returns :bus when all routes are Silver Line" do
+      assert SourceConfig.transit_mode_for_routes(["741", "742"]) == :bus
     end
 
-    test "Returns :none when no routes given" do
-      assert SourceConfig.transit_mode_for_routes([]) == :none
+    test "Returns :bus when no routes given" do
+      assert SourceConfig.transit_mode_for_routes([]) == :bus
     end
   end
 end
