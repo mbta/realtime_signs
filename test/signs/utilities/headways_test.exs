@@ -259,6 +259,21 @@ defmodule Signs.Utilities.HeadwaysTest do
                  }}}
     end
 
+    test "respects headway_stop_id" do
+      sign = %{@sign | headway_stop_id: "a", source_config: {[source_config_for_stop_id("c")]}}
+
+      current_time = FakeDepartures.test_departure_time()
+
+      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
+               {{source_config_for_stop_id("c"),
+                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
+                {source_config_for_stop_id("c"),
+                 %Content.Message.Headways.Bottom{
+                   range: {2, 8},
+                   prev_departure_mins: 0
+                 }}}
+    end
+
     test "when last departure was recent (<5 seconds), treat it as 0" do
       sign = %{
         @sign
