@@ -51,8 +51,7 @@ config :realtime_signs,
   s3_path: System.get_env("SIGNS_S3_PATH"),
   api_v3_key: System.get_env("API_V3_KEY"),
   api_v3_url: System.get_env("API_V3_URL") || "https://green.dev.api.mbtace.com",
-  number_of_http_updaters: String.to_integer(System.get_env("NUMBER_OF_HTTP_UPDATERS") || "4"),
-  observed_headway_fetcher: Headway.ObservedHeadwayFetcher
+  number_of_http_updaters: String.to_integer(System.get_env("NUMBER_OF_HTTP_UPDATERS") || "4")
 
 config :ex_aws,
   access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],

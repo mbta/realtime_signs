@@ -34,7 +34,7 @@ defmodule Signs.Realtime do
   defstruct @enforce_keys ++
               [
                 :bridge_id,
-                :headway_terminal_ids,
+                :headway_stop_id,
                 announced_arrivals: [],
                 announced_approachings: [],
                 announced_passthroughs: []
@@ -63,14 +63,15 @@ defmodule Signs.Realtime do
           bridge_id: Engine.Bridge.bridge_id() | nil,
           announced_arrivals: [Predictions.Prediction.trip_id()],
           announced_approachings: [Predictions.Prediction.trip_id()],
-          announced_passthroughs: [Predictions.Prediction.trip_id()],
-          headway_terminal_ids: [String.t()] | nil
+          announced_passthroughs: [Predictions.Prediction.trip_id()]
         }
 
   def start_link(%{"type" => "realtime"} = config, opts \\ []) do
+    source_config = config |> Map.fetch!("source_config") |> Utilities.SourceConfig.parse!()
+
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
-    headway_engine = opts[:headway_engine] || default_headway_engine(config)
-    last_departure_engine = opts[:last_departure_engine] || Engine.LastDepartures
+    headway_engine = opts[:headway_engine] || default_headway_engine(source_config)
+    last_departure_engine = opts[:last_departure_engine] || Engine.Departures
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
     bridge_engine = opts[:bridge_engine] || Engine.Bridge
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
@@ -79,7 +80,7 @@ defmodule Signs.Realtime do
       id: Map.fetch!(config, "id"),
       text_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
       audio_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "audio_zones")},
-      source_config: config |> Map.fetch!("source_config") |> Utilities.SourceConfig.parse!(),
+      source_config: source_config,
       current_content_top: {nil, Content.Message.Empty.new()},
       current_content_bottom: {nil, Content.Message.Empty.new()},
       prediction_engine: prediction_engine,
@@ -94,7 +95,7 @@ defmodule Signs.Realtime do
       expiration_seconds: 130,
       read_period_seconds: 240,
       bridge_id: Map.get(config, "bridge_id"),
-      headway_terminal_ids: Map.get(config, "headway_terminal_ids")
+      headway_stop_id: Map.get(config, "headway_stop_id")
     }
 
     GenServer.start_link(__MODULE__, sign)
@@ -118,7 +119,7 @@ defmodule Signs.Realtime do
 
     sign_config = Engine.Config.sign_config(sign.id)
 
-    mode = Content.Message.Alert.NoService.transit_mode_for_routes(sign_routes)
+    mode = Signs.Utilities.SourceConfig.transit_mode_for_routes(sign_routes)
 
     bridge_state =
       if sign.bridge_id do
@@ -225,10 +226,16 @@ defmodule Signs.Realtime do
     }
   end
 
-  @spec default_headway_engine(map()) :: module()
+  @spec default_headway_engine(Utilities.SourceConfig.config()) :: module()
   defp default_headway_engine(config) do
-    if Map.has_key?(config, "headway_terminal_ids") do
-      Engine.ObservedHeadways
+    routes =
+      case config do
+        {s1} -> Enum.flat_map(s1, & &1.routes)
+        {s1, s2} -> Enum.flat_map(s1, & &1.routes) ++ Enum.flat_map(s2, & &1.routes)
+      end
+
+    if Utilities.SourceConfig.transit_mode_for_routes(routes) == :train do
+      Engine.Departures
     else
       Engine.ScheduledHeadways
     end
