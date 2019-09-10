@@ -103,7 +103,7 @@ defmodule Engine.Departures do
           end).()
       |> Enum.take(3)
 
-    Map.put(departures, stop_id, new_times_for_stop)
+    Map.put(departures, translate_terminal_stop_id(stop_id), new_times_for_stop)
   end
 
   @spec headway_sort({non_neg_integer, non_neg_integer}) :: {non_neg_integer, non_neg_integer}
@@ -114,4 +114,11 @@ defmodule Engine.Departures do
   defp headway_sort({first, second}) when first <= second do
     {first, second}
   end
+
+  @spec translate_terminal_stop_id(String.t()) :: String.t()
+  defp translate_terminal_stop_id("Alewife-" <> _), do: "70061"
+  defp translate_terminal_stop_id("Braintree-" <> _), do: "70105"
+  defp translate_terminal_stop_id("Forest Hills-" <> _), do: "70001"
+  defp translate_terminal_stop_id("Oak Grove-" <> _), do: "70036"
+  defp translate_terminal_stop_id(stop_id), do: stop_id
 end
