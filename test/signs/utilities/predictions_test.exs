@@ -592,6 +592,23 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("passthrough_trains_southbound_red_line_destination", 1) do
+      [
+        %Predictions.Prediction{
+          stop_id: "passthrough_trains_southbound_red_line_destination",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 4,
+          destination_stop_id: "70083",
+          seconds_until_arrival: nil,
+          seconds_until_departure: nil,
+          seconds_until_passthrough: 30,
+          trip_id: "123"
+        }
+      ]
+    end
+
     def for_stop("passthrough_trains_bad_destination", 1) do
       [
         %Predictions.Prediction{
@@ -1176,6 +1193,29 @@ defmodule Signs.Utilities.PredictionsTest do
       assert Signs.Utilities.Predictions.get_passthrough_train_audio(sign) ==
                %Content.Audio.Passthrough{
                  destination: :braintree,
+                 trip_id: "123",
+                 route_id: "Red"
+               }
+    end
+
+    test "handles \"Southbound\" headsign" do
+      s = %SourceConfig{
+        stop_id: "passthrough_trains_southbound_red_line_destination",
+        headway_direction_name: "Alewife",
+        direction_id: 1,
+        terminal?: false,
+        platform: nil,
+        routes: nil,
+        announce_arriving?: true,
+        announce_boarding?: false
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      assert Signs.Utilities.Predictions.get_passthrough_train_audio(sign) ==
+               %Content.Audio.Passthrough{
+                 destination: :ashmont,
                  trip_id: "123",
                  route_id: "Red"
                }
