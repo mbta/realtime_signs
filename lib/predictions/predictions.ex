@@ -6,19 +6,27 @@ defmodule Predictions.Predictions do
           optional({String.t(), integer()}) => [Predictions.Prediction.t()]
         }
   def get_all(feed_message, current_time) do
-    feed_message["entity"]
-    |> Enum.map(& &1["trip_update"])
-    |> Enum.reject(&(&1["trip"]["schedule_relationship"] == "CANCELED"))
-    |> Enum.flat_map(&transform_stop_time_updates/1)
-    |> Enum.filter(fn {update, _, _, _, _, _} ->
-      update["arrival"] || update["departure"] || update["passthrough_time"]
+    predictions =
+      feed_message["entity"]
+      |> Enum.map(& &1["trip_update"])
+      |> Enum.reject(&(&1["trip"]["schedule_relationship"] == "CANCELED"))
+      |> Enum.flat_map(&transform_stop_time_updates/1)
+      |> Enum.filter(fn {update, _, _, _, _, _} ->
+        update["arrival"] || update["departure"] || update["passthrough_time"]
+      end)
+      |> Enum.map(&prediction_from_update(&1, current_time))
+
+    stops_with_trains =
+      predictions
+      |> Enum.filter(fn pred -> pred.stops_away == 0 end)
+      |> Enum.map(fn pred -> pred.stop_id end)
+
+    Engine.Departures.update_train_state(stops_with_trains, current_time)
+
+    predictions
+    |> Enum.group_by(fn prediction ->
+      {prediction.stop_id, prediction.direction_id}
     end)
-    |> Enum.group_by(
-      fn {update, _last_stop_id, _route_id, direction_id, _trip_id, _consist} ->
-        {update["stop_id"], direction_id}
-      end,
-      &prediction_from_update(&1, current_time)
-    )
   end
 
   @spec transform_stop_time_updates(map()) :: [
@@ -70,10 +78,6 @@ defmodule Predictions.Predictions do
       if stop_time_update["passthrough_time"],
         do: stop_time_update["passthrough_time"] - current_time_seconds,
         else: nil
-
-    if stop_time_update["stops_away"] == 0 do
-      Engine.LastDepartures.add_departure(stop_time_update["stop_id"], current_time)
-    end
 
     %Prediction{
       stop_id: stop_time_update["stop_id"],

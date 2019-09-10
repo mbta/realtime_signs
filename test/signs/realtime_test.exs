@@ -31,7 +31,7 @@ defmodule Signs.RealtimeTest do
     def for_stop(_stop_id, _direction_id), do: []
   end
 
-  defmodule FakeLastDepartureEngine do
+  defmodule FakeDepartureEngine do
     @test_departure_time nil
 
     def get_last_departure(_) do
@@ -93,7 +93,7 @@ defmodule Signs.RealtimeTest do
     current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: nil}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
-    last_departure_engine: FakeLastDepartureEngine,
+    last_departure_engine: FakeDepartureEngine,
     alerts_engine: FakeAlerts,
     bridge_engine: nil,
     sign_updater: FakeUpdater,

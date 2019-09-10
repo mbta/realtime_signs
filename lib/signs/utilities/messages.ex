@@ -9,7 +9,7 @@ defmodule Signs.Utilities.Messages do
           Engine.Config.sign_config(),
           DateTime.t(),
           Engine.Alerts.Fetcher.stop_status(),
-          Content.Message.Alert.NoService.transit_mode(),
+          Signs.Utilities.SourceConfig.transit_mode(),
           {Engine.Bridge.status(), Engine.Bridge.duration()} | nil
         ) ::
           {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
@@ -49,7 +49,7 @@ defmodule Signs.Utilities.Messages do
           Signs.Realtime.t(),
           DateTime.t(),
           Engine.Alerts.Fetcher.stop_status(),
-          Content.Message.Alert.NoService.transit_mode()
+          Signs.Utilities.SourceConfig.transit_mode()
         ) ::
           {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
            {Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()}}
@@ -62,7 +62,7 @@ defmodule Signs.Utilities.Messages do
 
   @spec get_alert_messages(
           Engine.Alerts.Fetcher.stop_status(),
-          Content.Message.Alert.NoService.transit_mode()
+          Signs.Utilities.SourceConfig.transit_mode()
         ) ::
           {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
            {Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()}}

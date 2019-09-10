@@ -65,7 +65,7 @@ defmodule Signs.Utilities.MessagesTest do
     def stopped_at?(_stop_id), do: false
   end
 
-  defmodule FakeLastDepartures do
+  defmodule FakeDepartures do
     @test_departure_time Timex.to_datetime(~N[2019-08-29 15:41:31], "America/New_York")
 
     def get_last_departure(_stop_id), do: @test_departure_time
@@ -96,7 +96,7 @@ defmodule Signs.Utilities.MessagesTest do
     current_content_bottom: {@src, %Content.Message.Predictions{headsign: "Ashmont", minutes: 3}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
-    last_departure_engine: FakeLastDepartures,
+    last_departure_engine: FakeDepartures,
     alerts_engine: FakeAlerts,
     bridge_engine: nil,
     sign_updater: FakeUpdater,
@@ -501,7 +501,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :none
 
-      current_time = Timex.shift(FakeLastDepartures.test_departure_time(), minutes: 5)
+      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
       assert Messages.get_messages(sign, sign_config, current_time, alert_status, :train, nil) ==
                {{%Signs.Utilities.SourceConfig{
