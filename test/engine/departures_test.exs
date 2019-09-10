@@ -50,6 +50,39 @@ defmodule Engine.DeparturesTest do
       assert :sys.get_state(departures_pid).departures == %{"a" => [time2], "b" => [time3, time1]}
     end
 
+    test "handles terminal platform stop IDs" do
+      {:ok, departures_pid} = Engine.Departures.start_link(gen_server_name: :departures_test)
+
+      time1 = Timex.now()
+
+      :ok =
+        Engine.Departures.update_train_state(
+          departures_pid,
+          MapSet.new(["Alewife-02"]),
+          time1
+        )
+
+      time2 = Timex.shift(time1, minutes: 1)
+
+      :ok =
+        Engine.Departures.update_train_state(
+          departures_pid,
+          MapSet.new(["Alewife-01", "Alewife-02"]),
+          time2
+        )
+
+      time3 = Timex.shift(time2, minutes: 1)
+
+      :ok =
+        Engine.Departures.update_train_state(
+          departures_pid,
+          MapSet.new(["Alewife-01"]),
+          time3
+        )
+
+      assert :sys.get_state(departures_pid).departures == %{"70061" => [time3]}
+    end
+
     test "when a departure is very quick assume that it is actually the real version of the previous departure" do
       {:ok, departures_pid} = Engine.Departures.start_link(gen_server_name: :departures_test)
 
