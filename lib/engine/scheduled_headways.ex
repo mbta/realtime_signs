@@ -9,7 +9,8 @@ defmodule Engine.ScheduledHeadways do
   require Signs.Utilities.SignsConfig
 
   @type state :: %{
-          ets_table_name: term(),
+          headways_ets_table: term(),
+          first_last_departures_ets_table: term(),
           schedule_data: %{String.t() => [Headway.ScheduleHeadway.schedule_map()]},
           fetcher: module(),
           fetch_ms: integer(),
@@ -35,7 +36,11 @@ defmodule Engine.ScheduledHeadways do
 
   @spec init(Keyword.t()) :: {:ok, state()}
   def init(opts) do
-    ets_table_name = opts[:ets_table_name] || __MODULE__
+    headways_ets_table = opts[:headways_ets_table] || :scheduled_headways
+
+    first_last_departures_ets_table =
+      opts[:first_last_departures_ets_table] || :scheduled_headways_first_last_departures
+
     fetcher = opts[:fetcher] || Application.get_env(:realtime_signs, :scheduled_headway_requester)
     fetch_ms = opts[:fetch_ms] || 60 * 60 * 1_000
     fetch_chunk_size = opts[:fetch_chunks_size] || 20
@@ -45,11 +50,20 @@ defmodule Engine.ScheduledHeadways do
       opts[:time_fetcher] ||
         fn -> Timex.shift(Timex.now(), milliseconds: div(headway_calc_ms, 2)) end
 
-    ^ets_table_name =
-      :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+    ^headways_ets_table =
+      :ets.new(headways_ets_table, [:set, :protected, :named_table, read_concurrency: true])
+
+    ^first_last_departures_ets_table =
+      :ets.new(first_last_departures_ets_table, [
+        :set,
+        :protected,
+        :named_table,
+        read_concurrency: true
+      ])
 
     state = %{
-      ets_table_name: ets_table_name,
+      headways_ets_table: headways_ets_table,
+      first_last_departures_ets_table: first_last_departures_ets_table,
       schedule_data: %{},
       fetcher: fetcher,
       fetch_ms: fetch_ms,
@@ -59,7 +73,7 @@ defmodule Engine.ScheduledHeadways do
       time_fetcher: time_fetcher
     }
 
-    :ets.insert(ets_table_name, Enum.map(state.stop_ids, fn x -> {x, :none} end))
+    :ets.insert(headways_ets_table, Enum.map(state.stop_ids, fn x -> {x, :none} end))
 
     send(self(), :data_update)
     send(self(), :calculation_update)
@@ -68,10 +82,19 @@ defmodule Engine.ScheduledHeadways do
   end
 
   @spec get_headways(:ets.tab(), String.t()) :: Headway.ScheduleHeadway.headway_range()
-  def get_headways(table_name \\ __MODULE__, stop_id) do
+  def get_headways(table_name \\ :scheduled_headways, stop_id) do
     [{_stop_id, headways}] = :ets.lookup(table_name, stop_id)
 
     headways
+  end
+
+  @spec get_first_last_departures(:ets.tab(), String.t()) ::
+          {DateTime.t() | nil, DateTime.t() | nil}
+  def get_first_last_departures(table_name \\ :scheduled_headways_first_last_departures, stop_id) do
+    case :ets.lookup(table_name, stop_id) do
+      [{^stop_id, {first_departure, last_departure}}] -> {first_departure, last_departure}
+      _ -> {nil, nil}
+    end
   end
 
   @spec handle_info(:data_update, state) :: {:noreply, state}
@@ -124,11 +147,12 @@ defmodule Engine.ScheduledHeadways do
       |> Enum.reject(&is_nil(&1))
       |> Enum.reduce(%{}, fn m, acc -> Map.merge(acc, m) end)
 
-    Map.put(
-      state,
-      :schedule_data,
-      Map.merge(state.schedule_data, updated_schedule_data)
-    )
+    new_schedule_data = Map.merge(state.schedule_data, updated_schedule_data)
+
+    first_last_departures = build_first_last_departures_map(new_schedule_data)
+    :ets.insert(state.first_last_departures_ets_table, Map.to_list(first_last_departures))
+
+    Map.put(state, :schedule_data, new_schedule_data)
   end
 
   @spec update_headway_data(state()) :: state()
@@ -148,8 +172,55 @@ defmodule Engine.ScheduledHeadways do
       |> Map.new()
       |> Map.merge(headways)
 
-    :ets.insert(state.ets_table_name, headways |> Enum.into([]))
+    :ets.insert(state.headways_ets_table, headways |> Enum.into([]))
 
     state
+  end
+
+  @spec build_first_last_departures_map(%{String.t() => [Headway.ScheduleHeadway.schedule_map()]}) ::
+          %{String.t() => %{first_departure: DateTime.t(), last_departure: DateTime.t()}}
+  defp build_first_last_departures_map(schedule_data) do
+    stop_time_map = build_stop_time_map(schedule_data)
+
+    Map.new(stop_time_map, fn {stop_id, stop_times} ->
+      min_time =
+        Enum.reduce(stop_times, nil, fn time, acc ->
+          if is_nil(acc) or DateTime.compare(time, acc) == :lt do
+            time
+          else
+            acc
+          end
+        end)
+
+      max_time =
+        Enum.reduce(stop_times, nil, fn time, acc ->
+          if is_nil(acc) or DateTime.compare(time, acc) == :gt do
+            time
+          else
+            acc
+          end
+        end)
+
+      {stop_id, {min_time, max_time}}
+    end)
+  end
+
+  @spec build_stop_time_map(%{String.t() => [Headway.ScheduleHeadway.schedule_map()]}) :: %{
+          String.t() => {DateTime.t() | nil, DateTime.t() | nil}
+        }
+  defp build_stop_time_map(schedule_data) do
+    Map.new(schedule_data, fn {stop_id, schedules} ->
+      {stop_id,
+       Enum.reduce(schedules, [], fn sched, acc ->
+         departure_time = get_in(sched, ["attributes", "departure_time"])
+
+         with false <- is_nil(departure_time),
+              {:ok, parsed_time} <- Timex.parse(departure_time, "{ISO:Extended}") do
+           [parsed_time | acc]
+         else
+           _ -> acc
+         end
+       end)}
+    end)
   end
 end

@@ -7,7 +7,8 @@ defmodule Engine.ScheduledHeadwaysTest do
       {:ok, pid} =
         Engine.ScheduledHeadways.start_link(
           gen_server_name: __MODULE__,
-          ets_table_name: __MODULE__,
+          headways_ets_table: :genserver_test_headways,
+          first_last_departures_ets_table: :genserver_test_first_last_departures,
           time_fetcher: fn -> Timex.to_datetime(~N[2017-07-04 09:00:00], "America/New_York") end
         )
 
@@ -53,20 +54,54 @@ defmodule Engine.ScheduledHeadwaysTest do
       :error
     end
 
+    def get_schedules(["first_last_departures"]) do
+      [
+        %{
+          "relationships" => %{"stop" => %{"data" => %{"id" => "first_last_departures"}}},
+          "attributes" => %{
+            "arrival_time" =>
+              Timex.format!(
+                Timex.to_datetime(~N[2017-07-04 08:35:00], "America/New_York"),
+                "{ISO:Extended}"
+              )
+          }
+        }
+        | Enum.map(@times, fn time ->
+            %{
+              "relationships" => %{"stop" => %{"data" => %{"id" => "first_last_departures"}}},
+              "attributes" => %{
+                "departure_time" =>
+                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
+              }
+            }
+          end)
+      ]
+    end
+
     def get_test_times() do
       @times
     end
   end
 
-  describe "get_headways callback" do
+  describe "get_headways/2" do
     test "returns a tuple of the min and max headway" do
-      ets_table_name = :engine_headways_test_get_headways
+      headways_ets_table = :engine_headways_test_get_headways
+      first_last_departures_ets_table = :engine_first_last_departures_test_get_headways
 
-      ^ets_table_name =
-        :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+      ^headways_ets_table =
+        :ets.new(headways_ets_table, [:set, :protected, :named_table, read_concurrency: true])
+
+      ^first_last_departures_ets_table =
+        :ets.new(first_last_departures_ets_table, [
+          :set,
+          :protected,
+          :named_table,
+          read_concurrency: true
+        ])
 
       state = %{
-        ets_table_name: ets_table_name,
+        headways_ets_table: headways_ets_table,
+        first_last_departures_ets_table: first_last_departures_ets_table,
         schedule_data: %{},
         fetcher: FakeScheduleFetcher,
         fetch_ms: 30_000,
@@ -79,7 +114,83 @@ defmodule Engine.ScheduledHeadwaysTest do
       {:noreply, state} = Engine.ScheduledHeadways.handle_info(:data_update, state)
       {:noreply, state} = Engine.ScheduledHeadways.handle_info(:calculation_update, state)
 
-      assert Engine.ScheduledHeadways.get_headways(state.ets_table_name, "123") == {10, 17}
+      assert Engine.ScheduledHeadways.get_headways(state.headways_ets_table, "123") == {10, 17}
+    end
+  end
+
+  describe "get_first_last_departures/2" do
+    test "returns a tuple of the first and last departure" do
+      headways_ets_table = :engine_headways_test_get_headways
+      first_last_departures_ets_table = :engine_first_last_departures_test_get_headways
+
+      ^headways_ets_table =
+        :ets.new(headways_ets_table, [:set, :protected, :named_table, read_concurrency: true])
+
+      ^first_last_departures_ets_table =
+        :ets.new(first_last_departures_ets_table, [
+          :set,
+          :protected,
+          :named_table,
+          read_concurrency: true
+        ])
+
+      state = %{
+        headways_ets_table: headways_ets_table,
+        first_last_departures_ets_table: first_last_departures_ets_table,
+        schedule_data: %{},
+        fetcher: FakeScheduleFetcher,
+        fetch_ms: 30_000,
+        fetch_chunk_size: 20,
+        headway_calc_ms: 30_000,
+        stop_ids: ["first_last_departures"],
+        time_fetcher: fn -> Timex.to_datetime(~N[2017-07-04 09:00:00], "America/New_York") end
+      }
+
+      {:noreply, state} = Engine.ScheduledHeadways.handle_info(:data_update, state)
+
+      {first_departure, last_departure} =
+        Engine.ScheduledHeadways.get_first_last_departures(
+          state.first_last_departures_ets_table,
+          "first_last_departures"
+        )
+
+      assert DateTime.to_naive(first_departure) == ~N[2017-07-04 08:45:00]
+      assert DateTime.to_naive(last_departure) == ~N[2017-07-04 09:20:00]
+    end
+
+    test "returns a tuple of nil, nil when no information found" do
+      headways_ets_table = :engine_headways_test_get_headways_nil_case
+      first_last_departures_ets_table = :engine_first_last_departures_test_get_headways_nil_case
+
+      ^headways_ets_table =
+        :ets.new(headways_ets_table, [:set, :protected, :named_table, read_concurrency: true])
+
+      ^first_last_departures_ets_table =
+        :ets.new(first_last_departures_ets_table, [
+          :set,
+          :protected,
+          :named_table,
+          read_concurrency: true
+        ])
+
+      state = %{
+        headways_ets_table: headways_ets_table,
+        first_last_departures_ets_table: first_last_departures_ets_table,
+        schedule_data: %{},
+        fetcher: FakeScheduleFetcher,
+        fetch_ms: 30_000,
+        fetch_chunk_size: 20,
+        headway_calc_ms: 30_000,
+        stop_ids: ["first_last_departures"],
+        time_fetcher: fn -> Timex.to_datetime(~N[2017-07-04 09:00:00], "America/New_York") end
+      }
+
+      {:noreply, state} = Engine.ScheduledHeadways.handle_info(:data_update, state)
+
+      assert Engine.ScheduledHeadways.get_first_last_departures(
+               state.first_last_departures_ets_table,
+               "unknown_stop_id"
+             ) == {nil, nil}
     end
   end
 
@@ -96,8 +207,17 @@ defmodule Engine.ScheduledHeadwaysTest do
           }
         end)
 
+      :first_last_departures_test1 =
+        :ets.new(:first_last_departures_test1, [
+          :set,
+          :protected,
+          :named_table,
+          read_concurrency: true
+        ])
+
       state = %{
         schedule_data: %{"123" => schedules},
+        first_last_departures_ets_table: :first_last_departures_test1,
         fetcher: FakeScheduleFetcher,
         fetch_ms: 30_000,
         fetch_chunk_size: 20,
@@ -141,8 +261,17 @@ defmodule Engine.ScheduledHeadwaysTest do
           }
         end)
 
+      :first_last_departures_test2 =
+        :ets.new(:first_last_departures_test2, [
+          :set,
+          :protected,
+          :named_table,
+          read_concurrency: true
+        ])
+
       state = %{
         schedule_data: %{"123" => schedules_123, "456" => schedules_456},
+        first_last_departures_ets_table: :first_last_departures_test2,
         fetcher: FakeScheduleFetcher,
         fetch_ms: 30_000,
         fetch_chunk_size: 1,
@@ -176,8 +305,17 @@ defmodule Engine.ScheduledHeadwaysTest do
           }
         end)
 
+      :first_last_departures_test3 =
+        :ets.new(:first_last_departures_test3, [
+          :set,
+          :protected,
+          :named_table,
+          read_concurrency: true
+        ])
+
       state = %{
         schedule_data: %{"123" => schedules_123, "789" => schedules_789},
+        first_last_departures_ets_table: :first_last_departures_test3,
         fetcher: FakeScheduleFetcher,
         fetch_ms: 30_000,
         fetch_chunk_size: 1,
