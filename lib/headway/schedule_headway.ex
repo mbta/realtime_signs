@@ -143,6 +143,7 @@ defmodule Headway.ScheduleHeadway do
   def format_headway_range({nil, nil}), do: ""
   def format_headway_range({x, y}) when x == y or is_nil(y), do: "Every #{x} min"
   def format_headway_range({x, y}) when x > y, do: "Every #{y} to #{x} min"
+  def format_headway_range({x, y}) when y - x > 10, do: "Up to every #{y} min"
   def format_headway_range({x, y}), do: "Every #{x} to #{y} min"
 
   @spec format_bottom(Content.Message.Headways.Bottom.t()) :: String.t()
