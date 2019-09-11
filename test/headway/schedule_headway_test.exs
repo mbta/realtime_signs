@@ -356,6 +356,10 @@ defmodule Headway.ScheduleHeadwayTest do
     test "formats single headway if both are the same" do
       assert format_headway_range({5, 5}) == "Every 5 min"
     end
+
+    test "when the range is larger than 10 minutes, says up to the top number" do
+      assert format_headway_range({5, 20}) == "Up to every 20 min"
+    end
   end
 
   describe "max_headway/1" do
