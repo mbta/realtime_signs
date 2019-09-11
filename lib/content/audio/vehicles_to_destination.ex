@@ -63,7 +63,7 @@ defmodule Content.Audio.VehiclesToDestination do
 
   def from_headway_message(
         %Content.Message.Headways.Top{headsign: dest},
-        %Content.Message.Headways.Bottom{range: {lower, upper} = range} = msg
+        %Content.Message.Headways.Bottom{range: {lower, upper} = range}
       )
       when range != {nil, nil} and upper - lower > 10 do
     %Content.Audio.Custom{
