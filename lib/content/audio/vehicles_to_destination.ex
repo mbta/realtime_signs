@@ -43,6 +43,14 @@ defmodule Content.Audio.VehiclesToDestination do
             } #{minutes_word} ago"
         }
 
+      {lower, upper} when upper - lower > 10 ->
+        %Content.Audio.Custom{
+          message:
+            "Trains to #{unabreviate_headsign(dest)} up to every #{upper} minutes.  Previous departure #{
+              last_departure
+            } #{minutes_word} ago"
+        }
+
       {lower, upper} ->
         %Content.Audio.Custom{
           message:
@@ -51,6 +59,16 @@ defmodule Content.Audio.VehiclesToDestination do
             } #{minutes_word} ago"
         }
     end
+  end
+
+  def from_headway_message(
+        %Content.Message.Headways.Top{headsign: dest},
+        %Content.Message.Headways.Bottom{range: {lower, upper} = range} = msg
+      )
+      when range != {nil, nil} and upper - lower > 10 do
+    %Content.Audio.Custom{
+      message: "Trains to #{unabreviate_headsign(dest)} up to every #{upper} minutes."
+    }
   end
 
   def from_headway_message(

@@ -315,5 +315,33 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                  %Content.Message.Headways.Bottom{@msg | range: :none, prev_departure_mins: 5}
                )
     end
+
+    test "returns a robo-voice message for a headway that is too big" do
+      assert %Content.Audio.Custom{
+               message:
+                 "Trains to Lechmere up to every 20 minutes.  Previous departure 5 minutes ago"
+             } =
+               from_headway_message(
+                 %Content.Message.Headways.Top{headsign: "Lechmere"},
+                 %Content.Message.Headways.Bottom{
+                   @msg
+                   | range: {5, 20},
+                     prev_departure_mins: 5
+                 }
+               )
+    end
+
+    test "returns a robo-voice message for a headway that is too big with no last departure" do
+      assert %Content.Audio.Custom{
+               message: "Trains to Lechmere up to every 20 minutes."
+             } =
+               from_headway_message(
+                 %Content.Message.Headways.Top{headsign: "Lechmere"},
+                 %Content.Message.Headways.Bottom{
+                   @msg
+                   | range: {5, 20}
+                 }
+               )
+    end
   end
 end
