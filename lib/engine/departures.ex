@@ -85,8 +85,10 @@ defmodule Engine.Departures do
           String.t() => [DateTime.t()]
         }
   defp add_departure(departures, stop_id, time) do
+    translated_stop_id = translate_terminal_stop_id(stop_id)
+
     new_times_for_stop =
-      departures[stop_id]
+      departures[translated_stop_id]
       |> List.wrap()
       |> (fn stop_departures ->
             case stop_departures do
@@ -103,7 +105,7 @@ defmodule Engine.Departures do
           end).()
       |> Enum.take(3)
 
-    Map.put(departures, translate_terminal_stop_id(stop_id), new_times_for_stop)
+    Map.put(departures, translated_stop_id, new_times_for_stop)
   end
 
   @spec headway_sort({non_neg_integer, non_neg_integer}) :: {non_neg_integer, non_neg_integer}
