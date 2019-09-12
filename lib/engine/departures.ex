@@ -7,6 +7,8 @@ defmodule Engine.Departures do
   require Signs.Utilities.SignsConfig
 
   @type t :: %{
+          scheduled_headways_engine: module(),
+          time_fetcher: (() -> DateTime.t()),
           stops_with_trains: MapSet.t(String.t()),
           departures: %{
             String.t() => [DateTime.t()]
@@ -19,8 +21,17 @@ defmodule Engine.Departures do
     GenServer.start_link(__MODULE__, engine_opts, name: gen_server_name)
   end
 
-  def init(_opts) do
-    {:ok, %{stops_with_trains: MapSet.new(), departures: %{}}}
+  def init(opts) do
+    scheduled_headways_engine = opts[:scheduled_headways_engine] || Engine.ScheduledHeadways
+    time_fetcher = opts[:time_fetcher] || fn -> Timex.now() end
+
+    {:ok,
+     %{
+       scheduled_headways_engine: scheduled_headways_engine,
+       time_fetcher: time_fetcher,
+       stops_with_trains: MapSet.new(),
+       departures: %{}
+     }}
   end
 
   def get_last_departure(pid \\ __MODULE__, stop_id) do
@@ -54,28 +65,38 @@ defmodule Engine.Departures do
         add_departure(acc, stop, current_time)
       end)
 
-    new_state = %{departures: new_departures, stops_with_trains: stops_with_trains}
+    new_state = %{state | departures: new_departures, stops_with_trains: stops_with_trains}
 
     {:reply, :ok, new_state}
   end
 
   def handle_call({:get_headways, stop_id}, _from, state) do
+    current_time = state.time_fetcher.()
+
+    {first_departure, last_departure} =
+      state.scheduled_headways_engine.get_first_last_departures(stop_id)
+
     headways =
-      case state[:departures][stop_id] do
-        [_one_departure] ->
-          {nil, nil}
+      if (!is_nil(first_departure) and DateTime.compare(current_time, first_departure) == :lt) or
+           (!is_nil(last_departure) and DateTime.compare(current_time, last_departure) == :gt) do
+        :none
+      else
+        case state[:departures][stop_id] do
+          [_one_departure] ->
+            {nil, nil}
 
-        [one_departure, two_departure] ->
-          {Timex.diff(one_departure, two_departure, :minutes), nil}
+          [one_departure, two_departure] ->
+            {Timex.diff(one_departure, two_departure, :minutes), nil}
 
-        [one_departure, two_departure, three_departure | _] ->
-          headway_sort(
-            {Timex.diff(one_departure, two_departure, :minutes),
-             Timex.diff(two_departure, three_departure, :minutes)}
-          )
+          [one_departure, two_departure, three_departure | _] ->
+            headway_sort(
+              {Timex.diff(one_departure, two_departure, :minutes),
+               Timex.diff(two_departure, three_departure, :minutes)}
+            )
 
-        _ ->
-          :none
+          _ ->
+            :none
+        end
       end
 
     {:reply, headways, state}
