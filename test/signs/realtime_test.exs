@@ -1,5 +1,5 @@
 defmodule Signs.RealtimeTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
   import ExUnit.CaptureLog
 
   alias Content.Message.Headways.Top, as: HT
@@ -233,7 +233,7 @@ defmodule Signs.RealtimeTest do
   end
 
   describe "log_headway_accuracy/1" do
-    test "dose not log the headway accuracy check when the tick_audit is not 0" do
+    test "does not log the headway accuracy check when the tick_audit is not 0" do
       sign = %{
         @sign
         | current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: 2}},
