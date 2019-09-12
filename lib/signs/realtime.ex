@@ -246,6 +246,7 @@ defmodule Signs.Realtime do
     end
   end
 
+  @spec log_headway_accuracy(Signs.Realtime.t()) :: Signs.Realtime.t()
   def log_headway_accuracy(
         %{
           tick_audit: 0,
