@@ -233,6 +233,21 @@ defmodule Signs.RealtimeTest do
   end
 
   describe "log_headway_accuracy/1" do
+    test "does not log the headway accuracy check when the last departure is nil" do
+      sign = %{
+        @sign
+        | current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: nil}},
+          tick_audit: 1
+      }
+
+      log =
+        capture_log([level: :info], fn ->
+          Signs.Realtime.log_headway_accuracy(sign)
+        end)
+
+      assert log == ""
+    end
+
     test "does not log the headway accuracy check when the tick_audit is not 0" do
       sign = %{
         @sign

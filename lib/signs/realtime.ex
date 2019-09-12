@@ -258,7 +258,8 @@ defmodule Signs.Realtime do
                prev_departure_mins: last_departure
              }}
         } = sign
-      ) do
+      )
+      when not is_nil(last_departure) do
     max_headway = Headway.ScheduleHeadway.max_headway(range)
 
     Logger.info(
