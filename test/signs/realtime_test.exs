@@ -100,6 +100,7 @@ defmodule Signs.RealtimeTest do
     tick_bottom: 1,
     tick_top: 1,
     tick_read: 1,
+    tick_audit: 1,
     expiration_seconds: 100,
     read_period_seconds: 100
   }
@@ -142,6 +143,7 @@ defmodule Signs.RealtimeTest do
       assert sign.tick_top == 0
       assert sign.tick_bottom == 0
       assert sign.tick_read == 0
+      assert sign.tick_audit == 0
     end
 
     test "expires content on both lines when tick is zero" do
@@ -227,6 +229,127 @@ defmodule Signs.RealtimeTest do
       assert sign.tick_top == 99
       assert sign.tick_bottom == 99
       assert sign.tick_read == 99
+    end
+  end
+
+  describe "log_headway_accuracy/1" do
+    test "dose not log the headway accuracy check when the tick_audit is not 0" do
+      sign = %{
+        @sign
+        | current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: 2}},
+          tick_audit: 1
+      }
+
+      log =
+        capture_log([level: :info], fn ->
+          Signs.Realtime.log_headway_accuracy(sign)
+        end)
+
+      assert log == ""
+    end
+
+    test "sets tick_audit back to 60 when it logs" do
+      sign = %{
+        @sign
+        | current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: 2}},
+          tick_audit: 0
+      }
+
+      sign = Signs.Realtime.log_headway_accuracy(sign)
+
+      assert sign.tick_audit == 60
+    end
+
+    test "logs stop id, headway, and last departure" do
+      sign = %{
+        @sign
+        | current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: 2}},
+          tick_audit: 0
+      }
+
+      log =
+        capture_log([level: :info], fn ->
+          Signs.Realtime.log_headway_accuracy(sign)
+        end)
+
+      assert log =~ "stop_id=1"
+      assert log =~ "headway_max=5"
+      assert log =~ "last_departure=2"
+    end
+
+    test "logs the headway accuracy check when the tick_audit is 0" do
+      sign = %{
+        @sign
+        | current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: 2}},
+          tick_audit: 0
+      }
+
+      log =
+        capture_log([level: :info], fn ->
+          Signs.Realtime.log_headway_accuracy(sign)
+        end)
+
+      assert log =~ "headway_accuracy_check"
+    end
+
+    test "evaluates the headway as accurate if the last departure is less than the max of the range" do
+      sign = %{
+        @sign
+        | current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: 2}},
+          tick_audit: 0
+      }
+
+      log =
+        capture_log([level: :info], fn ->
+          Signs.Realtime.log_headway_accuracy(sign)
+        end)
+
+      assert log =~ "in_range=true"
+    end
+
+    test "evaluates the headway as inaccurate if the last departure is greater than the max of the range" do
+      sign = %{
+        @sign
+        | current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: 6}},
+          tick_audit: 0
+      }
+
+      log =
+        capture_log([level: :info], fn ->
+          Signs.Realtime.log_headway_accuracy(sign)
+        end)
+
+      assert log =~ "in_range=false"
+    end
+
+    test "evaluates the headway as accurate if the last departure is less than the only number in the range" do
+      sign = %{
+        @sign
+        | current_content_bottom: {@src, %HB{range: {5, nil}, prev_departure_mins: 4}},
+          tick_audit: 0
+      }
+
+      log =
+        capture_log([level: :info], fn ->
+          Signs.Realtime.log_headway_accuracy(sign)
+        end)
+
+      assert log =~ "in_range=true"
+    end
+
+    test "evaluates the headway as inaccurate if the last departure is greater than the only number in the range" do
+      sign = %{
+        @sign
+        | current_content_bottom: {@src, %HB{range: {5, nil}, prev_departure_mins: 6}},
+          tick_audit: 0
+      }
+
+      log =
+        capture_log([level: :info], fn ->
+          Signs.Realtime.log_headway_accuracy(sign)
+        end)
+
+      assert log =~ "in_range=false"
     end
   end
 end
