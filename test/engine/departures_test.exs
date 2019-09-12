@@ -1,6 +1,13 @@
 defmodule Engine.DeparturesTest do
   use ExUnit.Case
 
+  defmodule FakeScheduledHeadwaysEngine do
+    def get_first_last_departures(_) do
+      {Timex.to_datetime(~N[2019-09-02 05:00:00], "America/New_York"),
+       Timex.to_datetime(~N[2019-09-02 23:00:00], "America/New_York")}
+    end
+  end
+
   describe "update_train_state/3" do
     test "records the most recent departure at a stop id" do
       {:ok, departures_pid} = Engine.Departures.start_link(gen_server_name: :departures_test)
@@ -157,6 +164,57 @@ defmodule Engine.DeparturesTest do
       insert_test_data(departures_pid, "three_departures", time2)
       insert_test_data(departures_pid, "three_departures", time3)
       assert Engine.Departures.get_headways(departures_pid, "three_departures") == {5, 10}
+    end
+
+    test "doesn't show headways before first departure" do
+      time1 = Timex.to_datetime(~N[2019-09-01 23:30:00], "America/New_York")
+      time2 = Timex.to_datetime(~N[2019-09-01 23:35:00], "America/New_York")
+
+      {:ok, departures_pid} =
+        Engine.Departures.start_link(
+          gen_server_name: :departures_test,
+          scheduled_headways_engine: FakeScheduledHeadwaysEngine,
+          time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 04:00:00], "America/New_York") end
+        )
+
+      insert_test_data(departures_pid, "before_first_departure", time1)
+      insert_test_data(departures_pid, "before_first_departure", time2)
+
+      assert Engine.Departures.get_headways(departures_pid, "before_first_departure") == :none
+    end
+
+    test "doesn't show headways after last departure" do
+      time1 = Timex.to_datetime(~N[2019-09-02 22:40:00], "America/New_York")
+      time2 = Timex.to_datetime(~N[2019-09-02 22:50:00], "America/New_York")
+
+      {:ok, departures_pid} =
+        Engine.Departures.start_link(
+          gen_server_name: :departures_test,
+          scheduled_headways_engine: FakeScheduledHeadwaysEngine,
+          time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 23:30:00], "America/New_York") end
+        )
+
+      insert_test_data(departures_pid, "after_last_departure", time1)
+      insert_test_data(departures_pid, "after_last_departure", time2)
+
+      assert Engine.Departures.get_headways(departures_pid, "after_last_departure") == :none
+    end
+
+    test "does show headways after first departure and before last departure" do
+      time1 = Timex.to_datetime(~N[2019-09-02 12:00:00], "America/New_York")
+      time2 = Timex.to_datetime(~N[2019-09-02 12:10:00], "America/New_York")
+
+      {:ok, departures_pid} =
+        Engine.Departures.start_link(
+          gen_server_name: :departures_test,
+          scheduled_headways_engine: FakeScheduledHeadwaysEngine,
+          time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 12:15:00], "America/New_York") end
+        )
+
+      insert_test_data(departures_pid, "during_revenue_service", time1)
+      insert_test_data(departures_pid, "during_revenue_service", time2)
+
+      assert Engine.Departures.get_headways(departures_pid, "during_revenue_service") == {10, nil}
     end
   end
 
