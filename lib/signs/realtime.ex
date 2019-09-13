@@ -271,6 +271,10 @@ defmodule Signs.Realtime do
     %{sign | tick_audit: 60}
   end
 
+  def log_headway_accuracy(%{tick_audit: 0} = sign) do
+    %{sign | tick_audit: 60}
+  end
+
   def log_headway_accuracy(sign) do
     sign
   end

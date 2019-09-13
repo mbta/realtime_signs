@@ -263,6 +263,18 @@ defmodule Signs.RealtimeTest do
       assert log == ""
     end
 
+    test "sets tick_audit back to 60 when it has nothign to log but the tick_audit is 0" do
+      sign = %{
+        @sign
+        | current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: nil}},
+          tick_audit: 0
+      }
+
+      sign = Signs.Realtime.log_headway_accuracy(sign)
+
+      assert sign.tick_audit == 60
+    end
+
     test "sets tick_audit back to 60 when it logs" do
       sign = %{
         @sign
