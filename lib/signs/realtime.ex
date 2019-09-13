@@ -263,9 +263,11 @@ defmodule Signs.Realtime do
     max_headway = Headway.ScheduleHeadway.max_headway(range)
 
     Logger.info(
-      "headway_accuracy_check stop_id=#{Signs.Utilities.SourceConfig.sign_stop_ids(source_config)} headway_max=#{
-        max_headway
-      } last_departure=#{last_departure} in_range=#{max_headway > last_departure}"
+      "headway_accuracy_check stop_id=#{
+        List.first(Signs.Utilities.SourceConfig.sign_stop_ids(source_config))
+      } headway_max=#{max_headway} last_departure=#{last_departure} in_range=#{
+        max_headway > last_departure
+      }"
     )
 
     %{sign | tick_audit: 60}
