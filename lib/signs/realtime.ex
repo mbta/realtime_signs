@@ -26,6 +26,7 @@ defmodule Signs.Realtime do
     :sign_updater,
     :tick_top,
     :tick_bottom,
+    :tick_audit,
     :tick_read,
     :expiration_seconds,
     :read_period_seconds
@@ -57,6 +58,7 @@ defmodule Signs.Realtime do
           sign_updater: module(),
           tick_bottom: non_neg_integer(),
           tick_top: non_neg_integer(),
+          tick_audit: non_neg_integer(),
           tick_read: non_neg_integer(),
           expiration_seconds: non_neg_integer(),
           read_period_seconds: non_neg_integer(),
@@ -91,6 +93,7 @@ defmodule Signs.Realtime do
       sign_updater: sign_updater,
       tick_bottom: 130,
       tick_top: 130,
+      tick_audit: 60,
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       expiration_seconds: 130,
       read_period_seconds: 240,
@@ -143,6 +146,7 @@ defmodule Signs.Realtime do
       |> announce_passthrough_trains()
       |> Utilities.Updater.update_sign(top, bottom)
       |> Utilities.Reader.read_sign()
+      |> log_headway_accuracy()
       |> do_expiration()
       |> decrement_ticks()
 
@@ -222,6 +226,7 @@ defmodule Signs.Realtime do
       sign
       | tick_bottom: sign.tick_bottom - 1,
         tick_top: sign.tick_top - 1,
+        tick_audit: sign.tick_audit - 1,
         tick_read: sign.tick_read - 1
     }
   end
@@ -239,5 +244,40 @@ defmodule Signs.Realtime do
     else
       Engine.ScheduledHeadways
     end
+  end
+
+  @spec log_headway_accuracy(Signs.Realtime.t()) :: Signs.Realtime.t()
+  def log_headway_accuracy(
+        %{
+          tick_audit: 0,
+          source_config: source_config,
+          current_content_bottom:
+            {_source_config,
+             %Content.Message.Headways.Bottom{
+               range: range,
+               prev_departure_mins: last_departure
+             }}
+        } = sign
+      )
+      when not is_nil(last_departure) do
+    max_headway = Headway.ScheduleHeadway.max_headway(range)
+
+    Logger.info(
+      "headway_accuracy_check stop_id=#{
+        List.first(Signs.Utilities.SourceConfig.sign_stop_ids(source_config))
+      } headway_max=#{max_headway} last_departure=#{last_departure} in_range=#{
+        max_headway > last_departure
+      }"
+    )
+
+    %{sign | tick_audit: 60}
+  end
+
+  def log_headway_accuracy(%{tick_audit: 0} = sign) do
+    %{sign | tick_audit: 60}
+  end
+
+  def log_headway_accuracy(sign) do
+    sign
   end
 end
