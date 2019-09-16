@@ -47,6 +47,7 @@ defmodule Signs.Utilities.ReaderTest do
     sign_updater: FakeUpdater,
     tick_bottom: 1,
     tick_top: 1,
+    tick_audit: 240,
     tick_read: 1,
     expiration_seconds: 100,
     read_period_seconds: 100

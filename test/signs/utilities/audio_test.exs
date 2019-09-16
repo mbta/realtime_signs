@@ -36,6 +36,7 @@ defmodule Signs.Utilities.AudioTest do
     sign_updater: nil,
     tick_bottom: 1,
     tick_top: 1,
+    tick_audit: 1,
     tick_read: 1,
     expiration_seconds: 100,
     read_period_seconds: 100

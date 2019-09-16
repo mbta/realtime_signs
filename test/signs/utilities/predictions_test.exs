@@ -632,6 +632,7 @@ defmodule Signs.Utilities.PredictionsTest do
     sign_updater: FakeUpdater,
     tick_bottom: 130,
     tick_top: 130,
+    tick_audit: 240,
     tick_read: 240,
     expiration_seconds: 130,
     read_period_seconds: 240
