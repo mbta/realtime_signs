@@ -232,7 +232,7 @@ defmodule Engine.DeparturesTest do
   end
 
   describe "schedule_headways_reset/1" do
-    test "resets the departures after the given amount of time" do
+    test "logs that it reset the departures when it runs" do
       {:ok, departures_pid} =
         Engine.Departures.start_link(
           gen_server_name: :departures_test,
@@ -247,6 +247,28 @@ defmodule Engine.DeparturesTest do
         end)
 
       assert log =~ "daily_reset"
+    end
+
+    test "resets the departures after the given amount of time" do
+      time1 = Timex.to_datetime(~N[2019-09-02 12:00:00], "America/New_York")
+
+      {:ok, departures_pid} =
+        Engine.Departures.start_link(
+          gen_server_name: :departures_test,
+          scheduled_headways_engine: FakeScheduledHeadwaysEngine,
+          time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 12:15:00], "America/New_York") end
+        )
+
+      insert_test_data(departures_pid, "stop1", time1)
+
+      log =
+        capture_log([level: :info], fn ->
+          Engine.Departures.schedule_headways_reset(departures_pid, 10)
+          Process.sleep(50)
+        end)
+
+      state = :sys.get_state(departures_pid)
+      assert state[:departures] == %{}
     end
   end
 
