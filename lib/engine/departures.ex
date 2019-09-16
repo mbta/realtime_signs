@@ -14,6 +14,7 @@ defmodule Engine.Departures do
             String.t() => [DateTime.t()]
           }
         }
+  @headway_reset_time {3, 0, 0}
 
   def start_link(opts \\ []) do
     gen_server_name = opts[:gen_server_name] || __MODULE__
@@ -24,6 +25,9 @@ defmodule Engine.Departures do
   def init(opts) do
     scheduled_headways_engine = opts[:scheduled_headways_engine] || Engine.ScheduledHeadways
     time_fetcher = opts[:time_fetcher] || fn -> Timex.now() end
+
+    reset_time = reset_time(time_fetcher.())
+    schedule_headways_reset(reset_time)
 
     {:ok,
      %{
@@ -83,7 +87,7 @@ defmodule Engine.Departures do
       else
         case state[:departures][stop_id] do
           [_one_departure] ->
-            {nil, nil}
+            state.scheduled_headways_engine.get_headways(stop_id)
 
           [one_departure, two_departure] ->
             {Timex.diff(one_departure, two_departure, :minutes), nil}
@@ -100,6 +104,18 @@ defmodule Engine.Departures do
       end
 
     {:reply, headways, state}
+  end
+
+  def handle_info(:daily_reset, state) do
+    reset_time = reset_time(state.time_fetcher.())
+    schedule_headways_reset(reset_time)
+
+    Logger.info("daily_reset: Resetting headway observations")
+    {:noreply, %{state | departures: %{}}}
+  end
+
+  def handle_info(_, _) do
+    {:noreply, %{}}
   end
 
   @spec add_departure(%{String.t() => [DateTime.t()]}, String.t(), DateTime.t()) :: %{
@@ -144,4 +160,18 @@ defmodule Engine.Departures do
   defp translate_terminal_stop_id("Forest Hills-" <> _), do: "70001"
   defp translate_terminal_stop_id("Oak Grove-" <> _), do: "70036"
   defp translate_terminal_stop_id(stop_id), do: stop_id
+
+  def schedule_headways_reset(pid \\ __MODULE__, interval) do
+    Process.send_after(pid, :daily_reset, interval)
+    nil
+  end
+
+  defp reset_time(current_time) do
+    {hour, minute, second} = @headway_reset_time
+
+    current_time
+    |> Timex.shift(days: 1)
+    |> Timex.set(hour: hour, minute: minute, second: second)
+    |> Timex.diff(current_time, :milliseconds)
+  end
 end

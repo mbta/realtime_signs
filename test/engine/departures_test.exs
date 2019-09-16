@@ -1,10 +1,15 @@
 defmodule Engine.DeparturesTest do
   use ExUnit.Case
+  import ExUnit.CaptureLog
 
   defmodule FakeScheduledHeadwaysEngine do
     def get_first_last_departures(_) do
       {Timex.to_datetime(~N[2019-09-02 05:00:00], "America/New_York"),
        Timex.to_datetime(~N[2019-09-02 23:00:00], "America/New_York")}
+    end
+
+    def get_headways(_) do
+      {5, 10}
     end
   end
 
@@ -139,11 +144,19 @@ defmodule Engine.DeparturesTest do
       assert Engine.Departures.get_headways(departures_pid, "no_departures") == :none
     end
 
-    test "when there is only one recorded departure, headway is nil" do
+    test "when there is only one recorded departure, uses the scheduled headway" do
       time = Timex.now()
-      {:ok, departures_pid} = Engine.Departures.start_link(gen_server_name: :departures_test)
+
+      {:ok, departures_pid} =
+        Engine.Departures.start_link(
+          gen_server_name: :departures_test,
+          scheduled_headways_engine: FakeScheduledHeadwaysEngine,
+          time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 12:15:00], "America/New_York") end
+        )
+
       insert_test_data(departures_pid, "one_departure", time)
-      assert Engine.Departures.get_headways(departures_pid, "one_departure") == {nil, nil}
+
+      assert Engine.Departures.get_headways(departures_pid, "one_departure") == {5, 10}
     end
 
     test "when there are two recorded departures, headway is the range between the two departures" do
@@ -215,6 +228,25 @@ defmodule Engine.DeparturesTest do
       insert_test_data(departures_pid, "during_revenue_service", time2)
 
       assert Engine.Departures.get_headways(departures_pid, "during_revenue_service") == {10, nil}
+    end
+  end
+
+  describe "schedule_headways_reset/1" do
+    test "resets the departures after the given amount of time" do
+      {:ok, departures_pid} =
+        Engine.Departures.start_link(
+          gen_server_name: :departures_test,
+          scheduled_headways_engine: FakeScheduledHeadwaysEngine,
+          time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 12:15:00], "America/New_York") end
+        )
+
+      log =
+        capture_log([level: :info], fn ->
+          Engine.Departures.schedule_headways_reset(departures_pid, 10)
+          Process.sleep(50)
+        end)
+
+      assert log =~ "daily_reset"
     end
   end
 
