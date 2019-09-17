@@ -23,8 +23,9 @@ defmodule Engine.Departures do
   end
 
   def init(opts) do
+    time_zone = Application.get_env(:realtime_signs, :time_zone)
     scheduled_headways_engine = opts[:scheduled_headways_engine] || Engine.ScheduledHeadways
-    time_fetcher = opts[:time_fetcher] || fn -> Timex.now("America/New_York") end
+    time_fetcher = opts[:time_fetcher] || fn -> Timex.now(time_zone) end
 
     reset_time = reset_time(time_fetcher.())
     schedule_headways_reset(reset_time)
