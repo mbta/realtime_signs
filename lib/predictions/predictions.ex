@@ -121,6 +121,7 @@ defmodule Predictions.Predictions do
     end)
   end
 
+  @spec translate_schedule_relationship(String.t()) :: :skipped | :scheduled
   defp translate_schedule_relationship("SKIPPED") do
     :skipped
   end
