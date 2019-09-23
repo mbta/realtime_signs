@@ -535,6 +535,8 @@ defmodule Predictions.PredictionsTest do
     end
 
     test "does not log departures for trips that are skipped" do
+      send(Engine.Departures, :daily_reset)
+
       feed_message = %{
         "entity" => [
           %{
@@ -649,6 +651,8 @@ defmodule Predictions.PredictionsTest do
     end
 
     test "does not record a train location when there is no departure prediction for it" do
+      send(Engine.Departures, :daily_reset)
+
       feed_message = %{
         "entity" => [
           %{
