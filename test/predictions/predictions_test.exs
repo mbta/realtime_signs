@@ -83,6 +83,7 @@ defmodule Predictions.PredictionsTest do
             stop_id: "70261",
             seconds_until_arrival: 180,
             direction_id: 0,
+            schedule_relationship: :SCHEDULED,
             route_id: "Mattapan",
             stops_away: 1,
             stopped?: false,
@@ -96,6 +97,7 @@ defmodule Predictions.PredictionsTest do
             stop_id: "70263",
             seconds_until_departure: 120,
             direction_id: 0,
+            schedule_relationship: :SCHEDULED,
             route_id: "Mattapan",
             destination_stop_id: "70261",
             stops_away: 1,
@@ -110,6 +112,7 @@ defmodule Predictions.PredictionsTest do
             stop_id: "70265",
             seconds_until_passthrough: 110,
             direction_id: 0,
+            schedule_relationship: :SKIPPED,
             route_id: "Mattapan",
             destination_stop_id: "70261",
             stops_away: 0,
@@ -275,6 +278,7 @@ defmodule Predictions.PredictionsTest do
           %Predictions.Prediction{
             stop_id: "70261",
             seconds_until_arrival: 180,
+            schedule_relationship: :SCHEDULED,
             direction_id: 0,
             route_id: "Mattapan",
             stopped?: false,
@@ -289,6 +293,7 @@ defmodule Predictions.PredictionsTest do
             stop_id: "70263",
             seconds_until_arrival: 120,
             direction_id: 0,
+            schedule_relationship: :SCHEDULED,
             route_id: "Mattapan",
             stopped?: false,
             stops_away: 1,
@@ -302,6 +307,7 @@ defmodule Predictions.PredictionsTest do
             stop_id: "70038",
             seconds_until_arrival: 200,
             direction_id: 1,
+            schedule_relationship: :SCHEDULED,
             route_id: "Blue",
             stopped?: false,
             stops_away: 1,
@@ -315,6 +321,7 @@ defmodule Predictions.PredictionsTest do
             stop_id: "70060",
             seconds_until_arrival: 400,
             direction_id: 1,
+            schedule_relationship: :SCHEDULED,
             route_id: "Blue",
             stopped?: false,
             stops_away: 1,
@@ -383,6 +390,7 @@ defmodule Predictions.PredictionsTest do
                    stop_id: "70263",
                    seconds_until_arrival: 0,
                    direction_id: 0,
+                   schedule_relationship: :SCHEDULED,
                    route_id: "Mattapan",
                    stopped?: false,
                    stops_away: 1,
@@ -524,6 +532,120 @@ defmodule Predictions.PredictionsTest do
                  }
                ]
              } = get_all(feed_message, @current_time)
+    end
+
+    test "does not log departures for trips that are skipped" do
+      feed_message = %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783458_32568935",
+            "is_deleted" => false,
+            "trip_update" => %{
+              "delay" => nil,
+              "stop_time_update" => [
+                %{
+                  "arrival" => %{
+                    "delay" => nil,
+                    "time" => 1_491_570_080,
+                    "uncertainty" => nil
+                  },
+                  "departure" => %{
+                    "delay" => nil,
+                    "time" => 1_491_570_120,
+                    "uncertainty" => nil
+                  },
+                  "schedule_relationship" => "SKIPPED",
+                  "stop_id" => "70263",
+                  "stop_sequence" => 2,
+                  "stops_away" => 0,
+                  "stopped?" => true
+                }
+              ],
+              "timestamp" => nil,
+              "trip" => %{
+                "direction_id" => 0,
+                "route_id" => "Mattapan",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
+              },
+              "vehicle" => %{
+                "id" => "G-10040",
+                "label" => "3260",
+                "license_plate" => nil
+              }
+            },
+            "vehicle" => nil
+          }
+        ],
+        "header" => %{
+          "gtfs_realtime_version" => "1.0",
+          "incrementality" => "FULL_DATASET",
+          "timestamp" => 1_490_783_458
+        }
+      }
+
+      get_all(feed_message, @current_time)
+
+      feed_message = %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783458_32568937",
+            "is_deleted" => false,
+            "trip_update" => %{
+              "delay" => nil,
+              "stop_time_update" => [
+                %{
+                  "arrival" => %{
+                    "delay" => nil,
+                    "time" => 1_491_570_120,
+                    "uncertainty" => nil
+                  },
+                  "departure" => %{
+                    "delay" => nil,
+                    "time" => 1_491_570_220,
+                    "uncertainty" => nil
+                  },
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70261",
+                  "stop_sequence" => 2,
+                  "stops_away" => 0,
+                  "stopped?" => true
+                }
+              ],
+              "timestamp" => nil,
+              "trip" => %{
+                "direction_id" => 0,
+                "route_id" => "Mattapan",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
+              },
+              "vehicle" => %{
+                "id" => "G-10040",
+                "label" => "3260",
+                "license_plate" => nil
+              }
+            },
+            "vehicle" => nil
+          }
+        ],
+        "header" => %{
+          "gtfs_realtime_version" => "1.0",
+          "incrementality" => "FULL_DATASET",
+          "timestamp" => 1_490_783_458
+        }
+      }
+
+      second_time = Timex.shift(@current_time, minutes: 2)
+      get_all(feed_message, second_time)
+
+      state = :sys.get_state(Engine.Departures)
+      assert state.departures == %{}
     end
   end
 

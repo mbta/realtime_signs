@@ -19,6 +19,7 @@ defmodule Predictions.Predictions do
     stops_with_trains =
       predictions
       |> Enum.filter(fn pred -> pred.stops_away == 0 end)
+      |> Enum.reject(fn pred -> pred.schedule_relationship == :SKIPPED end)
       |> Enum.map(fn pred -> pred.stop_id end)
 
     Engine.Departures.update_train_state(stops_with_trains, current_time)
@@ -85,6 +86,7 @@ defmodule Predictions.Predictions do
       seconds_until_arrival: max(0, seconds_until_arrival),
       seconds_until_departure: max(0, seconds_until_departure),
       seconds_until_passthrough: max(0, seconds_until_passthrough),
+      schedule_relationship: String.to_atom(stop_time_update["schedule_relationship"]),
       route_id: route_id,
       trip_id: trip_id,
       destination_stop_id: last_stop_id,
