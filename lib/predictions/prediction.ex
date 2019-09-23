@@ -21,7 +21,7 @@ defmodule Predictions.Prediction do
           seconds_until_departure: non_neg_integer() | nil,
           seconds_until_passthrough: non_neg_integer() | nil,
           direction_id: 0 | 1,
-          schedule_relationship: :SCHEDULED | :SKIPPED | nil,
+          schedule_relationship: :scheduled | :skipped | nil,
           route_id: String.t(),
           trip_id: trip_id() | nil,
           destination_stop_id: String.t(),
