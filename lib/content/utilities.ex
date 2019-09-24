@@ -66,6 +66,8 @@ defmodule Content.Utilities do
   def headsign_for_prediction("Green-D", 1, _), do: {:ok, "Govt Ctr"}
   def headsign_for_prediction("Green-E", 1, _), do: {:ok, "Lechmere"}
 
+  def headsign_for_prediction(_, _, "Government Center-Brattle"), do: {:ok, "Govt Ctr"}
+
   def headsign_for_prediction(_, _, _), do: {:error, :not_found}
 
   @spec stop_track_number(String.t()) :: track_number() | nil

@@ -16,6 +16,9 @@ defmodule Content.UtilitiesTest do
 
       assert headsign_for_prediction("Orange", 1, "Oak Grove-01") == {:ok, "Oak Grove"}
       assert headsign_for_prediction("Orange", 1, "Oak Grove-02") == {:ok, "Oak Grove"}
+
+      assert headsign_for_prediction("Green-D", 1, "Government Center-Brattle") ==
+               {:ok, "Govt Ctr"}
     end
 
     test "Southbound headsign on Red Line trunk" do
