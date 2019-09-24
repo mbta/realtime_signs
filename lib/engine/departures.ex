@@ -112,7 +112,7 @@ defmodule Engine.Departures do
     schedule_headways_reset(reset_time)
 
     Logger.info("daily_reset: Resetting headway observations")
-    {:noreply, %{state | departures: %{}}}
+    {:noreply, %{state | departures: %{}, stops_with_trains: MapSet.new()}}
   end
 
   def handle_info(_, _) do
