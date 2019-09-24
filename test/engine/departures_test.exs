@@ -249,6 +249,28 @@ defmodule Engine.DeparturesTest do
       assert log =~ "daily_reset"
     end
 
+    test "resets the stations with trains" do
+      time1 = Timex.to_datetime(~N[2019-09-02 12:00:00], "America/New_York")
+
+      {:ok, departures_pid} =
+        Engine.Departures.start_link(
+          gen_server_name: :departures_test,
+          scheduled_headways_engine: FakeScheduledHeadwaysEngine,
+          time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 12:15:00], "America/New_York") end
+        )
+
+      :ok =
+        Engine.Departures.update_train_state(
+          departures_pid,
+          ["stop1"],
+          time1
+        )
+
+      send(departures_pid, :daily_reset)
+      state = :sys.get_state(departures_pid)
+      assert state[:stops_with_trains] == MapSet.new()
+    end
+
     test "resets the departures after the given amount of time" do
       time1 = Timex.to_datetime(~N[2019-09-02 12:00:00], "America/New_York")
 
@@ -261,11 +283,7 @@ defmodule Engine.DeparturesTest do
 
       insert_test_data(departures_pid, "stop1", time1)
 
-      log =
-        capture_log([level: :info], fn ->
-          Engine.Departures.schedule_headways_reset(departures_pid, 10)
-          Process.sleep(50)
-        end)
+      send(departures_pid, :daily_reset)
 
       state = :sys.get_state(departures_pid)
       assert state[:departures] == %{}
