@@ -540,6 +540,33 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("terminal_dont_sort_0_stops_first", 0) do
+      [
+        %Predictions.Prediction{
+          stop_id: "terminal_dont_sort_0_stops_first",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
+          destination_stop_id: "70105",
+          seconds_until_arrival: nil,
+          seconds_until_departure: 120,
+          trip_id: "123"
+        },
+        %Predictions.Prediction{
+          stop_id: "terminal_dont_sort_0_stops_first",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 0,
+          destination_stop_id: "70093",
+          seconds_until_arrival: nil,
+          seconds_until_departure: 240,
+          trip_id: "123"
+        }
+      ]
+    end
+
     def for_stop("passthrough_trains", 0) do
       [
         %Predictions.Prediction{
@@ -1142,6 +1169,27 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^s, %Content.Message.Predictions{headsign: "Alewife", minutes: :approaching}},
                {^s, %Content.Message.Predictions{headsign: "Alewife", minutes: 2}}
+             } = Signs.Utilities.Predictions.get_messages(sign)
+    end
+
+    test "doesn't sort 0 stops away to first for terminals when another departure is sooner" do
+      s = %SourceConfig{
+        stop_id: "terminal_dont_sort_0_stops_first",
+        headway_direction_name: "Southbound",
+        direction_id: 0,
+        terminal?: true,
+        platform: nil,
+        routes: nil,
+        announce_arriving?: false,
+        announce_boarding?: true
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      assert {
+               {^s, %Content.Message.Predictions{headsign: "Braintree", minutes: 1}},
+               {^s, %Content.Message.Predictions{headsign: "Ashmont", minutes: 3}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
   end
