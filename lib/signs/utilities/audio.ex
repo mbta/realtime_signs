@@ -87,10 +87,6 @@ defmodule Signs.Utilities.Audio do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.StopsAway{}}, _sign, _line) do
-    false
-  end
-
   def should_interrupting_read?({_, %Content.Message.Headways.Bottom{}}, _sign, _line) do
     false
   end
@@ -274,22 +270,6 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_audio(
-         {_, %Message.StopsAway{headsign: same} = top},
-         {_, %{headsign: same}},
-         _multi_source?
-       ) do
-    Audio.StopsAway.from_message(top)
-  end
-
-  defp get_audio(
-         {_, %{headsign: same}} = top,
-         {_, %Message.StopsAway{headsign: same}},
-         multi_source?
-       ) do
-    get_audio_for_line(top, :top, multi_source?)
-  end
-
-  defp get_audio(
          {_, %Message.Bridge.Delays{}},
          {_, %Message.Bridge.Up{duration: duration}},
          _multi_source?
@@ -311,10 +291,6 @@ defmodule Signs.Utilities.Audio do
 
   defp get_audio_for_line({_, %Message.Predictions{}} = content, line, multi_source?) do
     Audio.Predictions.from_sign_content(content, line, multi_source?)
-  end
-
-  defp get_audio_for_line({_, %Message.StopsAway{} = message}, _line, _multi_source?) do
-    Audio.StopsAway.from_message(message)
   end
 
   defp get_audio_for_line({_, %Message.Empty{}}, _line, _multi_source?) do
