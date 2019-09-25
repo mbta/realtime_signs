@@ -9,8 +9,6 @@ defmodule Signs.Utilities.Predictions do
   require Content.Utilities
   alias Signs.Utilities.SourceConfig
 
-  @red_line_stops_away_mins 12
-
   @spec get_messages(Signs.Realtime.t()) ::
           {{SourceConfig.source() | nil, Content.Message.t()},
            {SourceConfig.source() | nil, Content.Message.t()}}
@@ -46,9 +44,6 @@ defmodule Signs.Utilities.Predictions do
     |> Enum.take(2)
     |> Enum.map(fn {source, prediction} ->
       cond do
-        !source.terminal? && red_line_stops_away?(prediction) ->
-          {source, Content.Message.StopsAway.from_prediction(prediction)}
-
         stopped_train?(prediction) ->
           {source, Content.Message.StoppedTrain.from_prediction(prediction)}
 
@@ -59,7 +54,6 @@ defmodule Signs.Utilities.Predictions do
           {source, Content.Message.Predictions.non_terminal(prediction)}
       end
     end)
-    |> sort_messages_by_stops_away()
     |> case do
       [] ->
         {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
@@ -148,13 +142,6 @@ defmodule Signs.Utilities.Predictions do
     status && String.starts_with?(status, "Stopped") && status != "Stopped at station"
   end
 
-  @spec red_line_stops_away?(Predictions.Prediction.t()) :: boolean()
-  defp red_line_stops_away?(prediction) do
-    prediction.route_id == "Red" and
-      (prediction.seconds_until_arrival || prediction.seconds_until_departure) >
-        60 * @red_line_stops_away_mins and prediction.stops_away > 0
-  end
-
   defp allowed_multi_berth_platform?(
          %SourceConfig{multi_berth?: true} = s1,
          %SourceConfig{multi_berth?: true} = s2
@@ -165,20 +152,5 @@ defmodule Signs.Utilities.Predictions do
 
   defp allowed_multi_berth_platform?(_, _) do
     false
-  end
-
-  @spec sort_messages_by_stops_away([{SourceConfig.source() | nil, Content.Message.t()}]) :: [
-          {SourceConfig.source() | nil, Content.Message.t()}
-        ]
-  defp sort_messages_by_stops_away([
-         {s1, %Content.Message.StopsAway{stops_away: stops_away1} = m1},
-         {s2, %Content.Message.StopsAway{stops_away: stops_away2} = m2}
-       ])
-       when stops_away2 < stops_away1 do
-    [{s2, m2}, {s1, m1}]
-  end
-
-  defp sort_messages_by_stops_away(msgs) do
-    msgs
   end
 end
