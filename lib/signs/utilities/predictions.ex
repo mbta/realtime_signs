@@ -93,7 +93,11 @@ defmodule Signs.Utilities.Predictions do
                prediction.direction_id,
                prediction.destination_stop_id
              ),
-           {:ok, destination} <- PaEss.Utilities.headsign_to_terminal_station(headsign) do
+           {:ok, destination} <-
+             (case headsign do
+                "Southbound" -> {:ok, :ashmont}
+                _ -> PaEss.Utilities.headsign_to_terminal_station(headsign)
+              end) do
         %Content.Audio.Passthrough{
           destination: destination,
           trip_id: prediction.trip_id,
