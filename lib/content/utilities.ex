@@ -58,6 +58,8 @@ defmodule Content.Utilities do
   def headsign_for_prediction(_, 1, "70150"), do: {:ok, "Kenmore"}
   def headsign_for_prediction(_, 1, "70174"), do: {:ok, "Reservoir"}
 
+  def headsign_for_prediction(_, _, "Government Center-Brattle"), do: {:ok, "Govt Ctr"}
+
   def headsign_for_prediction("Green-B", 0, _), do: {:ok, "Boston Col"}
   def headsign_for_prediction("Green-C", 0, _), do: {:ok, "Clvlnd Cir"}
   def headsign_for_prediction("Green-D", 0, _), do: {:ok, "Riverside"}
@@ -66,8 +68,6 @@ defmodule Content.Utilities do
   def headsign_for_prediction("Green-C", 1, _), do: {:ok, "North Sta"}
   def headsign_for_prediction("Green-D", 1, _), do: {:ok, "Govt Ctr"}
   def headsign_for_prediction("Green-E", 1, _), do: {:ok, "Lechmere"}
-
-  def headsign_for_prediction(_, _, "Government Center-Brattle"), do: {:ok, "Govt Ctr"}
 
   def headsign_for_prediction(_, _, _), do: {:error, :not_found}
 
