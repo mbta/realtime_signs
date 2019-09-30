@@ -9,7 +9,7 @@ defmodule Engine.Departures do
   @type t :: %{
           scheduled_headways_engine: module(),
           time_fetcher: (() -> DateTime.t()),
-          stops_with_trains: MapSet.t(String.t()),
+          stops_with_trains: %{String.t() => String.t()},
           departures: %{
             String.t() => [DateTime.t()]
           }
@@ -34,7 +34,7 @@ defmodule Engine.Departures do
      %{
        scheduled_headways_engine: scheduled_headways_engine,
        time_fetcher: time_fetcher,
-       stops_with_trains: MapSet.new(),
+       stops_with_trains: %{},
        departures: %{}
      }}
   end
@@ -43,9 +43,22 @@ defmodule Engine.Departures do
     GenServer.call(pid, {:get_last_departure, stop_id})
   end
 
-  @spec update_train_state(GenServer.server(), [String.t()], DateTime.t()) :: :ok
-  def update_train_state(pid \\ __MODULE__, stops_with_trains, current_time) do
-    GenServer.call(pid, {:update_train_state, stops_with_trains, current_time})
+  @spec update_train_state(
+          GenServer.server(),
+          %{String.t() => String.t()},
+          MapSet.t(String.t()),
+          DateTime.t()
+        ) :: :ok
+  def update_train_state(
+        pid \\ __MODULE__,
+        stops_with_trains,
+        vehicles_running_revenue_trips,
+        current_time
+      ) do
+    GenServer.call(
+      pid,
+      {:update_train_state, stops_with_trains, vehicles_running_revenue_trips, current_time}
+    )
   end
 
   @spec get_headways(GenServer.server(), String.t()) :: Headway.ScheduleHeadway.headway_range()
@@ -58,12 +71,20 @@ defmodule Engine.Departures do
     {:reply, last_departure, state}
   end
 
-  def handle_call({:update_train_state, stops_with_trains, current_time}, _from, state) do
-    stops_with_trains = MapSet.new(stops_with_trains)
-
+  def handle_call(
+        {:update_train_state, stops_with_trains, vehicles_running_revenue_trips, current_time},
+        _from,
+        state
+      ) do
     new_departure_stops =
-      state[:stops_with_trains]
-      |> MapSet.difference(stops_with_trains)
+      Enum.reduce(state[:stops_with_trains], [], fn {stop_id, vehicle_id}, acc ->
+        if !is_nil(vehicle_id) and stops_with_trains[stop_id] != vehicle_id and
+             vehicle_id in vehicles_running_revenue_trips do
+          [stop_id | acc]
+        else
+          acc
+        end
+      end)
 
     new_departures =
       Enum.reduce(new_departure_stops, state[:departures], fn stop, acc ->
