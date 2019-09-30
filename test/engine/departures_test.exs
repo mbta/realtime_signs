@@ -16,10 +16,11 @@ defmodule Engine.DeparturesTest do
   describe "update_train_state/3" do
     test "records the most recent departure at a stop id" do
       {:ok, departures_pid} = Engine.Departures.start_link(gen_server_name: :departures_test)
-      stops1 = MapSet.new(["a", "b"])
-      stops2 = MapSet.new(["a"])
-      stops3 = MapSet.new(["b"])
-      stops4 = MapSet.new([])
+      stops1 = %{"a" => "123", "b" => "456"}
+      stops2 = %{"a" => "123"}
+      stops3 = %{"b" => "789"}
+      stops4 = %{}
+      vehicles = MapSet.new(["123", "456", "789"])
 
       time1 = Timex.now()
 
@@ -27,6 +28,7 @@ defmodule Engine.DeparturesTest do
         Engine.Departures.update_train_state(
           departures_pid,
           stops1,
+          vehicles,
           time1
         )
 
@@ -34,6 +36,7 @@ defmodule Engine.DeparturesTest do
         Engine.Departures.update_train_state(
           departures_pid,
           stops2,
+          vehicles,
           time1
         )
 
@@ -45,6 +48,7 @@ defmodule Engine.DeparturesTest do
         Engine.Departures.update_train_state(
           departures_pid,
           stops3,
+          vehicles,
           time2
         )
 
@@ -56,13 +60,14 @@ defmodule Engine.DeparturesTest do
         Engine.Departures.update_train_state(
           departures_pid,
           stops4,
+          vehicles,
           time3
         )
 
       assert :sys.get_state(departures_pid).departures == %{"a" => [time2], "b" => [time3, time1]}
     end
 
-    test "handles terminal platform stop IDs" do
+    test "Doesn't add departure for train that's no longer in revenue service" do
       {:ok, departures_pid} = Engine.Departures.start_link(gen_server_name: :departures_test)
 
       time1 = Timex.now()
@@ -70,7 +75,8 @@ defmodule Engine.DeparturesTest do
       :ok =
         Engine.Departures.update_train_state(
           departures_pid,
-          MapSet.new(["Alewife-02"]),
+          %{"a" => "123"},
+          MapSet.new(["123"]),
           time1
         )
 
@@ -79,7 +85,61 @@ defmodule Engine.DeparturesTest do
       :ok =
         Engine.Departures.update_train_state(
           departures_pid,
-          MapSet.new(["Alewife-01", "Alewife-02"]),
+          %{},
+          MapSet.new([]),
+          time1
+        )
+
+      assert :sys.get_state(departures_pid).departures == %{}
+    end
+
+    test "Adds a departure when a stop still has a vehicle at it, but it's a different vehicle" do
+      {:ok, departures_pid} = Engine.Departures.start_link(gen_server_name: :departures_test)
+
+      time1 = Timex.now()
+
+      :ok =
+        Engine.Departures.update_train_state(
+          departures_pid,
+          %{"a" => "123"},
+          MapSet.new(["123", "456"]),
+          time1
+        )
+
+      time2 = Timex.shift(time1, minutes: 3)
+
+      :ok =
+        Engine.Departures.update_train_state(
+          departures_pid,
+          %{"a" => "456"},
+          MapSet.new(["123", "456"]),
+          time1
+        )
+
+      assert :sys.get_state(departures_pid).departures == %{"a" => [time1]}
+    end
+
+    test "handles terminal platform stop IDs" do
+      {:ok, departures_pid} = Engine.Departures.start_link(gen_server_name: :departures_test)
+
+      time1 = Timex.now()
+      vehicles = MapSet.new(["123", "456"])
+
+      :ok =
+        Engine.Departures.update_train_state(
+          departures_pid,
+          %{"Alewife-02" => "123"},
+          vehicles,
+          time1
+        )
+
+      time2 = Timex.shift(time1, minutes: 3)
+
+      :ok =
+        Engine.Departures.update_train_state(
+          departures_pid,
+          %{"Alewife-01" => "456", "Alewife-02" => "123"},
+          vehicles,
           time2
         )
 
@@ -88,7 +148,8 @@ defmodule Engine.DeparturesTest do
       :ok =
         Engine.Departures.update_train_state(
           departures_pid,
-          MapSet.new(["Alewife-01"]),
+          %{"Alewife-01" => "456"},
+          vehicles,
           time3
         )
 
@@ -99,7 +160,8 @@ defmodule Engine.DeparturesTest do
       :ok =
         Engine.Departures.update_train_state(
           departures_pid,
-          MapSet.new([]),
+          %{},
+          vehicles,
           time4
         )
 
@@ -262,7 +324,8 @@ defmodule Engine.DeparturesTest do
       :ok =
         Engine.Departures.update_train_state(
           departures_pid,
-          ["stop1"],
+          %{"stop1" => "123"},
+          MapSet.new(["123"]),
           time1
         )
 
@@ -294,14 +357,16 @@ defmodule Engine.DeparturesTest do
     :ok =
       Engine.Departures.update_train_state(
         pid,
-        [stop_id],
+        %{stop_id => "foo"},
+        MapSet.new([]),
         departure_time
       )
 
     :ok =
       Engine.Departures.update_train_state(
         pid,
-        [],
+        %{},
+        MapSet.new(["foo"]),
         departure_time
       )
   end

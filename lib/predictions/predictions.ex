@@ -11,19 +11,28 @@ defmodule Predictions.Predictions do
       |> Enum.map(& &1["trip_update"])
       |> Enum.reject(&(&1["trip"]["schedule_relationship"] == "CANCELED"))
       |> Enum.flat_map(&transform_stop_time_updates/1)
-      |> Enum.filter(fn {update, _, _, _, _, _} ->
+      |> Enum.filter(fn {update, _, _, _, _, _, _, _} ->
         update["arrival"] || update["departure"] || update["passthrough_time"]
       end)
       |> Enum.map(&prediction_from_update(&1, current_time))
+
+    vehicles_running_revenue_trips =
+      predictions
+      |> Enum.filter(& &1.revenue_trip?)
+      |> Enum.map(& &1.vehicle_id)
+      |> MapSet.new()
 
     stops_with_trains =
       predictions
       |> Enum.filter(fn pred -> pred.stops_away == 0 end)
       |> Enum.reject(fn pred -> pred.schedule_relationship == :skipped end)
-      |> Enum.reject(fn pred -> is_nil(pred.seconds_until_departure) end)
-      |> Enum.map(fn pred -> pred.stop_id end)
+      |> Map.new(fn pred -> {pred.stop_id, pred.vehicle_id} end)
 
-    Engine.Departures.update_train_state(stops_with_trains, current_time)
+    Engine.Departures.update_train_state(
+      stops_with_trains,
+      vehicles_running_revenue_trips,
+      current_time
+    )
 
     predictions
     |> Enum.group_by(fn prediction ->
@@ -32,7 +41,8 @@ defmodule Predictions.Predictions do
   end
 
   @spec transform_stop_time_updates(map()) :: [
-          {map(), String.t(), String.t(), integer(), String.t(), [String.t()] | nil}
+          {map(), String.t(), String.t(), integer(), String.t(), [String.t()] | nil, boolean(),
+           String.t() | nil}
         ]
   defp transform_stop_time_updates(trip_update) do
     last_stop_id =
@@ -48,20 +58,26 @@ defmodule Predictions.Predictions do
         nil
       end
 
+    revenue_trip? =
+      Enum.any?(trip_update["stop_time_update"], &(&1["schedule_relationship"] != "SKIPPED"))
+
+    vehicle_id = get_in(trip_update, ["vehicle", "id"])
+
     Enum.map(
       trip_update["stop_time_update"],
       &{&1, last_stop_id, trip_update["trip"]["route_id"], trip_update["trip"]["direction_id"],
-       trip_update["trip"]["trip_id"], consist}
+       trip_update["trip"]["trip_id"], consist, revenue_trip?, vehicle_id}
     )
   end
 
   @spec prediction_from_update(
           {GTFS.Realtime.trip_update_stop_time_update(), String.t(), String.t(), integer(),
-           Predictions.Prediction.trip_id(), [String.t()] | nil},
+           Predictions.Prediction.trip_id(), [String.t()] | nil, boolean(), String.t() | nil},
           DateTime.t()
         ) :: Prediction.t()
   defp prediction_from_update(
-         {stop_time_update, last_stop_id, route_id, direction_id, trip_id, consist},
+         {stop_time_update, last_stop_id, route_id, direction_id, trip_id, consist, revenue_trip?,
+          vehicle_id},
          current_time
        ) do
     current_time_seconds = DateTime.to_unix(current_time)
@@ -95,7 +111,9 @@ defmodule Predictions.Predictions do
       stopped?: stop_time_update["stopped?"],
       stops_away: stop_time_update["stops_away"],
       boarding_status: stop_time_update["boarding_status"],
-      new_cars?: consist_is_new?(consist)
+      new_cars?: consist_is_new?(consist),
+      revenue_trip?: revenue_trip?,
+      vehicle_id: vehicle_id
     }
   end
 
