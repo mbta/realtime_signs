@@ -89,7 +89,9 @@ defmodule Predictions.PredictionsTest do
             stopped?: false,
             destination_stop_id: "70261",
             trip_id: "32568935",
-            new_cars?: false
+            new_cars?: false,
+            revenue_trip?: true,
+            vehicle_id: "G-10040"
           }
         ],
         {"70263", 0} => [
@@ -104,7 +106,9 @@ defmodule Predictions.PredictionsTest do
             stopped?: true,
             boarding_status: "Stopped 1 stop away",
             trip_id: "32568935",
-            new_cars?: false
+            new_cars?: false,
+            revenue_trip?: true,
+            vehicle_id: "G-10040"
           }
         ],
         {"70265", 0} => [
@@ -118,7 +122,9 @@ defmodule Predictions.PredictionsTest do
             stops_away: 0,
             stopped?: false,
             trip_id: "32568935",
-            new_cars?: false
+            new_cars?: false,
+            revenue_trip?: true,
+            vehicle_id: "G-10040"
           }
         ]
       }
@@ -285,7 +291,9 @@ defmodule Predictions.PredictionsTest do
             stops_away: 1,
             destination_stop_id: "70261",
             trip_id: "32568935",
-            new_cars?: false
+            new_cars?: false,
+            revenue_trip?: true,
+            vehicle_id: "G-10040"
           }
         ],
         {"70263", 0} => [
@@ -299,7 +307,9 @@ defmodule Predictions.PredictionsTest do
             stops_away: 1,
             destination_stop_id: "70261",
             trip_id: "32568935",
-            new_cars?: false
+            new_cars?: false,
+            revenue_trip?: true,
+            vehicle_id: "G-10040"
           }
         ],
         {"70038", 1} => [
@@ -313,7 +323,9 @@ defmodule Predictions.PredictionsTest do
             stops_away: 1,
             destination_stop_id: "70060",
             trip_id: "trip_2",
-            new_cars?: false
+            new_cars?: false,
+            revenue_trip?: true,
+            vehicle_id: "vehicle_2"
           }
         ],
         {"70060", 1} => [
@@ -327,7 +339,9 @@ defmodule Predictions.PredictionsTest do
             stops_away: 1,
             destination_stop_id: "70060",
             trip_id: "trip_2",
-            new_cars?: false
+            new_cars?: false,
+            revenue_trip?: true,
+            vehicle_id: "vehicle_2"
           }
         ]
       }
@@ -396,7 +410,9 @@ defmodule Predictions.PredictionsTest do
                    stops_away: 1,
                    destination_stop_id: "70263",
                    trip_id: "32568935",
-                   new_cars?: false
+                   new_cars?: false,
+                   revenue_trip?: true,
+                   vehicle_id: "G-10040"
                  }
                ]
              }
@@ -650,7 +666,7 @@ defmodule Predictions.PredictionsTest do
       assert state.departures == %{}
     end
 
-    test "does not record a train location when there is no departure prediction for it" do
+    test "does not record a train location when the train is no longer in revenue service" do
       send(Engine.Departures, :daily_reset)
 
       feed_message = %{
@@ -713,17 +729,10 @@ defmodule Predictions.PredictionsTest do
               "delay" => nil,
               "stop_time_update" => [
                 %{
-                  "arrival" => %{
-                    "delay" => nil,
-                    "time" => 1_491_570_120,
-                    "uncertainty" => nil
-                  },
-                  "departure" => %{
-                    "delay" => nil,
-                    "time" => 1_491_570_120,
-                    "uncertainty" => nil
-                  },
-                  "schedule_relationship" => "SCHEDULED",
+                  "arrival" => nil,
+                  "departure" => nil,
+                  "passthrough_time" => 1_491_570_180,
+                  "schedule_relationship" => "SKIPPED",
                   "stop_id" => "70261",
                   "stop_sequence" => 2,
                   "stops_away" => 0,
