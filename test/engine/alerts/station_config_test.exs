@@ -8,16 +8,19 @@ defmodule Engine.Alerts.StationConfigTest do
       station_neighbors: station_neighbors
     } = Engine.Alerts.StationConfig.load_config()
 
-    assert stop_to_station["70200"] == "G Park St"
+    assert stop_to_station["70200"] == "G Park St eastbound"
 
-    assert Enum.sort(station_to_stops["G Park St"]) == [
+    assert Enum.sort(station_to_stops["G Park St westbound"]) == [
              "70196",
              "70197",
              "70198",
-             "70199",
-             "70200"
+             "70199"
            ]
 
-    assert Enum.sort(station_neighbors["G Copley"]) == ["G Arlington", "G Hynes", "G Prudential"]
+    assert Enum.sort(station_neighbors["G Copley eastbound"]) == [
+             "G Arlington eastbound",
+             "G Hynes eastbound",
+             "G Prudential eastbound"
+           ]
   end
 end
