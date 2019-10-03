@@ -1,5 +1,5 @@
 {
-  "Green-Trunk-eastbound": [
+  "Green-Trunk": [
     {"station": "G Kenmore eastbound", "stop_ids": ["70150"]},
     {"station": "G Hynes eastbound", "stop_ids": ["70152"]},
     {"station": "G Copley eastbound", "stop_ids": ["70154"]},
@@ -10,9 +10,7 @@
     {"station": "G Haymarket eastbound", "stop_ids": ["70203"]},
     {"station": "G North Station eastbound", "stop_ids": ["70205"]},
     {"station": "G Science Park eastbound", "stop_ids": ["70207"]},
-    {"station": "G Lechmere eastbound", "stop_ids": ["70209"]}
-  ],
-  "Green-Trunk-westbound": [
+    {"station": "G Lechmere eastbound", "stop_ids": ["70209"]},
     {"station": "G Lechmere westbound", "stop_ids": ["70210"]},
     {"station": "G Science Park westbound", "stop_ids": ["70208"]},
     {"station": "G North Station westbound", "stop_ids": ["70206"]},
