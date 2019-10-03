@@ -152,7 +152,7 @@
     {"station": "O Jackson Square southbound", "stop_ids": ["70006"]},
     {"station": "O Stony Brook southbound", "stop_ids": ["70004"]},
     {"station": "O Green Street southbound", "stop_ids": ["70002"]},
-    {"station": "O Forest Hills", "stop_ids": ["70001", "70001"]},
+    {"station": "O Forest Hills", "stop_ids": ["70001"]},
     {"station": "O Green Street northbound", "stop_ids": ["70003"]},
     {"station": "O Stony Brook northbound", "stop_ids": ["70005"]},
     {"station": "O Jackson Square northbound", "stop_ids": ["70007"]},
