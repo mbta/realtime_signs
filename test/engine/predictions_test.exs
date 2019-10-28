@@ -48,7 +48,7 @@ defmodule Engine.PredictionsTest do
           assert existing_state == last_modified
         end)
 
-      assert log =~ "Could not fetch pb file "
+      assert log =~ "Could not fetch file "
       assert log =~ "timeout"
     end
 

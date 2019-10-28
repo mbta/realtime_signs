@@ -119,7 +119,12 @@ defmodule Fake.HTTPoison do
       }
       |> Poison.encode!()
 
-    {:ok, %HTTPoison.Response{status_code: 200, body: feed_message}}
+    {:ok,
+     %HTTPoison.Response{
+       status_code: 200,
+       body: feed_message,
+       headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:30:58 GMT"}]
+     }}
   end
 
   def mock_response("fake_trip_update2.json") do
@@ -171,7 +176,12 @@ defmodule Fake.HTTPoison do
       }
       |> Poison.encode!()
 
-    {:ok, %HTTPoison.Response{status_code: 200, body: feed_message}}
+    {:ok,
+     %HTTPoison.Response{
+       status_code: 200,
+       body: feed_message,
+       headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:30:58 GMT"}]
+     }}
   end
 
   def mock_response("trip_updates_304") do

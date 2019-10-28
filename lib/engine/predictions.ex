@@ -19,6 +19,8 @@ defmodule Engine.Predictions do
 
   @trip_updates_table :trip_updates
 
+  @last_modified_time_format "{WDshort}, {D} {Mshort} {YYYY} {h24}:{m}:{s} {Zabbr}"
+
   def start_link do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
@@ -60,6 +62,13 @@ defmodule Engine.Predictions do
         state[:trip_updates_table]
       )
 
+    {_last_modified_vehicle_positions, _stops_with_trains} =
+      download_and_process_vehicle_positions(
+        state[:last_modified_vehicle_positions],
+        current_time,
+        :vehicle_positions_url
+      )
+
     {:noreply, Map.put(state, :last_modified_trip_updates, last_modified_trip_updates)}
   end
 
@@ -69,8 +78,7 @@ defmodule Engine.Predictions do
   end
 
   defp format_last_modified(time) do
-    {:ok, last_modified} =
-      Timex.format(time, "{WDshort}, {D} {Mshort} {YYYY} {h24}:{m}:{s} {Zabbr}")
+    {:ok, last_modified} = Timex.format(time, @last_modified_time_format)
 
     last_modified
   end
@@ -97,8 +105,35 @@ defmodule Engine.Predictions do
           :ets.tab()
         ) :: DateTime.t()
   defp download_and_insert_data(last_modified, current_time, parse_and_update_fn, url, ets_table) do
-    http_client = Application.get_env(:realtime_signs, :http_client)
     full_url = Application.get_env(:realtime_signs, url)
+
+    case download_data(full_url, last_modified) do
+      {:ok, body, new_last_modified} ->
+        parse_and_update_fn.(body, new_last_modified, ets_table)
+        new_last_modified || current_time
+
+      :error ->
+        last_modified
+    end
+  end
+
+  @spec download_and_process_vehicle_positions(DateTime.t(), DateTime.t(), atom()) ::
+          {DateTime.t(), %{String.t() => String.t()}}
+  defp download_and_process_vehicle_positions(last_modified, current_time, url) do
+    full_url = Application.get_env(:realtime_signs, url)
+
+    case download_data(full_url, last_modified) do
+      {:ok, _body, new_last_modified} ->
+        {new_last_modified || current_time, %{}}
+
+      :error ->
+        {last_modified, %{}}
+    end
+  end
+
+  @spec download_data(String.t(), DateTime.t()) :: {:ok, String.t(), DateTime.t() | nil} | :error
+  defp download_data(full_url, last_modified) do
+    http_client = Application.get_env(:realtime_signs, :http_client)
 
     case http_client.get(
            full_url,
@@ -106,17 +141,23 @@ defmodule Engine.Predictions do
            timeout: 2000,
            recv_timeout: 2000
          ) do
-      {:ok, %HTTPoison.Response{body: body, status_code: status}}
+      {:ok, %HTTPoison.Response{body: body, status_code: status, headers: headers}}
       when status >= 200 and status < 300 ->
-        parse_and_update_fn.(body, current_time, ets_table)
-        current_time
+        with {"Last-Modified", last_modified_string} <-
+               Enum.find(headers, fn {header, _value} -> header == "Last-Modified" end),
+             {:ok, last_modified_dt} <-
+               Timex.parse(last_modified_string, @last_modified_time_format) do
+          {:ok, body, last_modified_dt}
+        else
+          _ -> {:ok, body, nil}
+        end
 
       {:ok, %HTTPoison.Response{}} ->
-        last_modified
+        :error
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("Could not fetch pb file from #{inspect(full_url)}: #{inspect(reason)}")
-        last_modified
+        Logger.warn("Could not fetch file from #{inspect(full_url)}: #{inspect(reason)}")
+        :error
     end
   end
 
