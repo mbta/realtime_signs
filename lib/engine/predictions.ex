@@ -1,7 +1,8 @@
 defmodule Engine.Predictions do
   @moduledoc """
   Maintains an up-to-date internal state of the realtime predictions of vehicles
-  in the system. Fetches from the GTFS-RT PB file about once per second.
+  in the system. Fetches from the GTFS-rt enhanced JSON file about once per
+  second.
 
   Offers a `for_stop/1` public interface to get a list of Predictions.Prediction's
   for a given GTFS stop.
@@ -10,9 +11,13 @@ defmodule Engine.Predictions do
   use GenServer
   require Logger
 
-  @type state :: DateTime.t()
+  @type state :: %{
+          last_modified_trip_updates: DateTime.t(),
+          last_modified_vehicle_positions: DateTime.t(),
+          trip_updates_table: :ets.tab()
+        }
 
-  @predictions_table :vehicle_predictions
+  @trip_updates_table :trip_updates
 
   def start_link do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -20,7 +25,7 @@ defmodule Engine.Predictions do
 
   @doc "The upcoming predicted times a vehicle will be at this stop"
   @spec for_stop(String.t(), 0 | 1) :: [Predictions.Prediction.t()]
-  def for_stop(predictions_table_id \\ @predictions_table, gtfs_stop_id, direction_id) do
+  def for_stop(predictions_table_id \\ @trip_updates_table, gtfs_stop_id, direction_id) do
     case :ets.lookup(predictions_table_id, {gtfs_stop_id, direction_id}) do
       [{_, :none}] -> []
       [{{^gtfs_stop_id, ^direction_id}, predictions}] -> predictions
@@ -28,37 +33,37 @@ defmodule Engine.Predictions do
     end
   end
 
-  @spec init(state) :: {:ok, state}
   def init(_) do
     schedule_update(self())
 
-    @predictions_table =
-      :ets.new(@predictions_table, [:set, :protected, :named_table, read_concurrency: true])
+    @trip_updates_table =
+      :ets.new(@trip_updates_table, [:set, :protected, :named_table, read_concurrency: true])
 
-    {:ok, Timex.now()}
+    {:ok,
+     %{
+       last_modified_trip_updates: Timex.now(),
+       last_modified_vehicle_positions: Timex.now(),
+       trip_updates_table: @trip_updates_table
+     }}
   end
 
-  @spec handle_info(atom, state, :ets.tab()) :: {:noreply, state}
-
-  def handle_info(msg, state, predictions_table \\ @predictions_table)
-
-  def handle_info(:update, last_modified_predictions, predictions_table) do
+  def handle_info(:update, state) do
     schedule_update(self())
     current_time = Timex.now()
 
-    last_modified_predictions =
+    last_modified_trip_updates =
       download_and_insert_data(
-        last_modified_predictions,
+        state[:last_modified_trip_updates],
         current_time,
         &update_predictions/3,
         :trip_update_url,
-        predictions_table
+        state[:trip_updates_table]
       )
 
-    {:noreply, last_modified_predictions}
+    {:noreply, Map.put(state, :last_modified_trip_updates, last_modified_trip_updates)}
   end
 
-  def handle_info(msg, state, _) do
+  def handle_info(msg, state) do
     Logger.warn("#{__MODULE__} unknown message: #{inspect(msg)}")
     {:noreply, state}
   end

@@ -3,7 +3,7 @@ defmodule Engine.PredictionsTest do
   import ExUnit.CaptureLog
   import Engine.Predictions
 
-  describe "handle_info/4" do
+  describe "handle_info/2" do
     test "keeps existing states when trip_update url has not been modified" do
       trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
       position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
@@ -15,7 +15,12 @@ defmodule Engine.PredictionsTest do
         Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
-      existing_state = ~N[2017-07-04 09:05:00]
+      existing_state = %{
+        last_modified_trip_updates: ~N[2017-07-04 09:05:00],
+        last_modified_vehicle_positions: ~N[2017-07-04 09:05:00],
+        trip_updates_table: :test_trip_updates
+      }
+
       {:noreply, updated_state} = handle_info(:update, existing_state)
       assert updated_state == existing_state
     end
@@ -31,7 +36,11 @@ defmodule Engine.PredictionsTest do
         Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
-      existing_state = ~N[2017-07-04 09:05:00]
+      existing_state = %{
+        last_modified_trip_updates: ~N[2017-07-04 09:05:00],
+        last_modified_vehicle_positions: ~N[2017-07-04 09:05:00],
+        trip_updates_table: :test_trip_updates
+      }
 
       log =
         capture_log([level: :warn], fn ->
@@ -54,8 +63,6 @@ defmodule Engine.PredictionsTest do
         Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
-      existing_state = ~N[2017-07-04 09:05:00]
-
       predictions_table =
         :ets.new(:test_vehicle_predictions, [
           :set,
@@ -69,7 +76,13 @@ defmodule Engine.PredictionsTest do
         {{"stop_to_update", 0}, true}
       ])
 
-      handle_info(:update, existing_state, predictions_table)
+      existing_state = %{
+        last_modified_trip_updates: ~N[2017-07-04 09:05:00],
+        last_modified_vehicle_positions: ~N[2017-07-04 09:05:00],
+        trip_updates_table: predictions_table
+      }
+
+      handle_info(:update, existing_state)
 
       assert :ets.info(predictions_table)[:size] == 2
       [{{"stop_to_remove", 0}, :none}] = :ets.lookup(predictions_table, {"stop_to_remove", 0})
@@ -79,7 +92,11 @@ defmodule Engine.PredictionsTest do
     end
 
     test "logs a warning on any message but :update" do
-      existing_state = ~N[2017-07-04 09:05:00]
+      existing_state = %{
+        last_modified_trip_updates: ~N[2017-07-04 09:05:00],
+        last_modified_vehicle_positions: ~N[2017-07-04 09:05:00],
+        trip_updates_table: :test_trip_updates
+      }
 
       log =
         capture_log([level: :warn], fn ->
