@@ -123,8 +123,8 @@ defmodule Engine.Predictions do
     full_url = Application.get_env(:realtime_signs, url)
 
     case download_data(full_url, last_modified) do
-      {:ok, _body, new_last_modified} ->
-        {new_last_modified || current_time, %{}}
+      {:ok, body, new_last_modified} ->
+        {new_last_modified || current_time, vehicle_positions_response_to_stops_with_trains(body)}
 
       :error ->
         {last_modified, %{}}
@@ -163,5 +163,23 @@ defmodule Engine.Predictions do
 
   defp schedule_update(pid) do
     Process.send_after(pid, :update, 1_000)
+  end
+
+  @spec vehicle_positions_response_to_stops_with_trains(String.t()) :: %{String.t() => String.t()}
+  defp vehicle_positions_response_to_stops_with_trains(response) do
+    try do
+      response
+      |> Poison.Parser.parse!()
+      |> Map.get("entity")
+      |> Enum.filter(fn vehicle_position ->
+        get_in(vehicle_position, ["vehicle", "current_status"]) == "STOPPED_AT"
+      end)
+      |> Map.new(fn vehicle_position ->
+        {get_in(vehicle_position, ["vehicle", "stop_id"]),
+         get_in(vehicle_position, ["vehicle", "vehicle", "id"])}
+      end)
+    rescue
+      Poison.SyntaxError -> %{}
+    end
   end
 end
