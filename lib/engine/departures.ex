@@ -181,6 +181,7 @@ defmodule Engine.Departures do
   defp translate_terminal_stop_id("Braintree-" <> _), do: "70105"
   defp translate_terminal_stop_id("Forest Hills-" <> _), do: "70001"
   defp translate_terminal_stop_id("Oak Grove-" <> _), do: "70036"
+  defp translate_terminal_stop_id("70161"), do: "70160"
   defp translate_terminal_stop_id(stop_id), do: stop_id
 
   def schedule_headways_reset(pid \\ __MODULE__, interval) do
