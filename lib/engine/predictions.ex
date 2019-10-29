@@ -53,7 +53,7 @@ defmodule Engine.Predictions do
     schedule_update(self())
     current_time = Timex.now()
 
-    last_modified_trip_updates =
+    {last_modified_trip_updates, vehicles_running_revenue_trips} =
       download_and_insert_data(
         state[:last_modified_trip_updates],
         current_time,
@@ -62,14 +62,25 @@ defmodule Engine.Predictions do
         state[:trip_updates_table]
       )
 
-    {_last_modified_vehicle_positions, _stops_with_trains} =
+    {last_modified_vehicle_positions, stops_with_trains} =
       download_and_process_vehicle_positions(
         state[:last_modified_vehicle_positions],
         current_time,
         :vehicle_positions_url
       )
 
-    {:noreply, Map.put(state, :last_modified_trip_updates, last_modified_trip_updates)}
+    Engine.Departures.update_train_state(
+      stops_with_trains,
+      vehicles_running_revenue_trips,
+      current_time
+    )
+
+    {:noreply,
+     %{
+       state
+       | last_modified_trip_updates: last_modified_trip_updates,
+         last_modified_vehicle_positions: last_modified_vehicle_positions
+     }}
   end
 
   def handle_info(msg, state) do
@@ -83,9 +94,9 @@ defmodule Engine.Predictions do
     last_modified
   end
 
-  @spec update_predictions(any(), DateTime.t(), :ets.tab()) :: true
+  @spec update_predictions(any(), DateTime.t(), :ets.tab()) :: MapSet.t(String.t())
   defp update_predictions(body, current_time, predictions_table) do
-    new_predictions =
+    {new_predictions, vehicles_running_revenue_trips} =
       body
       |> Predictions.Predictions.parse_json_response()
       |> Predictions.Predictions.get_all(current_time)
@@ -95,25 +106,27 @@ defmodule Engine.Predictions do
 
     all_predictions = Map.merge(existing_predictions, new_predictions)
     :ets.insert(predictions_table, Enum.into(all_predictions, []))
+
+    vehicles_running_revenue_trips
   end
 
   @spec download_and_insert_data(
           DateTime.t(),
           DateTime.t(),
-          (any(), DateTime.t(), :ets.tab() -> true),
+          (any(), DateTime.t(), :ets.tab() -> any()),
           atom,
           :ets.tab()
-        ) :: DateTime.t()
+        ) :: {DateTime.t(), any()}
   defp download_and_insert_data(last_modified, current_time, parse_and_update_fn, url, ets_table) do
     full_url = Application.get_env(:realtime_signs, url)
 
     case download_data(full_url, last_modified) do
       {:ok, body, new_last_modified} ->
-        parse_and_update_fn.(body, new_last_modified, ets_table)
-        new_last_modified || current_time
+        {new_last_modified || current_time,
+         parse_and_update_fn.(body, new_last_modified, ets_table)}
 
       :error ->
-        last_modified
+        {last_modified, MapSet.new([])}
     end
   end
 

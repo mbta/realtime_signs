@@ -184,6 +184,231 @@ defmodule Fake.HTTPoison do
      }}
   end
 
+  def mock_response("trip_updates_out_of_service_1") do
+    feed_message =
+      %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783458_32568935",
+            "is_deleted" => false,
+            "trip_update" => %{
+              "delay" => nil,
+              "stop_time_update" => [
+                %{
+                  "arrival" => %{
+                    "delay" => nil,
+                    "time" => 1_491_570_080,
+                    "uncertainty" => nil
+                  },
+                  "departure" => nil,
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70263",
+                  "stop_sequence" => 2,
+                  "stops_away" => 0,
+                  "stopped?" => true
+                }
+              ],
+              "timestamp" => nil,
+              "trip" => %{
+                "direction_id" => 0,
+                "route_id" => "Mattapan",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
+              },
+              "vehicle" => %{
+                "id" => "G-10040",
+                "label" => "3260",
+                "license_plate" => nil
+              }
+            },
+            "vehicle" => nil
+          }
+        ],
+        "header" => %{
+          "gtfs_realtime_version" => "1.0",
+          "incrementality" => "FULL_DATASET",
+          "timestamp" => 1_490_783_458
+        }
+      }
+      |> Poison.encode!()
+
+    {:ok,
+     %HTTPoison.Response{
+       status_code: 200,
+       body: feed_message,
+       headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:30:58 GMT"}]
+     }}
+  end
+
+  def mock_response("vehicle_positions_out_of_service_1") do
+    feed_message =
+      %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783458_G-10040",
+            "is_deleted" => false,
+            "trip_update" => nil,
+            "vehicle" => %{
+              "congestion_level" => nil,
+              "current_status" => "STOPPED_AT",
+              "current_stop_sequence" => 2,
+              "occupancy_status" => nil,
+              "position" => %{
+                "bearing" => 315.0,
+                "latitude" => 42.33723,
+                "longitude" => -71.25208,
+                "odometer" => nil,
+                "speed" => 4.313936
+              },
+              "stop_id" => "70263",
+              "timestamp" => 1_490_783_458,
+              "trip" => %{
+                "direction_id" => 0,
+                "route_id" => "Mattapan",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
+              },
+              "vehicle" => %{
+                "consist" => [
+                  %{
+                    "label" => "3260"
+                  }
+                ],
+                "id" => "G-10040",
+                "label" => "3260",
+                "license_plate" => nil
+              }
+            }
+          }
+        ]
+      }
+      |> Poison.encode!()
+
+    {:ok,
+     %HTTPoison.Response{
+       status_code: 200,
+       body: feed_message,
+       headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:30:58 GMT"}]
+     }}
+  end
+
+  def mock_response("trip_updates_out_of_service_2") do
+    feed_message =
+      %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783458_32568937",
+            "is_deleted" => false,
+            "trip_update" => %{
+              "delay" => nil,
+              "stop_time_update" => [
+                %{
+                  "arrival" => nil,
+                  "departure" => nil,
+                  "passthrough_time" => 1_491_570_180,
+                  "schedule_relationship" => "SKIPPED",
+                  "stop_id" => "70261",
+                  "stop_sequence" => 2,
+                  "stops_away" => 0,
+                  "stopped?" => true
+                }
+              ],
+              "timestamp" => nil,
+              "trip" => %{
+                "direction_id" => 0,
+                "route_id" => "Mattapan",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
+              },
+              "vehicle" => %{
+                "id" => "G-10040",
+                "label" => "3260",
+                "license_plate" => nil
+              }
+            },
+            "vehicle" => nil
+          }
+        ],
+        "header" => %{
+          "gtfs_realtime_version" => "1.0",
+          "incrementality" => "FULL_DATASET",
+          "timestamp" => 1_490_783_578
+        }
+      }
+      |> Poison.encode!()
+
+    {:ok,
+     %HTTPoison.Response{
+       status_code: 200,
+       body: feed_message,
+       headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:32:58 GMT"}]
+     }}
+  end
+
+  def mock_response("vehicle_positions_out_of_service_2") do
+    feed_message =
+      %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783578_G-10040",
+            "is_deleted" => false,
+            "trip_update" => nil,
+            "vehicle" => %{
+              "congestion_level" => nil,
+              "current_status" => "STOPPED_AT",
+              "current_stop_sequence" => 2,
+              "occupancy_status" => nil,
+              "position" => %{
+                "bearing" => 315.0,
+                "latitude" => 42.33723,
+                "longitude" => -71.25208,
+                "odometer" => nil,
+                "speed" => 4.313936
+              },
+              "stop_id" => "70261",
+              "timestamp" => 1_490_783_578,
+              "trip" => %{
+                "direction_id" => 0,
+                "route_id" => "Mattapan",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
+              },
+              "vehicle" => %{
+                "consist" => [
+                  %{
+                    "label" => "3260"
+                  }
+                ],
+                "id" => "G-10040",
+                "label" => "3260",
+                "license_plate" => nil
+              }
+            }
+          }
+        ]
+      }
+      |> Poison.encode!()
+
+    {:ok,
+     %HTTPoison.Response{
+       status_code: 200,
+       body: feed_message,
+       headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:32:58 GMT"}]
+     }}
+  end
+
   def mock_response("trip_updates_304") do
     {:ok, %HTTPoison.Response{status_code: 304}}
   end
