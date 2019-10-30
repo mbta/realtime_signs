@@ -52,10 +52,9 @@ defmodule Engine.Predictions do
     current_time = Timex.now()
 
     {last_modified_trip_updates, vehicles_running_revenue_trips} =
-      download_and_insert_data(
+      download_and_process_trip_updates(
         state[:last_modified_trip_updates],
         current_time,
-        &update_predictions/3,
         :trip_update_url,
         state[:trip_updates_table]
       )
@@ -89,35 +88,34 @@ defmodule Engine.Predictions do
     {:noreply, state}
   end
 
-  @spec update_predictions(any(), DateTime.t(), :ets.tab()) :: MapSet.t(String.t())
-  defp update_predictions(body, current_time, predictions_table) do
-    {new_predictions, vehicles_running_revenue_trips} =
-      body
-      |> Predictions.Predictions.parse_json_response()
-      |> Predictions.Predictions.get_all(current_time)
-
-    existing_predictions =
-      :ets.tab2list(predictions_table) |> Enum.map(&{elem(&1, 0), :none}) |> Map.new()
-
-    all_predictions = Map.merge(existing_predictions, new_predictions)
-    :ets.insert(predictions_table, Enum.into(all_predictions, []))
-
-    vehicles_running_revenue_trips
-  end
-
-  @spec download_and_insert_data(
+  @spec download_and_process_trip_updates(
           String.t() | nil,
           DateTime.t(),
-          (any(), DateTime.t(), :ets.tab() -> any()),
           atom,
           :ets.tab()
         ) :: {String.t() | nil, any()}
-  defp download_and_insert_data(last_modified, current_time, parse_and_update_fn, url, ets_table) do
+  defp download_and_process_trip_updates(
+         last_modified,
+         current_time,
+         url,
+         ets_table
+       ) do
     full_url = Application.get_env(:realtime_signs, url)
 
     case download_data(full_url, last_modified) do
       {:ok, body, new_last_modified} ->
-        {new_last_modified, parse_and_update_fn.(body, current_time, ets_table)}
+        {new_predictions, vehicles_running_revenue_trips} =
+          body
+          |> Predictions.Predictions.parse_json_response()
+          |> Predictions.Predictions.get_all(current_time)
+
+        existing_predictions =
+          :ets.tab2list(ets_table) |> Enum.map(&{elem(&1, 0), :none}) |> Map.new()
+
+        all_predictions = Map.merge(existing_predictions, new_predictions)
+        :ets.insert(ets_table, Enum.into(all_predictions, []))
+
+        {new_last_modified, vehicles_running_revenue_trips}
 
       :error ->
         {last_modified, nil}
