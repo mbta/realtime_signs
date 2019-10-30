@@ -144,7 +144,7 @@ defmodule Engine.Departures do
           String.t() => [DateTime.t()]
         }
   defp add_departure(departures, stop_id, time) do
-    translated_stop_id = translate_terminal_stop_id(stop_id)
+    translated_stop_id = translate_stop_id(stop_id)
 
     new_times_for_stop =
       departures[translated_stop_id]
@@ -176,12 +176,14 @@ defmodule Engine.Departures do
     {first, second}
   end
 
-  @spec translate_terminal_stop_id(String.t()) :: String.t()
-  defp translate_terminal_stop_id("Alewife-" <> _), do: "70061"
-  defp translate_terminal_stop_id("Braintree-" <> _), do: "70105"
-  defp translate_terminal_stop_id("Forest Hills-" <> _), do: "70001"
-  defp translate_terminal_stop_id("Oak Grove-" <> _), do: "70036"
-  defp translate_terminal_stop_id(stop_id), do: stop_id
+  @spec translate_stop_id(String.t()) :: String.t()
+  defp translate_stop_id("Alewife-" <> _), do: "70061"
+  defp translate_stop_id("Braintree-" <> _), do: "70105"
+  defp translate_stop_id("Forest Hills-" <> _), do: "70001"
+  defp translate_stop_id("Oak Grove-" <> _), do: "70036"
+  defp translate_stop_id("70161"), do: "70160"
+  defp translate_stop_id("Government Center-Brattle"), do: "70201"
+  defp translate_stop_id(stop_id), do: stop_id
 
   def schedule_headways_reset(pid \\ __MODULE__, interval) do
     Process.send_after(pid, :daily_reset, interval)

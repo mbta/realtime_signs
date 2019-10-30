@@ -2,9 +2,10 @@ defmodule Predictions.Predictions do
   alias Predictions.Prediction
   require Logger
 
-  @spec get_all(map(), DateTime.t()) :: %{
-          optional({String.t(), integer()}) => [Predictions.Prediction.t()]
-        }
+  @spec get_all(map(), DateTime.t()) ::
+          {%{
+             optional({String.t(), integer()}) => [Predictions.Prediction.t()]
+           }, MapSet.t(String.t())}
   def get_all(feed_message, current_time) do
     predictions =
       feed_message["entity"]
@@ -22,22 +23,9 @@ defmodule Predictions.Predictions do
       |> Enum.map(& &1.vehicle_id)
       |> MapSet.new()
 
-    stops_with_trains =
-      predictions
-      |> Enum.filter(fn pred -> pred.stops_away == 0 end)
-      |> Enum.reject(fn pred -> pred.schedule_relationship == :skipped end)
-      |> Map.new(fn pred -> {pred.stop_id, pred.vehicle_id} end)
-
-    Engine.Departures.update_train_state(
-      stops_with_trains,
-      vehicles_running_revenue_trips,
-      current_time
-    )
-
-    predictions
-    |> Enum.group_by(fn prediction ->
-      {prediction.stop_id, prediction.direction_id}
-    end)
+    {Enum.group_by(predictions, fn prediction ->
+       {prediction.stop_id, prediction.direction_id}
+     end), vehicles_running_revenue_trips}
   end
 
   @spec transform_stop_time_updates(map()) :: [
