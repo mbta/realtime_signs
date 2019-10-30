@@ -16,8 +16,8 @@ defmodule Engine.PredictionsTest do
       end)
 
       existing_state = %{
-        last_modified_trip_updates: ~N[2017-07-04 09:05:00],
-        last_modified_vehicle_positions: ~N[2017-07-04 09:05:00],
+        last_modified_trip_updates: nil,
+        last_modified_vehicle_positions: nil,
         trip_updates_table: :test_trip_updates
       }
 
@@ -37,8 +37,8 @@ defmodule Engine.PredictionsTest do
       end)
 
       existing_state = %{
-        last_modified_trip_updates: ~N[2017-07-04 09:05:00],
-        last_modified_vehicle_positions: ~N[2017-07-04 09:05:00],
+        last_modified_trip_updates: nil,
+        last_modified_vehicle_positions: nil,
         trip_updates_table: :test_trip_updates
       }
 
@@ -77,8 +77,8 @@ defmodule Engine.PredictionsTest do
       ])
 
       existing_state = %{
-        last_modified_trip_updates: ~N[2017-07-04 09:05:00],
-        last_modified_vehicle_positions: ~N[2017-07-04 09:05:00],
+        last_modified_trip_updates: nil,
+        last_modified_vehicle_positions: nil,
         trip_updates_table: predictions_table
       }
 
@@ -109,8 +109,8 @@ defmodule Engine.PredictionsTest do
         ])
 
       state = %{
-        last_modified_trip_updates: ~N[2017-03-29 06:28:00],
-        last_modified_vehicle_positions: ~N[2017-03-29 06:28:00],
+        last_modified_trip_updates: nil,
+        last_modified_vehicle_positions: nil,
         trip_updates_table: :test_trip_out_of_service_updates
       }
 
@@ -142,8 +142,8 @@ defmodule Engine.PredictionsTest do
 
     test "logs a warning on any message but :update" do
       existing_state = %{
-        last_modified_trip_updates: ~N[2017-07-04 09:05:00],
-        last_modified_vehicle_positions: ~N[2017-07-04 09:05:00],
+        last_modified_trip_updates: nil,
+        last_modified_vehicle_positions: nil,
         trip_updates_table: :test_trip_updates
       }
 
