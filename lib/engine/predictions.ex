@@ -69,18 +69,22 @@ defmodule Engine.Predictions do
         :vehicle_positions_url
       )
 
-    Engine.Departures.update_train_state(
-      stops_with_trains,
-      vehicles_running_revenue_trips,
-      current_time
-    )
+    if vehicles_running_revenue_trips && stops_with_trains do
+      Engine.Departures.update_train_state(
+        stops_with_trains,
+        vehicles_running_revenue_trips,
+        current_time
+      )
 
-    {:noreply,
-     %{
-       state
-       | last_modified_trip_updates: last_modified_trip_updates,
-         last_modified_vehicle_positions: last_modified_vehicle_positions
-     }}
+      {:noreply,
+       %{
+         state
+         | last_modified_trip_updates: last_modified_trip_updates,
+           last_modified_vehicle_positions: last_modified_vehicle_positions
+       }}
+    else
+      {:noreply, state}
+    end
   end
 
   def handle_info(msg, state) do
@@ -126,12 +130,12 @@ defmodule Engine.Predictions do
          parse_and_update_fn.(body, new_last_modified, ets_table)}
 
       :error ->
-        {last_modified, MapSet.new([])}
+        {last_modified, nil}
     end
   end
 
   @spec download_and_process_vehicle_positions(DateTime.t(), DateTime.t(), atom()) ::
-          {DateTime.t(), %{String.t() => String.t()}}
+          {DateTime.t(), %{String.t() => String.t()} | nil}
   defp download_and_process_vehicle_positions(last_modified, current_time, url) do
     full_url = Application.get_env(:realtime_signs, url)
 
@@ -140,7 +144,7 @@ defmodule Engine.Predictions do
         {new_last_modified || current_time, vehicle_positions_response_to_stops_with_trains(body)}
 
       :error ->
-        {last_modified, %{}}
+        {last_modified, nil}
     end
   end
 
