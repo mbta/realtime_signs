@@ -1,9 +1,9 @@
 defmodule Engine.PredictionsTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
   import ExUnit.CaptureLog
   import Engine.Predictions
 
-  describe "handle_info/4" do
+  describe "handle_info/2" do
     test "keeps existing states when trip_update url has not been modified" do
       trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
       position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
@@ -15,7 +15,12 @@ defmodule Engine.PredictionsTest do
         Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
-      existing_state = ~N[2017-07-04 09:05:00]
+      existing_state = %{
+        last_modified_trip_updates: nil,
+        last_modified_vehicle_positions: nil,
+        trip_updates_table: :test_trip_updates
+      }
+
       {:noreply, updated_state} = handle_info(:update, existing_state)
       assert updated_state == existing_state
     end
@@ -31,15 +36,19 @@ defmodule Engine.PredictionsTest do
         Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
-      existing_state = ~N[2017-07-04 09:05:00]
+      existing_state = %{
+        last_modified_trip_updates: nil,
+        last_modified_vehicle_positions: nil,
+        trip_updates_table: :test_trip_updates
+      }
 
       log =
         capture_log([level: :warn], fn ->
-          {:noreply, last_modified} = handle_info(:update, existing_state)
-          assert existing_state == last_modified
+          {:noreply, updated_state} = handle_info(:update, existing_state)
+          assert existing_state == updated_state
         end)
 
-      assert log =~ "Could not fetch pb file "
+      assert log =~ "Could not fetch file "
       assert log =~ "timeout"
     end
 
@@ -54,8 +63,6 @@ defmodule Engine.PredictionsTest do
         Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
-      existing_state = ~N[2017-07-04 09:05:00]
-
       predictions_table =
         :ets.new(:test_vehicle_predictions, [
           :set,
@@ -69,7 +76,13 @@ defmodule Engine.PredictionsTest do
         {{"stop_to_update", 0}, true}
       ])
 
-      handle_info(:update, existing_state, predictions_table)
+      existing_state = %{
+        last_modified_trip_updates: nil,
+        last_modified_vehicle_positions: nil,
+        trip_updates_table: predictions_table
+      }
+
+      handle_info(:update, existing_state)
 
       assert :ets.info(predictions_table)[:size] == 2
       [{{"stop_to_remove", 0}, :none}] = :ets.lookup(predictions_table, {"stop_to_remove", 0})
@@ -78,8 +91,61 @@ defmodule Engine.PredictionsTest do
         :ets.lookup(predictions_table, {"stop_to_update", 0})
     end
 
+    test "does not record a train location when the train is no longer in revenue service" do
+      trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
+      position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
+
+      on_exit(fn ->
+        Application.put_env(:realtime_signs, :trip_update_url, trip_update_url)
+        Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
+      end)
+
+      :test_trip_out_of_service_updates =
+        :ets.new(:test_trip_out_of_service_updates, [
+          :set,
+          :protected,
+          :named_table,
+          read_concurrency: true
+        ])
+
+      state = %{
+        last_modified_trip_updates: nil,
+        last_modified_vehicle_positions: nil,
+        trip_updates_table: :test_trip_out_of_service_updates
+      }
+
+      send(Engine.Departures, :daily_reset)
+
+      Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_out_of_service_1")
+
+      Application.put_env(
+        :realtime_signs,
+        :vehicle_positions_url,
+        "vehicle_positions_out_of_service_1"
+      )
+
+      {:noreply, state} = handle_info(:update, state)
+
+      Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_out_of_service_2")
+
+      Application.put_env(
+        :realtime_signs,
+        :vehicle_positions_url,
+        "vehicle_positions_out_of_service_2"
+      )
+
+      {:noreply, state} = handle_info(:update, state)
+
+      state = :sys.get_state(Engine.Departures)
+      assert state.departures == %{}
+    end
+
     test "logs a warning on any message but :update" do
-      existing_state = ~N[2017-07-04 09:05:00]
+      existing_state = %{
+        last_modified_trip_updates: nil,
+        last_modified_vehicle_positions: nil,
+        trip_updates_table: :test_trip_updates
+      }
 
       log =
         capture_log([level: :warn], fn ->
