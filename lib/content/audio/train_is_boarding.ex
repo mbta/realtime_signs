@@ -32,7 +32,7 @@ defmodule Content.Audio.TrainIsBoarding do
         @is_now_boarding
       ]
 
-      {PaEss.Utilities.take_message_id(vars), vars, :audio}
+      {:sign_content, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
     end
 
     def to_params(%{destination: destination, route_id: route_id, track_number: track_number}) do
@@ -69,7 +69,7 @@ defmodule Content.Audio.TrainIsBoarding do
              ], :audio}
         end
 
-      {PaEss.Utilities.take_message_id(vars), vars, message_type}
+      {:sign_content, {PaEss.Utilities.take_message_id(vars), vars, message_type}}
     end
 
     @spec track(Content.Utilities.track_number()) :: String.t()

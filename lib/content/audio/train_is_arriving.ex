@@ -18,7 +18,7 @@ defmodule Content.Audio.TrainIsArriving do
   defimpl Content.Audio do
     def to_params(audio) do
       {message_id, vars} = audio_params(audio)
-      {message_id, vars, :audio_visual}
+      {:sign_content, {message_id, vars, :audio_visual}}
     end
 
     @spec audio_params(Content.Audio.TrainIsArriving.t()) :: {String.t(), [String.t()]}

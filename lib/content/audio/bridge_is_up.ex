@@ -37,7 +37,7 @@ defmodule Content.Audio.BridgeIsUp do
     alias PaEss.Utilities
 
     def to_params(audio) do
-      {message_id(audio), vars(audio), :audio_visual}
+      {:sign_content, {message_id(audio), vars(audio), :audio_visual}}
     end
 
     defp message_id(%{language: :english, time_estimate_mins: nil}), do: "136"

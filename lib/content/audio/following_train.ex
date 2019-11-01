@@ -56,12 +56,15 @@ defmodule Content.Audio.FollowingTrain do
     alias PaEss.Utilities
 
     def to_params(%{minutes: 1} = audio) do
-      {"159", [Utilities.destination_var(audio.destination), verb_var(audio)], :audio}
+      {:sign_content,
+       {"159", [Utilities.destination_var(audio.destination), verb_var(audio)], :audio}}
     end
 
     def to_params(audio) do
-      {"160", [Utilities.destination_var(audio.destination), verb_var(audio), minutes_var(audio)],
-       :audio}
+      {:sign_content,
+       {"160",
+        [Utilities.destination_var(audio.destination), verb_var(audio), minutes_var(audio)],
+        :audio}}
     end
 
     defp verb_var(%{verb: :arrives}), do: "503"

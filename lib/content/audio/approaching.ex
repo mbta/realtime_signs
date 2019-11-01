@@ -32,7 +32,7 @@ defmodule Content.Audio.Approaching do
           nil
 
         var ->
-          {"103", [var], :audio_visual}
+          {:sign_content, {"103", [var], :audio_visual}}
       end
     end
 
@@ -43,7 +43,7 @@ defmodule Content.Audio.Approaching do
 
         var ->
           vars = [@attention_passengers, var, @now_approaching_new_ol_cars]
-          {PaEss.Utilities.take_message_id(vars), vars, :audio_visual}
+          {:sign_content, {PaEss.Utilities.take_message_id(vars), vars, :audio_visual}}
       end
     end
 

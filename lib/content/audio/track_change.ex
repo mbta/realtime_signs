@@ -33,7 +33,7 @@ defmodule Content.Audio.TrackChange do
         track(audio.track)
       ]
 
-      {"109", vars, :audio_visual}
+      {:sign_content, {"109", vars, :audio_visual}}
     end
 
     defp track(1), do: @on_track_1

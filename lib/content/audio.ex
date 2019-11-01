@@ -8,8 +8,11 @@ defprotocol Content.Audio do
   """
 
   @doc "Converts an audio struct to the mid/vars params for the PA system"
-  @spec to_params(Content.Audio.t()) :: {mid, vars, type} | nil
-        when mid: String.t(), vars: [String.t()], type: :audio | :visual | :audio_visual
+  @spec to_params(Content.Audio.t()) :: {:sign_content, {mid, vars, type}} | {:ad_hoc, text} | nil
+        when mid: String.t(),
+             vars: [String.t()],
+             type: :audio | :visual | :audio_visual,
+             text: String.t()
   def to_params(audio)
 
   @type destination ::

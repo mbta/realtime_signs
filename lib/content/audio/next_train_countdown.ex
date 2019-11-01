@@ -32,7 +32,8 @@ defmodule Content.Audio.NextTrainCountdown do
     def to_params(%{platform: nil, minutes: 1, track_number: track_number} = audio) do
       case track_number do
         nil ->
-          {"141", [Utilities.destination_var(audio.destination), verb_var(audio)], :audio}
+          {:sign_content,
+           {"141", [Utilities.destination_var(audio.destination), verb_var(audio)], :audio}}
 
         _ ->
           terminal_track_params(audio, track_number)
@@ -42,9 +43,10 @@ defmodule Content.Audio.NextTrainCountdown do
     def to_params(%{platform: nil, track_number: track_number} = audio) do
       case track_number do
         nil ->
-          {"90",
-           [Utilities.destination_var(audio.destination), verb_var(audio), minutes_var(audio)],
-           :audio}
+          {:sign_content,
+           {"90",
+            [Utilities.destination_var(audio.destination), verb_var(audio), minutes_var(audio)],
+            :audio}}
 
         _ ->
           terminal_track_params(audio, track_number)
@@ -52,28 +54,30 @@ defmodule Content.Audio.NextTrainCountdown do
     end
 
     def to_params(%{minutes: 1} = audio) do
-      {"142",
-       [
-         Utilities.destination_var(audio.destination),
-         platform_var(audio),
-         verb_var(audio)
-       ], :audio}
+      {:sign_content,
+       {"142",
+        [
+          Utilities.destination_var(audio.destination),
+          platform_var(audio),
+          verb_var(audio)
+        ], :audio}}
     end
 
     def to_params(audio) do
-      {"99",
-       [
-         Utilities.destination_var(audio.destination),
-         platform_var(audio),
-         verb_var(audio),
-         minutes_var(audio)
-       ], :audio}
+      {:sign_content,
+       {"99",
+        [
+          Utilities.destination_var(audio.destination),
+          platform_var(audio),
+          verb_var(audio),
+          minutes_var(audio)
+        ], :audio}}
     end
 
     @spec terminal_track_params(
             Content.Audio.NextTrainCountdown.t(),
             Content.Utilities.track_number()
-          ) :: {String.t(), [String.t()], :audio}
+          ) :: {:sign_content, {String.t(), [String.t()], :audio}}
     defp terminal_track_params(audio, track_number) do
       vars = [
         @the_next,
@@ -93,7 +97,7 @@ defmodule Content.Audio.NextTrainCountdown do
         track(track_number)
       ]
 
-      {Utilities.take_message_id(vars), vars, :audio}
+      {:sign_content, {Utilities.take_message_id(vars), vars, :audio}}
     end
 
     defp platform_var(%{platform: :ashmont}), do: "4016"

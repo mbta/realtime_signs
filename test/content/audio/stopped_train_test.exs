@@ -7,14 +7,16 @@ defmodule Content.Audio.StoppedTrainTest do
       audio = %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}
 
       assert Content.Audio.to_params(audio) ==
-               {"109", ["501", "507", "4000", "533", "641", "5002", "534"], :audio}
+               {:sign_content,
+                {"109", ["501", "507", "4000", "533", "641", "5002", "534"], :audio}}
     end
 
     test "Uses singular 'stop' if 1 stop away" do
       audio = %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 1}
 
       assert Content.Audio.to_params(audio) ==
-               {"109", ["501", "507", "4000", "533", "641", "5001", "535"], :audio}
+               {:sign_content,
+                {"109", ["501", "507", "4000", "533", "641", "5001", "535"], :audio}}
     end
   end
 

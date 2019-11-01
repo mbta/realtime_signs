@@ -125,7 +125,7 @@ defmodule PaEss.HttpUpdater do
           post_result()
   defp process_send_audio(station, zones, audio, priority, timeout, state) do
     case Content.Audio.to_params(audio) do
-      {message_id, vars, type} ->
+      {:sign_content, {message_id, vars, type}} ->
         encoded =
           [
             MsgType: "Canned",

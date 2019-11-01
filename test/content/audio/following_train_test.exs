@@ -10,7 +10,8 @@ defmodule Content.Audio.FollowingTrainTest do
         minutes: 5
       }
 
-      assert Content.Audio.to_params(audio) == {"160", ["4016", "503", "5005"], :audio}
+      assert Content.Audio.to_params(audio) ==
+               {:sign_content, {"160", ["4016", "503", "5005"], :audio}}
     end
 
     test "When we dont have a good headsign, logs a warning" do
@@ -88,7 +89,7 @@ defmodule Content.Audio.FollowingTrainTest do
         minutes: 1
       }
 
-      assert Content.Audio.to_params(audio) == {"159", ["4016", "503"], :audio}
+      assert Content.Audio.to_params(audio) == {:sign_content, {"159", ["4016", "503"], :audio}}
     end
   end
 end

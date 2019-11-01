@@ -52,7 +52,7 @@ defmodule Content.Audio.StoppedTrain do
         stops_away_var(audio.stops_away)
       ]
 
-      {PaEss.Utilities.take_message_id(vars), vars, :audio}
+      {:sign_content, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
     end
 
     defp stops_away_var(1), do: "535"
