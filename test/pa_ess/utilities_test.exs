@@ -76,4 +76,10 @@ defmodule Content.Audio.UtilitiesTest do
     assert headsign_to_terminal_station("Park St") == {:ok, :park_st}
     assert headsign_to_terminal_station("Unknown") == {:error, :unknown}
   end
+
+  test "headsign_to_destination/1" do
+    assert headsign_to_destination("Southbound") == :southbound
+    assert headsign_to_destination("Ashmont") == :ashmont
+    assert headsign_to_destination("Unknown") == nil
+  end
 end

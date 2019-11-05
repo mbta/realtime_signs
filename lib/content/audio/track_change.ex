@@ -9,7 +9,7 @@ defmodule Content.Audio.TrackChange do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station(),
+          destination: PaEss.terminal_station() | :southbound,
           route_id: String.t(),
           track: integer()
         }
@@ -21,6 +21,11 @@ defmodule Content.Audio.TrackChange do
     @is_now_boarding "544"
     @on_track_1 "541"
     @on_track_2 "542"
+
+    def to_params(%{destination: :southbound}) do
+      Logger.error("TrackChange audio for southbound")
+      nil
+    end
 
     def to_params(audio) do
       vars = [

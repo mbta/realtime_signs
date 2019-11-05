@@ -47,5 +47,29 @@ defmodule Content.Audio.TrainIsBoardingTest do
                 {"111", ["501", "21000", "507", "21000", "4016", "21000", "544", "21000", "542"],
                  :audio}}
     end
+
+    test "Returns :ad_hoc params when destination is 'southbound'" do
+      audio = %Content.Audio.TrainIsBoarding{
+        destination: :southbound,
+        trip_id: nil,
+        route_id: "Red",
+        track_number: nil
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc, {"The next southbound train is now boarding", :audio}}
+    end
+
+    test "Returns :ad_hoc params when destination is 'southbound', and says track #" do
+      audio = %Content.Audio.TrainIsBoarding{
+        destination: :southbound,
+        trip_id: nil,
+        route_id: "Red",
+        track_number: 2
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc, {"The next southbound train is now boarding, on track 2", :audio}}
+    end
   end
 end

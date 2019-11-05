@@ -9,20 +9,20 @@ defmodule Content.Audio.StoppedTrain do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station(),
+          destination: PaEss.terminal_station() | :southbound,
           stops_away: non_neg_integer()
         }
 
   @spec from_message(Content.Message.t()) :: t() | nil
   def from_message(%Content.Message.StoppedTrain{headsign: headsign, stops_away: stops_away})
       when stops_away > 0 do
-    case PaEss.Utilities.headsign_to_terminal_station(headsign) do
-      {:ok, terminal} ->
-        %__MODULE__{destination: terminal, stops_away: stops_away}
+    destination = PaEss.Utilities.headsign_to_destination(headsign)
 
-      {:error, _} ->
-        Logger.warn("unknown_headsign: #{headsign}")
-        nil
+    if destination do
+      %__MODULE__{destination: destination, stops_away: stops_away}
+    else
+      Logger.warn("unknown_headsign: #{headsign}")
+      nil
     end
   end
 
@@ -40,6 +40,12 @@ defmodule Content.Audio.StoppedTrain do
     @train_to "507"
     @is "533"
     @stopped "641"
+
+    def to_params(%{destination: :southbound, stops_away: stops_away}) do
+      stop_or_stops = if stops_away == 1, do: "stop", else: "stops"
+      text = "The next southbound train is stopped #{stops_away} #{stop_or_stops} away"
+      {:ad_hoc, {text, :audio}}
+    end
 
     def to_params(audio) do
       vars = [

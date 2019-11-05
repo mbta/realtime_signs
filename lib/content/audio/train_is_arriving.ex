@@ -9,13 +9,17 @@ defmodule Content.Audio.TrainIsArriving do
   defstruct @enforce_keys ++ [:trip_id, :platform, :route_id]
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station(),
+          destination: PaEss.terminal_station() | :southbound,
           trip_id: Predictions.Prediction.trip_id() | nil,
           platform: Content.platform() | nil,
           route_id: String.t() | nil
         }
 
   defimpl Content.Audio do
+    def to_params(%{destination: :southbound}) do
+      {:ad_hoc, {"The next southbound train is now arriving.", :audio_visual}}
+    end
+
     def to_params(audio) do
       {message_id, vars} = audio_params(audio)
       {:sign_content, {message_id, vars, :audio_visual}}

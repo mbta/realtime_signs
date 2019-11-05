@@ -9,7 +9,7 @@ defmodule Content.Audio.Approaching do
   defstruct @enforce_keys ++ [:trip_id, :platform, :route_id, new_cars?: false]
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station(),
+          destination: PaEss.terminal_station() | :southbound,
           trip_id: Predictions.Prediction.trip_id() | nil,
           platform: Content.platform() | nil,
           route_id: String.t() | nil,
@@ -19,6 +19,10 @@ defmodule Content.Audio.Approaching do
   defimpl Content.Audio do
     @attention_passengers "783"
     @now_approaching_new_ol_cars "785"
+
+    def to_params(%{destination: :southbound}) do
+      {:ad_hoc, {"The next southbound train is now approaching.", :audio_visual}}
+    end
 
     def to_params(%Content.Audio.Approaching{new_cars?: false} = audio) do
       case destination_var(audio.destination, audio.platform, audio.route_id) do

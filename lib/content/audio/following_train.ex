@@ -9,7 +9,7 @@ defmodule Content.Audio.FollowingTrain do
   @type verb :: :arrives | :departs
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station(),
+          destination: PaEss.terminal_station() | :southbound,
           verb: verb(),
           minutes: integer()
         }
@@ -27,20 +27,20 @@ defmodule Content.Audio.FollowingTrain do
         %Content.Message.Predictions{minutes: n, headsign: headsign}
       })
       when is_integer(n) do
-    case PaEss.Utilities.headsign_to_terminal_station(headsign) do
-      {:ok, headsign_atom} ->
-        %__MODULE__{
-          destination: headsign_atom,
-          minutes: n,
-          verb: arrives_or_departs(terminal)
-        }
+    destination = PaEss.Utilities.headsign_to_destination(headsign)
 
-      {:error, :unknown} ->
-        Logger.warn(
-          "Content.Audio.FollowingTrain.from_predictions_message: unknown headsign: #{headsign}"
-        )
+    if destination do
+      %__MODULE__{
+        destination: destination,
+        minutes: n,
+        verb: arrives_or_departs(terminal)
+      }
+    else
+      Logger.warn(
+        "Content.Audio.FollowingTrain.from_predictions_message: unknown headsign: #{headsign}"
+      )
 
-        nil
+      nil
     end
   end
 
@@ -54,6 +54,12 @@ defmodule Content.Audio.FollowingTrain do
 
   defimpl Content.Audio do
     alias PaEss.Utilities
+
+    def to_params(%{destination: :southbound, verb: verb, minutes: minutes}) do
+      min_or_mins = if minutes == 1, do: "minute", else: "minutes"
+      text = "The following southbound train #{verb} in #{minutes} #{min_or_mins}"
+      {:ad_hoc, {text, :audio}}
+    end
 
     def to_params(%{minutes: 1} = audio) do
       {:sign_content,

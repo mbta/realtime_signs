@@ -97,6 +97,18 @@ defmodule PaEss.Utilities do
   def headsign_to_terminal_station("Govt Ctr"), do: {:ok, :government_center}
   def headsign_to_terminal_station("Park St"), do: {:ok, :park_st}
   def headsign_to_terminal_station("Kenmore"), do: {:ok, :kenmore}
-
   def headsign_to_terminal_station(_unknown), do: {:error, :unknown}
+
+  @doc "Wrapper for headsign_to_terminal_station/1 that also handles :southbound"
+  @spec headsign_to_destination(String.t()) :: PaEss.terminal_station() | :southbound | nil
+  def headsign_to_destination("Southbound") do
+    :southbound
+  end
+
+  def headsign_to_destination(headsign) do
+    case PaEss.Utilities.headsign_to_terminal_station(headsign) do
+      {:ok, headsign} -> headsign
+      _ -> nil
+    end
+  end
 end

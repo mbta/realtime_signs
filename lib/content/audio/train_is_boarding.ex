@@ -9,7 +9,7 @@ defmodule Content.Audio.TrainIsBoarding do
   defstruct @enforce_keys ++ [:trip_id]
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station(),
+          destination: PaEss.terminal_station() | :southbound,
           trip_id: Predictions.Prediction.trip_id() | nil,
           route_id: String.t(),
           track_number: Content.Utilities.track_number()
@@ -22,6 +22,17 @@ defmodule Content.Audio.TrainIsBoarding do
     @on_track_1 "541"
     @on_track_2 "542"
     @space "21000"
+
+    def to_params(%{destination: :southbound, track_number: track_number}) do
+      text =
+        if track_number do
+          "The next southbound train is now boarding, on track #{track_number}"
+        else
+          "The next southbound train is now boarding"
+        end
+
+      {:ad_hoc, {text, :audio}}
+    end
 
     def to_params(%{destination: destination, route_id: "Green-" <> _branch})
         when destination in [:lechmere, :north_station, :government_center, :park_st, :kenmore] do

@@ -9,7 +9,7 @@ defmodule Content.Audio.NextTrainCountdown do
   @type verb :: :arrives | :departs
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station(),
+          destination: PaEss.terminal_station() | :southbound,
           verb: verb(),
           minutes: integer(),
           track_number: Content.Utilities.track_number() | nil,
@@ -28,6 +28,25 @@ defmodule Content.Audio.NextTrainCountdown do
     @in_ "504"
     @minutes "505"
     @space "21000"
+
+    def to_params(%{destination: :southbound, verb: verb, minutes: minutes} = audio) do
+      min_or_mins = if minutes == 1, do: "minute", else: "minutes"
+      text = "The next southbound train #{verb} in #{minutes} #{min_or_mins}"
+
+      text =
+        cond do
+          audio.track_number ->
+            text <> " from track #{audio.track_number}"
+
+          audio.platform ->
+            text <> " on the #{audio.platform} platform"
+
+          true ->
+            text
+        end
+
+      {:ad_hoc, {text, :audio}}
+    end
 
     def to_params(%{platform: nil, minutes: 1, track_number: track_number} = audio) do
       case track_number do

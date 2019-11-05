@@ -18,6 +18,13 @@ defmodule Content.Audio.StoppedTrainTest do
                {:sign_content,
                 {"109", ["501", "507", "4000", "533", "641", "5001", "535"], :audio}}
     end
+
+    test "Returns :ad_hoc params for southbound destination" do
+      audio = %Content.Audio.StoppedTrain{destination: :southbound, stops_away: 2}
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc, {"The next southbound train is stopped 2 stops away", :audio}}
+    end
   end
 
   describe "from_message/1" do

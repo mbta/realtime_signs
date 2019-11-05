@@ -35,5 +35,12 @@ defmodule Content.Audio.ApproachingTest do
       audio = %Approaching{destination: :alewife, route_id: "Red", new_cars?: true}
       assert Content.Audio.to_params(audio) == {:sign_content, {"103", ["32124"], :audio_visual}}
     end
+
+    test "Returns params when destination is 'southbound'" do
+      audio = %Approaching{destination: :southbound}
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc, {"The next southbound train is now approaching.", :audio_visual}}
+    end
   end
 end
