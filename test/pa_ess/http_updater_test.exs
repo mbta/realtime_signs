@@ -190,7 +190,7 @@ defmodule PaEss.HttpUpdaterTest do
 
       assert {:ok, :sent} ==
                PaEss.HttpUpdater.process(
-                 {:send_custom_audio, [{"MCAP", ["n"]}, audio, 5, 60]},
+                 {:send_audio, [{"MCAP", ["n"]}, audio, 5, 60]},
                  state
                )
     end

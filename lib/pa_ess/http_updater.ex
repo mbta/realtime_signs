@@ -92,24 +92,6 @@ defmodule PaEss.HttpUpdater do
     send_post(state.http_poster, encoded)
   end
 
-  def process({:send_custom_audio, [{station, zones}, audio, priority, timeout]}, state) do
-    encoded =
-      [
-        MsgType: "AdHoc",
-        uid: state.uid,
-        msg: audio.message,
-        typ: audio_type(:audio),
-        sta: "#{station}#{zone_bitmap(zones)}",
-        pri: priority,
-        tim: timeout
-      ]
-      |> URI.encode_query()
-
-    Logger.info(["send_custom_audio: ", encoded, " pid=", inspect(self())])
-
-    send_post(state.http_poster, encoded)
-  end
-
   def process({:send_audio, [{station, zones}, audios, priority, timeout]}, state) do
     case audios do
       {a1, a2} ->
@@ -140,6 +122,23 @@ defmodule PaEss.HttpUpdater do
           |> URI.encode_query()
 
         Logger.info(["send_audio: ", encoded, " pid=", inspect(self())])
+
+        send_post(state.http_poster, encoded)
+
+      {:ad_hoc, {text, type}} ->
+        encoded =
+          [
+            MsgType: "AdHoc",
+            uid: state.uid,
+            msg: text,
+            typ: audio_type(type),
+            sta: "#{station}#{zone_bitmap(zones)}",
+            pri: priority,
+            tim: timeout
+          ]
+          |> URI.encode_query()
+
+        Logger.info(["send_custom_audio: ", encoded, " pid=", inspect(self())])
 
         send_post(state.http_poster, encoded)
 

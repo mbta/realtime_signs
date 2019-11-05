@@ -16,10 +16,6 @@ defmodule Signs.Utilities.ReaderTest do
     def send_audio(audio_id, audio, priority, timeout) do
       send(self(), {:send_audio, audio_id, audio, priority, timeout})
     end
-
-    def send_custom_audio(audio_id, audio, priority, timeout) do
-      send(self(), {:send_custom_audio, audio_id, audio, priority, timeout})
-    end
   end
 
   @src %Signs.Utilities.SourceConfig{
@@ -81,7 +77,7 @@ defmodule Signs.Utilities.ReaderTest do
 
       Reader.read_sign(sign)
 
-      assert_received({:send_custom_audio, _id, _audio, _priority, _timeout})
+      assert_received({:send_audio, _id, %Content.Audio.Custom{}, _priority, _timeout})
     end
   end
 

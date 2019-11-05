@@ -38,14 +38,4 @@ defmodule PaEss.LoggerTest do
                60
              )
   end
-
-  test "Logger behaviour runs without crashing for custom audio" do
-    assert {:ok, :sent} =
-             PaEss.Logger.send_custom_audio(
-               {"a", "b"},
-               %Content.Audio.Custom{message: "This is a test"},
-               5,
-               60
-             )
-  end
 end
