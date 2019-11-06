@@ -974,7 +974,7 @@ defmodule Signs.Utilities.PredictionsTest do
   end
 
   describe "get_passthrough_train_audio/1" do
-    test "returns empty list for multi-source sign" do
+    test "returns appropriate audio structs for multi-source sign" do
       s1 = %SourceConfig{
         stop_id: "passthrough_trains",
         headway_direction_name: "Southbound",
@@ -1000,7 +1000,13 @@ defmodule Signs.Utilities.PredictionsTest do
       config = {[s1], [s2]}
       sign = %{@sign | source_config: config}
 
-      assert Signs.Utilities.Predictions.get_passthrough_train_audio(sign) == nil
+      assert Signs.Utilities.Predictions.get_passthrough_train_audio(sign) == [
+               %Content.Audio.Passthrough{
+                 destination: :braintree,
+                 route_id: "Red",
+                 trip_id: "123"
+               }
+             ]
     end
 
     test "returns appropriate audio structs for single-source sign" do
@@ -1019,11 +1025,13 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert Signs.Utilities.Predictions.get_passthrough_train_audio(sign) ==
-               %Content.Audio.Passthrough{
-                 destination: :braintree,
-                 trip_id: "123",
-                 route_id: "Red"
-               }
+               [
+                 %Content.Audio.Passthrough{
+                   destination: :braintree,
+                   trip_id: "123",
+                   route_id: "Red"
+                 }
+               ]
     end
 
     test "handles \"Southbound\" headsign" do
@@ -1042,11 +1050,13 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert Signs.Utilities.Predictions.get_passthrough_train_audio(sign) ==
-               %Content.Audio.Passthrough{
-                 destination: :ashmont,
-                 trip_id: "123",
-                 route_id: "Red"
-               }
+               [
+                 %Content.Audio.Passthrough{
+                   destination: :ashmont,
+                   trip_id: "123",
+                   route_id: "Red"
+                 }
+               ]
     end
 
     test "handles case where headsign can't be determined" do
@@ -1066,7 +1076,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       log =
         capture_log([level: :info], fn ->
-          assert Signs.Utilities.Predictions.get_passthrough_train_audio(sign) == nil
+          assert Signs.Utilities.Predictions.get_passthrough_train_audio(sign) == []
         end)
 
       assert log =~ "no_passthrough_audio_for_prediction"

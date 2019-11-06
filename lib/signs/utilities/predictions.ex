@@ -76,10 +76,27 @@ defmodule Signs.Utilities.Predictions do
     end
   end
 
-  @spec get_passthrough_train_audio(Signs.Realtime.t()) :: Content.Audio.t() | nil
+  @spec get_passthrough_train_audio(Signs.Realtime.t()) :: [Content.Audio.t()]
   def get_passthrough_train_audio(%Signs.Realtime{source_config: {single_source}} = sign) do
-    single_source
-    |> get_source_list_predictions(sign.prediction_engine)
+    single_source |> get_source_list_passthrough_audio(sign.prediction_engine) |> List.wrap()
+  end
+
+  def get_passthrough_train_audio(
+        %Signs.Realtime{source_config: {top_line_sources, bottom_line_sources}} = sign
+      ) do
+    (top_line_sources
+     |> get_source_list_passthrough_audio(sign.prediction_engine)
+     |> List.wrap()) ++
+      (bottom_line_sources
+       |> get_source_list_passthrough_audio(sign.prediction_engine)
+       |> List.wrap())
+  end
+
+  @spec get_source_list_passthrough_audio([Signs.Utilities.SourceConfig.source()], module()) ::
+          Content.Audio.t() | nil
+  defp get_source_list_passthrough_audio(source_list, prediction_engine) do
+    source_list
+    |> get_source_list_predictions(prediction_engine)
     |> Enum.filter(fn {_source, prediction} ->
       prediction.seconds_until_passthrough && prediction.seconds_until_passthrough <= 60
     end)
@@ -109,10 +126,6 @@ defmodule Signs.Utilities.Predictions do
     end)
     |> Enum.reject(&is_nil(&1))
     |> Enum.at(0)
-  end
-
-  def get_passthrough_train_audio(_multi_source_sign) do
-    nil
   end
 
   @spec get_source_list_predictions([Signs.Utilities.SourceConfig.source()], module()) :: [
