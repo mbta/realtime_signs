@@ -11,7 +11,7 @@ defmodule Content.Audio.TrackChangeTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:sign_content,
+               {:canned,
                 {"109", ["540", "501", "536", "507", "4202", "544", "541"], :audio_visual}}
     end
 
@@ -23,7 +23,7 @@ defmodule Content.Audio.TrackChangeTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:sign_content,
+               {:canned,
                 {"109", ["540", "501", "539", "507", "4204", "544", "541"], :audio_visual}}
     end
 

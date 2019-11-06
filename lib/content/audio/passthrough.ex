@@ -27,7 +27,7 @@ defmodule Content.Audio.Passthrough do
           nil
 
         var ->
-          {:sign_content, {"103", [var], :audio_visual}}
+          {:canned, {"103", [var], :audio_visual}}
       end
     end
 

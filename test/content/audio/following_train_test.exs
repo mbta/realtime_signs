@@ -11,7 +11,7 @@ defmodule Content.Audio.FollowingTrainTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:sign_content, {"160", ["4016", "503", "5005"], :audio}}
+               {:canned, {"160", ["4016", "503", "5005"], :audio}}
     end
 
     test "When we dont have a good headsign, logs a warning" do
@@ -89,7 +89,7 @@ defmodule Content.Audio.FollowingTrainTest do
         minutes: 1
       }
 
-      assert Content.Audio.to_params(audio) == {:sign_content, {"159", ["4016", "503"], :audio}}
+      assert Content.Audio.to_params(audio) == {:canned, {"159", ["4016", "503"], :audio}}
     end
 
     test "returns ad_hoc audio when the destination is 'southbound'" do

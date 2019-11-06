@@ -12,7 +12,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       later_trip_mins: 10
     }
 
-    assert Content.Audio.to_params(audio) == {:sign_content, {"133", ["5507", "5510"], :audio}}
+    assert Content.Audio.to_params(audio) == {:canned, {"133", ["5507", "5510"], :audio}}
   end
 
   test "Buses to Chelsea in Spanish" do
@@ -23,7 +23,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       later_trip_mins: 10
     }
 
-    assert Content.Audio.to_params(audio) == {:sign_content, {"150", ["37007", "37010"], :audio}}
+    assert Content.Audio.to_params(audio) == {:canned, {"150", ["37007", "37010"], :audio}}
   end
 
   test "Buses to South Station in English" do
@@ -34,7 +34,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       later_trip_mins: 10
     }
 
-    assert Content.Audio.to_params(audio) == {:sign_content, {"134", ["5507", "5510"], :audio}}
+    assert Content.Audio.to_params(audio) == {:canned, {"134", ["5507", "5510"], :audio}}
   end
 
   test "Buses to South Station in Spanish" do
@@ -45,7 +45,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       later_trip_mins: 10
     }
 
-    assert Content.Audio.to_params(audio) == {:sign_content, {"151", ["37007", "37010"], :audio}}
+    assert Content.Audio.to_params(audio) == {:canned, {"151", ["37007", "37010"], :audio}}
   end
 
   test "Buses to South Station in Spanish, headway out of range" do

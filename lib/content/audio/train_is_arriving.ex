@@ -22,7 +22,7 @@ defmodule Content.Audio.TrainIsArriving do
 
     def to_params(audio) do
       {message_id, vars} = audio_params(audio)
-      {:sign_content, {message_id, vars, :audio_visual}}
+      {:canned, {message_id, vars, :audio_visual}}
     end
 
     @spec audio_params(Content.Audio.TrainIsArriving.t()) :: {String.t(), [String.t()]}

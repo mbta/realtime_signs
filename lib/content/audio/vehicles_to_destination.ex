@@ -165,7 +165,7 @@ defmodule Content.Audio.VehiclesToDestination do
           nil
 
         vars ->
-          {:sign_content, {message_id(audio), vars, :audio}}
+          {:canned, {message_id(audio), vars, :audio}}
       end
     end
 

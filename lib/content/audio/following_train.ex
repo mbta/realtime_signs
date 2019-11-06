@@ -62,12 +62,12 @@ defmodule Content.Audio.FollowingTrain do
     end
 
     def to_params(%{minutes: 1} = audio) do
-      {:sign_content,
+      {:canned,
        {"159", [Utilities.destination_var(audio.destination), verb_var(audio)], :audio}}
     end
 
     def to_params(audio) do
-      {:sign_content,
+      {:canned,
        {"160",
         [Utilities.destination_var(audio.destination), verb_var(audio), minutes_var(audio)],
         :audio}}
