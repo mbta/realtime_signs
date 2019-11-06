@@ -6,6 +6,7 @@ defmodule Content.Audio.Predictions do
   """
 
   require Logger
+  require Content.Utilities
   alias Content.Audio.TrackChange
   alias Content.Audio.TrainIsBoarding
   alias Content.Audio.TrainIsArriving
@@ -74,7 +75,7 @@ defmodule Content.Audio.Predictions do
         predictions.minutes == :max_time ->
           %NextTrainCountdown{
             destination: destination,
-            minutes: 30,
+            minutes: div(Content.Utilities.max_time_seconds(), 60),
             verb: if(src.terminal?, do: :departs, else: :arrives),
             track_number: Content.Utilities.stop_track_number(predictions.stop_id),
             platform: src.platform

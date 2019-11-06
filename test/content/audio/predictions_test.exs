@@ -288,7 +288,7 @@ defmodule Content.Audio.PredictionsTest do
         stop_id: "70065"
       }
 
-      assert %Audio.NextTrainCountdown{destination: :ashmont, verb: :arrives, minutes: 30} =
+      assert %Audio.NextTrainCountdown{destination: :ashmont, verb: :arrives, minutes: 20} =
                from_sign_content({src, predictions}, :top, false)
     end
 
