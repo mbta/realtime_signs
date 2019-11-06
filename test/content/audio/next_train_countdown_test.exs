@@ -271,18 +271,4 @@ defmodule Content.Audio.NextTrainCountdownTest do
     assert Content.Audio.to_params(audio) ==
              {:ad_hoc, {"The next southbound train departs in 5 minutes from track 1", :audio}}
   end
-
-  test "The next southbound train on ashmont platform" do
-    audio = %Content.Audio.NextTrainCountdown{
-      destination: :southbound,
-      verb: :arrives,
-      minutes: 5,
-      track_number: nil,
-      platform: :ashmont
-    }
-
-    assert Content.Audio.to_params(audio) ==
-             {:ad_hoc,
-              {"The next southbound train arrives in 5 minutes on the ashmont platform", :audio}}
-  end
 end

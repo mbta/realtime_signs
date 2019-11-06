@@ -34,15 +34,10 @@ defmodule Content.Audio.NextTrainCountdown do
       text = "The next southbound train #{verb} in #{minutes} #{min_or_mins}"
 
       text =
-        cond do
-          audio.track_number ->
-            text <> " from track #{audio.track_number}"
-
-          audio.platform ->
-            text <> " on the #{audio.platform} platform"
-
-          true ->
-            text
+        if audio.track_number do
+          text <> " from track #{audio.track_number}"
+        else
+          text
         end
 
       {:ad_hoc, {text, :audio}}
