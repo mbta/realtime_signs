@@ -10,8 +10,7 @@ defmodule Content.Audio.FollowingTrainTest do
         minutes: 5
       }
 
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"160", ["4016", "503", "5005"], :audio}}
+      assert Content.Audio.to_params(audio) == {:canned, {"160", ["4016", "503", "5005"], :audio}}
     end
 
     test "When we dont have a good headsign, logs a warning" do
