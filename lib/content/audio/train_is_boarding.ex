@@ -9,7 +9,7 @@ defmodule Content.Audio.TrainIsBoarding do
   defstruct @enforce_keys ++ [:trip_id]
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station() | :southbound,
+          destination: PaEss.destination(),
           trip_id: Predictions.Prediction.trip_id() | nil,
           route_id: String.t(),
           track_number: Content.Utilities.track_number()

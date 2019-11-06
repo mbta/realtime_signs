@@ -9,7 +9,7 @@ defmodule Content.Audio.Approaching do
   defstruct @enforce_keys ++ [:trip_id, :platform, :route_id, new_cars?: false]
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station() | :southbound,
+          destination: PaEss.destination(),
           trip_id: Predictions.Prediction.trip_id() | nil,
           platform: Content.platform() | nil,
           route_id: String.t() | nil,

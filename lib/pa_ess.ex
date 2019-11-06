@@ -31,4 +31,5 @@ defmodule PaEss do
           | :government_center
           | :park_st
           | :kenmore
+  @type destination :: terminal_station() | :southbound
 end

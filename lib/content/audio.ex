@@ -7,13 +7,14 @@ defprotocol Content.Audio do
   this protocol, in order to obtain the mid and vars.
   """
 
+  @type av_type :: :audio | :visual | :audio_visual
+  @type message_id :: String.t()
+  @type message_vars :: [String.t()]
+  @type canned_message :: {:canned, {message_id(), message_vars(), av_type()}}
+  @type ad_hoc_message :: {:ad_hoc, {String.t(), av_type()}}
+
   @doc "Converts an audio struct to the mid/vars params for the PA system"
-  @spec to_params(Content.Audio.t()) ::
-          {:canned, {mid, vars, type}} | {:ad_hoc, {text, type}} | nil
-        when mid: String.t(),
-             vars: [String.t()],
-             type: :audio | :visual | :audio_visual,
-             text: String.t()
+  @spec to_params(Content.Audio.t()) :: canned_message() | ad_hoc_message() | nil
   def to_params(audio)
 
   @type destination ::

@@ -9,7 +9,7 @@ defmodule Content.Audio.StoppedTrain do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station() | :southbound,
+          destination: PaEss.destination(),
           stops_away: non_neg_integer()
         }
 

@@ -9,7 +9,7 @@ defmodule Content.Audio.NextTrainCountdown do
   @type verb :: :arrives | :departs
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station() | :southbound,
+          destination: PaEss.destination(),
           verb: verb(),
           minutes: integer(),
           track_number: Content.Utilities.track_number() | nil,
@@ -96,7 +96,7 @@ defmodule Content.Audio.NextTrainCountdown do
     @spec terminal_track_params(
             Content.Audio.NextTrainCountdown.t(),
             Content.Utilities.track_number()
-          ) :: {:canned, {String.t(), [String.t()], :audio}}
+          ) :: Content.Audio.canned_message()
     defp terminal_track_params(audio, track_number) do
       vars = [
         @the_next,

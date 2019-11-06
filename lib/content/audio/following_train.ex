@@ -9,7 +9,7 @@ defmodule Content.Audio.FollowingTrain do
   @type verb :: :arrives | :departs
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station() | :southbound,
+          destination: PaEss.destination(),
           verb: verb(),
           minutes: integer()
         }
@@ -62,8 +62,7 @@ defmodule Content.Audio.FollowingTrain do
     end
 
     def to_params(%{minutes: 1} = audio) do
-      {:canned,
-       {"159", [Utilities.destination_var(audio.destination), verb_var(audio)], :audio}}
+      {:canned, {"159", [Utilities.destination_var(audio.destination), verb_var(audio)], :audio}}
     end
 
     def to_params(audio) do

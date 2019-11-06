@@ -100,7 +100,7 @@ defmodule PaEss.Utilities do
   def headsign_to_terminal_station(_unknown), do: {:error, :unknown}
 
   @doc "Wrapper for headsign_to_terminal_station/1 that also handles :southbound"
-  @spec headsign_to_destination(String.t()) :: PaEss.terminal_station() | :southbound | nil
+  @spec headsign_to_destination(String.t()) :: PaEss.destination() | nil
   def headsign_to_destination("Southbound") do
     :southbound
   end

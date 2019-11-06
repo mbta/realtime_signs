@@ -9,7 +9,7 @@ defmodule Content.Audio.TrackChange do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station() | :southbound,
+          destination: PaEss.destination(),
           route_id: String.t(),
           track: integer()
         }
