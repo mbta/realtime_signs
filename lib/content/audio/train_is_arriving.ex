@@ -16,8 +16,9 @@ defmodule Content.Audio.TrainIsArriving do
         }
 
   defimpl Content.Audio do
-    def to_params(%{destination: :southbound}) do
-      {:ad_hoc, {"The next southbound train is now arriving.", :audio_visual}}
+    def to_params(%{destination: :southbound, route_id: "Red"}) do
+      text = "Attention passengers: The next southbound Red Line train is now arriving."
+      {:ad_hoc, {text, :audio_visual}}
     end
 
     def to_params(audio) do

@@ -20,8 +20,9 @@ defmodule Content.Audio.Approaching do
     @attention_passengers "783"
     @now_approaching_new_ol_cars "785"
 
-    def to_params(%{destination: :southbound}) do
-      {:ad_hoc, {"The next southbound train is now approaching.", :audio_visual}}
+    def to_params(%{destination: :southbound, route_id: "Red"}) do
+      text = "Attention passengers: The next southbound Red Line train is now approaching."
+      {:ad_hoc, {text, :audio_visual}}
     end
 
     def to_params(%Content.Audio.Approaching{new_cars?: false} = audio) do
