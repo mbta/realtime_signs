@@ -54,12 +54,10 @@ defmodule MessageQueueTest do
     {:ok, :sent} = MessageQueue.update_single_line(pid, 1, 2, 3, 4, 5)
     {:ok, :sent} = MessageQueue.update_sign(pid, 1, 2, 3, 4, 5)
     {:ok, :sent} = MessageQueue.send_audio(pid, 1, 2, 3, 4)
-    {:ok, :sent} = MessageQueue.send_custom_audio(pid, 1, 2, 3, 4)
 
     assert MessageQueue.get_message(pid) == {:update_single_line, [1, 2, 3, 4, 5]}
     assert MessageQueue.get_message(pid) == {:update_sign, [1, 2, 3, 4, 5]}
     assert MessageQueue.get_message(pid) == {:send_audio, [1, 2, 3, 4]}
-    assert MessageQueue.get_message(pid) == {:send_custom_audio, [1, 2, 3, 4]}
     assert MessageQueue.get_message(pid) == nil
   end
 end

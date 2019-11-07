@@ -7,14 +7,32 @@ defmodule Content.Audio.StoppedTrainTest do
       audio = %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}
 
       assert Content.Audio.to_params(audio) ==
-               {"109", ["501", "507", "4000", "533", "641", "5002", "534"], :audio}
+               {:canned, {"109", ["501", "507", "4000", "533", "641", "5002", "534"], :audio}}
     end
 
     test "Uses singular 'stop' if 1 stop away" do
       audio = %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 1}
 
       assert Content.Audio.to_params(audio) ==
-               {"109", ["501", "507", "4000", "533", "641", "5001", "535"], :audio}
+               {:canned, {"109", ["501", "507", "4000", "533", "641", "5001", "535"], :audio}}
+    end
+
+    test "Returns :ad_hoc params for southbound destination" do
+      audio = %Content.Audio.StoppedTrain{destination: :southbound, stops_away: 2}
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc, {"The next southbound train is stopped 2 stops away", :audio}}
+    end
+
+    test "Handles unknown destinations gracefully" do
+      audio = %Content.Audio.StoppedTrain{destination: :unknown, stops_away: 2}
+
+      log =
+        capture_log([level: :error], fn ->
+          assert Content.Audio.to_params(audio) == nil
+        end)
+
+      assert log =~ "unknown destination"
     end
   end
 

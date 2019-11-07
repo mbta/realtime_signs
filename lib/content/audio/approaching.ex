@@ -9,7 +9,7 @@ defmodule Content.Audio.Approaching do
   defstruct @enforce_keys ++ [:trip_id, :platform, :route_id, new_cars?: false]
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station(),
+          destination: PaEss.destination(),
           trip_id: Predictions.Prediction.trip_id() | nil,
           platform: Content.platform() | nil,
           route_id: String.t() | nil,
@@ -19,6 +19,11 @@ defmodule Content.Audio.Approaching do
   defimpl Content.Audio do
     @attention_passengers "783"
     @now_approaching_new_ol_cars "785"
+
+    def to_params(%{destination: :southbound, route_id: "Red"}) do
+      text = "Attention passengers: The next southbound Red Line train is now approaching."
+      {:ad_hoc, {text, :audio_visual}}
+    end
 
     def to_params(%Content.Audio.Approaching{new_cars?: false} = audio) do
       case destination_var(audio.destination, audio.platform, audio.route_id) do
@@ -32,7 +37,7 @@ defmodule Content.Audio.Approaching do
           nil
 
         var ->
-          {"103", [var], :audio_visual}
+          {:canned, {"103", [var], :audio_visual}}
       end
     end
 
@@ -43,24 +48,23 @@ defmodule Content.Audio.Approaching do
 
         var ->
           vars = [@attention_passengers, var, @now_approaching_new_ol_cars]
-          {PaEss.Utilities.take_message_id(vars), vars, :audio_visual}
+          {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio_visual}}
       end
     end
 
-    @spec destination_var(PaEss.terminal_station(), Content.platform(), String.t()) ::
-            String.t() | nil
-    defp destination_var(:wonderland, nil, _route_id), do: "32120"
-    defp destination_var(:bowdoin, nil, _route_id), do: "32121"
-    defp destination_var(:oak_grove, nil, _route_id), do: "32122"
-    defp destination_var(:forest_hills, nil, _route_id), do: "32123"
-    defp destination_var(:alewife, nil, _route_id), do: "32124"
+    @spec destination_var(PaEss.destination(), Content.platform(), String.t()) :: String.t() | nil
     defp destination_var(:alewife, :ashmont, _route_id), do: "32125"
     defp destination_var(:alewife, :braintree, _route_id), do: "32126"
+    defp destination_var(:alewife, nil, _route_id), do: "32124"
     defp destination_var(:ashmont, nil, "Red"), do: "32127"
     defp destination_var(:braintree, nil, _route_id), do: "32128"
+    defp destination_var(:bowdoin, nil, _route_id), do: "32121"
+    defp destination_var(:wonderland, nil, _route_id), do: "32120"
+    defp destination_var(:forest_hills, nil, _route_id), do: "32123"
+    defp destination_var(:oak_grove, nil, _route_id), do: "32122"
     defp destination_var(_destination, _platform, _route_id), do: nil
 
-    @spec new_cars_destination_var(PaEss.terminal_station()) :: String.t() | nil
+    @spec new_cars_destination_var(PaEss.destination()) :: String.t() | nil
     defp new_cars_destination_var(:oak_grove), do: "4022"
     defp new_cars_destination_var(:forest_hills), do: "4043"
     defp new_cars_destination_var(_destination), do: nil

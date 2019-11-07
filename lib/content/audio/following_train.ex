@@ -9,7 +9,7 @@ defmodule Content.Audio.FollowingTrain do
   @type verb :: :arrives | :departs
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station(),
+          destination: PaEss.destination(),
           verb: verb(),
           minutes: integer()
         }
@@ -27,10 +27,10 @@ defmodule Content.Audio.FollowingTrain do
         %Content.Message.Predictions{minutes: n, headsign: headsign}
       })
       when is_integer(n) do
-    case PaEss.Utilities.headsign_to_terminal_station(headsign) do
-      {:ok, headsign_atom} ->
+    case PaEss.Utilities.headsign_to_destination(headsign) do
+      {:ok, destination} ->
         %__MODULE__{
-          destination: headsign_atom,
+          destination: destination,
           minutes: n,
           verb: arrives_or_departs(terminal)
         }
@@ -55,13 +55,28 @@ defmodule Content.Audio.FollowingTrain do
   defimpl Content.Audio do
     alias PaEss.Utilities
 
-    def to_params(%{minutes: 1} = audio) do
-      {"159", [Utilities.destination_var(audio.destination), verb_var(audio)], :audio}
+    def to_params(%{destination: :southbound, verb: verb, minutes: minutes}) do
+      min_or_mins = if minutes == 1, do: "minute", else: "minutes"
+      text = "The following southbound train #{verb} in #{minutes} #{min_or_mins}"
+      {:ad_hoc, {text, :audio}}
     end
 
     def to_params(audio) do
-      {"160", [Utilities.destination_var(audio.destination), verb_var(audio), minutes_var(audio)],
-       :audio}
+      case Utilities.destination_var(audio.destination) do
+        {:ok, dest_var} ->
+          if audio.minutes == 1 do
+            {:canned, {"159", [dest_var, verb_var(audio)], :audio}}
+          else
+            {:canned, {"160", [dest_var, verb_var(audio), minutes_var(audio)], :audio}}
+          end
+
+        {:error, :unknown} ->
+          Logger.error(
+            "FollowingTrain.to_params unknown destination: #{inspect(audio.destination)}"
+          )
+
+          nil
+      end
     end
 
     defp verb_var(%{verb: :arrives}), do: "503"

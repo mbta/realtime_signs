@@ -9,18 +9,18 @@ defmodule Content.Audio.StoppedTrain do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station(),
+          destination: PaEss.destination(),
           stops_away: non_neg_integer()
         }
 
   @spec from_message(Content.Message.t()) :: t() | nil
   def from_message(%Content.Message.StoppedTrain{headsign: headsign, stops_away: stops_away})
       when stops_away > 0 do
-    case PaEss.Utilities.headsign_to_terminal_station(headsign) do
-      {:ok, terminal} ->
-        %__MODULE__{destination: terminal, stops_away: stops_away}
+    case PaEss.Utilities.headsign_to_destination(headsign) do
+      {:ok, destination} ->
+        %__MODULE__{destination: destination, stops_away: stops_away}
 
-      {:error, _} ->
+      {:error, :unknown} ->
         Logger.warn("unknown_headsign: #{headsign}")
         nil
     end
@@ -41,18 +41,34 @@ defmodule Content.Audio.StoppedTrain do
     @is "533"
     @stopped "641"
 
-    def to_params(audio) do
-      vars = [
-        @the_next,
-        @train_to,
-        PaEss.Utilities.destination_var(audio.destination),
-        @is,
-        @stopped,
-        number_var(audio.stops_away),
-        stops_away_var(audio.stops_away)
-      ]
+    def to_params(%{destination: :southbound, stops_away: stops_away}) do
+      stop_or_stops = if stops_away == 1, do: "stop", else: "stops"
+      text = "The next southbound train is stopped #{stops_away} #{stop_or_stops} away"
+      {:ad_hoc, {text, :audio}}
+    end
 
-      {PaEss.Utilities.take_message_id(vars), vars, :audio}
+    def to_params(audio) do
+      case PaEss.Utilities.destination_var(audio.destination) do
+        {:ok, dest_var} ->
+          vars = [
+            @the_next,
+            @train_to,
+            dest_var,
+            @is,
+            @stopped,
+            number_var(audio.stops_away),
+            stops_away_var(audio.stops_away)
+          ]
+
+          {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
+
+        {:error, :unknown} ->
+          Logger.error(
+            "StoppedTrain.to_params unknown destination: #{inspect(audio.destination)}"
+          )
+
+          nil
+      end
     end
 
     defp stops_away_var(1), do: "535"

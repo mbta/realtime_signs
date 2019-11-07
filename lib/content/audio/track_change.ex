@@ -9,7 +9,7 @@ defmodule Content.Audio.TrackChange do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station(),
+          destination: PaEss.destination(),
           route_id: String.t(),
           track: integer()
         }
@@ -23,17 +23,24 @@ defmodule Content.Audio.TrackChange do
     @on_track_2 "542"
 
     def to_params(audio) do
-      vars = [
-        @track_change,
-        @the_next,
-        branch_letter(audio.route_id),
-        @train_to,
-        PaEss.Utilities.destination_var(audio.destination),
-        @is_now_boarding,
-        track(audio.track)
-      ]
+      case PaEss.Utilities.destination_var(audio.destination) do
+        {:ok, dest_var} ->
+          vars = [
+            @track_change,
+            @the_next,
+            branch_letter(audio.route_id),
+            @train_to,
+            dest_var,
+            @is_now_boarding,
+            track(audio.track)
+          ]
 
-      {"109", vars, :audio_visual}
+          {:canned, {"109", vars, :audio_visual}}
+
+        {:error, :unknown} ->
+          Logger.error("TrackChange.to_params unknown destination: #{inspect(audio.destination)}")
+          nil
+      end
     end
 
     defp track(1), do: @on_track_1
