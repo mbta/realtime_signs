@@ -52,20 +52,19 @@ defmodule Content.Audio.Approaching do
       end
     end
 
-    @spec destination_var(PaEss.terminal_station(), Content.platform(), String.t()) ::
-            String.t() | nil
-    defp destination_var(:wonderland, nil, _route_id), do: "32120"
-    defp destination_var(:bowdoin, nil, _route_id), do: "32121"
-    defp destination_var(:oak_grove, nil, _route_id), do: "32122"
-    defp destination_var(:forest_hills, nil, _route_id), do: "32123"
-    defp destination_var(:alewife, nil, _route_id), do: "32124"
+    @spec destination_var(PaEss.destination(), Content.platform(), String.t()) :: String.t() | nil
     defp destination_var(:alewife, :ashmont, _route_id), do: "32125"
     defp destination_var(:alewife, :braintree, _route_id), do: "32126"
+    defp destination_var(:alewife, nil, _route_id), do: "32124"
     defp destination_var(:ashmont, nil, "Red"), do: "32127"
+    defp destination_var(:bowdoin, nil, _route_id), do: "32121"
     defp destination_var(:braintree, nil, _route_id), do: "32128"
+    defp destination_var(:forest_hills, nil, _route_id), do: "32123"
+    defp destination_var(:oak_grove, nil, _route_id), do: "32122"
+    defp destination_var(:wonderland, nil, _route_id), do: "32120"
     defp destination_var(_destination, _platform, _route_id), do: nil
 
-    @spec new_cars_destination_var(PaEss.terminal_station()) :: String.t() | nil
+    @spec new_cars_destination_var(PaEss.destination()) :: String.t() | nil
     defp new_cars_destination_var(:oak_grove), do: "4022"
     defp new_cars_destination_var(:forest_hills), do: "4043"
     defp new_cars_destination_var(_destination), do: nil

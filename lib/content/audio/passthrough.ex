@@ -9,7 +9,7 @@ defmodule Content.Audio.Passthrough do
   defstruct @enforce_keys ++ [:trip_id, :route_id]
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station(),
+          destination: PaEss.destination(),
           trip_id: Predictions.Prediction.trip_id() | nil,
           route_id: String.t() | nil
         }
@@ -31,14 +31,14 @@ defmodule Content.Audio.Passthrough do
       end
     end
 
-    @spec destination_var(PaEss.terminal_station(), String.t()) :: String.t() | nil
-    defp destination_var(:wonderland, _route_id), do: "32110"
-    defp destination_var(:bowdoin, _route_id), do: "32111"
-    defp destination_var(:oak_grove, _route_id), do: "32112"
-    defp destination_var(:forest_hills, _route_id), do: "32113"
+    @spec destination_var(PaEss.destination(), String.t()) :: String.t() | nil
     defp destination_var(:alewife, _route_id), do: "32114"
     defp destination_var(:ashmont, "Red"), do: "32117"
+    defp destination_var(:bowdoin, _route_id), do: "32111"
     defp destination_var(:braintree, _route_id), do: "32118"
+    defp destination_var(:forest_hills, _route_id), do: "32113"
+    defp destination_var(:oak_grove, _route_id), do: "32112"
+    defp destination_var(:wonderland, _route_id), do: "32110"
     defp destination_var(_destination, _route_id), do: nil
   end
 end

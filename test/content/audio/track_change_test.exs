@@ -17,7 +17,7 @@ defmodule Content.Audio.TrackChangeTest do
 
     test "correctly changes tracks for c/e" do
       audio = %Content.Audio.TrackChange{
-        destination: :heath_st,
+        destination: :heath_street,
         route_id: "Green-E",
         track: 1
       }

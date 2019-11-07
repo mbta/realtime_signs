@@ -43,62 +43,45 @@ defmodule Content.Audio.NextTrainCountdown do
       {:ad_hoc, {text, :audio}}
     end
 
-    def to_params(%{platform: nil, minutes: 1, track_number: track_number} = audio) do
-      case track_number do
-        nil ->
-          {:canned,
-           {"141", [Utilities.destination_var(audio.destination), verb_var(audio)], :audio}}
-
-        _ ->
-          terminal_track_params(audio, track_number)
-      end
-    end
-
-    def to_params(%{platform: nil, track_number: track_number} = audio) do
-      case track_number do
-        nil ->
-          {:canned,
-           {"90",
-            [Utilities.destination_var(audio.destination), verb_var(audio), minutes_var(audio)],
-            :audio}}
-
-        _ ->
-          terminal_track_params(audio, track_number)
-      end
-    end
-
-    def to_params(%{minutes: 1} = audio) do
-      {:canned,
-       {"142",
-        [
-          Utilities.destination_var(audio.destination),
-          platform_var(audio),
-          verb_var(audio)
-        ], :audio}}
-    end
-
     def to_params(audio) do
-      {:canned,
-       {"99",
-        [
-          Utilities.destination_var(audio.destination),
-          platform_var(audio),
-          verb_var(audio),
-          minutes_var(audio)
-        ], :audio}}
+      case Utilities.destination_var(audio.destination) do
+        {:ok, dest_var} ->
+          cond do
+            !is_nil(audio.track_number) ->
+              terminal_track_params(audio)
+
+            is_nil(audio.platform) and audio.minutes == 1 ->
+              {:canned, {"141", [dest_var, verb_var(audio)], :audio}}
+
+            is_nil(audio.platform) ->
+              {:canned, {"90", [dest_var, verb_var(audio), minutes_var(audio)], :audio}}
+
+            audio.minutes == 1 ->
+              {:canned, {"142", [dest_var, platform_var(audio), verb_var(audio)], :audio}}
+
+            true ->
+              {:canned,
+               {"99", [dest_var, platform_var(audio), verb_var(audio), minutes_var(audio)],
+                :audio}}
+          end
+
+        {:error, :unknown} ->
+          Logger.error("NextTrainCountdown unknown destination: #{inspect(audio.destination)}")
+          nil
+      end
     end
 
-    @spec terminal_track_params(
-            Content.Audio.NextTrainCountdown.t(),
-            Content.Utilities.track_number()
-          ) :: Content.Audio.canned_message()
-    defp terminal_track_params(audio, track_number) do
+    @spec terminal_track_params(Content.Audio.NextTrainCountdown.t()) ::
+            Content.Audio.canned_message()
+    defp terminal_track_params(audio) do
+      {:ok, dest_var} = Utilities.destination_var(audio.destination)
+
       vars = [
         @the_next,
         @space,
         @train_to,
         @space,
-        Utilities.destination_var(audio.destination),
+        dest_var,
         @space,
         verb_var(audio),
         @space,
@@ -108,7 +91,7 @@ defmodule Content.Audio.NextTrainCountdown do
         @space,
         @minutes,
         @space,
-        track(track_number)
+        track(audio.track_number)
       ]
 
       {:canned, {Utilities.take_message_id(vars), vars, :audio}}

@@ -16,13 +16,13 @@ defmodule Content.Audio.StoppedTrain do
   @spec from_message(Content.Message.t()) :: t() | nil
   def from_message(%Content.Message.StoppedTrain{headsign: headsign, stops_away: stops_away})
       when stops_away > 0 do
-    destination = PaEss.Utilities.headsign_to_destination(headsign)
+    case PaEss.Utilities.headsign_to_destination(headsign) do
+      {:ok, destination} ->
+        %__MODULE__{destination: destination, stops_away: stops_away}
 
-    if destination do
-      %__MODULE__{destination: destination, stops_away: stops_away}
-    else
-      Logger.warn("unknown_headsign: #{headsign}")
-      nil
+      {:error, :unknown} ->
+        Logger.warn("unknown_headsign: #{headsign}")
+        nil
     end
   end
 
@@ -48,17 +48,24 @@ defmodule Content.Audio.StoppedTrain do
     end
 
     def to_params(audio) do
-      vars = [
-        @the_next,
-        @train_to,
-        PaEss.Utilities.destination_var(audio.destination),
-        @is,
-        @stopped,
-        number_var(audio.stops_away),
-        stops_away_var(audio.stops_away)
-      ]
+      case PaEss.Utilities.destination_var(audio.destination) do
+        {:ok, dest_var} ->
+          vars = [
+            @the_next,
+            @train_to,
+            dest_var,
+            @is,
+            @stopped,
+            number_var(audio.stops_away),
+            stops_away_var(audio.stops_away)
+          ]
 
-      {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
+          {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
+
+        {:error, :unknown} ->
+          Logger.error("StoppedTrain.to_params unkown destination: #{inspect(audio.destination)}")
+          nil
+      end
     end
 
     defp stops_away_var(1), do: "535"

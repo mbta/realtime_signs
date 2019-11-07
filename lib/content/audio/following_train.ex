@@ -27,20 +27,20 @@ defmodule Content.Audio.FollowingTrain do
         %Content.Message.Predictions{minutes: n, headsign: headsign}
       })
       when is_integer(n) do
-    destination = PaEss.Utilities.headsign_to_destination(headsign)
+    case PaEss.Utilities.headsign_to_destination(headsign) do
+      {:ok, destination} ->
+        %__MODULE__{
+          destination: destination,
+          minutes: n,
+          verb: arrives_or_departs(terminal)
+        }
 
-    if destination do
-      %__MODULE__{
-        destination: destination,
-        minutes: n,
-        verb: arrives_or_departs(terminal)
-      }
-    else
-      Logger.warn(
-        "Content.Audio.FollowingTrain.from_predictions_message: unknown headsign: #{headsign}"
-      )
+      {:error, :unknown} ->
+        Logger.warn(
+          "Content.Audio.FollowingTrain.from_predictions_message: unknown headsign: #{headsign}"
+        )
 
-      nil
+        nil
     end
   end
 
@@ -61,15 +61,22 @@ defmodule Content.Audio.FollowingTrain do
       {:ad_hoc, {text, :audio}}
     end
 
-    def to_params(%{minutes: 1} = audio) do
-      {:canned, {"159", [Utilities.destination_var(audio.destination), verb_var(audio)], :audio}}
-    end
-
     def to_params(audio) do
-      {:canned,
-       {"160",
-        [Utilities.destination_var(audio.destination), verb_var(audio), minutes_var(audio)],
-        :audio}}
+      case Utilities.destination_var(audio.destination) do
+        {:ok, dest_var} ->
+          if audio.minutes == 1 do
+            {:canned, {"159", [dest_var, verb_var(audio)], :audio}}
+          else
+            {:canned, {"160", [dest_var, verb_var(audio), minutes_var(audio)], :audio}}
+          end
+
+        {:error, :unknown} ->
+          Logger.error(
+            "FollowingTrain.to_params unknown destination: #{inspect(audio.destination)}"
+          )
+
+          nil
+      end
     end
 
     defp verb_var(%{verb: :arrives}), do: "503"

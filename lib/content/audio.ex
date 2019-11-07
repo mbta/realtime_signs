@@ -13,33 +13,9 @@ defprotocol Content.Audio do
   @type canned_message :: {:canned, {message_id(), message_vars(), av_type()}}
   @type ad_hoc_message :: {:ad_hoc, {String.t(), av_type()}}
 
+  @type language :: :english | :spanish
+
   @doc "Converts an audio struct to the mid/vars params for the PA system"
   @spec to_params(Content.Audio.t()) :: canned_message() | ad_hoc_message() | nil
   def to_params(audio)
-
-  @type destination ::
-          :chelsea
-          | :south_station
-          | :northbound
-          | :southbound
-          | :eastbound
-          | :westbound
-          | :alewife
-          | :ashmont
-          | :braintree
-          | :wonderland
-          | :bowdoin
-          | :forest_hills
-          | :oak_grove
-          | :park_street
-          | :govt_ctr
-          | :north_sta
-          | :lechmere
-          | :riverside
-          | :heath_street
-          | :boston_college
-          | :cleveland_circle
-          | :mattapan
-
-  @type language :: :english | :spanish
 end

@@ -46,7 +46,7 @@ defmodule Content.Audio.PredictionsTest do
       }
 
       assert %Audio.TrackChange{
-               destination: :heath_st,
+               destination: :heath_street,
                route_id: "Green-E",
                track: 2
              } = from_sign_content({src, predictions}, :top, false)
@@ -63,7 +63,7 @@ defmodule Content.Audio.PredictionsTest do
       }
 
       assert %Audio.NextTrainCountdown{
-               destination: :heath_st,
+               destination: :heath_street,
                verb: :arrives,
                minutes: 2
              } = from_sign_content({src, predictions}, :top, false)
