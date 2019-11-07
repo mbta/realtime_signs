@@ -36,8 +36,8 @@ defmodule Content.Audio.TrainIsBoarding do
 
     def to_params(audio) do
       case PaEss.Utilities.destination_var(audio.destination) do
-        {:ok, _} ->
-          do_to_params(audio)
+        {:ok, destination_var} ->
+          do_to_params(audio, destination_var)
 
         {:error, :unknown} ->
           Logger.error("TrainIsBoarding.to_params unknown destination: #{audio.destination}")
@@ -45,30 +45,29 @@ defmodule Content.Audio.TrainIsBoarding do
       end
     end
 
-    def do_to_params(%{destination: destination, route_id: "Green-" <> _branch})
-        when destination in [:lechmere, :north_station, :government_center, :park_st, :kenmore] do
-      {:ok, dest_var} = PaEss.Utilities.destination_var(destination)
-
+    defp do_to_params(%{destination: destination, route_id: "Green-" <> _branch}, destination_var)
+         when destination in [:lechmere, :north_station, :government_center, :park_st, :kenmore] do
       vars = [
         @the_next,
         @train_to,
-        dest_var,
+        destination_var,
         @is_now_boarding
       ]
 
       {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
     end
 
-    def do_to_params(%{destination: destination, route_id: route_id, track_number: track_number}) do
-      {:ok, dest_var} = PaEss.Utilities.destination_var(destination)
-
+    defp do_to_params(
+           %{destination: destination, route_id: route_id, track_number: track_number},
+           destination_var
+         ) do
       {vars, message_type} =
         case {branch_letter(route_id), track_number} do
           {nil, nil} ->
             {[
                @the_next,
                @train_to,
-               dest_var,
+               destination_var,
                @is_now_boarding
              ], :audio}
 
@@ -78,7 +77,7 @@ defmodule Content.Audio.TrainIsBoarding do
                @space,
                @train_to,
                @space,
-               dest_var,
+               destination_var,
                @space,
                @is_now_boarding,
                @space,
@@ -90,7 +89,7 @@ defmodule Content.Audio.TrainIsBoarding do
                @the_next,
                branch_letter,
                @train_to,
-               dest_var,
+               destination_var,
                @is_now_boarding
              ], :audio}
         end

@@ -15,26 +15,26 @@ defmodule PaEss do
   @type destination ::
           :alewife
           | :ashmont
-          | :boston_college
-          | :bowdoin
           | :braintree
-          | :chelsea
-          | :cleveland_circle
-          | :eastbound
-          | :forest_hills
-          | :government_center
-          | :heath_street
-          | :kenmore
-          | :lechmere
           | :mattapan
-          | :north_station
-          | :northbound
+          | :bowdoin
+          | :wonderland
           | :oak_grove
+          | :forest_hills
+          | :chelsea
+          | :south_station
+          | :lechmere
+          | :north_station
+          | :government_center
           | :park_street
+          | :kenmore
+          | :boston_college
+          | :cleveland_circle
           | :reservoir
           | :riverside
-          | :south_station
+          | :heath_street
+          | :northbound
           | :southbound
+          | :eastbound
           | :westbound
-          | :wonderland
 end

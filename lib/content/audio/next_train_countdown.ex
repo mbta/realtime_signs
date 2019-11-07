@@ -48,7 +48,7 @@ defmodule Content.Audio.NextTrainCountdown do
         {:ok, dest_var} ->
           cond do
             !is_nil(audio.track_number) ->
-              terminal_track_params(audio)
+              terminal_track_params(audio, dest_var)
 
             is_nil(audio.platform) and audio.minutes == 1 ->
               {:canned, {"141", [dest_var, verb_var(audio)], :audio}}
@@ -71,17 +71,15 @@ defmodule Content.Audio.NextTrainCountdown do
       end
     end
 
-    @spec terminal_track_params(Content.Audio.NextTrainCountdown.t()) ::
+    @spec terminal_track_params(Content.Audio.NextTrainCountdown.t(), String.t()) ::
             Content.Audio.canned_message()
-    defp terminal_track_params(audio) do
-      {:ok, dest_var} = Utilities.destination_var(audio.destination)
-
+    defp terminal_track_params(audio, destination_var) do
       vars = [
         @the_next,
         @space,
         @train_to,
         @space,
-        dest_var,
+        destination_var,
         @space,
         verb_var(audio),
         @space,
