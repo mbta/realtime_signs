@@ -58,7 +58,7 @@ defmodule Content.Audio.TrainIsBoarding do
     end
 
     defp do_to_params(
-           %{destination: destination, route_id: route_id, track_number: track_number},
+           %{route_id: route_id, track_number: track_number},
            destination_var
          ) do
       {vars, message_type} =
