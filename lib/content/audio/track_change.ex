@@ -22,11 +22,6 @@ defmodule Content.Audio.TrackChange do
     @on_track_1 "541"
     @on_track_2 "542"
 
-    def to_params(%{destination: :southbound}) do
-      Logger.error("TrackChange audio for southbound")
-      nil
-    end
-
     def to_params(audio) do
       case PaEss.Utilities.destination_var(audio.destination) do
         {:ok, dest_var} ->

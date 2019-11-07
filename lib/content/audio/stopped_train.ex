@@ -63,7 +63,10 @@ defmodule Content.Audio.StoppedTrain do
           {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
 
         {:error, :unknown} ->
-          Logger.error("StoppedTrain.to_params unkown destination: #{inspect(audio.destination)}")
+          Logger.error(
+            "StoppedTrain.to_params unknown destination: #{inspect(audio.destination)}"
+          )
+
           nil
       end
     end

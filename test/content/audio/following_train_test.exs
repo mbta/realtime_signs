@@ -101,5 +101,20 @@ defmodule Content.Audio.FollowingTrainTest do
       assert Content.Audio.to_params(audio) ==
                {:ad_hoc, {"The following southbound train arrives in 3 minutes", :audio}}
     end
+
+    test "Handles unknown destination gracefully" do
+      audio = %Content.Audio.FollowingTrain{
+        destination: :unknown,
+        verb: :arrives,
+        minutes: 3
+      }
+
+      log =
+        capture_log([level: :error], fn ->
+          assert Content.Audio.to_params(audio) == nil
+        end)
+
+      assert log =~ "unknown destination"
+    end
   end
 end

@@ -23,6 +23,17 @@ defmodule Content.Audio.StoppedTrainTest do
       assert Content.Audio.to_params(audio) ==
                {:ad_hoc, {"The next southbound train is stopped 2 stops away", :audio}}
     end
+
+    test "Handles unknown destinations gracefully" do
+      audio = %Content.Audio.StoppedTrain{destination: :unknown, stops_away: 2}
+
+      log =
+        capture_log([level: :error], fn ->
+          assert Content.Audio.to_params(audio) == nil
+        end)
+
+      assert log =~ "unknown destination"
+    end
   end
 
   describe "from_message/1" do

@@ -27,9 +27,9 @@ defmodule Content.Audio.TrackChangeTest do
                 {"109", ["540", "501", "539", "507", "4204", "544", "541"], :audio_visual}}
     end
 
-    test "Logs error and returns nil if southbound destination" do
+    test "Handles unknown destination gracefully" do
       audio = %Content.Audio.TrackChange{
-        destination: :southbound,
+        destination: :unknown,
         route_id: "Green-E",
         track: 1
       }
@@ -39,7 +39,7 @@ defmodule Content.Audio.TrackChangeTest do
           assert Content.Audio.to_params(audio) == nil
         end)
 
-      assert log =~ "TrackChange audio for southbound"
+      assert log =~ "unknown destination"
     end
   end
 end

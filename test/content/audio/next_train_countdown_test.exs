@@ -1,5 +1,6 @@
 defmodule Content.Audio.NextTrainCountdownTest do
   use ExUnit.Case, async: true
+  import ExUnit.CaptureLog
 
   describe "Content.Audio.to_params protocol" do
     test "Next train to Ashmont" do
@@ -260,5 +261,22 @@ defmodule Content.Audio.NextTrainCountdownTest do
 
     assert Content.Audio.to_params(audio) ==
              {:ad_hoc, {"The next southbound train departs in 5 minutes from track 1", :audio}}
+  end
+
+  test "Handles unknown destination gracefully" do
+    audio = %Content.Audio.NextTrainCountdown{
+      destination: :unknown,
+      verb: :departs,
+      minutes: 5,
+      track_number: 1,
+      platform: nil
+    }
+
+    log =
+      capture_log([level: :error], fn ->
+        assert Content.Audio.to_params(audio) == nil
+      end)
+
+    assert log =~ "unknown destination"
   end
 end
