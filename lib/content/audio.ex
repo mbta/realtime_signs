@@ -7,34 +7,15 @@ defprotocol Content.Audio do
   this protocol, in order to obtain the mid and vars.
   """
 
-  @doc "Converts an audio struct to the mid/vars params for the PA system"
-  @spec to_params(Content.Audio.t()) :: {mid, vars, type} | nil
-        when mid: String.t(), vars: [String.t()], type: :audio | :visual | :audio_visual
-  def to_params(audio)
-
-  @type destination ::
-          :chelsea
-          | :south_station
-          | :northbound
-          | :southbound
-          | :eastbound
-          | :westbound
-          | :alewife
-          | :ashmont
-          | :braintree
-          | :wonderland
-          | :bowdoin
-          | :forest_hills
-          | :oak_grove
-          | :park_street
-          | :govt_ctr
-          | :north_sta
-          | :lechmere
-          | :riverside
-          | :heath_street
-          | :boston_college
-          | :cleveland_circle
-          | :mattapan
+  @type av_type :: :audio | :visual | :audio_visual
+  @type message_id :: String.t()
+  @type message_vars :: [String.t()]
+  @type canned_message :: {:canned, {message_id(), message_vars(), av_type()}}
+  @type ad_hoc_message :: {:ad_hoc, {String.t(), av_type()}}
 
   @type language :: :english | :spanish
+
+  @doc "Converts an audio struct to the mid/vars params for the PA system"
+  @spec to_params(Content.Audio.t()) :: canned_message() | ad_hoc_message() | nil
+  def to_params(audio)
 end

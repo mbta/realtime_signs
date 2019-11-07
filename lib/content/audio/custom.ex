@@ -38,4 +38,10 @@ defmodule Content.Audio.Custom do
       message: audio
     }
   end
+
+  defimpl Content.Audio do
+    def to_params(%Content.Audio.Custom{message: message}) do
+      {:ad_hoc, {message, :audio}}
+    end
+  end
 end

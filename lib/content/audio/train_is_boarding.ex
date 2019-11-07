@@ -9,7 +9,7 @@ defmodule Content.Audio.TrainIsBoarding do
   defstruct @enforce_keys ++ [:trip_id]
 
   @type t :: %__MODULE__{
-          destination: PaEss.terminal_station(),
+          destination: PaEss.destination(),
           trip_id: Predictions.Prediction.trip_id() | nil,
           route_id: String.t(),
           track_number: Content.Utilities.track_number()
@@ -23,26 +23,51 @@ defmodule Content.Audio.TrainIsBoarding do
     @on_track_2 "542"
     @space "21000"
 
-    def to_params(%{destination: destination, route_id: "Green-" <> _branch})
-        when destination in [:lechmere, :north_station, :government_center, :park_st, :kenmore] do
+    def to_params(%{destination: :southbound, track_number: track_number}) do
+      text =
+        if track_number do
+          "The next southbound train is now boarding, on track #{track_number}"
+        else
+          "The next southbound train is now boarding"
+        end
+
+      {:ad_hoc, {text, :audio}}
+    end
+
+    def to_params(audio) do
+      case PaEss.Utilities.destination_var(audio.destination) do
+        {:ok, destination_var} ->
+          do_to_params(audio, destination_var)
+
+        {:error, :unknown} ->
+          Logger.error("TrainIsBoarding.to_params unknown destination: #{audio.destination}")
+          nil
+      end
+    end
+
+    defp do_to_params(%{destination: destination, route_id: "Green-" <> _branch}, destination_var)
+         when destination in [:lechmere, :north_station, :government_center, :park_st, :kenmore] do
       vars = [
         @the_next,
         @train_to,
-        PaEss.Utilities.destination_var(destination),
+        destination_var,
         @is_now_boarding
       ]
 
-      {PaEss.Utilities.take_message_id(vars), vars, :audio}
+      {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
     end
 
-    def to_params(%{destination: destination, route_id: route_id, track_number: track_number}) do
+    defp do_to_params(
+           %{route_id: route_id, track_number: track_number},
+           destination_var
+         ) do
       {vars, message_type} =
         case {branch_letter(route_id), track_number} do
           {nil, nil} ->
             {[
                @the_next,
                @train_to,
-               PaEss.Utilities.destination_var(destination),
+               destination_var,
                @is_now_boarding
              ], :audio}
 
@@ -52,7 +77,7 @@ defmodule Content.Audio.TrainIsBoarding do
                @space,
                @train_to,
                @space,
-               PaEss.Utilities.destination_var(destination),
+               destination_var,
                @space,
                @is_now_boarding,
                @space,
@@ -64,12 +89,12 @@ defmodule Content.Audio.TrainIsBoarding do
                @the_next,
                branch_letter,
                @train_to,
-               PaEss.Utilities.destination_var(destination),
+               destination_var,
                @is_now_boarding
              ], :audio}
         end
 
-      {PaEss.Utilities.take_message_id(vars), vars, message_type}
+      {:canned, {PaEss.Utilities.take_message_id(vars), vars, message_type}}
     end
 
     @spec track(Content.Utilities.track_number()) :: String.t()
