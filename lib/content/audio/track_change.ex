@@ -26,21 +26,38 @@ defmodule Content.Audio.TrackChange do
     def to_params(audio) do
       case PaEss.Utilities.destination_var(audio.destination) do
         {:ok, dest_var} ->
-          vars = [
-            @track_change,
-            @space,
-            @the_next,
-            @space,
-            branch_letter(audio.route_id),
-            @space,
-            @train_to,
-            @space,
-            dest_var,
-            @space,
-            @is_now_boarding,
-            @space,
-            track(audio.track)
-          ]
+          vars =
+            if audio.destination == :kenmore do
+              [
+                @track_change,
+                @space,
+                @the_next,
+                @space,
+                @train_to,
+                @space,
+                dest_var,
+                @space,
+                @is_now_boarding,
+                @space,
+                track(audio.track)
+              ]
+            else
+              [
+                @track_change,
+                @space,
+                @the_next,
+                @space,
+                branch_letter(audio.route_id),
+                @space,
+                @train_to,
+                @space,
+                dest_var,
+                @space,
+                @is_now_boarding,
+                @space,
+                track(audio.track)
+              ]
+            end
 
           {:canned, {"109", vars, :audio_visual}}
 
