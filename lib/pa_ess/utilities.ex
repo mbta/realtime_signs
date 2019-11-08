@@ -117,6 +117,32 @@ defmodule PaEss.Utilities do
   def headsign_to_destination("Westbound"), do: {:ok, :westbound}
   def headsign_to_destination(_unknown), do: {:error, :unknown}
 
+  @spec destination_to_ad_hoc_string(PaEss.destination()) :: String.t()
+  def destination_to_ad_hoc_string(:alewife), do: "Alewife"
+  def destination_to_ad_hoc_string(:ashmont), do: "Ashmont"
+  def destination_to_ad_hoc_string(:braintree), do: "Braintree"
+  def destination_to_ad_hoc_string(:mattapan), do: "Mattapan"
+  def destination_to_ad_hoc_string(:bowdoin), do: "Bowdoin"
+  def destination_to_ad_hoc_string(:wonderland), do: "Wonderland"
+  def destination_to_ad_hoc_string(:oak_grove), do: "Oak Grove"
+  def destination_to_ad_hoc_string(:forest_hills), do: "Forest Hills"
+  def destination_to_ad_hoc_string(:chelsea), do: "Chelsea"
+  def destination_to_ad_hoc_string(:south_station), do: "South Station"
+  def destination_to_ad_hoc_string(:lechmere), do: "Lechmere"
+  def destination_to_ad_hoc_string(:north_station), do: "North Station"
+  def destination_to_ad_hoc_string(:government_center), do: "Government Center"
+  def destination_to_ad_hoc_string(:park_street), do: "Park Street"
+  def destination_to_ad_hoc_string(:kenmore), do: "Kenmore"
+  def destination_to_ad_hoc_string(:boston_college), do: "Boston College"
+  def destination_to_ad_hoc_string(:cleveland_circle), do: "Cleveland Circle"
+  def destination_to_ad_hoc_string(:reservoir), do: "Reservoir"
+  def destination_to_ad_hoc_string(:riverside), do: "Riverside"
+  def destination_to_ad_hoc_string(:heath_street), do: "Heath Street"
+  def destination_to_ad_hoc_string(:northbound), do: "Northbound"
+  def destination_to_ad_hoc_string(:southbound), do: "Southbound"
+  def destination_to_ad_hoc_string(:eastbound), do: "Eastbound"
+  def destination_to_ad_hoc_string(:westbound), do: "Westbound"
+
   @spec green_line_branch_var(Content.Utilities.green_line_branch()) :: String.t()
   def green_line_branch_var(:b), do: "536"
   def green_line_branch_var(:c), do: "537"

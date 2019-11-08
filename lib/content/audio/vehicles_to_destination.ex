@@ -7,70 +7,17 @@ defmodule Content.Audio.VehiclesToDestination do
   alias PaEss.Utilities
 
   @enforce_keys [:language, :destination, :next_trip_mins, :later_trip_mins]
-  defstruct @enforce_keys
+  defstruct @enforce_keys ++ [:previous_departure_mins]
 
   @type t :: %__MODULE__{
           language: Content.Audio.language(),
           destination: PaEss.destination(),
           next_trip_mins: integer(),
-          later_trip_mins: integer()
+          later_trip_mins: integer(),
+          previous_departure_mins: integer() | nil
         }
 
   @spec from_headway_message(Content.Message.t(), Content.Message.t()) :: t() | {t(), t()} | nil
-  def from_headway_message(
-        %Content.Message.Headways.Top{headsign: dest},
-        %Content.Message.Headways.Bottom{range: range, prev_departure_mins: last_departure}
-      )
-      when not is_nil(last_departure) do
-    minutes_word = if last_departure > 1, do: "minutes", else: "minute"
-
-    case range do
-      :none ->
-        %Content.Audio.Custom{
-          message: ""
-        }
-
-      {nil, nil} ->
-        %Content.Audio.Custom{
-          message: ""
-        }
-
-      {single_number, nil} ->
-        %Content.Audio.Custom{
-          message:
-            "Trains to #{unabreviate_headsign(dest)} every #{single_number} minutes.  Previous departure #{
-              last_departure
-            } #{minutes_word} ago"
-        }
-
-      {lower, upper} when upper - lower > 10 ->
-        %Content.Audio.Custom{
-          message:
-            "Trains to #{unabreviate_headsign(dest)} up to every #{upper} minutes.  Previous departure #{
-              last_departure
-            } #{minutes_word} ago"
-        }
-
-      {lower, upper} ->
-        %Content.Audio.Custom{
-          message:
-            "Trains to #{unabreviate_headsign(dest)} every #{lower} to #{upper} minutes.  Previous departure #{
-              last_departure
-            } #{minutes_word} ago"
-        }
-    end
-  end
-
-  def from_headway_message(
-        %Content.Message.Headways.Top{headsign: dest},
-        %Content.Message.Headways.Bottom{range: {lower, upper} = range}
-      )
-      when range != {nil, nil} and upper - lower > 10 do
-    %Content.Audio.Custom{
-      message: "Trains to #{unabreviate_headsign(dest)} up to every #{upper} minutes."
-    }
-  end
-
   def from_headway_message(
         %Content.Message.Headways.Top{headsign: headsign},
         %Content.Message.Headways.Bottom{range: range} = msg
@@ -78,7 +25,8 @@ defmodule Content.Audio.VehiclesToDestination do
       when range != {nil, nil} do
     with {:ok, destination} <- PaEss.Utilities.headsign_to_destination(headsign),
          {x, y} <- get_mins(range) do
-      case {create(:english, destination, x, y), create(:spanish, destination, x, y)} do
+      case {create(:english, destination, x, y, msg.prev_departure_mins),
+            create(:spanish, destination, x, y, msg.prev_departure_mins)} do
         {%__MODULE__{} = a1, %__MODULE__{} = a2} -> {a1, a2}
         {%__MODULE__{} = a, nil} -> a
         _ -> nil
@@ -101,15 +49,24 @@ defmodule Content.Audio.VehiclesToDestination do
     nil
   end
 
-  defp create(language, destination, next_mins, later_mins) do
+  @spec create(
+          Content.Audio.language(),
+          PaEss.destination(),
+          integer(),
+          integer(),
+          integer() | nil
+        ) :: t() | nil
+  defp create(language, destination, next_mins, later_mins, previous_departure_mins) do
     if Utilities.valid_range?(next_mins, language) and
          Utilities.valid_range?(later_mins, language) and
-         Utilities.valid_destination?(destination, language) do
+         Utilities.valid_destination?(destination, language) and
+         not (language == :spanish and !is_nil(previous_departure_mins)) do
       %__MODULE__{
         language: language,
         destination: destination,
         next_trip_mins: next_mins,
-        later_trip_mins: later_mins
+        later_trip_mins: later_mins,
+        previous_departure_mins: previous_departure_mins
       }
     end
   end
@@ -121,19 +78,19 @@ defmodule Content.Audio.VehiclesToDestination do
   defp get_mins({y, x}), do: {x, y}
   defp get_mins(_), do: :error
 
-  @spec unabreviate_headsign(String.t()) :: String.t()
-  defp unabreviate_headsign("Frst Hills"), do: "Forest Hills"
-  defp unabreviate_headsign("Govt Ctr"), do: "Government Center"
-  defp unabreviate_headsign("Park St"), do: "Park Street"
-  defp unabreviate_headsign("Clvlnd Cir"), do: "Cleveland Circle"
-  defp unabreviate_headsign("Boston Col"), do: "Boston College"
-  defp unabreviate_headsign("Heath St"), do: "Heath Street"
-  defp unabreviate_headsign(dest), do: dest
-
   defimpl Content.Audio do
     alias PaEss.Utilities
 
-    def to_params(audio) do
+    def to_params(
+          %Content.Audio.VehiclesToDestination{
+            next_trip_mins: next_trip_mins,
+            later_trip_mins: later_trip_mins,
+            previous_departure_mins: nil,
+            language: language
+          } = audio
+        )
+        when (later_trip_mins - next_trip_mins <= 10 or language == :spanish) and
+               next_trip_mins != later_trip_mins do
       case vars(audio) do
         nil ->
           Logger.warn("no_audio_for_headway_range #{inspect(audio)}")
@@ -143,6 +100,41 @@ defmodule Content.Audio.VehiclesToDestination do
           {:canned, {message_id(audio), vars, :audio}}
       end
     end
+
+    def to_params(%Content.Audio.VehiclesToDestination{language: :english} = audio) do
+      destination_string = PaEss.Utilities.destination_to_ad_hoc_string(audio.destination)
+
+      vehicles_to_destination =
+        if audio.destination in [:northbound, :southbound, :eastbound, :westbound] do
+          destination_string <> " trains"
+        else
+          "Trains to " <> destination_string
+        end
+
+      minutes_range =
+        cond do
+          audio.next_trip_mins == audio.later_trip_mins ->
+            " every #{audio.next_trip_mins} minutes."
+
+          audio.later_trip_mins - audio.next_trip_mins <= 10 ->
+            " every #{audio.next_trip_mins} to #{audio.later_trip_mins} minutes."
+
+          true ->
+            " up to every #{audio.later_trip_mins} minutes."
+        end
+
+      previous_departure =
+        if audio.previous_departure_mins do
+          minutes_word = if audio.previous_departure_mins == 1, do: "minute", else: "minutes"
+          "  Previous departure #{audio.previous_departure_mins} #{minutes_word} ago."
+        else
+          ""
+        end
+
+      {:ad_hoc, {vehicles_to_destination <> minutes_range <> previous_departure, :audio}}
+    end
+
+    def to_params(_audio), do: nil
 
     @spec message_id(Content.Audio.VehiclesToDestination.t()) :: String.t()
     defp message_id(%{language: :english, destination: :alewife}), do: "175"

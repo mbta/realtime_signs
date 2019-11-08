@@ -4,64 +4,161 @@ defmodule Content.Audio.VehiclesToDestinationTest do
 
   import Content.Audio.VehiclesToDestination
 
-  test "Buses to Chelsea in English" do
-    audio = %Content.Audio.VehiclesToDestination{
-      destination: :chelsea,
-      language: :english,
-      next_trip_mins: 7,
-      later_trip_mins: 10
-    }
+  describe "to_params/1" do
+    test "Buses to Chelsea in English" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :chelsea,
+        language: :english,
+        next_trip_mins: 7,
+        later_trip_mins: 10
+      }
 
-    assert Content.Audio.to_params(audio) == {:canned, {"133", ["5507", "5510"], :audio}}
-  end
+      assert Content.Audio.to_params(audio) == {:canned, {"133", ["5507", "5510"], :audio}}
+    end
 
-  test "Buses to Chelsea in Spanish" do
-    audio = %Content.Audio.VehiclesToDestination{
-      destination: :chelsea,
-      language: :spanish,
-      next_trip_mins: 7,
-      later_trip_mins: 10
-    }
+    test "Buses to Chelsea in Spanish" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :chelsea,
+        language: :spanish,
+        next_trip_mins: 7,
+        later_trip_mins: 10
+      }
 
-    assert Content.Audio.to_params(audio) == {:canned, {"150", ["37007", "37010"], :audio}}
-  end
+      assert Content.Audio.to_params(audio) == {:canned, {"150", ["37007", "37010"], :audio}}
+    end
 
-  test "Buses to South Station in English" do
-    audio = %Content.Audio.VehiclesToDestination{
-      destination: :south_station,
-      language: :english,
-      next_trip_mins: 7,
-      later_trip_mins: 10
-    }
+    test "Buses to South Station in English" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :south_station,
+        language: :english,
+        next_trip_mins: 7,
+        later_trip_mins: 10
+      }
 
-    assert Content.Audio.to_params(audio) == {:canned, {"134", ["5507", "5510"], :audio}}
-  end
+      assert Content.Audio.to_params(audio) == {:canned, {"134", ["5507", "5510"], :audio}}
+    end
 
-  test "Buses to South Station in Spanish" do
-    audio = %Content.Audio.VehiclesToDestination{
-      destination: :south_station,
-      language: :spanish,
-      next_trip_mins: 7,
-      later_trip_mins: 10
-    }
+    test "Buses to South Station in Spanish" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :south_station,
+        language: :spanish,
+        next_trip_mins: 7,
+        later_trip_mins: 10
+      }
 
-    assert Content.Audio.to_params(audio) == {:canned, {"151", ["37007", "37010"], :audio}}
-  end
+      assert Content.Audio.to_params(audio) == {:canned, {"151", ["37007", "37010"], :audio}}
+    end
 
-  test "Buses to South Station in Spanish, headway out of range" do
-    audio = %Content.Audio.VehiclesToDestination{
-      destination: :south_station,
-      language: :spanish,
-      next_trip_mins: 7,
-      later_trip_mins: 21
-    }
+    test "Buses to South Station in Spanish, headway out of range" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :south_station,
+        language: :spanish,
+        next_trip_mins: 7,
+        later_trip_mins: 21
+      }
 
-    log =
-      capture_log([level: :warn], fn ->
-        assert Content.Audio.to_params(audio) == nil
-      end)
+      log =
+        capture_log([level: :warn], fn ->
+          assert Content.Audio.to_params(audio) == nil
+        end)
 
-    assert log =~ "no_audio_for_headway_range"
+      assert log =~ "no_audio_for_headway_range"
+    end
+
+    test "Buses to South Station in Spanish, headway range of more than 10 minutes but still uses canned message" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :south_station,
+        language: :spanish,
+        next_trip_mins: 7,
+        later_trip_mins: 18
+      }
+
+      assert Content.Audio.to_params(audio) == {:canned, {"151", ["37007", "37018"], :audio}}
+    end
+
+    test "returns a robo-voice message for headways with a last departure" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :lechmere,
+        language: :english,
+        next_trip_mins: 5,
+        later_trip_mins: 7,
+        previous_departure_mins: 5
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc,
+                {"Trains to Lechmere every 5 to 7 minutes.  Previous departure 5 minutes ago.",
+                 :audio}}
+    end
+
+    test "returns a robo-voice message for headways with a single number range" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :lechmere,
+        language: :english,
+        next_trip_mins: 7,
+        later_trip_mins: 7
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc, {"Trains to Lechmere every 7 minutes.", :audio}}
+    end
+
+    test "singularizes the minutes when the last departure was one minute ago" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :lechmere,
+        language: :english,
+        next_trip_mins: 5,
+        later_trip_mins: 7,
+        previous_departure_mins: 1
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc,
+                {"Trains to Lechmere every 5 to 7 minutes.  Previous departure 1 minute ago.",
+                 :audio}}
+    end
+
+    test "returns a robo-voice message for a headway range that is too big" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :lechmere,
+        language: :english,
+        next_trip_mins: 5,
+        later_trip_mins: 20,
+        previous_departure_mins: 5
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc,
+                {"Trains to Lechmere up to every 20 minutes.  Previous departure 5 minutes ago.",
+                 :audio}}
+    end
+
+    test "returns a robo-voice message for a headway that is too big with no last departure" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :lechmere,
+        language: :english,
+        next_trip_mins: 5,
+        later_trip_mins: 20
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc, {"Trains to Lechmere up to every 20 minutes.", :audio}}
+    end
+
+    test "returns correct audio for cardinal direction, rather than terminal, headways" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :southbound,
+        language: :english,
+        next_trip_mins: 5,
+        later_trip_mins: 7,
+        previous_departure_mins: 3
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc,
+                {"Southbound trains every 5 to 7 minutes.  Previous departure 3 minutes ago.",
+                 :audio}}
+    end
   end
 
   describe "from_headway_message/2" do
@@ -249,99 +346,6 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                next_trip_mins: 20,
                later_trip_mins: 25
              } = from_headway_message(%Content.Message.Headways.Top{headsign: "Chelsea"}, msg)
-    end
-
-    test "returns a robo-voice message for headways with a last departure" do
-      assert %Content.Audio.Custom{
-               message:
-                 "Trains to Lechmere every 5 to 7 minutes.  Previous departure 5 minutes ago"
-             } =
-               from_headway_message(
-                 %Content.Message.Headways.Top{headsign: "Lechmere"},
-                 %Content.Message.Headways.Bottom{@msg | prev_departure_mins: 5}
-               )
-    end
-
-    test "returns a robo-voice message for a single-number headway with a last departure" do
-      assert %Content.Audio.Custom{
-               message: "Trains to Lechmere every 8 minutes.  Previous departure 5 minutes ago"
-             } =
-               from_headway_message(
-                 %Content.Message.Headways.Top{headsign: "Lechmere"},
-                 %Content.Message.Headways.Bottom{@msg | range: {8, nil}, prev_departure_mins: 5}
-               )
-    end
-
-    test "singularizes the minutes when the last departure was one minute ago" do
-      assert %Content.Audio.Custom{
-               message: "Trains to Lechmere every 8 minutes.  Previous departure 1 minute ago"
-             } =
-               from_headway_message(
-                 %Content.Message.Headways.Top{headsign: "Lechmere"},
-                 %Content.Message.Headways.Bottom{@msg | range: {8, nil}, prev_departure_mins: 1}
-               )
-    end
-
-    test "unabreviates the headsign before putting it in custom message" do
-      assert %Content.Audio.Custom{
-               message: "Trains to Forest Hills every 8 minutes.  Previous departure 1 minute ago"
-             } =
-               from_headway_message(
-                 %Content.Message.Headways.Top{headsign: "Frst Hills"},
-                 %Content.Message.Headways.Bottom{@msg | range: {8, nil}, prev_departure_mins: 1}
-               )
-    end
-
-    test "returns a robo-voice message for a {nil, nil} headway with a last departure" do
-      assert %Content.Audio.Custom{
-               message: ""
-             } =
-               from_headway_message(
-                 %Content.Message.Headways.Top{headsign: "Lechmere"},
-                 %Content.Message.Headways.Bottom{
-                   @msg
-                   | range: {nil, nil},
-                     prev_departure_mins: 5
-                 }
-               )
-    end
-
-    test "returns a robo-voice message for a :none headway with a last departure" do
-      assert %Content.Audio.Custom{
-               message: ""
-             } =
-               from_headway_message(
-                 %Content.Message.Headways.Top{headsign: "Lechmere"},
-                 %Content.Message.Headways.Bottom{@msg | range: :none, prev_departure_mins: 5}
-               )
-    end
-
-    test "returns a robo-voice message for a headway that is too big" do
-      assert %Content.Audio.Custom{
-               message:
-                 "Trains to Lechmere up to every 20 minutes.  Previous departure 5 minutes ago"
-             } =
-               from_headway_message(
-                 %Content.Message.Headways.Top{headsign: "Lechmere"},
-                 %Content.Message.Headways.Bottom{
-                   @msg
-                   | range: {5, 20},
-                     prev_departure_mins: 5
-                 }
-               )
-    end
-
-    test "returns a robo-voice message for a headway that is too big with no last departure" do
-      assert %Content.Audio.Custom{
-               message: "Trains to Lechmere up to every 20 minutes."
-             } =
-               from_headway_message(
-                 %Content.Message.Headways.Top{headsign: "Lechmere"},
-                 %Content.Message.Headways.Bottom{
-                   @msg
-                   | range: {5, 20}
-                 }
-               )
     end
   end
 end
