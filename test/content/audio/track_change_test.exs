@@ -57,6 +57,31 @@ defmodule Content.Audio.TrackChangeTest do
                  ], :audio_visual}}
     end
 
+    test "omits branch letter from Kenmore-bound trains" do
+      audio = %Content.Audio.TrackChange{
+        destination: :kenmore,
+        route_id: "Green-D",
+        track: 2
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"109",
+                 [
+                   "540",
+                   "21000",
+                   "501",
+                   "21000",
+                   "507",
+                   "21000",
+                   "4070",
+                   "21000",
+                   "544",
+                   "21000",
+                   "542"
+                 ], :audio_visual}}
+    end
+
     test "Handles unknown destination gracefully" do
       audio = %Content.Audio.TrackChange{
         destination: :unknown,
