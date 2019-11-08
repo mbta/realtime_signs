@@ -165,19 +165,19 @@ defmodule Signs.Realtime do
 
   @spec announce_passthrough_trains(Signs.Realtime.t()) :: Signs.Realtime.t()
   defp announce_passthrough_trains(sign) do
-    audio = Utilities.Predictions.get_passthrough_train_audio(sign)
+    sign
+    |> Utilities.Predictions.get_passthrough_train_audio()
+    |> Enum.reduce(sign, fn audio, sign ->
+      if audio.trip_id not in sign.announced_passthroughs do
+        sign.sign_updater.send_audio(sign.audio_id, audio, 5, 60)
 
-    if audio && audio.trip_id not in sign.announced_passthroughs do
-      sign.sign_updater.send_audio(sign.audio_id, audio, 5, 60)
-
-      %__MODULE__{
+        update_in(sign.announced_passthroughs, fn list ->
+          Enum.take([audio.trip_id | list], @announced_history_length)
+        end)
+      else
         sign
-        | announced_passthroughs:
-            Enum.take([audio.trip_id | sign.announced_passthroughs], @announced_history_length)
-      }
-    else
-      sign
-    end
+      end
+    end)
   end
 
   @spec do_expiration(Signs.Realtime.t()) :: Signs.Realtime.t()
