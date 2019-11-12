@@ -21,19 +21,38 @@ defmodule Content.Audio.TrackChange do
     @is_now_boarding "544"
     @on_track_1 "541"
     @on_track_2 "542"
+    @space "21000"
 
     def to_params(audio) do
       case PaEss.Utilities.destination_var(audio.destination) do
         {:ok, dest_var} ->
-          vars = [
-            @track_change,
-            @the_next,
-            branch_letter(audio.route_id),
-            @train_to,
-            dest_var,
-            @is_now_boarding,
-            track(audio.track)
-          ]
+          vars =
+            if audio.destination == :kenmore do
+              Enum.intersperse(
+                [
+                  @track_change,
+                  @the_next,
+                  @train_to,
+                  dest_var,
+                  @is_now_boarding,
+                  track(audio.track)
+                ],
+                @space
+              )
+            else
+              Enum.intersperse(
+                [
+                  @track_change,
+                  @the_next,
+                  branch_letter(audio.route_id),
+                  @train_to,
+                  dest_var,
+                  @is_now_boarding,
+                  track(audio.track)
+                ],
+                @space
+              )
+            end
 
           {:canned, {"109", vars, :audio_visual}}
 
