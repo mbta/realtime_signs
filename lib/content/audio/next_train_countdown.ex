@@ -119,7 +119,7 @@ defmodule Content.Audio.NextTrainCountdown do
             verb_var(audio),
             @in_,
             minutes_var(audio),
-            @minutes,
+            minute_or_minutes(audio),
             track(audio.track_number)
           ],
           @space

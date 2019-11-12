@@ -309,7 +309,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
                    "21000",
                    "5001",
                    "21000",
-                   "505",
+                   "532",
                    "21000",
                    "541"
                  ], :audio}}
