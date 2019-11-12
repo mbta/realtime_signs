@@ -12,7 +12,22 @@ defmodule Content.Audio.TrackChangeTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"109", ["540", "501", "536", "507", "4202", "544", "541"], :audio_visual}}
+                {"109",
+                 [
+                   "540",
+                   "21000",
+                   "501",
+                   "21000",
+                   "536",
+                   "21000",
+                   "507",
+                   "21000",
+                   "4202",
+                   "21000",
+                   "544",
+                   "21000",
+                   "541"
+                 ], :audio_visual}}
     end
 
     test "correctly changes tracks for c/e" do
@@ -24,7 +39,47 @@ defmodule Content.Audio.TrackChangeTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"109", ["540", "501", "539", "507", "4204", "544", "541"], :audio_visual}}
+                {"109",
+                 [
+                   "540",
+                   "21000",
+                   "501",
+                   "21000",
+                   "539",
+                   "21000",
+                   "507",
+                   "21000",
+                   "4204",
+                   "21000",
+                   "544",
+                   "21000",
+                   "541"
+                 ], :audio_visual}}
+    end
+
+    test "omits branch letter from Kenmore-bound trains" do
+      audio = %Content.Audio.TrackChange{
+        destination: :kenmore,
+        route_id: "Green-D",
+        track: 2
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"109",
+                 [
+                   "540",
+                   "21000",
+                   "501",
+                   "21000",
+                   "507",
+                   "21000",
+                   "4070",
+                   "21000",
+                   "544",
+                   "21000",
+                   "542"
+                 ], :audio_visual}}
     end
 
     test "Handles unknown destination gracefully" do
