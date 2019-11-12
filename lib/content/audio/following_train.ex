@@ -3,13 +3,14 @@ defmodule Content.Audio.FollowingTrain do
   The following train to [destination] arrives in [n] minutes.
   """
 
-  @enforce_keys [:destination, :verb, :minutes]
+  @enforce_keys [:destination, :route_id, :verb, :minutes]
   defstruct @enforce_keys
 
   @type verb :: :arrives | :departs
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
+          route_id: String.t(),
           verb: verb(),
           minutes: integer()
         }
@@ -24,13 +25,14 @@ defmodule Content.Audio.FollowingTrain do
         %{
           terminal?: terminal
         },
-        %Content.Message.Predictions{minutes: n, headsign: headsign}
+        %Content.Message.Predictions{minutes: n, headsign: headsign, route_id: route_id}
       })
       when is_integer(n) do
     case PaEss.Utilities.headsign_to_destination(headsign) do
       {:ok, destination} ->
         %__MODULE__{
           destination: destination,
+          route_id: route_id,
           minutes: n,
           verb: arrives_or_departs(terminal)
         }

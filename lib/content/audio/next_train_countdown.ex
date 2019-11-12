@@ -3,13 +3,14 @@ defmodule Content.Audio.NextTrainCountdown do
   The next train to [destination] arrives in [n] minutes.
   """
 
-  @enforce_keys [:destination, :verb, :minutes, :track_number]
+  @enforce_keys [:destination, :route_id, :verb, :minutes, :track_number]
   defstruct @enforce_keys ++ [platform: nil]
 
   @type verb :: :arrives | :departs
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
+          route_id: String.t(),
           verb: verb(),
           minutes: integer(),
           track_number: Content.Utilities.track_number() | nil,
