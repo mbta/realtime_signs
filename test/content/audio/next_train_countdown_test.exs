@@ -6,6 +6,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Next train to Ashmont" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :ashmont,
+        route_id: "Mattapan",
         verb: :arrives,
         minutes: 5,
         track_number: nil,
@@ -18,6 +19,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Next train to Mattapan" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :mattapan,
+        route_id: "Mattapan",
         verb: :arrives,
         minutes: 5,
         track_number: nil,
@@ -30,6 +32,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Next train to Bowdoin" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :bowdoin,
+        route_id: "Blue",
         verb: :arrives,
         minutes: 5,
         track_number: nil,
@@ -42,6 +45,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Next train to Wonderland" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :wonderland,
+        route_id: "Blue",
         verb: :arrives,
         minutes: 5,
         track_number: nil,
@@ -54,6 +58,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Next train to Forest Hills" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :forest_hills,
+        route_id: "Orange",
         verb: :arrives,
         minutes: 5,
         track_number: nil,
@@ -66,6 +71,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Next train to Oak Grove" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :oak_grove,
+        route_id: "Orange",
         verb: :arrives,
         minutes: 5,
         track_number: nil,
@@ -78,6 +84,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Next train to Alewife" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :alewife,
+        route_id: "Red",
         verb: :arrives,
         minutes: 5,
         track_number: nil,
@@ -90,6 +97,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Next train to Alewife arrives in one minute" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :alewife,
+        route_id: "Red",
         verb: :arrives,
         minutes: 1,
         track_number: nil,
@@ -102,6 +110,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Next train to Alewife on the Ashmont platform" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :alewife,
+        route_id: "Red",
         verb: :arrives,
         minutes: 5,
         track_number: nil,
@@ -115,6 +124,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Next train to Alewife on the Ashmont platform arrives in one minute" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :alewife,
+        route_id: "Red",
         verb: :arrives,
         minutes: 1,
         track_number: nil,
@@ -127,6 +137,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Next train to Alewife on the Braintree platform" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :alewife,
+        route_id: "Red",
         verb: :arrives,
         minutes: 5,
         track_number: nil,
@@ -140,6 +151,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Next train to Braintree" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :braintree,
+        route_id: "Red",
         verb: :arrives,
         minutes: 5,
         track_number: nil,
@@ -152,6 +164,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Uses audio for 30 minutes when train is more than 30 minutes away" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :wonderland,
+        route_id: "Blue",
         verb: :arrives,
         minutes: 50,
         track_number: nil,
@@ -164,6 +177,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Next train to Braintree on track 1" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :braintree,
+        route_id: "Red",
         verb: :departs,
         minutes: 5,
         track_number: 1,
@@ -195,6 +209,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     test "Next train to Braintree in 1 minute on track 1" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :braintree,
+        route_id: "Red",
         verb: :departs,
         minutes: 1,
         track_number: 1,
@@ -227,6 +242,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
   test "The next southbound train in 1 minute" do
     audio = %Content.Audio.NextTrainCountdown{
       destination: :southbound,
+      route_id: "Red",
       verb: :arrives,
       minutes: 1,
       track_number: nil,
@@ -240,6 +256,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
   test "The next southbound train in multiple minutes" do
     audio = %Content.Audio.NextTrainCountdown{
       destination: :southbound,
+      route_id: "Red",
       verb: :arrives,
       minutes: 5,
       track_number: nil,
@@ -253,6 +270,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
   test "The next southbound train on track 1" do
     audio = %Content.Audio.NextTrainCountdown{
       destination: :southbound,
+      route_id: "Red",
       verb: :departs,
       minutes: 5,
       track_number: 1,
@@ -266,6 +284,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
   test "Handles unknown destination gracefully" do
     audio = %Content.Audio.NextTrainCountdown{
       destination: :unknown,
+      route_id: "Red",
       verb: :departs,
       minutes: 5,
       track_number: 1,

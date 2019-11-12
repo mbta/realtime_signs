@@ -6,6 +6,7 @@ defmodule Content.Audio.FollowingTrainTest do
     test "Following train to Ashmont" do
       audio = %Content.Audio.FollowingTrain{
         destination: :ashmont,
+        route_id: "Mattapan",
         verb: :arrives,
         minutes: 5
       }
@@ -46,7 +47,11 @@ defmodule Content.Audio.FollowingTrainTest do
     end
 
     test "when its a non terminal it uses arrives" do
-      message = %Content.Message.Predictions{headsign: "Ashmont", minutes: 5}
+      message = %Content.Message.Predictions{
+        headsign: "Ashmont",
+        route_id: "Mattapan",
+        minutes: 5
+      }
 
       audio =
         Content.Audio.FollowingTrain.from_predictions_message(
@@ -58,13 +63,18 @@ defmodule Content.Audio.FollowingTrainTest do
 
       assert audio == %Content.Audio.FollowingTrain{
                destination: :ashmont,
+               route_id: "Mattapan",
                minutes: 5,
                verb: :arrives
              }
     end
 
     test "when its a terminal it uses departs" do
-      message = %Content.Message.Predictions{headsign: "Ashmont", minutes: 5}
+      message = %Content.Message.Predictions{
+        headsign: "Ashmont",
+        route_id: "Mattapan",
+        minutes: 5
+      }
 
       audio =
         Content.Audio.FollowingTrain.from_predictions_message(
@@ -76,6 +86,7 @@ defmodule Content.Audio.FollowingTrainTest do
 
       assert audio == %Content.Audio.FollowingTrain{
                destination: :ashmont,
+               route_id: "Mattapan",
                minutes: 5,
                verb: :departs
              }
@@ -84,6 +95,7 @@ defmodule Content.Audio.FollowingTrainTest do
     test "when its 1 minute, uses the right singular announcement" do
       audio = %Content.Audio.FollowingTrain{
         destination: :ashmont,
+        route_id: "Mattpan",
         verb: :arrives,
         minutes: 1
       }
@@ -94,6 +106,7 @@ defmodule Content.Audio.FollowingTrainTest do
     test "returns ad_hoc audio when the destination is 'southbound'" do
       audio = %Content.Audio.FollowingTrain{
         destination: :southbound,
+        route_id: "Red",
         verb: :arrives,
         minutes: 3
       }
@@ -105,6 +118,7 @@ defmodule Content.Audio.FollowingTrainTest do
     test "Handles unknown destination gracefully" do
       audio = %Content.Audio.FollowingTrain{
         destination: :unknown,
+        route_id: "Foo",
         verb: :arrives,
         minutes: 3
       }
