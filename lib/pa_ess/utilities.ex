@@ -108,4 +108,10 @@ defmodule PaEss.Utilities do
   def headsign_to_destination("Eastbound"), do: {:ok, :eastbound}
   def headsign_to_destination("Westbound"), do: {:ok, :westbound}
   def headsign_to_destination(_unknown), do: {:error, :unknown}
+
+  @spec green_line_branch_var(Content.Utilities.green_line_branch()) :: String.t()
+  def green_line_branch_var(:b), do: "536"
+  def green_line_branch_var(:c), do: "537"
+  def green_line_branch_var(:d), do: "538"
+  def green_line_branch_var(:e), do: "539"
 end
