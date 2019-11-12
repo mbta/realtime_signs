@@ -28,35 +28,30 @@ defmodule Content.Audio.TrackChange do
         {:ok, dest_var} ->
           vars =
             if audio.destination == :kenmore do
-              [
-                @track_change,
-                @space,
-                @the_next,
-                @space,
-                @train_to,
-                @space,
-                dest_var,
-                @space,
-                @is_now_boarding,
-                @space,
-                track(audio.track)
-              ]
+              Enum.intersperse(
+                [
+                  @track_change,
+                  @the_next,
+                  @train_to,
+                  dest_var,
+                  @is_now_boarding,
+                  track(audio.track)
+                ],
+                @space
+              )
             else
-              [
-                @track_change,
-                @space,
-                @the_next,
-                @space,
-                branch_letter(audio.route_id),
-                @space,
-                @train_to,
-                @space,
-                dest_var,
-                @space,
-                @is_now_boarding,
-                @space,
-                track(audio.track)
-              ]
+              Enum.intersperse(
+                [
+                  @track_change,
+                  @the_next,
+                  branch_letter(audio.route_id),
+                  @train_to,
+                  dest_var,
+                  @is_now_boarding,
+                  track(audio.track)
+                ],
+                @space
+              )
             end
 
           {:canned, {"109", vars, :audio_visual}}
