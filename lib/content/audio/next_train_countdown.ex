@@ -74,23 +74,20 @@ defmodule Content.Audio.NextTrainCountdown do
     @spec terminal_track_params(Content.Audio.NextTrainCountdown.t(), String.t()) ::
             Content.Audio.canned_message()
     defp terminal_track_params(audio, destination_var) do
-      vars = [
-        @the_next,
-        @space,
-        @train_to,
-        @space,
-        destination_var,
-        @space,
-        verb_var(audio),
-        @space,
-        @in_,
-        @space,
-        minutes_var(audio),
-        @space,
-        @minutes,
-        @space,
-        track(audio.track_number)
-      ]
+      vars =
+        Enum.intersperse(
+          [
+            @the_next,
+            @train_to,
+            destination_var,
+            verb_var(audio),
+            @in_,
+            minutes_var(audio),
+            @minutes,
+            track(audio.track_number)
+          ],
+          @space
+        )
 
       {:canned, {Utilities.take_message_id(vars), vars, :audio}}
     end
