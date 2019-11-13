@@ -4,7 +4,6 @@ defmodule Signs.Utilities.Headways do
   geneartes the top and bottom lines for the sign
   """
   alias Signs.Utilities.SourceConfig
-  @alert_headway_factor 1.4
 
   @spec get_messages(Signs.Realtime.t(), DateTime.t()) ::
           {{SourceConfig.source() | nil, Content.Message.t()},
@@ -28,16 +27,6 @@ defmodule Signs.Utilities.Headways do
     stop_id = sign.headway_stop_id || config.stop_id
     headway_range = sign.headway_engine.get_headways(stop_id)
     last_departure = sign.last_departure_engine.get_last_departure(config.stop_id)
-
-    sign_stop_ids =
-      sign.source_config
-      |> Signs.Utilities.SourceConfig.sign_stop_ids()
-
-    sign_routes =
-      sign.source_config
-      |> Signs.Utilities.SourceConfig.sign_routes()
-
-    alert_status = sign.alerts_engine.max_stop_status(sign_stop_ids, sign_routes)
 
     case headway_range do
       :none ->
@@ -68,16 +57,6 @@ defmodule Signs.Utilities.Headways do
         end
 
       {bottom, top} ->
-        adjusted_range =
-          if alert_status != :none do
-            {
-              if(bottom, do: (bottom * @alert_headway_factor) |> round()),
-              if(top, do: (top * @alert_headway_factor) |> round)
-            }
-          else
-            {bottom, top}
-          end
-
         {{config,
           %Content.Message.Headways.Top{
             headsign: config.headway_direction_name,
@@ -85,7 +64,7 @@ defmodule Signs.Utilities.Headways do
           }},
          {config,
           %Content.Message.Headways.Bottom{
-            range: adjusted_range,
+            range: {bottom, top},
             prev_departure_mins: minutes_ago(last_departure, current_time)
           }}}
     end

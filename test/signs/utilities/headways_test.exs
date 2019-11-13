@@ -2,11 +2,6 @@ defmodule Signs.Utilities.HeadwaysTest do
   use ExUnit.Case
 
   defmodule FakeAlerts do
-    def max_stop_status(["suspended"], _routes), do: :suspension_closed_station
-    def max_stop_status(["suspended_transfer"], _routes), do: :suspension_transfer_station
-    def max_stop_status(["shuttles"], _routes), do: :shuttles_closed_station
-    def max_stop_status(["closure"], _routes), do: :station_closure
-    def max_stop_status(_stops, ["Green-B"]), do: :alert_along_route
     def max_stop_status(_stops, _routes), do: :none
   end
 
@@ -139,66 +134,6 @@ defmodule Signs.Utilities.HeadwaysTest do
                 {source_with_headway,
                  %Content.Message.Headways.Bottom{
                    range: {2, 8},
-                   prev_departure_mins: 5
-                 }}}
-    end
-
-    test "increases the headways if there are alerts on the route" do
-      source_config = %{source_config_for_stop_id("a") | routes: ["Green-B"]}
-
-      sign = %{
-        @sign
-        | source_config: {[source_config]}
-      }
-
-      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
-
-      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
-               {{source_config,
-                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_config,
-                 %Content.Message.Headways.Bottom{
-                   range: {3, 11},
-                   prev_departure_mins: 5
-                 }}}
-    end
-
-    test "increases the headways if there are alerts on the route and it only gets a bottom end of the range" do
-      source_config = %{source_config_for_stop_id("h") | routes: ["Green-B"]}
-
-      sign = %{
-        @sign
-        | source_config: {[source_config]}
-      }
-
-      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
-
-      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
-               {{source_config,
-                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_config,
-                 %Content.Message.Headways.Bottom{
-                   range: {3, nil},
-                   prev_departure_mins: 5
-                 }}}
-    end
-
-    test "increases the headways if there are alerts on the route and it only gets a top end of the range" do
-      source_config = %{source_config_for_stop_id("g") | routes: ["Green-B"]}
-
-      sign = %{
-        @sign
-        | source_config: {[source_config]}
-      }
-
-      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
-
-      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
-               {{source_config,
-                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
-                {source_config,
-                 %Content.Message.Headways.Bottom{
-                   range: {nil, 7},
                    prev_departure_mins: 5
                  }}}
     end
