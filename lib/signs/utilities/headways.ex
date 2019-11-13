@@ -36,10 +36,10 @@ defmodule Signs.Utilities.Headways do
         {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
 
       {:first_departure, range, first_departure} ->
-        max_headway = Headway.ScheduleHeadway.max_headway(range)
+        max_headway = Headway.HeadwayDisplay.max_headway(range)
         time_buffer = if max_headway, do: max_headway, else: 0
 
-        if Headway.ScheduleHeadway.show_first_departure?(
+        if Headway.HeadwayDisplay.show_first_departure?(
              first_departure,
              Timex.now(),
              time_buffer

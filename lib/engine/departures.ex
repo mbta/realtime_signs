@@ -61,7 +61,7 @@ defmodule Engine.Departures do
     )
   end
 
-  @spec get_headways(GenServer.server(), String.t()) :: Headway.ScheduleHeadway.headway_range()
+  @spec get_headways(GenServer.server(), String.t()) :: Headway.HeadwayDisplay.headway_range()
   def get_headways(pid \\ __MODULE__, stop_id) do
     GenServer.call(pid, {:get_headways, stop_id})
   end

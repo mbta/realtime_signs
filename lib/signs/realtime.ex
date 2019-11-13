@@ -260,7 +260,7 @@ defmodule Signs.Realtime do
         } = sign
       )
       when not is_nil(last_departure) do
-    max_headway = Headway.ScheduleHeadway.max_headway(range)
+    max_headway = Headway.HeadwayDisplay.max_headway(range)
 
     Logger.info(
       "headway_accuracy_check stop_id=#{
