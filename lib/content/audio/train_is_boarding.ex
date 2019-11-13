@@ -58,11 +58,14 @@ defmodule Content.Audio.TrainIsBoarding do
     end
 
     defp do_to_params(
-           %{route_id: route_id, track_number: track_number},
+           %{destination: destination, route_id: route_id, track_number: track_number},
            destination_var
          ) do
       {vars, message_type} =
-        case {branch_letter(route_id), track_number} do
+        case {Content.Utilities.route_and_destination_branch_letter(
+                route_id,
+                destination
+              ), track_number} do
           {nil, nil} ->
             {[
                @the_next,
@@ -84,10 +87,10 @@ defmodule Content.Audio.TrainIsBoarding do
                track(track_number)
              ], :audio}
 
-          {branch_letter, _track_number} ->
+          {green_line_branch, _track_number} ->
             {[
                @the_next,
-               branch_letter,
+               PaEss.Utilities.green_line_branch_var(green_line_branch),
                @train_to,
                destination_var,
                @is_now_boarding
@@ -100,12 +103,5 @@ defmodule Content.Audio.TrainIsBoarding do
     @spec track(Content.Utilities.track_number()) :: String.t()
     defp track(1), do: @on_track_1
     defp track(2), do: @on_track_2
-
-    @spec branch_letter(String.t()) :: String.t() | nil
-    defp branch_letter("Green-B"), do: "536"
-    defp branch_letter("Green-C"), do: "537"
-    defp branch_letter("Green-D"), do: "538"
-    defp branch_letter("Green-E"), do: "539"
-    defp branch_letter(_), do: nil
   end
 end
