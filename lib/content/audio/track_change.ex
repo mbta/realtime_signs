@@ -21,7 +21,6 @@ defmodule Content.Audio.TrackChange do
     @is_now_boarding "544"
     @on_track_1 "541"
     @on_track_2 "542"
-    @space "21000"
 
     def to_params(audio) do
       case PaEss.Utilities.destination_var(audio.destination) do
@@ -32,34 +31,28 @@ defmodule Content.Audio.TrackChange do
                    audio.destination
                  ) do
               nil ->
-                Enum.intersperse(
-                  [
-                    @track_change,
-                    @the_next,
-                    @train_to,
-                    dest_var,
-                    @is_now_boarding,
-                    track(audio.track)
-                  ],
-                  @space
-                )
+                [
+                  @track_change,
+                  @the_next,
+                  @train_to,
+                  dest_var,
+                  @is_now_boarding,
+                  track(audio.track)
+                ]
 
               branch ->
-                Enum.intersperse(
-                  [
-                    @track_change,
-                    @the_next,
-                    PaEss.Utilities.green_line_branch_var(branch),
-                    @train_to,
-                    dest_var,
-                    @is_now_boarding,
-                    track(audio.track)
-                  ],
-                  @space
-                )
+                [
+                  @track_change,
+                  @the_next,
+                  PaEss.Utilities.green_line_branch_var(branch),
+                  @train_to,
+                  dest_var,
+                  @is_now_boarding,
+                  track(audio.track)
+                ]
             end
 
-          {:canned, {"109", vars, :audio_visual}}
+          PaEss.Utilities.take_message(vars, :audio_visual)
 
         {:error, :unknown} ->
           Logger.error("TrackChange.to_params unknown destination: #{inspect(audio.destination)}")

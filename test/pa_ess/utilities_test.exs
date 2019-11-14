@@ -31,6 +31,11 @@ defmodule Content.Audio.UtilitiesTest do
     assert countdown_minutes_var(10) == "5010"
   end
 
+  test "take_message/2" do
+    assert take_message(["1", "2", "3"], :audio_visual) ==
+             {:canned, {"107", ["1", "21000", "2", "21000", "3"], :audio_visual}}
+  end
+
   test "take_message_id/1" do
     assert take_message_id(["1", "2", "3"]) == "105"
   end

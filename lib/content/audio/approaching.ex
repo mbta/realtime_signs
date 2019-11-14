@@ -47,6 +47,7 @@ defmodule Content.Audio.Approaching do
           to_params(%Content.Audio.Approaching{audio | new_cars?: false})
 
         var ->
+          # can't use take_message/2 directly as the spaces cause problems
           vars = [@attention_passengers, var, @now_approaching_new_ol_cars]
           {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio_visual}}
       end
