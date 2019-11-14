@@ -21,14 +21,16 @@ defmodule Content.Audio.TrackChange do
     @is_now_boarding "544"
     @on_track_1 "541"
     @on_track_2 "542"
-    @space "21000"
 
     def to_params(audio) do
       case PaEss.Utilities.destination_var(audio.destination) do
         {:ok, dest_var} ->
           vars =
-            if audio.destination == :kenmore do
-              Enum.intersperse(
+            case Content.Utilities.route_and_destination_branch_letter(
+                   audio.route_id,
+                   audio.destination
+                 ) do
+              nil ->
                 [
                   @track_change,
                   @the_next,
@@ -36,25 +38,21 @@ defmodule Content.Audio.TrackChange do
                   dest_var,
                   @is_now_boarding,
                   track(audio.track)
-                ],
-                @space
-              )
-            else
-              Enum.intersperse(
+                ]
+
+              branch ->
                 [
                   @track_change,
                   @the_next,
-                  branch_letter(audio.route_id),
+                  PaEss.Utilities.green_line_branch_var(branch),
                   @train_to,
                   dest_var,
                   @is_now_boarding,
                   track(audio.track)
-                ],
-                @space
-              )
+                ]
             end
 
-          {:canned, {"109", vars, :audio_visual}}
+          PaEss.Utilities.take_message(vars, :audio_visual)
 
         {:error, :unknown} ->
           Logger.error("TrackChange.to_params unknown destination: #{inspect(audio.destination)}")
@@ -64,10 +62,5 @@ defmodule Content.Audio.TrackChange do
 
     defp track(1), do: @on_track_1
     defp track(2), do: @on_track_2
-
-    defp branch_letter("Green-B"), do: "536"
-    defp branch_letter("Green-C"), do: "537"
-    defp branch_letter("Green-D"), do: "538"
-    defp branch_letter("Green-E"), do: "539"
   end
 end

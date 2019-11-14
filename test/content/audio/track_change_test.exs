@@ -12,7 +12,7 @@ defmodule Content.Audio.TrackChangeTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"109",
+                {"115",
                  [
                    "540",
                    "21000",
@@ -39,7 +39,7 @@ defmodule Content.Audio.TrackChangeTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"109",
+                {"115",
                  [
                    "540",
                    "21000",
@@ -66,7 +66,7 @@ defmodule Content.Audio.TrackChangeTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"109",
+                {"113",
                  [
                    "540",
                    "21000",

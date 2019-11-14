@@ -60,7 +60,7 @@ defmodule Content.Audio.StoppedTrain do
             stops_away_var(audio.stops_away)
           ]
 
-          {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
+          PaEss.Utilities.take_message(vars, :audio)
 
         {:error, :unknown} ->
           Logger.error(

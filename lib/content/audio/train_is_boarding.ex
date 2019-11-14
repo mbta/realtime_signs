@@ -21,7 +21,6 @@ defmodule Content.Audio.TrainIsBoarding do
     @is_now_boarding "544"
     @on_track_1 "541"
     @on_track_2 "542"
-    @space "21000"
 
     def to_params(%{destination: :southbound, track_number: track_number}) do
       text =
@@ -54,58 +53,50 @@ defmodule Content.Audio.TrainIsBoarding do
         @is_now_boarding
       ]
 
-      {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
+      PaEss.Utilities.take_message(vars, :audio)
     end
 
     defp do_to_params(
-           %{route_id: route_id, track_number: track_number},
+           %{destination: destination, route_id: route_id, track_number: track_number},
            destination_var
          ) do
-      {vars, message_type} =
-        case {branch_letter(route_id), track_number} do
+      vars =
+        case {Content.Utilities.route_and_destination_branch_letter(
+                route_id,
+                destination
+              ), track_number} do
           {nil, nil} ->
-            {[
-               @the_next,
-               @train_to,
-               destination_var,
-               @is_now_boarding
-             ], :audio}
+            [
+              @the_next,
+              @train_to,
+              destination_var,
+              @is_now_boarding
+            ]
 
           {nil, track_number} ->
-            {[
-               @the_next,
-               @space,
-               @train_to,
-               @space,
-               destination_var,
-               @space,
-               @is_now_boarding,
-               @space,
-               track(track_number)
-             ], :audio}
+            [
+              @the_next,
+              @train_to,
+              destination_var,
+              @is_now_boarding,
+              track(track_number)
+            ]
 
-          {branch_letter, _track_number} ->
-            {[
-               @the_next,
-               branch_letter,
-               @train_to,
-               destination_var,
-               @is_now_boarding
-             ], :audio}
+          {green_line_branch, _track_number} ->
+            [
+              @the_next,
+              PaEss.Utilities.green_line_branch_var(green_line_branch),
+              @train_to,
+              destination_var,
+              @is_now_boarding
+            ]
         end
 
-      {:canned, {PaEss.Utilities.take_message_id(vars), vars, message_type}}
+      PaEss.Utilities.take_message(vars, :audio)
     end
 
     @spec track(Content.Utilities.track_number()) :: String.t()
     defp track(1), do: @on_track_1
     defp track(2), do: @on_track_2
-
-    @spec branch_letter(String.t()) :: String.t() | nil
-    defp branch_letter("Green-B"), do: "536"
-    defp branch_letter("Green-C"), do: "537"
-    defp branch_letter("Green-D"), do: "538"
-    defp branch_letter("Green-E"), do: "539"
-    defp branch_letter(_), do: nil
   end
 end

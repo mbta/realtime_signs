@@ -149,6 +149,7 @@ defmodule PaEss.HttpUpdaterTest do
 
       audio = %Content.Audio.NextTrainCountdown{
         destination: :ashmont,
+        route_id: "Mattapan",
         verb: :arrives,
         track_number: nil,
         minutes: 4
@@ -200,6 +201,7 @@ defmodule PaEss.HttpUpdaterTest do
 
       audio1 = %Content.Audio.NextTrainCountdown{
         destination: :ashmont,
+        route_id: "Red",
         verb: :arrives,
         track_number: nil,
         minutes: 2
@@ -207,6 +209,7 @@ defmodule PaEss.HttpUpdaterTest do
 
       audio2 = %Content.Audio.NextTrainCountdown{
         destination: :braintree,
+        route_id: "Red",
         verb: :arrives,
         track_number: nil,
         minutes: 7
@@ -226,6 +229,7 @@ defmodule PaEss.HttpUpdaterTest do
 
     audio = %Content.Audio.NextTrainCountdown{
       destination: :ashmont,
+      route_id: "Red",
       verb: :arrives,
       track_number: nil,
       minutes: 2
