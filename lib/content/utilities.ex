@@ -1,5 +1,6 @@
 defmodule Content.Utilities do
   @type track_number :: non_neg_integer()
+  @type green_line_branch :: :b | :c | :d | :e
 
   defmacro max_time_seconds do
     quote do: 20 * 60
@@ -81,4 +82,13 @@ defmodule Content.Utilities do
   def stop_track_number("Oak Grove-01"), do: 1
   def stop_track_number("Oak Grove-02"), do: 2
   def stop_track_number(_), do: nil
+
+  @spec route_and_destination_branch_letter(String.t(), PaEss.destination()) ::
+          green_line_branch() | nil
+  def route_and_destination_branch_letter("Green-B", :boston_college), do: :b
+  def route_and_destination_branch_letter("Green-C", :cleveland_circle), do: :c
+  def route_and_destination_branch_letter("Green-D", :riverside), do: :d
+  def route_and_destination_branch_letter("Green-D", :reservoir), do: :d
+  def route_and_destination_branch_letter("Green-E", :heath_street), do: :e
+  def route_and_destination_branch_letter(_route_id, _destination), do: nil
 end

@@ -11,7 +11,9 @@ defmodule Content.Audio.TrainIsBoardingTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:canned, {"107", ["501", "538", "507", "4084", "544"], :audio}}
+               {:canned,
+                {"111", ["501", "21000", "538", "21000", "507", "21000", "4084", "21000", "544"],
+                 :audio}}
     end
 
     test "Next train to North Station is now boarding (no branch letter for EB trains)" do
@@ -22,7 +24,8 @@ defmodule Content.Audio.TrainIsBoardingTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:canned, {"106", ["501", "507", "4027", "544"], :audio}}
+               {:canned,
+                {"109", ["501", "21000", "507", "21000", "4027", "21000", "544"], :audio}}
     end
 
     test "Next train to Alewife is now boarding (works on Heavy Rail)" do
@@ -33,7 +36,8 @@ defmodule Content.Audio.TrainIsBoardingTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:canned, {"106", ["501", "507", "4000", "544"], :audio}}
+               {:canned,
+                {"109", ["501", "21000", "507", "21000", "4000", "21000", "544"], :audio}}
     end
 
     test "announces track number at terminal with multiple boarding tracks" do

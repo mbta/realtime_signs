@@ -3,13 +3,14 @@ defmodule Content.Audio.NextTrainCountdown do
   The next train to [destination] arrives in [n] minutes.
   """
 
-  @enforce_keys [:destination, :verb, :minutes, :track_number]
+  @enforce_keys [:destination, :route_id, :verb, :minutes, :track_number]
   defstruct @enforce_keys ++ [platform: nil]
 
   @type verb :: :arrives | :departs
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
+          route_id: String.t(),
           verb: verb(),
           minutes: integer(),
           track_number: Content.Utilities.track_number() | nil,
@@ -27,7 +28,7 @@ defmodule Content.Audio.NextTrainCountdown do
     @on_track_2 "542"
     @in_ "504"
     @minutes "505"
-    @space "21000"
+    @minute "532"
 
     def to_params(%{destination: :southbound, verb: verb, minutes: minutes} = audio) do
       min_or_mins = if minutes == 1, do: "minute", else: "minutes"
@@ -46,9 +47,18 @@ defmodule Content.Audio.NextTrainCountdown do
     def to_params(audio) do
       case Utilities.destination_var(audio.destination) do
         {:ok, dest_var} ->
+          green_line_branch =
+            Content.Utilities.route_and_destination_branch_letter(
+              audio.route_id,
+              audio.destination
+            )
+
           cond do
             !is_nil(audio.track_number) ->
               terminal_track_params(audio, dest_var)
+
+            !is_nil(green_line_branch) ->
+              green_line_with_branch_params(audio, green_line_branch, dest_var)
 
             is_nil(audio.platform) and audio.minutes == 1 ->
               {:canned, {"141", [dest_var, verb_var(audio)], :audio}}
@@ -67,8 +77,29 @@ defmodule Content.Audio.NextTrainCountdown do
 
         {:error, :unknown} ->
           Logger.error("NextTrainCountdown unknown destination: #{inspect(audio.destination)}")
+
           nil
       end
+    end
+
+    @spec green_line_with_branch_params(
+            Content.Audio.NextTrainCountdown.t(),
+            Content.Utilities.green_line_branch(),
+            String.t()
+          ) :: Content.Audio.canned_message()
+    defp green_line_with_branch_params(audio, green_line_branch, destination_var) do
+      vars = [
+        @the_next,
+        PaEss.Utilities.green_line_branch_var(green_line_branch),
+        @train_to,
+        destination_var,
+        verb_var(audio),
+        @in_,
+        minutes_var(audio),
+        minute_or_minutes(audio)
+      ]
+
+      Utilities.take_message(vars, :audio)
     end
 
     @spec terminal_track_params(Content.Audio.NextTrainCountdown.t(), String.t()) ::
@@ -76,23 +107,16 @@ defmodule Content.Audio.NextTrainCountdown do
     defp terminal_track_params(audio, destination_var) do
       vars = [
         @the_next,
-        @space,
         @train_to,
-        @space,
         destination_var,
-        @space,
         verb_var(audio),
-        @space,
         @in_,
-        @space,
         minutes_var(audio),
-        @space,
-        @minutes,
-        @space,
+        minute_or_minutes(audio),
         track(audio.track_number)
       ]
 
-      {:canned, {Utilities.take_message_id(vars), vars, :audio}}
+      Utilities.take_message(vars, :audio)
     end
 
     defp platform_var(%{platform: :ashmont}), do: "4016"
@@ -104,6 +128,10 @@ defmodule Content.Audio.NextTrainCountdown do
     defp minutes_var(%{minutes: minutes}) do
       Utilities.countdown_minutes_var(minutes)
     end
+
+    @spec minute_or_minutes(Content.Audio.NextTrainCountdown.t()) :: String.t()
+    defp minute_or_minutes(%Content.Audio.NextTrainCountdown{minutes: 1}), do: @minute
+    defp minute_or_minutes(%Content.Audio.NextTrainCountdown{}), do: @minutes
 
     @spec track(Content.Utilities.track_number()) :: String.t()
     defp track(1), do: @on_track_1

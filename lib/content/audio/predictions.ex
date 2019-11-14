@@ -65,6 +65,7 @@ defmodule Content.Audio.Predictions do
           predictions.minutes == :approaching ->
             %NextTrainCountdown{
               destination: destination,
+              route_id: predictions.route_id,
               minutes: 1,
               verb: if(src.terminal?, do: :departs, else: :arrives),
               track_number: Content.Utilities.stop_track_number(predictions.stop_id),
@@ -74,6 +75,7 @@ defmodule Content.Audio.Predictions do
           predictions.minutes == :max_time ->
             %NextTrainCountdown{
               destination: destination,
+              route_id: predictions.route_id,
               minutes: div(Content.Utilities.max_time_seconds(), 60),
               verb: if(src.terminal?, do: :departs, else: :arrives),
               track_number: Content.Utilities.stop_track_number(predictions.stop_id),
@@ -83,6 +85,7 @@ defmodule Content.Audio.Predictions do
           is_integer(predictions.minutes) ->
             %NextTrainCountdown{
               destination: destination,
+              route_id: predictions.route_id,
               minutes: predictions.minutes,
               verb: if(src.terminal?, do: :departs, else: :arrives),
               track_number: Content.Utilities.stop_track_number(predictions.stop_id),
