@@ -201,9 +201,15 @@ defmodule Engine.DeparturesTest do
   end
 
   describe "get_headways/2" do
-    test "handles case with no departure history" do
-      {:ok, departures_pid} = Engine.Departures.start_link(gen_server_name: :departures_test)
-      assert Engine.Departures.get_headways(departures_pid, "no_departures") == :none
+    test "with no departure history, uses the scheduled headway" do
+      {:ok, departures_pid} =
+        Engine.Departures.start_link(
+          gen_server_name: :departures_test,
+          scheduled_headways_engine: FakeScheduledHeadwaysEngine,
+          time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 12:15:00], "America/New_York") end
+        )
+
+      assert Engine.Departures.get_headways(departures_pid, "no_departures") == {5, 10}
     end
 
     test "when there is only one recorded departure, uses the scheduled headway" do
@@ -227,7 +233,7 @@ defmodule Engine.DeparturesTest do
       {:ok, departures_pid} = Engine.Departures.start_link(gen_server_name: :departures_test)
       insert_test_data(departures_pid, "two_departures", time1)
       insert_test_data(departures_pid, "two_departures", time2)
-      assert Engine.Departures.get_headways(departures_pid, "two_departures") == {5, nil}
+      assert Engine.Departures.get_headways(departures_pid, "two_departures") == {5, 7}
     end
 
     test "when there are three recorded departures, headway is the range between the first two departures, and the range between the second two" do
@@ -238,7 +244,7 @@ defmodule Engine.DeparturesTest do
       insert_test_data(departures_pid, "three_departures", time1)
       insert_test_data(departures_pid, "three_departures", time2)
       insert_test_data(departures_pid, "three_departures", time3)
-      assert Engine.Departures.get_headways(departures_pid, "three_departures") == {5, 10}
+      assert Engine.Departures.get_headways(departures_pid, "three_departures") == {5, 12}
     end
 
     test "doesn't show headways before first departure" do
@@ -289,7 +295,7 @@ defmodule Engine.DeparturesTest do
       insert_test_data(departures_pid, "during_revenue_service", time1)
       insert_test_data(departures_pid, "during_revenue_service", time2)
 
-      assert Engine.Departures.get_headways(departures_pid, "during_revenue_service") == {10, nil}
+      assert Engine.Departures.get_headways(departures_pid, "during_revenue_service") == {10, 12}
     end
   end
 

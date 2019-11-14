@@ -105,26 +105,16 @@ defmodule Engine.Departures do
       state.scheduled_headways_engine.get_first_last_departures(stop_id)
 
     headways =
-      if (!is_nil(first_departure) and DateTime.compare(current_time, first_departure) == :lt) or
-           (!is_nil(last_departure) and DateTime.compare(current_time, last_departure) == :gt) do
-        :none
-      else
-        case state[:departures][stop_id] do
-          [_one_departure] ->
-            state.scheduled_headways_engine.get_headways(stop_id)
+      cond do
+        (!is_nil(first_departure) and DateTime.compare(current_time, first_departure) == :lt) or
+            (!is_nil(last_departure) and DateTime.compare(current_time, last_departure) == :gt) ->
+          :none
 
-          [one_departure, two_departure] ->
-            {Timex.diff(one_departure, two_departure, :minutes), nil}
+        is_list(state[:departures][stop_id]) and Enum.count(state[:departures][stop_id]) >= 2 ->
+          Headway.HeadwayDisplay.calculate_headway_range(state[:departures][stop_id])
 
-          [one_departure, two_departure, three_departure | _] ->
-            headway_sort(
-              {Timex.diff(one_departure, two_departure, :minutes),
-               Timex.diff(two_departure, three_departure, :minutes)}
-            )
-
-          _ ->
-            :none
-        end
+        true ->
+          state.scheduled_headways_engine.get_headways(stop_id)
       end
 
     {:reply, headways, state}
@@ -167,15 +157,6 @@ defmodule Engine.Departures do
       |> Enum.take(3)
 
     Map.put(departures, translated_stop_id, new_times_for_stop)
-  end
-
-  @spec headway_sort({non_neg_integer, non_neg_integer}) :: {non_neg_integer, non_neg_integer}
-  defp headway_sort({first, second}) when first > second do
-    {second, first}
-  end
-
-  defp headway_sort({first, second}) when first <= second do
-    {first, second}
   end
 
   @spec translate_stop_id(String.t()) :: String.t()
