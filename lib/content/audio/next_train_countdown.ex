@@ -29,7 +29,6 @@ defmodule Content.Audio.NextTrainCountdown do
     @in_ "504"
     @minutes "505"
     @minute "532"
-    @space "21000"
 
     def to_params(%{destination: :southbound, verb: verb, minutes: minutes} = audio) do
       min_or_mins = if minutes == 1, do: "minute", else: "minutes"
@@ -89,43 +88,35 @@ defmodule Content.Audio.NextTrainCountdown do
             String.t()
           ) :: Content.Audio.canned_message()
     defp green_line_with_branch_params(audio, green_line_branch, destination_var) do
-      vars =
-        Enum.intersperse(
-          [
-            @the_next,
-            PaEss.Utilities.green_line_branch_var(green_line_branch),
-            @train_to,
-            destination_var,
-            verb_var(audio),
-            @in_,
-            minutes_var(audio),
-            minute_or_minutes(audio)
-          ],
-          @space
-        )
+      vars = [
+        @the_next,
+        PaEss.Utilities.green_line_branch_var(green_line_branch),
+        @train_to,
+        destination_var,
+        verb_var(audio),
+        @in_,
+        minutes_var(audio),
+        minute_or_minutes(audio)
+      ]
 
-      {:canned, {Utilities.take_message_id(vars), vars, :audio}}
+      Utilities.take_message(vars, :audio)
     end
 
     @spec terminal_track_params(Content.Audio.NextTrainCountdown.t(), String.t()) ::
             Content.Audio.canned_message()
     defp terminal_track_params(audio, destination_var) do
-      vars =
-        Enum.intersperse(
-          [
-            @the_next,
-            @train_to,
-            destination_var,
-            verb_var(audio),
-            @in_,
-            minutes_var(audio),
-            minute_or_minutes(audio),
-            track(audio.track_number)
-          ],
-          @space
-        )
+      vars = [
+        @the_next,
+        @train_to,
+        destination_var,
+        verb_var(audio),
+        @in_,
+        minutes_var(audio),
+        minute_or_minutes(audio),
+        track(audio.track_number)
+      ]
 
-      {:canned, {Utilities.take_message_id(vars), vars, :audio}}
+      Utilities.take_message(vars, :audio)
     end
 
     defp platform_var(%{platform: :ashmont}), do: "4016"

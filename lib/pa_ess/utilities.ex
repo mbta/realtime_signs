@@ -5,6 +5,8 @@ defmodule PaEss.Utilities do
 
   require Logger
 
+  @space "21000"
+
   @spec valid_range?(integer(), Content.Audio.language()) :: boolean()
   def valid_range?(n, :english) do
     n > 0 and n < 60
@@ -50,7 +52,13 @@ defmodule PaEss.Utilities do
     Integer.to_string(5030)
   end
 
-  @doc "Message ID for a dynamic message constructed from TAKE variables"
+  @doc "Constructs message from TAKE variables"
+  @spec take_message([String.t()], Content.Audio.av_type()) :: Content.Audio.canned_message()
+  def take_message(vars, av_type) do
+    vars_with_spaces = Enum.intersperse(vars, @space)
+    {:canned, {take_message_id(vars_with_spaces), vars_with_spaces, av_type}}
+  end
+
   @spec take_message_id([String.t()]) :: String.t()
   def take_message_id(vars) do
     Integer.to_string(102 + length(vars))

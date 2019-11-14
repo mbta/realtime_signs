@@ -62,7 +62,6 @@ defmodule Content.Audio.FollowingTrain do
     @in_ "504"
     @minutes "505"
     @minute "532"
-    @space "21000"
 
     def to_params(%{destination: :southbound, verb: verb, minutes: minutes}) do
       min_or_mins = if minutes == 1, do: "minute", else: "minutes"
@@ -105,22 +104,18 @@ defmodule Content.Audio.FollowingTrain do
             String.t()
           ) :: Content.Audio.canned_message()
     defp green_line_with_branch_params(audio, green_line_branch, destination_var) do
-      vars =
-        Enum.intersperse(
-          [
-            @the_following,
-            PaEss.Utilities.green_line_branch_var(green_line_branch),
-            @train_to,
-            destination_var,
-            verb_var(audio),
-            @in_,
-            minutes_var(audio),
-            minute_or_minutes(audio)
-          ],
-          @space
-        )
+      vars = [
+        @the_following,
+        PaEss.Utilities.green_line_branch_var(green_line_branch),
+        @train_to,
+        destination_var,
+        verb_var(audio),
+        @in_,
+        minutes_var(audio),
+        minute_or_minutes(audio)
+      ]
 
-      {:canned, {Utilities.take_message_id(vars), vars, :audio}}
+      Utilities.take_message(vars, :audio)
     end
 
     defp verb_var(%{verb: :arrives}), do: "503"
