@@ -269,68 +269,6 @@ defmodule Headway.HeadwayDisplayTest do
       {:first_departure, headway, _first_time} = Map.get(headways, "111")
       assert headway == {5, nil}
     end
-
-    test "excludes artificially-long headways from calculation" do
-      times = [
-        ~N[2017-07-04 08:55:00],
-        ~N[2017-07-04 09:05:00],
-        ~N[2017-07-04 09:50:00],
-        ~N[2017-07-04 10:05:00]
-      ]
-
-      schedules = %{
-        "111" =>
-          Enum.map(times, fn time ->
-            %{
-              "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-              "attributes" => %{
-                "departure_time" =>
-                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
-              }
-            }
-          end)
-      }
-
-      headways =
-        group_headways_for_stations(
-          schedules,
-          ["111"],
-          Timex.to_datetime(@current_time, "America/New_York")
-        )
-
-      assert headways == %{"111" => {10, 17}}
-    end
-
-    test "still uses long headways if there's more than one of them" do
-      times = [
-        ~N[2017-07-04 08:55:00],
-        ~N[2017-07-04 09:05:00],
-        ~N[2017-07-04 09:50:00],
-        ~N[2017-07-04 10:30:00]
-      ]
-
-      schedules = %{
-        "111" =>
-          Enum.map(times, fn time ->
-            %{
-              "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-              "attributes" => %{
-                "departure_time" =>
-                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
-              }
-            }
-          end)
-      }
-
-      headways =
-        group_headways_for_stations(
-          schedules,
-          ["111"],
-          Timex.to_datetime(@current_time, "America/New_York")
-        )
-
-      assert headways == %{"111" => {10, 42}}
-    end
   end
 
   describe "format_headway_range/1" do
