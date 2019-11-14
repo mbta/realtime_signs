@@ -14,6 +14,8 @@ defmodule Engine.Departures do
             String.t() => [DateTime.t()]
           }
         }
+
+  @headway_merge_threshold 2
   @headway_reset_time {3, 0, 0}
 
   def start_link(opts \\ []) do
@@ -152,7 +154,7 @@ defmodule Engine.Departures do
       |> (fn stop_departures ->
             case stop_departures do
               [first | rest] ->
-                if Timex.diff(time, first, :minutes) > 2 do
+                if Timex.diff(time, first, :minutes) > @headway_merge_threshold do
                   [time | stop_departures]
                 else
                   [time | rest]

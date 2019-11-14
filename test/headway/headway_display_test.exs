@@ -150,7 +150,7 @@ defmodule Headway.HeadwayDisplayTest do
       assert headways == %{"111" => {10, 17}, "222" => {12, 14}}
     end
 
-    test "Adds two minutes to the max headway time" do
+    test "Returns :up_to for excessively-wide headway ranges without padding the upper value" do
       times = [
         ~N[2017-07-04 08:42:00],
         ~N[2017-07-04 09:02:00],
@@ -177,14 +177,14 @@ defmodule Headway.HeadwayDisplayTest do
           Timex.to_datetime(@current_time, "America/New_York")
         )
 
-      assert headways == %{"111" => {5, 22}}
+      assert headways == %{"111" => {:up_to, 20}}
     end
 
     test "Uses a lower limit on the min headway time" do
       times = [
-        ~N[2017-07-04 08:58:00],
-        ~N[2017-07-04 09:02:00],
-        ~N[2017-07-04 09:10:00]
+        ~N[2017-07-04 08:59:00],
+        ~N[2017-07-04 09:00:00],
+        ~N[2017-07-04 09:05:00]
       ]
 
       schedules = %{
@@ -207,14 +207,14 @@ defmodule Headway.HeadwayDisplayTest do
           Timex.to_datetime(@current_time, "America/New_York")
         )
 
-      assert headways == %{"111" => {5, 10}}
+      assert headways == %{"111" => {2, 7}}
     end
 
     test "Uses lower limit and padding on upper value" do
       times = [
         ~N[2017-07-04 08:59:00],
-        ~N[2017-07-04 09:01:00],
-        ~N[2017-07-04 09:02:00]
+        ~N[2017-07-04 09:00:00],
+        ~N[2017-07-04 09:01:00]
       ]
 
       schedules = %{
@@ -237,7 +237,7 @@ defmodule Headway.HeadwayDisplayTest do
           Timex.to_datetime(@current_time, "America/New_York")
         )
 
-      assert headways == %{"111" => {5, 7}}
+      assert headways == %{"111" => {2, 4}}
     end
 
     test "Pads headway when only two times are given" do
@@ -267,13 +267,13 @@ defmodule Headway.HeadwayDisplayTest do
         )
 
       {:first_departure, headway, _first_time} = Map.get(headways, "111")
-      assert headway == {5, nil}
+      assert headway == {2, 4}
     end
   end
 
   describe "format_headway_range/1" do
-    test "returns nil string for nil headway" do
-      assert format_headway_range({nil, nil}) == ""
+    test "returns empty string for :none headway" do
+      assert format_headway_range(:none) == ""
     end
 
     test "formats lower headway time first" do
@@ -281,12 +281,8 @@ defmodule Headway.HeadwayDisplayTest do
       assert format_headway_range({3, 5}) == "Every 3 to 5 min"
     end
 
-    test "formats single headway if both are the same" do
-      assert format_headway_range({5, 5}) == "Every 5 min"
-    end
-
-    test "when the range is larger than 10 minutes, says up to the top number" do
-      assert format_headway_range({5, 20}) == "Up to every 20 min"
+    test "formats headways \"up to\" some number of minutes" do
+      assert format_headway_range({:up_to, 20}) == "Up to every 20 min"
     end
   end
 
