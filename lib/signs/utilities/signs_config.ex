@@ -31,9 +31,6 @@ defmodule Signs.Utilities.SignsConfig do
         |> List.flatten()
         |> Enum.map(& &1["stop_id"])
 
-      "headway" ->
-        [sign["gtfs_stop_id"]]
-
       "bridge_only" ->
         []
     end
