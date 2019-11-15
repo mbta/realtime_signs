@@ -17,6 +17,7 @@ defmodule Engine.AlertsTest do
       log =
         capture_log(fn ->
           send(pid, :unknown_message)
+          Process.sleep(50)
         end)
 
       assert Process.alive?(pid)
