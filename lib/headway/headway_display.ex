@@ -7,7 +7,7 @@ defmodule Headway.HeadwayDisplay do
 
   @min_headway 2
   @headway_padding 2
-  @max_headway_range 7
+  @max_headway_range 9 - @headway_padding
 
   @spec group_headways_for_stations(
           %{String.t() => schedule_map()},
