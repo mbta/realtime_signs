@@ -80,8 +80,6 @@ defmodule Engine.DeparturesTest do
           time1
         )
 
-      time2 = Timex.shift(time1, minutes: 3)
-
       :ok =
         Engine.Departures.update_train_state(
           departures_pid,
@@ -105,8 +103,6 @@ defmodule Engine.DeparturesTest do
           MapSet.new(["123", "456"]),
           time1
         )
-
-      time2 = Timex.shift(time1, minutes: 3)
 
       :ok =
         Engine.Departures.update_train_state(
