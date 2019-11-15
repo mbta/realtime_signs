@@ -91,18 +91,6 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                  :audio}}
     end
 
-    test "returns a robo-voice message for headways with a single number range" do
-      audio = %Content.Audio.VehiclesToDestination{
-        destination: :lechmere,
-        language: :english,
-        next_trip_mins: 7,
-        later_trip_mins: 7
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"Trains to Lechmere every 7 minutes.", :audio}}
-    end
-
     test "singularizes the minutes when the last departure was one minute ago" do
       audio = %Content.Audio.VehiclesToDestination{
         destination: :lechmere,
@@ -116,6 +104,31 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                {:ad_hoc,
                 {"Trains to Lechmere every 5 to 7 minutes.  Previous departure 1 minute ago.",
                  :audio}}
+    end
+
+    test "doesn't announce departure zero minute ago" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :lechmere,
+        language: :english,
+        next_trip_mins: 5,
+        later_trip_mins: 7,
+        previous_departure_mins: 0
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc, {"Trains to Lechmere every 5 to 7 minutes.", :audio}}
+    end
+
+    test "returns a robo-voice message for headways with a single number range" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :lechmere,
+        language: :english,
+        next_trip_mins: 7,
+        later_trip_mins: 7
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc, {"Trains to Lechmere every 7 minutes.", :audio}}
     end
 
     test "returns a robo-voice message for a headway range that is too big" do

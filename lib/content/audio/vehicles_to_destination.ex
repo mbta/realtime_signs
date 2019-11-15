@@ -124,7 +124,7 @@ defmodule Content.Audio.VehiclesToDestination do
         end
 
       previous_departure =
-        if audio.previous_departure_mins do
+        if !is_nil(audio.previous_departure_mins) and audio.previous_departure_mins > 0 do
           minutes_word = if audio.previous_departure_mins == 1, do: "minute", else: "minutes"
           "  Previous departure #{audio.previous_departure_mins} #{minutes_word} ago."
         else
