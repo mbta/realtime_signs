@@ -50,15 +50,14 @@ defmodule Headway.HeadwayDisplay do
 
   def calculate_headway_range([_single_time]), do: :none
 
-  def calculate_headway_range([previous_time, upcoming_time]) do
-    actual_headway = {abs(Timex.diff(upcoming_time, previous_time, :minutes)), nil}
+  def calculate_headway_range([time1, time2]) do
+    actual_headway = {abs(Timex.diff(time1, time2, :minutes)), nil}
     individual_headways_to_range(actual_headway)
   end
 
-  def calculate_headway_range([previous_time, upcoming_time, second_upcoming_time | _]) do
+  def calculate_headway_range([time1, time2, time3 | _]) do
     actual_headway =
-      {abs(Timex.diff(upcoming_time, previous_time, :minutes)),
-       abs(Timex.diff(second_upcoming_time, upcoming_time, :minutes))}
+      {abs(Timex.diff(time1, time2, :minutes)), abs(Timex.diff(time2, time3, :minutes))}
 
     individual_headways_to_range(actual_headway)
   end
