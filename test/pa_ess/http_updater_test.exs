@@ -96,8 +96,7 @@ defmodule PaEss.HttpUpdaterTest do
       audio = %Content.Audio.VehiclesToDestination{
         language: :english,
         destination: :chelsea,
-        next_trip_mins: 8,
-        later_trip_mins: 12
+        headway_range: {8, 12}
       }
 
       assert {:ok, :sent} ==
@@ -110,8 +109,7 @@ defmodule PaEss.HttpUpdaterTest do
       audio = %Content.Audio.VehiclesToDestination{
         language: :english,
         destination: :south_station,
-        next_trip_mins: 8,
-        later_trip_mins: 12
+        headway_range: {8, 12}
       }
 
       assert {:ok, :sent} ==
@@ -136,8 +134,7 @@ defmodule PaEss.HttpUpdaterTest do
       audio = %Content.Audio.VehiclesToDestination{
         language: :spanish,
         destination: :chelsea,
-        next_trip_mins: 8,
-        later_trip_mins: 14
+        headway_range: {8, 14}
       }
 
       assert {:ok, :sent} ==

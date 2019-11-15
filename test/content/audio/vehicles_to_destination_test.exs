@@ -9,8 +9,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       audio = %Content.Audio.VehiclesToDestination{
         destination: :chelsea,
         language: :english,
-        next_trip_mins: 7,
-        later_trip_mins: 10
+        headway_range: {7, 10}
       }
 
       assert Content.Audio.to_params(audio) == {:canned, {"133", ["5507", "5510"], :audio}}
@@ -20,8 +19,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       audio = %Content.Audio.VehiclesToDestination{
         destination: :chelsea,
         language: :spanish,
-        next_trip_mins: 7,
-        later_trip_mins: 10
+        headway_range: {7, 10}
       }
 
       assert Content.Audio.to_params(audio) == {:canned, {"150", ["37007", "37010"], :audio}}
@@ -31,8 +29,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       audio = %Content.Audio.VehiclesToDestination{
         destination: :south_station,
         language: :english,
-        next_trip_mins: 7,
-        later_trip_mins: 10
+        headway_range: {7, 10}
       }
 
       assert Content.Audio.to_params(audio) == {:canned, {"134", ["5507", "5510"], :audio}}
@@ -42,8 +39,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       audio = %Content.Audio.VehiclesToDestination{
         destination: :south_station,
         language: :spanish,
-        next_trip_mins: 7,
-        later_trip_mins: 10
+        headway_range: {7, 10}
       }
 
       assert Content.Audio.to_params(audio) == {:canned, {"151", ["37007", "37010"], :audio}}
@@ -53,8 +49,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       audio = %Content.Audio.VehiclesToDestination{
         destination: :south_station,
         language: :spanish,
-        next_trip_mins: 7,
-        later_trip_mins: 21
+        headway_range: {19, 21}
       }
 
       log =
@@ -65,23 +60,11 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       assert log =~ "no_audio_for_headway_range"
     end
 
-    test "Buses to South Station in Spanish, headway range of more than 10 minutes but still uses canned message" do
-      audio = %Content.Audio.VehiclesToDestination{
-        destination: :south_station,
-        language: :spanish,
-        next_trip_mins: 7,
-        later_trip_mins: 18
-      }
-
-      assert Content.Audio.to_params(audio) == {:canned, {"151", ["37007", "37018"], :audio}}
-    end
-
     test "returns a robo-voice message for headways with a last departure" do
       audio = %Content.Audio.VehiclesToDestination{
         destination: :lechmere,
         language: :english,
-        next_trip_mins: 5,
-        later_trip_mins: 7,
+        headway_range: {5, 7},
         previous_departure_mins: 5
       }
 
@@ -95,8 +78,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       audio = %Content.Audio.VehiclesToDestination{
         destination: :lechmere,
         language: :english,
-        next_trip_mins: 5,
-        later_trip_mins: 7,
+        headway_range: {5, 7},
         previous_departure_mins: 1
       }
 
@@ -110,8 +92,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       audio = %Content.Audio.VehiclesToDestination{
         destination: :lechmere,
         language: :english,
-        next_trip_mins: 5,
-        later_trip_mins: 7,
+        headway_range: {5, 7},
         previous_departure_mins: 0
       }
 
@@ -119,24 +100,11 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                {:ad_hoc, {"Trains to Lechmere every 5 to 7 minutes.", :audio}}
     end
 
-    test "returns a robo-voice message for headways with a single number range" do
-      audio = %Content.Audio.VehiclesToDestination{
-        destination: :lechmere,
-        language: :english,
-        next_trip_mins: 7,
-        later_trip_mins: 7
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"Trains to Lechmere every 7 minutes.", :audio}}
-    end
-
     test "returns a robo-voice message for a headway range that is too big" do
       audio = %Content.Audio.VehiclesToDestination{
         destination: :lechmere,
         language: :english,
-        next_trip_mins: 5,
-        later_trip_mins: 20,
+        headway_range: {:up_to, 20},
         previous_departure_mins: 5
       }
 
@@ -150,8 +118,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       audio = %Content.Audio.VehiclesToDestination{
         destination: :lechmere,
         language: :english,
-        next_trip_mins: 5,
-        later_trip_mins: 20
+        headway_range: {:up_to, 20}
       }
 
       assert Content.Audio.to_params(audio) ==
@@ -162,8 +129,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       audio = %Content.Audio.VehiclesToDestination{
         destination: :southbound,
         language: :english,
-        next_trip_mins: 5,
-        later_trip_mins: 7,
+        headway_range: {5, 7},
         previous_departure_mins: 3
       }
 
@@ -171,6 +137,16 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                {:ad_hoc,
                 {"Southbound trains every 5 to 7 minutes.  Previous departure 3 minutes ago.",
                  :audio}}
+    end
+
+    test "returns nil when range is unexpected" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: :lechmere,
+        language: :english,
+        headway_range: {:a, :b, :c}
+      }
+
+      assert Content.Audio.to_params(audio) == nil
     end
   end
 
@@ -290,75 +266,6 @@ defmodule Content.Audio.VehiclesToDestinationTest do
         end)
 
       assert log =~ "message_to_audio_error"
-    end
-
-    test "returns nils when range is all nil, but doesn't warn" do
-      msg = %{@msg | range: {nil, nil}}
-
-      log =
-        capture_log([level: :warn], fn ->
-          assert from_headway_message(%Content.Message.Headways.Top{headsign: "Chelsea"}, msg) ==
-                   nil
-        end)
-
-      refute log =~ "from_headway_message"
-    end
-
-    test "returns nil when range is unexpected" do
-      msg = %{@msg | range: {:a, :b, :c}}
-
-      assert from_headway_message(%Content.Message.Headways.Top{headsign: "Chelsea"}, msg) == nil
-    end
-
-    test "returns a padded range when one value is missing or values are the same" do
-      msg1 = %{@msg | range: {10, nil}}
-      msg2 = %{@msg | range: {nil, 10}}
-      msg3 = %{@msg | range: {10, 10}}
-
-      Enum.each([msg1, msg2, msg3], fn msg ->
-        assert {
-                 %Content.Audio.VehiclesToDestination{
-                   language: :english,
-                   next_trip_mins: 10,
-                   later_trip_mins: 12
-                 },
-                 %Content.Audio.VehiclesToDestination{
-                   language: :spanish,
-                   next_trip_mins: 10,
-                   later_trip_mins: 12
-                 }
-               } = from_headway_message(%Content.Message.Headways.Top{headsign: "Chelsea"}, msg)
-      end)
-    end
-
-    test "returns audio with values in ascending order regardless of range order" do
-      msg1 = %{@msg | range: {10, 15}}
-      msg2 = %{@msg | range: {15, 10}}
-
-      Enum.each([msg1, msg2], fn msg ->
-        assert {
-                 %Content.Audio.VehiclesToDestination{
-                   language: :english,
-                   next_trip_mins: 10,
-                   later_trip_mins: 15
-                 },
-                 %Content.Audio.VehiclesToDestination{
-                   language: :spanish,
-                   next_trip_mins: 10,
-                   later_trip_mins: 15
-                 }
-               } = from_headway_message(%Content.Message.Headways.Top{headsign: "Chelsea"}, msg)
-      end)
-    end
-
-    test "returns an english struct but not a spanish, if number is out of the latter range" do
-      msg = %{@msg | range: {20, 25}}
-
-      assert %Content.Audio.VehiclesToDestination{
-               language: :english,
-               next_trip_mins: 20,
-               later_trip_mins: 25
-             } = from_headway_message(%Content.Message.Headways.Top{headsign: "Chelsea"}, msg)
     end
   end
 end

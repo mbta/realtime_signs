@@ -244,8 +244,7 @@ defmodule Signs.Utilities.AudioTest do
                %Audio.VehiclesToDestination{
                  language: :english,
                  destination: :alewife,
-                 next_trip_mins: 1,
-                 later_trip_mins: 3
+                 headway_range: {1, 3}
                },
                ^sign
              } = from_sign(sign)
