@@ -11,9 +11,5 @@ defmodule Signs.Utilities.SignsConfigTest do
     test "includes a mezzanine sign" do
       assert Enum.member?(Signs.Utilities.SignsConfig.all_stop_ids(), "70056")
     end
-
-    test "includes a headway sign" do
-      assert Enum.member?(Signs.Utilities.SignsConfig.all_stop_ids(), "74632")
-    end
   end
 end
