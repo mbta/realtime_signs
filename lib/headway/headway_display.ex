@@ -121,7 +121,6 @@ defmodule Headway.HeadwayDisplay do
   @spec format_headway_range(headway_range()) :: String.t()
   def format_headway_range(:none), do: ""
   def format_headway_range({:up_to, x}), do: "Up to every #{x} min"
-  def format_headway_range({x, y}) when x > y, do: "Every #{y} to #{x} min"
   def format_headway_range({x, y}), do: "Every #{x} to #{y} min"
 
   @spec format_bottom(Content.Message.Headways.Bottom.t()) :: String.t()

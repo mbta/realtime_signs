@@ -276,8 +276,7 @@ defmodule Headway.HeadwayDisplayTest do
       assert format_headway_range(:none) == ""
     end
 
-    test "formats lower headway time first" do
-      assert format_headway_range({5, 3}) == "Every 3 to 5 min"
+    test "formats a normal range" do
       assert format_headway_range({3, 5}) == "Every 3 to 5 min"
     end
 
