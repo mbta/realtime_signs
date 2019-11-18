@@ -1,17 +1,7 @@
-defmodule Headway.ScheduleHeadwayTest do
+defmodule Headway.HeadwayDisplayTest do
   use ExUnit.Case, async: true
   import ExUnit.CaptureLog
-  import Headway.ScheduleHeadway
-
-  describe "build_request/1" do
-    test "builds request with comma separated station ids and direction IDs" do
-      assert build_request({~w[0 1], ["7022", "1123"]}) ==
-               "https://green.dev.api.mbtace.com/schedules?filter[stop]=7022,1123&filter[direction_id]=0,1"
-
-      assert build_request({["1"], ["7022"]}) ==
-               "https://green.dev.api.mbtace.com/schedules?filter[stop]=7022&filter[direction_id]=1"
-    end
-  end
+  import Headway.HeadwayDisplay
 
   describe "group_headways_for_stations/1" do
     @current_time ~N[2017-07-04 09:00:00]
@@ -160,7 +150,7 @@ defmodule Headway.ScheduleHeadwayTest do
       assert headways == %{"111" => {10, 17}, "222" => {12, 14}}
     end
 
-    test "Adds two minutes to the max headway time" do
+    test "Returns :up_to for excessively-wide headway ranges without padding the upper value" do
       times = [
         ~N[2017-07-04 08:42:00],
         ~N[2017-07-04 09:02:00],
@@ -187,14 +177,14 @@ defmodule Headway.ScheduleHeadwayTest do
           Timex.to_datetime(@current_time, "America/New_York")
         )
 
-      assert headways == %{"111" => {5, 22}}
+      assert headways == %{"111" => {:up_to, 20}}
     end
 
     test "Uses a lower limit on the min headway time" do
       times = [
-        ~N[2017-07-04 08:58:00],
-        ~N[2017-07-04 09:02:00],
-        ~N[2017-07-04 09:10:00]
+        ~N[2017-07-04 08:59:00],
+        ~N[2017-07-04 09:00:00],
+        ~N[2017-07-04 09:05:00]
       ]
 
       schedules = %{
@@ -217,14 +207,14 @@ defmodule Headway.ScheduleHeadwayTest do
           Timex.to_datetime(@current_time, "America/New_York")
         )
 
-      assert headways == %{"111" => {5, 10}}
+      assert headways == %{"111" => {2, 7}}
     end
 
     test "Uses lower limit and padding on upper value" do
       times = [
         ~N[2017-07-04 08:59:00],
-        ~N[2017-07-04 09:01:00],
-        ~N[2017-07-04 09:02:00]
+        ~N[2017-07-04 09:00:00],
+        ~N[2017-07-04 09:01:00]
       ]
 
       schedules = %{
@@ -247,7 +237,7 @@ defmodule Headway.ScheduleHeadwayTest do
           Timex.to_datetime(@current_time, "America/New_York")
         )
 
-      assert headways == %{"111" => {5, 7}}
+      assert headways == %{"111" => {2, 4}}
     end
 
     test "Pads headway when only two times are given" do
@@ -277,88 +267,21 @@ defmodule Headway.ScheduleHeadwayTest do
         )
 
       {:first_departure, headway, _first_time} = Map.get(headways, "111")
-      assert headway == {5, nil}
-    end
-
-    test "excludes artificially-long headways from calculation" do
-      times = [
-        ~N[2017-07-04 08:55:00],
-        ~N[2017-07-04 09:05:00],
-        ~N[2017-07-04 09:50:00],
-        ~N[2017-07-04 10:05:00]
-      ]
-
-      schedules = %{
-        "111" =>
-          Enum.map(times, fn time ->
-            %{
-              "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-              "attributes" => %{
-                "departure_time" =>
-                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
-              }
-            }
-          end)
-      }
-
-      headways =
-        group_headways_for_stations(
-          schedules,
-          ["111"],
-          Timex.to_datetime(@current_time, "America/New_York")
-        )
-
-      assert headways == %{"111" => {10, 17}}
-    end
-
-    test "still uses long headways if there's more than one of them" do
-      times = [
-        ~N[2017-07-04 08:55:00],
-        ~N[2017-07-04 09:05:00],
-        ~N[2017-07-04 09:50:00],
-        ~N[2017-07-04 10:30:00]
-      ]
-
-      schedules = %{
-        "111" =>
-          Enum.map(times, fn time ->
-            %{
-              "relationships" => %{"stop" => %{"data" => %{"id" => "111"}}},
-              "attributes" => %{
-                "departure_time" =>
-                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
-              }
-            }
-          end)
-      }
-
-      headways =
-        group_headways_for_stations(
-          schedules,
-          ["111"],
-          Timex.to_datetime(@current_time, "America/New_York")
-        )
-
-      assert headways == %{"111" => {10, 42}}
+      assert headway == {2, 4}
     end
   end
 
   describe "format_headway_range/1" do
-    test "returns nil string for nil headway" do
-      assert format_headway_range({nil, nil}) == ""
+    test "returns empty string for :none headway" do
+      assert format_headway_range(:none) == ""
     end
 
-    test "formats lower headway time first" do
-      assert format_headway_range({5, 3}) == "Every 3 to 5 min"
+    test "formats a normal range" do
       assert format_headway_range({3, 5}) == "Every 3 to 5 min"
     end
 
-    test "formats single headway if both are the same" do
-      assert format_headway_range({5, 5}) == "Every 5 min"
-    end
-
-    test "when the range is larger than 10 minutes, says up to the top number" do
-      assert format_headway_range({5, 20}) == "Up to every 20 min"
+    test "formats headways \"up to\" some number of minutes" do
+      assert format_headway_range({:up_to, 20}) == "Up to every 20 min"
     end
   end
 

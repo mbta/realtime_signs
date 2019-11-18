@@ -81,4 +81,9 @@ defmodule Content.Audio.UtilitiesTest do
     assert headsign_to_destination("Wonderland") == {:ok, :wonderland}
     assert headsign_to_destination("Unknown") == {:error, :unknown}
   end
+
+  test "destination_to_ad_hoc_string/1" do
+    assert destination_to_ad_hoc_string(:heath_street) == "Heath Street"
+    assert destination_to_ad_hoc_string(:southbound) == "Southbound"
+  end
 end
