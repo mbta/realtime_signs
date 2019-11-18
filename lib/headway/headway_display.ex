@@ -91,30 +91,31 @@ defmodule Headway.HeadwayDisplay do
     Time.compare(current_time, earliest_time) != :lt
   end
 
-  @spec individual_headways_to_range({non_neg_integer | nil, non_neg_integer | nil}) ::
-          headway_range
-  defp individual_headways_to_range({x, y}) when x < y,
-    do: do_individual_headways_to_range({x, y})
-
-  defp individual_headways_to_range({x, y}), do: do_individual_headways_to_range({y, x})
-
-  @spec do_individual_headways_to_range({non_neg_integer | nil, non_neg_integer | nil}) ::
-          headway_range
-  defp do_individual_headways_to_range({x, nil}) do
+  @spec individual_headways_to_range({non_neg_integer, non_neg_integer | nil}) :: headway_range
+  defp individual_headways_to_range({x, nil}) do
     {pad_lower_value(x), pad_lower_value(x) + @headway_padding}
   end
 
+  defp individual_headways_to_range({x, y}) when x < y do
+    do_individual_headways_to_range({x, y})
+  end
+
+  defp individual_headways_to_range({x, y}) do
+    do_individual_headways_to_range({y, x})
+  end
+
+  @spec do_individual_headways_to_range({non_neg_integer, non_neg_integer}) :: headway_range
   defp do_individual_headways_to_range({x, y})
-       when x != nil and y != nil and y - x > @max_headway_range do
+       when y - x > @max_headway_range do
     {:up_to, y}
   end
 
   defp do_individual_headways_to_range({x, y}), do: {pad_lower_value(x), pad_upper_value(y)}
 
-  @spec pad_lower_value(integer) :: integer
+  @spec pad_lower_value(non_neg_integer) :: integer
   defp pad_lower_value(x), do: max(x, @min_headway)
 
-  @spec pad_upper_value(integer) :: integer
+  @spec pad_upper_value(non_neg_integer) :: integer
   defp pad_upper_value(y), do: max(y, @min_headway) + @headway_padding
 
   @spec format_headway_range(headway_range()) :: String.t()
