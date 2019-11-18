@@ -1,6 +1,5 @@
 defmodule Headway.Request do
   require Logger
-  alias Headway.ScheduleHeadway
 
   @spec get_schedules([GTFS.station_id()]) :: [%{}] | :error
   def get_schedules(station_ids) do
@@ -9,7 +8,7 @@ defmodule Headway.Request do
 
     results =
       Enum.group_by(station_ids, &directions_for_station_id/1)
-      |> Enum.map(&ScheduleHeadway.build_request/1)
+      |> Enum.map(&build_request/1)
       |> Enum.map(
         &http_client.get(&1, api_key_header(api_v3_key), timeout: 5000, recv_timeout: 5000)
       )
@@ -20,6 +19,14 @@ defmodule Headway.Request do
     else
       Enum.concat(results)
     end
+  end
+
+  @spec build_request({[String.t()], [GTFS.station_id()]}) :: String.t()
+  def build_request({direction_ids, station_ids}) do
+    id_filter = station_ids |> Enum.map(&URI.encode/1) |> Enum.join(",")
+    direction_filter = direction_ids |> Enum.map(&URI.encode/1) |> Enum.join(",")
+    schedule_api_url = Application.get_env(:realtime_signs, :api_v3_url) <> "/schedules"
+    schedule_api_url <> "?filter[stop]=#{id_filter}&filter[direction_id]=#{direction_filter}"
   end
 
   @spec validate_and_parse_response({atom, %HTTPoison.Response{}} | {atom, %HTTPoison.Error{}}) ::

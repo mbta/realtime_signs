@@ -1,22 +1,13 @@
-defmodule Headway.ScheduleHeadway do
+defmodule Headway.HeadwayDisplay do
   require Logger
 
-  @type headway_range ::
-          {nil, nil} | {non_neg_integer, nil} | {non_neg_integer, non_neg_integer} | :none
+  @type headway_range :: {non_neg_integer, non_neg_integer} | {:up_to, non_neg_integer} | :none
   @type t :: headway_range | {:first_departure, headway_range, DateTime.t()}
   @type schedule_map :: map
 
-  @min_headway 5
+  @min_headway 2
   @headway_padding 2
-  @max_headway_to_consider 30
-
-  @spec build_request({[String.t()], [GTFS.station_id()]}) :: String.t()
-  def build_request({direction_ids, station_ids}) do
-    id_filter = station_ids |> Enum.map(&URI.encode/1) |> Enum.join(",")
-    direction_filter = direction_ids |> Enum.map(&URI.encode/1) |> Enum.join(",")
-    schedule_api_url = Application.get_env(:realtime_signs, :api_v3_url) <> "/schedules"
-    schedule_api_url <> "?filter[stop]=#{id_filter}&filter[direction_id]=#{direction_filter}"
-  end
+  @max_headway_range 9 - @headway_padding
 
   @spec group_headways_for_stations(
           %{String.t() => schedule_map()},
@@ -51,48 +42,24 @@ defmodule Headway.ScheduleHeadway do
   end
 
   defp do_headway_for_station({previous_times, later_times}) do
-    calculate_headway_range([List.last(previous_times) | Enum.take(later_times, 3)])
+    calculate_headway_range([List.last(previous_times) | Enum.take(later_times, 2)])
   end
 
   @spec calculate_headway_range([DateTime.t()]) :: headway_range
-  defp calculate_headway_range([previous_time, upcoming_time]) do
-    actual_headway = {Timex.diff(upcoming_time, previous_time, :minutes), nil}
-    pad_headway_range(actual_headway)
+  def calculate_headway_range([]), do: :none
+
+  def calculate_headway_range([_single_time]), do: :none
+
+  def calculate_headway_range([time1, time2]) do
+    actual_headway = {abs(Timex.diff(time1, time2, :minutes)), nil}
+    individual_headways_to_range(actual_headway)
   end
 
-  defp calculate_headway_range([previous_time, upcoming_time, second_upcoming_time]) do
+  def calculate_headway_range([time1, time2, time3 | _]) do
     actual_headway =
-      {Timex.diff(upcoming_time, previous_time, :minutes),
-       Timex.diff(second_upcoming_time, upcoming_time, :minutes)}
+      {abs(Timex.diff(time1, time2, :minutes)), abs(Timex.diff(time2, time3, :minutes))}
 
-    pad_headway_range(actual_headway)
-  end
-
-  defp calculate_headway_range([
-         previous_time,
-         upcoming_time,
-         second_upcoming_time,
-         third_upcoming_time
-       ]) do
-    minute_headways = [
-      Timex.diff(upcoming_time, previous_time, :minutes),
-      Timex.diff(second_upcoming_time, upcoming_time, :minutes),
-      Timex.diff(third_upcoming_time, second_upcoming_time, :minutes)
-    ]
-
-    {_dropped?, usable_headways} =
-      Enum.reduce(minute_headways, {false, []}, fn headway, {dropped?, acc} ->
-        if headway <= @max_headway_to_consider or dropped? do
-          {dropped?, acc ++ [headway]}
-        else
-          {true, acc}
-        end
-      end)
-
-    usable_headways
-    |> Enum.take(2)
-    |> List.to_tuple()
-    |> pad_headway_range()
+    individual_headways_to_range(actual_headway)
   end
 
   @spec schedule_time(map) :: [DateTime.t()]
@@ -124,26 +91,36 @@ defmodule Headway.ScheduleHeadway do
     Time.compare(current_time, earliest_time) != :lt
   end
 
-  @spec pad_headway_range(headway_range) :: headway_range
-  defp pad_headway_range({x, y}) when x < y, do: do_pad_headway_range({x, y})
-  defp pad_headway_range({x, y}), do: do_pad_headway_range({y, x})
+  @spec individual_headways_to_range({non_neg_integer, non_neg_integer | nil}) :: headway_range
+  defp individual_headways_to_range({x, nil}) do
+    {pad_lower_value(x), pad_lower_value(x) + @headway_padding}
+  end
 
-  @spec do_pad_headway_range(headway_range) :: headway_range
-  defp do_pad_headway_range({x, nil}), do: {pad_lower_value(x), nil}
-  defp do_pad_headway_range({x, y}), do: {pad_lower_value(x), pad_upper_value(y)}
+  defp individual_headways_to_range({x, y}) when x < y do
+    do_individual_headways_to_range({x, y})
+  end
 
-  @spec pad_lower_value(integer) :: integer
+  defp individual_headways_to_range({x, y}) do
+    do_individual_headways_to_range({y, x})
+  end
+
+  @spec do_individual_headways_to_range({non_neg_integer, non_neg_integer}) :: headway_range
+  defp do_individual_headways_to_range({x, y})
+       when y - x > @max_headway_range do
+    {:up_to, y}
+  end
+
+  defp do_individual_headways_to_range({x, y}), do: {pad_lower_value(x), pad_upper_value(y)}
+
+  @spec pad_lower_value(non_neg_integer) :: integer
   defp pad_lower_value(x), do: max(x, @min_headway)
 
-  @spec pad_upper_value(integer) :: integer
+  @spec pad_upper_value(non_neg_integer) :: integer
   defp pad_upper_value(y), do: max(y, @min_headway) + @headway_padding
 
   @spec format_headway_range(headway_range()) :: String.t()
   def format_headway_range(:none), do: ""
-  def format_headway_range({nil, nil}), do: ""
-  def format_headway_range({x, y}) when x == y or is_nil(y), do: "Every #{x} min"
-  def format_headway_range({x, y}) when x > y, do: "Every #{y} to #{x} min"
-  def format_headway_range({x, y}) when y - x > 10, do: "Up to every #{y} min"
+  def format_headway_range({:up_to, x}), do: "Up to every #{x} min"
   def format_headway_range({x, y}), do: "Every #{x} to #{y} min"
 
   @spec format_bottom(Content.Message.Headways.Bottom.t()) :: String.t()

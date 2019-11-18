@@ -11,7 +11,7 @@ defmodule Engine.ScheduledHeadways do
   @type state :: %{
           headways_ets_table: term(),
           first_last_departures_ets_table: term(),
-          schedule_data: %{String.t() => [Headway.ScheduleHeadway.schedule_map()]},
+          schedule_data: %{String.t() => [Headway.HeadwayDisplay.schedule_map()]},
           fetcher: module(),
           fetch_ms: integer(),
           fetch_chunk_size: integer(),
@@ -81,7 +81,7 @@ defmodule Engine.ScheduledHeadways do
     {:ok, state}
   end
 
-  @spec get_headways(:ets.tab(), String.t()) :: Headway.ScheduleHeadway.headway_range()
+  @spec get_headways(:ets.tab(), String.t()) :: Headway.HeadwayDisplay.headway_range()
   def get_headways(table_name \\ :scheduled_headways, stop_id) do
     [{_stop_id, headways}] = :ets.lookup(table_name, stop_id)
 
@@ -177,7 +177,7 @@ defmodule Engine.ScheduledHeadways do
     state
   end
 
-  @spec build_first_last_departures_map(%{String.t() => [Headway.ScheduleHeadway.schedule_map()]}) ::
+  @spec build_first_last_departures_map(%{String.t() => [Headway.HeadwayDisplay.schedule_map()]}) ::
           %{String.t() => %{first_departure: DateTime.t(), last_departure: DateTime.t()}}
   defp build_first_last_departures_map(schedule_data) do
     stop_time_map = build_stop_time_map(schedule_data)
@@ -205,7 +205,7 @@ defmodule Engine.ScheduledHeadways do
     end)
   end
 
-  @spec build_stop_time_map(%{String.t() => [Headway.ScheduleHeadway.schedule_map()]}) :: %{
+  @spec build_stop_time_map(%{String.t() => [Headway.HeadwayDisplay.schedule_map()]}) :: %{
           String.t() => {DateTime.t() | nil, DateTime.t() | nil}
         }
   defp build_stop_time_map(schedule_data) do
