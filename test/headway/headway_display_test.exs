@@ -1,5 +1,6 @@
 defmodule Headway.HeadwayDisplayTest do
   use ExUnit.Case, async: true
+  use ExUnitProperties
   import ExUnit.CaptureLog
   import Headway.HeadwayDisplay
 
@@ -292,13 +293,19 @@ defmodule Headway.HeadwayDisplayTest do
       assert max_headway({5, 1}) == 5
     end
 
-    test "Returns max headway when nil value is included" do
-      assert max_headway({5, nil}) == 5
-      assert max_headway({nil, 5}) == 5
+    test "Returns high end of an \"up to\" range" do
+      assert max_headway({:up_to, 15}) == 15
     end
 
     test "Returns nil when no headway values available" do
-      assert max_headway({nil, nil}) == nil
+      assert max_headway(:none) == nil
+    end
+
+    property "Returns an integer or nil" do
+      check all(headway_range <- Test.Support.Generators.gen_headway_range()) do
+        max_headway = max_headway(headway_range)
+        assert is_integer(max_headway) or is_nil(max_headway)
+      end
     end
   end
 
