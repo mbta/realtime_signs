@@ -42,7 +42,8 @@ defmodule RealtimeSigns.Mixfile do
       {:poison, "~> 3.1"},
       {:sentry, "~> 6.2"},
       {:timex, "~> 3.1"},
-      {:uuid, "~> 1.1", only: :test}
+      {:uuid, "~> 1.1", only: :test},
+      {:stream_data, "~> 0.1", only: [:dev, :test]}
     ]
   end
 
