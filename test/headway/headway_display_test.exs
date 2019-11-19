@@ -1,5 +1,6 @@
 defmodule Headway.HeadwayDisplayTest do
   use ExUnit.Case, async: true
+  use ExUnitProperties
   import ExUnit.CaptureLog
   import Headway.HeadwayDisplay
 
@@ -298,6 +299,13 @@ defmodule Headway.HeadwayDisplayTest do
 
     test "Returns nil when no headway values available" do
       assert max_headway(:none) == nil
+    end
+
+    property "Returns an integer or nil" do
+      check all(headway_range <- Test.Support.Generators.gen_headway_range()) do
+        max_headway = max_headway(headway_range)
+        assert is_integer(max_headway) or is_nil(max_headway)
+      end
     end
   end
 
