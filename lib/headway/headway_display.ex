@@ -137,8 +137,7 @@ defmodule Headway.HeadwayDisplay do
   end
 
   @spec max_headway(headway_range) :: non_neg_integer | nil
-  def max_headway({nil, nil}), do: nil
-  def max_headway({nil, y}), do: y
-  def max_headway({x, nil}), do: x
+  def max_headway({:up_to, x}), do: x
   def max_headway({x, y}), do: max(x, y)
+  def max_headway(:none), do: nil
 end

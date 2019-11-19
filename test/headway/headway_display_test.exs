@@ -292,13 +292,12 @@ defmodule Headway.HeadwayDisplayTest do
       assert max_headway({5, 1}) == 5
     end
 
-    test "Returns max headway when nil value is included" do
-      assert max_headway({5, nil}) == 5
-      assert max_headway({nil, 5}) == 5
+    test "Returns high end of an \"up to\" range" do
+      assert max_headway({:up_to, 15}) == 15
     end
 
     test "Returns nil when no headway values available" do
-      assert max_headway({nil, nil}) == nil
+      assert max_headway(:none) == nil
     end
   end
 
