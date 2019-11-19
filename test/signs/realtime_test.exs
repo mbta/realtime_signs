@@ -352,7 +352,7 @@ defmodule Signs.RealtimeTest do
     test "evaluates the headway as accurate if the last departure is less than the only number in the range" do
       sign = %{
         @sign
-        | current_content_bottom: {@src, %HB{range: {5, nil}, prev_departure_mins: 4}},
+        | current_content_bottom: {@src, %HB{range: {:up_to, 5}, prev_departure_mins: 4}},
           tick_audit: 0
       }
 
@@ -367,7 +367,7 @@ defmodule Signs.RealtimeTest do
     test "evaluates the headway as inaccurate if the last departure is greater than the only number in the range" do
       sign = %{
         @sign
-        | current_content_bottom: {@src, %HB{range: {5, nil}, prev_departure_mins: 6}},
+        | current_content_bottom: {@src, %HB{range: {:up_to, 5}, prev_departure_mins: 6}},
           tick_audit: 0
       }
 
