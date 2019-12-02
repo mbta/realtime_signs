@@ -36,7 +36,6 @@ defmodule RealtimeSigns.Mixfile do
       {:ex_aws, "~> 2.0"},
       {:ex_aws_s3, "~> 2.0"},
       {:excoveralls, "~> 0.5", only: :test},
-      {:exprotobuf, "~> 1.0"},
       {:httpoison, "~> 1.0"},
       {:logger_splunk_backend, git: "https://github.com/mbta/logger_splunk_backend.git"},
       {:poison, "~> 3.1"},
