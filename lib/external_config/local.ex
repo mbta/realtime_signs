@@ -13,7 +13,7 @@ defmodule ExternalConfig.Local do
     if etag == current_version do
       :unchanged
     else
-      {etag, Poison.Parser.parse!(file)}
+      {etag, Jason.decode!(file)}
     end
   end
 end

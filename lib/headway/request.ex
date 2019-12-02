@@ -55,7 +55,7 @@ defmodule Headway.Request do
 
   @spec parse_body(String.t()) :: [map()]
   defp parse_body(body) do
-    case Poison.decode(body) do
+    case Jason.decode(body) do
       {:ok, response} ->
         Map.get(response, "data")
 

@@ -10,7 +10,7 @@ defmodule Signs.Utilities.SignsConfig do
     |> :code.priv_dir()
     |> Path.join("signs.json")
     |> File.read!()
-    |> Poison.Parser.parse!()
+    |> Jason.decode!()
   end
 
   @doc "Extracts every stop_id from the signs.json configuration"

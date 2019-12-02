@@ -16,7 +16,7 @@ defmodule ExternalConfig.S3 do
         :unchanged
 
       {:ok, response} ->
-        body = Poison.Parser.parse!(response.body)
+        body = Jason.decode!(response.body)
 
         etag =
           response.headers

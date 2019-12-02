@@ -48,7 +48,7 @@ defmodule Positions.PositionsTest do
 
   describe "parse_json_response/1" do
     test "parses response" do
-      encoded_json = Poison.encode!(@feed_message)
+      encoded_json = Jason.encode!(@feed_message)
       assert parse_json_response(encoded_json) == @feed_message
     end
 
