@@ -59,8 +59,8 @@ defmodule Predictions.Predictions do
   end
 
   @spec prediction_from_update(
-          {GTFS.Realtime.trip_update_stop_time_update(), String.t(), String.t(), integer(),
-           Predictions.Prediction.trip_id(), [String.t()] | nil, boolean(), String.t() | nil},
+          {map(), String.t(), String.t(), integer(), Predictions.Prediction.trip_id(),
+           [String.t()] | nil, boolean(), String.t() | nil},
           DateTime.t()
         ) :: Prediction.t()
   defp prediction_from_update(
