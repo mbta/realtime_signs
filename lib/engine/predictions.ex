@@ -175,7 +175,7 @@ defmodule Engine.Predictions do
   defp vehicle_positions_response_to_stops_with_trains(response) do
     try do
       response
-      |> Poison.Parser.parse!()
+      |> Jason.decode!()
       |> Map.get("entity")
       |> Enum.filter(fn vehicle_position ->
         get_in(vehicle_position, ["vehicle", "current_status"]) == "STOPPED_AT"
@@ -185,7 +185,7 @@ defmodule Engine.Predictions do
          get_in(vehicle_position, ["vehicle", "vehicle", "id"])}
       end)
     rescue
-      Poison.SyntaxError -> %{}
+      Jason.DecodeError -> %{}
     end
   end
 end

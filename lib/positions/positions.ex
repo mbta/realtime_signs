@@ -11,7 +11,7 @@ defmodule Positions.Positions do
   end
 
   def parse_json_response(body) do
-    Poison.Parser.parse!(body)
+    Jason.decode!(body)
   end
 
   @spec get_stopped(map) :: [{String.t(), true}]

@@ -554,7 +554,7 @@ defmodule Predictions.PredictionsTest do
   describe "parse_pb_response/1" do
     test "decodes a pb file" do
       assert @feed_message
-             |> Poison.encode!()
+             |> Jason.encode!()
              |> parse_json_response == @feed_message
     end
 

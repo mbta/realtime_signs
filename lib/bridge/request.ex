@@ -18,7 +18,7 @@ defmodule Bridge.Request do
           {String.t(), non_neg_integer | nil} | nil
   defp parse_response({:ok, %HTTPoison.Response{status_code: status, body: body}}, current_time)
        when status >= 200 and status < 300 do
-    case Poison.decode(body) do
+    case Jason.decode(body) do
       {:ok, response} ->
         do_parse_response(response, current_time)
 
