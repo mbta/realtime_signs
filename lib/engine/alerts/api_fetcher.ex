@@ -53,7 +53,7 @@ defmodule Engine.Alerts.ApiFetcher do
              }
            ),
          %{status_code: 200, body: body} <- req,
-         {:ok, parsed} <- Poison.Parser.parse(body),
+         {:ok, parsed} <- Jason.decode(body),
          {:ok, data} <- Map.fetch(parsed, "data") do
       {:ok, data}
     else

@@ -110,7 +110,7 @@ defmodule Predictions.Predictions do
   end
 
   def parse_json_response(body) do
-    Poison.Parser.parse!(body)
+    Jason.decode!(body)
   end
 
   @spec consist_is_new?([String.t()] | nil) :: boolean()

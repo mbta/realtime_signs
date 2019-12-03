@@ -62,7 +62,7 @@ defmodule Signs.Utilities.SourceConfigTest do
 
   describe "parse_one/1" do
     test "parses one source list" do
-      assert @one_source_json |> Poison.Parser.parse!() |> SourceConfig.parse!() ==
+      assert @one_source_json |> Jason.decode!() |> SourceConfig.parse!() ==
                {
                  [
                    %SourceConfig{
@@ -92,7 +92,7 @@ defmodule Signs.Utilities.SourceConfigTest do
     end
 
     test "parse two source lists" do
-      assert @two_source_json |> Poison.Parser.parse!() |> SourceConfig.parse!() ==
+      assert @two_source_json |> Jason.decode!() |> SourceConfig.parse!() ==
                {
                  [
                    %SourceConfig{
@@ -126,7 +126,7 @@ defmodule Signs.Utilities.SourceConfigTest do
     test "pull stop ids from config" do
       Enum.map([@one_source_json, @two_source_json], fn json ->
         assert json
-               |> Poison.Parser.parse!()
+               |> Jason.decode!()
                |> SourceConfig.parse!()
                |> SourceConfig.sign_stop_ids() == ["123", "234"]
       end)
@@ -137,7 +137,7 @@ defmodule Signs.Utilities.SourceConfigTest do
     test "pull routes from config" do
       Enum.map([@one_source_json, @two_source_json], fn json ->
         assert json
-               |> Poison.Parser.parse!()
+               |> Jason.decode!()
                |> SourceConfig.parse!()
                |> SourceConfig.sign_routes() == ["Foo", "Bar"]
       end)

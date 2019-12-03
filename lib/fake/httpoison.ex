@@ -117,7 +117,7 @@ defmodule Fake.HTTPoison do
           "timestamp" => 1_490_783_458
         }
       }
-      |> Poison.encode!()
+      |> Jason.encode!()
 
     {:ok,
      %HTTPoison.Response{
@@ -174,7 +174,7 @@ defmodule Fake.HTTPoison do
           "timestamp" => 1_490_783_458
         }
       }
-      |> Poison.encode!()
+      |> Jason.encode!()
 
     {:ok,
      %HTTPoison.Response{
@@ -233,7 +233,7 @@ defmodule Fake.HTTPoison do
           "timestamp" => 1_490_783_458
         }
       }
-      |> Poison.encode!()
+      |> Jason.encode!()
 
     {:ok,
      %HTTPoison.Response{
@@ -288,7 +288,7 @@ defmodule Fake.HTTPoison do
           }
         ]
       }
-      |> Poison.encode!()
+      |> Jason.encode!()
 
     {:ok,
      %HTTPoison.Response{
@@ -344,7 +344,7 @@ defmodule Fake.HTTPoison do
           "timestamp" => 1_490_783_578
         }
       }
-      |> Poison.encode!()
+      |> Jason.encode!()
 
     {:ok,
      %HTTPoison.Response{
@@ -399,7 +399,7 @@ defmodule Fake.HTTPoison do
           }
         ]
       }
-      |> Poison.encode!()
+      |> Jason.encode!()
 
     {:ok,
      %HTTPoison.Response{
@@ -443,7 +443,7 @@ defmodule Fake.HTTPoison do
         "https://green.dev.api.mbtace.com/schedules?filter[stop]=valid_json&filter[direction_id]=0,1"
       ) do
     json = %{"data" => [%{"relationships" => "trip"}]}
-    encoded = Poison.encode!(json)
+    encoded = Jason.encode!(json)
     {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
   end
 
@@ -459,7 +459,7 @@ defmodule Fake.HTTPoison do
       "lift_estimate" => %{"estimate_time" => estimate}
     }
 
-    encoded = Poison.encode!(json)
+    encoded = Jason.encode!(json)
     {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
   end
 
@@ -477,7 +477,7 @@ defmodule Fake.HTTPoison do
 
   def mock_response("https://green.dev.api.mbtace.com/schedules" <> _) do
     json = %{"data" => []}
-    encoded = Poison.encode!(json)
+    encoded = Jason.encode!(json)
     {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
   end
 
@@ -605,7 +605,7 @@ defmodule Fake.HTTPoison do
       ]
     }
 
-    {:ok, %HTTPoison.Response{status_code: 200, body: Poison.encode!(response)}}
+    {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(response)}}
   end
 
   def mock_response(_), do: {:ok, %HTTPoison.Response{status_code: 200, body: ""}}
