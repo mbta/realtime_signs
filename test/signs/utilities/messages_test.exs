@@ -569,7 +569,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :headway
       alert_status = :station_closure
 
-      assert {{_, %Content.Message.Alert.NoService{mode: mode}}, {_, %Content.Message.Empty{}}} =
+      assert {{_, %Content.Message.Alert.NoService{mode: _mode}}, {_, %Content.Message.Empty{}}} =
                Messages.get_messages(sign, sign_config, Timex.now(), alert_status, :train, nil)
     end
   end
