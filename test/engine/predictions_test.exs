@@ -134,7 +134,7 @@ defmodule Engine.PredictionsTest do
         "vehicle_positions_out_of_service_2"
       )
 
-      {:noreply, state} = handle_info(:update, state)
+      {:noreply, _} = handle_info(:update, state)
 
       state = :sys.get_state(Engine.Departures)
       assert state.departures == %{}
