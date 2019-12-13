@@ -1,6 +1,5 @@
 defmodule Engine.BridgeTest do
   use ExUnit.Case
-  import ExUnit.CaptureLog
 
   describe "status/2" do
     test "gives the status for the bridge id provided" do
