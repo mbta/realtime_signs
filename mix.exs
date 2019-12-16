@@ -14,6 +14,12 @@ defmodule RealtimeSigns.Mixfile do
         plt_add_apps: [:mix],
         plt_add_deps: true,
         ignore_warnings: ".dialyzer.ignore-warnings"
+      ],
+      releases: [
+        realtime_signs: [
+          include_executables_for: [:windows],
+          applications: [runtime_tools: :permanent]
+        ]
       ]
     ]
   end
