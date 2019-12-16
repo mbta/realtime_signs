@@ -65,7 +65,7 @@ defmodule Engine.Predictions do
         :vehicle_positions_url
       )
 
-    if vehicles_running_revenue_trips && stops_with_trains do
+    if vehicles_running_revenue_trips != nil && stops_with_trains do
       Engine.Departures.update_train_state(
         stops_with_trains,
         vehicles_running_revenue_trips,

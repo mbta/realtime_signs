@@ -32,14 +32,14 @@ defmodule RealtimeSigns.Mixfile do
   defp deps do
     [
       {:dialyxir, "~> 1.0.0-rc.4", only: [:dev, :test], runtime: false},
-      {:ehmon, git: "https://github.com/heroku/ehmon.git", tag: "v4"},
+      {:ehmon, git: "https://github.com/mbta/ehmon.git"},
       {:ex_aws, "~> 2.0"},
       {:ex_aws_s3, "~> 2.0"},
       {:excoveralls, "~> 0.5", only: :test},
       {:httpoison, "~> 1.0"},
       {:logger_splunk_backend, git: "https://github.com/mbta/logger_splunk_backend.git"},
       {:jason, "~> 1.1.2"},
-      {:sentry, "~> 6.2"},
+      {:sentry, "~> 7.0"},
       {:timex, "~> 3.1"},
       {:uuid, "~> 1.1", only: :test},
       {:stream_data, "~> 0.1", only: [:dev, :test]}
