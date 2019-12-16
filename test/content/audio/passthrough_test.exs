@@ -7,7 +7,7 @@ defmodule Content.Audio.PassthroughTest do
   describe "to_params/1" do
     test "Returns params" do
       audio = %Passthrough{destination: :alewife, route_id: "Red"}
-      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32114"], :audio_visual}}
+      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32114"], :audio_visual, 1}}
     end
 
     test "Returns nil when destination for which we don't have audio" do

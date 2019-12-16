@@ -36,6 +36,8 @@ defmodule Content.Audio.StoppedTrain do
   end
 
   defimpl Content.Audio do
+    @priority 3
+
     @the_next "501"
     @train_to "507"
     @is "533"
@@ -44,7 +46,7 @@ defmodule Content.Audio.StoppedTrain do
     def to_params(%{destination: :southbound, stops_away: stops_away}) do
       stop_or_stops = if stops_away == 1, do: "stop", else: "stops"
       text = "The next southbound train is stopped #{stops_away} #{stop_or_stops} away"
-      {:ad_hoc, {text, :audio}}
+      {:ad_hoc, {text, :audio, @priority}}
     end
 
     def to_params(audio) do
@@ -60,7 +62,7 @@ defmodule Content.Audio.StoppedTrain do
             stops_away_var(audio.stops_away)
           ]
 
-          PaEss.Utilities.take_message(vars, :audio)
+          PaEss.Utilities.take_message(vars, :audio, @priority)
 
         {:error, :unknown} ->
           Logger.error(
