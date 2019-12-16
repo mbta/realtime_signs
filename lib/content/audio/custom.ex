@@ -40,8 +40,10 @@ defmodule Content.Audio.Custom do
   end
 
   defimpl Content.Audio do
+    @priority 5
+
     def to_params(%Content.Audio.Custom{message: message}) do
-      {:ad_hoc, {message, :audio}}
+      {:ad_hoc, {message, :audio, @priority}}
     end
   end
 end

@@ -15,6 +15,8 @@ defmodule Content.Audio.TrackChange do
         }
 
   defimpl Content.Audio do
+    @priority 2
+
     @track_change "540"
     @the_next "501"
     @train_to "507"
@@ -52,7 +54,7 @@ defmodule Content.Audio.TrackChange do
                 ]
             end
 
-          PaEss.Utilities.take_message(vars, :audio_visual)
+          PaEss.Utilities.take_message(vars, :audio_visual, @priority)
 
         {:error, :unknown} ->
           Logger.error("TrackChange.to_params unknown destination: #{inspect(audio.destination)}")

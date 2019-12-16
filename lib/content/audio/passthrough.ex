@@ -15,6 +15,8 @@ defmodule Content.Audio.Passthrough do
         }
 
   defimpl Content.Audio do
+    @priority 1
+
     def to_params(audio) do
       case destination_var(audio.destination, audio.route_id) do
         nil ->
@@ -27,7 +29,7 @@ defmodule Content.Audio.Passthrough do
           nil
 
         var ->
-          {:canned, {"103", [var], :audio_visual}}
+          {:canned, {"103", [var], :audio_visual, @priority}}
       end
     end
 
