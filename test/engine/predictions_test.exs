@@ -148,7 +148,7 @@ defmodule Engine.PredictionsTest do
       }
 
       log =
-        capture_log([level: :warn], fn ->
+        capture_log([level: :info], fn ->
           {:noreply, ^existing_state} = handle_info(:unrecognized, existing_state)
         end)
 
