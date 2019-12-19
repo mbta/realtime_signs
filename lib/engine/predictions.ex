@@ -84,7 +84,7 @@ defmodule Engine.Predictions do
   end
 
   def handle_info(msg, state) do
-    Logger.warn("#{__MODULE__} unknown message: #{inspect(msg)}")
+    Logger.info("#{__MODULE__} unknown message: #{inspect(msg)}")
     {:noreply, state}
   end
 
