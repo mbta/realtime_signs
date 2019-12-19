@@ -13,7 +13,7 @@ defmodule Content.Audio.TrainIsBoardingTest do
       assert Content.Audio.to_params(audio) ==
                {:canned,
                 {"111", ["501", "21000", "538", "21000", "507", "21000", "4084", "21000", "544"],
-                 :audio}}
+                 :audio, 2}}
     end
 
     test "Next train to North Station is now boarding (no branch letter for EB trains)" do
@@ -25,7 +25,7 @@ defmodule Content.Audio.TrainIsBoardingTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"109", ["501", "21000", "507", "21000", "4027", "21000", "544"], :audio}}
+                {"109", ["501", "21000", "507", "21000", "4027", "21000", "544"], :audio, 2}}
     end
 
     test "Next train to Alewife is now boarding (works on Heavy Rail)" do
@@ -37,7 +37,7 @@ defmodule Content.Audio.TrainIsBoardingTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"109", ["501", "21000", "507", "21000", "4000", "21000", "544"], :audio}}
+                {"109", ["501", "21000", "507", "21000", "4000", "21000", "544"], :audio, 2}}
     end
 
     test "announces track number at terminal with multiple boarding tracks" do
@@ -50,7 +50,7 @@ defmodule Content.Audio.TrainIsBoardingTest do
       assert Content.Audio.to_params(audio) ==
                {:canned,
                 {"111", ["501", "21000", "507", "21000", "4016", "21000", "544", "21000", "542"],
-                 :audio}}
+                 :audio, 2}}
     end
 
     test "Returns :ad_hoc params when destination is 'southbound'" do
@@ -62,7 +62,7 @@ defmodule Content.Audio.TrainIsBoardingTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"The next southbound train is now boarding", :audio}}
+               {:ad_hoc, {"The next southbound train is now boarding", :audio, 2}}
     end
 
     test "Returns :ad_hoc params when destination is 'southbound', and says track #" do
@@ -74,7 +74,7 @@ defmodule Content.Audio.TrainIsBoardingTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"The next southbound train is now boarding, on track 2", :audio}}
+               {:ad_hoc, {"The next southbound train is now boarding, on track 2", :audio, 2}}
     end
 
     test "Handles unknown destination gracefully" do

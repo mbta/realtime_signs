@@ -19,8 +19,8 @@ defmodule Signs.Utilities.UpdaterTest do
       send(self(), {:update_sign, id, top_msg, bottom_msg, duration, start})
     end
 
-    def send_audio(audio_id, audio, priority, timeout) do
-      send(self(), {:send_audio, audio_id, audio, priority, timeout})
+    def send_audio(audio_id, audio, timeout) do
+      send(self(), {:send_audio, audio_id, audio, timeout})
     end
   end
 

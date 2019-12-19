@@ -16,6 +16,8 @@ defmodule Content.Audio.TrainIsBoarding do
         }
 
   defimpl Content.Audio do
+    @priority 2
+
     @the_next "501"
     @train_to "507"
     @is_now_boarding "544"
@@ -30,7 +32,7 @@ defmodule Content.Audio.TrainIsBoarding do
           "The next southbound train is now boarding"
         end
 
-      {:ad_hoc, {text, :audio}}
+      {:ad_hoc, {text, :audio, @priority}}
     end
 
     def to_params(audio) do
@@ -53,7 +55,7 @@ defmodule Content.Audio.TrainIsBoarding do
         @is_now_boarding
       ]
 
-      PaEss.Utilities.take_message(vars, :audio)
+      PaEss.Utilities.take_message(vars, :audio, @priority)
     end
 
     defp do_to_params(
@@ -92,7 +94,7 @@ defmodule Content.Audio.TrainIsBoarding do
             ]
         end
 
-      PaEss.Utilities.take_message(vars, :audio)
+      PaEss.Utilities.take_message(vars, :audio, @priority)
     end
 
     @spec track(Content.Utilities.track_number()) :: String.t()

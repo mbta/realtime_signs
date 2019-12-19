@@ -36,8 +36,10 @@ defmodule Content.Audio.BridgeIsUp do
   defimpl Content.Audio do
     alias PaEss.Utilities
 
+    @priority 5
+
     def to_params(audio) do
-      {:canned, {message_id(audio), vars(audio), :audio_visual}}
+      {:canned, {message_id(audio), vars(audio), :audio_visual, @priority}}
     end
 
     defp message_id(%{language: :english, time_estimate_mins: nil}), do: "136"

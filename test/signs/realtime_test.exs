@@ -56,8 +56,8 @@ defmodule Signs.RealtimeTest do
       send(self(), {:update_sign, id, top_msg, bottom_msg, duration, start})
     end
 
-    def send_audio(id, audio, priority, timeout) do
-      send(self(), {:send_audio, id, audio, priority, timeout})
+    def send_audio(id, audio, timeout) do
+      send(self(), {:send_audio, id, audio, timeout})
     end
   end
 
@@ -211,7 +211,7 @@ defmodule Signs.RealtimeTest do
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
       assert sign.announced_passthroughs == ["123"]
-      assert_received({:send_audio, _, %Content.Audio.Passthrough{}, _, _})
+      assert_received({:send_audio, _, %Content.Audio.Passthrough{}, _})
     end
   end
 
