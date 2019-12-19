@@ -1,5 +1,6 @@
 defmodule Engine.ConfigTest do
   use ExUnit.Case, async: false
+  import ExUnit.CaptureLog
 
   describe "sign_config/2" do
     test "is auto when the sign is enabled" do
@@ -50,7 +51,7 @@ defmodule Engine.ConfigTest do
     end
   end
 
-  describe "update callback" do
+  describe "hanfle_info/2" do
     test "does not update config when it is unchanged" do
       {:noreply, state} =
         Engine.Config.handle_info(:update, %{
@@ -78,6 +79,20 @@ defmodule Engine.ConfigTest do
       _state = initialize_test_state(:config_test_headway, fn -> DateTime.utc_now() end)
 
       assert :ets.lookup(:config_test_headway, "headway_test") == [{"headway_test", :headway}]
+    end
+
+    test "logs a when an unknown message is received" do
+      log =
+        capture_log([level: :info], fn ->
+          {:noreply, state} =
+            Engine.Config.handle_info(:foo, %{
+              ets_table_name: :test,
+              current_version: "unchanged",
+              time_fetcher: fn -> DateTime.utc_now() end
+            })
+        end)
+
+      assert log =~ "unknown message: :foo"
     end
   end
 
