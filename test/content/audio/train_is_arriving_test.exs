@@ -5,27 +5,27 @@ defmodule Content.Audio.TrainIsArrivingTest do
   describe "Content.Audio.to_params protocol" do
     test "Next train to Ashmont is now arriving" do
       audio = %Content.Audio.TrainIsArriving{destination: :ashmont, route_id: "Mattapan"}
-      assert Content.Audio.to_params(audio) == {:canned, {"90129", [], :audio_visual}}
+      assert Content.Audio.to_params(audio) == {:canned, {"90129", [], :audio_visual, 1}}
     end
 
     test "Next train to Mattapan is now arriving" do
       audio = %Content.Audio.TrainIsArriving{destination: :mattapan, route_id: "Mattapan"}
-      assert Content.Audio.to_params(audio) == {:canned, {"90128", [], :audio_visual}}
+      assert Content.Audio.to_params(audio) == {:canned, {"90128", [], :audio_visual, 1}}
     end
 
     test "Next train to Wonderland is now arriving" do
       audio = %Content.Audio.TrainIsArriving{destination: :wonderland, route_id: "Blue"}
-      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32100"], :audio_visual}}
+      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32100"], :audio_visual, 1}}
     end
 
     test "Next train to Bowdoin is now arriving" do
       audio = %Content.Audio.TrainIsArriving{destination: :bowdoin, route_id: "Blue"}
-      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32101"], :audio_visual}}
+      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32101"], :audio_visual, 1}}
     end
 
     test "Red line train to Ashmont" do
       audio = %Content.Audio.TrainIsArriving{destination: :ashmont, route_id: "Red"}
-      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32107"], :audio_visual}}
+      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32107"], :audio_visual, 1}}
     end
 
     test "Red line train to Alewife" do
@@ -35,7 +35,7 @@ defmodule Content.Audio.TrainIsArrivingTest do
         platform: nil
       }
 
-      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32104"], :audio_visual}}
+      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32104"], :audio_visual, 1}}
     end
 
     test "Red line train to Alewife on Braintree platform" do
@@ -45,7 +45,7 @@ defmodule Content.Audio.TrainIsArrivingTest do
         platform: :braintree
       }
 
-      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32106"], :audio_visual}}
+      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32106"], :audio_visual, 1}}
     end
 
     test "Southbound train" do
@@ -54,7 +54,7 @@ defmodule Content.Audio.TrainIsArrivingTest do
       assert Content.Audio.to_params(audio) ==
                {:ad_hoc,
                 {"Attention passengers: The next southbound Red Line train is now arriving.",
-                 :audio_visual}}
+                 :audio_visual, 1}}
     end
 
     test "Handles unknown destination gracefully" do

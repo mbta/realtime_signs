@@ -17,12 +17,14 @@ defmodule Content.Audio.Approaching do
         }
 
   defimpl Content.Audio do
+    @priority 2
+
     @attention_passengers "783"
     @now_approaching_new_ol_cars "785"
 
     def to_params(%{destination: :southbound, route_id: "Red"}) do
       text = "Attention passengers: The next southbound Red Line train is now approaching."
-      {:ad_hoc, {text, :audio_visual}}
+      {:ad_hoc, {text, :audio_visual, @priority}}
     end
 
     def to_params(%Content.Audio.Approaching{new_cars?: false} = audio) do
@@ -37,7 +39,7 @@ defmodule Content.Audio.Approaching do
           nil
 
         var ->
-          {:canned, {"103", [var], :audio_visual}}
+          {:canned, {"103", [var], :audio_visual, @priority}}
       end
     end
 
@@ -49,7 +51,7 @@ defmodule Content.Audio.Approaching do
         var ->
           # can't use take_message/2 directly as the spaces cause problems
           vars = [@attention_passengers, var, @now_approaching_new_ol_cars]
-          {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio_visual}}
+          {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio_visual, @priority}}
       end
     end
 

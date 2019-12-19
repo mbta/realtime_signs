@@ -12,7 +12,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
         headway_range: {7, 10}
       }
 
-      assert Content.Audio.to_params(audio) == {:canned, {"133", ["5507", "5510"], :audio}}
+      assert Content.Audio.to_params(audio) == {:canned, {"133", ["5507", "5510"], :audio, 4}}
     end
 
     test "Buses to Chelsea in Spanish" do
@@ -22,7 +22,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
         headway_range: {7, 10}
       }
 
-      assert Content.Audio.to_params(audio) == {:canned, {"150", ["37007", "37010"], :audio}}
+      assert Content.Audio.to_params(audio) == {:canned, {"150", ["37007", "37010"], :audio, 4}}
     end
 
     test "Buses to South Station in English" do
@@ -32,7 +32,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
         headway_range: {7, 10}
       }
 
-      assert Content.Audio.to_params(audio) == {:canned, {"134", ["5507", "5510"], :audio}}
+      assert Content.Audio.to_params(audio) == {:canned, {"134", ["5507", "5510"], :audio, 4}}
     end
 
     test "Buses to South Station in Spanish" do
@@ -42,7 +42,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
         headway_range: {7, 10}
       }
 
-      assert Content.Audio.to_params(audio) == {:canned, {"151", ["37007", "37010"], :audio}}
+      assert Content.Audio.to_params(audio) == {:canned, {"151", ["37007", "37010"], :audio, 4}}
     end
 
     test "Buses to South Station in Spanish, headway out of range" do
@@ -71,7 +71,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       assert Content.Audio.to_params(audio) ==
                {:ad_hoc,
                 {"Trains to Lechmere every 5 to 7 minutes.  Previous departure 5 minutes ago.",
-                 :audio}}
+                 :audio, 4}}
     end
 
     test "singularizes the minutes when the last departure was one minute ago" do
@@ -85,7 +85,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       assert Content.Audio.to_params(audio) ==
                {:ad_hoc,
                 {"Trains to Lechmere every 5 to 7 minutes.  Previous departure 1 minute ago.",
-                 :audio}}
+                 :audio, 4}}
     end
 
     test "doesn't announce departure zero minute ago" do
@@ -97,7 +97,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"Trains to Lechmere every 5 to 7 minutes.", :audio}}
+               {:ad_hoc, {"Trains to Lechmere every 5 to 7 minutes.", :audio, 4}}
     end
 
     test "returns a robo-voice message for a headway range that is too big" do
@@ -111,7 +111,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       assert Content.Audio.to_params(audio) ==
                {:ad_hoc,
                 {"Trains to Lechmere up to every 20 minutes.  Previous departure 5 minutes ago.",
-                 :audio}}
+                 :audio, 4}}
     end
 
     test "returns a robo-voice message for a headway that is too big with no last departure" do
@@ -122,7 +122,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"Trains to Lechmere up to every 20 minutes.", :audio}}
+               {:ad_hoc, {"Trains to Lechmere up to every 20 minutes.", :audio, 4}}
     end
 
     test "returns correct audio for cardinal direction, rather than terminal, headways" do
@@ -136,7 +136,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       assert Content.Audio.to_params(audio) ==
                {:ad_hoc,
                 {"Southbound trains every 5 to 7 minutes.  Previous departure 3 minutes ago.",
-                 :audio}}
+                 :audio, 4}}
     end
 
     test "returns nil when range is unexpected" do

@@ -32,8 +32,8 @@ defmodule Content.Audio.UtilitiesTest do
   end
 
   test "take_message/2" do
-    assert take_message(["1", "2", "3"], :audio_visual) ==
-             {:canned, {"107", ["1", "21000", "2", "21000", "3"], :audio_visual}}
+    assert take_message(["1", "2", "3"], :audio_visual, 5) ==
+             {:canned, {"107", ["1", "21000", "2", "21000", "3"], :audio_visual, 5}}
   end
 
   test "take_message_id/1" do

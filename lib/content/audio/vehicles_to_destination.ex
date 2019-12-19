@@ -68,6 +68,8 @@ defmodule Content.Audio.VehiclesToDestination do
   defimpl Content.Audio do
     alias PaEss.Utilities
 
+    @priority 4
+
     def to_params(
           %Content.Audio.VehiclesToDestination{
             headway_range: {lower_mins, higher_mins},
@@ -81,7 +83,7 @@ defmodule Content.Audio.VehiclesToDestination do
           nil
 
         vars ->
-          {:canned, {message_id(audio), vars, :audio}}
+          {:canned, {message_id(audio), vars, :audio, @priority}}
       end
     end
 
@@ -112,7 +114,8 @@ defmodule Content.Audio.VehiclesToDestination do
           ""
         end
 
-      {:ad_hoc, {vehicles_to_destination <> minutes_range <> previous_departure, :audio}}
+      {:ad_hoc,
+       {vehicles_to_destination <> minutes_range <> previous_departure, :audio, @priority}}
     end
 
     def to_params(_audio), do: nil
