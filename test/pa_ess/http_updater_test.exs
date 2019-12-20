@@ -6,6 +6,7 @@ end
 
 defmodule PaEss.HttpUpdaterTest do
   use ExUnit.Case, async: true
+  import ExUnit.CaptureLog
 
   defmodule FakePoster do
     def post(_, q, _) do
@@ -18,10 +19,17 @@ defmodule PaEss.HttpUpdaterTest do
     test "replys with {:ok, :sent} when successful" do
       state = make_state()
 
-      assert PaEss.HttpUpdater.process(
-               {:update_single_line, [{"SBOX", "c"}, "1", %Content.Message.Empty{}, 60, :now]},
-               state
-             ) == {:ok, :sent}
+      log =
+        capture_log(fn ->
+          assert PaEss.HttpUpdater.process(
+                   {:update_single_line,
+                    [{"SBOX", "c"}, "1", %Content.Message.Empty{}, 60, :now]},
+                   state
+                 ) == {:ok, :sent}
+        end)
+
+      assert log =~ ~r" arinc_ms=\d+"
+      assert log =~ ~r" signs_ui_ms=\d+"
     end
 
     test "Posts a request to display a message now" do
@@ -62,11 +70,17 @@ defmodule PaEss.HttpUpdaterTest do
       top = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: :boarding}
       bottom = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: 2}
 
-      assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process(
-                 {:update_sign, [{"ABCD", "n"}, top, bottom, 60, :now]},
-                 state
-               )
+      log =
+        capture_log(fn ->
+          assert {:ok, :sent} ==
+                   PaEss.HttpUpdater.process(
+                     {:update_sign, [{"ABCD", "n"}, top, bottom, 60, :now]},
+                     state
+                   )
+        end)
+
+      assert log =~ ~r" arinc_ms=\d+"
+      assert log =~ ~r" signs_ui_ms=\d+"
     end
 
     test "replies with {:ok, :sent} when successful" do
@@ -99,8 +113,13 @@ defmodule PaEss.HttpUpdaterTest do
         headway_range: {8, 12}
       }
 
-      assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process({:send_audio, [{"SBOX", ["c"]}, audio, 60]}, state)
+      log =
+        capture_log(fn ->
+          assert {:ok, :sent} ==
+                   PaEss.HttpUpdater.process({:send_audio, [{"SBOX", ["c"]}, audio, 60]}, state)
+        end)
+
+      assert log =~ ~r"arinc_ms=\d+"
     end
 
     test "Buses to South Station" do
@@ -186,11 +205,17 @@ defmodule PaEss.HttpUpdaterTest do
         message: "Custom Message"
       }
 
-      assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process(
-                 {:send_audio, [{"MCAP", ["n"]}, audio, 60]},
-                 state
-               )
+      log =
+        capture_log(fn ->
+          assert {:ok, :sent} ==
+                   PaEss.HttpUpdater.process(
+                     {:send_audio, [{"MCAP", ["n"]}, audio, 60]},
+                     state
+                   )
+        end)
+
+      assert log =~ ~r" arinc_ms=\d+"
+      assert log =~ "send_custom_audio"
     end
 
     test "can send two audio messages" do
