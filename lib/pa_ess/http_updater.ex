@@ -64,10 +64,22 @@ defmodule PaEss.HttpUpdater do
   def process({:update_single_line, [{station, zone}, line_no, msg, duration, start_secs]}, state) do
     cmd = to_command(msg, duration, start_secs, zone, line_no)
     encoded = URI.encode_query(MsgType: "SignContent", uid: state.uid, sta: station, c: cmd)
-    Logger.info(["update_single_line: ", encoded, " pid=", inspect(self())])
 
-    update_ui(state.http_poster, encoded)
-    send_post(state.http_poster, encoded)
+    {ui_time, _} = :timer.tc(fn -> update_ui(state.http_poster, encoded) end)
+    {arinc_time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
+
+    Logger.info([
+      "update_single_line: ",
+      encoded,
+      " pid=",
+      inspect(self()),
+      " arinc_ms=",
+      inspect(div(arinc_time, 1000)),
+      " signs_ui_ms=",
+      inspect(div(ui_time, 1000))
+    ])
+
+    result
   end
 
   def process(
@@ -86,10 +98,21 @@ defmodule PaEss.HttpUpdater do
         c: bottom_cmd
       )
 
-    Logger.info(["update_sign: ", encoded, " pid=", inspect(self())])
+    {ui_time, _} = :timer.tc(fn -> update_ui(state.http_poster, encoded) end)
+    {arinc_time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
 
-    update_ui(state.http_poster, encoded)
-    send_post(state.http_poster, encoded)
+    Logger.info([
+      "update_sign: ",
+      encoded,
+      " pid=",
+      inspect(self()),
+      " arinc_ms=",
+      inspect(div(arinc_time, 1000)),
+      " signs_ui_ms=",
+      inspect(div(ui_time, 1000))
+    ])
+
+    result
   end
 
   def process({:send_audio, [{station, zones}, audios, timeout]}, state) do
@@ -121,9 +144,18 @@ defmodule PaEss.HttpUpdater do
           ]
           |> URI.encode_query()
 
-        Logger.info(["send_audio: ", encoded, " pid=", inspect(self())])
+        {time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
 
-        send_post(state.http_poster, encoded)
+        Logger.info([
+          "send_audio: ",
+          encoded,
+          " pid=",
+          inspect(self()),
+          " arinc_ms=",
+          inspect(div(time, 1000))
+        ])
+
+        result
 
       {:ad_hoc, {text, type, priority}} ->
         encoded =
@@ -138,9 +170,18 @@ defmodule PaEss.HttpUpdater do
           ]
           |> URI.encode_query()
 
-        Logger.info(["send_custom_audio: ", encoded, " pid=", inspect(self())])
+        {time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
 
-        send_post(state.http_poster, encoded)
+        Logger.info([
+          "send_custom_audio: ",
+          encoded,
+          " pid=",
+          inspect(self()),
+          " arinc_ms=",
+          inspect(div(time, 1000))
+        ])
+
+        result
 
       nil ->
         {:ok, :no_audio}
