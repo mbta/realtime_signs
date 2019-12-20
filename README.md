@@ -32,19 +32,19 @@ The version of Erlang we use is precompiled Erlang/OTP 22.1, installed via [this
 
 The version of Elixir we use is precompiled Elixir 1.9.4, downloaded [here](https://github.com/elixir-lang/elixir/releases) and unzipped to `/c/Users/RTRUser/bin`.
 
-The `realtime_signs` code is `git clone`d to `/c/Users/RTRUser/GitHub/realtime_signs_release_[dev/prod]/`. (The repo is cloned twice, once for dev and once for prod.)
+The `realtime_signs` code is `git clone`d to `/c/Users/RTRUser/GitHub/realtime_signs_release_[dev|prod]/`. (The repo is cloned twice, once for dev and once for prod.)
 
 We build the application via Elixir-native `mix release`, setting the `PATH` to include the aforementioned versions of Elixir and Erlang. The release gets built into `_build/prod/rel/`.
 
-To manage the Windows service we use [`nssm`](https://nssm.cc/). The service is configured via `nssm edit realtime-signs-[prod/staging]`. In particular, environment variables are added there, and the app launch is configured there. The app is configured to launch as follows:
+To manage the Windows service we use [`nssm`](https://nssm.cc/). The service is configured via `nssm edit realtime-signs-[prod|staging]`. In particular, environment variables are added there, and the app launch is configured there. The app is configured to launch as follows:
 
-* `Path`: `C:\Users\RTRUser\GitHub\realtime_signs_release_[dev/prod]\_build\prod\rel\realtime_signs\bin\realtime_signs.bat`
-* `Startup directory`: `C:\Users\RTRUser\GitHub\realtime_signs_release_[dev/prod]`
+* `Path`: `C:\Users\RTRUser\GitHub\realtime_signs_release_[dev|prod]\_build\prod\rel\realtime_signs\bin\realtime_signs.bat`
+* `Startup directory`: `C:\Users\RTRUser\GitHub\realtime_signs_release_[dev|prod]`
 * `Arguments`: `start`
 
 To deploy a new version of the code:
 
-1. In Git Bash, navigate to `/c/Users/RTRUser/GitHub/realtime_signs_release_[dev/prod]`
+1. In Git Bash, navigate to `/c/Users/RTRUser/GitHub/realtime_signs_release_[dev|prod]`
 1. `git pull` the latest version
-1. Run `./build_release.sh` to compile a new release.
+1. Run `./build_release.sh realtime_signs_[dev|prod]` to compile a new release. The second argument gives the name of the Erlang node to run the relase under and isn't terribly important as long as it's distinct for dev versus prod.
 1. Open the Windows `Services` application and restart `realtime-signs-[staging/prod]`
