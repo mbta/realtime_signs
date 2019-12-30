@@ -117,6 +117,32 @@ defmodule PaEss.Utilities do
   def headsign_to_destination("Westbound"), do: {:ok, :westbound}
   def headsign_to_destination(_unknown), do: {:error, :unknown}
 
+  @spec destination_to_sign_string(PaEss.destination()) :: String.t()
+  def destination_to_sign_string(:alewife), do: "Alewife"
+  def destination_to_sign_string(:ashmont), do: "Ashmont"
+  def destination_to_sign_string(:braintree), do: "Braintree"
+  def destination_to_sign_string(:mattapan), do: "Mattapan"
+  def destination_to_sign_string(:bowdoin), do: "Bowdoin"
+  def destination_to_sign_string(:wonderland), do: "Wonderland"
+  def destination_to_sign_string(:oak_grove), do: "Oak Grove"
+  def destination_to_sign_string(:forest_hills), do: "Frst Hills"
+  def destination_to_sign_string(:chelsea), do: "Chelsea"
+  def destination_to_sign_string(:south_station), do: "South Sta"
+  def destination_to_sign_string(:lechmere), do: "Lechmere"
+  def destination_to_sign_string(:north_station), do: "North Sta"
+  def destination_to_sign_string(:government_center), do: "Govt Ctr"
+  def destination_to_sign_string(:park_street), do: "Park St"
+  def destination_to_sign_string(:kenmore), do: "Kenmore"
+  def destination_to_sign_string(:boston_college), do: "Boston Col"
+  def destination_to_sign_string(:cleveland_circle), do: "Clvlnd Cir"
+  def destination_to_sign_string(:reservoir), do: "Reservoir"
+  def destination_to_sign_string(:riverside), do: "Riverside"
+  def destination_to_sign_string(:heath_street), do: "Heath St"
+  def destination_to_sign_string(:northbound), do: "Northbound"
+  def destination_to_sign_string(:southbound), do: "Southbound"
+  def destination_to_sign_string(:eastbound), do: "Eastbound"
+  def destination_to_sign_string(:westbound), do: "Westbound"
+
   @spec destination_to_ad_hoc_string(PaEss.destination()) :: String.t()
   def destination_to_ad_hoc_string(:alewife), do: "Alewife"
   def destination_to_ad_hoc_string(:ashmont), do: "Ashmont"
