@@ -1,5 +1,6 @@
 defmodule RealtimeSignsConfigTest do
   use ExUnit.Case, async: false
+  import ExUnit.CaptureLog
 
   import RealtimeSignsConfig
 
@@ -21,6 +22,20 @@ defmodule RealtimeSignsConfigTest do
     test "converts an integer before storing in application environment" do
       assert :ok = update_env(%{"ENV_VAR" => "5"}, :app_key, "ENV_VAR", type: :integer)
       assert Application.get_env(:realtime_signs, :app_key) == 5
+    end
+
+    test "logs the environment variable unless it's private" do
+      env = %{"ENV1" => "env1", "ENV2" => "env2"}
+
+      log =
+        capture_log(fn ->
+          :ok = update_env(env, :app_key, "ENV1")
+          :ok = update_env(env, :app_key, "ENV2", private?: true)
+          :ok = Process.sleep(50)
+        end)
+
+      assert log =~ ~s(ENV1="env1")
+      refute log =~ "ENV2"
     end
   end
 end
