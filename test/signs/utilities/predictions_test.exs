@@ -467,6 +467,22 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("indeterminate_destination", 0) do
+      [
+        %Predictions.Prediction{
+          stop_id: "indeterminate_destination",
+          direction_id: 0,
+          route_id: "Not a Valid Route",
+          stopped?: false,
+          stops_away: 0,
+          destination_stop_id: "Not a Valid Stop ID",
+          seconds_until_arrival: nil,
+          seconds_until_departure: 240,
+          trip_id: "123"
+        }
+      ]
+    end
+
     def for_stop("passthrough_trains", 0) do
       [
         %Predictions.Prediction{
@@ -608,8 +624,8 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s1, %Content.Message.Predictions{headsign: "Ashmont", minutes: 2}},
-               {^s2, %Content.Message.Predictions{headsign: "Alewife", minutes: 2}}
+               {^s1, %Content.Message.Predictions{destination: :ashmont, minutes: 2}},
+               {^s2, %Content.Message.Predictions{destination: :alewife, minutes: 2}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
@@ -638,8 +654,8 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s1, %Content.Message.Predictions{headsign: "Alewife", minutes: 2}},
-               {^s2, %Content.Message.Predictions{headsign: "Alewife", minutes: 4}}
+               {^s1, %Content.Message.Predictions{destination: :alewife, minutes: 2}},
+               {^s2, %Content.Message.Predictions{destination: :alewife, minutes: 4}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
@@ -658,8 +674,8 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^src, %Content.Message.Predictions{headsign: "Alewife", minutes: 4}},
-               {^src, %Content.Message.Predictions{headsign: "Alewife", minutes: 8}}
+               {^src, %Content.Message.Predictions{destination: :alewife, minutes: 4}},
+               {^src, %Content.Message.Predictions{destination: :alewife, minutes: 8}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
@@ -698,7 +714,7 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^src, %Content.Message.Predictions{headsign: "Mattapan", minutes: :max_time}},
+               {^src, %Content.Message.Predictions{destination: :mattapan, minutes: :max_time}},
                {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
@@ -718,7 +734,7 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^src, %Content.Message.Predictions{headsign: "Mattapan", minutes: :max_time}},
+               {^src, %Content.Message.Predictions{destination: :mattapan, minutes: :max_time}},
                {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
@@ -844,12 +860,12 @@ defmodule Signs.Utilities.PredictionsTest do
       sign2 = %{@sign | source_config: config2}
 
       assert {
-               {^s1, %Content.Message.Predictions{headsign: "Boston Col"}},
-               {^s1, %Content.Message.Predictions{headsign: "Riverside"}}
+               {^s1, %Content.Message.Predictions{destination: :boston_college}},
+               {^s1, %Content.Message.Predictions{destination: :riverside}}
              } = Signs.Utilities.Predictions.get_messages(sign1)
 
       assert {
-               {^s2, %Content.Message.Predictions{headsign: "Riverside"}},
+               {^s2, %Content.Message.Predictions{destination: :riverside}},
                {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign2)
     end
@@ -870,8 +886,10 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
-               {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :boarding}}
+               {^s,
+                %Content.Message.Predictions{destination: :boston_college, minutes: :boarding}},
+               {^s,
+                %Content.Message.Predictions{destination: :cleveland_circle, minutes: :boarding}}
              } = Signs.Utilities.Predictions.get_messages(sign)
 
       s = %{s | stop_id: "second_brd"}
@@ -879,8 +897,9 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{sign | source_config: config}
 
       assert {
-               {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :boarding}},
-               {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: 3}}
+               {^s,
+                %Content.Message.Predictions{destination: :cleveland_circle, minutes: :boarding}},
+               {^s, %Content.Message.Predictions{destination: :boston_college, minutes: 3}}
              } = Signs.Utilities.Predictions.get_messages(sign)
 
       s = %{s | stop_id: "first_brd"}
@@ -888,8 +907,9 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{sign | source_config: config}
 
       assert {
-               {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
-               {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: 3}}
+               {^s,
+                %Content.Message.Predictions{destination: :boston_college, minutes: :boarding}},
+               {^s, %Content.Message.Predictions{destination: :cleveland_circle, minutes: 3}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
@@ -912,8 +932,9 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s1, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :arriving}},
-               {^s2, %Content.Message.Predictions{headsign: "Riverside", minutes: :arriving}}
+               {^s1,
+                %Content.Message.Predictions{destination: :cleveland_circle, minutes: :arriving}},
+               {^s2, %Content.Message.Predictions{destination: :riverside, minutes: :arriving}}
              } = Signs.Utilities.Predictions.get_messages(sign)
 
       s1 = %{s1 | multi_berth?: false}
@@ -922,8 +943,9 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s1, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :arriving}},
-               {^s2, %Content.Message.Predictions{headsign: "Riverside", minutes: 1}}
+               {^s1,
+                %Content.Message.Predictions{destination: :cleveland_circle, minutes: :arriving}},
+               {^s2, %Content.Message.Predictions{destination: :riverside, minutes: 1}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
@@ -946,8 +968,9 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s1, %Content.Message.Predictions{headsign: "Riverside", minutes: :boarding}},
-               {^s2, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}}
+               {^s1, %Content.Message.Predictions{destination: :riverside, minutes: :boarding}},
+               {^s2,
+                %Content.Message.Predictions{destination: :boston_college, minutes: :boarding}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
@@ -967,9 +990,28 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s, %Content.Message.Predictions{headsign: "Braintree", minutes: 1}},
-               {^s, %Content.Message.Predictions{headsign: "Ashmont", minutes: 3}}
+               {^s, %Content.Message.Predictions{destination: :braintree, minutes: 1}},
+               {^s, %Content.Message.Predictions{destination: :ashmont, minutes: 3}}
              } = Signs.Utilities.Predictions.get_messages(sign)
+    end
+
+    test "properly handles case where destination can't be determined" do
+      s = %SourceConfig{
+        stop_id: "indeterminate_destination",
+        headway_destination: :southbound,
+        direction_id: 0,
+        terminal?: true,
+        platform: nil,
+        routes: nil,
+        announce_arriving?: false,
+        announce_boarding?: true
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      assert Signs.Utilities.Predictions.get_messages(sign) ==
+               {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
     end
   end
 

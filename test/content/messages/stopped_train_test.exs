@@ -3,7 +3,7 @@ defmodule Content.Message.StoppedTrainTest do
 
   describe "to_string/1" do
     test "returns tuple of stopped away pages otherwise" do
-      msg = %Content.Message.StoppedTrain{headsign: "Braintree", stops_away: 2}
+      msg = %Content.Message.StoppedTrain{destination: :braintree, stops_away: 2}
 
       assert Content.Message.to_string(msg) ==
                [
@@ -14,7 +14,7 @@ defmodule Content.Message.StoppedTrainTest do
     end
 
     test "if only 1 stop away, doesn't pluralize, and adjusts spacing" do
-      msg = %Content.Message.StoppedTrain{headsign: "Braintree", stops_away: 1}
+      msg = %Content.Message.StoppedTrain{destination: :braintree, stops_away: 1}
 
       assert Content.Message.to_string(msg) ==
                [
@@ -37,7 +37,7 @@ defmodule Content.Message.StoppedTrainTest do
 
       assert Content.Message.StoppedTrain.from_prediction(prediction) ==
                %Content.Message.StoppedTrain{
-                 headsign: "Alewife",
+                 destination: :alewife,
                  stops_away: 5
                }
     end
@@ -47,7 +47,7 @@ defmodule Content.Message.StoppedTrainTest do
 
       assert Content.Message.StoppedTrain.from_prediction(prediction) ==
                %Content.Message.StoppedTrain{
-                 headsign: "Alewife",
+                 destination: :alewife,
                  stops_away: 1
                }
     end
@@ -57,7 +57,7 @@ defmodule Content.Message.StoppedTrainTest do
 
       assert Content.Message.StoppedTrain.from_prediction(prediction) ==
                %Content.Message.StoppedTrain{
-                 headsign: "Alewife",
+                 destination: :alewife,
                  stops_away: 10
                }
     end
@@ -65,11 +65,7 @@ defmodule Content.Message.StoppedTrainTest do
     test "handles unknown final stop_id" do
       prediction = %{@prediction | route_id: "Fake Route", destination_stop_id: "123"}
 
-      assert Content.Message.StoppedTrain.from_prediction(prediction) ==
-               %Content.Message.StoppedTrain{
-                 headsign: "",
-                 stops_away: 1
-               }
+      assert is_nil(Content.Message.StoppedTrain.from_prediction(prediction))
     end
   end
 end

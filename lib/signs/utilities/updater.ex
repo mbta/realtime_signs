@@ -116,22 +116,22 @@ defmodule Signs.Utilities.Updater do
   end
 
   defp countup?(
-         %Content.Message.Predictions{headsign: same, minutes: :arriving},
-         %Content.Message.Predictions{headsign: same, minutes: :approaching}
+         %Content.Message.Predictions{destination: same, minutes: :arriving},
+         %Content.Message.Predictions{destination: same, minutes: :approaching}
        ) do
     true
   end
 
   defp countup?(
-         %Content.Message.Predictions{headsign: same, minutes: :approaching},
-         %Content.Message.Predictions{headsign: same, minutes: 1}
+         %Content.Message.Predictions{destination: same, minutes: :approaching},
+         %Content.Message.Predictions{destination: same, minutes: 1}
        ) do
     true
   end
 
   defp countup?(
-         %Content.Message.Predictions{headsign: same, minutes: a},
-         %Content.Message.Predictions{headsign: same, minutes: b}
+         %Content.Message.Predictions{destination: same, minutes: a},
+         %Content.Message.Predictions{destination: same, minutes: b}
        )
        when a + 1 == b do
     true
