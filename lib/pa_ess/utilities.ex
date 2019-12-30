@@ -94,23 +94,19 @@ defmodule PaEss.Utilities do
   def headsign_to_destination("Bowdoin"), do: {:ok, :bowdoin}
   def headsign_to_destination("Wonderland"), do: {:ok, :wonderland}
   def headsign_to_destination("Oak Grove"), do: {:ok, :oak_grove}
-  def headsign_to_destination("Frst Hills"), do: {:ok, :forest_hills}
+  def headsign_to_destination("Forest Hills"), do: {:ok, :forest_hills}
   def headsign_to_destination("Chelsea"), do: {:ok, :chelsea}
   def headsign_to_destination("South Station"), do: {:ok, :south_station}
   def headsign_to_destination("Lechmere"), do: {:ok, :lechmere}
-  def headsign_to_destination("North Sta"), do: {:ok, :north_station}
   def headsign_to_destination("North Station"), do: {:ok, :north_station}
-  def headsign_to_destination("Govt Ctr"), do: {:ok, :government_center}
-  def headsign_to_destination("Park St"), do: {:ok, :park_street}
+  def headsign_to_destination("Government Center"), do: {:ok, :government_center}
   def headsign_to_destination("Park Street"), do: {:ok, :park_street}
   def headsign_to_destination("Kenmore"), do: {:ok, :kenmore}
-  def headsign_to_destination("Boston Col"), do: {:ok, :boston_college}
   def headsign_to_destination("Boston College"), do: {:ok, :boston_college}
   def headsign_to_destination("Cleveland Circle"), do: {:ok, :cleveland_circle}
   def headsign_to_destination("Reservoir"), do: {:ok, :reservoir}
   def headsign_to_destination("Riverside"), do: {:ok, :riverside}
-  def headsign_to_destination("Clvlnd Cir"), do: {:ok, :cleveland_circle}
-  def headsign_to_destination("Heath St"), do: {:ok, :heath_street}
+  def headsign_to_destination("Heath Street"), do: {:ok, :heath_street}
   def headsign_to_destination("Northbound"), do: {:ok, :northbound}
   def headsign_to_destination("Southbound"), do: {:ok, :southbound}
   def headsign_to_destination("Eastbound"), do: {:ok, :eastbound}
