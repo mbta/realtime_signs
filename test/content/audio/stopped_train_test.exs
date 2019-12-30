@@ -70,21 +70,10 @@ defmodule Content.Audio.StoppedTrainTest do
 
   describe "from_message/1" do
     test "Converts a stopped train message with known headsign" do
-      msg = %Content.Message.StoppedTrain{headsign: "Frst Hills", stops_away: 1}
+      msg = %Content.Message.StoppedTrain{destination: :forest_hills, stops_away: 1}
 
       assert Content.Audio.StoppedTrain.from_message(msg) ==
                %Content.Audio.StoppedTrain{destination: :forest_hills, stops_away: 1}
-    end
-
-    test "Logs a warning if unknown headsign" do
-      msg = %Content.Message.StoppedTrain{headsign: "Unknown", stops_away: 1}
-
-      log =
-        capture_log([level: :warn], fn ->
-          assert Content.Audio.StoppedTrain.from_message(msg) == nil
-        end)
-
-      assert log =~ "unknown_headsign"
     end
 
     test "Returns nil for irrelevant message" do
@@ -93,7 +82,7 @@ defmodule Content.Audio.StoppedTrainTest do
     end
 
     test "when the trian is stopped 0 stops away, does not announce that it is stopped 0 stops away" do
-      msg = %Content.Message.StoppedTrain{headsign: "Frst Hills", stops_away: 0}
+      msg = %Content.Message.StoppedTrain{destination: :forest_hills, stops_away: 0}
 
       assert Content.Audio.StoppedTrain.from_message(msg) == nil
     end

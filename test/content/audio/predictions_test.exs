@@ -22,7 +22,7 @@ defmodule Content.Audio.PredictionsTest do
       src = %{@src | stop_id: "70197", direction_id: 0, headway_direction_name: "Boston Col"}
 
       predictions = %Message.Predictions{
-        headsign: "Boston Col",
+        destination: :boston_college,
         minutes: :boarding,
         route_id: "Green-B",
         stop_id: "70197"
@@ -39,7 +39,7 @@ defmodule Content.Audio.PredictionsTest do
       src = %{@src | stop_id: "70196", direction_id: 0, headway_direction_name: "Heath St"}
 
       predictions = %Message.Predictions{
-        headsign: "Heath St",
+        destination: :heath_street,
         minutes: :boarding,
         route_id: "Green-E",
         stop_id: "70196"
@@ -56,7 +56,7 @@ defmodule Content.Audio.PredictionsTest do
       src = %{@src | stop_id: "70196", direction_id: 0, headway_direction_name: "Heath St"}
 
       predictions = %Message.Predictions{
-        headsign: "Heath St",
+        destination: :heath_street,
         minutes: 2,
         route_id: "Green-E",
         stop_id: "70196"
@@ -79,7 +79,7 @@ defmodule Content.Audio.PredictionsTest do
       }
 
       predictions = %Message.Predictions{
-        headsign: "Ashmont",
+        destination: :ashmont,
         minutes: :approaching,
         route_id: "Red",
         stop_id: "70085",
@@ -106,7 +106,7 @@ defmodule Content.Audio.PredictionsTest do
       }
 
       predictions = %Message.Predictions{
-        headsign: "Ashmont",
+        destination: :ashmont,
         minutes: :approaching,
         route_id: "Red",
         stop_id: "70085",
@@ -132,7 +132,7 @@ defmodule Content.Audio.PredictionsTest do
       }
 
       predictions = %Message.Predictions{
-        headsign: "Riverside",
+        destination: :riverside,
         minutes: :approaching,
         route_id: "Green-D",
         stop_id: "70155",
@@ -149,7 +149,7 @@ defmodule Content.Audio.PredictionsTest do
       src = %{@src | stop_id: "70065", direction_id: 0, headway_direction_name: "Southbound"}
 
       predictions = %Message.Predictions{
-        headsign: "Ashmont",
+        destination: :ashmont,
         minutes: :approaching,
         route_id: "Red",
         stop_id: "70065"
@@ -168,7 +168,7 @@ defmodule Content.Audio.PredictionsTest do
       src = %{@src | stop_id: "70065", direction_id: 0, headway_direction_name: "Southbound"}
 
       predictions = %Message.Predictions{
-        headsign: "Ashmont",
+        destination: :ashmont,
         minutes: :boarding,
         route_id: "Red",
         stop_id: "70065",
@@ -193,7 +193,7 @@ defmodule Content.Audio.PredictionsTest do
       }
 
       predictions = %Message.Predictions{
-        headsign: "Ashmont",
+        destination: :ashmont,
         minutes: :arriving,
         route_id: "Red",
         stop_id: "70085",
@@ -218,7 +218,7 @@ defmodule Content.Audio.PredictionsTest do
       }
 
       predictions = %Message.Predictions{
-        headsign: "Ashmont",
+        destination: :ashmont,
         minutes: 1,
         route_id: "Red",
         stop_id: "70065"
@@ -238,7 +238,7 @@ defmodule Content.Audio.PredictionsTest do
       }
 
       predictions = %Message.Predictions{
-        headsign: "Ashmont",
+        destination: :ashmont,
         minutes: 1,
         route_id: "Red",
         stop_id: "70061"
@@ -258,7 +258,7 @@ defmodule Content.Audio.PredictionsTest do
       }
 
       predictions = %Message.Predictions{
-        headsign: "Alewife",
+        destination: :alewife,
         minutes: 2,
         route_id: "Red",
         stop_id: "70096"
@@ -282,7 +282,7 @@ defmodule Content.Audio.PredictionsTest do
       }
 
       predictions = %Message.Predictions{
-        headsign: "Ashmont",
+        destination: :ashmont,
         minutes: :max_time,
         route_id: "Red",
         stop_id: "70065"
@@ -290,22 +290,6 @@ defmodule Content.Audio.PredictionsTest do
 
       assert %Audio.NextTrainCountdown{destination: :ashmont, verb: :arrives, minutes: 20} =
                from_sign_content({src, predictions}, :top, false)
-    end
-
-    test "returns nil and logs warning if invalid headsign" do
-      predictions = %Message.Predictions{
-        headsign: "Mars",
-        minutes: 1,
-        route_id: "Red",
-        stop_id: "70061"
-      }
-
-      log =
-        capture_log([level: :warn], fn ->
-          assert from_sign_content({@src, predictions}, :top, false) == nil
-        end)
-
-      assert log =~ "unknown headsign"
     end
   end
 end

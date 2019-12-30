@@ -92,8 +92,9 @@ defmodule Signs.Utilities.MessagesTest do
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: {[@src]},
-    current_content_top: {@src, %Content.Message.Predictions{headsign: "Alewife", minutes: 4}},
-    current_content_bottom: {@src, %Content.Message.Predictions{headsign: "Ashmont", minutes: 3}},
+    current_content_top: {@src, %Content.Message.Predictions{destination: :alewife, minutes: 4}},
+    current_content_bottom:
+      {@src, %Content.Message.Predictions{destination: :ashmont, minutes: 3}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartures,
@@ -197,7 +198,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
@@ -215,7 +216,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
@@ -267,7 +268,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
@@ -285,7 +286,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
@@ -355,7 +356,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
@@ -373,7 +374,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
@@ -471,7 +472,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
@@ -489,7 +490,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",

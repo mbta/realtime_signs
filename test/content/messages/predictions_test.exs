@@ -15,10 +15,10 @@ defmodule Content.Message.PredictionsTest do
 
       log =
         capture_log([level: :warn], fn ->
-          Content.Message.Predictions.non_terminal(prediction)
+          assert is_nil(Content.Message.Predictions.non_terminal(prediction))
         end)
 
-      assert log =~ "Could not find headsign for prediction"
+      assert log =~ "no_destination_for_prediction"
     end
 
     test "puts ARR on the sign when train is 0 seconds away, but not boarding" do
@@ -247,10 +247,10 @@ defmodule Content.Message.PredictionsTest do
 
       log =
         capture_log([level: :warn], fn ->
-          Content.Message.Predictions.terminal(prediction)
+          assert is_nil(Content.Message.Predictions.terminal(prediction))
         end)
 
-      assert log =~ "Could not find headsign for prediction"
+      assert log =~ "no_destination_for_prediction"
     end
 
     test "logs a warning when we cant find a headsign" do
@@ -265,10 +265,10 @@ defmodule Content.Message.PredictionsTest do
 
       log =
         capture_log([level: :warn], fn ->
-          Content.Message.Predictions.terminal(prediction)
+          assert is_nil(Content.Message.Predictions.terminal(prediction))
         end)
 
-      assert log =~ "Could not find headsign for prediction"
+      assert log =~ "no_destination_for_prediction"
     end
 
     test "puts boarding on the sign when train is supposed to be boarding according to rtr" do

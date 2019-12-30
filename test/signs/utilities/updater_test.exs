@@ -39,8 +39,8 @@ defmodule Signs.Utilities.UpdaterTest do
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: {[]},
-    current_content_top: {@src, %P{headsign: "Alewife", minutes: 4}},
-    current_content_bottom: {@src, %P{headsign: "Ashmont", minutes: 3}},
+    current_content_top: {@src, %P{destination: :alewife, minutes: 4}},
+    current_content_bottom: {@src, %P{destination: :ashmont, minutes: 3}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartures,
@@ -57,8 +57,8 @@ defmodule Signs.Utilities.UpdaterTest do
 
   describe "update_sign/3" do
     test "doesn't do anything if both lines are the same" do
-      same_top = {@src, %P{headsign: "Alewife", minutes: 4}}
-      same_bottom = {@src, %P{headsign: "Ashmont", minutes: 3}}
+      same_top = {@src, %P{destination: :alewife, minutes: 4}}
+      same_bottom = {@src, %P{destination: :ashmont, minutes: 3}}
 
       sign = Updater.update_sign(@sign, same_top, same_bottom)
 
@@ -70,8 +70,8 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "changes the top line if necessary" do
-      diff_top = {@src, %P{headsign: "Alewife", minutes: 3}}
-      same_bottom = {@src, %P{headsign: "Ashmont", minutes: 3}}
+      diff_top = {@src, %P{destination: :alewife, minutes: 3}}
+      same_bottom = {@src, %P{destination: :ashmont, minutes: 3}}
 
       sign = Updater.update_sign(@sign, diff_top, same_bottom)
 
@@ -83,9 +83,9 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "does not change top line if it would be a count up from ARR to approaching" do
-      sign = %{@sign | current_content_top: {@src, %P{headsign: "Alewife", minutes: :arriving}}}
-      diff_top = {@src, %P{headsign: "Alewife", minutes: :approaching}}
-      same_bottom = {@src, %P{headsign: "Ashmont", minutes: 3}}
+      sign = %{@sign | current_content_top: {@src, %P{destination: :alewife, minutes: :arriving}}}
+      diff_top = {@src, %P{destination: :alewife, minutes: :approaching}}
+      same_bottom = {@src, %P{destination: :ashmont, minutes: 3}}
 
       Updater.update_sign(sign, diff_top, same_bottom)
 
@@ -95,11 +95,11 @@ defmodule Signs.Utilities.UpdaterTest do
     test "does not change the top line if it would be a count up from approaching to 1 min" do
       sign = %{
         @sign
-        | current_content_top: {@src, %P{headsign: "Alewife", minutes: :approaching}}
+        | current_content_top: {@src, %P{destination: :alewife, minutes: :approaching}}
       }
 
-      diff_top = {@src, %P{headsign: "Alewife", minutes: 1}}
-      same_bottom = {@src, %P{headsign: "Ashmont", minutes: 3}}
+      diff_top = {@src, %P{destination: :alewife, minutes: 1}}
+      same_bottom = {@src, %P{destination: :ashmont, minutes: 3}}
 
       Updater.update_sign(sign, diff_top, same_bottom)
 
@@ -107,9 +107,9 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "does not change top line if it would be a count up from 3 min to 4 min" do
-      sign = %{@sign | current_content_top: {@src, %P{headsign: "Alewife", minutes: 3}}}
-      diff_top = {@src, %P{headsign: "Alewife", minutes: 4}}
-      same_bottom = {@src, %P{headsign: "Ashmont", minutes: 3}}
+      sign = %{@sign | current_content_top: {@src, %P{destination: :alewife, minutes: 3}}}
+      diff_top = {@src, %P{destination: :alewife, minutes: 4}}
+      same_bottom = {@src, %P{destination: :ashmont, minutes: 3}}
 
       Updater.update_sign(sign, diff_top, same_bottom)
 
@@ -119,11 +119,11 @@ defmodule Signs.Utilities.UpdaterTest do
     test "does not change bottom line if it would be a count up from ARR to approaching" do
       sign = %{
         @sign
-        | current_content_bottom: {@src, %P{headsign: "Ashmont", minutes: :arriving}}
+        | current_content_bottom: {@src, %P{destination: :ashmont, minutes: :arriving}}
       }
 
-      same_top = {@src, %P{headsign: "Alewife", minutes: 4}}
-      diff_bottom = {@src, %P{headsign: "Ashmont", minutes: :approaching}}
+      same_top = {@src, %P{destination: :alewife, minutes: 4}}
+      diff_bottom = {@src, %P{destination: :ashmont, minutes: :approaching}}
 
       Updater.update_sign(sign, same_top, diff_bottom)
 
@@ -131,8 +131,8 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "changes the bottom line if necessary" do
-      same_top = {@src, %P{headsign: "Alewife", minutes: 4}}
-      diff_bottom = {@src, %P{headsign: "Ashmont", minutes: 2}}
+      same_top = {@src, %P{destination: :alewife, minutes: 4}}
+      diff_bottom = {@src, %P{destination: :ashmont, minutes: 2}}
 
       sign = Updater.update_sign(@sign, same_top, diff_bottom)
 
@@ -144,8 +144,8 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "changes both lines if necessary" do
-      diff_top = {@src, %P{headsign: "Alewife", minutes: 3}}
-      diff_bottom = {@src, %P{headsign: "Ashmont", minutes: 2}}
+      diff_top = {@src, %P{destination: :alewife, minutes: 3}}
+      diff_bottom = {@src, %P{destination: :ashmont, minutes: 2}}
 
       sign = Updater.update_sign(@sign, diff_top, diff_bottom)
 
@@ -160,18 +160,18 @@ defmodule Signs.Utilities.UpdaterTest do
 
       sign = %{
         @sign
-        | current_content_top: {src, %P{headsign: "Alewife", minutes: :boarding}},
-          current_content_bottom: {src, %P{headsign: "Ashmont", minutes: :boarding}}
+        | current_content_top: {src, %P{destination: :alewife, minutes: :boarding}},
+          current_content_bottom: {src, %P{destination: :ashmont, minutes: :boarding}}
       }
 
-      diff_top = {src, %P{headsign: "Ashmont", minutes: :boarding}}
-      diff_bottom = {src, %P{headsign: "Alewife", minutes: 19}}
+      diff_top = {src, %P{destination: :ashmont, minutes: :boarding}}
+      diff_bottom = {src, %P{destination: :alewife, minutes: 19}}
       Updater.update_sign(sign, diff_top, diff_bottom)
       refute_received({:send_audio, _, _, _, _})
     end
 
     test "logs when stopped train message turns on" do
-      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
+      diff_top = {@src, %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2}}
       same_bottom = @sign.current_content_bottom
 
       initial_tick_read = 10
@@ -188,8 +188,8 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "logs when stopped train message turns off" do
-      new_top = {@src, %P{headsign: "Alewife", minutes: 4}}
-      new_bottom = {@src, %P{headsign: "Alewife", minutes: 4}}
+      new_top = {@src, %P{destination: :alewife, minutes: 4}}
+      new_bottom = {@src, %P{destination: :alewife, minutes: 4}}
 
       initial_tick_read = 10
       read_period_seconds = 100
@@ -197,9 +197,9 @@ defmodule Signs.Utilities.UpdaterTest do
       sign = %{
         @sign
         | current_content_top:
-            {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
+            {@src, %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2}},
           current_content_bottom:
-            {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
+            {@src, %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2}},
           tick_read: initial_tick_read,
           read_period_seconds: read_period_seconds
       }
@@ -214,8 +214,8 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "logs when stopped train message changes from zero to non-zero stops away" do
-      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}}
-      same_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 2}}
+      diff_top = {@src, %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2}}
+      same_bottom = {@src, %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 2}}
 
       initial_tick_read = 10
       read_period_seconds = 100
@@ -223,9 +223,9 @@ defmodule Signs.Utilities.UpdaterTest do
       sign = %{
         @sign
         | current_content_top:
-            {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 0}},
+            {@src, %Content.Message.StoppedTrain{destination: :alewife, stops_away: 0}},
           current_content_bottom:
-            {@src, %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 0}},
+            {@src, %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 0}},
           tick_read: initial_tick_read,
           read_period_seconds: read_period_seconds
       }
@@ -240,8 +240,8 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "logs when stopped train message changes from non-zero to zero stops away" do
-      diff_top = {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 0}}
-      same_bottom = {@src, %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 0}}
+      diff_top = {@src, %Content.Message.StoppedTrain{destination: :alewife, stops_away: 0}}
+      same_bottom = {@src, %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 0}}
 
       initial_tick_read = 10
       read_period_seconds = 100
@@ -249,9 +249,9 @@ defmodule Signs.Utilities.UpdaterTest do
       sign = %{
         @sign
         | current_content_top:
-            {@src, %Content.Message.StoppedTrain{headsign: "Alewife", stops_away: 2}},
+            {@src, %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2}},
           current_content_bottom:
-            {@src, %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 2}},
+            {@src, %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 2}},
           tick_read: initial_tick_read,
           read_period_seconds: read_period_seconds
       }

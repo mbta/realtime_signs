@@ -14,41 +14,9 @@ defmodule Content.Audio.FollowingTrainTest do
       assert Content.Audio.to_params(audio) == {:canned, {"160", ["4016", "503", "5005"], :audio}}
     end
 
-    test "When we dont have a good headsign, logs a warning" do
-      message = %Content.Message.Predictions{headsign: "Neverland", minutes: 5}
-
-      log =
-        capture_log([level: :warn], fn ->
-          assert Content.Audio.FollowingTrain.from_predictions_message(
-                   {%{
-                      terminal?: false,
-                      platform: nil
-                    }, message}
-                 ) == nil
-        end)
-
-      assert log =~ "unknown headsign"
-    end
-
-    test "When we dont have a good headsign and its a terminal, logs a warning" do
-      message = %Content.Message.Predictions{headsign: "Neverland", minutes: 5}
-
-      log =
-        capture_log([level: :warn], fn ->
-          assert Content.Audio.FollowingTrain.from_predictions_message(
-                   {%{
-                      terminal?: true,
-                      platform: nil
-                    }, message}
-                 ) == nil
-        end)
-
-      assert log =~ "unknown headsign"
-    end
-
     test "when its a non terminal it uses arrives" do
       message = %Content.Message.Predictions{
-        headsign: "Ashmont",
+        destination: :ashmont,
         route_id: "Mattapan",
         minutes: 5
       }
@@ -71,7 +39,7 @@ defmodule Content.Audio.FollowingTrainTest do
 
     test "when its a terminal it uses departs" do
       message = %Content.Message.Predictions{
-        headsign: "Ashmont",
+        destination: :ashmont,
         route_id: "Mattapan",
         minutes: 5
       }

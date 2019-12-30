@@ -223,47 +223,37 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_audio(
-         {_, %Message.Predictions{headsign: same}} = content_top,
-         {_, %Message.Predictions{headsign: same}} = content_bottom,
+         {_, %Message.Predictions{destination: same}} = content_top,
+         {_, %Message.Predictions{destination: same}} = content_bottom,
          multi_source?
        ) do
     top_audio = Audio.Predictions.from_sign_content(content_top, :top, multi_source?)
 
-    if top_audio do
-      case Audio.FollowingTrain.from_predictions_message(content_bottom) do
-        nil -> top_audio
-        bottom_audio -> {top_audio, bottom_audio}
-      end
-    else
-      Logger.error(
-        "message_to_audio_error Utilities.Audio same_headsign #{inspect(content_top)}, #{
-          inspect(content_bottom)
-        }"
-      )
-
-      nil
+    case Audio.FollowingTrain.from_predictions_message(content_bottom) do
+      nil -> top_audio
+      bottom_audio -> {top_audio, bottom_audio}
     end
   end
 
   defp get_audio(
-         {_, %Message.StoppedTrain{headsign: same} = top},
-         {_, %Message.StoppedTrain{headsign: same}},
+         {_, %Message.StoppedTrain{destination: same} = top},
+         {_, %Message.StoppedTrain{destination: same}},
          _multi_source?
        ) do
     Audio.StoppedTrain.from_message(top)
   end
 
   defp get_audio(
-         {_, %Message.StoppedTrain{headsign: same} = top},
-         {_, %Message.Predictions{headsign: same}},
+         {_, %Message.StoppedTrain{destination: same} = top},
+         {_, %Message.Predictions{destination: same}},
          _multi_source?
        ) do
     Audio.StoppedTrain.from_message(top)
   end
 
   defp get_audio(
-         {_, %Message.Predictions{headsign: same}} = top_content,
-         {_, %Message.StoppedTrain{headsign: same}},
+         {_, %Message.Predictions{destination: same}} = top_content,
+         {_, %Message.StoppedTrain{destination: same}},
          multi_source?
        ) do
     Audio.Predictions.from_sign_content(top_content, :top, multi_source?)
