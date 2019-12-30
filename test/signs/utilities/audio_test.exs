@@ -14,7 +14,7 @@ defmodule Signs.Utilities.AudioTest do
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     direction_id: 0,
-    headway_direction_name: "Southbound",
+    headway_destination: :southbound,
     platform: nil,
     terminal?: false,
     announce_arriving?: false,
@@ -193,7 +193,7 @@ defmodule Signs.Utilities.AudioTest do
     end
 
     test "returns true if it's a different kind of message" do
-      message = %Message.Headways.Top{headsign: "Alewife", vehicle_type: :train}
+      message = %Message.Headways.Top{destination: :alewife, vehicle_type: :train}
       assert should_interrupting_read?({@src, message}, %{@sign | source_config: {[@src]}}, :top)
     end
   end
@@ -241,7 +241,7 @@ defmodule Signs.Utilities.AudioTest do
     test "Headway messages" do
       sign = %{
         @sign
-        | current_content_top: {@src, %Message.Headways.Top{headsign: "Alewife"}},
+        | current_content_top: {@src, %Message.Headways.Top{destination: :alewife}},
           current_content_bottom: {@src, %Message.Headways.Bottom{range: {1, 3}}}
       }
 
@@ -258,7 +258,7 @@ defmodule Signs.Utilities.AudioTest do
     test "Headways in Spanish, too, if available" do
       sign = %{
         @sign
-        | current_content_top: {@src, %Message.Headways.Top{headsign: "Chelsea"}},
+        | current_content_top: {@src, %Message.Headways.Top{destination: :chelsea}},
           current_content_bottom: {@src, %Message.Headways.Bottom{range: {1, 3}}}
       }
 

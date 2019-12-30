@@ -10,7 +10,7 @@ defmodule Content.Audio.PredictionsTest do
   @src %SourceConfig{
     stop_id: "70196",
     direction_id: 0,
-    headway_direction_name: "Heath St",
+    headway_destination: :heath_street,
     platform: nil,
     terminal?: false,
     announce_arriving?: false,
@@ -19,7 +19,7 @@ defmodule Content.Audio.PredictionsTest do
 
   describe "from_sign_content/3" do
     test "returns a TrackChange audio when Green-B boarding other side at Park St" do
-      src = %{@src | stop_id: "70197", direction_id: 0, headway_direction_name: "Boston Col"}
+      src = %{@src | stop_id: "70197", direction_id: 0, headway_destination: :boston_college}
 
       predictions = %Message.Predictions{
         destination: :boston_college,
@@ -36,7 +36,7 @@ defmodule Content.Audio.PredictionsTest do
     end
 
     test "returns a TrackChange audio when Green-E boarding other side at Park St" do
-      src = %{@src | stop_id: "70196", direction_id: 0, headway_direction_name: "Heath St"}
+      src = %{@src | stop_id: "70196", direction_id: 0, headway_destination: :heath_street}
 
       predictions = %Message.Predictions{
         destination: :heath_street,
@@ -53,7 +53,7 @@ defmodule Content.Audio.PredictionsTest do
     end
 
     test "returns a NextTrainCountdown if it's the wrong track but somehow not boarding" do
-      src = %{@src | stop_id: "70196", direction_id: 0, headway_direction_name: "Heath St"}
+      src = %{@src | stop_id: "70196", direction_id: 0, headway_destination: :heath_street}
 
       predictions = %Message.Predictions{
         destination: :heath_street,
@@ -74,7 +74,7 @@ defmodule Content.Audio.PredictionsTest do
         @src
         | stop_id: "70085",
           direction_id: 0,
-          headway_direction_name: "Southbound",
+          headway_destination: :southbound,
           platform: :ashmont
       }
 
@@ -101,7 +101,7 @@ defmodule Content.Audio.PredictionsTest do
         @src
         | stop_id: "70085",
           direction_id: 0,
-          headway_direction_name: "Southbound",
+          headway_destination: :southbound,
           platform: :ashmont
       }
 
@@ -128,7 +128,7 @@ defmodule Content.Audio.PredictionsTest do
         @src
         | stop_id: "70155",
           direction_id: 0,
-          headway_direction_name: "Westbound"
+          headway_destination: :westbound
       }
 
       predictions = %Message.Predictions{
@@ -146,7 +146,7 @@ defmodule Content.Audio.PredictionsTest do
     end
 
     test "returns a NextTrainCountdown audio if predictions say it's approaching on the bottom line" do
-      src = %{@src | stop_id: "70065", direction_id: 0, headway_direction_name: "Southbound"}
+      src = %{@src | stop_id: "70065", direction_id: 0, headway_destination: :southbound}
 
       predictions = %Message.Predictions{
         destination: :ashmont,
@@ -165,7 +165,7 @@ defmodule Content.Audio.PredictionsTest do
     end
 
     test "returns a TrainIsBoarding audio if predictions say it's boarding" do
-      src = %{@src | stop_id: "70065", direction_id: 0, headway_direction_name: "Southbound"}
+      src = %{@src | stop_id: "70065", direction_id: 0, headway_destination: :southbound}
 
       predictions = %Message.Predictions{
         destination: :ashmont,
@@ -188,7 +188,7 @@ defmodule Content.Audio.PredictionsTest do
         @src
         | stop_id: "70085",
           direction_id: 0,
-          headway_direction_name: "Southbound",
+          headway_destination: :southbound,
           platform: :ashmont
       }
 
@@ -213,7 +213,7 @@ defmodule Content.Audio.PredictionsTest do
         @src
         | stop_id: "70065",
           direction_id: 0,
-          headway_direction_name: "Southbound",
+          headway_destination: :southbound,
           terminal?: false
       }
 
@@ -233,7 +233,7 @@ defmodule Content.Audio.PredictionsTest do
         @src
         | stop_id: "70061",
           direction_id: 0,
-          headway_direction_name: "Southbound",
+          headway_destination: :southbound,
           terminal?: true
       }
 
@@ -253,7 +253,7 @@ defmodule Content.Audio.PredictionsTest do
         @src
         | stop_id: "70096",
           direction_id: 1,
-          headway_direction_name: "Alewife",
+          headway_destination: :alewife,
           platform: :ashmont
       }
 
@@ -277,7 +277,7 @@ defmodule Content.Audio.PredictionsTest do
         @src
         | stop_id: "70065",
           direction_id: 0,
-          headway_direction_name: "Southbound",
+          headway_destination: :southbound,
           terminal?: false
       }
 

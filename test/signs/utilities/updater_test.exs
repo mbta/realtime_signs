@@ -26,7 +26,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
-    headway_direction_name: "Southbound",
+    headway_destination: :southbound,
     direction_id: 0,
     platform: nil,
     terminal?: false,

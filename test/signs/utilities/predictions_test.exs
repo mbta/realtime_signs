@@ -602,7 +602,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "when given two source lists, returns earliest result from each" do
       s1 = %SourceConfig{
         stop_id: "1",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -612,7 +612,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s2 = %SourceConfig{
         stop_id: "2",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -632,7 +632,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "when given one source list, returns earliest two results" do
       s1 = %SourceConfig{
         stop_id: "3",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -642,7 +642,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s2 = %SourceConfig{
         stop_id: "4",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -662,7 +662,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "sorts by arrival or departure depending on which is present" do
       src = %SourceConfig{
         stop_id: "arrival_vs_departure_time",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -682,7 +682,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "When the train is stopped a long time away, but not quite max time, shows stopped" do
       src = %SourceConfig{
         stop_id: "stopped_not_too_long_away",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -702,7 +702,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "When the train is stopped a long time away from a terminal, shows max time instead of stopped" do
       src = %SourceConfig{
         stop_id: "stopped_a_long_time_away_terminal",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: true,
         platform: nil,
@@ -722,7 +722,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "When the train is stopped a long time away, shows max time instead of stopped" do
       src = %SourceConfig{
         stop_id: "stopped_a_long_time_away",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -742,7 +742,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "pads out results if only one prediction" do
       s = %SourceConfig{
         stop_id: "7",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -762,7 +762,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "pads out results if no predictions" do
       s = %SourceConfig{
         stop_id: "n/a",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -782,7 +782,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "only the first prediction in a source list can be BRD" do
       s = %SourceConfig{
         stop_id: "8",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -802,7 +802,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Returns stopped train message" do
       s = %SourceConfig{
         stop_id: "9",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -822,7 +822,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Only includes predictions if a departure prediction is present" do
       s = %SourceConfig{
         stop_id: "stop_with_nil_departure_prediction",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -842,7 +842,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Filters by route if present" do
       s1 = %SourceConfig{
         stop_id: "filterable_by_route",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -873,7 +873,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Sorts boarding status to the top" do
       s = %SourceConfig{
         stop_id: "both_brd",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -916,7 +916,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Does not allow ARR on second line unless platform has multiple berths" do
       s1 = %SourceConfig{
         stop_id: "arr_multi_berth1",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -952,7 +952,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Correctly orders BRD predictions between trains mid-trip and those starting their trip" do
       s1 = %SourceConfig{
         stop_id: "multiple_brd_some_first_stop_1",
-        headway_direction_name: "Westbound",
+        headway_destination: :westbound,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -977,7 +977,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "doesn't sort 0 stops away to first for terminals when another departure is sooner" do
       s = %SourceConfig{
         stop_id: "terminal_dont_sort_0_stops_first",
-        headway_direction_name: "Southbound",
+        headway_destination: :southbound,
         direction_id: 0,
         terminal?: true,
         platform: nil,
@@ -1019,7 +1019,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "returns appropriate audio structs for multi-source sign" do
       s1 = %SourceConfig{
         stop_id: "passthrough_trains",
-        headway_direction_name: "Southbound",
+        headway_destination: :southbound,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -1030,7 +1030,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s2 = %SourceConfig{
         stop_id: "passthrough_trains",
-        headway_direction_name: "Alewife",
+        headway_destination: :alewife,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -1054,7 +1054,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "returns appropriate audio structs for single-source sign" do
       s = %SourceConfig{
         stop_id: "passthrough_trains",
-        headway_direction_name: "Southbound",
+        headway_destination: :southbound,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -1079,7 +1079,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "handles \"Southbound\" headsign" do
       s = %SourceConfig{
         stop_id: "passthrough_trains_southbound_red_line_destination",
-        headway_direction_name: "Alewife",
+        headway_destination: :alewife,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -1104,7 +1104,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "handles case where headsign can't be determined" do
       s = %SourceConfig{
         stop_id: "passthrough_trains_bad_destination",
-        headway_direction_name: "Alewife",
+        headway_destination: :alewife,
         direction_id: 1,
         terminal?: false,
         platform: nil,
