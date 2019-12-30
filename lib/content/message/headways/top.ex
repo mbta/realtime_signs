@@ -1,27 +1,29 @@
 defmodule Content.Message.Headways.Top do
   require Logger
-  defstruct [:headsign, :vehicle_type]
+  defstruct [:destination, :vehicle_type]
 
   @type vehicle_type :: :bus | :trolley | :train
   @type t :: %__MODULE__{
-          headsign: String.t(),
+          destination: PaEss.destination(),
           vehicle_type: vehicle_type
         }
 
   defimpl Content.Message do
     def to_string(%Content.Message.Headways.Top{
-          headsign: headsign,
+          destination: destination,
           vehicle_type: type
         })
         when type in [:bus] do
-      "#{type |> signify_vehicle_type() |> String.capitalize()} to #{signify_headsign(headsign)}"
+      "#{type |> signify_vehicle_type() |> String.capitalize()} to #{
+        PaEss.Utilities.destination_to_sign_string(destination)
+      }"
     end
 
     def to_string(%Content.Message.Headways.Top{
-          headsign: headsign,
+          destination: destination,
           vehicle_type: type
         }) do
-      "#{headsign} #{signify_vehicle_type(type)}"
+      "#{PaEss.Utilities.destination_to_sign_string(destination)} #{signify_vehicle_type(type)}"
     end
 
     @spec signify_vehicle_type(Content.Message.Headways.Top.vehicle_type()) :: String.t()
@@ -35,14 +37,6 @@ defmodule Content.Message.Headways.Top do
 
     defp signify_vehicle_type(:trolley) do
       "trolleys"
-    end
-
-    defp signify_headsign("South Station") do
-      "South Sta"
-    end
-
-    defp signify_headsign(headsign) do
-      headsign
     end
   end
 end

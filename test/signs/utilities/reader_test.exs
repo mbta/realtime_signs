@@ -21,7 +21,7 @@ defmodule Signs.Utilities.ReaderTest do
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     direction_id: 0,
-    headway_direction_name: "Southbound",
+    headway_destination: :southbound,
     platform: nil,
     terminal?: false,
     announce_arriving?: false,
