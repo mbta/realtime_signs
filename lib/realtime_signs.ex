@@ -32,14 +32,14 @@ defmodule RealtimeSigns do
     env = System.get_env()
     :ok = Config.update_env(env, :sign_head_end_host, "SIGN_HEAD_END_HOST")
     :ok = Config.update_env(env, :sign_ui_url, "SIGN_UI_URL")
-    :ok = Config.update_env(env, :sign_ui_api_key, "SIGN_UI_API_KEY")
+    :ok = Config.update_env(env, :sign_ui_api_key, "SIGN_UI_API_KEY", private?: true)
     :ok = Config.update_env(env, :bridge_api_username, "BRIDGE_API_USERNAME")
-    :ok = Config.update_env(env, :bridge_api_password, "BRIDGE_API_PASSWORD")
+    :ok = Config.update_env(env, :bridge_api_password, "BRIDGE_API_PASSWORD", private?: true)
     :ok = Config.update_env(env, :trip_update_url, "TRIP_UPDATE_URL")
     :ok = Config.update_env(env, :vehicle_positions_url, "VEHICLE_POSITIONS_URL")
     :ok = Config.update_env(env, :s3_bucket, "SIGNS_S3_BUCKET")
     :ok = Config.update_env(env, :s3_path, "SIGNS_S3_PATH")
-    :ok = Config.update_env(env, :api_v3_key, "API_V3_KEY")
+    :ok = Config.update_env(env, :api_v3_key, "API_V3_KEY", private?: true)
     :ok = Config.update_env(env, :api_v3_url, "API_V3_URL")
 
     :ok =
