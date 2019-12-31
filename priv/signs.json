@@ -4924,21 +4924,11 @@
     "type": "realtime",
     "source_config": [
       [
-        {
-          "stop_id": "70150",
-          "direction_id": 1,
-          "headway_direction_name": "Eastbound",
-          "routes": ["Green-B"],
-          "platform": null,
-          "terminal": false,
-          "announce_arriving": true,
-          "announce_boarding": false
-        },
 	{
           "stop_id": "71150",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green-B"],
+          "routes": ["Green-B", "Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -4956,21 +4946,11 @@
     "type": "realtime",
     "source_config": [
       [
-        {
-          "stop_id": "70151",
-          "direction_id": 0,
-          "headway_direction_name": "Westbound",
-          "routes": ["Green-B"],
-          "platform": null,
-          "terminal": false,
-          "announce_arriving": true,
-          "announce_boarding": false
-        },
 	{
           "stop_id": "71151",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green-B"],
+          "routes": ["Green-B", "Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -4992,7 +4972,7 @@
           "stop_id": "70150",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": ["Green-C", "Green-D"],
+          "routes": ["Green-B", "Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5014,7 +4994,7 @@
           "stop_id": "70151",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": ["Green-C", "Green-D"],
+          "routes": ["Green-B", "Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
