@@ -1,10 +1,12 @@
 defmodule RealtimeSigns.Mixfile do
   use Mix.Project
 
+  @version "1.0.0-2020-01-02"
+
   def project do
     [
       app: :realtime_signs,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.5",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
