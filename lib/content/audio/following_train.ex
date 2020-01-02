@@ -57,8 +57,6 @@ defmodule Content.Audio.FollowingTrain do
   defimpl Content.Audio do
     alias PaEss.Utilities
 
-    @priority 3
-
     @the_following "667"
     @train_to "507"
     @in_ "504"
@@ -68,7 +66,7 @@ defmodule Content.Audio.FollowingTrain do
     def to_params(%{destination: :southbound, verb: verb, minutes: minutes}) do
       min_or_mins = if minutes == 1, do: "minute", else: "minutes"
       text = "The following southbound train #{verb} in #{minutes} #{min_or_mins}"
-      {:ad_hoc, {text, :audio, @priority}}
+      {:ad_hoc, {text, :audio}}
     end
 
     def to_params(audio) do
@@ -85,11 +83,10 @@ defmodule Content.Audio.FollowingTrain do
               green_line_with_branch_params(audio, green_line_branch, dest_var)
 
             audio.minutes == 1 ->
-              {:canned, {"159", [dest_var, verb_var(audio)], :audio, @priority}}
+              {:canned, {"159", [dest_var, verb_var(audio)], :audio}}
 
             true ->
-              {:canned,
-               {"160", [dest_var, verb_var(audio), minutes_var(audio)], :audio, @priority}}
+              {:canned, {"160", [dest_var, verb_var(audio), minutes_var(audio)], :audio}}
           end
 
         {:error, :unknown} ->
@@ -118,7 +115,7 @@ defmodule Content.Audio.FollowingTrain do
         minute_or_minutes(audio)
       ]
 
-      Utilities.take_message(vars, :audio, @priority)
+      Utilities.take_message(vars, :audio)
     end
 
     defp verb_var(%{verb: :arrives}), do: "503"

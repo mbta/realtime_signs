@@ -22,8 +22,6 @@ defmodule Content.Audio.NextTrainCountdown do
   defimpl Content.Audio do
     alias PaEss.Utilities
 
-    @priority 3
-
     @the_next "501"
     @train_to "507"
     @on_track_1 "541"
@@ -43,7 +41,7 @@ defmodule Content.Audio.NextTrainCountdown do
           text
         end
 
-      {:ad_hoc, {text, :audio, @priority}}
+      {:ad_hoc, {text, :audio}}
     end
 
     def to_params(audio) do
@@ -63,20 +61,18 @@ defmodule Content.Audio.NextTrainCountdown do
               green_line_with_branch_params(audio, green_line_branch, dest_var)
 
             is_nil(audio.platform) and audio.minutes == 1 ->
-              {:canned, {"141", [dest_var, verb_var(audio)], :audio, @priority}}
+              {:canned, {"141", [dest_var, verb_var(audio)], :audio}}
 
             is_nil(audio.platform) ->
-              {:canned,
-               {"90", [dest_var, verb_var(audio), minutes_var(audio)], :audio, @priority}}
+              {:canned, {"90", [dest_var, verb_var(audio), minutes_var(audio)], :audio}}
 
             audio.minutes == 1 ->
-              {:canned,
-               {"142", [dest_var, platform_var(audio), verb_var(audio)], :audio, @priority}}
+              {:canned, {"142", [dest_var, platform_var(audio), verb_var(audio)], :audio}}
 
             true ->
               {:canned,
                {"99", [dest_var, platform_var(audio), verb_var(audio), minutes_var(audio)],
-                :audio, @priority}}
+                :audio}}
           end
 
         {:error, :unknown} ->
@@ -103,7 +99,7 @@ defmodule Content.Audio.NextTrainCountdown do
         minute_or_minutes(audio)
       ]
 
-      Utilities.take_message(vars, :audio, @priority)
+      Utilities.take_message(vars, :audio)
     end
 
     @spec terminal_track_params(Content.Audio.NextTrainCountdown.t(), String.t()) ::
@@ -120,7 +116,7 @@ defmodule Content.Audio.NextTrainCountdown do
         track(audio.track_number)
       ]
 
-      Utilities.take_message(vars, :audio, @priority)
+      Utilities.take_message(vars, :audio)
     end
 
     defp platform_var(%{platform: :ashmont}), do: "4016"

@@ -10,7 +10,9 @@ defmodule PaEss.Updater do
                  duration: integer(),
                  start: integer() | :now
 
-  @callback send_audio(PaEss.audio_id(), audios, timeout) :: {:ok, :sent} | {:error, any()}
-            when timeout: integer(),
+  @callback send_audio(PaEss.audio_id(), audios, priority, timeout) ::
+              {:ok, :sent} | {:error, any()}
+            when priority: integer(),
+                 timeout: integer(),
                  audios: Content.Audio.t() | {Content.Audio.t(), Content.Audio.t()}
 end
