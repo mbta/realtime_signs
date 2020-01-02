@@ -9,7 +9,7 @@ defmodule Content.Audio.BridgeIsUpTest do
       time_estimate_mins: nil
     }
 
-    assert Content.Audio.to_params(audio) == {:canned, {"136", [], :audio_visual, 5}}
+    assert Content.Audio.to_params(audio) == {:canned, {"136", [], :audio_visual}}
   end
 
   test "Bridge is up (with a time estimate of 5 minutes) in English" do
@@ -18,7 +18,7 @@ defmodule Content.Audio.BridgeIsUpTest do
       time_estimate_mins: 5
     }
 
-    assert Content.Audio.to_params(audio) == {:canned, {"135", ["5505"], :audio_visual, 5}}
+    assert Content.Audio.to_params(audio) == {:canned, {"135", ["5505"], :audio_visual}}
   end
 
   test "Bridge is up (no time estimate) in Spanish" do
@@ -27,7 +27,7 @@ defmodule Content.Audio.BridgeIsUpTest do
       time_estimate_mins: nil
     }
 
-    assert Content.Audio.to_params(audio) == {:canned, {"157", [], :audio_visual, 5}}
+    assert Content.Audio.to_params(audio) == {:canned, {"157", [], :audio_visual}}
   end
 
   test "Bridge is up (with a time estimate of 5 minutes) in Spanish" do
@@ -36,7 +36,7 @@ defmodule Content.Audio.BridgeIsUpTest do
       time_estimate_mins: 5
     }
 
-    assert Content.Audio.to_params(audio) == {:canned, {"152", ["37005"], :audio_visual, 5}}
+    assert Content.Audio.to_params(audio) == {:canned, {"152", ["37005"], :audio_visual}}
   end
 
   test "When bridge is up with an estimate of 21 minutes, exclude time in Spanish audio" do
@@ -45,7 +45,7 @@ defmodule Content.Audio.BridgeIsUpTest do
       time_estimate_mins: 21
     }
 
-    assert Content.Audio.to_params(audio) == {:canned, {"152", [], :audio_visual, 5}}
+    assert Content.Audio.to_params(audio) == {:canned, {"152", [], :audio_visual}}
   end
 
   describe "create_bridge_messages/1" do

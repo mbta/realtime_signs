@@ -13,8 +13,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         platform: nil
       }
 
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"90", ["4016", "503", "5005"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"90", ["4016", "503", "5005"], :audio}}
     end
 
     test "Next train to Mattapan" do
@@ -27,8 +26,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         platform: nil
       }
 
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"90", ["4100", "503", "5005"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"90", ["4100", "503", "5005"], :audio}}
     end
 
     test "Next train to Bowdoin" do
@@ -41,8 +39,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         platform: nil
       }
 
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"90", ["4055", "503", "5005"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"90", ["4055", "503", "5005"], :audio}}
     end
 
     test "Next train to Wonderland" do
@@ -55,8 +52,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         platform: nil
       }
 
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"90", ["4044", "503", "5005"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"90", ["4044", "503", "5005"], :audio}}
     end
 
     test "Next train to Forest Hills" do
@@ -69,8 +65,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         platform: nil
       }
 
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"90", ["4043", "503", "5005"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"90", ["4043", "503", "5005"], :audio}}
     end
 
     test "Next train to Oak Grove" do
@@ -83,8 +78,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         platform: nil
       }
 
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"90", ["4022", "503", "5005"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"90", ["4022", "503", "5005"], :audio}}
     end
 
     test "Next train to Alewife" do
@@ -97,8 +91,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         platform: nil
       }
 
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"90", ["4000", "503", "5005"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"90", ["4000", "503", "5005"], :audio}}
     end
 
     test "Next train to Alewife arrives in one minute" do
@@ -111,7 +104,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         platform: nil
       }
 
-      assert Content.Audio.to_params(audio) == {:canned, {"141", ["4000", "503"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"141", ["4000", "503"], :audio}}
     end
 
     test "Next train to Alewife on the Ashmont platform" do
@@ -125,7 +118,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:canned, {"99", ["4000", "4016", "503", "5005"], :audio, 3}}
+               {:canned, {"99", ["4000", "4016", "503", "5005"], :audio}}
     end
 
     test "Next train to Alewife on the Ashmont platform arrives in one minute" do
@@ -138,8 +131,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         platform: :ashmont
       }
 
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"142", ["4000", "4016", "503"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"142", ["4000", "4016", "503"], :audio}}
     end
 
     test "Next train to Alewife on the Braintree platform" do
@@ -153,7 +145,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:canned, {"99", ["4000", "4021", "503", "5005"], :audio, 3}}
+               {:canned, {"99", ["4000", "4021", "503", "5005"], :audio}}
     end
 
     test "Next train to Braintree" do
@@ -166,8 +158,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         platform: nil
       }
 
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"90", ["4021", "503", "5005"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"90", ["4021", "503", "5005"], :audio}}
     end
 
     test "Uses audio for 30 minutes when train is more than 30 minutes away" do
@@ -180,8 +171,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         platform: nil
       }
 
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"90", ["4044", "503", "5030"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"90", ["4044", "503", "5030"], :audio}}
     end
 
     test "Next D train in 5 minutes" do
@@ -213,7 +203,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
                    "5005",
                    "21000",
                    "505"
-                 ], :audio, 3}}
+                 ], :audio}}
     end
 
     test "Next B train in 1 minute" do
@@ -245,7 +235,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
                    "5001",
                    "21000",
                    "532"
-                 ], :audio, 3}}
+                 ], :audio}}
     end
 
     test "Eastbound Green Line trains don't get branch letters" do
@@ -258,8 +248,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         platform: nil
       }
 
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"90", ["4007", "503", "5005"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"90", ["4007", "503", "5005"], :audio}}
     end
 
     test "Next train to Braintree on track 1" do
@@ -291,7 +280,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
                    "505",
                    "21000",
                    "541"
-                 ], :audio, 3}}
+                 ], :audio}}
     end
 
     test "Next train to Braintree in 1 minute on track 1" do
@@ -323,7 +312,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
                    "532",
                    "21000",
                    "541"
-                 ], :audio, 3}}
+                 ], :audio}}
     end
   end
 
@@ -338,7 +327,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     }
 
     assert Content.Audio.to_params(audio) ==
-             {:ad_hoc, {"The next southbound train arrives in 1 minute", :audio, 3}}
+             {:ad_hoc, {"The next southbound train arrives in 1 minute", :audio}}
   end
 
   test "The next southbound train in multiple minutes" do
@@ -352,7 +341,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     }
 
     assert Content.Audio.to_params(audio) ==
-             {:ad_hoc, {"The next southbound train arrives in 5 minutes", :audio, 3}}
+             {:ad_hoc, {"The next southbound train arrives in 5 minutes", :audio}}
   end
 
   test "The next southbound train on track 1" do
@@ -366,7 +355,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
     }
 
     assert Content.Audio.to_params(audio) ==
-             {:ad_hoc, {"The next southbound train departs in 5 minutes from track 1", :audio, 3}}
+             {:ad_hoc, {"The next southbound train departs in 5 minutes from track 1", :audio}}
   end
 
   test "Handles unknown destination gracefully" do

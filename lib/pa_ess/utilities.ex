@@ -53,11 +53,10 @@ defmodule PaEss.Utilities do
   end
 
   @doc "Constructs message from TAKE variables"
-  @spec take_message([String.t()], Content.Audio.av_type(), Content.Audio.priority()) ::
-          Content.Audio.canned_message()
-  def take_message(vars, av_type, priority) do
+  @spec take_message([String.t()], Content.Audio.av_type()) :: Content.Audio.canned_message()
+  def take_message(vars, av_type) do
     vars_with_spaces = Enum.intersperse(vars, @space)
-    {:canned, {take_message_id(vars_with_spaces), vars_with_spaces, av_type, priority}}
+    {:canned, {take_message_id(vars_with_spaces), vars_with_spaces, av_type}}
   end
 
   @spec take_message_id([String.t()]) :: String.t()
