@@ -1,8 +1,13 @@
 defmodule RealtimeSigns do
+  require Logger
   alias RealtimeSignsConfig, as: Config
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
+
+    Logger.info(
+      "Starting realtime_signs version #{inspect(Application.spec(:realtime_signs, :vsn))}"
+    )
 
     runtime_config()
 
