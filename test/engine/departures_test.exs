@@ -200,7 +200,7 @@ defmodule Engine.DeparturesTest do
     test "with no departure history, uses the scheduled headway" do
       {:ok, departures_pid} =
         Engine.Departures.start_link(
-          gen_server_name: :departures_test_scheduled_headway_1,
+          gen_server_name: :departures_test,
           scheduled_headways_engine: FakeScheduledHeadwaysEngine,
           time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 12:15:00], "America/New_York") end
         )
@@ -213,7 +213,7 @@ defmodule Engine.DeparturesTest do
 
       {:ok, departures_pid} =
         Engine.Departures.start_link(
-          gen_server_name: :departures_test_scheduled_headway_2,
+          gen_server_name: :departures_test,
           scheduled_headways_engine: FakeScheduledHeadwaysEngine,
           time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 12:15:00], "America/New_York") end
         )
@@ -226,10 +226,7 @@ defmodule Engine.DeparturesTest do
     test "when there are two recorded departures, headway is the range between the two departures" do
       time1 = Timex.now()
       time2 = Timex.shift(time1, minutes: 5)
-
-      {:ok, departures_pid} =
-        Engine.Departures.start_link(gen_server_name: :departures_test_headway_range_1)
-
+      {:ok, departures_pid} = Engine.Departures.start_link(gen_server_name: :departures_test)
       insert_test_data(departures_pid, "two_departures", time1)
       insert_test_data(departures_pid, "two_departures", time2)
       assert Engine.Departures.get_headways(departures_pid, "two_departures") == {5, 7}
@@ -239,10 +236,7 @@ defmodule Engine.DeparturesTest do
       time1 = Timex.now()
       time2 = Timex.shift(time1, minutes: 5)
       time3 = Timex.shift(time2, minutes: 10)
-
-      {:ok, departures_pid} =
-        Engine.Departures.start_link(gen_server_name: :departures_test_headway_range_2)
-
+      {:ok, departures_pid} = Engine.Departures.start_link(gen_server_name: :departures_test)
       insert_test_data(departures_pid, "three_departures", time1)
       insert_test_data(departures_pid, "three_departures", time2)
       insert_test_data(departures_pid, "three_departures", time3)
@@ -255,7 +249,7 @@ defmodule Engine.DeparturesTest do
 
       {:ok, departures_pid} =
         Engine.Departures.start_link(
-          gen_server_name: :departures_test_no_headways_before_first_departure,
+          gen_server_name: :departures_test,
           scheduled_headways_engine: FakeScheduledHeadwaysEngine,
           time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 04:00:00], "America/New_York") end
         )
@@ -272,7 +266,7 @@ defmodule Engine.DeparturesTest do
 
       {:ok, departures_pid} =
         Engine.Departures.start_link(
-          gen_server_name: :departures_test_no_headways_after_last_departure,
+          gen_server_name: :departures_test,
           scheduled_headways_engine: FakeScheduledHeadwaysEngine,
           time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 23:30:00], "America/New_York") end
         )
@@ -289,7 +283,7 @@ defmodule Engine.DeparturesTest do
 
       {:ok, departures_pid} =
         Engine.Departures.start_link(
-          gen_server_name: :departures_test_headways_during_service_hours,
+          gen_server_name: :departures_test,
           scheduled_headways_engine: FakeScheduledHeadwaysEngine,
           time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 12:15:00], "America/New_York") end
         )
@@ -305,7 +299,7 @@ defmodule Engine.DeparturesTest do
     test "logs that it reset the departures when it runs" do
       {:ok, departures_pid} =
         Engine.Departures.start_link(
-          gen_server_name: :departures_test_resets_departures_1,
+          gen_server_name: :departures_test,
           scheduled_headways_engine: FakeScheduledHeadwaysEngine,
           time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 12:15:00], "America/New_York") end
         )
@@ -324,7 +318,7 @@ defmodule Engine.DeparturesTest do
 
       {:ok, departures_pid} =
         Engine.Departures.start_link(
-          gen_server_name: :departures_test_resets_departures_2,
+          gen_server_name: :departures_test,
           scheduled_headways_engine: FakeScheduledHeadwaysEngine,
           time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 12:15:00], "America/New_York") end
         )
@@ -347,7 +341,7 @@ defmodule Engine.DeparturesTest do
 
       {:ok, departures_pid} =
         Engine.Departures.start_link(
-          gen_server_name: :departures_test_resets_departures_3,
+          gen_server_name: :departures_test,
           scheduled_headways_engine: FakeScheduledHeadwaysEngine,
           time_fetcher: fn -> Timex.to_datetime(~N[2019-09-02 12:15:00], "America/New_York") end
         )

@@ -27,7 +27,7 @@ defmodule Content.Audio.TrackChangeTest do
                    "544",
                    "21000",
                    "541"
-                 ], :audio_visual, 2}}
+                 ], :audio_visual}}
     end
 
     test "correctly changes tracks for c/e" do
@@ -54,7 +54,7 @@ defmodule Content.Audio.TrackChangeTest do
                    "544",
                    "21000",
                    "541"
-                 ], :audio_visual, 2}}
+                 ], :audio_visual}}
     end
 
     test "omits branch letter from Kenmore-bound trains" do
@@ -79,7 +79,7 @@ defmodule Content.Audio.TrackChangeTest do
                    "544",
                    "21000",
                    "542"
-                 ], :audio_visual, 2}}
+                 ], :audio_visual}}
     end
 
     test "Handles unknown destination gracefully" do

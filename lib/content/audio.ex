@@ -10,9 +10,8 @@ defprotocol Content.Audio do
   @type av_type :: :audio | :visual | :audio_visual
   @type message_id :: String.t()
   @type message_vars :: [String.t()]
-  @type priority :: integer()
-  @type canned_message :: {:canned, {message_id(), message_vars(), av_type(), priority()}}
-  @type ad_hoc_message :: {:ad_hoc, {String.t(), av_type(), priority()}}
+  @type canned_message :: {:canned, {message_id(), message_vars(), av_type()}}
+  @type ad_hoc_message :: {:ad_hoc, {String.t(), av_type()}}
 
   @type language :: :english | :spanish
 

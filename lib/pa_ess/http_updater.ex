@@ -115,22 +115,22 @@ defmodule PaEss.HttpUpdater do
     result
   end
 
-  def process({:send_audio, [{station, zones}, audios, timeout]}, state) do
+  def process({:send_audio, [{station, zones}, audios, priority, timeout]}, state) do
     case audios do
       {a1, a2} ->
-        process_send_audio(station, zones, a1, timeout, state)
-        process_send_audio(station, zones, a2, timeout, state)
+        process_send_audio(station, zones, a1, priority, timeout, state)
+        process_send_audio(station, zones, a2, priority, timeout, state)
 
       a ->
-        process_send_audio(station, zones, a, timeout, state)
+        process_send_audio(station, zones, a, priority, timeout, state)
     end
   end
 
-  @spec process_send_audio(String.t(), [String.t()], Content.Audio.t(), integer(), t()) ::
+  @spec process_send_audio(String.t(), [String.t()], Content.Audio.t(), integer(), integer(), t()) ::
           post_result()
-  defp process_send_audio(station, zones, audio, timeout, state) do
+  defp process_send_audio(station, zones, audio, priority, timeout, state) do
     case Content.Audio.to_params(audio) do
-      {:canned, {message_id, vars, type, priority}} ->
+      {:canned, {message_id, vars, type}} ->
         encoded =
           [
             MsgType: "Canned",
@@ -157,7 +157,7 @@ defmodule PaEss.HttpUpdater do
 
         result
 
-      {:ad_hoc, {text, type, priority}} ->
+      {:ad_hoc, {text, type}} ->
         encoded =
           [
             MsgType: "AdHoc",

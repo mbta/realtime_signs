@@ -11,12 +11,11 @@ defmodule Content.Audio.FollowingTrainTest do
         minutes: 5
       }
 
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"160", ["4016", "503", "5005"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"160", ["4016", "503", "5005"], :audio}}
     end
 
     test "When we dont have a good headsign, logs a warning" do
-      message = %Content.Message.Predictions{headsign: "Neverland", minutes: 3}
+      message = %Content.Message.Predictions{headsign: "Neverland", minutes: 5}
 
       log =
         capture_log([level: :warn], fn ->
@@ -101,7 +100,7 @@ defmodule Content.Audio.FollowingTrainTest do
         minutes: 1
       }
 
-      assert Content.Audio.to_params(audio) == {:canned, {"159", ["4016", "503"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"159", ["4016", "503"], :audio}}
     end
 
     test "Next D train in 5 minutes" do
@@ -131,7 +130,7 @@ defmodule Content.Audio.FollowingTrainTest do
                    "5005",
                    "21000",
                    "505"
-                 ], :audio, 3}}
+                 ], :audio}}
     end
 
     test "Next B train in 1 minute" do
@@ -161,7 +160,7 @@ defmodule Content.Audio.FollowingTrainTest do
                    "5001",
                    "21000",
                    "532"
-                 ], :audio, 3}}
+                 ], :audio}}
     end
 
     test "Eastbound Green Line trains don't get branch letters" do
@@ -172,8 +171,7 @@ defmodule Content.Audio.FollowingTrainTest do
         minutes: 5
       }
 
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"160", ["4007", "503", "5005"], :audio, 3}}
+      assert Content.Audio.to_params(audio) == {:canned, {"160", ["4007", "503", "5005"], :audio}}
     end
 
     test "returns ad_hoc audio when the destination is 'southbound'" do
@@ -185,7 +183,7 @@ defmodule Content.Audio.FollowingTrainTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"The following southbound train arrives in 3 minutes", :audio, 3}}
+               {:ad_hoc, {"The following southbound train arrives in 3 minutes", :audio}}
     end
 
     test "Handles unknown destination gracefully" do

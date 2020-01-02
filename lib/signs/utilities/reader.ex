@@ -52,6 +52,6 @@ defmodule Signs.Utilities.Reader do
           Content.Audio.t() | {Content.Audio.t(), Content.Audio.t()}
         ) :: {:ok, :sent} | {:error, any()}
   defp send_audios(sign, audio) do
-    sign.sign_updater.send_audio(sign.audio_id, audio, 60)
+    sign.sign_updater.send_audio(sign.audio_id, audio, 5, 60)
   end
 end
