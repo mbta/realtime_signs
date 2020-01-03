@@ -17,11 +17,11 @@ defmodule Content.Message.Predictions do
   @terminal_brd_seconds 30
   @terminal_prediction_offset_seconds -60
 
-  @enforce_keys [:headsign, :minutes]
-  defstruct [:headsign, :minutes, :route_id, :stop_id, :trip_id, width: 18, new_cars?: false]
+  @enforce_keys [:destination, :minutes]
+  defstruct [:destination, :minutes, :route_id, :stop_id, :trip_id, width: 18, new_cars?: false]
 
   @type t :: %__MODULE__{
-          headsign: String.t(),
+          destination: PaEss.destination(),
           minutes: integer() | :boarding | :arriving | :approaching | :max_time,
           route_id: String.t(),
           stop_id: String.t(),
@@ -30,7 +30,7 @@ defmodule Content.Message.Predictions do
           new_cars?: boolean()
         }
 
-  @spec non_terminal(Predictions.Prediction.t(), integer()) :: t()
+  @spec non_terminal(Predictions.Prediction.t(), integer()) :: t() | nil
   def non_terminal(prediction, width \\ 18)
 
   def non_terminal(prediction, width) do
@@ -46,32 +46,29 @@ defmodule Content.Message.Predictions do
         true -> predicted_time |> Kernel./(60) |> round()
       end
 
-    headsign =
-      case Content.Utilities.headsign_for_prediction(
-             prediction.route_id,
-             prediction.direction_id,
-             prediction.destination_stop_id
-           ) do
-        {:ok, dest} ->
-          dest
+    case Content.Utilities.destination_for_prediction(
+           prediction.route_id,
+           prediction.direction_id,
+           prediction.destination_stop_id
+         ) do
+      {:ok, destination} ->
+        %__MODULE__{
+          destination: destination,
+          minutes: minutes,
+          route_id: prediction.route_id,
+          stop_id: prediction.stop_id,
+          trip_id: prediction.trip_id,
+          width: width,
+          new_cars?: prediction.new_cars?
+        }
 
-        {:error, _} ->
-          Logger.warn("Could not find headsign for prediction #{inspect(prediction)}")
-          ""
-      end
-
-    %__MODULE__{
-      headsign: headsign,
-      minutes: minutes,
-      route_id: prediction.route_id,
-      stop_id: prediction.stop_id,
-      trip_id: prediction.trip_id,
-      width: width,
-      new_cars?: prediction.new_cars?
-    }
+      {:error, _} ->
+        Logger.warn("no_destination_for_prediction #{inspect(prediction)}")
+        nil
+    end
   end
 
-  @spec terminal(Predictions.Prediction.t(), integer()) :: t()
+  @spec terminal(Predictions.Prediction.t(), integer()) :: t() | nil
   def terminal(prediction, width \\ 18)
 
   def terminal(prediction, width) do
@@ -85,29 +82,26 @@ defmodule Content.Message.Predictions do
         x -> x |> Kernel./(60) |> round()
       end
 
-    headsign =
-      case Content.Utilities.headsign_for_prediction(
-             prediction.route_id,
-             prediction.direction_id,
-             prediction.destination_stop_id
-           ) do
-        {:ok, dest} ->
-          dest
+    case Content.Utilities.destination_for_prediction(
+           prediction.route_id,
+           prediction.direction_id,
+           prediction.destination_stop_id
+         ) do
+      {:ok, destination} ->
+        %__MODULE__{
+          destination: destination,
+          minutes: minutes,
+          route_id: prediction.route_id,
+          stop_id: prediction.stop_id,
+          trip_id: prediction.trip_id,
+          width: width,
+          new_cars?: prediction.new_cars?
+        }
 
-        {:error, _} ->
-          Logger.warn("Could not find headsign for prediction #{inspect(prediction)}")
-          ""
-      end
-
-    %__MODULE__{
-      headsign: headsign,
-      minutes: minutes,
-      route_id: prediction.route_id,
-      stop_id: prediction.stop_id,
-      trip_id: prediction.trip_id,
-      width: width,
-      new_cars?: prediction.new_cars?
-    }
+      {:error, _} ->
+        Logger.warn("no_destination_for_prediction #{inspect(prediction)}")
+        nil
+    end
   end
 
   defimpl Content.Message do
@@ -117,7 +111,9 @@ defmodule Content.Message.Predictions do
     @arriving "ARR"
     @max_time "20+ min"
 
-    def to_string(%{headsign: headsign, minutes: minutes, width: width, stop_id: stop_id}) do
+    def to_string(%{destination: destination, minutes: minutes, width: width, stop_id: stop_id}) do
+      headsign = PaEss.Utilities.destination_to_sign_string(destination)
+
       duration_string =
         case minutes do
           :boarding -> @boarding

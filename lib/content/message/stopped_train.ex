@@ -12,36 +12,33 @@ defmodule Content.Message.StoppedTrain do
 
   require Logger
 
-  @enforce_keys [:headsign, :stops_away]
+  @enforce_keys [:destination, :stops_away]
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          headsign: String.t(),
+          destination: PaEss.destination(),
           stops_away: non_neg_integer()
         }
 
-  @spec from_prediction(Predictions.Prediction.t()) :: t()
+  @spec from_prediction(Predictions.Prediction.t()) :: t() | nil
   def from_prediction(%{boarding_status: status} = prediction) when not is_nil(status) do
-    headsign =
-      case Content.Utilities.headsign_for_prediction(
-             prediction.route_id,
-             prediction.direction_id,
-             prediction.destination_stop_id
-           ) do
-        {:ok, dest} ->
-          dest
+    case Content.Utilities.destination_for_prediction(
+           prediction.route_id,
+           prediction.direction_id,
+           prediction.destination_stop_id
+         ) do
+      {:ok, destination} ->
+        stops_away = parse_stops_away(prediction.boarding_status)
 
-        {:error, _} ->
-          Logger.warn("Could not find headsign for prediction #{inspect(prediction)}")
-          ""
-      end
+        %__MODULE__{
+          destination: destination,
+          stops_away: stops_away
+        }
 
-    stops_away = parse_stops_away(prediction.boarding_status)
-
-    %__MODULE__{
-      headsign: headsign,
-      stops_away: stops_away
-    }
+      {:error, _} ->
+        Logger.warn("no_destination_for_prediction #{inspect(prediction)}")
+        nil
+    end
   end
 
   defp parse_stops_away(str) do
@@ -52,7 +49,9 @@ defmodule Content.Message.StoppedTrain do
   end
 
   defimpl Content.Message do
-    def to_string(%{headsign: headsign, stops_away: n}) do
+    def to_string(%{destination: destination, stops_away: n}) do
+      headsign = PaEss.Utilities.destination_to_sign_string(destination)
+
       stop_word = if n == 1, do: "stop", else: "stops"
 
       [

@@ -39,9 +39,11 @@ defmodule Signs.Utilities.SourceConfig do
   ]
   """
 
+  require Logger
+
   @enforce_keys [
     :stop_id,
-    :headway_direction_name,
+    :headway_destination,
     :direction_id,
     :platform,
     :terminal?,
@@ -54,7 +56,7 @@ defmodule Signs.Utilities.SourceConfig do
   @type source :: %__MODULE__{
           stop_id: String.t(),
           headway_stop_id: String.t() | nil,
-          headway_direction_name: String.t(),
+          headway_destination: PaEss.destination() | nil,
           direction_id: 0 | 1,
           routes: [String.t()] | nil,
           platform: Content.platform() | nil,
@@ -113,9 +115,11 @@ defmodule Signs.Utilities.SourceConfig do
         _ -> false
       end
 
+    {:ok, headway_destination} = PaEss.Utilities.headsign_to_destination(headway_direction_name)
+
     %__MODULE__{
       stop_id: stop_id,
-      headway_direction_name: headway_direction_name,
+      headway_destination: headway_destination,
       direction_id: direction_id,
       routes: source["routes"],
       platform: platform,

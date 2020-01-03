@@ -80,7 +80,7 @@ defmodule Signs.Utilities.MessagesTest do
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     direction_id: 0,
-    headway_direction_name: "Mattapan",
+    headway_destination: :mattapan,
     platform: nil,
     terminal?: false,
     announce_arriving?: false,
@@ -92,8 +92,9 @@ defmodule Signs.Utilities.MessagesTest do
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: {[@src]},
-    current_content_top: {@src, %Content.Message.Predictions{headsign: "Alewife", minutes: 4}},
-    current_content_bottom: {@src, %Content.Message.Predictions{headsign: "Ashmont", minutes: 3}},
+    current_content_top: {@src, %Content.Message.Predictions{destination: :alewife, minutes: 4}},
+    current_content_bottom:
+      {@src, %Content.Message.Predictions{destination: :ashmont, minutes: 3}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartures,
@@ -189,7 +190,7 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_arriving?: false,
                    announce_boarding?: false,
                    direction_id: 0,
-                   headway_direction_name: "Mattapan",
+                   headway_destination: :mattapan,
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -197,7 +198,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
@@ -207,7 +208,7 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_arriving?: false,
                    announce_boarding?: false,
                    direction_id: 0,
-                   headway_direction_name: "Mattapan",
+                   headway_destination: :mattapan,
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -215,7 +216,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
@@ -259,7 +260,7 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_arriving?: false,
                    announce_boarding?: false,
                    direction_id: 0,
-                   headway_direction_name: "Mattapan",
+                   headway_destination: :mattapan,
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -267,7 +268,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
@@ -277,7 +278,7 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_arriving?: false,
                    announce_boarding?: false,
                    direction_id: 0,
-                   headway_direction_name: "Mattapan",
+                   headway_destination: :mattapan,
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -285,7 +286,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
@@ -347,7 +348,7 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_arriving?: false,
                    announce_boarding?: false,
                    direction_id: 0,
-                   headway_direction_name: "Mattapan",
+                   headway_destination: :mattapan,
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -355,7 +356,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
@@ -365,7 +366,7 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_arriving?: false,
                    announce_boarding?: false,
                    direction_id: 0,
-                   headway_direction_name: "Mattapan",
+                   headway_destination: :mattapan,
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -373,7 +374,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
@@ -463,7 +464,7 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_arriving?: false,
                    announce_boarding?: false,
                    direction_id: 0,
-                   headway_direction_name: "Mattapan",
+                   headway_destination: :mattapan,
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -471,7 +472,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
@@ -481,7 +482,7 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_arriving?: false,
                    announce_boarding?: false,
                    direction_id: 0,
-                   headway_direction_name: "Mattapan",
+                   headway_destination: :mattapan,
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -489,7 +490,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Predictions{
-                   headsign: "Ashmont",
+                   destination: :ashmont,
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
@@ -509,7 +510,7 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_arriving?: false,
                    announce_boarding?: false,
                    direction_id: 0,
-                   headway_direction_name: "Mattapan",
+                   headway_destination: :mattapan,
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -517,14 +518,14 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Headways.Top{
-                   headsign: "Mattapan",
+                   destination: :mattapan,
                    vehicle_type: :train
                  }},
                 {%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
                    announce_boarding?: false,
                    direction_id: 0,
-                   headway_direction_name: "Mattapan",
+                   headway_destination: :mattapan,
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -557,7 +558,7 @@ defmodule Signs.Utilities.MessagesTest do
 
       assert {{_,
                %Content.Message.Headways.Top{
-                 headsign: "Mattapan",
+                 destination: :mattapan,
                  vehicle_type: :train
                }},
               {_, %Content.Message.Headways.Bottom{range: {1, 4}}}} =

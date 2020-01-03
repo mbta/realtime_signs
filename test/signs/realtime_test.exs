@@ -76,7 +76,7 @@ defmodule Signs.RealtimeTest do
 
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
-    headway_direction_name: "Southbound",
+    headway_destination: :southbound,
     direction_id: 0,
     platform: nil,
     terminal?: false,
@@ -89,7 +89,7 @@ defmodule Signs.RealtimeTest do
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: {[@src]},
-    current_content_top: {@src, %HT{headsign: "Southbound", vehicle_type: :train}},
+    current_content_top: {@src, %HT{destination: :southbound, vehicle_type: :train}},
     current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: nil}},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
@@ -156,8 +156,8 @@ defmodule Signs.RealtimeTest do
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
 
       assert_received(
-        {:update_sign, _id, %HT{headsign: "Southbound", vehicle_type: :train}, %HB{range: {1, 5}},
-         _dur, _start}
+        {:update_sign, _id, %HT{destination: :southbound, vehicle_type: :train},
+         %HB{range: {1, 5}}, _dur, _start}
       )
 
       refute_received({:send_audio, _, _, _, _})
@@ -176,7 +176,7 @@ defmodule Signs.RealtimeTest do
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
 
       assert_received(
-        {:update_single_line, _id, "1", %HT{headsign: "Southbound", vehicle_type: :train}, _dur,
+        {:update_single_line, _id, "1", %HT{destination: :southbound, vehicle_type: :train}, _dur,
          _start}
       )
 

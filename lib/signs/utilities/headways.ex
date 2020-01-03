@@ -47,7 +47,7 @@ defmodule Signs.Utilities.Headways do
           {
             {config,
              %Content.Message.Headways.Top{
-               headsign: config.headway_direction_name,
+               destination: config.headway_destination,
                vehicle_type: vehicle_type(config.routes)
              }},
             {config, %Content.Message.Headways.Bottom{range: range}}
@@ -59,7 +59,7 @@ defmodule Signs.Utilities.Headways do
       {bottom, top} ->
         {{config,
           %Content.Message.Headways.Top{
-            headsign: config.headway_direction_name,
+            destination: config.headway_destination,
             vehicle_type: vehicle_type(config.routes)
           }},
          {config,

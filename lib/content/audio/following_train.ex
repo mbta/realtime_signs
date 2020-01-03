@@ -25,25 +25,15 @@ defmodule Content.Audio.FollowingTrain do
         %{
           terminal?: terminal
         },
-        %Content.Message.Predictions{minutes: n, headsign: headsign, route_id: route_id}
+        %Content.Message.Predictions{minutes: n, destination: destination, route_id: route_id}
       })
       when is_integer(n) do
-    case PaEss.Utilities.headsign_to_destination(headsign) do
-      {:ok, destination} ->
-        %__MODULE__{
-          destination: destination,
-          route_id: route_id,
-          minutes: n,
-          verb: arrives_or_departs(terminal)
-        }
-
-      {:error, :unknown} ->
-        Logger.warn(
-          "Content.Audio.FollowingTrain.from_predictions_message: unknown headsign: #{headsign}"
-        )
-
-        nil
-    end
+    %__MODULE__{
+      destination: destination,
+      route_id: route_id,
+      minutes: n,
+      verb: arrives_or_departs(terminal)
+    }
   end
 
   def from_predictions_message({_src, _msg}) do
