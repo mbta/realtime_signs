@@ -467,6 +467,22 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("indeterminate_destination", 0) do
+      [
+        %Predictions.Prediction{
+          stop_id: "indeterminate_destination",
+          direction_id: 0,
+          route_id: "Not a Valid Route",
+          stopped?: false,
+          stops_away: 0,
+          destination_stop_id: "Not a Valid Stop ID",
+          seconds_until_arrival: nil,
+          seconds_until_departure: 240,
+          trip_id: "123"
+        }
+      ]
+    end
+
     def for_stop("passthrough_trains", 0) do
       [
         %Predictions.Prediction{
@@ -586,7 +602,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "when given two source lists, returns earliest result from each" do
       s1 = %SourceConfig{
         stop_id: "1",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -596,7 +612,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s2 = %SourceConfig{
         stop_id: "2",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -608,15 +624,15 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s1, %Content.Message.Predictions{headsign: "Ashmont", minutes: 2}},
-               {^s2, %Content.Message.Predictions{headsign: "Alewife", minutes: 2}}
+               {^s1, %Content.Message.Predictions{destination: :ashmont, minutes: 2}},
+               {^s2, %Content.Message.Predictions{destination: :alewife, minutes: 2}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "when given one source list, returns earliest two results" do
       s1 = %SourceConfig{
         stop_id: "3",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -626,7 +642,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s2 = %SourceConfig{
         stop_id: "4",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -638,15 +654,15 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s1, %Content.Message.Predictions{headsign: "Alewife", minutes: 2}},
-               {^s2, %Content.Message.Predictions{headsign: "Alewife", minutes: 4}}
+               {^s1, %Content.Message.Predictions{destination: :alewife, minutes: 2}},
+               {^s2, %Content.Message.Predictions{destination: :alewife, minutes: 4}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "sorts by arrival or departure depending on which is present" do
       src = %SourceConfig{
         stop_id: "arrival_vs_departure_time",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -658,15 +674,15 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^src, %Content.Message.Predictions{headsign: "Alewife", minutes: 4}},
-               {^src, %Content.Message.Predictions{headsign: "Alewife", minutes: 8}}
+               {^src, %Content.Message.Predictions{destination: :alewife, minutes: 4}},
+               {^src, %Content.Message.Predictions{destination: :alewife, minutes: 8}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "When the train is stopped a long time away, but not quite max time, shows stopped" do
       src = %SourceConfig{
         stop_id: "stopped_not_too_long_away",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -686,7 +702,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "When the train is stopped a long time away from a terminal, shows max time instead of stopped" do
       src = %SourceConfig{
         stop_id: "stopped_a_long_time_away_terminal",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: true,
         platform: nil,
@@ -698,7 +714,7 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^src, %Content.Message.Predictions{headsign: "Mattapan", minutes: :max_time}},
+               {^src, %Content.Message.Predictions{destination: :mattapan, minutes: :max_time}},
                {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
@@ -706,7 +722,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "When the train is stopped a long time away, shows max time instead of stopped" do
       src = %SourceConfig{
         stop_id: "stopped_a_long_time_away",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -718,7 +734,7 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^src, %Content.Message.Predictions{headsign: "Mattapan", minutes: :max_time}},
+               {^src, %Content.Message.Predictions{destination: :mattapan, minutes: :max_time}},
                {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
@@ -726,7 +742,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "pads out results if only one prediction" do
       s = %SourceConfig{
         stop_id: "7",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -746,7 +762,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "pads out results if no predictions" do
       s = %SourceConfig{
         stop_id: "n/a",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -766,7 +782,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "only the first prediction in a source list can be BRD" do
       s = %SourceConfig{
         stop_id: "8",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -786,7 +802,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Returns stopped train message" do
       s = %SourceConfig{
         stop_id: "9",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -806,7 +822,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Only includes predictions if a departure prediction is present" do
       s = %SourceConfig{
         stop_id: "stop_with_nil_departure_prediction",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -826,7 +842,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Filters by route if present" do
       s1 = %SourceConfig{
         stop_id: "filterable_by_route",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -844,12 +860,12 @@ defmodule Signs.Utilities.PredictionsTest do
       sign2 = %{@sign | source_config: config2}
 
       assert {
-               {^s1, %Content.Message.Predictions{headsign: "Boston Col"}},
-               {^s1, %Content.Message.Predictions{headsign: "Riverside"}}
+               {^s1, %Content.Message.Predictions{destination: :boston_college}},
+               {^s1, %Content.Message.Predictions{destination: :riverside}}
              } = Signs.Utilities.Predictions.get_messages(sign1)
 
       assert {
-               {^s2, %Content.Message.Predictions{headsign: "Riverside"}},
+               {^s2, %Content.Message.Predictions{destination: :riverside}},
                {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign2)
     end
@@ -857,7 +873,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Sorts boarding status to the top" do
       s = %SourceConfig{
         stop_id: "both_brd",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -870,8 +886,10 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
-               {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :boarding}}
+               {^s,
+                %Content.Message.Predictions{destination: :boston_college, minutes: :boarding}},
+               {^s,
+                %Content.Message.Predictions{destination: :cleveland_circle, minutes: :boarding}}
              } = Signs.Utilities.Predictions.get_messages(sign)
 
       s = %{s | stop_id: "second_brd"}
@@ -879,8 +897,9 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{sign | source_config: config}
 
       assert {
-               {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :boarding}},
-               {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: 3}}
+               {^s,
+                %Content.Message.Predictions{destination: :cleveland_circle, minutes: :boarding}},
+               {^s, %Content.Message.Predictions{destination: :boston_college, minutes: 3}}
              } = Signs.Utilities.Predictions.get_messages(sign)
 
       s = %{s | stop_id: "first_brd"}
@@ -888,15 +907,16 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{sign | source_config: config}
 
       assert {
-               {^s, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}},
-               {^s, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: 3}}
+               {^s,
+                %Content.Message.Predictions{destination: :boston_college, minutes: :boarding}},
+               {^s, %Content.Message.Predictions{destination: :cleveland_circle, minutes: 3}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "Does not allow ARR on second line unless platform has multiple berths" do
       s1 = %SourceConfig{
         stop_id: "arr_multi_berth1",
-        headway_direction_name: "Mattapan",
+        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -912,8 +932,9 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s1, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :arriving}},
-               {^s2, %Content.Message.Predictions{headsign: "Riverside", minutes: :arriving}}
+               {^s1,
+                %Content.Message.Predictions{destination: :cleveland_circle, minutes: :arriving}},
+               {^s2, %Content.Message.Predictions{destination: :riverside, minutes: :arriving}}
              } = Signs.Utilities.Predictions.get_messages(sign)
 
       s1 = %{s1 | multi_berth?: false}
@@ -922,15 +943,16 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s1, %Content.Message.Predictions{headsign: "Clvlnd Cir", minutes: :arriving}},
-               {^s2, %Content.Message.Predictions{headsign: "Riverside", minutes: 1}}
+               {^s1,
+                %Content.Message.Predictions{destination: :cleveland_circle, minutes: :arriving}},
+               {^s2, %Content.Message.Predictions{destination: :riverside, minutes: 1}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "Correctly orders BRD predictions between trains mid-trip and those starting their trip" do
       s1 = %SourceConfig{
         stop_id: "multiple_brd_some_first_stop_1",
-        headway_direction_name: "Westbound",
+        headway_destination: :westbound,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -946,15 +968,16 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s1, %Content.Message.Predictions{headsign: "Riverside", minutes: :boarding}},
-               {^s2, %Content.Message.Predictions{headsign: "Boston Col", minutes: :boarding}}
+               {^s1, %Content.Message.Predictions{destination: :riverside, minutes: :boarding}},
+               {^s2,
+                %Content.Message.Predictions{destination: :boston_college, minutes: :boarding}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 
     test "doesn't sort 0 stops away to first for terminals when another departure is sooner" do
       s = %SourceConfig{
         stop_id: "terminal_dont_sort_0_stops_first",
-        headway_direction_name: "Southbound",
+        headway_destination: :southbound,
         direction_id: 0,
         terminal?: true,
         platform: nil,
@@ -967,9 +990,28 @@ defmodule Signs.Utilities.PredictionsTest do
       sign = %{@sign | source_config: config}
 
       assert {
-               {^s, %Content.Message.Predictions{headsign: "Braintree", minutes: 1}},
-               {^s, %Content.Message.Predictions{headsign: "Ashmont", minutes: 3}}
+               {^s, %Content.Message.Predictions{destination: :braintree, minutes: 1}},
+               {^s, %Content.Message.Predictions{destination: :ashmont, minutes: 3}}
              } = Signs.Utilities.Predictions.get_messages(sign)
+    end
+
+    test "properly handles case where destination can't be determined" do
+      s = %SourceConfig{
+        stop_id: "indeterminate_destination",
+        headway_destination: :southbound,
+        direction_id: 0,
+        terminal?: true,
+        platform: nil,
+        routes: nil,
+        announce_arriving?: false,
+        announce_boarding?: true
+      }
+
+      config = {[s]}
+      sign = %{@sign | source_config: config}
+
+      assert Signs.Utilities.Predictions.get_messages(sign) ==
+               {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
     end
   end
 
@@ -977,7 +1019,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "returns appropriate audio structs for multi-source sign" do
       s1 = %SourceConfig{
         stop_id: "passthrough_trains",
-        headway_direction_name: "Southbound",
+        headway_destination: :southbound,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -988,7 +1030,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s2 = %SourceConfig{
         stop_id: "passthrough_trains",
-        headway_direction_name: "Alewife",
+        headway_destination: :alewife,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -1012,7 +1054,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "returns appropriate audio structs for single-source sign" do
       s = %SourceConfig{
         stop_id: "passthrough_trains",
-        headway_direction_name: "Southbound",
+        headway_destination: :southbound,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -1037,7 +1079,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "handles \"Southbound\" headsign" do
       s = %SourceConfig{
         stop_id: "passthrough_trains_southbound_red_line_destination",
-        headway_direction_name: "Alewife",
+        headway_destination: :alewife,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -1062,7 +1104,7 @@ defmodule Signs.Utilities.PredictionsTest do
     test "handles case where headsign can't be determined" do
       s = %SourceConfig{
         stop_id: "passthrough_trains_bad_destination",
-        headway_direction_name: "Alewife",
+        headway_destination: :alewife,
         direction_id: 1,
         terminal?: false,
         platform: nil,

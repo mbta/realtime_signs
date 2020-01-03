@@ -64,22 +64,27 @@ defmodule Content.Audio.UtilitiesTest do
   test "headsign_to_destination/1" do
     assert headsign_to_destination("Alewife") == {:ok, :alewife}
     assert headsign_to_destination("Ashmont") == {:ok, :ashmont}
-    assert headsign_to_destination("Boston Col") == {:ok, :boston_college}
+    assert headsign_to_destination("Boston College") == {:ok, :boston_college}
     assert headsign_to_destination("Bowdoin") == {:ok, :bowdoin}
     assert headsign_to_destination("Braintree") == {:ok, :braintree}
-    assert headsign_to_destination("Clvlnd Cir") == {:ok, :cleveland_circle}
-    assert headsign_to_destination("Frst Hills") == {:ok, :forest_hills}
-    assert headsign_to_destination("Govt Ctr") == {:ok, :government_center}
-    assert headsign_to_destination("Heath St") == {:ok, :heath_street}
+    assert headsign_to_destination("Cleveland Circle") == {:ok, :cleveland_circle}
+    assert headsign_to_destination("Forest Hills") == {:ok, :forest_hills}
+    assert headsign_to_destination("Government Center") == {:ok, :government_center}
+    assert headsign_to_destination("Heath Street") == {:ok, :heath_street}
     assert headsign_to_destination("Lechmere") == {:ok, :lechmere}
     assert headsign_to_destination("Mattapan") == {:ok, :mattapan}
-    assert headsign_to_destination("North Sta") == {:ok, :north_station}
+    assert headsign_to_destination("North Station") == {:ok, :north_station}
     assert headsign_to_destination("Oak Grove") == {:ok, :oak_grove}
-    assert headsign_to_destination("Park St") == {:ok, :park_street}
+    assert headsign_to_destination("Park Street") == {:ok, :park_street}
     assert headsign_to_destination("Reservoir") == {:ok, :reservoir}
     assert headsign_to_destination("Riverside") == {:ok, :riverside}
     assert headsign_to_destination("Wonderland") == {:ok, :wonderland}
     assert headsign_to_destination("Unknown") == {:error, :unknown}
+  end
+
+  test "destination_to_sign_string/1" do
+    assert destination_to_sign_string(:forest_hills) == "Frst Hills"
+    assert destination_to_sign_string(:southbound) == "Southbound"
   end
 
   test "destination_to_ad_hoc_string/1" do

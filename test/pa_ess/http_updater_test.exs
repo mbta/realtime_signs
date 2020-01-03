@@ -34,7 +34,7 @@ defmodule PaEss.HttpUpdaterTest do
 
     test "Posts a request to display a message now" do
       state = make_state()
-      msg = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: :boarding}
+      msg = %Content.Message.Predictions{destination: :wonderland, minutes: :boarding}
 
       assert {:ok, :sent} ==
                PaEss.HttpUpdater.process(
@@ -45,7 +45,7 @@ defmodule PaEss.HttpUpdaterTest do
 
     test "Returns an error if HTTP response code is not 2XX" do
       state = make_state()
-      msg = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: :arriving}
+      msg = %Content.Message.Predictions{destination: :wonderland, minutes: :arriving}
 
       assert {:error, :bad_status} ==
                PaEss.HttpUpdater.process(
@@ -56,7 +56,7 @@ defmodule PaEss.HttpUpdaterTest do
 
     test "Returns an error if HTTP request fails" do
       state = make_state()
-      msg = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: 2}
+      msg = %Content.Message.Predictions{destination: :wonderland, minutes: 2}
 
       assert {:error, :post_error} ==
                PaEss.HttpUpdater.process(
@@ -67,8 +67,8 @@ defmodule PaEss.HttpUpdaterTest do
 
     test "Posts both lines of the sign at the same time" do
       state = make_state()
-      top = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: :boarding}
-      bottom = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: 2}
+      top = %Content.Message.Predictions{destination: :wonderland, minutes: :boarding}
+      bottom = %Content.Message.Predictions{destination: :wonderland, minutes: 2}
 
       log =
         capture_log(fn ->
@@ -272,14 +272,14 @@ defmodule PaEss.HttpUpdaterTest do
 
   describe "to_command/5" do
     test "handles messages that are single string" do
-      msg = %Content.Message.Predictions{headsign: "Inf n Beynd", minutes: 2}
+      msg = %Content.Message.Predictions{destination: :wonderland, minutes: 2}
 
       assert PaEss.HttpUpdater.to_command(msg, 55, :now, "n", 1) ==
-               "e55~n1-\"Inf n Beynd  2 min\""
+               "e55~n1-\"Wonderland   2 min\""
     end
 
     test "handles messages that paginate" do
-      msg = %Content.Message.StoppedTrain{headsign: "Ashmont", stops_away: 3}
+      msg = %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 3}
 
       assert PaEss.HttpUpdater.to_command(msg, 55, :now, "n", 1) ==
                "e55~n1-\"Ashmont       away\".2-\"Ashmont    Stopped\".5-\"Ashmont    3 stops\".2"

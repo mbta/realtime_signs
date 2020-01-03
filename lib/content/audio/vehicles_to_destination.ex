@@ -18,24 +18,14 @@ defmodule Content.Audio.VehiclesToDestination do
 
   @spec from_headway_message(Content.Message.t(), Content.Message.t()) :: t() | {t(), t()} | nil
   def from_headway_message(
-        %Content.Message.Headways.Top{headsign: headsign},
+        %Content.Message.Headways.Top{destination: destination},
         %Content.Message.Headways.Bottom{range: range} = msg
       ) do
-    case PaEss.Utilities.headsign_to_destination(headsign) do
-      {:ok, destination} ->
-        case {create(:english, destination, range, msg.prev_departure_mins),
-              create(:spanish, destination, range, msg.prev_departure_mins)} do
-          {%__MODULE__{} = a1, %__MODULE__{} = a2} -> {a1, a2}
-          {%__MODULE__{} = a, nil} -> a
-          _ -> nil
-        end
-
-      _ ->
-        Logger.error(
-          "message_to_audio_error Audio.VehiclesToDestination: #{inspect(msg)}, #{headsign}"
-        )
-
-        nil
+    case {create(:english, destination, range, msg.prev_departure_mins),
+          create(:spanish, destination, range, msg.prev_departure_mins)} do
+      {%__MODULE__{} = a1, %__MODULE__{} = a2} -> {a1, a2}
+      {%__MODULE__{} = a, nil} -> a
+      _ -> nil
     end
   end
 

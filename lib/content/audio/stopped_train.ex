@@ -14,16 +14,9 @@ defmodule Content.Audio.StoppedTrain do
         }
 
   @spec from_message(Content.Message.t()) :: t() | nil
-  def from_message(%Content.Message.StoppedTrain{headsign: headsign, stops_away: stops_away})
+  def from_message(%Content.Message.StoppedTrain{destination: destination, stops_away: stops_away})
       when stops_away > 0 do
-    case PaEss.Utilities.headsign_to_destination(headsign) do
-      {:ok, destination} ->
-        %__MODULE__{destination: destination, stops_away: stops_away}
-
-      {:error, :unknown} ->
-        Logger.warn("unknown_headsign: #{headsign}")
-        nil
-    end
+    %__MODULE__{destination: destination, stops_away: stops_away}
   end
 
   def from_message(%Content.Message.StoppedTrain{stops_away: 0}) do

@@ -54,6 +54,7 @@ defmodule Signs.Utilities.Predictions do
           {source, Content.Message.Predictions.non_terminal(prediction)}
       end
     end)
+    |> Enum.reject(fn {_source, message} -> is_nil(message) end)
     |> case do
       [] ->
         {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
@@ -102,23 +103,27 @@ defmodule Signs.Utilities.Predictions do
     end)
     |> Enum.sort_by(fn {_source, prediction} -> prediction.seconds_until_passthrough end)
     |> Enum.map(fn {_source, prediction} ->
-      with {:ok, headsign} <-
-             Content.Utilities.headsign_for_prediction(
-               prediction.route_id,
-               prediction.direction_id,
-               prediction.destination_stop_id
-             ),
-           {:ok, destination} <-
-             (case headsign do
-                "Southbound" -> {:ok, :ashmont}
-                _ -> PaEss.Utilities.headsign_to_destination(headsign)
-              end) do
-        %Content.Audio.Passthrough{
-          destination: destination,
-          trip_id: prediction.trip_id,
-          route_id: prediction.route_id
-        }
-      else
+      route_id = prediction.route_id
+
+      case Content.Utilities.destination_for_prediction(
+             route_id,
+             prediction.direction_id,
+             prediction.destination_stop_id
+           ) do
+        {:ok, :southbound} when route_id == "Red" ->
+          %Content.Audio.Passthrough{
+            destination: :ashmont,
+            trip_id: prediction.trip_id,
+            route_id: prediction.route_id
+          }
+
+        {:ok, destination} ->
+          %Content.Audio.Passthrough{
+            destination: destination,
+            trip_id: prediction.trip_id,
+            route_id: prediction.route_id
+          }
+
         _ ->
           Logger.info("no_passthrough_audio_for_prediction prediction=#{inspect(prediction)}")
           nil

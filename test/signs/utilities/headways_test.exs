@@ -77,7 +77,7 @@ defmodule Signs.Utilities.HeadwaysTest do
     %Signs.Utilities.SourceConfig{
       stop_id: stop_id,
       routes: ["Red"],
-      headway_direction_name: "Southbound",
+      headway_destination: :southbound,
       direction_id: 0,
       platform: nil,
       terminal?: false,
@@ -105,7 +105,7 @@ defmodule Signs.Utilities.HeadwaysTest do
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("a"),
-                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
+                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}},
                 {source_config_for_stop_id("a"),
                  %Content.Message.Headways.Bottom{
                    range: {2, 8},
@@ -130,7 +130,7 @@ defmodule Signs.Utilities.HeadwaysTest do
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_with_headway,
-                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
+                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}},
                 {source_with_headway,
                  %Content.Message.Headways.Bottom{
                    range: {2, 8},
@@ -187,7 +187,7 @@ defmodule Signs.Utilities.HeadwaysTest do
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("e"),
-                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
+                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}},
                 {source_config_for_stop_id("e"),
                  %Content.Message.Headways.Bottom{
                    range: {1, 5},
@@ -202,7 +202,7 @@ defmodule Signs.Utilities.HeadwaysTest do
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("c"),
-                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
+                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}},
                 {source_config_for_stop_id("c"),
                  %Content.Message.Headways.Bottom{
                    range: {2, 8},
@@ -220,7 +220,7 @@ defmodule Signs.Utilities.HeadwaysTest do
 
       assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
                {{source_config_for_stop_id("a"),
-                 %Content.Message.Headways.Top{headsign: "Southbound", vehicle_type: :train}},
+                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}},
                 {source_config_for_stop_id("a"),
                  %Content.Message.Headways.Bottom{
                    range: {2, 8},

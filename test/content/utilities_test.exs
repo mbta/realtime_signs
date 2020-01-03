@@ -3,35 +3,35 @@ defmodule Content.UtilitiesTest do
 
   import Content.Utilities
 
-  describe "headsign_for_prediction/3" do
+  describe "destination_for_prediction/3" do
     test "handles child stops properly" do
-      assert headsign_for_prediction("Red", 1, "Alewife-01") == {:ok, "Alewife"}
-      assert headsign_for_prediction("Red", 1, "Alewife-02") == {:ok, "Alewife"}
+      assert destination_for_prediction("Red", 1, "Alewife-01") == {:ok, :alewife}
+      assert destination_for_prediction("Red", 1, "Alewife-02") == {:ok, :alewife}
 
-      assert headsign_for_prediction("Red", 0, "Braintree-01") == {:ok, "Braintree"}
-      assert headsign_for_prediction("Red", 0, "Braintree-02") == {:ok, "Braintree"}
+      assert destination_for_prediction("Red", 0, "Braintree-01") == {:ok, :braintree}
+      assert destination_for_prediction("Red", 0, "Braintree-02") == {:ok, :braintree}
 
-      assert headsign_for_prediction("Orange", 0, "Forest Hills-01") == {:ok, "Frst Hills"}
-      assert headsign_for_prediction("Orange", 0, "Forest Hills-02") == {:ok, "Frst Hills"}
+      assert destination_for_prediction("Orange", 0, "Forest Hills-01") == {:ok, :forest_hills}
+      assert destination_for_prediction("Orange", 0, "Forest Hills-02") == {:ok, :forest_hills}
 
-      assert headsign_for_prediction("Orange", 1, "Oak Grove-01") == {:ok, "Oak Grove"}
-      assert headsign_for_prediction("Orange", 1, "Oak Grove-02") == {:ok, "Oak Grove"}
+      assert destination_for_prediction("Orange", 1, "Oak Grove-01") == {:ok, :oak_grove}
+      assert destination_for_prediction("Orange", 1, "Oak Grove-02") == {:ok, :oak_grove}
 
-      assert headsign_for_prediction("Green-D", 0, "Government Center-Brattle") ==
-               {:ok, "Govt Ctr"}
+      assert destination_for_prediction("Green-D", 0, "Government Center-Brattle") ==
+               {:ok, :government_center}
     end
 
     test "Southbound headsign on Red Line trunk" do
-      assert headsign_for_prediction("Red", 0, "70063") == {:ok, "Southbound"}
+      assert destination_for_prediction("Red", 0, "70063") == {:ok, :southbound}
     end
 
     test "Regular headsigns for regular Red Line trips to Ashmont / Braintree" do
-      assert headsign_for_prediction("Red", 0, "70093") == {:ok, "Ashmont"}
-      assert headsign_for_prediction("Red", 0, "70105") == {:ok, "Braintree"}
+      assert destination_for_prediction("Red", 0, "70093") == {:ok, :ashmont}
+      assert destination_for_prediction("Red", 0, "70105") == {:ok, :braintree}
     end
 
     test "Dont show kenmore on signs when the destination is blandford st" do
-      assert headsign_for_prediction("Green-B", 0, "70149") == {:ok, "Boston Col"}
+      assert destination_for_prediction("Green-B", 0, "70149") == {:ok, :boston_college}
     end
   end
 
