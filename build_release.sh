@@ -12,6 +12,9 @@ fi
 ERL_DIR="erl10.5"
 ELIXIR_DIR="elixir1.9.4"
 
+rm -rf _build-prev
+test -e "_build" && mv _build _build-prev
+
 env MIX_ENV=prod PATH="/c/Users/RTRUser/bin/$ERL_DIR/bin/:/c/Users/RTRUser/bin/$ELIXIR_DIR/bin/:$PATH" mix deps.get
 env MIX_ENV=prod PATH="/c/Users/RTRUser/bin/$ERL_DIR/bin/:/c/Users/RTRUser/bin/$ELIXIR_DIR/bin/:$PATH" RELEASE_NODE=$1 mix release
 

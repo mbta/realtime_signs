@@ -1,6 +1,9 @@
 # The directory Mix will write compiled artifacts to.
 /_build/
 
+# The directory we move the previously built release to as backup
+/_build-prev/
+
 # If you run "mix test --cover", coverage assets end up here.
 /cover/
 
