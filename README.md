@@ -44,20 +44,17 @@ To manage the Windows service we use [`nssm`](https://nssm.cc/). The service is 
 
 To deploy a new version of the code:
 
-1. Ensure a new version of the app has been merged (`@version` in mix.exs)
 1. In Git Bash, navigate to `/c/Users/RTRUser/GitHub/realtime_signs_release_[dev|prod]`
 1. `git pull` the latest version
-1. Tag the release in git: `git tag -a yyyy-mm-dd -m "Deploying on [date] at [time]"`
-1. Push the tag to GitHub: `git push origin yyyy-mm-dd`
 1. Run `./build_release.sh realtime_signs_[dev|prod]` to compile a new release. The second argument gives the name of the Erlang node to run the relase under and isn't terribly important as long as it's distinct for dev versus prod.
 1. Open the Windows `Services` application and restart `realtime-signs-[staging/prod]`
+1. Tag the release in git: `git tag -a yyyy-mm-dd -m "Deployed on [date] at [time]"`
+1. Push the tag to GitHub: `git push origin yyyy-mm-dd`
 
 ## Rolling back
 
 To quickly roll back to a previous version:
 
-* See the available versions with `ls _build/prod/rel/realtime_signs/releases`
-* Identify the version in that list to roll back to
-* `nssm edit realtime-signs-[dev|prod]`
-* Set the environment variable `RELEASE_VSN=[...]` to that version string
+* Move the broken release: `mv _build _build-broken`
+* Restore the previous release: `mv _build-prev _build`
 * Restart the service

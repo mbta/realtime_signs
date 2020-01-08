@@ -1,7 +1,7 @@
 defmodule RealtimeSigns.Mixfile do
   use Mix.Project
 
-  @version "1.1.0-2020-01-06"
+  @version "1.0.0"
 
   def project do
     [
