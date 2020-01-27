@@ -19,7 +19,7 @@ defmodule MessageQueue do
         }
 
   @max_size 300
-  @too_full_drop 15
+  @too_full_drop 30
 
   use GenServer
   require Logger
