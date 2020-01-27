@@ -21,8 +21,8 @@ defmodule MessageQueueTest do
       {:reply, {:ok, :sent}, state} =
         MessageQueue.handle_call({:queue_update, msg}, self(), state)
 
-      assert {{:value, 16}, _queue} = :queue.out(state.queue)
-      assert state.length == 286
+      assert {{:value, 31}, _queue} = :queue.out(state.queue)
+      assert state.length == 271
     end
 
     test "logs if message size is multiple of 30" do
