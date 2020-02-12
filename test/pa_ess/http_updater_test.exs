@@ -58,11 +58,16 @@ defmodule PaEss.HttpUpdaterTest do
       state = make_state()
       msg = %Content.Message.Predictions{destination: :wonderland, minutes: 2}
 
-      assert {:error, :post_error} ==
-               PaEss.HttpUpdater.process(
-                 {:update_single_line, [{"timeout", "n"}, 1, msg, 60, 1234]},
-                 state
-               )
+      log =
+        capture_log([level: :info], fn ->
+          assert {:error, :post_error} ==
+                   PaEss.HttpUpdater.process(
+                     {:update_single_line, [{"timeout", "n"}, 1, msg, 60, 1234]},
+                     state
+                   )
+        end)
+
+      assert log =~ "sign_ui_post_error"
     end
 
     test "Posts both lines of the sign at the same time" do

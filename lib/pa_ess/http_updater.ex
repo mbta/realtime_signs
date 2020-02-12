@@ -283,7 +283,7 @@ defmodule PaEss.HttpUpdater do
         {:error, :bad_status}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("sign_ui_post_error: #{inspect(reason)}")
+        Logger.info("sign_ui_post_error: #{inspect(reason)}")
         {:error, :post_error}
     end
   end
