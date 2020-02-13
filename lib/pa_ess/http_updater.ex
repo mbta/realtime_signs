@@ -268,6 +268,8 @@ defmodule PaEss.HttpUpdater do
     end
   end
 
+  @spec update_ui(module(), String.t()) ::
+          {:ok, :sent} | {:error, :bad_status} | {:error, :post_error}
   def update_ui(http_poster, query) do
     key = Application.get_env(:realtime_signs, :sign_ui_api_key)
 
@@ -283,7 +285,7 @@ defmodule PaEss.HttpUpdater do
         {:error, :bad_status}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("sign_ui_post_error: #{inspect(reason)}")
+        Logger.info("sign_ui_post_error: #{inspect(reason)}")
         {:error, :post_error}
     end
   end
