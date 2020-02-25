@@ -54,6 +54,7 @@ defmodule Content.Audio.UtilitiesTest do
     assert destination_var(:lechmere) == {:ok, "4056"}
     assert destination_var(:mattapan) == {:ok, "4100"}
     assert destination_var(:north_station) == {:ok, "4027"}
+    assert destination_var(:haymarket) == {:ok, "4060"}
     assert destination_var(:oak_grove) == {:ok, "4022"}
     assert destination_var(:park_street) == {:ok, "4007"}
     assert destination_var(:reservoir) == {:ok, "4076"}
@@ -74,6 +75,7 @@ defmodule Content.Audio.UtilitiesTest do
     assert headsign_to_destination("Lechmere") == {:ok, :lechmere}
     assert headsign_to_destination("Mattapan") == {:ok, :mattapan}
     assert headsign_to_destination("North Station") == {:ok, :north_station}
+    assert headsign_to_destination("Haymarket") == {:ok, :haymarket}
     assert headsign_to_destination("Oak Grove") == {:ok, :oak_grove}
     assert headsign_to_destination("Park Street") == {:ok, :park_street}
     assert headsign_to_destination("Reservoir") == {:ok, :reservoir}
