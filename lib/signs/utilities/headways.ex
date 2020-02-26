@@ -5,6 +5,15 @@ defmodule Signs.Utilities.Headways do
   """
   alias Signs.Utilities.SourceConfig
 
+  @gl_gov_ctr_disruption_start ~N[2020-02-29 03:00:00]
+  @gl_gov_ctr_disruption_end ~N[2020-03-02 03:00:00]
+  @lechmere_destination_sign_ids ["green_north_station_eastbound", "science_park_eastbound"]
+  @haymarket_destination_sign_ids [
+    "lechmere_green_line",
+    "science_park_westbound",
+    "green_north_station_westbound"
+  ]
+
   @spec get_messages(Signs.Realtime.t(), DateTime.t()) ::
           {{SourceConfig.source() | nil, Content.Message.t()},
            {SourceConfig.source() | nil, Content.Message.t()}}
@@ -24,9 +33,35 @@ defmodule Signs.Utilities.Headways do
   @spec do_headway_messages(Signs.Realtime.t(), map(), DateTime.t()) ::
           {{map(), Content.Message.t()}, {map(), Content.Message.t()}}
   defp do_headway_messages(sign, config, current_time) do
+    during_gl_gov_ctr_disruption? =
+      DateTime.compare(
+        current_time,
+        Timex.to_datetime(@gl_gov_ctr_disruption_start, "America/New_York")
+      ) == :gt and
+        DateTime.compare(
+          current_time,
+          Timex.to_datetime(@gl_gov_ctr_disruption_end, "America/New_York")
+        ) == :lt
+
     stop_id = sign.headway_stop_id || config.stop_id
     headway_range = sign.headway_engine.get_headways(stop_id)
-    last_departure = sign.last_departure_engine.get_last_departure(config.stop_id)
+
+    all_gl_changed_signs =
+      Enum.concat(@haymarket_destination_sign_ids, @lechmere_destination_sign_ids)
+
+    last_departure =
+      if during_gl_gov_ctr_disruption? and sign.id in all_gl_changed_signs do
+        nil
+      else
+        sign.last_departure_engine.get_last_departure(config.stop_id)
+      end
+
+    destination =
+      cond do
+        during_gl_gov_ctr_disruption? and sign.id in @haymarket_destination_sign_ids -> :haymarket
+        during_gl_gov_ctr_disruption? and sign.id in @lechmere_destination_sign_ids -> :lechmere
+        true -> config.headway_destination
+      end
 
     case headway_range do
       :none ->
@@ -47,7 +82,7 @@ defmodule Signs.Utilities.Headways do
           {
             {config,
              %Content.Message.Headways.Top{
-               destination: config.headway_destination,
+               destination: destination,
                vehicle_type: vehicle_type(config.routes)
              }},
             {config, %Content.Message.Headways.Bottom{range: range}}
@@ -59,7 +94,7 @@ defmodule Signs.Utilities.Headways do
       {bottom, top} ->
         {{config,
           %Content.Message.Headways.Top{
-            destination: config.headway_destination,
+            destination: destination,
             vehicle_type: vehicle_type(config.routes)
           }},
          {config,

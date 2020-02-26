@@ -61,10 +61,11 @@ defmodule Content.Audio.VehiclesToDestination do
     def to_params(
           %Content.Audio.VehiclesToDestination{
             headway_range: {lower_mins, higher_mins},
-            previous_departure_mins: nil
+            previous_departure_mins: nil,
+            destination: destination
           } = audio
         )
-        when is_integer(lower_mins) and is_integer(higher_mins) do
+        when is_integer(lower_mins) and is_integer(higher_mins) and destination != :haymarket do
       case vars(audio) do
         nil ->
           Logger.warn("no_audio_for_headway_range #{inspect(audio)}")
