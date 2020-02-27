@@ -241,7 +241,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                {{source_config_for_stop_id("a"),
                  %Content.Message.Headways.Top{destination: :haymarket, vehicle_type: :train}},
                 {source_config_for_stop_id("a"),
-                 %Content.Message.Headways.Bottom{range: {2, 8}, prev_departure_mins: nil}}}
+                 %Content.Message.Headways.Bottom{range: {10, 12}, prev_departure_mins: nil}}}
     end
 
     test "generates correct messages for Science Park eastbound during disruption" do
@@ -257,7 +257,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                {{source_config_for_stop_id("a"),
                  %Content.Message.Headways.Top{destination: :lechmere, vehicle_type: :train}},
                 {source_config_for_stop_id("a"),
-                 %Content.Message.Headways.Bottom{range: {2, 8}, prev_departure_mins: nil}}}
+                 %Content.Message.Headways.Bottom{range: {10, 12}, prev_departure_mins: nil}}}
     end
 
     test "doesn't change Science Park westbound outside of disruption timeframe" do
