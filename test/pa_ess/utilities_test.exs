@@ -90,7 +90,25 @@ defmodule Content.Audio.UtilitiesTest do
   end
 
   test "destination_to_ad_hoc_string/1" do
-    assert destination_to_ad_hoc_string(:heath_street) == "Heath Street"
-    assert destination_to_ad_hoc_string(:southbound) == "Southbound"
+    assert destination_to_ad_hoc_string(:heath_street) == {:ok, "Heath Street"}
+    assert destination_to_ad_hoc_string(:southbound) == {:ok, "Southbound"}
+  end
+
+  describe "ad_hoc_trip_description/2" do
+    test "handles locations as destinations" do
+      assert ad_hoc_trip_description(:kenmore) == {:ok, "train to Kenmore"}
+      assert ad_hoc_trip_description(:kenmore, "Green-D") == {:ok, "D train to Kenmore"}
+      assert ad_hoc_trip_description(:kenmore, "An-Unexpected-Route") == {:ok, "train to Kenmore"}
+      assert ad_hoc_trip_description(:unknown) == {:error, :unknown}
+      assert ad_hoc_trip_description(:unknown, "Green-D") == {:error, :unknown}
+    end
+
+    test "handles cardinal directions as destinations" do
+      assert ad_hoc_trip_description(:eastbound) == {:ok, "Eastbound train"}
+      assert ad_hoc_trip_description(:eastbound, "Green-C") == {:ok, "Eastbound C train"}
+
+      assert ad_hoc_trip_description(:eastbound, "An-Unexpected-Route") ==
+               {:ok, "Eastbound train"}
+    end
   end
 end
