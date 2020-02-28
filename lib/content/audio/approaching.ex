@@ -4,6 +4,7 @@ defmodule Content.Audio.Approaching do
   """
 
   require Logger
+  alias PaEss.Utilities
 
   @enforce_keys [:destination]
   defstruct @enforce_keys ++ [:trip_id, :platform, :route_id, new_cars?: false]
@@ -20,21 +21,22 @@ defmodule Content.Audio.Approaching do
     @attention_passengers "783"
     @now_approaching_new_ol_cars "785"
 
-    def to_params(%{destination: :southbound, route_id: "Red"}) do
-      text = "Attention passengers: The next southbound Red Line train is now approaching."
-      {:ad_hoc, {text, :audio_visual}}
+    def to_params(%Content.Audio.Approaching{new_cars?: false, route_id: route_id} = audio)
+        when route_id in ["Mattapan", "Green-B", "Green-C", "Green-D", "Green-E"] do
+      handle_unknown_destination(audio)
     end
 
     def to_params(%Content.Audio.Approaching{new_cars?: false} = audio) do
       case destination_var(audio.destination, audio.platform, audio.route_id) do
         nil ->
-          Logger.info(
-            "unknown_approaching_audio: destination=#{audio.destination} route_id=#{
-              audio.route_id
-            } platform=#{audio.platform}"
-          )
+          case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
+            {:ok, trip} ->
+              text = "Attention passengers: The next #{trip} is now approaching."
+              {:ad_hoc, {text, :audio_visual}}
 
-          nil
+            {:error, :unknown} ->
+              handle_unknown_destination(audio)
+          end
 
         var ->
           {:canned, {"103", [var], :audio_visual}}
@@ -51,6 +53,17 @@ defmodule Content.Audio.Approaching do
           vars = [@attention_passengers, var, @now_approaching_new_ol_cars]
           {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio_visual}}
       end
+    end
+
+    @spec handle_unknown_destination(Content.Audio.Approaching.t()) :: nil
+    defp handle_unknown_destination(audio) do
+      Logger.info(
+        "unknown_approaching_audio: destination=#{audio.destination} route_id=#{audio.route_id} platform=#{
+          audio.platform
+        }"
+      )
+
+      nil
     end
 
     @spec destination_var(PaEss.destination(), Content.platform(), String.t()) :: String.t() | nil

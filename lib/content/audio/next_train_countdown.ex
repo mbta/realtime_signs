@@ -30,20 +30,6 @@ defmodule Content.Audio.NextTrainCountdown do
     @minutes "505"
     @minute "532"
 
-    def to_params(%{destination: :southbound, verb: verb, minutes: minutes} = audio) do
-      min_or_mins = if minutes == 1, do: "minute", else: "minutes"
-      text = "The next southbound train #{verb} in #{minutes} #{min_or_mins}"
-
-      text =
-        if audio.track_number do
-          text <> " from track #{audio.track_number}"
-        else
-          text
-        end
-
-      {:ad_hoc, {text, :audio}}
-    end
-
     def to_params(audio) do
       case Utilities.destination_var(audio.destination) do
         {:ok, dest_var} ->
@@ -76,9 +62,27 @@ defmodule Content.Audio.NextTrainCountdown do
           end
 
         {:error, :unknown} ->
-          Logger.error("NextTrainCountdown unknown destination: #{inspect(audio.destination)}")
+          case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
+            {:ok, trip} ->
+              min_or_mins = if audio.minutes == 1, do: "minute", else: "minutes"
+              text = "The next #{trip} #{audio.verb} in #{audio.minutes} #{min_or_mins}"
 
-          nil
+              text =
+                if audio.track_number do
+                  text <> " from track #{audio.track_number}"
+                else
+                  text
+                end
+
+              {:ad_hoc, {text, :audio}}
+
+            {:error, :unknown} ->
+              Logger.error(
+                "NextTrainCountdown unknown destination: #{inspect(audio.destination)}"
+              )
+
+              nil
+          end
       end
     end
 

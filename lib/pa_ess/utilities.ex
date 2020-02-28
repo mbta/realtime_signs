@@ -142,32 +142,97 @@ defmodule PaEss.Utilities do
   def destination_to_sign_string(:eastbound), do: "Eastbound"
   def destination_to_sign_string(:westbound), do: "Westbound"
 
-  @spec destination_to_ad_hoc_string(PaEss.destination()) :: String.t()
-  def destination_to_ad_hoc_string(:alewife), do: "Alewife"
-  def destination_to_ad_hoc_string(:ashmont), do: "Ashmont"
-  def destination_to_ad_hoc_string(:braintree), do: "Braintree"
-  def destination_to_ad_hoc_string(:mattapan), do: "Mattapan"
-  def destination_to_ad_hoc_string(:bowdoin), do: "Bowdoin"
-  def destination_to_ad_hoc_string(:wonderland), do: "Wonderland"
-  def destination_to_ad_hoc_string(:oak_grove), do: "Oak Grove"
-  def destination_to_ad_hoc_string(:forest_hills), do: "Forest Hills"
-  def destination_to_ad_hoc_string(:chelsea), do: "Chelsea"
-  def destination_to_ad_hoc_string(:south_station), do: "South Station"
-  def destination_to_ad_hoc_string(:lechmere), do: "Lechmere"
-  def destination_to_ad_hoc_string(:north_station), do: "North Station"
-  def destination_to_ad_hoc_string(:haymarket), do: "Haymarket"
-  def destination_to_ad_hoc_string(:government_center), do: "Government Center"
-  def destination_to_ad_hoc_string(:park_street), do: "Park Street"
-  def destination_to_ad_hoc_string(:kenmore), do: "Kenmore"
-  def destination_to_ad_hoc_string(:boston_college), do: "Boston College"
-  def destination_to_ad_hoc_string(:cleveland_circle), do: "Cleveland Circle"
-  def destination_to_ad_hoc_string(:reservoir), do: "Reservoir"
-  def destination_to_ad_hoc_string(:riverside), do: "Riverside"
-  def destination_to_ad_hoc_string(:heath_street), do: "Heath Street"
-  def destination_to_ad_hoc_string(:northbound), do: "Northbound"
-  def destination_to_ad_hoc_string(:southbound), do: "Southbound"
-  def destination_to_ad_hoc_string(:eastbound), do: "Eastbound"
-  def destination_to_ad_hoc_string(:westbound), do: "Westbound"
+  @spec destination_to_ad_hoc_string(PaEss.destination()) ::
+          {:ok, String.t()} | {:error, :unknown}
+  def destination_to_ad_hoc_string(:alewife), do: {:ok, "Alewife"}
+  def destination_to_ad_hoc_string(:ashmont), do: {:ok, "Ashmont"}
+  def destination_to_ad_hoc_string(:braintree), do: {:ok, "Braintree"}
+  def destination_to_ad_hoc_string(:mattapan), do: {:ok, "Mattapan"}
+  def destination_to_ad_hoc_string(:bowdoin), do: {:ok, "Bowdoin"}
+  def destination_to_ad_hoc_string(:wonderland), do: {:ok, "Wonderland"}
+  def destination_to_ad_hoc_string(:oak_grove), do: {:ok, "Oak Grove"}
+  def destination_to_ad_hoc_string(:forest_hills), do: {:ok, "Forest Hills"}
+  def destination_to_ad_hoc_string(:chelsea), do: {:ok, "Chelsea"}
+  def destination_to_ad_hoc_string(:south_station), do: {:ok, "South Station"}
+  def destination_to_ad_hoc_string(:lechmere), do: {:ok, "Lechmere"}
+  def destination_to_ad_hoc_string(:north_station), do: {:ok, "North Station"}
+  def destination_to_ad_hoc_string(:haymarket), do: {:ok, "Haymarket"}
+  def destination_to_ad_hoc_string(:government_center), do: {:ok, "Government Center"}
+  def destination_to_ad_hoc_string(:park_street), do: {:ok, "Park Street"}
+  def destination_to_ad_hoc_string(:kenmore), do: {:ok, "Kenmore"}
+  def destination_to_ad_hoc_string(:boston_college), do: {:ok, "Boston College"}
+  def destination_to_ad_hoc_string(:cleveland_circle), do: {:ok, "Cleveland Circle"}
+  def destination_to_ad_hoc_string(:reservoir), do: {:ok, "Reservoir"}
+  def destination_to_ad_hoc_string(:riverside), do: {:ok, "Riverside"}
+  def destination_to_ad_hoc_string(:heath_street), do: {:ok, "Heath Street"}
+  def destination_to_ad_hoc_string(:northbound), do: {:ok, "Northbound"}
+  def destination_to_ad_hoc_string(:southbound), do: {:ok, "Southbound"}
+  def destination_to_ad_hoc_string(:eastbound), do: {:ok, "Eastbound"}
+  def destination_to_ad_hoc_string(:westbound), do: {:ok, "Westbound"}
+  def destination_to_ad_hoc_string(_unknown), do: {:error, :unknown}
+
+  @spec route_to_ad_hoc_string(String.t()) :: {:ok, String.t()} | {:error, :unknown}
+  def route_to_ad_hoc_string("Red"), do: {:ok, "Red Line"}
+  def route_to_ad_hoc_string("Blue"), do: {:ok, "Blue Line"}
+  def route_to_ad_hoc_string("Orange"), do: {:ok, "Orange Line"}
+  def route_to_ad_hoc_string("Mattapan"), do: {:ok, "Mattapan"}
+  def route_to_ad_hoc_string("Green-B"), do: {:ok, "B"}
+  def route_to_ad_hoc_string("Green-C"), do: {:ok, "C"}
+  def route_to_ad_hoc_string("Green-D"), do: {:ok, "D"}
+  def route_to_ad_hoc_string("Green-E"), do: {:ok, "E"}
+  def route_to_ad_hoc_string(_unknown), do: {:error, :unknown}
+
+  @spec ad_hoc_trip_description(PaEss.destination(), String.t() | nil) ::
+          {:ok, String.t()} | {:error, :unknown}
+  def ad_hoc_trip_description(destination, route_id \\ nil)
+
+  def ad_hoc_trip_description(destination, nil)
+      when destination in [:eastbound, :westbound, :southbound, :northbound] do
+    case destination_to_ad_hoc_string(destination) do
+      {:ok, destination_string} ->
+        {:ok, "#{destination_string} train"}
+
+      _ ->
+        {:error, :unknown}
+    end
+  end
+
+  def ad_hoc_trip_description(destination, route_id)
+      when destination in [:eastbound, :westbound, :southbound, :northbound] do
+    case {destination_to_ad_hoc_string(destination), route_to_ad_hoc_string(route_id)} do
+      {{:ok, destination_string}, {:ok, route_string}} ->
+        {:ok, "#{destination_string} #{route_string} train"}
+
+      {{:ok, _destination_string}, {:error, :unknown}} ->
+        ad_hoc_trip_description(destination)
+
+      _ ->
+        {:error, :unknown}
+    end
+  end
+
+  def ad_hoc_trip_description(destination, nil) do
+    case destination_to_ad_hoc_string(destination) do
+      {:ok, destination_string} ->
+        {:ok, "train to #{destination_string}"}
+
+      _ ->
+        {:error, :unknown}
+    end
+  end
+
+  def ad_hoc_trip_description(destination, route_id) do
+    case {destination_to_ad_hoc_string(destination), route_to_ad_hoc_string(route_id)} do
+      {{:ok, destination_string}, {:ok, route_string}} ->
+        {:ok, "#{route_string} train to #{destination_string}"}
+
+      {{:ok, _destination_string}, {:error, :unknown}} ->
+        ad_hoc_trip_description(destination)
+
+      _ ->
+        {:error, :unknown}
+    end
+  end
 
   @spec green_line_branch_var(Content.Utilities.green_line_branch()) :: String.t()
   def green_line_branch_var(:b), do: "536"
