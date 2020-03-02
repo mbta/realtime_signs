@@ -15,7 +15,8 @@ defmodule Content.Audio.PassthroughTest do
 
       assert Content.Audio.to_params(audio) ==
                {:ad_hoc,
-                {"The next Southbound Orange Line train does not take customers", :audio}}
+                {"The next Southbound Orange Line train does not take customers. Please stand back from the yellow line.",
+                 :audio}}
     end
 
     test "Returns nil for Green Line trips" do
