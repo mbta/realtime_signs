@@ -361,8 +361,8 @@ defmodule Content.Audio.NextTrainCountdownTest do
 
   test "Returns ad_hoc audio for valid destinations" do
     audio = %Content.Audio.NextTrainCountdown{
-      destination: :westbound,
-      route_id: "Green-B",
+      destination: :southbound,
+      route_id: "Orange",
       verb: :departs,
       minutes: 5,
       track_number: 1,
@@ -370,7 +370,8 @@ defmodule Content.Audio.NextTrainCountdownTest do
     }
 
     assert Content.Audio.to_params(audio) ==
-             {:ad_hoc, {"The next Westbound B train departs in 5 minutes from track 1", :audio}}
+             {:ad_hoc,
+              {"The next Southbound Orange Line train departs in 5 minutes from track 1", :audio}}
   end
 
   test "Handles unknown destination gracefully" do
