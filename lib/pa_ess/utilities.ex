@@ -198,6 +198,11 @@ defmodule PaEss.Utilities do
   end
 
   def ad_hoc_trip_description(destination, route_id)
+      when destination == :eastbound and route_id in ["Green-B", "Green-C", "Green-D", "Green-E"] do
+    ad_hoc_trip_description(destination)
+  end
+
+  def ad_hoc_trip_description(destination, route_id)
       when destination in [:eastbound, :westbound, :southbound, :northbound] do
     case {destination_to_ad_hoc_string(destination), route_to_ad_hoc_string(route_id)} do
       {{:ok, destination_string}, {:ok, route_string}} ->
@@ -219,6 +224,12 @@ defmodule PaEss.Utilities do
       _ ->
         {:error, :unknown}
     end
+  end
+
+  def ad_hoc_trip_description(destination, route_id)
+      when destination in [:lechmere, :north_station, :government_center, :park_street, :kenmore] and
+             route_id in ["Green-B", "Green-C", "Green-D", "Green-E"] do
+    ad_hoc_trip_description(destination)
   end
 
   def ad_hoc_trip_description(destination, route_id) do
