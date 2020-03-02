@@ -52,9 +52,12 @@ defmodule Content.Audio.StoppedTrain do
 
         {:error, :unknown} ->
           case Utilities.ad_hoc_trip_description(audio.destination) do
-            {:ok, trip} ->
+            {:ok, trip_description} ->
               stop_or_stops = if audio.stops_away == 1, do: "stop", else: "stops"
-              text = "The next #{trip} is stopped #{audio.stops_away} #{stop_or_stops} away"
+
+              text =
+                "The next #{trip_description} is stopped #{audio.stops_away} #{stop_or_stops} away"
+
               {:ad_hoc, {text, :audio}}
 
             {:error, :unknown} ->

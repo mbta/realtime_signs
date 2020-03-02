@@ -75,9 +75,14 @@ defmodule Content.Audio.FollowingTrain do
 
         {:error, :unknown} ->
           case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
-            {:ok, trip} ->
+            {:ok, trip_description} ->
               min_or_mins = if audio.minutes == 1, do: "minute", else: "minutes"
-              text = "The following #{trip} #{audio.verb} in #{audio.minutes} #{min_or_mins}"
+
+              text =
+                "The following #{trip_description} #{audio.verb} in #{audio.minutes} #{
+                  min_or_mins
+                }"
+
               {:ad_hoc, {text, :audio}}
 
             {:error, :unknown} ->

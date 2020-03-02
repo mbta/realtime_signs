@@ -24,8 +24,8 @@ defmodule Content.Audio.Passthrough do
       case destination_var(audio.destination, audio.route_id) do
         nil ->
           case PaEss.Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
-            {:ok, trip} ->
-              text = "The next #{trip} does not take customers"
+            {:ok, trip_description} ->
+              text = "The next #{trip_description} does not take customers"
               {:ad_hoc, {text, :audio}}
 
             {:error, :unknown} ->

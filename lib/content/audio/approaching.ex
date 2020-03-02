@@ -30,8 +30,8 @@ defmodule Content.Audio.Approaching do
       case destination_var(audio.destination, audio.platform, audio.route_id) do
         nil ->
           case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
-            {:ok, trip} ->
-              text = "Attention passengers: The next #{trip} is now approaching."
+            {:ok, trip_description} ->
+              text = "Attention passengers: The next #{trip_description} is now approaching."
               {:ad_hoc, {text, :audio_visual}}
 
             {:error, :unknown} ->
