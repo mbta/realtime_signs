@@ -20,7 +20,7 @@ defmodule Content.Audio.PassthroughTest do
     end
 
     test "Returns nil for Green Line trips" do
-      audio = %Passthrough{destination: :unknown, route_id: "Green-D"}
+      audio = %Passthrough{destination: :riverside, route_id: "Green-D"}
       log = capture_log([level: :info], fn -> assert Content.Audio.to_params(audio) == nil end)
       assert log =~ "unknown_passthrough_audio"
     end
