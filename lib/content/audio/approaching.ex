@@ -21,7 +21,7 @@ defmodule Content.Audio.Approaching do
     @attention_passengers "783"
     @now_approaching_new_ol_cars "785"
 
-    def to_params(%Content.Audio.Approaching{new_cars?: false, route_id: route_id} = audio)
+    def to_params(%Content.Audio.Approaching{route_id: route_id} = audio)
         when route_id in ["Mattapan", "Green-B", "Green-C", "Green-D", "Green-E"] do
       handle_unknown_destination(audio)
     end
