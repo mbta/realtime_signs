@@ -29,12 +29,12 @@ defmodule Content.Audio.TrainIsBoarding do
 
         {:error, :unknown} ->
           case PaEss.Utilities.ad_hoc_trip_description(audio.destination) do
-            {:ok, trip} ->
+            {:ok, trip_description} ->
               text =
                 if audio.track_number do
-                  "The next #{trip} is now boarding, on track #{audio.track_number}"
+                  "The next #{trip_description} is now boarding, on track #{audio.track_number}"
                 else
-                  "The next #{trip} is now boarding"
+                  "The next #{trip_description} is now boarding"
                 end
 
               {:ad_hoc, {text, :audio}}
