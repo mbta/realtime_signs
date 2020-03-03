@@ -53,12 +53,6 @@ defmodule Content.Audio.FollowingTrain do
     @minutes "505"
     @minute "532"
 
-    def to_params(%{destination: :southbound, verb: verb, minutes: minutes}) do
-      min_or_mins = if minutes == 1, do: "minute", else: "minutes"
-      text = "The following southbound train #{verb} in #{minutes} #{min_or_mins}"
-      {:ad_hoc, {text, :audio}}
-    end
-
     def to_params(audio) do
       case Utilities.destination_var(audio.destination) do
         {:ok, dest_var} ->
@@ -80,11 +74,24 @@ defmodule Content.Audio.FollowingTrain do
           end
 
         {:error, :unknown} ->
-          Logger.error(
-            "FollowingTrain.to_params unknown destination: #{inspect(audio.destination)}"
-          )
+          case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
+            {:ok, trip_description} ->
+              min_or_mins = if audio.minutes == 1, do: "minute", else: "minutes"
 
-          nil
+              text =
+                "The following #{trip_description} #{audio.verb} in #{audio.minutes} #{
+                  min_or_mins
+                }"
+
+              {:ad_hoc, {text, :audio}}
+
+            {:error, :unknown} ->
+              Logger.error(
+                "FollowingTrain.to_params unknown destination: #{inspect(audio.destination)}"
+              )
+
+              nil
+          end
       end
     end
 

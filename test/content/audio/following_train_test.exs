@@ -151,7 +151,19 @@ defmodule Content.Audio.FollowingTrainTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"The following southbound train arrives in 3 minutes", :audio}}
+               {:ad_hoc, {"The following Southbound Red Line train arrives in 3 minutes", :audio}}
+    end
+
+    test "Returns ad_hoc audio for valid destinations" do
+      audio = %Content.Audio.FollowingTrain{
+        destination: :eastbound,
+        route_id: "Green-D",
+        verb: :arrives,
+        minutes: 3
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc, {"The following Eastbound train arrives in 3 minutes", :audio}}
     end
 
     test "Handles unknown destination gracefully" do

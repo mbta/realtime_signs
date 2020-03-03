@@ -15,20 +15,37 @@ defmodule Content.Audio.Passthrough do
         }
 
   defimpl Content.Audio do
+    def to_params(%Content.Audio.Passthrough{route_id: route_id} = audio)
+        when route_id in ["Mattapan", "Green-B", "Green-C", "Green-D", "Green-E"] do
+      handle_unknown_destination(audio)
+    end
+
     def to_params(audio) do
       case destination_var(audio.destination, audio.route_id) do
         nil ->
-          Logger.info(
-            "unknown_passthrough_audio: destination=#{audio.destination} route_id=#{
-              audio.route_id
-            }"
-          )
+          case PaEss.Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
+            {:ok, trip_description} ->
+              text =
+                "The next #{trip_description} does not take customers. Please stand back from the yellow line."
 
-          nil
+              {:ad_hoc, {text, :audio}}
+
+            {:error, :unknown} ->
+              handle_unknown_destination(audio)
+          end
 
         var ->
           {:canned, {"103", [var], :audio_visual}}
       end
+    end
+
+    @spec handle_unknown_destination(Content.Audio.Passthrough.t()) :: nil
+    defp handle_unknown_destination(audio) do
+      Logger.info(
+        "unknown_passthrough_audio: destination=#{audio.destination} route_id=#{audio.route_id}"
+      )
+
+      nil
     end
 
     @spec destination_var(PaEss.destination(), String.t()) :: String.t() | nil
