@@ -4,6 +4,7 @@ defmodule Content.Audio.StoppedTrain do
   """
 
   require Logger
+  alias PaEss.Utilities
 
   @enforce_keys [:destination, :stops_away]
   defstruct @enforce_keys
@@ -34,12 +35,6 @@ defmodule Content.Audio.StoppedTrain do
     @is "533"
     @stopped "641"
 
-    def to_params(%{destination: :southbound, stops_away: stops_away}) do
-      stop_or_stops = if stops_away == 1, do: "stop", else: "stops"
-      text = "The next southbound train is stopped #{stops_away} #{stop_or_stops} away"
-      {:ad_hoc, {text, :audio}}
-    end
-
     def to_params(audio) do
       case PaEss.Utilities.destination_var(audio.destination) do
         {:ok, dest_var} ->
@@ -56,11 +51,22 @@ defmodule Content.Audio.StoppedTrain do
           PaEss.Utilities.take_message(vars, :audio)
 
         {:error, :unknown} ->
-          Logger.error(
-            "StoppedTrain.to_params unknown destination: #{inspect(audio.destination)}"
-          )
+          case Utilities.ad_hoc_trip_description(audio.destination) do
+            {:ok, trip_description} ->
+              stop_or_stops = if audio.stops_away == 1, do: "stop", else: "stops"
 
-          nil
+              text =
+                "The next #{trip_description} is stopped #{audio.stops_away} #{stop_or_stops} away"
+
+              {:ad_hoc, {text, :audio}}
+
+            {:error, :unknown} ->
+              Logger.error(
+                "StoppedTrain.to_params unknown destination: #{inspect(audio.destination)}"
+              )
+
+              nil
+          end
       end
     end
 

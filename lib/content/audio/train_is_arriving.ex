@@ -4,6 +4,7 @@ defmodule Content.Audio.TrainIsArriving do
   """
 
   require Logger
+  alias PaEss.Utilities
 
   @enforce_keys [:destination]
   defstruct @enforce_keys ++ [:trip_id, :platform, :route_id]
@@ -16,19 +17,21 @@ defmodule Content.Audio.TrainIsArriving do
         }
 
   defimpl Content.Audio do
-    def to_params(%{destination: :southbound, route_id: "Red"}) do
-      text = "Attention passengers: The next southbound Red Line train is now arriving."
-      {:ad_hoc, {text, :audio_visual}}
-    end
-
     def to_params(audio) do
       case audio_params(audio) do
         {message_id, vars} ->
           {:canned, {message_id, vars, :audio_visual}}
 
         nil ->
-          Logger.error("TrainIsArriving.to_params unknown params for #{inspect(audio)}")
-          nil
+          case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
+            {:ok, trip_description} ->
+              text = "Attention passengers: The next #{trip_description} is now arriving."
+              {:ad_hoc, {text, :audio_visual}}
+
+            {:error, :unknown} ->
+              Logger.error("TrainIsArriving.to_params unknown params for #{inspect(audio)}")
+              nil
+          end
       end
     end
 

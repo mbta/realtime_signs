@@ -53,7 +53,19 @@ defmodule Content.Audio.TrainIsArrivingTest do
 
       assert Content.Audio.to_params(audio) ==
                {:ad_hoc,
-                {"Attention passengers: The next southbound Red Line train is now arriving.",
+                {"Attention passengers: The next Southbound Red Line train is now arriving.",
+                 :audio_visual}}
+    end
+
+    test "Returns ad_hoc audio for valid destinations" do
+      audio = %Content.Audio.TrainIsArriving{
+        destination: :westbound,
+        route_id: "Green-B"
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc,
+                {"Attention passengers: The next Westbound B train is now arriving.",
                  :audio_visual}}
     end
 

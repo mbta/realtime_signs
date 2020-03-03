@@ -80,30 +80,34 @@ defmodule Content.Audio.VehiclesToDestination do
           %Content.Audio.VehiclesToDestination{language: :english, headway_range: {x, y}} = audio
         )
         when (x == :up_to or is_integer(x)) and is_integer(y) do
-      destination_string = PaEss.Utilities.destination_to_ad_hoc_string(audio.destination)
+      case PaEss.Utilities.destination_to_ad_hoc_string(audio.destination) do
+        {:ok, destination_string} ->
+          vehicles_to_destination =
+            if audio.destination in [:northbound, :southbound, :eastbound, :westbound] do
+              destination_string <> " trains"
+            else
+              "Trains to " <> destination_string
+            end
 
-      vehicles_to_destination =
-        if audio.destination in [:northbound, :southbound, :eastbound, :westbound] do
-          destination_string <> " trains"
-        else
-          "Trains to " <> destination_string
-        end
+          minutes_range =
+            case audio.headway_range do
+              {:up_to, up_to_mins} -> " up to every #{up_to_mins} minutes."
+              {lower_mins, higher_mins} -> " every #{lower_mins} to #{higher_mins} minutes."
+            end
 
-      minutes_range =
-        case audio.headway_range do
-          {:up_to, up_to_mins} -> " up to every #{up_to_mins} minutes."
-          {lower_mins, higher_mins} -> " every #{lower_mins} to #{higher_mins} minutes."
-        end
+          previous_departure =
+            if !is_nil(audio.previous_departure_mins) and audio.previous_departure_mins > 0 do
+              minutes_word = if audio.previous_departure_mins == 1, do: "minute", else: "minutes"
+              "  Previous departure #{audio.previous_departure_mins} #{minutes_word} ago."
+            else
+              ""
+            end
 
-      previous_departure =
-        if !is_nil(audio.previous_departure_mins) and audio.previous_departure_mins > 0 do
-          minutes_word = if audio.previous_departure_mins == 1, do: "minute", else: "minutes"
-          "  Previous departure #{audio.previous_departure_mins} #{minutes_word} ago."
-        else
-          ""
-        end
+          {:ad_hoc, {vehicles_to_destination <> minutes_range <> previous_departure, :audio}}
 
-      {:ad_hoc, {vehicles_to_destination <> minutes_range <> previous_departure, :audio}}
+        {:error, :unknown} ->
+          nil
+      end
     end
 
     def to_params(_audio), do: nil
