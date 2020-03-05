@@ -44,16 +44,10 @@ defmodule Signs.Utilities.Headways do
         ) == :lt
 
     stop_id = sign.headway_stop_id || config.stop_id
+    headway_range = sign.headway_engine.get_headways(stop_id)
 
     all_gl_changed_signs =
       Enum.concat(@haymarket_destination_sign_ids, @lechmere_destination_sign_ids)
-
-    headway_range =
-      if during_gl_gov_ctr_disruption? and sign.id in all_gl_changed_signs do
-        {10, 12}
-      else
-        sign.headway_engine.get_headways(stop_id)
-      end
 
     last_departure =
       if during_gl_gov_ctr_disruption? and sign.id in all_gl_changed_signs do
