@@ -25,7 +25,6 @@ defmodule PaEss do
           | :south_station
           | :lechmere
           | :north_station
-          | :haymarket
           | :government_center
           | :park_street
           | :kenmore
