@@ -148,18 +148,6 @@ defmodule Content.Audio.VehiclesToDestinationTest do
 
       assert Content.Audio.to_params(audio) == nil
     end
-
-    test "returns ad-hoc audio for Haymarket destination" do
-      audio = %Content.Audio.VehiclesToDestination{
-        destination: :haymarket,
-        language: :english,
-        headway_range: {2, 8},
-        previous_departure_mins: nil
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"Trains to Haymarket every 2 to 8 minutes.", :audio}}
-    end
   end
 
   describe "from_headway_message/2" do
