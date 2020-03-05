@@ -87,7 +87,6 @@ defmodule PaEss.Utilities do
   def destination_var(:forest_hills), do: {:ok, "4043"}
   def destination_var(:lechmere), do: {:ok, "4056"}
   def destination_var(:north_station), do: {:ok, "4027"}
-  def destination_var(:haymarket), do: {:ok, "4060"}
   def destination_var(:government_center), do: {:ok, "4061"}
   def destination_var(:park_street), do: {:ok, "4007"}
   def destination_var(:kenmore), do: {:ok, "4070"}
@@ -111,7 +110,6 @@ defmodule PaEss.Utilities do
   def headsign_to_destination("South Station"), do: {:ok, :south_station}
   def headsign_to_destination("Lechmere"), do: {:ok, :lechmere}
   def headsign_to_destination("North Station"), do: {:ok, :north_station}
-  def headsign_to_destination("Haymarket"), do: {:ok, :haymarket}
   def headsign_to_destination("Government Center"), do: {:ok, :government_center}
   def headsign_to_destination("Park Street"), do: {:ok, :park_street}
   def headsign_to_destination("Kenmore"), do: {:ok, :kenmore}
@@ -139,7 +137,6 @@ defmodule PaEss.Utilities do
   def destination_to_sign_string(:south_station), do: "South Sta"
   def destination_to_sign_string(:lechmere), do: "Lechmere"
   def destination_to_sign_string(:north_station), do: "North Sta"
-  def destination_to_sign_string(:haymarket), do: "Haymarket"
   def destination_to_sign_string(:government_center), do: "Govt Ctr"
   def destination_to_sign_string(:park_street), do: "Park St"
   def destination_to_sign_string(:kenmore), do: "Kenmore"
@@ -167,7 +164,6 @@ defmodule PaEss.Utilities do
   def destination_to_ad_hoc_string(:south_station), do: {:ok, "South Station"}
   def destination_to_ad_hoc_string(:lechmere), do: {:ok, "Lechmere"}
   def destination_to_ad_hoc_string(:north_station), do: {:ok, "North Station"}
-  def destination_to_ad_hoc_string(:haymarket), do: {:ok, "Haymarket"}
   def destination_to_ad_hoc_string(:government_center), do: {:ok, "Government Center"}
   def destination_to_ad_hoc_string(:park_street), do: {:ok, "Park Street"}
   def destination_to_ad_hoc_string(:kenmore), do: {:ok, "Kenmore"}

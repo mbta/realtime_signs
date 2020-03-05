@@ -43,7 +43,6 @@ defmodule Content.Utilities do
 
   def destination_for_prediction("Red", 0, _), do: {:ok, :southbound}
 
-  def destination_for_prediction(_, 0, "70204"), do: {:ok, :haymarket}
   def destination_for_prediction(_, 0, "70151"), do: {:ok, :kenmore}
   def destination_for_prediction(_, 0, "70202"), do: {:ok, :government_center}
   def destination_for_prediction(_, 0, "70201"), do: {:ok, :government_center}
