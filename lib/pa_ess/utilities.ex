@@ -7,6 +7,17 @@ defmodule PaEss.Utilities do
 
   @space "21000"
 
+  @abbreviation_replacements [
+    {~r"\bOL\b", "Orange Line"},
+    {~r"\bBL\b", "Blue Line"},
+    {~r"\bRL\b", "Red Line"},
+    {~r"\bGL\b", "Green Line"},
+    {~r"\bNB\b", "Northbound"},
+    {~r"\bSB\b", "Southbound"},
+    {~r"\bEB\b", "Eastbound"},
+    {~r"\bWB\b", "Westbound"}
+  ]
+
   @spec valid_range?(integer(), Content.Audio.language()) :: boolean()
   def valid_range?(n, :english) do
     n > 0 and n < 60
@@ -250,4 +261,15 @@ defmodule PaEss.Utilities do
   def green_line_branch_var(:c), do: "537"
   def green_line_branch_var(:d), do: "538"
   def green_line_branch_var(:e), do: "539"
+
+  @spec replace_abbreviations(String.t()) :: String.t()
+  def replace_abbreviations(text) when is_binary(text) do
+    Enum.reduce(
+      @abbreviation_replacements,
+      text,
+      fn {abbr, replacement}, text ->
+        String.replace(text, abbr, replacement)
+      end
+    )
+  end
 end

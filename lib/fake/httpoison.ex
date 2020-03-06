@@ -55,6 +55,10 @@ defmodule Fake.HTTPoison do
 
       body =~ "MsgType=AdHoc&uid=1006&msg=Custom+Message&typ=1&sta=MCAP001000&pri=5&tim=60" ->
         {:ok, %HTTPoison.Response{status_code: 200}}
+
+      body =~
+          "MsgType=AdHoc&uid=1006&msg=Custom+Orange+Line+Message&typ=1&sta=MCAP001000&pri=5&tim=60" ->
+        {:ok, %HTTPoison.Response{status_code: 200}}
     end
   end
 
