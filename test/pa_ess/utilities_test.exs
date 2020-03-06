@@ -133,4 +133,18 @@ defmodule Content.Audio.UtilitiesTest do
       end)
     end
   end
+
+  describe "replace_abbreviations/1" do
+    test "replaces multiple times, including binary start and end" do
+      assert replace_abbreviations("RL and RL and OL") == "Red Line and Red Line and Orange Line"
+    end
+
+    test "does not replace when touching other letters" do
+      assert replace_abbreviations("BLAM!") == "BLAM!"
+    end
+
+    test "replaces when next to punctuation" do
+      assert replace_abbreviations("OL, OK") == "Orange Line, OK"
+    end
+  end
 end
