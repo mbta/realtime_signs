@@ -42,6 +42,11 @@ defmodule Engine.Config do
     latest_version =
       case updater.get(state.current_version) do
         {version, config} ->
+          # To handle two formats of signs config:
+          # old: %{ "sign_id" => %{ sign config}, "sign_id2" => ...}
+          # new: %{ "signs" => %{ "sign_id" => %{ sign_config }, ...}}
+          config = Map.get(config, "signs", config)
+
           config =
             Enum.map(config, fn {sign_id, config_json} ->
               {sign_id, transform_sign_config(state, config_json)}

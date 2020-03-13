@@ -63,6 +63,21 @@ defmodule Engine.ConfigTest do
       assert state[:current_version] == "unchanged"
     end
 
+    test "handles new format of config" do
+      :ets.new(:test_new_format, [:set, :protected, :named_table, read_concurrency: true])
+
+      {:noreply, state} =
+        Engine.Config.handle_info(:update, %{
+          ets_table_name: :test_new_format,
+          current_version: "new_format",
+          time_fetcher: &DateTime.utc_now/0
+        })
+
+      assert :ets.lookup(:test_new_format, "some_custom_sign") == [
+               {"some_custom_sign", {:static_text, {"custom", ""}}}
+             ]
+    end
+
     test "correctly loads config for a sigh with a mode of \"off\"" do
       _state = initialize_test_state(:config_test_off, fn -> DateTime.utc_now() end)
 
