@@ -6,6 +6,17 @@ defmodule Fake.ExternalConfig.Local do
     :unchanged
   end
 
+  def get("new_format") do
+    {
+      nil,
+      %{
+        "signs" => %{
+          "some_custom_sign" => %{"line1" => "custom", "line2" => "", "expires" => nil}
+        }
+      }
+    }
+  end
+
   def get(_current_version) do
     {nil,
      %{
