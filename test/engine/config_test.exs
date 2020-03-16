@@ -51,11 +51,14 @@ defmodule Engine.ConfigTest do
     end
   end
 
-  describe "hanfle_info/2" do
+  describe "handle_info/2" do
     test "does not update config when it is unchanged" do
+      Engine.Config.Headways.create_table(:test_headways)
+
       {:noreply, state} =
         Engine.Config.handle_info(:update, %{
           table_name_signs: :test,
+          table_name_headways: :test_headways,
           current_version: "unchanged",
           time_fetcher: fn -> DateTime.utc_now() end
         })
@@ -65,10 +68,12 @@ defmodule Engine.ConfigTest do
 
     test "handles new format of config" do
       :ets.new(:test_new_format, [:set, :protected, :named_table, read_concurrency: true])
+      Engine.Config.Headways.create_table(:test_headways)
 
-      {:noreply, state} =
+      {:noreply, _state} =
         Engine.Config.handle_info(:update, %{
           table_name_signs: :test_new_format,
+          table_name_headways: :test_headways,
           current_version: "new_format",
           time_fetcher: &DateTime.utc_now/0
         })
@@ -99,9 +104,10 @@ defmodule Engine.ConfigTest do
     test "logs a when an unknown message is received" do
       log =
         capture_log([level: :info], fn ->
-          {:noreply, state} =
+          {:noreply, _state} =
             Engine.Config.handle_info(:foo, %{
               table_name_signs: :test,
+              table_name_headways: :test_headways,
               current_version: "unchanged",
               time_fetcher: fn -> DateTime.utc_now() end
             })
@@ -116,8 +122,11 @@ defmodule Engine.ConfigTest do
     ^table_name_signs =
       :ets.new(table_name_signs, [:set, :protected, :named_table, read_concurrency: true])
 
+    Engine.Config.Headways.create_table(:test_headways)
+
     state = %{
       table_name_signs: table_name_signs,
+      table_name_headways: :test_headways,
       current_version: nil,
       time_fetcher: time_fetcher
     }

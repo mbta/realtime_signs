@@ -5,11 +5,14 @@ defmodule Engine.Config do
 
   use GenServer
   require Logger
+  alias Engine.Config.Headway
+  alias Engine.Config.Headways
 
   @type version_id :: String.t() | nil
 
   @type state :: %{
           table_name_signs: term(),
+          table_name_headways: term(),
           current_version: version_id,
           time_fetcher: (() -> DateTime.t())
         }
@@ -17,6 +20,7 @@ defmodule Engine.Config do
   @type sign_config :: :auto | :headway | :off | {:static_text, {String.t(), String.t()}}
 
   @table_signs :config_engine_signs
+  @table_headways :config_engine_headways
 
   def start_link(name \\ __MODULE__) do
     GenServer.start_link(__MODULE__, [], name: name)
@@ -30,6 +34,11 @@ defmodule Engine.Config do
     end
   end
 
+  @spec headway_config(:ets.tab(), String.t()) :: Headway.t()
+  def headway_config(table_name, group_id) do
+    Headways.get_headway(table_name, group_id)
+  end
+
   def update(pid \\ __MODULE__) do
     schedule_update(pid, 0)
   end
@@ -38,6 +47,7 @@ defmodule Engine.Config do
   def init(opts) do
     state = %{
       table_name_signs: @table_signs,
+      table_name_headways: @table_headways,
       current_version: nil,
       time_fetcher: opts[:time_fetcher] || fn -> DateTime.utc_now() end
     }
@@ -46,6 +56,8 @@ defmodule Engine.Config do
 
     @table_signs =
       :ets.new(state.table_name_signs, [:set, :protected, :named_table, read_concurrency: true])
+
+    @table_headways = Headways.create_table(@table_headways)
 
     {:ok, state}
   end
@@ -68,7 +80,15 @@ defmodule Engine.Config do
               {sign_id, transform_sign_config(state, config_json)}
             end)
 
+          config_headways =
+            config
+            |> Map.get("multi_sign_headways", %{})
+            |> Headways.parse()
+            |> Enum.map(&{&1.id, &1})
+
           :ets.insert(state.table_name_signs, Enum.into(config_signs, []))
+          :ok = Headways.update_table(state.table_name_headways, config_headways)
+
           version
 
         :unchanged ->
