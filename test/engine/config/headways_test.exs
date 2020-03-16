@@ -14,9 +14,6 @@ defmodule Engine.Config.HeadwaysTest do
           %Headway{group_id: "B", range_low: 10, range_high: 12}
         ])
 
-      require IEx
-      IEx.pry()
-
       assert %Headway{group_id: "A", range_low: 8, range_high: 10} =
                Headways.get_headway(table, "A")
 

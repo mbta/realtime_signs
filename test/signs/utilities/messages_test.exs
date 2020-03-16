@@ -89,6 +89,7 @@ defmodule Signs.Utilities.MessagesTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
+    headway_group: "headway_group",
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: {[@src]},
