@@ -30,7 +30,7 @@ defmodule Engine.ConfigTest do
           Timex.to_datetime(~N[2017-07-04 07:00:00], "America/New_York")
         end)
 
-      assert Engine.Config.sign_config(state.ets_table_name, "custom_text_test") ==
+      assert Engine.Config.sign_config(state.table_name_signs, "custom_text_test") ==
                {:static_text, {"Test message", "Please ignore"}}
     end
 
@@ -40,7 +40,7 @@ defmodule Engine.ConfigTest do
           Timex.to_datetime(~N[2017-07-04 09:00:00], "America/New_York")
         end)
 
-      assert Engine.Config.sign_config(state.ets_table_name, "custom_text_test") == :auto
+      assert Engine.Config.sign_config(state.table_name_signs, "custom_text_test") == :auto
     end
 
     test "properly returns headway mode" do
@@ -55,7 +55,7 @@ defmodule Engine.ConfigTest do
     test "does not update config when it is unchanged" do
       {:noreply, state} =
         Engine.Config.handle_info(:update, %{
-          ets_table_name: :test,
+          table_name_signs: :test,
           current_version: "unchanged",
           time_fetcher: fn -> DateTime.utc_now() end
         })
@@ -68,7 +68,7 @@ defmodule Engine.ConfigTest do
 
       {:noreply, state} =
         Engine.Config.handle_info(:update, %{
-          ets_table_name: :test_new_format,
+          table_name_signs: :test_new_format,
           current_version: "new_format",
           time_fetcher: &DateTime.utc_now/0
         })
@@ -101,7 +101,7 @@ defmodule Engine.ConfigTest do
         capture_log([level: :info], fn ->
           {:noreply, state} =
             Engine.Config.handle_info(:foo, %{
-              ets_table_name: :test,
+              table_name_signs: :test,
               current_version: "unchanged",
               time_fetcher: fn -> DateTime.utc_now() end
             })
@@ -112,12 +112,12 @@ defmodule Engine.ConfigTest do
   end
 
   @spec initialize_test_state(:ets.tab(), (() -> DateTime.t())) :: Engine.Config.t()
-  defp initialize_test_state(ets_table_name, time_fetcher) do
-    ^ets_table_name =
-      :ets.new(ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+  defp initialize_test_state(table_name_signs, time_fetcher) do
+    ^table_name_signs =
+      :ets.new(table_name_signs, [:set, :protected, :named_table, read_concurrency: true])
 
     state = %{
-      ets_table_name: ets_table_name,
+      table_name_signs: table_name_signs,
       current_version: nil,
       time_fetcher: time_fetcher
     }
