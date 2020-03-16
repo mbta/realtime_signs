@@ -229,4 +229,25 @@ defmodule Signs.Utilities.HeadwaysTest do
                  }}}
     end
   end
+
+  describe "get_configured_messages/2" do
+    test "uses the configuration for the range values" do
+      config = source_config_for_stop_id("stopid")
+      config = %{config | headway_destination: :northbound}
+      sign = %{@sign | source_config: {[config]}}
+      headway_config = %Engine.Config.Headway{group_id: "G", range_low: 3, range_high: 5}
+
+      assert {{^config, %Content.Message.Headways.Top{destination: :northbound}},
+              {^config, %Content.Message.Headways.Bottom{prev_departure_mins: nil, range: {3, 5}}}} =
+               Signs.Utilities.Headways.get_configured_messages(sign, headway_config)
+    end
+
+    test "returns empty messages for mezzanine signs" do
+      sign = %{@sign | source_config: {[], []}}
+      headway_config = %Engine.Config.Headway{group_id: "G", range_low: 3, range_high: 5}
+
+      assert {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}} =
+               Signs.Utilities.Headways.get_configured_messages(sign, headway_config)
+    end
+  end
 end

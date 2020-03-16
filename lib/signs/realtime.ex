@@ -124,6 +124,7 @@ defmodule Signs.Realtime do
     alert_status = sign.alerts_engine.max_stop_status(sign_stop_ids, sign_routes)
 
     sign_config = Engine.Config.sign_config(sign.id)
+    headway_config = Engine.Config.headway_config(sign.headway_group)
 
     mode = Signs.Utilities.SourceConfig.transit_mode_for_routes(sign_routes)
 
@@ -138,6 +139,7 @@ defmodule Signs.Realtime do
       Utilities.Messages.get_messages(
         sign,
         sign_config,
+        headway_config,
         Timex.now(),
         alert_status,
         mode,

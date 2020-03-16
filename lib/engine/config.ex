@@ -34,8 +34,8 @@ defmodule Engine.Config do
     end
   end
 
-  @spec headway_config(:ets.tab(), String.t()) :: Headway.t()
-  def headway_config(table_name, group_id) do
+  @spec headway_config(:ets.tab(), String.t()) :: Headway.t() | nil
+  def headway_config(table_name \\ @table_headways, group_id) do
     Headways.get_headway(table_name, group_id)
   end
 

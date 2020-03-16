@@ -21,6 +21,27 @@ defmodule Signs.Utilities.Headways do
     end
   end
 
+  @spec get_configured_messages(Signs.Realtime.t(), Engine.Config.Headway.t()) ::
+          {{SourceConfig.source() | nil, Content.Message.t()},
+           {SourceConfig.source() | nil, Content.Message.t()}}
+  def get_configured_messages(sign, %Engine.Config.Headway{range_low: low, range_high: high}) do
+    case single_source_config(sign) do
+      nil ->
+        # Mezzanine / Center platform, blank for now
+        {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
+
+      %SourceConfig{} = config ->
+        {
+          {config,
+           %Content.Message.Headways.Top{
+             destination: config.headway_destination,
+             vehicle_type: vehicle_type(config.routes)
+           }},
+          {config, %Content.Message.Headways.Bottom{range: {low, high}, prev_departure_mins: nil}}
+        }
+    end
+  end
+
   @spec do_headway_messages(Signs.Realtime.t(), map(), DateTime.t()) ::
           {{map(), Content.Message.t()}, {map(), Content.Message.t()}}
   defp do_headway_messages(sign, config, current_time) do
