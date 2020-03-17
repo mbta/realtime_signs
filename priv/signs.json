@@ -1,7 +1,7 @@
 [
   {
     "id": "cedar_grove_outbound",
-    "headway_group": "TBD",
+    "headway_group": "mattapan_trunk",
     "type": "realtime",
     "pa_ess_loc": "MCED",
     "read_loop_offset": 60,
@@ -24,7 +24,7 @@
   },
   {
     "id": "cedar_grove_inbound",
-    "headway_group": "TBD",
+    "headway_group": "mattapan_trunk",
     "type": "realtime",
     "pa_ess_loc": "MCED",
     "read_loop_offset": 0,
@@ -47,7 +47,7 @@
   },
   {
     "id": "butler_center",
-    "headway_group": "TBD",
+    "headway_group": "mattapan_trunk",
     "type": "realtime",
     "pa_ess_loc": "MBUT",
     "read_loop_offset": 150,
@@ -82,7 +82,7 @@
   },
   {
     "id": "milton_outbound",
-    "headway_group": "TBD",
+    "headway_group": "mattapan_trunk",
     "type": "realtime",
     "pa_ess_loc": "MMIL",
     "read_loop_offset": 60,
@@ -105,7 +105,7 @@
   },
   {
     "id": "milton_inbound",
-    "headway_group": "TBD",
+    "headway_group": "mattapan_trunk",
     "type": "realtime",
     "pa_ess_loc": "MMIL",
     "read_loop_offset": 0,
@@ -128,7 +128,7 @@
   },
   {
     "id": "central_avenue_outbound",
-    "headway_group": "TBD",
+    "headway_group": "mattapan_trunk",
     "type": "realtime",
     "pa_ess_loc": "MCEN",
     "read_loop_offset": 60,
@@ -151,7 +151,7 @@
   },
   {
     "id": "central_avenue_inbound",
-    "headway_group": "TBD",
+    "headway_group": "mattapan_trunk",
     "type": "realtime",
     "pa_ess_loc": "MCEN",
     "read_loop_offset": 0,
@@ -174,7 +174,7 @@
   },
   {
     "id": "valley_road_outbound",
-    "headway_group": "TBD",
+    "headway_group": "mattapan_trunk",
     "type": "realtime",
     "pa_ess_loc": "MVAL",
     "read_loop_offset": 60,
@@ -197,7 +197,7 @@
   },
   {
     "id": "valley_road_inbound",
-    "headway_group": "TBD",
+    "headway_group": "mattapan_trunk",
     "type": "realtime",
     "pa_ess_loc": "MVAL",
     "read_loop_offset": 0,
@@ -220,7 +220,7 @@
   },
   {
     "id": "capen_street_inbound",
-    "headway_group": "TBD",
+    "headway_group": "mattapan_trunk",
     "type": "realtime",
     "pa_ess_loc": "MCAP",
     "read_loop_offset": 0,
@@ -243,7 +243,7 @@
   },
   {
     "id": "wonderland_westbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BWON",
     "read_loop_offset": 90,
@@ -266,7 +266,7 @@
   },
   {
     "id": "wonderland_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BWON",
     "read_loop_offset": 120,
@@ -289,7 +289,7 @@
   },
   {
     "id": "revere_beach_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BREV",
     "read_loop_offset": 30,
@@ -312,7 +312,7 @@
   },
   {
     "id": "revere_beach_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BREV",
     "read_loop_offset": 120,
@@ -347,7 +347,7 @@
   },
   {
     "id": "revere_beach_westbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BREV",
     "read_loop_offset": 90,
@@ -370,7 +370,7 @@
   },
   {
     "id": "beachmont_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BBEA",
     "read_loop_offset": 30,
@@ -393,7 +393,7 @@
   },
   {
     "id": "beachmont_westbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BBEA",
     "read_loop_offset": 90,
@@ -416,7 +416,7 @@
   },
   {
     "id": "suffolk_downs_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BSUF",
     "read_loop_offset": 30,
@@ -439,7 +439,7 @@
   },
   {
     "id": "suffolk_downs_westbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BSUF",
     "read_loop_offset": 90,
@@ -462,7 +462,7 @@
   },
   {
     "id": "orient_heights_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BORH",
     "read_loop_offset": 30,
@@ -485,7 +485,7 @@
   },
   {
     "id": "orient_heights_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BORH",
     "read_loop_offset": 120,
@@ -520,7 +520,7 @@
   },
   {
     "id": "orient_heights_westbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BORH",
     "read_loop_offset": 90,
@@ -543,7 +543,7 @@
   },
   {
     "id": "wood_island_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BWOO",
     "read_loop_offset": 30,
@@ -566,7 +566,7 @@
   },
   {
     "id": "wood_island_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BWOO",
     "read_loop_offset": 120,
@@ -601,7 +601,7 @@
   },
   {
     "id": "wood_island_westbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BWOO",
     "read_loop_offset": 90,
@@ -624,7 +624,7 @@
   },
   {
     "id": "airport_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BAIR",
     "read_loop_offset": 30,
@@ -647,7 +647,7 @@
   },
   {
     "id": "airport_westbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BAIR",
     "read_loop_offset": 90,
@@ -670,7 +670,7 @@
   },
   {
     "id": "maverick_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BMAV",
     "read_loop_offset": 30,
@@ -693,7 +693,7 @@
   },
   {
     "id": "maverick_westbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BMAV",
     "read_loop_offset": 90,
@@ -716,7 +716,7 @@
   },
   {
     "id": "aquarium_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BAQU",
     "read_loop_offset": 30,
@@ -739,7 +739,7 @@
   },
   {
     "id": "aquarium_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BAQU",
     "read_loop_offset": 120,
@@ -774,7 +774,7 @@
   },
   {
     "id": "aquarium_westbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BAQU",
     "read_loop_offset": 90,
@@ -797,7 +797,7 @@
   },
   {
     "id": "state_blue_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BSTA",
     "read_loop_offset": 30,
@@ -820,7 +820,7 @@
   },
   {
     "id": "state_blue_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BSTA",
     "read_loop_offset": 120,
@@ -855,7 +855,7 @@
   },
   {
     "id": "state_blue_westbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BSTA",
     "read_loop_offset": 90,
@@ -878,7 +878,7 @@
   },
   {
     "id": "government_center_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BGOV",
     "read_loop_offset": 30,
@@ -901,7 +901,7 @@
   },
   {
     "id": "government_center_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BGOV",
     "read_loop_offset": 120,
@@ -936,7 +936,7 @@
   },
   {
     "id": "government_center_westbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BGOV",
     "read_loop_offset": 90,
@@ -959,7 +959,7 @@
   },
   {
     "id": "bowdoin_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BBOW",
     "read_loop_offset": 30,
@@ -982,7 +982,7 @@
   },
   {
     "id": "bowdoin_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "blue_trunk",
     "type": "realtime",
     "pa_ess_loc": "BBOW",
     "read_loop_offset": 120,
@@ -1005,7 +1005,7 @@
   },
   {
     "id": "oak_grove_mezzanine_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OOAK",
     "read_loop_offset": 120,
@@ -1049,7 +1049,7 @@
   },
   {
     "id": "oak_grove_east_busway",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OOAK",
     "read_loop_offset": 30,
@@ -1093,7 +1093,7 @@
   },
   {
     "id": "oak_grove_platform",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OOAK",
     "read_loop_offset": 60,
@@ -1137,7 +1137,7 @@
   },
   {
     "id": "malden_lobby",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OMAL",
     "read_loop_offset": 120,
@@ -1172,7 +1172,7 @@
   },
   {
     "id": "malden_center_platform",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OMAL",
     "read_loop_offset": 0,
@@ -1207,7 +1207,7 @@
   },
   {
     "id": "wellington_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OWEL",
     "read_loop_offset": 120,
@@ -1242,7 +1242,7 @@
   },
   {
     "id": "wellington_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OWEL",
     "read_loop_offset": 0,
@@ -1265,7 +1265,7 @@
   },
   {
     "id": "wellington_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OWEL",
     "read_loop_offset": 60,
@@ -1288,7 +1288,7 @@
   },
   {
     "id": "assembly_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OASQ",
     "read_loop_offset": 120,
@@ -1323,7 +1323,7 @@
   },
   {
     "id": "assembly_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OASQ",
     "read_loop_offset": 0,
@@ -1346,7 +1346,7 @@
   },
   {
     "id": "assembly_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OASQ",
     "read_loop_offset": 60,
@@ -1369,7 +1369,7 @@
   },
   {
     "id": "sullivan_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OSUL",
     "read_loop_offset": 120,
@@ -1404,7 +1404,7 @@
   },
   {
     "id": "sullivan_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OSUL",
     "read_loop_offset": 0,
@@ -1427,7 +1427,7 @@
   },
   {
     "id": "sullivan_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OSUL",
     "read_loop_offset": 60,
@@ -1450,7 +1450,7 @@
   },
   {
     "id": "community_college_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OCOM",
     "read_loop_offset": 120,
@@ -1485,7 +1485,7 @@
   },
   {
     "id": "community_college_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OCOM",
     "read_loop_offset": 0,
@@ -1508,7 +1508,7 @@
   },
   {
     "id": "community_college_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OCOM",
     "read_loop_offset": 60,
@@ -1531,7 +1531,7 @@
   },
   {
     "id": "orange_north_station_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "ONST",
     "read_loop_offset": 0,
@@ -1554,7 +1554,7 @@
   },
   {
     "id": "orange_north_station_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "ONST",
     "read_loop_offset": 60,
@@ -1577,7 +1577,7 @@
   },
   {
     "id": "orange_north_station_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "ONST",
     "read_loop_offset": 150,
@@ -1612,7 +1612,7 @@
   },
   {
     "id": "orange_north_station_commuter_rail_exit",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "ONST",
     "read_loop_offset": 120,
@@ -1647,7 +1647,7 @@
   },
   {
     "id": "orange_haymarket_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OHAY",
     "read_loop_offset": 120,
@@ -1682,7 +1682,7 @@
   },
   {
     "id": "orange_haymarket_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OHAY",
     "read_loop_offset": 0,
@@ -1705,7 +1705,7 @@
   },
   {
     "id": "orange_haymarket_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OHAY",
     "read_loop_offset": 60,
@@ -1728,7 +1728,7 @@
   },
   {
     "id": "orange_state_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OSTN",
     "read_loop_offset": 120,
@@ -1763,7 +1763,7 @@
   },
   {
     "id": "orange_state_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OSTN",
     "read_loop_offset": 0,
@@ -1786,7 +1786,7 @@
   },
   {
     "id": "orange_state_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OSTS",
     "read_loop_offset": 60,
@@ -1809,7 +1809,7 @@
   },
   {
     "id": "orange_downtown_crossing_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "ODTN",
     "read_loop_offset": 0,
@@ -1832,7 +1832,7 @@
   },
   {
     "id": "orange_downtown_crossing_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "ODTS",
     "read_loop_offset": 60,
@@ -1855,7 +1855,7 @@
   },
   {
     "id": "chinatown_northbound_lobby",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OCHN",
     "read_loop_offset": 120,
@@ -1878,7 +1878,7 @@
   },
   {
     "id": "chinatown_southbound_lobby",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OCHS",
     "read_loop_offset": 120,
@@ -1901,7 +1901,7 @@
   },
   {
     "id": "chinatown_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OCHN",
     "read_loop_offset": 0,
@@ -1924,7 +1924,7 @@
   },
   {
     "id": "chinatown_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OCHS",
     "read_loop_offset": 60,
@@ -1947,7 +1947,7 @@
   },
   {
     "id": "tufts_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "ONEM",
     "read_loop_offset": 120,
@@ -1982,7 +1982,7 @@
   },
   {
     "id": "tufts_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "ONEM",
     "read_loop_offset": 0,
@@ -2005,7 +2005,7 @@
   },
   {
     "id": "tufts_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "ONEM",
     "read_loop_offset": 60,
@@ -2028,7 +2028,7 @@
   },
   {
     "id": "back_bay_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OBAC",
     "read_loop_offset": 120,
@@ -2063,7 +2063,7 @@
   },
   {
     "id": "back_bay_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OBAC",
     "read_loop_offset": 0,
@@ -2086,7 +2086,7 @@
   },
   {
     "id": "back_bay_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OBAC",
     "read_loop_offset": 60,
@@ -2109,7 +2109,7 @@
   },
   {
     "id": "mass_ave_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OMAS",
     "read_loop_offset": 120,
@@ -2144,7 +2144,7 @@
   },
   {
     "id": "mass_ave_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OMAS",
     "read_loop_offset": 0,
@@ -2167,7 +2167,7 @@
   },
   {
     "id": "mass_ave_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OMAS",
     "read_loop_offset": 60,
@@ -2190,7 +2190,7 @@
   },
   {
     "id": "ruggles_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "ORUG",
     "read_loop_offset": 0,
@@ -2213,7 +2213,7 @@
   },
   {
     "id": "ruggles_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "ORUG",
     "read_loop_offset": 60,
@@ -2236,7 +2236,7 @@
   },
   {
     "id": "ruggles_center",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "ORUG",
     "read_loop_offset": 150,
@@ -2271,7 +2271,7 @@
   },
   {
     "id": "ruggles_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "ORUG",
     "read_loop_offset": 120,
@@ -2306,7 +2306,7 @@
   },
   {
     "id": "roxbury_crossing_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OROX",
     "read_loop_offset": 120,
@@ -2341,7 +2341,7 @@
   },
   {
     "id": "roxbury_crossing_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OROX",
     "read_loop_offset": 0,
@@ -2364,7 +2364,7 @@
   },
   {
     "id": "roxbury_crossing_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OROX",
     "read_loop_offset": 60,
@@ -2387,7 +2387,7 @@
   },
   {
     "id": "jackson_square_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OJAC",
     "read_loop_offset": 120,
@@ -2422,7 +2422,7 @@
   },
   {
     "id": "jackson_square_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OJAC",
     "read_loop_offset": 0,
@@ -2445,7 +2445,7 @@
   },
   {
     "id": "jackson_square_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OJAC",
     "read_loop_offset": 60,
@@ -2468,7 +2468,7 @@
   },
   {
     "id": "stony_brook_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OSTO",
     "read_loop_offset": 120,
@@ -2503,7 +2503,7 @@
   },
   {
     "id": "stony_brook_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OSTO",
     "read_loop_offset": 0,
@@ -2526,7 +2526,7 @@
   },
   {
     "id": "stony_brook_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OSTO",
     "read_loop_offset": 60,
@@ -2549,7 +2549,7 @@
   },
   {
     "id": "green_street_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OGRE",
     "read_loop_offset": 120,
@@ -2584,7 +2584,7 @@
   },
   {
     "id": "green_street_northbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OGRE",
     "read_loop_offset": 0,
@@ -2607,7 +2607,7 @@
   },
   {
     "id": "green_street_southbound",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OGRE",
     "read_loop_offset": 60,
@@ -2630,7 +2630,7 @@
   },
   {
     "id": "forest_hills_main_lobby",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OFOR",
     "read_loop_offset": 120,
@@ -2674,7 +2674,7 @@
   },
   {
     "id": "forest_hills_platform",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "OFOR",
     "read_loop_offset": 0,
@@ -2718,7 +2718,7 @@
   },
   {
     "id": "forest_hills_entrances_from_busways",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "SFOR",
     "read_loop_offset": 120,
@@ -2762,7 +2762,7 @@
   },
   {
     "id": "ruggles_upper_busway",
-    "headway_group": "TBD",
+    "headway_group": "orange_trunk",
     "type": "realtime",
     "pa_ess_loc": "SRUG",
     "read_loop_offset": 120,
@@ -2797,7 +2797,7 @@
   },
   {
     "id": "alewife_center_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RALE",
     "read_loop_offset": 150,
@@ -2841,7 +2841,7 @@
   },
   {
     "id": "alewife_mezzanine_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RALE",
     "read_loop_offset": 120,
@@ -2885,7 +2885,7 @@
   },
   {
     "id": "davis_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RDAV",
     "read_loop_offset": 120,
@@ -2920,7 +2920,7 @@
   },
   {
     "id": "davis_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RDAV",
     "read_loop_offset": 0,
@@ -2943,7 +2943,7 @@
   },
   {
     "id": "davis_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RDAV",
     "read_loop_offset": 60,
@@ -2966,7 +2966,7 @@
   },
   {
     "id": "porter_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RPOR",
     "read_loop_offset": 120,
@@ -3001,7 +3001,7 @@
   },
   {
     "id": "porter_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RPOR",
     "read_loop_offset": 0,
@@ -3024,7 +3024,7 @@
   },
   {
     "id": "porter_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RPOR",
     "read_loop_offset": 60,
@@ -3047,7 +3047,7 @@
   },
   {
     "id": "harvard_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RHAR",
     "read_loop_offset": 120,
@@ -3082,7 +3082,7 @@
   },
   {
     "id": "harvard_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RHAR",
     "read_loop_offset": 0,
@@ -3105,7 +3105,7 @@
   },
   {
     "id": "harvard_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RHAR",
     "read_loop_offset": 60,
@@ -3128,7 +3128,7 @@
   },
   {
     "id": "central_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RCEN",
     "read_loop_offset": 0,
@@ -3151,7 +3151,7 @@
   },
   {
     "id": "central_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RCEN",
     "read_loop_offset": 60,
@@ -3174,7 +3174,7 @@
   },
   {
     "id": "kendall_mit_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RKEN",
     "read_loop_offset": 0,
@@ -3197,7 +3197,7 @@
   },
   {
     "id": "kendall_mit_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RKEN",
     "read_loop_offset": 60,
@@ -3220,7 +3220,7 @@
   },
   {
     "id": "charles_mgh_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RMGH",
     "read_loop_offset": 0,
@@ -3243,7 +3243,7 @@
   },
   {
     "id": "charles_mgh_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RMGH",
     "read_loop_offset": 60,
@@ -3266,7 +3266,7 @@
   },
   {
     "id": "red_park_st_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RPRK",
     "read_loop_offset": 0,
@@ -3289,7 +3289,7 @@
   },
   {
     "id": "red_park_st_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RPRK",
     "read_loop_offset": 60,
@@ -3312,7 +3312,7 @@
   },
   {
     "id": "red_park_st_center",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RPRK",
     "read_loop_offset": 150,
@@ -3347,7 +3347,7 @@
   },
   {
     "id": "red_downtown_crossing_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RDTC",
     "read_loop_offset": 0,
@@ -3370,7 +3370,7 @@
   },
   {
     "id": "red_downtown_crossing_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RDTC",
     "read_loop_offset": 60,
@@ -3393,7 +3393,7 @@
   },
   {
     "id": "red_south_station_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RSOU",
     "read_loop_offset": 120,
@@ -3428,7 +3428,7 @@
   },
   {
     "id": "red_south_station_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RSOU",
     "read_loop_offset": 0,
@@ -3451,7 +3451,7 @@
   },
   {
     "id": "red_south_station_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RSOU",
     "read_loop_offset": 60,
@@ -3474,7 +3474,7 @@
   },
   {
     "id": "south_station_silver_line_arrival_platform",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "SSOU",
     "read_loop_offset": 90,
@@ -3509,7 +3509,7 @@
   },
   {
     "id": "broadway_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RBRO",
     "read_loop_offset": 120,
@@ -3544,7 +3544,7 @@
   },
   {
     "id": "broadway_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RBRO",
     "read_loop_offset": 0,
@@ -3567,7 +3567,7 @@
   },
   {
     "id": "broadway_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RBRO",
     "read_loop_offset": 60,
@@ -3590,7 +3590,7 @@
   },
   {
     "id": "andrew_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RAND",
     "read_loop_offset": 120,
@@ -3625,7 +3625,7 @@
   },
   {
     "id": "andrew_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RAND",
     "read_loop_offset": 0,
@@ -3648,7 +3648,7 @@
   },
   {
     "id": "andrew_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RAND",
     "read_loop_offset": 60,
@@ -3671,7 +3671,7 @@
   },
   {
     "id": "savin_hill_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_ashmont",
     "type": "realtime",
     "pa_ess_loc": "RSAV",
     "read_loop_offset": 120,
@@ -3706,7 +3706,7 @@
   },
   {
     "id": "savin_hill_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_ashmont",
     "type": "realtime",
     "pa_ess_loc": "RSAV",
     "read_loop_offset": 0,
@@ -3729,7 +3729,7 @@
   },
   {
     "id": "savin_hill_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_ashmont",
     "type": "realtime",
     "pa_ess_loc": "RSAV",
     "read_loop_offset": 60,
@@ -3752,7 +3752,7 @@
   },
   {
     "id": "fields_corner_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_ashmont",
     "type": "realtime",
     "pa_ess_loc": "RFIE",
     "read_loop_offset": 120,
@@ -3787,7 +3787,7 @@
   },
   {
     "id": "fields_corner_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_ashmont",
     "type": "realtime",
     "pa_ess_loc": "RFIE",
     "read_loop_offset": 0,
@@ -3810,7 +3810,7 @@
   },
   {
     "id": "fields_corner_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_ashmont",
     "type": "realtime",
     "pa_ess_loc": "RFIE",
     "read_loop_offset": 60,
@@ -3833,7 +3833,7 @@
   },
   {
     "id": "shawmut_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_ashmont",
     "type": "realtime",
     "pa_ess_loc": "RSHA",
     "read_loop_offset": 120,
@@ -3868,7 +3868,7 @@
   },
   {
     "id": "shawmut_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_ashmont",
     "type": "realtime",
     "pa_ess_loc": "RSHA",
     "read_loop_offset": 0,
@@ -3891,7 +3891,7 @@
   },
   {
     "id": "shawmut_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_ashmont",
     "type": "realtime",
     "pa_ess_loc": "RSHA",
     "read_loop_offset": 60,
@@ -3914,7 +3914,7 @@
   },
   {
     "id": "ashmont_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_ashmont",
     "type": "realtime",
     "pa_ess_loc": "RASH",
     "read_loop_offset": 120,
@@ -3949,7 +3949,7 @@
   },
   {
     "id": "red_ashmont_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_ashmont",
     "type": "realtime",
     "pa_ess_loc": "RASH",
     "read_loop_offset": 0,
@@ -3972,7 +3972,7 @@
   },
   {
     "id": "north_quincy_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RNQU",
     "read_loop_offset": 120,
@@ -4007,7 +4007,7 @@
   },
   {
     "id": "north_quincy_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RNQU",
     "read_loop_offset": 0,
@@ -4030,7 +4030,7 @@
   },
   {
     "id": "north_quincy_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RNQU",
     "read_loop_offset": 60,
@@ -4053,7 +4053,7 @@
   },
   {
     "id": "wollaston_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RWOL",
     "read_loop_offset": 120,
@@ -4088,7 +4088,7 @@
   },
   {
     "id": "wollaston_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RWOL",
     "read_loop_offset": 0,
@@ -4111,7 +4111,7 @@
   },
   {
     "id": "wollaston_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RWOL",
     "read_loop_offset": 60,
@@ -4134,7 +4134,7 @@
   },
   {
     "id": "quincy_center_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RQUC",
     "read_loop_offset": 120,
@@ -4169,7 +4169,7 @@
   },
   {
     "id": "quincy_center_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RQUC",
     "read_loop_offset": 0,
@@ -4192,7 +4192,7 @@
   },
   {
     "id": "quincy_center_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RQUC",
     "read_loop_offset": 60,
@@ -4215,7 +4215,7 @@
   },
   {
     "id": "quincy_adams_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RQUA",
     "read_loop_offset": 120,
@@ -4250,7 +4250,7 @@
   },
   {
     "id": "quincy_adams_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RQUA",
     "read_loop_offset": 0,
@@ -4273,7 +4273,7 @@
   },
   {
     "id": "quincy_adams_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RQUA",
     "read_loop_offset": 60,
@@ -4296,7 +4296,7 @@
   },
   {
     "id": "braintree_center_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RBRA",
     "read_loop_offset": 150,
@@ -4340,7 +4340,7 @@
   },
   {
     "id": "braintree_mezzanine_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RBRA",
     "read_loop_offset": 120,
@@ -4384,7 +4384,7 @@
   },
   {
     "id": "jfk_umass_ashmont_platform_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_ashmont",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
     "read_loop_offset": 90,
@@ -4407,7 +4407,7 @@
   },
   {
     "id": "jfk_umass_braintree_platform_southbound",
-    "headway_group": "TBD",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
     "read_loop_offset": 60,
@@ -4430,7 +4430,7 @@
   },
   {
     "id": "jfk_umass_ashmont_platform_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
     "read_loop_offset": 30,
@@ -4453,7 +4453,7 @@
   },
   {
     "id": "jfk_umass_braintree_platform_northbound",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
     "read_loop_offset": 0,
@@ -4476,7 +4476,7 @@
   },
   {
     "id": "jfk_umass_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "red_trunk",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
     "read_loop_offset": 120,
@@ -4531,7 +4531,7 @@
   },
   {
     "id": "riverside_entire_station",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GRIV",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -4554,7 +4554,7 @@
   },
   {
     "id": "woodland_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GWOO",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -4577,7 +4577,7 @@
   },
   {
     "id": "woodland_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GWOO",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -4600,7 +4600,7 @@
   },
   {
     "id": "waban_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GWAB",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -4623,7 +4623,7 @@
   },
   {
     "id": "waban_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GWAB",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -4646,7 +4646,7 @@
   },
   {
     "id": "eliot_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GELI",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -4669,7 +4669,7 @@
   },
   {
     "id": "eliot_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GELI",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -4692,7 +4692,7 @@
   },
   {
     "id": "newton_highlands_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GNEH",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -4715,7 +4715,7 @@
   },
   {
     "id": "newton_highlands_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GNEH",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -4738,7 +4738,7 @@
   },
   {
     "id": "newton_centre_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GNEC",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -4761,7 +4761,7 @@
   },
   {
     "id": "newton_centre_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GNEC",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -4784,7 +4784,7 @@
   },
   {
     "id": "chestnut_hill_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GCHE",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -4807,7 +4807,7 @@
   },
   {
     "id": "chestnut_hill_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GCHE",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -4830,7 +4830,7 @@
   },
   {
     "id": "reservoir_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GRES",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -4853,7 +4853,7 @@
   },
   {
     "id": "reservoir_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GRES",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -4876,7 +4876,7 @@
   },
   {
     "id": "beaconsfield_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GBEA",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -4899,7 +4899,7 @@
   },
   {
     "id": "beaconsfield_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GBEA",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -4922,7 +4922,7 @@
   },
   {
     "id": "brookline_hills_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GBRH",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -4945,7 +4945,7 @@
   },
   {
     "id": "brookline_hills_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GBRH",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -4968,7 +4968,7 @@
   },
   {
     "id": "brookline_village_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GBRV",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -4991,7 +4991,7 @@
   },
   {
     "id": "brookline_village_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GBRV",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -5014,7 +5014,7 @@
   },
   {
     "id": "longwood_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GLON",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -5037,7 +5037,7 @@
   },
   {
     "id": "longwood_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GLON",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -5060,7 +5060,7 @@
   },
   {
     "id": "fenway_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GFEN",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -5083,7 +5083,7 @@
   },
   {
     "id": "fenway_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_d",
     "pa_ess_loc": "GFEN",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -5106,7 +5106,7 @@
   },
   {
     "id": "kenmore_b_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GKEN",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -5129,7 +5129,7 @@
   },
   {
     "id": "kenmore_b_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GKEN",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -5152,7 +5152,7 @@
   },
   {
     "id": "kenmore_c_d_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GKEN",
     "read_loop_offset": 0,
     "text_zone": "n",
@@ -5175,7 +5175,7 @@
   },
   {
     "id": "kenmore_c_d_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GKEN",
     "read_loop_offset": 60,
     "text_zone": "s",
@@ -5198,7 +5198,7 @@
   },
   {
     "id": "kenmore_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GKEN",
     "read_loop_offset": 120,
     "text_zone": "m",
@@ -5253,7 +5253,7 @@
   },
   {
     "id": "hynes_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GAUD",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -5276,7 +5276,7 @@
   },
   {
     "id": "hynes_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GAUD",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -5299,7 +5299,7 @@
   },
   {
     "id": "hynes_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GAUD",
     "read_loop_offset": 120,
     "text_zone": "m",
@@ -5334,7 +5334,7 @@
   },
   {
     "id": "copley_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GCOP",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -5357,7 +5357,7 @@
   },
   {
     "id": "copley_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GCOP",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -5380,7 +5380,7 @@
   },
   {
     "id": "arlington_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GARL",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -5403,7 +5403,7 @@
   },
   {
     "id": "arlington_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GARL",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -5426,7 +5426,7 @@
   },
   {
     "id": "arlington_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GARL",
     "read_loop_offset": 120,
     "text_zone": "m",
@@ -5461,7 +5461,7 @@
   },
   {
     "id": "boylston_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GBOY",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -5484,7 +5484,7 @@
   },
   {
     "id": "boylston_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GBOY",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -5507,7 +5507,7 @@
   },
   {
     "id": "symphony_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_e",
     "pa_ess_loc": "GSYM",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -5530,7 +5530,7 @@
   },
   {
     "id": "symphony_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_e",
     "pa_ess_loc": "GSYM",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -5553,7 +5553,7 @@
   },
   {
     "id": "prudential_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_e",
     "pa_ess_loc": "GPRU",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -5576,7 +5576,7 @@
   },
   {
     "id": "prudential_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_e",
     "pa_ess_loc": "GPRU",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -5599,7 +5599,7 @@
   },
   {
     "id": "prudential_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "green_e",
     "pa_ess_loc": "GPRU",
     "read_loop_offset": 120,
     "text_zone": "m",
@@ -5634,7 +5634,7 @@
   },
   {
     "id": "park_st_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GPRKE",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -5667,7 +5667,7 @@
   },
   {
     "id": "park_st_winter_st_concourse",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GPRKE",
     "read_loop_offset": 120,
     "text_zone": "m",
@@ -5700,7 +5700,7 @@
   },
   {
     "id": "park_st_westbound_wall_track",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GPRKW",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -5735,7 +5735,7 @@
   },
   {
     "id": "park_st_westbound_fence_track",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GPRKW",
     "read_loop_offset": 0,
     "text_zone": "n",
@@ -5771,7 +5771,7 @@
 
   {
     "id": "green_government_center_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GGOV",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -5794,7 +5794,7 @@
   },
   {
     "id": "green_government_center_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GGOV",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -5817,7 +5817,7 @@
   },
   {
     "id": "green_government_center_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GGOV",
     "read_loop_offset": 120,
     "text_zone": "m",
@@ -5853,7 +5853,7 @@
 
   {
     "id": "green_haymarket_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GHAY",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -5876,7 +5876,7 @@
   },
   {
     "id": "green_haymarket_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GHAY",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -5900,7 +5900,7 @@
 
   {
     "id": "green_north_station_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GNST",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -5923,7 +5923,7 @@
   },
   {
     "id": "green_north_station_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GNST",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -5946,7 +5946,7 @@
   },
   {
     "id": "green_north_station_commuter_rail_exit",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GNST",
     "read_loop_offset": 120,
     "text_zone": "m",
@@ -5981,7 +5981,7 @@
   },
   {
     "id": "science_park_eastbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GSCI",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -6004,7 +6004,7 @@
   },
   {
     "id": "science_park_westbound",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GSCI",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -6027,7 +6027,7 @@
   },
   {
     "id": "science_park_mezzanine",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GSCI",
     "read_loop_offset": 120,
     "text_zone": "m",
@@ -6062,7 +6062,7 @@
   },
   {
     "id": "lechmere_green_line",
-    "headway_group": "TBD",
+    "headway_group": "green_trunk",
     "pa_ess_loc": "GLEC",
     "read_loop_offset": 90,
     "text_zone": "w",
