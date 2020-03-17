@@ -4430,7 +4430,7 @@
   },
   {
     "id": "jfk_umass_ashmont_platform_northbound",
-    "headway_group": "red_trunk",
+    "headway_group": "red_ashmont",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
     "read_loop_offset": 30,
@@ -4453,7 +4453,7 @@
   },
   {
     "id": "jfk_umass_braintree_platform_northbound",
-    "headway_group": "red_trunk",
+    "headway_group": "red_braintree",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
     "read_loop_offset": 0,
