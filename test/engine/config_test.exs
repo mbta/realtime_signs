@@ -83,19 +83,35 @@ defmodule Engine.ConfigTest do
              ]
     end
 
-    test "correctly loads config for a sigh with a mode of \"off\"" do
+    test "handles a config with multi-sign headways" do
+      :ets.new(:test_signs, [:set, :protected, :named_table, read_concurrency: true])
+      Engine.Config.Headways.create_table(:test_group_headways)
+
+      {:noreply, _state} =
+        Engine.Config.handle_info(:update, %{
+          table_name_signs: :test_signs,
+          table_name_headways: :test_group_headways,
+          current_version: "headway_config",
+          time_fetcher: &DateTime.utc_now/0
+        })
+
+      assert %Engine.Config.Headway{range_low: 8, range_high: 10} =
+               Engine.Config.Headways.get_headway(:test_group_headways, "custom_headway")
+    end
+
+    test "correctly loads config for a sign with a mode of \"off\"" do
       _state = initialize_test_state(:config_test_off, fn -> DateTime.utc_now() end)
 
       assert :ets.lookup(:config_test_off, "off_test") == [{"off_test", :off}]
     end
 
-    test "correctly loads config for a sigh with a mode of \"auto\"" do
+    test "correctly loads config for a sign with a mode of \"auto\"" do
       _state = initialize_test_state(:config_test_auto, fn -> DateTime.utc_now() end)
 
       assert :ets.lookup(:config_test_auto, "auto_test") == [{"auto_test", :auto}]
     end
 
-    test "correctly loads config for a sigh with a mode of \"headway\"" do
+    test "correctly loads config for a sign with a mode of \"headway\"" do
       _state = initialize_test_state(:config_test_headway, fn -> DateTime.utc_now() end)
 
       assert :ets.lookup(:config_test_headway, "headway_test") == [{"headway_test", :headway}]

@@ -84,7 +84,6 @@ defmodule Engine.Config do
             config
             |> Map.get("multi_sign_headways", %{})
             |> Headways.parse()
-            |> Enum.map(&{&1.id, &1})
 
           :ets.insert(state.table_name_signs, Enum.into(config_signs, []))
           :ok = Headways.update_table(state.table_name_headways, config_headways)
