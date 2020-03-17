@@ -24,11 +24,22 @@ defmodule Signs.Utilities.Headways do
   @spec get_configured_messages(Signs.Realtime.t(), Engine.Config.Headway.t()) ::
           {{SourceConfig.source() | nil, Content.Message.t()},
            {SourceConfig.source() | nil, Content.Message.t()}}
-  def get_configured_messages(sign, %Engine.Config.Headway{range_low: low, range_high: high}) do
+  def get_configured_messages(sign, %Engine.Config.Headway{
+        range_low: low,
+        range_high: high,
+        non_platform_text_line1: line1,
+        non_platform_text_line2: line2
+      }) do
     case single_source_config(sign) do
       nil ->
-        # Mezzanine / Center platform, blank for now
-        {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
+        if line1 || line2 do
+          {{nil, Content.Message.Custom.new(line1 || "", :top)},
+           {nil, Content.Message.Custom.new(line2 || "", :bottom)}}
+        else
+          {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
+        end
+
+      # Mezzanine / Center platform, blank for now
 
       %SourceConfig{} = config ->
         {

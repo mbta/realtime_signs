@@ -242,7 +242,23 @@ defmodule Signs.Utilities.HeadwaysTest do
                Signs.Utilities.Headways.get_configured_messages(sign, headway_config)
     end
 
-    test "returns empty messages for mezzanine signs" do
+    test "returns configured non-platform text" do
+      sign = %{@sign | source_config: {[], []}}
+
+      headway_config = %Engine.Config.Headway{
+        group_id: "G",
+        range_low: 3,
+        range_high: 5,
+        non_platform_text_line1: "line1",
+        non_platform_text_line2: "line2"
+      }
+
+      assert {{nil, %Content.Message.Custom{line: :top, message: "line1"}},
+              {nil, %Content.Message.Custom{line: :bottom, message: "line2"}}} =
+               Signs.Utilities.Headways.get_configured_messages(sign, headway_config)
+    end
+
+    test "returns empty messages for mezzanine signs if no text supplied" do
       sign = %{@sign | source_config: {[], []}}
       headway_config = %Engine.Config.Headway{group_id: "G", range_low: 3, range_high: 5}
 
