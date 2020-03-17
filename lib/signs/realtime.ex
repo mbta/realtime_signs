@@ -15,6 +15,7 @@ defmodule Signs.Realtime do
     :id,
     :text_id,
     :audio_id,
+    :headway_group,
     :source_config,
     :current_content_top,
     :current_content_bottom,
@@ -47,6 +48,7 @@ defmodule Signs.Realtime do
           id: String.t(),
           text_id: PaEss.text_id(),
           audio_id: PaEss.audio_id(),
+          headway_group: Engine.Config.Headway.group_id(),
           source_config: Utilities.SourceConfig.config(),
           current_content_top: line_content(),
           current_content_bottom: line_content(),
@@ -82,6 +84,7 @@ defmodule Signs.Realtime do
       id: Map.fetch!(config, "id"),
       text_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
       audio_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "audio_zones")},
+      headway_group: Map.fetch!(config, "headway_group"),
       source_config: source_config,
       current_content_top: {nil, Content.Message.Empty.new()},
       current_content_bottom: {nil, Content.Message.Empty.new()},
@@ -121,6 +124,7 @@ defmodule Signs.Realtime do
     alert_status = sign.alerts_engine.max_stop_status(sign_stop_ids, sign_routes)
 
     sign_config = Engine.Config.sign_config(sign.id)
+    headway_config = Engine.Config.headway_config(sign.headway_group)
 
     mode = Signs.Utilities.SourceConfig.transit_mode_for_routes(sign_routes)
 
@@ -135,6 +139,7 @@ defmodule Signs.Realtime do
       Utilities.Messages.get_messages(
         sign,
         sign_config,
+        headway_config,
         Timex.now(),
         alert_status,
         mode,
