@@ -5,33 +5,61 @@ defmodule Engine.Config do
 
   use GenServer
   require Logger
+  alias Engine.Config.Headway
+  alias Engine.Config.Headways
 
   @type version_id :: String.t() | nil
 
   @type state :: %{
-          ets_table_name: term(),
+          table_name_signs: term(),
+          table_name_headways: term(),
           current_version: version_id,
           time_fetcher: (() -> DateTime.t())
         }
 
   @type sign_config :: :auto | :headway | :off | {:static_text, {String.t(), String.t()}}
 
-  @table __MODULE__
+  @table_signs :config_engine_signs
+  @table_headways :config_engine_headways
 
   def start_link(name \\ __MODULE__) do
     GenServer.start_link(__MODULE__, [], name: name)
   end
 
   @spec sign_config(:ets.tab(), String.t()) :: sign_config()
-  def sign_config(table_name \\ @table, sign_id) do
+  def sign_config(table_name \\ @table_signs, sign_id) do
     case :ets.lookup(table_name, sign_id) do
       [{^sign_id, config}] -> config
       _ -> :auto
     end
   end
 
+  @spec headway_config(:ets.tab(), String.t()) :: Headway.t() | nil
+  def headway_config(table_name \\ @table_headways, group_id) do
+    Headways.get_headway(table_name, group_id)
+  end
+
   def update(pid \\ __MODULE__) do
     schedule_update(pid, 0)
+  end
+
+  @spec init(map()) :: {:ok, state}
+  def init(opts) do
+    state = %{
+      table_name_signs: @table_signs,
+      table_name_headways: @table_headways,
+      current_version: nil,
+      time_fetcher: opts[:time_fetcher] || fn -> DateTime.utc_now() end
+    }
+
+    schedule_update(self())
+
+    @table_signs =
+      :ets.new(state.table_name_signs, [:set, :protected, :named_table, read_concurrency: true])
+
+    @table_headways = Headways.create_table(@table_headways)
+
+    {:ok, state}
   end
 
   @spec handle_info(:update, state) :: {:noreply, state}
@@ -45,14 +73,21 @@ defmodule Engine.Config do
           # To handle two formats of signs config:
           # old: %{ "sign_id" => %{ sign config}, "sign_id2" => ...}
           # new: %{ "signs" => %{ "sign_id" => %{ sign_config }, ...}}
-          config = Map.get(config, "signs", config)
+          config_signs = Map.get(config, "signs", config)
 
-          config =
-            Enum.map(config, fn {sign_id, config_json} ->
+          config_signs =
+            Enum.map(config_signs, fn {sign_id, config_json} ->
               {sign_id, transform_sign_config(state, config_json)}
             end)
 
-          :ets.insert(state.ets_table_name, Enum.into(config, []))
+          config_headways =
+            config
+            |> Map.get("multi_sign_headways", %{})
+            |> Headways.parse()
+
+          :ets.insert(state.table_name_signs, Enum.into(config_signs, []))
+          :ok = Headways.update_table(state.table_name_headways, config_headways)
+
           version
 
         :unchanged ->
@@ -112,22 +147,6 @@ defmodule Engine.Config do
       true ->
         :auto
     end
-  end
-
-  @spec init(map()) :: {:ok, state}
-  def init(opts) do
-    state = %{
-      ets_table_name: @table,
-      current_version: nil,
-      time_fetcher: opts[:time_fetcher] || fn -> DateTime.utc_now() end
-    }
-
-    schedule_update(self())
-
-    @table =
-      :ets.new(state.ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
-
-    {:ok, state}
   end
 
   defp schedule_update(pid, time \\ 1_000) do

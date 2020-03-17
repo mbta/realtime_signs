@@ -17,6 +17,18 @@ defmodule Fake.ExternalConfig.Local do
     }
   end
 
+  def get("headway_config") do
+    {
+      nil,
+      %{
+        "signs" => %{},
+        "multi_sign_headways" => %{
+          "custom_headway" => %{"range_high" => 10, "range_low" => 8}
+        }
+      }
+    }
+  end
+
   def get(_current_version) do
     {nil,
      %{
