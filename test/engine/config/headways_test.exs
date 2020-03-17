@@ -35,4 +35,14 @@ defmodule Engine.Config.HeadwaysTest do
                Headways.get_headway(table, "C")
     end
   end
+
+  describe "parse/1" do
+    test "parses data and ignores invalid entries" do
+      assert [%Headway{group_id: "id", range_low: 5, range_high: 10}] =
+               Headways.parse(%{
+                 "id" => %{"range_low" => 5, "range_high" => 10},
+                 "wrong" => %{}
+               })
+    end
+  end
 end
