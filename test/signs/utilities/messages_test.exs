@@ -114,7 +114,7 @@ defmodule Signs.Utilities.MessagesTest do
     test "when custom text is present, display it, overriding alerts or disabled status" do
       sign = @sign
       sign_config = {:static_text, {"Test message", "Please ignore"}}
-      alert_status = :suspension
+      alert_status = :suspension_closed_station
 
       assert Messages.get_messages(sign, sign_config, nil, Timex.now(), alert_status, :train, nil) ==
                {{nil, Content.Message.Custom.new("Test message", :top)},
@@ -341,7 +341,7 @@ defmodule Signs.Utilities.MessagesTest do
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
 
-      alert_status = :suspension
+      alert_status = :suspension_closed_station
       sign_config = :auto
 
       assert Messages.get_messages(sign, sign_config, nil, Timex.now(), alert_status, :train, nil) ==
@@ -618,6 +618,31 @@ defmodule Signs.Utilities.MessagesTest do
 
       assert {{_, %Content.Message.Headways.Top{destination: :alewife}},
               {_, %Content.Message.Headways.Bottom{prev_departure_mins: nil, range: {13, 17}}}} =
+               Messages.get_messages(
+                 sign,
+                 sign_config,
+                 headway_config,
+                 Timex.now(),
+                 alert_status,
+                 :train,
+                 nil
+               )
+    end
+
+    test "when a specified headway is configured but an alert is present, shows the alert" do
+      src = %{@src | headway_destination: :alewife}
+      sign = %{@sign | source_config: {[src]}}
+      sign_config = :auto
+
+      headway_config = %Engine.Config.Headway{
+        group_id: "headway_group",
+        range_low: 13,
+        range_high: 17
+      }
+
+      alert_status = :suspension_closed_station
+
+      assert {{_, %Content.Message.Alert.NoService{mode: :train}}, {_, %Content.Message.Empty{}}} =
                Messages.get_messages(
                  sign,
                  sign_config,
