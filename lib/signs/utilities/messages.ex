@@ -26,7 +26,10 @@ defmodule Signs.Utilities.Messages do
       ) do
     cond do
       headway_config ->
-        Signs.Utilities.Headways.get_configured_messages(sign, headway_config)
+        case get_alert_messages(alert_status, mode) do
+          nil -> Signs.Utilities.Headways.get_configured_messages(sign, headway_config)
+          messages -> messages
+        end
 
       match?({:static_text, {_, _}}, sign_config) ->
         {:static_text, {line1, line2}} = sign_config
