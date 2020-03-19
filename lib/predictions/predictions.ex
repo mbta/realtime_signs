@@ -75,14 +75,16 @@ defmodule Predictions.Predictions do
     current_time_seconds = DateTime.to_unix(current_time)
 
     seconds_until_arrival =
-      if stop_time_update["arrival"] && sufficient_certainty?(stop_time_update["arrival"]),
-        do: stop_time_update["arrival"]["time"] - current_time_seconds,
-        else: nil
+      if stop_time_update["arrival"] &&
+           sufficient_certainty?(stop_time_update["arrival"], route_id),
+         do: stop_time_update["arrival"]["time"] - current_time_seconds,
+         else: nil
 
     seconds_until_departure =
-      if stop_time_update["departure"] && sufficient_certainty?(stop_time_update["departure"]),
-        do: stop_time_update["departure"]["time"] - current_time_seconds,
-        else: nil
+      if stop_time_update["departure"] &&
+           sufficient_certainty?(stop_time_update["departure"], route_id),
+         do: stop_time_update["departure"]["time"] - current_time_seconds,
+         else: nil
 
     seconds_until_passthrough =
       if stop_time_update["passthrough_time"],
@@ -140,8 +142,13 @@ defmodule Predictions.Predictions do
     :scheduled
   end
 
-  @spec sufficient_certainty?(map()) :: boolean()
-  defp sufficient_certainty?(stop_time_event) do
+  @spec sufficient_certainty?(map(), String.t()) :: boolean()
+  defp sufficient_certainty?(_stop_time_event, route_id)
+       when route_id in ["Mattapan", "Green-B", "Green-C", "Green-D", "Green-E"] do
+    true
+  end
+
+  defp sufficient_certainty?(stop_time_event, _route_id) do
     if Application.get_env(:realtime_signs, :filter_uncertain_predictions?) do
       is_nil(stop_time_event["uncertainty"]) or stop_time_event["uncertainty"] <= 300
     else
