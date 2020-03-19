@@ -48,6 +48,11 @@ defmodule RealtimeSigns do
     :ok = Config.update_env(env, :api_v3_url, "API_V3_URL")
 
     :ok =
+      Config.update_env(env, :filter_uncertain_predictions?, "FILTER_UNCERTAIN_PREDICTIONS",
+        type: :boolean
+      )
+
+    :ok =
       Config.update_env(env, :number_of_http_updaters, "NUMBER_OF_HTTP_UPDATERS", type: :integer)
   end
 

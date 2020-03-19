@@ -142,6 +142,10 @@ defmodule Predictions.Predictions do
 
   @spec sufficient_certainty?(map()) :: boolean()
   defp sufficient_certainty?(stop_time_event) do
-    is_nil(stop_time_event["uncertainty"]) or stop_time_event["uncertainty"] <= 300
+    if Application.get_env(:realtime_signs, :filter_uncertain_predictions?) do
+      is_nil(stop_time_event["uncertainty"]) or stop_time_event["uncertainty"] <= 300
+    else
+      true
+    end
   end
 end
