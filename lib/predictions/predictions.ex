@@ -16,6 +16,10 @@ defmodule Predictions.Predictions do
         update["arrival"] || update["departure"] || update["passthrough_time"]
       end)
       |> Enum.map(&prediction_from_update(&1, current_time))
+      |> Enum.reject(
+        &(is_nil(&1.seconds_until_arrival) and is_nil(&1.seconds_until_departure) and
+            is_nil(&1.seconds_until_passthrough))
+      )
 
     vehicles_running_revenue_trips =
       predictions
@@ -71,12 +75,12 @@ defmodule Predictions.Predictions do
     current_time_seconds = DateTime.to_unix(current_time)
 
     seconds_until_arrival =
-      if stop_time_update["arrival"],
+      if stop_time_update["arrival"] && sufficient_certainty?(stop_time_update["arrival"]),
         do: stop_time_update["arrival"]["time"] - current_time_seconds,
         else: nil
 
     seconds_until_departure =
-      if stop_time_update["departure"],
+      if stop_time_update["departure"] && sufficient_certainty?(stop_time_update["departure"]),
         do: stop_time_update["departure"]["time"] - current_time_seconds,
         else: nil
 
@@ -134,5 +138,10 @@ defmodule Predictions.Predictions do
 
   defp translate_schedule_relationship(_) do
     :scheduled
+  end
+
+  @spec sufficient_certainty?(map()) :: boolean()
+  defp sufficient_certainty?(stop_time_event) do
+    is_nil(stop_time_event["uncertainty"]) or stop_time_event["uncertainty"] <= 300
   end
 end
