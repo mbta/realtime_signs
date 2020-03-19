@@ -24,6 +24,21 @@ defmodule RealtimeSignsConfigTest do
       assert Application.get_env(:realtime_signs, :app_key) == 5
     end
 
+    test "treats a boolean value as false if the environment variable isn't specified" do
+      assert :ok = update_env(%{}, :app_key, "ENV_VAR", type: :boolean)
+      assert Application.get_env(:realtime_signs, :app_key) == false
+    end
+
+    test "treats an empty string value as false for a boolean" do
+      assert :ok = update_env(%{"ENV_VAR" => ""}, :app_key, "ENV_VAR", type: :boolean)
+      assert Application.get_env(:realtime_signs, :app_key) == false
+    end
+
+    test "treats any non-empty string value as true for a boolean" do
+      assert :ok = update_env(%{"ENV_VAR" => "1"}, :app_key, "ENV_VAR", type: :boolean)
+      assert Application.get_env(:realtime_signs, :app_key) == true
+    end
+
     test "logs the environment variable unless it's private" do
       env = %{"ENV1" => "env1", "ENV2" => "env2"}
 

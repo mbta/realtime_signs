@@ -9,6 +9,10 @@ defmodule RealtimeSignsConfig do
 
     case Map.get(env, env_var) do
       nil ->
+        if type == :boolean do
+          Application.put_env(:realtime_signs, app_key, false)
+        end
+
         :ok
 
       value ->
@@ -16,6 +20,7 @@ defmodule RealtimeSignsConfig do
           case type do
             :string -> value
             :integer -> String.to_integer(value)
+            :boolean -> if value == "", do: false, else: true
           end
 
         unless private? do
