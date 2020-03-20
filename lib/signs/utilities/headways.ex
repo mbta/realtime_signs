@@ -21,53 +21,32 @@ defmodule Signs.Utilities.Headways do
     end
   end
 
-  @spec get_configured_messages(Signs.Realtime.t(), Engine.Config.Headway.t()) ::
-          {{SourceConfig.source() | nil, Content.Message.t()},
-           {SourceConfig.source() | nil, Content.Message.t()}}
-  def get_configured_messages(sign, %Engine.Config.Headway{
-        range_low: low,
-        range_high: high,
-        non_platform_text_line1: line1,
-        non_platform_text_line2: line2
-      }) do
-    case single_source_config(sign) do
-      nil ->
-        if line1 || line2 do
-          {{nil, Content.Message.Custom.new(line1 || "", :top)},
-           {nil, Content.Message.Custom.new(line2 || "", :bottom)}}
-        else
-          {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
-        end
-
-      # Mezzanine / Center platform, blank for now
-
-      %SourceConfig{} = config ->
-        {
-          {config,
-           %Content.Message.Headways.Top{
-             destination: config.headway_destination,
-             vehicle_type: vehicle_type(config.routes)
-           }},
-          {config, %Content.Message.Headways.Bottom{range: {low, high}, prev_departure_mins: nil}}
-        }
-    end
-  end
-
   @spec do_headway_messages(Signs.Realtime.t(), map(), DateTime.t()) ::
           {{map(), Content.Message.t()}, {map(), Content.Message.t()}}
   defp do_headway_messages(sign, config, current_time) do
     stop_id = sign.headway_stop_id || config.stop_id
     headway_range = sign.headway_engine.get_headways(stop_id)
-    _last_departure = sign.last_departure_engine.get_last_departure(config.stop_id)
+    headway_config = sign.config_engine.headway_config(sign.headway_group, current_time)
 
     case headway_range do
       :none ->
+        # Scheduled headways engine says time is outside of service hours
         {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
 
       {nil, nil} ->
+        # Likely a bug: one ETS table says no current schedules, but the other
+        # syas it's during service hours.
         {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
 
       {:first_departure, range, first_departure} ->
+        # Schedule headways engine says time is within one headway of first trip
+        range =
+          if headway_config do
+            {headway_config.range_low, headway_config.range_high}
+          else
+            range
+          end
+
         max_headway = Headway.HeadwayDisplay.max_headway(range)
         time_buffer = if max_headway, do: max_headway, else: 0
 
@@ -89,6 +68,13 @@ defmodule Signs.Utilities.Headways do
         end
 
       {bottom, top} ->
+        {bottom, top} =
+          if headway_config do
+            {headway_config.range_low, headway_config.range_high}
+          else
+            {bottom, top}
+          end
+
         {{config,
           %Content.Message.Headways.Top{
             destination: config.headway_destination,

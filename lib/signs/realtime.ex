@@ -22,6 +22,7 @@ defmodule Signs.Realtime do
     :prediction_engine,
     :headway_engine,
     :last_departure_engine,
+    :config_engine,
     :alerts_engine,
     :sign_updater,
     :tick_top,
@@ -46,13 +47,14 @@ defmodule Signs.Realtime do
           id: String.t(),
           text_id: PaEss.text_id(),
           audio_id: PaEss.audio_id(),
-          headway_group: Engine.Config.Headway.group_id(),
+          headway_group: String.t(),
           source_config: Utilities.SourceConfig.config(),
           current_content_top: line_content(),
           current_content_bottom: line_content(),
           prediction_engine: module(),
           headway_engine: module(),
           last_departure_engine: module(),
+          config_engine: module(),
           alerts_engine: module(),
           sign_updater: module(),
           tick_bottom: non_neg_integer(),
@@ -71,6 +73,7 @@ defmodule Signs.Realtime do
 
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
     headway_engine = opts[:headway_engine] || Engine.Departures
+    config_engine = opts[:config_engine] || Engine.Config
     last_departure_engine = opts[:last_departure_engine] || Engine.Departures
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
@@ -86,6 +89,7 @@ defmodule Signs.Realtime do
       prediction_engine: prediction_engine,
       headway_engine: headway_engine,
       last_departure_engine: last_departure_engine,
+      config_engine: config_engine,
       alerts_engine: alerts_engine,
       sign_updater: sign_updater,
       tick_bottom: 130,
@@ -115,16 +119,15 @@ defmodule Signs.Realtime do
       |> Signs.Utilities.SourceConfig.sign_routes()
 
     alert_status = sign.alerts_engine.max_stop_status(sign_stop_ids, sign_routes)
-
-    sign_config = Engine.Config.sign_config(sign.id)
-    headway_config = Engine.Config.headway_config(sign.headway_group)
+    sign_config = sign.config_engine.sign_config(sign.id)
+    time_zone = Application.get_env(:realtime_signs, :time_zone)
+    {:ok, current_time} = DateTime.utc_now() |> DateTime.shift_zone(time_zone)
 
     {top, bottom} =
       Utilities.Messages.get_messages(
         sign,
         sign_config,
-        headway_config,
-        Timex.now(),
+        current_time,
         alert_status
       )
 

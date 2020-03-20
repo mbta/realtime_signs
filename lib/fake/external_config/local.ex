@@ -22,8 +22,10 @@ defmodule Fake.ExternalConfig.Local do
       nil,
       %{
         "signs" => %{},
-        "multi_sign_headways" => %{
-          "custom_headway" => %{"range_high" => 10, "range_low" => 8}
+        "configured_headways" => %{
+          "custom_headway" => %{
+            "peak" => %{"range_high" => 10, "range_low" => 8}
+          }
         }
       }
     }

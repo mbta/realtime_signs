@@ -7,7 +7,6 @@ defmodule Signs.Utilities.Messages do
   @spec get_messages(
           Signs.Realtime.t(),
           Engine.Config.sign_config(),
-          Engine.Config.Headway.t() | nil,
           DateTime.t(),
           Engine.Alerts.Fetcher.stop_status()
         ) ::
@@ -16,17 +15,10 @@ defmodule Signs.Utilities.Messages do
   def get_messages(
         sign,
         sign_config,
-        headway_config,
         current_time,
         alert_status
       ) do
     cond do
-      headway_config ->
-        case get_alert_messages(alert_status) do
-          nil -> Signs.Utilities.Headways.get_configured_messages(sign, headway_config)
-          messages -> messages
-        end
-
       match?({:static_text, {_, _}}, sign_config) ->
         {:static_text, {line1, line2}} = sign_config
 
