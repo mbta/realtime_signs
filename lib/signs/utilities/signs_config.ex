@@ -25,14 +25,8 @@ defmodule Signs.Utilities.SignsConfig do
 
   @spec get_stop_ids_for_sign(map()) :: [String.t()]
   def get_stop_ids_for_sign(sign) do
-    case sign["type"] do
-      "realtime" ->
-        sign["source_config"]
-        |> List.flatten()
-        |> Enum.map(& &1["stop_id"])
-
-      "bridge_only" ->
-        []
-    end
+    sign["source_config"]
+    |> List.flatten()
+    |> Enum.map(& &1["stop_id"])
   end
 end

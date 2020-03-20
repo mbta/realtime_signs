@@ -33,7 +33,6 @@ defmodule Signs.Utilities.AudioTest do
     headway_engine: nil,
     last_departure_engine: nil,
     alerts_engine: nil,
-    bridge_engine: nil,
     sign_updater: nil,
     tick_bottom: 1,
     tick_top: 1,
@@ -178,16 +177,6 @@ defmodule Signs.Utilities.AudioTest do
              )
     end
 
-    test "returns false if it's the bottom line and a bridge delay message" do
-      message = %Message.Bridge.Up{}
-
-      refute should_interrupting_read?(
-               {@src, message},
-               %{@sign | source_config: {[@src]}},
-               :bottom
-             )
-    end
-
     test "returns false for bottom headway message" do
       message = %Message.Headways.Bottom{range: {1, 5}, prev_departure_mins: nil}
       refute should_interrupting_read?({@src, message}, %{@sign | source_config: {[@src]}}, :top)
@@ -267,18 +256,6 @@ defmodule Signs.Utilities.AudioTest do
                 %Audio.VehiclesToDestination{language: :english},
                 %Audio.VehiclesToDestination{language: :spanish}
               }, ^sign} = from_sign(sign)
-    end
-
-    test "Bridge up" do
-      sign = %{
-        @sign
-        | current_content_top: {@src, %Message.Bridge.Delays{}},
-          current_content_bottom: {@src, %Message.Bridge.Up{duration: 5}}
-      }
-
-      assert {{%Audio.BridgeIsUp{language: :english, time_estimate_mins: 5},
-               %Audio.BridgeIsUp{language: :spanish, time_estimate_mins: 5}},
-              ^sign} = from_sign(sign)
     end
 
     test "Countdowns say 'following train' if second line is same headsign" do

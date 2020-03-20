@@ -35,6 +35,5 @@ defmodule Signs.Supervisor do
     end
   end
 
-  defp sign_module(%{"type" => "bridge_only"}), do: Signs.BridgeOnly
   defp sign_module(%{"type" => "realtime"}), do: Signs.Realtime
 end
