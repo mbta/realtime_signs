@@ -589,7 +589,6 @@ defmodule Signs.Utilities.PredictionsTest do
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartures,
     alerts_engine: nil,
-    bridge_engine: nil,
     sign_updater: FakeUpdater,
     tick_bottom: 130,
     tick_top: 130,
