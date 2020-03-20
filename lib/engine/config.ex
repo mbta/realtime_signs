@@ -34,9 +34,10 @@ defmodule Engine.Config do
     end
   end
 
-  @spec headway_config(:ets.tab(), String.t()) :: Headway.t() | nil
-  def headway_config(table_name \\ @table_headways, group_id) do
-    Headways.get_headway(table_name, group_id)
+  @spec headway_config(:ets.tab(), String.t(), DateTime.t()) :: Headway.t() | nil
+  def headway_config(table_name \\ @table_headways, headway_group, current_time) do
+    time_period = Headway.current_time_period(current_time)
+    Headways.get_headway(table_name, {headway_group, time_period})
   end
 
   def update(pid \\ __MODULE__) do
@@ -82,7 +83,7 @@ defmodule Engine.Config do
 
           config_headways =
             config
-            |> Map.get("multi_sign_headways", %{})
+            |> Map.get("configured_headways", %{})
             |> Headways.parse()
 
           :ets.insert(state.table_name_signs, Enum.into(config_signs, []))

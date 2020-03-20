@@ -45,6 +45,7 @@ defmodule Signs.Utilities.UpdaterTest do
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartures,
+    config_engine: Engine.Config,
     alerts_engine: nil,
     sign_updater: FakeUpdater,
     tick_bottom: 1,

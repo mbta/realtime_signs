@@ -54,6 +54,8 @@ config :ehmon, :report_mf, {:ehmon, :info_report}
 
 config :sentry, json_library: Jason
 
+config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.
