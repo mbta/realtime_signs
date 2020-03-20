@@ -74,7 +74,7 @@ defmodule Signs.Realtime do
     source_config = config |> Map.fetch!("source_config") |> Utilities.SourceConfig.parse!()
 
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
-    headway_engine = opts[:headway_engine] || default_headway_engine(source_config)
+    headway_engine = opts[:headway_engine] || Engine.Departures
     last_departure_engine = opts[:last_departure_engine] || Engine.Departures
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
     bridge_engine = opts[:bridge_engine] || Engine.Bridge
@@ -126,8 +126,6 @@ defmodule Signs.Realtime do
     sign_config = Engine.Config.sign_config(sign.id)
     headway_config = Engine.Config.headway_config(sign.headway_group)
 
-    mode = Signs.Utilities.SourceConfig.transit_mode_for_routes(sign_routes)
-
     bridge_state =
       if sign.bridge_id do
         Engine.Bridge.status(sign.bridge_id)
@@ -142,7 +140,6 @@ defmodule Signs.Realtime do
         headway_config,
         Timex.now(),
         alert_status,
-        mode,
         bridge_state
       )
 
@@ -234,21 +231,6 @@ defmodule Signs.Realtime do
         tick_audit: sign.tick_audit - 1,
         tick_read: sign.tick_read - 1
     }
-  end
-
-  @spec default_headway_engine(Utilities.SourceConfig.config()) :: module()
-  defp default_headway_engine(config) do
-    routes =
-      case config do
-        {s1} -> Enum.flat_map(s1, & &1.routes)
-        {s1, s2} -> Enum.flat_map(s1, & &1.routes) ++ Enum.flat_map(s2, & &1.routes)
-      end
-
-    if Utilities.SourceConfig.transit_mode_for_routes(routes) == :train do
-      Engine.Departures
-    else
-      Engine.ScheduledHeadways
-    end
   end
 
   @spec log_headway_accuracy(Signs.Realtime.t()) :: Signs.Realtime.t()

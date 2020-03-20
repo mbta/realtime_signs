@@ -69,10 +69,6 @@ defmodule Signs.Utilities.SourceConfig do
 
   @type config :: {[source()]} | {[source()], [source()]}
 
-  @bus_routes ["741", "742", "743"]
-
-  @type transit_mode :: :train | :bus
-
   @spec parse!([[map()]]) :: config()
   def parse!([both_lines_config]) do
     {Enum.map(both_lines_config, &parse_source!/1)}
@@ -151,14 +147,5 @@ defmodule Signs.Utilities.SourceConfig do
 
   def sign_routes({s}) do
     Enum.flat_map(s, &(&1.routes || []))
-  end
-
-  @spec transit_mode_for_routes([String.t()]) :: transit_mode()
-  def transit_mode_for_routes(routes) do
-    if Enum.all?(routes, fn route -> route in @bus_routes end) do
-      :bus
-    else
-      :train
-    end
   end
 end
