@@ -3,19 +3,14 @@ defmodule Content.Message.Alert.NoService do
   A message displayed when a station is closed due to shuttles or a suspension
   """
 
-  @enforce_keys [:mode]
+  @enforce_keys []
   defstruct @enforce_keys
 
-  @type t :: %__MODULE__{
-          mode: Signs.Utilities.SourceConfig.transit_mode()
-        }
+  @type t :: %__MODULE__{}
 
   defimpl Content.Message do
-    def to_string(msg) do
-      case msg.mode do
-        :train -> "No train service"
-        :none -> "No service"
-      end
+    def to_string(_msg) do
+      "No train service"
     end
   end
 end

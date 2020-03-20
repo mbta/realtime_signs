@@ -203,7 +203,7 @@ defmodule Signs.Utilities.AudioTest do
     test "Station closure" do
       sign = %{
         @sign
-        | current_content_top: {@src, %Message.Alert.NoService{mode: :train}},
+        | current_content_top: {@src, %Message.Alert.NoService{}},
           current_content_bottom: {@src, %Message.Alert.UseShuttleBus{}}
       }
 
