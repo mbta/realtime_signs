@@ -91,6 +91,7 @@ defmodule Signs.RealtimeTest do
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartureEngine,
+    config_engine: Engine.Config,
     alerts_engine: FakeAlerts,
     sign_updater: FakeUpdater,
     tick_bottom: 1,

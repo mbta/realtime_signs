@@ -95,8 +95,14 @@ defmodule Engine.ConfigTest do
           time_fetcher: &DateTime.utc_now/0
         })
 
+      test_time = DateTime.from_naive!(~N[2020-03-20 08:00:00], "America/New_York")
+
       assert %Engine.Config.Headway{range_low: 8, range_high: 10} =
-               Engine.Config.Headways.get_headway(:test_group_headways, "custom_headway")
+               Engine.Config.headway_config(
+                 :test_group_headways,
+                 "custom_headway",
+                 test_time
+               )
     end
 
     test "correctly loads config for a sign with a mode of \"off\"" do

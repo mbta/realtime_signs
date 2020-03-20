@@ -32,6 +32,7 @@ defmodule Signs.Utilities.AudioTest do
     prediction_engine: nil,
     headway_engine: nil,
     last_departure_engine: nil,
+    config_engine: Engine.Config,
     alerts_engine: nil,
     sign_updater: nil,
     tick_bottom: 1,
