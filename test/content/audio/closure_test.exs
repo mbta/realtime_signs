@@ -10,14 +10,14 @@ defmodule Content.Audio.ClosureTest do
 
     test "Station closed due to shuttle" do
       assert from_messages(
-               %Content.Message.Alert.NoService{mode: :train},
+               %Content.Message.Alert.NoService{},
                %Content.Message.Alert.UseShuttleBus{}
              ) == %Content.Audio.Closure{alert: :shuttles_closed_station}
     end
 
     test "Station closed due to suspension" do
       assert from_messages(
-               %Content.Message.Alert.NoService{mode: :train},
+               %Content.Message.Alert.NoService{},
                %Content.Message.Empty{}
              ) == %Content.Audio.Closure{alert: :suspension_closed_station}
     end
