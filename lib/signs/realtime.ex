@@ -23,7 +23,6 @@ defmodule Signs.Realtime do
     :headway_engine,
     :last_departure_engine,
     :alerts_engine,
-    :bridge_engine,
     :sign_updater,
     :tick_top,
     :tick_bottom,
@@ -35,7 +34,6 @@ defmodule Signs.Realtime do
 
   defstruct @enforce_keys ++
               [
-                :bridge_id,
                 :headway_stop_id,
                 announced_arrivals: [],
                 announced_approachings: [],
@@ -56,7 +54,6 @@ defmodule Signs.Realtime do
           headway_engine: module(),
           last_departure_engine: module(),
           alerts_engine: module(),
-          bridge_engine: module(),
           sign_updater: module(),
           tick_bottom: non_neg_integer(),
           tick_top: non_neg_integer(),
@@ -64,7 +61,6 @@ defmodule Signs.Realtime do
           tick_read: non_neg_integer(),
           expiration_seconds: non_neg_integer(),
           read_period_seconds: non_neg_integer(),
-          bridge_id: Engine.Bridge.bridge_id() | nil,
           announced_arrivals: [Predictions.Prediction.trip_id()],
           announced_approachings: [Predictions.Prediction.trip_id()],
           announced_passthroughs: [Predictions.Prediction.trip_id()]
@@ -77,7 +73,6 @@ defmodule Signs.Realtime do
     headway_engine = opts[:headway_engine] || Engine.Departures
     last_departure_engine = opts[:last_departure_engine] || Engine.Departures
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
-    bridge_engine = opts[:bridge_engine] || Engine.Bridge
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
 
     sign = %__MODULE__{
@@ -92,7 +87,6 @@ defmodule Signs.Realtime do
       headway_engine: headway_engine,
       last_departure_engine: last_departure_engine,
       alerts_engine: alerts_engine,
-      bridge_engine: bridge_engine,
       sign_updater: sign_updater,
       tick_bottom: 130,
       tick_top: 130,
@@ -100,7 +94,6 @@ defmodule Signs.Realtime do
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       expiration_seconds: 130,
       read_period_seconds: 240,
-      bridge_id: Map.get(config, "bridge_id"),
       headway_stop_id: Map.get(config, "headway_stop_id")
     }
 
@@ -126,21 +119,13 @@ defmodule Signs.Realtime do
     sign_config = Engine.Config.sign_config(sign.id)
     headway_config = Engine.Config.headway_config(sign.headway_group)
 
-    bridge_state =
-      if sign.bridge_id do
-        Engine.Bridge.status(sign.bridge_id)
-      else
-        nil
-      end
-
     {top, bottom} =
       Utilities.Messages.get_messages(
         sign,
         sign_config,
         headway_config,
         Timex.now(),
-        alert_status,
-        bridge_state
+        alert_status
       )
 
     sign =

@@ -143,18 +143,6 @@ defmodule PaEss.HttpUpdaterTest do
                PaEss.HttpUpdater.process({:send_audio, [{"SBSQ", ["m"]}, audio, 5, 60]}, state)
     end
 
-    test "Chelsea bridge raised, expect delays" do
-      state = make_state(%{uid: 1002})
-
-      audio = %Content.Audio.BridgeIsUp{
-        language: :english,
-        time_estimate_mins: 10
-      }
-
-      assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process({:send_audio, [{"SCHS", ["w"]}, audio, 5, 200]}, state)
-    end
-
     test "Buses to Chelsea, in Spanish" do
       state = make_state(%{uid: 1003})
 

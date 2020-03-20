@@ -22,7 +22,7 @@ defmodule PaEss.LoggerTest do
     assert {:ok, :sent} =
              PaEss.Logger.send_audio(
                {"a", "b"},
-               %Content.Audio.BridgeIsUp{language: :english, time_estimate_mins: 5},
+               %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 5},
                5,
                60
              )
@@ -32,8 +32,8 @@ defmodule PaEss.LoggerTest do
     assert {:ok, :sent} =
              PaEss.Logger.send_audio(
                {"a", "b"},
-               {%Content.Audio.BridgeIsUp{language: :english, time_estimate_mins: 5},
-                %Content.Audio.BridgeIsUp{language: :english, time_estimate_mins: 5}},
+               {%Content.Audio.StoppedTrain{destination: :alewife, stops_away: 5},
+                %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 5}},
                5,
                60
              )

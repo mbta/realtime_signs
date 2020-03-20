@@ -9,8 +9,7 @@ defmodule Signs.Utilities.Messages do
           Engine.Config.sign_config(),
           Engine.Config.Headway.t() | nil,
           DateTime.t(),
-          Engine.Alerts.Fetcher.stop_status(),
-          {Engine.Bridge.status(), Engine.Bridge.duration()} | nil
+          Engine.Alerts.Fetcher.stop_status()
         ) ::
           {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
            {Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()}}
@@ -19,8 +18,7 @@ defmodule Signs.Utilities.Messages do
         sign_config,
         headway_config,
         current_time,
-        alert_status,
-        bridge_state
+        alert_status
       ) do
     cond do
       headway_config ->
@@ -37,12 +35,6 @@ defmodule Signs.Utilities.Messages do
 
       sign_config == :off ->
         {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
-
-      alert_status == :none and match?({"Raised", _}, bridge_state) ->
-        {"Raised", duration} = bridge_state
-
-        {{nil, %Content.Message.Bridge.Delays{}},
-         {nil, duration |> clean_duration |> Content.Message.Bridge.Up.new()}}
 
       sign_config == :headway ->
         get_headway_or_alert_messages(sign, current_time, alert_status)
@@ -97,8 +89,4 @@ defmodule Signs.Utilities.Messages do
         nil
     end
   end
-
-  @spec clean_duration(integer() | nil) :: integer() | nil
-  defp clean_duration(n) when is_integer(n) and n >= 1, do: n
-  defp clean_duration(_), do: nil
 end

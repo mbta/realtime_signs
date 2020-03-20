@@ -6,7 +6,6 @@ config :realtime_signs,
   http_poster_mod: Fake.HTTPoison,
   scheduled_headway_requester: Fake.Headway.Request,
   headway_calculator: Fake.Headway.HeadwayDisplay,
-  bridge_requester: Fake.Bridge.Request,
   external_config_getter: Fake.ExternalConfig.Local,
   aws_client: Fake.ExAws,
   s3_client: Fake.ExAws
