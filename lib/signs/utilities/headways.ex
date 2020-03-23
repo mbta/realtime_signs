@@ -58,7 +58,7 @@ defmodule Signs.Utilities.Headways do
   defp do_headway_messages(sign, config, current_time) do
     stop_id = sign.headway_stop_id || config.stop_id
     headway_range = sign.headway_engine.get_headways(stop_id)
-    last_departure = sign.last_departure_engine.get_last_departure(config.stop_id)
+    _last_departure = sign.last_departure_engine.get_last_departure(config.stop_id)
 
     case headway_range do
       :none ->
@@ -97,7 +97,7 @@ defmodule Signs.Utilities.Headways do
          {config,
           %Content.Message.Headways.Bottom{
             range: {bottom, top},
-            prev_departure_mins: minutes_ago(last_departure, current_time)
+            prev_departure_mins: nil
           }}}
     end
   end
@@ -117,26 +117,6 @@ defmodule Signs.Utilities.Headways do
     case sign.source_config do
       {[one]} -> one
       _ -> nil
-    end
-  end
-
-  @spec minutes_ago(DateTime.t() | nil, DateTime.t()) :: integer() | nil
-  defp minutes_ago(nil, _current_time) do
-    nil
-  end
-
-  defp minutes_ago(departure_time, current_time) do
-    diff =
-      current_time
-      |> DateTime.diff(departure_time)
-
-    if diff < 5 do
-      0
-    else
-      diff
-      |> Kernel./(60)
-      |> Float.ceil()
-      |> Kernel.trunc()
     end
   end
 end
