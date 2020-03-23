@@ -109,7 +109,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                 {source_config_for_stop_id("a"),
                  %Content.Message.Headways.Bottom{
                    range: {2, 8},
-                   prev_departure_mins: 5
+                   prev_departure_mins: nil
                  }}}
     end
 
@@ -134,7 +134,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                 {source_with_headway,
                  %Content.Message.Headways.Bottom{
                    range: {2, 8},
-                   prev_departure_mins: 5
+                   prev_departure_mins: nil
                  }}}
     end
 
@@ -206,7 +206,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                 {source_config_for_stop_id("c"),
                  %Content.Message.Headways.Bottom{
                    range: {2, 8},
-                   prev_departure_mins: 0
+                   prev_departure_mins: nil
                  }}}
     end
 
@@ -224,7 +224,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                 {source_config_for_stop_id("a"),
                  %Content.Message.Headways.Bottom{
                    range: {2, 8},
-                   prev_departure_mins: 0
+                   prev_departure_mins: nil
                  }}}
     end
   end

@@ -466,7 +466,7 @@ defmodule Signs.Utilities.MessagesTest do
                  },
                  %Content.Message.Headways.Bottom{
                    range: {1, 4},
-                   prev_departure_mins: 5
+                   prev_departure_mins: nil
                  }}}
     end
 
