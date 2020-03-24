@@ -102,7 +102,10 @@ defmodule Engine.Departures do
     current_time = state.time_fetcher.()
 
     {first_departure, last_departure} =
-      state.scheduled_headways_engine.get_first_last_departures(stop_id)
+      case state.scheduled_headways_engine.get_first_last_departures([stop_id]) do
+        [{%DateTime{}, %DateTime{}} = datetimes] -> datetimes
+        _ -> {nil, nil}
+      end
 
     headways =
       cond do

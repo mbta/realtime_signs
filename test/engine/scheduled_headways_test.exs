@@ -148,10 +148,10 @@ defmodule Engine.ScheduledHeadwaysTest do
 
       {:noreply, state} = Engine.ScheduledHeadways.handle_info(:data_update, state)
 
-      {first_departure, last_departure} =
+      [{first_departure, last_departure}] =
         Engine.ScheduledHeadways.get_first_last_departures(
           state.first_last_departures_ets_table,
-          "first_last_departures"
+          ["first_last_departures"]
         )
 
       assert DateTime.to_naive(first_departure) == ~N[2017-07-04 08:45:00]
@@ -189,8 +189,8 @@ defmodule Engine.ScheduledHeadwaysTest do
 
       assert Engine.ScheduledHeadways.get_first_last_departures(
                state.first_last_departures_ets_table,
-               "unknown_stop_id"
-             ) == {nil, nil}
+               ["unknown_stop_id"]
+             ) == []
     end
   end
 

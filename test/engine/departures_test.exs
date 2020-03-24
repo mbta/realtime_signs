@@ -4,8 +4,10 @@ defmodule Engine.DeparturesTest do
 
   defmodule FakeScheduledHeadwaysEngine do
     def get_first_last_departures(_) do
-      {Timex.to_datetime(~N[2019-09-02 05:00:00], "America/New_York"),
-       Timex.to_datetime(~N[2019-09-02 23:00:00], "America/New_York")}
+      [
+        {Timex.to_datetime(~N[2019-09-02 05:00:00], "America/New_York"),
+         Timex.to_datetime(~N[2019-09-02 23:00:00], "America/New_York")}
+      ]
     end
 
     def get_headways(_) do
