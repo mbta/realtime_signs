@@ -5650,7 +5650,8 @@
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
-          "announce_boarding": false
+          "announce_boarding": false,
+          "source_for_headway": true
 	},
         {
           "stop_id": "70200",
@@ -5683,7 +5684,8 @@
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
-          "announce_boarding": false
+          "announce_boarding": false,
+          "source_for_headway": true
 	},
         {
           "stop_id": "70200",
@@ -5717,7 +5719,8 @@
           "terminal": false,
           "announce_arriving": false,
           "announce_boarding": true,
-          "multi_berth": true
+          "multi_berth": true,
+          "source_for_headway": true
         },
         {
           "stop_id": "70199",
@@ -5752,7 +5755,8 @@
           "terminal": false,
           "announce_arriving": false,
           "announce_boarding": true,
-          "multi_berth": true
+          "multi_berth": true,
+          "source_for_headway": true
         },
         {
           "stop_id": "70198",
