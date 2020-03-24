@@ -72,7 +72,7 @@ defmodule Signs.Realtime do
     source_config = config |> Map.fetch!("source_config") |> Utilities.SourceConfig.parse!()
 
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
-    headway_engine = opts[:headway_engine] || Engine.Departures
+    headway_engine = opts[:headway_engine] || Engine.ScheduledHeadways
     config_engine = opts[:config_engine] || Engine.Config
     last_departure_engine = opts[:last_departure_engine] || Engine.Departures
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
