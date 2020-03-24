@@ -18,37 +18,8 @@ defmodule Signs.Utilities.HeadwaysTest do
   end
 
   defmodule FakeHeadways do
-    def get_headways("a") do
-      {2, 8}
-    end
-
-    def get_headways("b") do
-      :none
-    end
-
-    def get_headways("c") do
-      {nil, nil}
-    end
-
-    def get_headways("d") do
-      {:first_departure, {1, 5}, DateTime.utc_now() |> Timex.shift(minutes: 10)}
-    end
-
-    def get_headways("e") do
-      {:first_departure, {1, 5}, DateTime.utc_now()}
-    end
-
-    def get_headways("f") do
-      {nil, nil}
-    end
-
-    def get_headways("g") do
-      {nil, 5}
-    end
-
-    def get_headways("h") do
-      {2, nil}
-    end
+    def display_headways?("no_service", _time, _buffer), do: false
+    def display_headways?(_, _time, _buffer), do: true
   end
 
   defmodule FakeHeadwayConfigEngine do
@@ -58,6 +29,10 @@ defmodule Signs.Utilities.HeadwaysTest do
 
     def headway_config("config_test", _time) do
       %Engine.Config.Headway{headway_id: "id", range_low: 9, range_high: 13}
+    end
+
+    def headway_config("8-11", _time) do
+      %Engine.Config.Headway{headway_id: "id", range_low: 8, range_high: 11}
     end
 
     def headway_config(_headway_group, _time) do
@@ -102,58 +77,35 @@ defmodule Signs.Utilities.HeadwaysTest do
     }
   end
 
+  @current_time DateTime.utc_now()
+
   describe "get_messages/2" do
     test "generates blank messages when the source config has multiple sources and the sign has no headway_stop_id" do
-      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
+      sign = %{@sign | source_config: {[], []}}
 
-      assert Signs.Utilities.Headways.get_messages(@sign, current_time) ==
+      assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
                {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
     end
 
-    test "generates top and bottom messages to display the headway at a single-source stop" do
+    test "displays the headway at a single-source stop" do
       sign = %{
         @sign
-        | source_config: {[source_config_for_stop_id("a")]}
+        | source_config: {[source_config_for_stop_id("a")]},
+          config_engine: FakeHeadwayConfigEngine,
+          headway_group: "8-11"
       }
 
-      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
-
-      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
+      assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
                {{source_config_for_stop_id("a"),
                  %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}},
                 {source_config_for_stop_id("a"),
                  %Content.Message.Headways.Bottom{
-                   range: {2, 8},
+                   range: {8, 11},
                    prev_departure_mins: nil
                  }}}
     end
 
-    test "generates top and bottom messages to display the headway for a sign with headway_stop_id" do
-      source_with_headway = %{source_config_for_stop_id("a") | source_for_headway?: true}
-
-      sign = %{
-        @sign
-        | source_config:
-            {[
-               source_config_for_stop_id("f"),
-               source_with_headway,
-               source_config_for_stop_id("c")
-             ]}
-      }
-
-      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
-
-      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
-               {{source_with_headway,
-                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}},
-                {source_with_headway,
-                 %Content.Message.Headways.Bottom{
-                   range: {2, 8},
-                   prev_departure_mins: nil
-                 }}}
-    end
-
-    test "generates headway range based on headway config" do
+    test "displays the headway at multi-source stop that has a source_for_headway" do
       source_with_headway = %{source_config_for_stop_id("a") | source_for_headway?: true}
 
       sign = %{
@@ -165,111 +117,45 @@ defmodule Signs.Utilities.HeadwaysTest do
                source_config_for_stop_id("c")
              ]},
           config_engine: FakeHeadwayConfigEngine,
-          headway_group: "config_test"
+          headway_group: "8-11"
       }
 
-      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
-
-      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
+      assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
                {{source_with_headway,
                  %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}},
                 {source_with_headway,
                  %Content.Message.Headways.Bottom{
-                   range: {9, 13},
+                   range: {8, 11},
                    prev_departure_mins: nil
                  }}}
     end
 
-    test "generates blank messages to display when no headway information present" do
+    test "generates empty messages if no headway is configured for some reason" do
+      config = source_config_for_stop_id("a")
+
       sign = %{
         @sign
-        | source_config: {[source_config_for_stop_id("b")]}
+        | source_config: {[config]},
+          config_engine: FakeHeadwayConfigEngine,
+          headway_group: "none_configured"
       }
 
-      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
-
-      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
-               {{source_config_for_stop_id("b"), %Content.Message.Empty{}},
-                {source_config_for_stop_id("b"), %Content.Message.Empty{}}}
+      assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
+               {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
     end
 
-    test "generates blank messages for {nil, nil} headways" do
+    test "generates empty messages if outside of service hours" do
+      config = source_config_for_stop_id("no_service")
+
       sign = %{
         @sign
-        | source_config: {[source_config_for_stop_id("c")]}
+        | source_config: {[config]},
+          config_engine: FakeHeadwayConfigEngine,
+          headway_group: "8-11"
       }
 
-      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
-
-      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
-               {{source_config_for_stop_id("c"), %Content.Message.Empty{}},
-                {source_config_for_stop_id("c"), %Content.Message.Empty{}}}
-    end
-
-    test "generates blank messages to display more than one headway earlier than the first departure of the day" do
-      sign = %{
-        @sign
-        | source_config: {[source_config_for_stop_id("d")]}
-      }
-
-      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
-
-      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
-               {{source_config_for_stop_id("d"), %Content.Message.Empty{}},
-                {source_config_for_stop_id("d"), %Content.Message.Empty{}}}
-    end
-
-    test "generates a headway message to display immediately before the first departure of the day" do
-      sign = %{
-        @sign
-        | source_config: {[source_config_for_stop_id("e")]}
-      }
-
-      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
-
-      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
-               {{source_config_for_stop_id("e"),
-                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}},
-                {source_config_for_stop_id("e"),
-                 %Content.Message.Headways.Bottom{
-                   range: {1, 5},
-                   prev_departure_mins: nil
-                 }}}
-    end
-
-    test "generates a headway message to display before first departure, from headway config" do
-      sign = %{
-        @sign
-        | source_config: {[source_config_for_stop_id("e")]},
-          headway_group: "first_dep_test",
-          config_engine: FakeHeadwayConfigEngine
-      }
-
-      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
-
-      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
-               {{source_config_for_stop_id("e"),
-                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}},
-                {source_config_for_stop_id("e"),
-                 %Content.Message.Headways.Bottom{
-                   range: {7, 11},
-                   prev_departure_mins: nil
-                 }}}
-    end
-
-    test "respects headway_stop_id" do
-      sign = %{@sign | headway_stop_id: "a", source_config: {[source_config_for_stop_id("c")]}}
-
-      current_time = FakeDepartures.test_departure_time()
-
-      assert Signs.Utilities.Headways.get_messages(sign, current_time) ==
-               {{source_config_for_stop_id("c"),
-                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}},
-                {source_config_for_stop_id("c"),
-                 %Content.Message.Headways.Bottom{
-                   range: {2, 8},
-                   prev_departure_mins: nil
-                 }}}
+      assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
+               {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
     end
   end
 end

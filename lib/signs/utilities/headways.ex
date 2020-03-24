@@ -4,6 +4,7 @@ defmodule Signs.Utilities.Headways do
   geneartes the top and bottom lines for the sign
   """
   alias Signs.Utilities.SourceConfig
+  require Logger
 
   @spec get_messages(Signs.Realtime.t(), DateTime.t()) ::
           {{SourceConfig.source() | nil, Content.Message.t()},
@@ -24,72 +25,30 @@ defmodule Signs.Utilities.Headways do
   @spec do_headway_messages(Signs.Realtime.t(), map(), DateTime.t()) ::
           {{map(), Content.Message.t()}, {map(), Content.Message.t()}}
   defp do_headway_messages(sign, config, current_time) do
-    stop_id = sign.headway_stop_id || config.stop_id
-    headway_range = sign.headway_engine.get_headways(stop_id)
-    headway_config = sign.config_engine.headway_config(sign.headway_group, current_time)
-
-    case headway_range do
-      :none ->
-        # Scheduled headways engine says time is outside of service hours
+    case sign.config_engine.headway_config(sign.headway_group, current_time) do
+      nil ->
         {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
 
-      {nil, nil} ->
-        # Likely a bug: one ETS table says no current schedules, but the other
-        # syas it's during service hours.
-        {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
+      %Engine.Config.Headway{} = headway ->
+        stop_id = sign.headway_stop_id || config.stop_id
+        buffer_mins = headway.range_high
 
-      {:first_departure, range, first_departure} ->
-        # Schedule headways engine says time is within one headway of first trip
-        range =
-          if headway_config do
-            {headway_config.range_low, headway_config.range_high}
-          else
-            range
-          end
-
-        max_headway = Headway.HeadwayDisplay.max_headway(range)
-        time_buffer = if max_headway, do: max_headway, else: 0
-
-        if Headway.HeadwayDisplay.show_first_departure?(
-             first_departure,
-             Timex.now(),
-             time_buffer
-           ) do
-          {
-            {config,
-             %Content.Message.Headways.Top{
-               destination: config.headway_destination,
-               vehicle_type: vehicle_type(config.routes)
-             }},
-            {config, %Content.Message.Headways.Bottom{range: range}}
-          }
+        if sign.headway_engine.display_headways?(stop_id, current_time, buffer_mins) do
+          {{config,
+            %Content.Message.Headways.Top{
+              destination: config.headway_destination,
+              vehicle_type: :train
+            }},
+           {config,
+            %Content.Message.Headways.Bottom{
+              range: {headway.range_low, headway.range_high},
+              prev_departure_mins: nil
+            }}}
         else
-          {{config, Content.Message.Empty.new()}, {config, Content.Message.Empty.new()}}
+          {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
         end
-
-      {bottom, top} ->
-        {bottom, top} =
-          if headway_config do
-            {headway_config.range_low, headway_config.range_high}
-          else
-            {bottom, top}
-          end
-
-        {{config,
-          %Content.Message.Headways.Top{
-            destination: config.headway_destination,
-            vehicle_type: vehicle_type(config.routes)
-          }},
-         {config,
-          %Content.Message.Headways.Bottom{
-            range: {bottom, top},
-            prev_departure_mins: nil
-          }}}
     end
   end
-
-  defp vehicle_type(["743"]), do: :bus
-  defp vehicle_type(_), do: :train
 
   @spec config_by_headway_id(Signs.Realtime.t()) :: SourceConfig.source() | nil
   defp config_by_headway_id(sign) do
