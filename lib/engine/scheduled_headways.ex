@@ -88,13 +88,11 @@ defmodule Engine.ScheduledHeadways do
     headways
   end
 
-  @spec get_first_last_departures(:ets.tab(), String.t()) ::
-          {DateTime.t() | nil, DateTime.t() | nil}
-  def get_first_last_departures(table_name \\ :scheduled_headways_first_last_departures, stop_id) do
-    case :ets.lookup(table_name, stop_id) do
-      [{^stop_id, {first_departure, last_departure}}] -> {first_departure, last_departure}
-      _ -> {nil, nil}
-    end
+  @spec get_first_last_departures(:ets.tab(), [String.t()]) ::
+          [{DateTime.t() | nil, DateTime.t() | nil}]
+  def get_first_last_departures(table_name \\ :scheduled_headways_first_last_departures, stop_ids) do
+    pattern = for id <- stop_ids, do: {{id, :"$1"}, [], [:"$1"]}
+    :ets.select(table_name, pattern)
   end
 
   @doc "Checks if the given time is after the first scheduled stop and before the last.
@@ -107,8 +105,8 @@ defmodule Engine.ScheduledHeadways do
         current_time,
         buffer_mins
       ) do
-    case get_first_last_departures(table, stop_id) do
-      {%DateTime{} = first, %DateTime{} = last} ->
+    case get_first_last_departures(table, [stop_id]) do
+      [{%DateTime{} = first, %DateTime{} = last}] ->
         first = DateTime.add(first, -1 * buffer_mins * 60)
 
         DateTime.compare(current_time, first) == :gt and
