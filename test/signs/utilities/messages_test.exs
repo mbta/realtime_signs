@@ -75,6 +75,13 @@ defmodule Signs.Utilities.MessagesTest do
 
   defmodule FakeHeadways do
     def get_headways(_stop_id), do: {1, 4}
+    def display_headways?(_stop_id, _time, _buffer), do: true
+  end
+
+  defmodule FakeConfigEngine do
+    def headway_config("8-11", _time) do
+      %Engine.Config.Headway{headway_id: "id", range_low: 8, range_high: 11}
+    end
   end
 
   @src %Signs.Utilities.SourceConfig{
@@ -426,7 +433,13 @@ defmodule Signs.Utilities.MessagesTest do
     end
 
     test "when there are no predictions and only one source config, puts headways on the sign" do
-      sign = %{@sign | source_config: {[%{@src | stop_id: "no_preds"}]}}
+      sign = %{
+        @sign
+        | source_config: {[%{@src | stop_id: "no_preds"}]},
+          config_engine: FakeConfigEngine,
+          headway_group: "8-11"
+      }
+
       sign_config = :auto
       alert_status = :none
 
@@ -460,7 +473,7 @@ defmodule Signs.Utilities.MessagesTest do
                    terminal?: false
                  },
                  %Content.Message.Headways.Bottom{
-                   range: {1, 4},
+                   range: {8, 11},
                    prev_departure_mins: nil
                  }}}
     end
@@ -479,7 +492,7 @@ defmodule Signs.Utilities.MessagesTest do
     end
 
     test "when sign is forced into headway mode but no alerts are present, displays headways" do
-      sign = @sign
+      sign = %{@sign | config_engine: FakeConfigEngine, headway_group: "8-11"}
       sign_config = :headway
       alert_status = :none
 
@@ -488,7 +501,7 @@ defmodule Signs.Utilities.MessagesTest do
                  destination: :mattapan,
                  vehicle_type: :train
                }},
-              {_, %Content.Message.Headways.Bottom{range: {1, 4}}}} =
+              {_, %Content.Message.Headways.Bottom{range: {8, 11}}}} =
                Messages.get_messages(sign, sign_config, Timex.now(), alert_status)
     end
 

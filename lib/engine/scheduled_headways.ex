@@ -97,6 +97,28 @@ defmodule Engine.ScheduledHeadways do
     end
   end
 
+  @doc "Checks if the given time is after the first scheduled stop and before the last.
+  A buffer of minutes (positive) is subtracted from the first time. so that headways are
+  shown for a short time before the first train."
+  @spec display_headways?(:ets.tab(), String.t(), DateTime.t(), non_neg_integer()) :: boolean()
+  def display_headways?(
+        table \\ :scheduled_headways_first_last_departures,
+        stop_id,
+        current_time,
+        buffer_mins
+      ) do
+    case get_first_last_departures(table, stop_id) do
+      {%DateTime{} = first, %DateTime{} = last} ->
+        first = DateTime.add(first, -1 * buffer_mins * 60)
+
+        DateTime.compare(current_time, first) == :gt and
+          DateTime.compare(current_time, last) == :lt
+
+      _ ->
+        true
+    end
+  end
+
   @spec handle_info(:data_update, state) :: {:noreply, state}
   def handle_info(:data_update, state) do
     schedule_data_update(self(), state.fetch_ms)

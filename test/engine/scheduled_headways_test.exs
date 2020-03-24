@@ -194,6 +194,41 @@ defmodule Engine.ScheduledHeadwaysTest do
     end
   end
 
+  describe "display_headways?/4" do
+    test "returns true/false depending on time" do
+      table = :display_headways_test
+      stop = "stop"
+      buffer_mins = 12
+
+      first_departure = DateTime.from_naive!(~N[2020-03-24 10:00:00], "America/New_York")
+      last_departure = DateTime.from_naive!(~N[2020-03-25 01:00:00], "America/New_York")
+
+      :ets.new(table, [:set, :protected, :named_table, read_concurrency: true])
+      :ets.insert(table, {stop, {first_departure, last_departure}})
+
+      before_service = DateTime.add(first_departure, -1 * (buffer_mins + 5) * 60)
+      during_buffer = DateTime.add(first_departure, -1 * (buffer_mins - 5) * 60)
+      during_service = DateTime.add(first_departure, 3 * 60 * 60)
+      after_service = DateTime.add(last_departure, 5 * 60)
+
+      refute Engine.ScheduledHeadways.display_headways?(table, stop, before_service, buffer_mins)
+      assert Engine.ScheduledHeadways.display_headways?(table, stop, during_buffer, buffer_mins)
+      assert Engine.ScheduledHeadways.display_headways?(table, stop, during_service, buffer_mins)
+      refute Engine.ScheduledHeadways.display_headways?(table, stop, after_service, buffer_mins)
+    end
+
+    test "returns true if missing first/last trip timing" do
+      :ets.new(:no_data, [:set, :protected, :named_table, read_concurrency: true])
+      time = DateTime.from_naive!(~N[2020-03-20 10:00:00], "America/New_York")
+      assert Engine.ScheduledHeadways.display_headways?(:no_data, "no_stop", time, 0)
+    end
+
+    test "display_headways?/3 fills in ETS table name" do
+      time = DateTime.from_naive!(~N[2020-03-20 10:00:00], "America/New_York")
+      assert Engine.ScheduledHeadways.display_headways?("no_data", time, 0)
+    end
+  end
+
   describe "data_update callback" do
     test "updates all gtfs stop id schedule data in the state" do
       schedules =

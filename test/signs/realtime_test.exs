@@ -45,6 +45,15 @@ defmodule Signs.RealtimeTest do
 
   defmodule FakeHeadways do
     def get_headways(_stop_id), do: {1, 5}
+    def display_headways?(_stop_id, _time, _buffer), do: true
+  end
+
+  defmodule FakeConfigEngine do
+    def sign_config(_sign_id), do: :auto
+
+    def headway_config(_group, _time) do
+      %Engine.Config.Headway{headway_id: "id", range_low: 11, range_high: 13}
+    end
   end
 
   defmodule FakeUpdater do
@@ -91,7 +100,7 @@ defmodule Signs.RealtimeTest do
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartureEngine,
-    config_engine: Engine.Config,
+    config_engine: FakeConfigEngine,
     alerts_engine: FakeAlerts,
     sign_updater: FakeUpdater,
     tick_bottom: 1,
@@ -117,7 +126,12 @@ defmodule Signs.RealtimeTest do
     end
 
     test "decrements ticks and doesn't send audio or text when sign is not expired" do
-      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, @sign)
+      sign = %{
+        @sign
+        | current_content_bottom: {@src, %HB{range: {11, 13}, prev_departure_mins: nil}}
+      }
+
+      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
       refute_received({:send_audio, _, _, _, _})
       refute_received({:update_single_line, _, _, _, _, _})
       refute_received({:update_sign, _, _, _, _, _})
@@ -130,14 +144,16 @@ defmodule Signs.RealtimeTest do
       sign = %{
         @sign
         | tick_top: 0,
-          tick_bottom: 0
+          tick_bottom: 0,
+          current_content_top: {nil, %HT{destination: :southbound, vehicle_type: :train}},
+          current_content_bottom: {nil, %HB{range: {11, 13}}}
       }
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
 
       assert_received(
         {:update_sign, _id, %HT{destination: :southbound, vehicle_type: :train},
-         %HB{range: {1, 5}}, _dur, _start}
+         %HB{range: {11, 13}}, _dur, _start}
       )
 
       refute_received({:send_audio, _, _, _, _})
@@ -150,7 +166,9 @@ defmodule Signs.RealtimeTest do
       sign = %{
         @sign
         | tick_top: 0,
-          tick_bottom: 60
+          tick_bottom: 60,
+          current_content_top: {nil, %HT{destination: :southbound, vehicle_type: :train}},
+          current_content_bottom: {nil, %HB{range: {11, 13}}}
       }
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
@@ -170,12 +188,14 @@ defmodule Signs.RealtimeTest do
       sign = %{
         @sign
         | tick_top: 60,
-          tick_bottom: 0
+          tick_bottom: 0,
+          current_content_top: {nil, %HT{destination: :southbound, vehicle_type: :train}},
+          current_content_bottom: {nil, %HB{range: {11, 13}}}
       }
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
 
-      assert_received({:update_single_line, _id, "2", %HB{range: {1, 5}}, _dur, _start})
+      assert_received({:update_single_line, _id, "2", %HB{range: {11, 13}}, _dur, _start})
 
       refute_received({:send_audio, _, _, _, _})
 
