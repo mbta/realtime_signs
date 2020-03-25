@@ -4,14 +4,16 @@ defmodule Signs.Utilities.Messages do
   be displaying
   """
 
+  @type sign_messages ::
+          {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
+           {Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()}}
+
   @spec get_messages(
           Signs.Realtime.t(),
           Engine.Config.sign_config(),
           DateTime.t(),
           Engine.Alerts.Fetcher.stop_status()
-        ) ::
-          {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
-           {Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()}}
+        ) :: sign_messages()
   def get_messages(
         sign,
         sign_config,
@@ -46,9 +48,7 @@ defmodule Signs.Utilities.Messages do
           Signs.Realtime.t(),
           DateTime.t(),
           Engine.Alerts.Fetcher.stop_status()
-        ) ::
-          {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
-           {Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()}}
+        ) :: sign_messages()
   defp get_headway_or_alert_messages(sign, current_time, alert_status) do
     case get_alert_messages(alert_status) do
       nil -> Signs.Utilities.Headways.get_messages(sign, current_time)
@@ -56,10 +56,7 @@ defmodule Signs.Utilities.Messages do
     end
   end
 
-  @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status()) ::
-          {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
-           {Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()}}
-          | nil
+  @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status()) :: sign_messages() | nil
   defp get_alert_messages(alert_status) do
     case alert_status do
       :shuttles_transfer_station ->
