@@ -11,7 +11,7 @@ defmodule Content.Audio.VehiclesToDestination do
 
   @type t :: %__MODULE__{
           language: Content.Audio.language(),
-          destination: PaEss.destination(),
+          destination: PaEss.destination() | nil,
           headway_range: Headway.HeadwayDisplay.headway_range(),
           previous_departure_mins: integer() | nil
         }
@@ -39,10 +39,24 @@ defmodule Content.Audio.VehiclesToDestination do
 
   @spec create(
           Content.Audio.language(),
-          PaEss.destination(),
+          PaEss.destination() | nil,
           Headway.HeadwayDisplay.headway_range(),
           integer() | nil
         ) :: t() | nil
+
+  defp create(:english, nil, range, nil) do
+    %__MODULE__{
+      language: :english,
+      destination: nil,
+      headway_range: range,
+      previous_departure_mins: nil
+    }
+  end
+
+  defp create(:spanish, nil, _range, nil) do
+    nil
+  end
+
   defp create(language, destination, headway_range, previous_departure_mins) do
     if Utilities.valid_destination?(destination, language) and
          not (language == :spanish and !is_nil(previous_departure_mins)) do
@@ -57,6 +71,15 @@ defmodule Content.Audio.VehiclesToDestination do
 
   defimpl Content.Audio do
     alias PaEss.Utilities
+
+    def to_params(%Content.Audio.VehiclesToDestination{
+          language: :english,
+          destination: nil,
+          headway_range: {range_low, range_high},
+          previous_departure_mins: nil
+        }) do
+      {:ad_hoc, {"Trains every #{range_low} to #{range_high} minutes.", :audio}}
+    end
 
     def to_params(
           %Content.Audio.VehiclesToDestination{

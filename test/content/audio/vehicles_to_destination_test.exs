@@ -148,6 +148,18 @@ defmodule Content.Audio.VehiclesToDestinationTest do
 
       assert Content.Audio.to_params(audio) == nil
     end
+
+    test "Returns ad-hoc audio when no destination" do
+      audio = %Content.Audio.VehiclesToDestination{
+        destination: nil,
+        language: :english,
+        headway_range: {8, 10},
+        previous_departure_mins: nil
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:ad_hoc, {"Trains every 8 to 10 minutes.", :audio}}
+    end
   end
 
   describe "from_headway_message/2" do
@@ -271,6 +283,19 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                from_headway_message(
                  %Content.Message.Headways.Top{destination: :south_station},
                  @msg
+               )
+    end
+
+    test "handles a nil destination in English" do
+      assert %Content.Audio.VehiclesToDestination{
+               language: :english,
+               destination: nil,
+               headway_range: {8, 10},
+               previous_departure_mins: nil
+             } =
+               from_headway_message(
+                 %Content.Message.Headways.Top{destination: nil, vehicle_type: :train},
+                 %Content.Message.Headways.Bottom{range: {8, 10}, prev_departure_mins: nil}
                )
     end
 
