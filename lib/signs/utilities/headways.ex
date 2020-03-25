@@ -33,7 +33,7 @@ defmodule Signs.Utilities.Headways do
         stop_id = sign.headway_stop_id || config.stop_id
         buffer_mins = headway.range_high
 
-        if sign.headway_engine.display_headways?(stop_id, current_time, buffer_mins) do
+        if sign.headway_engine.display_headways?([stop_id], current_time, buffer_mins) do
           {{config,
             %Content.Message.Headways.Top{
               destination: config.headway_destination,

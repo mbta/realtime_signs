@@ -45,7 +45,7 @@ defmodule Signs.RealtimeTest do
 
   defmodule FakeHeadways do
     def get_headways(_stop_id), do: {1, 5}
-    def display_headways?(_stop_id, _time, _buffer), do: true
+    def display_headways?(_stop_ids, _time, _buffer), do: true
   end
 
   defmodule FakeConfigEngine do

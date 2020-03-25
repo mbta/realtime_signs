@@ -2,6 +2,8 @@ defmodule Engine.ScheduledHeadwaysTest do
   use ExUnit.Case
   import ExUnit.CaptureLog
 
+  @ets_table_params [:set, :protected, :named_table, read_concurrency: true]
+
   describe "GenServer initialization" do
     test "GenServer starts up successfully" do
       {:ok, pid} =
@@ -88,8 +90,7 @@ defmodule Engine.ScheduledHeadwaysTest do
       headways_ets_table = :engine_headways_test_get_headways
       first_last_departures_ets_table = :engine_first_last_departures_test_get_headways
 
-      ^headways_ets_table =
-        :ets.new(headways_ets_table, [:set, :protected, :named_table, read_concurrency: true])
+      ^headways_ets_table = :ets.new(headways_ets_table, @ets_table_params)
 
       ^first_last_departures_ets_table =
         :ets.new(first_last_departures_ets_table, [
@@ -123,8 +124,7 @@ defmodule Engine.ScheduledHeadwaysTest do
       headways_ets_table = :engine_headways_test_get_headways
       first_last_departures_ets_table = :engine_first_last_departures_test_get_headways
 
-      ^headways_ets_table =
-        :ets.new(headways_ets_table, [:set, :protected, :named_table, read_concurrency: true])
+      ^headways_ets_table = :ets.new(headways_ets_table, @ets_table_params)
 
       ^first_last_departures_ets_table =
         :ets.new(first_last_departures_ets_table, [
@@ -162,8 +162,7 @@ defmodule Engine.ScheduledHeadwaysTest do
       headways_ets_table = :engine_headways_test_get_headways_nil_case
       first_last_departures_ets_table = :engine_first_last_departures_test_get_headways_nil_case
 
-      ^headways_ets_table =
-        :ets.new(headways_ets_table, [:set, :protected, :named_table, read_concurrency: true])
+      ^headways_ets_table = :ets.new(headways_ets_table, @ets_table_params)
 
       ^first_last_departures_ets_table =
         :ets.new(first_last_departures_ets_table, [
@@ -203,7 +202,7 @@ defmodule Engine.ScheduledHeadwaysTest do
       first_departure = DateTime.from_naive!(~N[2020-03-24 10:00:00], "America/New_York")
       last_departure = DateTime.from_naive!(~N[2020-03-25 01:00:00], "America/New_York")
 
-      :ets.new(table, [:set, :protected, :named_table, read_concurrency: true])
+      :ets.new(table, @ets_table_params)
       :ets.insert(table, {stop, {first_departure, last_departure}})
 
       before_service = DateTime.add(first_departure, -1 * (buffer_mins + 5) * 60)
@@ -211,21 +210,75 @@ defmodule Engine.ScheduledHeadwaysTest do
       during_service = DateTime.add(first_departure, 3 * 60 * 60)
       after_service = DateTime.add(last_departure, 5 * 60)
 
-      refute Engine.ScheduledHeadways.display_headways?(table, stop, before_service, buffer_mins)
-      assert Engine.ScheduledHeadways.display_headways?(table, stop, during_buffer, buffer_mins)
-      assert Engine.ScheduledHeadways.display_headways?(table, stop, during_service, buffer_mins)
-      refute Engine.ScheduledHeadways.display_headways?(table, stop, after_service, buffer_mins)
+      refute Engine.ScheduledHeadways.display_headways?(
+               table,
+               [stop],
+               before_service,
+               buffer_mins
+             )
+
+      assert Engine.ScheduledHeadways.display_headways?(table, [stop], during_buffer, buffer_mins)
+
+      assert Engine.ScheduledHeadways.display_headways?(
+               table,
+               [stop],
+               during_service,
+               buffer_mins
+             )
+
+      refute Engine.ScheduledHeadways.display_headways?(table, [stop], after_service, buffer_mins)
     end
 
-    test "returns true if missing first/last trip timing" do
-      :ets.new(:no_data, [:set, :protected, :named_table, read_concurrency: true])
+    test "uses the earliest first and earliest last departure" do
+      table = :dh_multiple_test
+
+      early_first_dep = DateTime.from_naive!(~N[2020-03-20 05:00:00], "America/New_York")
+      later_first_dep = DateTime.from_naive!(~N[2020-03-20 06:00:00], "America/New_York")
+      in_service_early = DateTime.from_naive!(~N[2020-03-20 05:15:00], "America/New_York")
+
+      early_last_dep = DateTime.from_naive!(~N[2020-03-21 00:00:00], "America/New_York")
+      later_last_dep = DateTime.from_naive!(~N[2020-03-21 02:00:00], "America/New_York")
+      no_service_late = DateTime.from_naive!(~N[2020-03-21 01:00:00], "America/New_York")
+
+      :ets.new(table, @ets_table_params)
+      :ets.insert(table, {"stop1", {early_first_dep, later_last_dep}})
+      :ets.insert(table, {"stop2", {later_first_dep, early_last_dep}})
+
+      assert Engine.ScheduledHeadways.display_headways?(
+               table,
+               ["stop1", "stop2"],
+               in_service_early,
+               0
+             )
+
+      refute Engine.ScheduledHeadways.display_headways?(
+               table,
+               ["stop1", "stop2"],
+               no_service_late,
+               0
+             )
+    end
+
+    test "handles when the only departure times are nil" do
+      table = :dh_nil_test
+      datetime = DateTime.from_naive!(~N[2020-03-20 12:00:00], "America/New_York")
+
+      :ets.new(table, @ets_table_params)
+      :ets.insert(table, {"stop_id", {nil, nil}})
+      :ets.insert(table, {"stop_id", {nil, nil}})
+
+      refute Engine.ScheduledHeadways.display_headways?(table, ["stop_id"], datetime, 0)
+    end
+
+    test "returns false if missing first/last trip timing" do
+      :ets.new(:no_data, @ets_table_params)
       time = DateTime.from_naive!(~N[2020-03-20 10:00:00], "America/New_York")
-      assert Engine.ScheduledHeadways.display_headways?(:no_data, "no_stop", time, 0)
+      refute Engine.ScheduledHeadways.display_headways?(:no_data, ["no_stop"], time, 0)
     end
 
     test "display_headways?/3 fills in ETS table name" do
       time = DateTime.from_naive!(~N[2020-03-20 10:00:00], "America/New_York")
-      assert Engine.ScheduledHeadways.display_headways?("no_data", time, 0)
+      refute Engine.ScheduledHeadways.display_headways?(["no_data"], time, 0)
     end
   end
 
