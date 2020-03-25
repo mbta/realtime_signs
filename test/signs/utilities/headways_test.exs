@@ -18,7 +18,7 @@ defmodule Signs.Utilities.HeadwaysTest do
   end
 
   defmodule FakeHeadways do
-    def display_headways?("no_service", _time, _buffer), do: false
+    def display_headways?(["no_service"], _time, _buffer), do: false
     def display_headways?(_, _time, _buffer), do: true
   end
 

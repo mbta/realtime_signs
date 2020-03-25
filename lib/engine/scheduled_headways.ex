@@ -98,23 +98,45 @@ defmodule Engine.ScheduledHeadways do
   @doc "Checks if the given time is after the first scheduled stop and before the last.
   A buffer of minutes (positive) is subtracted from the first time. so that headways are
   shown for a short time before the first train."
-  @spec display_headways?(:ets.tab(), String.t(), DateTime.t(), non_neg_integer()) :: boolean()
+  @spec display_headways?(:ets.tab(), [String.t()], DateTime.t(), non_neg_integer()) :: boolean()
   def display_headways?(
         table \\ :scheduled_headways_first_last_departures,
-        stop_id,
+        stop_ids,
         current_time,
         buffer_mins
       ) do
-    case get_first_last_departures(table, [stop_id]) do
-      [{%DateTime{} = first, %DateTime{} = last}] ->
+    first_last_departures = get_first_last_departures(table, stop_ids)
+
+    earliest_first =
+      first_last_departures
+      |> Enum.map(&elem(&1, 0))
+      |> min_time()
+
+    earliest_last =
+      first_last_departures
+      |> Enum.map(&elem(&1, 1))
+      |> min_time()
+
+    case {earliest_first, earliest_last} do
+      {%DateTime{} = first, %DateTime{} = last} ->
         first = DateTime.add(first, -1 * buffer_mins * 60)
 
         DateTime.compare(current_time, first) == :gt and
           DateTime.compare(current_time, last) == :lt
 
       _ ->
-        true
+        false
     end
+  end
+
+  @spec min_time([DateTime.t() | nil]) :: DateTime.t() | nil
+  defp min_time([]), do: nil
+  defp min_time([%DateTime{} = dt]), do: dt
+
+  defp min_time(datetimes) do
+    datetimes
+    |> Enum.filter(& &1)
+    |> Enum.min_by(&DateTime.to_unix/1, fn -> nil end)
   end
 
   @spec handle_info(:data_update, state) :: {:noreply, state}
