@@ -157,5 +157,19 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
                {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
     end
+
+    test "generates non-directional headway message at center/mezz signs" do
+      sign = %{
+        @sign
+        | source_config: {[source_config_for_stop_id("mezz")], []},
+          config_engine: FakeHeadwayConfigEngine,
+          headway_group: "8-11"
+      }
+
+      assert {
+               {nil, %Content.Message.Headways.Top{destination: nil}},
+               {nil, %Content.Message.Headways.Bottom{range: {8, 11}}}
+             } = Signs.Utilities.Headways.get_messages(sign, @current_time)
+    end
   end
 end
