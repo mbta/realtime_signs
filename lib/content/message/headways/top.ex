@@ -4,11 +4,18 @@ defmodule Content.Message.Headways.Top do
 
   @type vehicle_type :: :bus | :trolley | :train
   @type t :: %__MODULE__{
-          destination: PaEss.destination(),
+          destination: PaEss.destination() | nil,
           vehicle_type: vehicle_type
         }
 
   defimpl Content.Message do
+    def to_string(%Content.Message.Headways.Top{
+          destination: nil,
+          vehicle_type: type
+        }) do
+      type |> signify_vehicle_type |> String.capitalize()
+    end
+
     def to_string(%Content.Message.Headways.Top{
           destination: destination,
           vehicle_type: type

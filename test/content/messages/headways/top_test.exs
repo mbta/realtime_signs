@@ -44,5 +44,12 @@ defmodule Content.Message.Headways.TopTest do
                vehicle_type: :train
              }) == "Frst Hills trains"
     end
+
+    test "Shows the right message when no destination" do
+      assert Content.Message.to_string(%Content.Message.Headways.Top{
+               destination: nil,
+               vehicle_type: :train
+             }) == "Trains"
+    end
   end
 end
