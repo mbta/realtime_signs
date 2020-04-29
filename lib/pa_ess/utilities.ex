@@ -58,7 +58,7 @@ defmodule PaEss.Utilities do
     {~r"\bNewton Hlnd\b", "Newton Highlands"},
     {~r"\bSt Mary's\b", "Saint Mary's Street"},
     {~r"\bHawes St\b", "Hawes Street"},
-    {~r"\bKent St\b", "Kent Streeaul Street"},
+    {~r"\bKent St\b", "Kent Street"},
     {~r"\bCoolidge Cn\b", "Coolidge Corner"},
     {~r"\bSummit Ave\b", "Summit Avenue"},
     {~r"\bBrandon Hll\b", "Brandon Hall"},
