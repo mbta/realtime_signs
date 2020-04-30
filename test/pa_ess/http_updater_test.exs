@@ -54,7 +54,7 @@ defmodule PaEss.HttpUpdaterTest do
                )
     end
 
-    test "Returns an error if HTTP request fails" do
+    test "Returns error if HTTP request fails, doesn't send to Signs UI" do
       state = make_state()
       msg = %Content.Message.Predictions{destination: :wonderland, minutes: 2}
 
@@ -67,7 +67,8 @@ defmodule PaEss.HttpUpdaterTest do
                    )
         end)
 
-      assert log =~ "sign_ui_post_error"
+      assert log =~ ~r" arinc_ms=\d+"
+      refute log =~ ~r" signs_ui_ms=\d+"
     end
 
     test "Posts both lines of the sign at the same time" do
@@ -86,6 +87,24 @@ defmodule PaEss.HttpUpdaterTest do
 
       assert log =~ ~r" arinc_ms=\d+"
       assert log =~ ~r" signs_ui_ms=\d+"
+    end
+
+    test "Returns error if HTTP request fails when updating both lines, doesn't send to Signs UI" do
+      state = make_state()
+      top = %Content.Message.Predictions{destination: :wonderland, minutes: :boarding}
+      bottom = %Content.Message.Predictions{destination: :wonderland, minutes: 2}
+
+      log =
+        capture_log([level: :info], fn ->
+          assert {:error, :post_error} ==
+                   PaEss.HttpUpdater.process(
+                     {:update_sign, [{"timeout", "n"}, top, bottom, 60, :now]},
+                     state
+                   )
+        end)
+
+      assert log =~ ~r" arinc_ms=\d+"
+      refute log =~ ~r" signs_ui_ms=\d+"
     end
 
     test "replies with {:ok, :sent} when successful" do

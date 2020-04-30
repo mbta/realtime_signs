@@ -65,19 +65,33 @@ defmodule PaEss.HttpUpdater do
     cmd = to_command(msg, duration, start_secs, zone, line_no)
     encoded = URI.encode_query(MsgType: "SignContent", uid: state.uid, sta: station, c: cmd)
 
-    {ui_time, _} = :timer.tc(fn -> update_ui(state.http_poster, encoded) end)
     {arinc_time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
 
-    Logger.info([
-      "update_single_line: ",
-      encoded,
-      " pid=",
-      inspect(self()),
-      " arinc_ms=",
-      inspect(div(arinc_time, 1000)),
-      " signs_ui_ms=",
-      inspect(div(ui_time, 1000))
-    ])
+    case result do
+      {:ok, _} ->
+        {ui_time, _} = :timer.tc(fn -> update_ui(state.http_poster, encoded) end)
+
+        Logger.info([
+          "update_single_line: ",
+          encoded,
+          " pid=",
+          inspect(self()),
+          " arinc_ms=",
+          inspect(div(arinc_time, 1000)),
+          " signs_ui_ms=",
+          inspect(div(ui_time, 1000))
+        ])
+
+      {:error, _} ->
+        Logger.info([
+          "update_single_line: ",
+          encoded,
+          " pid=",
+          inspect(self()),
+          " arinc_ms=",
+          inspect(div(arinc_time, 1000))
+        ])
+    end
 
     result
   end
@@ -98,19 +112,33 @@ defmodule PaEss.HttpUpdater do
         c: bottom_cmd
       )
 
-    {ui_time, _} = :timer.tc(fn -> update_ui(state.http_poster, encoded) end)
     {arinc_time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
 
-    Logger.info([
-      "update_sign: ",
-      encoded,
-      " pid=",
-      inspect(self()),
-      " arinc_ms=",
-      inspect(div(arinc_time, 1000)),
-      " signs_ui_ms=",
-      inspect(div(ui_time, 1000))
-    ])
+    case result do
+      {:ok, _} ->
+        {ui_time, _} = :timer.tc(fn -> update_ui(state.http_poster, encoded) end)
+
+        Logger.info([
+          "update_sign: ",
+          encoded,
+          " pid=",
+          inspect(self()),
+          " arinc_ms=",
+          inspect(div(arinc_time, 1000)),
+          " signs_ui_ms=",
+          inspect(div(ui_time, 1000))
+        ])
+
+      {:error, _} ->
+        Logger.info([
+          "update_sign: ",
+          encoded,
+          " pid=",
+          inspect(self()),
+          " arinc_ms=",
+          inspect(div(arinc_time, 1000))
+        ])
+    end
 
     result
   end
