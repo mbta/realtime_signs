@@ -19,6 +19,8 @@ defmodule Content.UtilitiesTest do
 
       assert destination_for_prediction("Green-D", 0, "Government Center-Brattle") ==
                {:ok, :government_center}
+
+      assert destination_for_prediction("Green-E", 1, "71199") == {:ok, :park_street}
     end
 
     test "Southbound headsign on Red Line trunk" do
