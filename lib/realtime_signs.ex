@@ -13,6 +13,7 @@ defmodule RealtimeSigns do
 
     children =
       [
+        :hackney_pool.child_spec(:arinc_pool, []),
         worker(Engine.Config, []),
         worker(Engine.Predictions, []),
         worker(Engine.ScheduledHeadways, []),
