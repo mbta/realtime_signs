@@ -13,7 +13,7 @@ defmodule RealtimeSigns.Mixfile do
       test_coverage: [tool: ExCoveralls],
       elixirc_paths: elixirc_paths(Mix.env()),
       dialyzer: [
-        plt_add_apps: [:mix],
+        plt_add_apps: [:mix, :hackney],
         plt_add_deps: true,
         ignore_warnings: ".dialyzer.ignore-warnings"
       ],
