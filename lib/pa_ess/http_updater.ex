@@ -280,9 +280,14 @@ defmodule PaEss.HttpUpdater do
 
   @spec send_post(module(), binary()) :: post_result()
   defp send_post(http_poster, query) do
-    case http_poster.post(sign_url(), query, [
-           {"Content-type", "application/x-www-form-urlencoded"}
-         ]) do
+    case http_poster.post(
+           sign_url(),
+           query,
+           [
+             {"Content-type", "application/x-www-form-urlencoded"}
+           ],
+           hackney: [pool: :arinc_pool]
+         ) do
       {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
         {:ok, :sent}
 
@@ -301,10 +306,15 @@ defmodule PaEss.HttpUpdater do
   def update_ui(http_poster, query) do
     key = Application.get_env(:realtime_signs, :sign_ui_api_key)
 
-    case http_poster.post(sign_ui_url(), query, [
-           {"Content-type", "application/x-www-form-urlencoded"},
-           {"x-api-key", key}
-         ]) do
+    case http_poster.post(
+           sign_ui_url(),
+           query,
+           [
+             {"Content-type", "application/x-www-form-urlencoded"},
+             {"x-api-key", key}
+           ],
+           hackney: [pool: :arinc_pool]
+         ) do
       {:ok, %HTTPoison.Response{status_code: status}} when status == 201 ->
         {:ok, :sent}
 

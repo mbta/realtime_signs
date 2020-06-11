@@ -9,7 +9,7 @@ defmodule PaEss.HttpUpdaterTest do
   import ExUnit.CaptureLog
 
   defmodule FakePoster do
-    def post(_, q, _) do
+    def post(_, q, _, _) do
       send(self(), {:post, q})
       {:ok, %HTTPoison.Response{status_code: 200}}
     end
