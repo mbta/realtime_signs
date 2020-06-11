@@ -112,7 +112,8 @@ defmodule PaEss.Utilities do
     {~r"\bTufts Med\b", "Tufts Medical Center"},
     {~r"\bMalden Ctr\b", "Malden Center"},
     {~r"\bNorth Sta\b", "North Station"},
-    {~r"\bGov'?t Ctr\b", "Government Center"}
+    {~r"\bGov'?t Ctr\b", "Government Center"},
+    {~r/\bSVC\b/i, "Service"}
   ]
 
   @spec valid_range?(integer(), Content.Audio.language()) :: boolean()
