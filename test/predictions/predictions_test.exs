@@ -439,7 +439,7 @@ defmodule Predictions.PredictionsTest do
                   "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70263",
                   "stopped?" => false,
-                  "stops_away" => 0,
+                  "stops_away" => nil,
                   "stop_sequence" => 1
                 },
                 %{
@@ -481,27 +481,29 @@ defmodule Predictions.PredictionsTest do
         }
       }
 
-      assert {%{
-                {"70264", 0} => [
-                  %Predictions.Prediction{
-                    boarding_status: nil,
-                    destination_stop_id: "70263",
-                    direction_id: 0,
-                    new_cars?: false,
-                    revenue_trip?: true,
-                    route_id: "Mattapan",
-                    schedule_relationship: :scheduled,
-                    seconds_until_arrival: nil,
-                    seconds_until_departure: 100,
-                    seconds_until_passthrough: nil,
-                    stop_id: "70264",
-                    stopped?: false,
-                    stops_away: 1,
-                    trip_id: "32568935",
-                    vehicle_id: "G-10040"
-                  }
-                ]
-              }, _} = get_all(feed_message, @current_time)
+      {predictions_map, _} = get_all(feed_message, @current_time)
+
+      assert predictions_map == %{
+               {"70264", 0} => [
+                 %Predictions.Prediction{
+                   boarding_status: nil,
+                   destination_stop_id: "70263",
+                   direction_id: 0,
+                   new_cars?: false,
+                   revenue_trip?: true,
+                   route_id: "Mattapan",
+                   schedule_relationship: :scheduled,
+                   seconds_until_arrival: nil,
+                   seconds_until_departure: 100,
+                   seconds_until_passthrough: nil,
+                   stop_id: "70264",
+                   stopped?: false,
+                   stops_away: 1,
+                   trip_id: "32568935",
+                   vehicle_id: "G-10040"
+                 }
+               ]
+             }
     end
 
     test "identifies new Orange Line cars" do

@@ -7,8 +7,6 @@ defmodule Predictions.Predictions do
              optional({String.t(), integer()}) => [Predictions.Prediction.t()]
            }, MapSet.t(String.t())}
   def get_all(feed_message, current_time) do
-    current_time_unix = DateTime.to_unix(current_time)
-
     predictions =
       feed_message["entity"]
       |> Enum.map(& &1["trip_update"])
@@ -16,7 +14,7 @@ defmodule Predictions.Predictions do
       |> Enum.flat_map(&transform_stop_time_updates/1)
       |> Enum.filter(fn {update, _, _, _, _, _, _, _} ->
         update["arrival"] || update["passthrough_time"] ||
-          (update["departure"] && update["departure"]["time"] > current_time_unix)
+          (update["departure"] && not is_nil(update["stops_away"]))
       end)
       |> Enum.map(&prediction_from_update(&1, current_time))
       |> Enum.reject(
