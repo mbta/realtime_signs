@@ -419,6 +419,93 @@ defmodule Predictions.PredictionsTest do
               }, _} = get_all(feed_message, @current_time)
     end
 
+    test "filters stop_time_updates with departure_time in past" do
+      feed_message = %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783458_32568935",
+            "is_deleted" => false,
+            "trip_update" => %{
+              "delay" => nil,
+              "stop_time_update" => [
+                %{
+                  "arrival" => nil,
+                  "departure" => %{
+                    "delay" => nil,
+                    "time" => Timex.to_unix(@current_time) - 100,
+                    "uncertainty" => nil
+                  },
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70263",
+                  "stopped?" => false,
+                  "stops_away" => nil,
+                  "stop_sequence" => 1
+                },
+                %{
+                  "arrival" => nil,
+                  "departure" => %{
+                    "delay" => nil,
+                    "time" => Timex.to_unix(@current_time) + 100,
+                    "uncertainty" => nil
+                  },
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70264",
+                  "stopped?" => false,
+                  "stops_away" => 1,
+                  "stop_sequence" => 2
+                }
+              ],
+              "timestamp" => nil,
+              "trip" => %{
+                "direction_id" => 0,
+                "route_id" => "Mattapan",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
+              },
+              "vehicle" => %{
+                "id" => "G-10040",
+                "label" => "3260",
+                "license_plate" => nil
+              }
+            },
+            "vehicle" => nil
+          }
+        ],
+        "header" => %{
+          "gtfs_realtime_version" => "1.0",
+          "incrementality" => "FULL_DATASET",
+          "timestamp" => 1_490_783_458
+        }
+      }
+
+      {predictions_map, _} = get_all(feed_message, @current_time)
+
+      assert predictions_map == %{
+               {"70264", 0} => [
+                 %Predictions.Prediction{
+                   boarding_status: nil,
+                   destination_stop_id: "70263",
+                   direction_id: 0,
+                   new_cars?: false,
+                   revenue_trip?: true,
+                   route_id: "Mattapan",
+                   schedule_relationship: :scheduled,
+                   seconds_until_arrival: nil,
+                   seconds_until_departure: 100,
+                   seconds_until_passthrough: nil,
+                   stop_id: "70264",
+                   stopped?: false,
+                   stops_away: 1,
+                   trip_id: "32568935",
+                   vehicle_id: "G-10040"
+                 }
+               ]
+             }
+    end
+
     test "identifies new Orange Line cars" do
       feed_message = %{
         "entity" => [
