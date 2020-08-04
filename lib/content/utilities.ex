@@ -69,7 +69,7 @@ defmodule Content.Utilities do
   def destination_for_prediction("Green-B", 1, _), do: {:ok, :park_street}
   def destination_for_prediction("Green-C", 1, _), do: {:ok, :north_station}
   def destination_for_prediction("Green-D", 1, _), do: {:ok, :government_center}
-  def destination_for_prediction("Green-E", 1, _), do: {:ok, :lechmere}
+  def destination_for_prediction("Green-E", 1, _), do: {:ok, :north_station}
 
   def destination_for_prediction(_, _, _), do: {:error, :not_found}
 
