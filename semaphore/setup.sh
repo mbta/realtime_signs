@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-ELIXIR_VERSION=1.9.4
+ELIXIR_VERSION=1.10.3
 ERLANG_VERSION=22.1.7
 
 export ERL_HOME="${SEMAPHORE_CACHE_DIR}/.kerl/installs/${ERLANG_VERSION}"
