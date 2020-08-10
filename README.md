@@ -35,11 +35,7 @@ The `realtime_signs` code is `git clone`d to `/c/Users/RTRUser/GitHub/realtime_s
 
 We build the application via Elixir-native `mix release`, setting the `PATH` to include the aforementioned versions of Elixir and Erlang. The release gets built into `_build/prod/rel/`.
 
-To manage the Windows service we use [`nssm`](https://nssm.cc/). The service is configured via `nssm edit realtime-signs-[prod|staging]`. In particular, environment variables are added there, and the app launch is configured there. The app is configured to launch as follows:
-
-* `Path`: `C:\Users\RTRUser\GitHub\realtime_signs_release_[dev|prod]\_build\prod\rel\realtime_signs\bin\realtime_signs.bat`
-* `Startup directory`: `C:\Users\RTRUser\GitHub\realtime_signs_release_[dev|prod]`
-* `Arguments`: `start`
+To manage the Windows service we use [`WinSW 2.9`](https://github.com/winsw/winsw/releases/tag/v2.9.0). The service is configured via an XML file in `/c/Users/RTRUser/apps/`. In particular, environment variables are updated by editing the XML file. Updates should also be made to the copy of the XML file in 1Password.
 
 To deploy a new version of the code:
 
