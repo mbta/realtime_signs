@@ -20,7 +20,8 @@ config :logger, :splunk,
   host: 'https://http-inputs-mbta.splunkcloud.com/services/collector/event',
   token: {:system, "PROD_SIGNS_SPLUNK_TOKEN"},
   format: "$dateT$time [$level]$levelpad node=$node $metadata$message\n",
-  metadata: [:request_id]
+  metadata: [:request_id],
+  max_buffer: 100
 
 config :realtime_signs,
   external_config_getter: ExternalConfig.S3,
