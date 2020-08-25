@@ -441,6 +441,19 @@ defmodule Predictions.PredictionsTest do
                     "uncertainty" => nil
                   },
                   "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70262",
+                  "stopped?" => false,
+                  "stops_away" => nil,
+                  "stop_sequence" => 1
+                },
+                %{
+                  "arrival" => nil,
+                  "departure" => %{
+                    "delay" => nil,
+                    "time" => Timex.to_unix(@current_time) - 100,
+                    "uncertainty" => nil
+                  },
+                  "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70263",
                   "stopped?" => false,
                   "stops_away" => nil,
@@ -491,7 +504,7 @@ defmodule Predictions.PredictionsTest do
                {"70264", 0} => [
                  %Predictions.Prediction{
                    boarding_status: nil,
-                   destination_stop_id: "70263",
+                   destination_stop_id: "70262",
                    direction_id: 0,
                    new_cars?: false,
                    revenue_trip?: true,
