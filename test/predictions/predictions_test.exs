@@ -419,7 +419,7 @@ defmodule Predictions.PredictionsTest do
               }, _} = get_all(feed_message, @current_time)
     end
 
-    test "filters stop_time_updates with departure_time in past" do
+    test "filters stop_time_updates where stops_away == nil" do
       feed_message = %{
         "entity" => [
           %{
@@ -429,6 +429,23 @@ defmodule Predictions.PredictionsTest do
             "trip_update" => %{
               "delay" => nil,
               "stop_time_update" => [
+                %{
+                  "arrival" => %{
+                    "delay" => nil,
+                    "time" => Timex.to_unix(@current_time) - 100,
+                    "uncertainty" => nil
+                  },
+                  "departure" => %{
+                    "delay" => nil,
+                    "time" => Timex.to_unix(@current_time) - 100,
+                    "uncertainty" => nil
+                  },
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70262",
+                  "stopped?" => false,
+                  "stops_away" => nil,
+                  "stop_sequence" => 1
+                },
                 %{
                   "arrival" => nil,
                   "departure" => %{
@@ -487,7 +504,7 @@ defmodule Predictions.PredictionsTest do
                {"70264", 0} => [
                  %Predictions.Prediction{
                    boarding_status: nil,
-                   destination_stop_id: "70263",
+                   destination_stop_id: "70262",
                    direction_id: 0,
                    new_cars?: false,
                    revenue_trip?: true,
