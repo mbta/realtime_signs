@@ -151,7 +151,8 @@ defmodule Fake.HTTPoison do
                   "departure" => nil,
                   "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "stop_to_update",
-                  "stop_sequence" => 1
+                  "stop_sequence" => 1,
+                  "stops_away" => 0
                 }
               ],
               "timestamp" => nil,

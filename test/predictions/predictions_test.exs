@@ -419,7 +419,7 @@ defmodule Predictions.PredictionsTest do
               }, _} = get_all(feed_message, @current_time)
     end
 
-    test "filters stop_time_updates with departure_time in past" do
+    test "filters stop_time_updates where stops_away == nil" do
       feed_message = %{
         "entity" => [
           %{
@@ -430,7 +430,11 @@ defmodule Predictions.PredictionsTest do
               "delay" => nil,
               "stop_time_update" => [
                 %{
-                  "arrival" => nil,
+                  "arrival" => %{
+                    "delay" => nil,
+                    "time" => Timex.to_unix(@current_time) - 100,
+                    "uncertainty" => nil
+                  },
                   "departure" => %{
                     "delay" => nil,
                     "time" => Timex.to_unix(@current_time) - 100,
