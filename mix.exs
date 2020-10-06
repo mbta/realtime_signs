@@ -46,7 +46,7 @@ defmodule RealtimeSigns.Mixfile do
       {:excoveralls, "== 0.12.3", only: :test},
       {:hackney, "== 1.15.2"},
       {:httpoison, "~> 1.0"},
-      {:logger_splunk_backend, git: "https://github.com/mbta/logger_splunk_backend.git"},
+      {:logger_splunk_backend, "~> 2.0"},
       {:jason, "~> 1.2.0"},
       {:sentry, "~> 8.0"},
       {:timex, "~> 3.1"},
