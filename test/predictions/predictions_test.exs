@@ -19,7 +19,7 @@ defmodule Predictions.PredictionsTest do
               "schedule_relationship" => "SKIPPED",
               "stop_id" => "70265",
               "stop_sequence" => 1,
-              "stops_away" => 0,
+              "stops_away" => nil,
               "stopped?" => false,
               "passthrough_time" => 1_491_570_110
             },
@@ -120,7 +120,7 @@ defmodule Predictions.PredictionsTest do
             schedule_relationship: :skipped,
             route_id: "Mattapan",
             destination_stop_id: "70261",
-            stops_away: 0,
+            stops_away: nil,
             stopped?: false,
             trip_id: "32568935",
             new_cars?: false,

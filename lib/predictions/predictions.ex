@@ -13,8 +13,8 @@ defmodule Predictions.Predictions do
       |> Enum.reject(&(&1["trip"]["schedule_relationship"] == "CANCELED"))
       |> Enum.flat_map(&transform_stop_time_updates/1)
       |> Enum.filter(fn {update, _, _, _, _, _, _, _} ->
-        (update["arrival"] || update["passthrough_time"] || update["departure"]) &&
-          not is_nil(update["stops_away"])
+        ((update["arrival"] || update["departure"]) &&
+           not is_nil(update["stops_away"])) || update["passthrough_time"]
       end)
       |> Enum.map(&prediction_from_update(&1, current_time))
       |> Enum.reject(
