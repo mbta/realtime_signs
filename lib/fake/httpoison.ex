@@ -321,7 +321,7 @@ defmodule Fake.HTTPoison do
                   "schedule_relationship" => "SKIPPED",
                   "stop_id" => "70261",
                   "stop_sequence" => 2,
-                  "stops_away" => 0,
+                  "stops_away" => nil,
                   "stopped?" => true
                 }
               ],
