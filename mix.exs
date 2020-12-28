@@ -44,7 +44,7 @@ defmodule RealtimeSigns.Mixfile do
       {:ex_aws, "~> 2.0"},
       {:ex_aws_s3, "~> 2.0"},
       {:excoveralls, "== 0.12.3", only: :test},
-      {:hackney, "== 1.15.2"},
+      {:hackney, "== 1.17.0"},
       {:httpoison, "~> 1.0"},
       {:logger_splunk_backend, "~> 2.0"},
       {:jason, "~> 1.2.0"},
