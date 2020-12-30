@@ -655,6 +655,138 @@ defmodule Predictions.PredictionsTest do
               }, _} = get_all(feed_message, @current_time)
     end
 
+    test "identifies new Red Line cars" do
+      feed_message = %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783458_32568935",
+            "is_deleted" => false,
+            "trip_update" => %{
+              "delay" => nil,
+              "stop_time_update" => [
+                %{
+                  "arrival" => %{
+                    "delay" => nil,
+                    "time" => 1_491_570_180,
+                    "uncertainty" => nil
+                  },
+                  "departure" => nil,
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70061",
+                  "stops_away" => 1,
+                  "stopped?" => false,
+                  "stop_sequence" => 1
+                }
+              ],
+              "timestamp" => nil,
+              "trip" => %{
+                "direction_id" => 1,
+                "route_id" => "Red",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
+              },
+              "vehicle" => %{
+                "id" => "R-545EF880",
+                "label" => "1900",
+                "license_plate" => nil,
+                "consist" => [
+                  %{"label" => "1900"},
+                  %{"label" => "1901"},
+                  %{"label" => "1902"},
+                  %{"label" => "1903"},
+                  %{"label" => "1905"},
+                  %{"label" => "1904"}
+                ]
+              }
+            },
+            "vehicle" => nil
+          }
+        ],
+        "header" => %{
+          "gtfs_realtime_version" => "1.0",
+          "incrementality" => "FULL_DATASET",
+          "timestamp" => 1_490_783_458
+        }
+      }
+
+      assert {%{
+                {"70061", 1} => [
+                  %Predictions.Prediction{
+                    new_cars?: true
+                  }
+                ]
+              }, _} = get_all(feed_message, @current_time)
+    end
+
+    test "identifies old Red Line cars" do
+      feed_message = %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783458_32568935",
+            "is_deleted" => false,
+            "trip_update" => %{
+              "delay" => nil,
+              "stop_time_update" => [
+                %{
+                  "arrival" => %{
+                    "delay" => nil,
+                    "time" => 1_491_570_180,
+                    "uncertainty" => nil
+                  },
+                  "departure" => nil,
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70061",
+                  "stops_away" => 1,
+                  "stopped?" => false,
+                  "stop_sequence" => 1
+                }
+              ],
+              "timestamp" => nil,
+              "trip" => %{
+                "direction_id" => 1,
+                "route_id" => "Red",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
+              },
+              "vehicle" => %{
+                "id" => "R-545EF880",
+                "label" => "1706",
+                "license_plate" => nil,
+                "consist" => [
+                  %{"label" => "1706"},
+                  %{"label" => "1707"},
+                  %{"label" => "1502"},
+                  %{"label" => "1503"},
+                  %{"label" => "1750"},
+                  %{"label" => "1751"}
+                ]
+              }
+            },
+            "vehicle" => nil
+          }
+        ],
+        "header" => %{
+          "gtfs_realtime_version" => "1.0",
+          "incrementality" => "FULL_DATASET",
+          "timestamp" => 1_490_783_458
+        }
+      }
+
+      assert {%{
+                {"70061", 1} => [
+                  %Predictions.Prediction{
+                    new_cars?: false
+                  }
+                ]
+              }, _} = get_all(feed_message, @current_time)
+    end
+
     test "include predictions with low uncertainty" do
       reassign_env(:filter_uncertain_predictions?, true)
 

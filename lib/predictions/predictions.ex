@@ -106,7 +106,7 @@ defmodule Predictions.Predictions do
       stopped?: stop_time_update["stopped?"],
       stops_away: stop_time_update["stops_away"],
       boarding_status: stop_time_update["boarding_status"],
-      new_cars?: consist_is_new?(consist),
+      new_cars?: consist_is_new?(consist, route_id),
       revenue_trip?: revenue_trip?,
       vehicle_id: vehicle_id
     }
@@ -120,16 +120,21 @@ defmodule Predictions.Predictions do
     Jason.decode!(body)
   end
 
-  @spec consist_is_new?([String.t()] | nil) :: boolean()
-  defp consist_is_new?(nil) do
+  @spec consist_is_new?([String.t()] | nil, String.t()) :: boolean()
+  defp consist_is_new?(nil, _route_id) do
     false
   end
 
-  defp consist_is_new?(consist) do
+  defp consist_is_new?(consist, route_id) do
     Enum.any?(consist, fn car ->
+      # See http://roster.transithistory.org/ for numbers of new cars
       case Integer.parse(car) do
-        :error -> false
-        {n, _remaining} -> 1400 <= n and n <= 1551
+        :error ->
+          false
+
+        {n, _remaining} ->
+          (route_id == "Orange" and 1400 <= n and n <= 1551) or
+            (route_id == "Red" and 1900 <= n and n <= 2151)
       end
     end)
   end
