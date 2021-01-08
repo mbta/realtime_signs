@@ -23,9 +23,34 @@ These can all be set with `export VARIABLE=value`, or e.g. `OCS_PORT=1234 iex -S
 
 ## Deploys
 
-Realtime signs (dev and prod) run as a Windows services on Opstech3.
+Realtime Signs (dev and prod) runs as Windows services on Opstech3, a virtual server hosted on hardware inside the MBTA network. You will need [VPN access](https://www.mbta.com/org/workfromhome) and [remote desktop access](https://github.com/mbta/wiki/blob/master/devops/accessing-windows-servers.md) to this server first.
 
-On Opstech3 there is a user, `RTRUser` where the code and compiled artifacts live. In order to access `/c/Users/RTRUser/` in Git Bash, you will have to navigate to the directory in the Windows GUI Explorer. The first time you open it, it will prompt you for permissions, and then after that you'll have access via Git Bash.
+### First-time steps
+
+1. Grant your account access to the `RTRUser` account's home directory, where the code and compiled artifacts live. In Windows Explorer, navigate to `C:\Users\RTRUser` and you'll be prompted to change the permissions on the folder. From here on, you should be able to access it in Git Bash via the path `/c/Users/RTRUser` (or right-click on the folder and "Git Bash Here").
+
+1. Generate a new SSH key and link it to your GitHub account. [Instructions are here](https://docs.github.com/en/github-ae@latest/github/authenticating-to-github/connecting-to-github-with-ssh); select "Linux" as your operating system and perform the steps in Git Bash.
+
+### Deploying
+
+To deploy a new version of the code:
+
+1. In Git Bash, navigate to `/c/Users/RTRUser/GitHub/realtime_signs_release_[dev|prod]`
+1. `git pull` the latest version
+1. Run `./build_release.sh realtime_signs_[dev|prod]` to compile a new release. The second argument gives the name of the Erlang node to run the release under and isn't terribly important as long as it's distinct for dev versus prod.
+1. Open the Windows `Services` application and restart `Realtime Signs (Dev/Prod)`
+1. Tag the release in git: `git tag -a yyyy-mm-dd -m "Deployed on [date] at [time]"`
+1. Push the tag to GitHub: `git push origin yyyy-mm-dd`
+
+### Rolling back
+
+To quickly roll back to a previous version:
+
+* Move the broken release: `mv _build _build-broken`
+* Restore the previous release: `mv _build-prev _build`
+* Restart the service
+
+### Setup details
 
 The version of Erlang we use is precompiled Erlang/OTP 22.1, installed via [this Windows installer](https://www.erlang-solutions.com/resources/download.html) to `/c/Users/RTRUser/bin/`.
 
@@ -36,20 +61,3 @@ The `realtime_signs` code is `git clone`d to `/c/Users/RTRUser/GitHub/realtime_s
 We build the application via Elixir-native `mix release`, setting the `PATH` to include the aforementioned versions of Elixir and Erlang. The release gets built into `_build/prod/rel/`.
 
 To manage the Windows service we use [`WinSW 2.9`](https://github.com/winsw/winsw/releases/tag/v2.9.0). The service is configured via an XML file in `/c/Users/RTRUser/apps/`. In particular, environment variables are updated by editing the XML file. Updates should also be made to the copy of the XML file in 1Password.
-
-To deploy a new version of the code:
-
-1. In Git Bash, navigate to `/c/Users/RTRUser/GitHub/realtime_signs_release_[dev|prod]`
-1. `git pull` the latest version
-1. Run `./build_release.sh realtime_signs_[dev|prod]` to compile a new release. The second argument gives the name of the Erlang node to run the relase under and isn't terribly important as long as it's distinct for dev versus prod.
-1. Open the Windows `Services` application and restart `realtime-signs-[staging/prod]`
-1. Tag the release in git: `git tag -a yyyy-mm-dd -m "Deployed on [date] at [time]"`
-1. Push the tag to GitHub: `git push origin yyyy-mm-dd`
-
-## Rolling back
-
-To quickly roll back to a previous version:
-
-* Move the broken release: `mv _build _build-broken`
-* Restore the previous release: `mv _build-prev _build`
-* Restart the service
