@@ -5959,26 +5959,14 @@
     "source_config": [
       [
         {
-          "stop_id": "70205",
-          "direction_id": 1,
-          "headway_direction_name": "Eastbound",
-          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
-          "platform": null,
-          "terminal": false,
-          "announce_arriving": true,
-          "announce_boarding": false
-        }
-      ],
-      [
-        {
           "stop_id": "70206",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
           "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
-          "announce_arriving": true,
-          "announce_boarding": false
+          "announce_arriving": false,
+          "announce_boarding": true
         }
       ]
     ]
