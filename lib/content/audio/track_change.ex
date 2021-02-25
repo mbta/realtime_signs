@@ -1,6 +1,6 @@
 defmodule Content.Audio.TrackChange do
   @moduledoc """
-  Track change: The next [line] train to [desitnation] is now boarding on [track]
+  Track change: The next [line] train to [destination] is now boarding on [track]
   """
 
   require Logger
