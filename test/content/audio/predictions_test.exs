@@ -18,7 +18,7 @@ defmodule Content.Audio.PredictionsTest do
   }
 
   describe "from_sign_content/3" do
-    test "returns a TrackChange audio when Green-B boarding other side at Park St" do
+    test "returns a TrackChange audio when Green-B boarding at C berth at Park St" do
       src = %{@src | stop_id: "70197", direction_id: 0, headway_destination: :boston_college}
 
       predictions = %Message.Predictions{
@@ -31,24 +31,24 @@ defmodule Content.Audio.PredictionsTest do
       assert %Audio.TrackChange{
                destination: :boston_college,
                route_id: "Green-B",
-               track: 1
+               berth: "70197"
              } = from_sign_content({src, predictions}, :top, false)
     end
 
-    test "returns a TrackChange audio when Green-E boarding other side at Park St" do
-      src = %{@src | stop_id: "70196", direction_id: 0, headway_destination: :heath_street}
+    test "returns a TrackChange audio when Green-E boarding at D berth at Park St" do
+      src = %{@src | stop_id: "70198", direction_id: 0, headway_destination: :heath_street}
 
       predictions = %Message.Predictions{
         destination: :heath_street,
         minutes: :boarding,
         route_id: "Green-E",
-        stop_id: "70196"
+        stop_id: "70198"
       }
 
       assert %Audio.TrackChange{
                destination: :heath_street,
                route_id: "Green-E",
-               track: 2
+               berth: "70198"
              } = from_sign_content({src, predictions}, :top, false)
     end
 

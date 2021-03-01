@@ -3,82 +3,156 @@ defmodule Content.Audio.TrackChangeTest do
   import ExUnit.CaptureLog
 
   describe "to_params/1" do
-    test "correctly changes tracks for b/d" do
+    test "correctly changes berths from b to c" do
       audio = %Content.Audio.TrackChange{
         destination: :boston_college,
         route_id: "Green-B",
-        track: 1
+        berth: "70197"
       }
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"115",
+                {"105",
                  [
                    "540",
                    "21000",
-                   "501",
-                   "21000",
-                   "536",
-                   "21000",
-                   "507",
-                   "21000",
-                   "4202",
-                   "21000",
-                   "544",
-                   "21000",
-                   "541"
+                   "813"
                  ], :audio_visual}}
     end
 
-    test "correctly changes tracks for c/e" do
+    test "correctly changes berths from c to b" do
+      audio = %Content.Audio.TrackChange{
+        destination: :cleveland_circle,
+        route_id: "Green-C",
+        berth: "70196"
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"105",
+                 [
+                   "540",
+                   "21000",
+                   "814"
+                 ], :audio_visual}}
+    end
+
+    test "correctly changes berths from d to e (reservoir)" do
+      audio = %Content.Audio.TrackChange{
+        destination: :reservoir,
+        route_id: "Green-D",
+        berth: "70199"
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"105",
+                 [
+                   "540",
+                   "21000",
+                   "815"
+                 ], :audio_visual}}
+    end
+
+    test "correctly changes berths from d to e (riverside)" do
+      audio = %Content.Audio.TrackChange{
+        destination: :riverside,
+        route_id: "Green-D",
+        berth: "70199"
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"105",
+                 [
+                   "540",
+                   "21000",
+                   "818"
+                 ], :audio_visual}}
+    end
+
+    test "correctly changes berths from e to d" do
       audio = %Content.Audio.TrackChange{
         destination: :heath_street,
         route_id: "Green-E",
-        track: 1
+        berth: "70198"
       }
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"115",
+                {"105",
                  [
                    "540",
                    "21000",
-                   "501",
-                   "21000",
-                   "539",
-                   "21000",
-                   "507",
-                   "21000",
-                   "4204",
-                   "21000",
-                   "544",
-                   "21000",
-                   "541"
+                   "816"
                  ], :audio_visual}}
     end
 
-    test "omits branch letter from Kenmore-bound trains" do
+    test "correctly announces Kenmore B track changes to the C platform" do
       audio = %Content.Audio.TrackChange{
         destination: :kenmore,
-        route_id: "Green-D",
-        track: 2
+        route_id: "Green-B",
+        berth: "70197"
       }
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"113",
+                {"105",
                  [
                    "540",
                    "21000",
-                   "501",
+                   "820"
+                 ], :audio_visual}}
+    end
+
+    test "correctly announces Kenmore C track changes to the B platform" do
+      audio = %Content.Audio.TrackChange{
+        destination: :kenmore,
+        route_id: "Green-C",
+        berth: "70196"
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"105",
+                 [
+                   "540",
                    "21000",
-                   "507",
+                   "823"
+                 ], :audio_visual}}
+    end
+
+    test "correctly announces Kenmore D track changes to the E platform" do
+      audio = %Content.Audio.TrackChange{
+        destination: :kenmore,
+        route_id: "Green-D",
+        berth: "70199"
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"105",
+                 [
+                   "540",
                    "21000",
-                   "4070",
+                   "822"
+                 ], :audio_visual}}
+    end
+
+    test "correctly announces Kenmore E track changes to the D platform" do
+      audio = %Content.Audio.TrackChange{
+        destination: :kenmore,
+        route_id: "Green-E",
+        berth: "70198"
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"105",
+                 [
+                   "540",
                    "21000",
-                   "544",
-                   "21000",
-                   "542"
+                   "821"
                  ], :audio_visual}}
     end
 
@@ -86,7 +160,7 @@ defmodule Content.Audio.TrackChangeTest do
       audio = %Content.Audio.TrackChange{
         destination: :unknown,
         route_id: "Green-E",
-        track: 1
+        berth: "00000"
       }
 
       log =
@@ -94,7 +168,7 @@ defmodule Content.Audio.TrackChangeTest do
           assert Content.Audio.to_params(audio) == nil
         end)
 
-      assert log =~ "unknown destination"
+      assert log =~ "unknown route, berth, destination"
     end
   end
 end
