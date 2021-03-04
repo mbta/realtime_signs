@@ -1282,6 +1282,16 @@
           "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
+        },
+        {
+          "stop_id": "70032",
+          "routes": ["Orange"],
+          "direction_id": 1,
+          "headway_direction_name": "Oak Grove",
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
         }
       ]
     ]
