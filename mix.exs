@@ -43,7 +43,7 @@ defmodule RealtimeSigns.Mixfile do
       {:ehmon, git: "https://github.com/mbta/ehmon.git"},
       {:ex_aws, "~> 2.0"},
       {:ex_aws_s3, "~> 2.0"},
-      {:excoveralls, "== 0.13.4", only: :test},
+      {:excoveralls, "== 0.14.0", only: :test},
       {:hackney, "== 1.17.0"},
       {:httpoison, "~> 1.0"},
       {:logger_splunk_backend, "~> 2.0"},
