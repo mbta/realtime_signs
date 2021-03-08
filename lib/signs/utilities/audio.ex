@@ -83,6 +83,10 @@ defmodule Signs.Utilities.Audio do
     false
   end
 
+  def should_interrupting_read?({_, %Content.Message.StoppedAtStation{}}, _sign, :bottom) do
+    false
+  end
+
   def should_interrupting_read?({_, %Content.Message.Headways.Bottom{}}, _sign, _line) do
     false
   end
@@ -255,6 +259,30 @@ defmodule Signs.Utilities.Audio do
     Audio.Predictions.from_sign_content(top_content, :top, multi_source?)
   end
 
+  defp get_audio(
+         {_, %Message.StoppedAtStation{destination: same} = top},
+         {_, %Message.StoppedAtStation{destination: same}},
+         _multi_source?
+       ) do
+    Audio.StoppedAtStation.from_message(top)
+  end
+
+  defp get_audio(
+         {_, %Message.StoppedAtStation{destination: same} = top},
+         {_, %Message.Predictions{destination: same}},
+         _multi_source?
+       ) do
+    Audio.StoppedAtStation.from_message(top)
+  end
+
+  defp get_audio(
+         {_, %Message.Predictions{destination: same}} = top_content,
+         {_, %Message.StoppedAtStation{destination: same}},
+         multi_source?
+       ) do
+    Audio.Predictions.from_sign_content(top_content, :top, multi_source?)
+  end
+
   defp get_audio(top, bottom, multi_source?) do
     top_audio = get_audio_for_line(top, :top, multi_source?)
     bottom_audio = get_audio_for_line(bottom, :bottom, multi_source?)
@@ -265,6 +293,10 @@ defmodule Signs.Utilities.Audio do
           Content.Audio.t() | nil
   defp get_audio_for_line({_, %Message.StoppedTrain{} = message}, _line, _multi_source?) do
     Audio.StoppedTrain.from_message(message)
+  end
+
+  defp get_audio_for_line({_, %Message.StoppedAtStation{} = message}, _line, _multi_source?) do
+    Audio.StoppedAtStation.from_message(message)
   end
 
   defp get_audio_for_line({_, %Message.Predictions{}} = content, line, multi_source?) do

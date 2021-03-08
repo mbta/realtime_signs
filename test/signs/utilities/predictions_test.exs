@@ -569,6 +569,22 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("70025", 1) do
+      [
+        %Predictions.Prediction{
+          stop_id: "70025",
+          direction_id: 1,
+          route_id: "Orange",
+          stopped?: false,
+          stops_away: 4,
+          boarding_status: "Stopped 4 stop away",
+          destination_stop_id: "Oak Grove",
+          seconds_until_arrival: 600,
+          seconds_until_departure: 610
+        }
+      ]
+    end
+
     def for_stop(_stop_id, _direction_id) do
       []
     end
@@ -677,6 +693,41 @@ defmodule Signs.Utilities.PredictionsTest do
       assert {
                {^src, %Content.Message.Predictions{destination: :alewife, minutes: 4}},
                {^src, %Content.Message.Predictions{destination: :alewife, minutes: 8}}
+             } = Signs.Utilities.Predictions.get_messages(sign)
+    end
+
+    test "When an OL train is stopped, show the station it's stopped at, only if in the experiment" do
+      initial_val = Application.get_env(:realtime_signs, :stations_away_experiment?)
+
+      on_exit(fn ->
+        Application.put_env(:realtime_signs, :stations_away_experiment?, initial_val)
+      end)
+
+      src = %SourceConfig{
+        stop_id: "70025",
+        headway_destination: :oak_grove,
+        direction_id: 1,
+        terminal?: false,
+        platform: nil,
+        announce_arriving?: false,
+        announce_boarding?: false
+      }
+
+      config = {[src]}
+      sign = %{@sign | source_config: config}
+
+      Application.put_env(:realtime_signs, :stations_away_experiment?, true)
+
+      assert {
+               {^src, %Content.Message.StoppedAtStation{destination: :oak_grove}},
+               {nil, %Content.Message.Empty{}}
+             } = Signs.Utilities.Predictions.get_messages(sign)
+
+      Application.put_env(:realtime_signs, :stations_away_experiment?, false)
+
+      assert {
+               {^src, %Content.Message.StoppedTrain{destination: :oak_grove}},
+               {nil, %Content.Message.Empty{}}
              } = Signs.Utilities.Predictions.get_messages(sign)
     end
 

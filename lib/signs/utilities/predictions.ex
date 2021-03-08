@@ -44,6 +44,10 @@ defmodule Signs.Utilities.Predictions do
     |> Enum.take(2)
     |> Enum.map(fn {source, prediction} ->
       cond do
+        stopped_train?(prediction) and prediction.route_id == "Orange" and
+            stations_away_experiment?() ->
+          {source, Content.Message.StoppedAtStation.from_prediction(prediction)}
+
         stopped_train?(prediction) ->
           {source, Content.Message.StoppedTrain.from_prediction(prediction)}
 
@@ -157,7 +161,7 @@ defmodule Signs.Utilities.Predictions do
 
   defp stopped_train?(prediction) do
     status = prediction.boarding_status
-    status && String.starts_with?(status, "Stopped") && status != "Stopped at station"
+    !is_nil(status) and String.starts_with?(status, "Stopped") and status != "Stopped at station"
   end
 
   defp allowed_multi_berth_platform?(
@@ -170,5 +174,9 @@ defmodule Signs.Utilities.Predictions do
 
   defp allowed_multi_berth_platform?(_, _) do
     false
+  end
+
+  defp stations_away_experiment? do
+    Application.get_env(:realtime_signs, :stations_away_experiment?, false)
   end
 end

@@ -187,6 +187,11 @@ defmodule Signs.Utilities.AudioTest do
       message = %Message.Headways.Top{destination: :alewife, vehicle_type: :train}
       assert should_interrupting_read?({@src, message}, %{@sign | source_config: {[@src]}}, :top)
     end
+
+    test "returns false if it's the bottom line that changes to StoppedAtStation" do
+      msg = %Message.StoppedAtStation{destination: :oak_grove, stopped_at: :wellington}
+      refute should_interrupting_read?({@src, msg}, %{@sign | source_config: {[@src]}}, :bottom)
+    end
   end
 
   describe "from_sign/1" do
@@ -615,6 +620,68 @@ defmodule Signs.Utilities.AudioTest do
                },
                ^sign
              } = from_sign(sign)
+    end
+
+    test "Announces StoppedAtStation for just top, if destination is same as bottom" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.StoppedAtStation{destination: :oak_grove, stopped_at: :wellington}},
+          current_content_bottom:
+            {@src, %Message.StoppedAtStation{destination: :oak_grove, stopped_at: :ruggles}}
+      }
+
+      assert {
+               %Content.Audio.StoppedAtStation{destination: :oak_grove, stopped_at: :wellington},
+               _
+             } = from_sign(sign)
+    end
+
+    test "Announces StoppedAtStation for just top, if bottom is a prediction with same destination" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.StoppedAtStation{destination: :oak_grove, stopped_at: :wellington}},
+          current_content_bottom:
+            {@src, %Message.Predictions{destination: :oak_grove, minutes: 10}}
+      }
+
+      assert {
+               %Content.Audio.StoppedAtStation{destination: :oak_grove, stopped_at: :wellington},
+               _
+             } = from_sign(sign)
+    end
+
+    test "Announces Prediction for just top, if bottom is a StoppedAtStation with same destination" do
+      sign = %{
+        @sign
+        | current_content_top: {@src, %Message.Predictions{destination: :oak_grove, minutes: 5}},
+          current_content_bottom:
+            {@src, %Message.StoppedAtStation{destination: :oak_grove, stopped_at: :ruggles}}
+      }
+
+      assert {
+               %Content.Audio.NextTrainCountdown{destination: :oak_grove, minutes: 5},
+               _
+             } = from_sign(sign)
+    end
+
+    test "Announces StoppedAtStation for both lines, if different destinations" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.StoppedAtStation{destination: :oak_grove, stopped_at: :wellington}},
+          current_content_bottom:
+            {@src, %Message.StoppedAtStation{destination: :forest_hills, stopped_at: :wellington}}
+      }
+
+      assert {{
+                %Content.Audio.StoppedAtStation{destination: :oak_grove, stopped_at: :wellington},
+                %Content.Audio.StoppedAtStation{
+                  destination: :forest_hills,
+                  stopped_at: :wellington
+                }
+              }, _} = from_sign(sign)
     end
   end
 end

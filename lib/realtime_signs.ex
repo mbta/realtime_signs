@@ -54,6 +54,11 @@ defmodule RealtimeSigns do
 
     :ok =
       Config.update_env(env, :number_of_http_updaters, "NUMBER_OF_HTTP_UPDATERS", type: :integer)
+
+    :ok =
+      Config.update_env(env, :stations_away_experiment?, "STATIONS_AWAY_EXPERIMENT",
+        type: :boolean
+      )
   end
 
   def http_updater_children do
