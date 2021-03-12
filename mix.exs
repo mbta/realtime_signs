@@ -13,7 +13,7 @@ defmodule RealtimeSigns.Mixfile do
       test_coverage: [tool: ExCoveralls],
       elixirc_paths: elixirc_paths(Mix.env()),
       dialyzer: [
-        plt_add_apps: [:mix, :hackney],
+        plt_add_apps: [:mix, :hackney, :httpd, :inets],
         plt_add_deps: true,
         ignore_warnings: ".dialyzer.ignore-warnings"
       ],
@@ -41,17 +41,18 @@ defmodule RealtimeSigns.Mixfile do
     [
       {:dialyxir, "~> 1.1.0", only: [:dev, :test], runtime: false},
       {:ehmon, git: "https://github.com/mbta/ehmon.git"},
-      {:ex_aws, "~> 2.0"},
       {:ex_aws_s3, "~> 2.0"},
+      {:ex_aws, "~> 2.0"},
       {:excoveralls, "== 0.14.0", only: :test},
       {:hackney, "== 1.17.0"},
       {:httpoison, "~> 1.0"},
-      {:logger_splunk_backend, "~> 2.0"},
       {:jason, "~> 1.2.0"},
+      {:logger_splunk_backend, "~> 2.0"},
+      {:mox, "~> 1.0.0", only: [:test]},
       {:sentry, "~> 8.0"},
+      {:stream_data, "~> 0.1", only: [:dev, :test]},
       {:timex, "~> 3.1"},
-      {:uuid, "~> 1.1", only: :test},
-      {:stream_data, "~> 0.1", only: [:dev, :test]}
+      {:uuid, "~> 1.1", only: :test}
     ]
   end
 

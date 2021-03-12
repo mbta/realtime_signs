@@ -1,9 +1,13 @@
 defmodule Engine.HealthTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   import ExUnit.CaptureLog
+  import Mox
+  require Logger
+
+  setup :verify_on_exit!
 
   test "logs pool stats" do
-    {:ok, _pid} = Engine.Health.start_link(name: :health_test, period_ms: 500)
+    {:ok, _pid} = Engine.Health.start_link(period_ms: 500)
 
     log =
       capture_log(fn ->
@@ -11,5 +15,60 @@ defmodule Engine.HealthTest do
       end)
 
     assert log =~ "event=pool_info"
+  end
+
+  test "restarts after 5 consecutive failed network checks" do
+    test_pid = self()
+
+    Engine.NetworkCheck.Mock
+    |> expect(:check, 1, fn -> :ok end)
+    |> expect(:check, 5, fn -> :error end)
+    |> stub(:check, fn ->
+      send(test_pid, :all_checks_done)
+      :ok
+    end)
+
+    {:ok, health_pid} =
+      Engine.Health.start_link(
+        period_ms: 15,
+        network_check_mod: Engine.NetworkCheck.Mock,
+        restart_fn: fn -> send(test_pid, :restarting) end
+      )
+
+    allow(Engine.NetworkCheck.Mock, test_pid, health_pid)
+
+    assert_receive :restarting, 150
+  end
+
+  test "does not restart after 5 non-consecutive failed network checks" do
+    test_pid = self()
+
+    Engine.NetworkCheck.Mock
+    |> expect(:check, 1, fn -> :ok end)
+    |> expect(:check, 4, fn -> :error end)
+    |> expect(:check, 1, fn -> :ok end)
+    |> expect(:check, 1, fn -> :error end)
+    |> stub(:check, fn ->
+      send(test_pid, :all_checks_done)
+      :ok
+    end)
+
+    {:ok, health_pid} =
+      Engine.Health.start_link(
+        period_ms: 15,
+        network_check_mod: Engine.NetworkCheck.Mock,
+        restart_fn: fn -> send(test_pid, :restarting) end
+      )
+
+    allow(Engine.NetworkCheck.Mock, test_pid, health_pid)
+
+    assert_receive :all_checks_done, 150
+    refute_received :restarting
+  end
+
+  describe "restart_noop/0" do
+    test "does nothing and returns :ok" do
+      assert Engine.Health.restart_noop() == :ok
+    end
   end
 end

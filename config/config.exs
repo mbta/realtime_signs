@@ -42,7 +42,8 @@ config :realtime_signs,
   s3_path: nil,
   api_v3_key: nil,
   api_v3_url: "https://green.dev.api.mbtace.com",
-  number_of_http_updaters: 4
+  number_of_http_updaters: 4,
+  restart_fn: &Engine.Health.restart_noop/0
 
 config :ex_aws,
   access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],
