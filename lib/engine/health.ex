@@ -2,6 +2,8 @@ defmodule Engine.Health do
   use GenServer
   require Logger
 
+  defstruct [:timer_ref]
+
   @hackney_pools [:default, :arinc_pool]
   @default_period_ms 60_000
 
@@ -11,17 +13,12 @@ defmodule Engine.Health do
     GenServer.start_link(__MODULE__, period_ms, name: name)
   end
 
-  @spec health_check(GenServer.server()) :: {:ok, []}
-  def health_check(pid) do
-    GenServer.call(pid, :health_check)
-  end
-
   def init(period_ms) do
-    {:ok, timer_ref} = :timer.apply_interval(period_ms, __MODULE__, :health_check, [self()])
-    {:ok, timer_ref}
+    {:ok, timer_ref} = :timer.send_interval(period_ms, self(), :health_check)
+    {:ok, %__MODULE__{timer_ref: timer_ref}}
   end
 
-  def handle_call(:health_check, _from, timer_ref) do
+  def handle_info(:health_check, state) do
     Enum.each(
       @hackney_pools,
       fn pool ->
@@ -35,6 +32,6 @@ defmodule Engine.Health do
       end
     )
 
-    {:reply, [], timer_ref}
+    {:noreply, state}
   end
 end
