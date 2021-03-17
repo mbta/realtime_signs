@@ -26,20 +26,11 @@ defmodule Content.Audio.Predictions do
         multi_source?
       ) do
     cond do
-      predictions.route_id in ["Green-B", "Green-D"] and
-        predictions.stop_id in ["70197", "70199"] and predictions.minutes == :boarding ->
+      TrackChange.park_track_change?(predictions) and predictions.minutes == :boarding ->
         %TrackChange{
           destination: predictions.destination,
           route_id: predictions.route_id,
-          track: 1
-        }
-
-      predictions.route_id in ["Green-C", "Green-E"] and
-        predictions.stop_id in ["70196", "70198"] and predictions.minutes == :boarding ->
-        %TrackChange{
-          destination: predictions.destination,
-          route_id: predictions.route_id,
-          track: 2
+          berth: predictions.stop_id
         }
 
       predictions.minutes == :boarding ->
