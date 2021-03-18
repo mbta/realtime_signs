@@ -1425,12 +1425,12 @@
         {
           "stop_id": "70031",
           "routes": ["Orange"],
-          "direction_id": 1,
-          "headway_direction_name": "Oak Grove",
+          "direction_id": 0,
+          "headway_direction_name": "Forest Hills",
           "platform": null,
-          "terminal": false,
-          "announce_arriving": true,
-          "announce_boarding": false
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": true
         }
       ]
     ]
@@ -1489,6 +1489,16 @@
           "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
+        },
+        {
+          "stop_id": "70029",
+          "routes": ["Orange"],
+          "direction_id": 0,
+          "headway_direction_name": "Forest Hills",
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
         }
       ]
     ]
@@ -1508,6 +1518,16 @@
           "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        },
+        {
+          "stop_id": "70029",
+          "routes": ["Orange"],
+          "direction_id": 0,
+          "headway_direction_name": "Forest Hills",
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
