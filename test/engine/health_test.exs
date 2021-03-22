@@ -66,6 +66,18 @@ defmodule Engine.HealthTest do
     refute_received :restarting
   end
 
+  test "handles unknown messages like :ssl_closed" do
+    {:ok, pid} = Engine.Health.start_link()
+
+    log =
+      capture_log(fn ->
+        send(pid, :ssl_closed)
+      end)
+
+    assert log =~ "unknown_message"
+    assert Process.alive?(pid)
+  end
+
   describe "restart_noop/0" do
     test "does nothing and returns :ok" do
       assert Engine.Health.restart_noop() == :ok
