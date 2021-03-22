@@ -46,6 +46,11 @@ defmodule Engine.Health do
     {:noreply, state}
   end
 
+  def handle_info(msg, state) do
+    Logger.info("Engine.Health unknown_message msg=#{inspect(msg)}")
+    {:noreply, state}
+  end
+
   defp log_hackney_pools do
     Enum.each(
       @hackney_pools,
