@@ -30,22 +30,14 @@ defmodule Engine.ScheduledHeadwaysTest do
 
   defmodule FakeScheduleFetcher do
     @times [
-      ~N[2017-07-04 09:05:00],
-      ~N[2017-07-04 08:55:00],
-      ~N[2017-07-04 08:45:00],
-      ~N[2017-07-04 09:20:00]
+      "2017-07-04T09:05:00-04:00",
+      "2017-07-04T08:55:00-04:00",
+      "2017-07-04T08:45:00-04:00",
+      "2017-07-04T09:20:00-04:00"
     ]
 
     def get_schedules(["123"]) do
-      Enum.map(@times, fn time ->
-        %{
-          "relationships" => %{"stop" => %{"data" => %{"id" => "123"}}},
-          "attributes" => %{
-            "departure_time" =>
-              Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
-          }
-        }
-      end)
+      get_test_times("123")
     end
 
     def get_schedules(["456"]) do
@@ -68,20 +60,19 @@ defmodule Engine.ScheduledHeadwaysTest do
               )
           }
         }
-        | Enum.map(@times, fn time ->
-            %{
-              "relationships" => %{"stop" => %{"data" => %{"id" => "first_last_departures"}}},
-              "attributes" => %{
-                "departure_time" =>
-                  Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
-              }
-            }
-          end)
+        | get_test_times("first_last_departures")
       ]
     end
 
-    def get_test_times() do
-      @times
+    def get_test_times(stop_id) do
+      Enum.map(@times, fn time ->
+        %{
+          "relationships" => %{"stop" => %{"data" => %{"id" => stop_id}}},
+          "attributes" => %{
+            "departure_time" => time
+          }
+        }
+      end)
     end
   end
 
@@ -284,16 +275,7 @@ defmodule Engine.ScheduledHeadwaysTest do
 
   describe "data_update callback" do
     test "updates all gtfs stop id schedule data in the state" do
-      schedules =
-        Enum.map(FakeScheduleFetcher.get_test_times(), fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "123"}}},
-            "attributes" => %{
-              "departure_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
-            }
-          }
-        end)
+      schedules = FakeScheduleFetcher.get_test_times("123")
 
       :first_last_departures_test1 =
         :ets.new(:first_last_departures_test1, [
@@ -327,27 +309,8 @@ defmodule Engine.ScheduledHeadwaysTest do
     end
 
     test "handles empty results from request" do
-      schedules_123 =
-        Enum.map(FakeScheduleFetcher.get_test_times(), fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "123"}}},
-            "attributes" => %{
-              "departure_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
-            }
-          }
-        end)
-
-      schedules_456 =
-        Enum.map(FakeScheduleFetcher.get_test_times(), fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "456"}}},
-            "attributes" => %{
-              "departure_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
-            }
-          }
-        end)
+      schedules_123 = FakeScheduleFetcher.get_test_times("123")
+      schedules_456 = FakeScheduleFetcher.get_test_times("456")
 
       :first_last_departures_test2 =
         :ets.new(:first_last_departures_test2, [
@@ -371,27 +334,8 @@ defmodule Engine.ScheduledHeadwaysTest do
     end
 
     test "handles errors in the request" do
-      schedules_123 =
-        Enum.map(FakeScheduleFetcher.get_test_times(), fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "123"}}},
-            "attributes" => %{
-              "departure_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
-            }
-          }
-        end)
-
-      schedules_789 =
-        Enum.map(FakeScheduleFetcher.get_test_times(), fn time ->
-          %{
-            "relationships" => %{"stop" => %{"data" => %{"id" => "789"}}},
-            "attributes" => %{
-              "departure_time" =>
-                Timex.format!(Timex.to_datetime(time, "America/New_York"), "{ISO:Extended}")
-            }
-          }
-        end)
+      schedules_123 = FakeScheduleFetcher.get_test_times("123")
+      schedules_789 = FakeScheduleFetcher.get_test_times("789")
 
       :first_last_departures_test3 =
         :ets.new(:first_last_departures_test3, [
