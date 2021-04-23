@@ -358,5 +358,36 @@ defmodule Engine.ScheduledHeadwaysTest do
 
       assert state.schedule_data == updated_state.schedule_data
     end
+
+    test "returns DateTimes in a valid format" do
+      schedules_123 = FakeScheduleFetcher.get_test_times("123")
+
+      :first_last_departures_test4 =
+        :ets.new(:first_last_departures_test4, [
+          :set,
+          :protected,
+          :named_table,
+          read_concurrency: true
+        ])
+
+      state = %{
+        schedule_data: %{"123" => schedules_123},
+        first_last_departures_ets_table: :first_last_departures_test4,
+        fetcher: FakeScheduleFetcher,
+        fetch_ms: 30_000,
+        fetch_chunk_size: 1,
+        stop_ids: ["123"]
+      }
+
+      {:noreply, _updated_state} = Engine.ScheduledHeadways.handle_info(:data_update, state)
+
+      [{first, last}] =
+        Engine.ScheduledHeadways.get_first_last_departures(:first_last_departures_test4, ["123"])
+
+      # Ensure that after parsing and loading datetimes we can use them with native functions.
+      # Timex had a bug where its parser would result in an invalid datetime which blows up
+      # non-Timex datetime operations.
+      assert DateTime.add(first, 10)
+    end
   end
 end

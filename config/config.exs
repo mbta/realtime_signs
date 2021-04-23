@@ -55,7 +55,9 @@ config :ehmon, :report_mf, {:ehmon, :info_report}
 
 config :sentry, json_library: Jason
 
-config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
+# Have to use Timex's DB for now because Timex.parse can return times in
+# "Etc/UTC-4" time zone, which is invalid by IANA and TzData.TimeZoneDatabase
+config :elixir, :time_zone_database, Timex.Timezone.Database
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
