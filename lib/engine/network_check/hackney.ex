@@ -13,7 +13,7 @@ defmodule Engine.NetworkCheck.Hackney do
       ])
 
     case response do
-      {:ok, 200, _} ->
+      {:ok, status, _} when status >= 200 and status < 300 ->
         Logger.info("#{__MODULE__} check_network result=success")
         :ok
 
