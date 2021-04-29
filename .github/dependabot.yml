@@ -1,0 +1,25 @@
+version: 2
+updates:
+- package-ecosystem: mix
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "10:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: ex_aws
+    versions:
+    - 2.1.7
+    - 2.1.8
+    - 2.1.9
+    - 2.2.0
+  - dependency-name: timex
+    versions:
+    - 3.7.0
+    - 3.7.2
+    - 3.7.3
+  - dependency-name: hackney
+    versions:
+    - 1.17.1
+    - 1.17.2
+    - 1.17.3
