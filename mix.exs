@@ -10,7 +10,7 @@ defmodule RealtimeSigns.Mixfile do
       elixir: "~> 1.5",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      test_coverage: [tool: ExCoveralls],
+      test_coverage: [tool: LcovEx],
       elixirc_paths: elixirc_paths(Mix.env()),
       dialyzer: [
         plt_add_apps: [:mix, :hackney, :httpd, :inets],
@@ -43,7 +43,7 @@ defmodule RealtimeSigns.Mixfile do
       {:ehmon, git: "https://github.com/mbta/ehmon.git"},
       {:ex_aws_s3, "~> 2.0"},
       {:ex_aws, "~> 2.0"},
-      {:excoveralls, "== 0.14.0", only: :test},
+      {:lcov_ex, "~> 0.2", only: [:dev, :test], runtime: false},
       {:hackney, "== 1.17.4"},
       {:httpoison, "~> 1.0"},
       {:jason, "~> 1.2.0"},
