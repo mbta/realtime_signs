@@ -1,29 +1,62 @@
 defmodule Signs.Utilities.SourceConfig do
   @moduledoc """
-  Configuration for a sign's data sourcess, via JSON.
+  Configuration for a sign's data sourcess, via JSON. Configuration of a sign looks like:
 
-  Provide each individual data source as a JSON map like the following:
+  ## Sign (zone) config
 
   {
-    "stop_id": "123",
-    "direction_id": 0,
-    "platform": null,
-    "terminal": true
-  }
+    "id": "roxbury_crossing_southbound",
+    "headway_group": "orange_trunk",
+    "type": "realtime",
+    "pa_ess_loc": "OROX",
+    "text_zone": "s",
+    "audio_zones": ["s"],
+    "read_loop_offset": 60,
+    "source_config": [...]
+  },
 
-  where "stop_id" is the GTFS Stop ID, "direction_id" is either 0 or 1 and corresponds to north/south,
-  west/east, inbound/outbound, platform is "ashmont", "braintree" (for JFK/UMass weirdness) or null, and
-  "terminal" is whether the stop is considered a terminal (whether we should use the arrival or departure
-  prediction times, and whether we should announce "arrives" or "departs" on the speakers).
+  * id: the internal ID of this "sign". Really, it's a "zone" and could have a few physical signs
+    as a part of it in the station, but they all display exactly the same content. Logically
+    they're a single entity in the ARINC system as far as we can interact with it. This ID is also
+    used by signs-ui, and is how realtime-signs knows how signs-ui has configured the sign.
+  * headway_group: this references the signs-ui values that the PIOs set for headways.
+  * type: always "realtime". (there were other types in previous iterations of the app.)
+  * pa_ess_loc: the ARINC station code. Starts with the line color B, R, O, G, or M, and then
+    three letters for the station.
+  * text_zone: one of the 6 zones ARINC divides a station into, for the purpose of sending text to
+    the sign.
+  * audio_zones: a list of those ARINC zones for the purpose of sending audio. This may differ
+    from the text_zone when the speakers are close enough to cause confusion. For example, at Park
+    Street for the Red line, we have the center platform text_zone set to "c", but the audio_zones
+    set to [], while the north zone we have the text_zone set to "n" and the audio_zones set to
+    ["n", "c"]. So the center platform doesn't play audio of its *own*, but rather the north and
+    south platforms play their audio over the center platform speakers. Since a train that goes to
+    "ARR" will do so simultaneously for either the north or south platform *and* the center
+    platform, this configuration prevents simultaneous, slightly overlapping audio of the same
+    content.
+  * read_loop_offset: how many seconds to wait after app start-up before entering the "read loop",
+    which reads things like "The next train to X arrives in 3 minutes. The following train arrives
+    in 8 minutes". We generally have different read_loop_offsets for different zones, or where
+    speakers are particularly close, to encourage them to play their audio at different times.
+  * source_config: see below.
 
-  A list of sources can be provided in a group: [{...}, {...}, {...}, ...]. All the sources will be sorted
-  together in order of their respective arrivals/departures (depending on their respective "terminal" values).
-  For example, JFK mezzanine northbound uses 70086 and 70096 in a source group, since those are the Ashmont
-  and Braintree platforms, and it wishes to display the next train from either location.
+  ## Source config
+  A sign's data is provided via the "source_config" key, which is a list of lists of "sources"
+  (see next section).
 
-  We currently support up to two _lists_ of sources. If one list is provided, then its next two trips will
-  show up on the lines of the sign. If two lists are provided, then the next trip from each list will
-  appear on different lines of the sign.
+  A list of sources can be provided: [{...}, {...}, {...}, ...]. The sources determine which
+  predictions to use in the `Engine.Predictions` process. When a list of multiple sources is
+  provided, their corresponding predictions are aggregated and sorted by arrival time (or
+  departure, for terminals), so that the "next" train will be the earliest arriving train from any
+  of the sources. For example, the JFK mezzanine sign's top line uses a source list of two
+  sources, with GTFS stop IDs 70086 and 70096, which are the Ashmont and Braintree northbound
+  platforms. That way the sign will say when the next northbound train will be arriving at JFK,
+  from either of the Braintree or Ashmont branches.
+
+  The "source_config" key currently supports up to two _lists_ of sources. If one list is
+  provided, then this sign is a "platform" sign and its next two trips will show up on the two
+  lines of the sign. If two lists are provided, then this sign is a "mezzanine" or "center" sign
+  and the next trip from each list will appear on different lines of the sign.
 
   The JSON structure for one list of sources is:
 
@@ -37,6 +70,37 @@ defmodule Signs.Utilities.SourceConfig do
     [{...}, {...}],
     [{...}, {...}]
   ]
+
+  ## Source
+
+  Allows specifying one of a sign's data sources that it uses to calculate what to display. It
+  looks like:
+
+  {
+    "stop_id": "70008",
+    "routes": ["Orange"],
+    "direction_id": 0,
+    "headway_direction_name": "Forest Hills",
+    "platform": null,
+    "terminal": false,
+    "announce_arriving": true,
+    "announce_boarding": false
+  }
+
+  * stop_id: The GTFS stop_id that it uses for prediction data.
+  * routes: A list of routes that are relevant to this sign regarding alerts.
+  * direction_id: 0 or 1, used in tandem with the stop ID for predictions
+  * headway_direction_name: The headsign to use when in "headway mode"
+  * platform: mostly null, but :ashmont | :braintree for JFK/UMass, where it's used for the "next
+    train to X is approaching, on the Y platform" audio.
+  * terminal: whether this is a "terminal", and should use arrival or departure times in its
+    countdown.
+  * announce_arriving: whether to play audio when a sign goes to ARR.
+  * announce_boarding: whether to play audio when a sign goes to BRD. Generally we do one or the
+    other. Considerations include how noisy the station is, what we've done in the past, how
+    reliable ARR is (BRD is reliable, but especially at Boylston, e.g., ARR can have the "next"
+    train change frequently, so you don't want to announce the wrong one is arriving), and whether
+    it's a terminal or not.
   """
 
   require Logger
