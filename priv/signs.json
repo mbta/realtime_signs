@@ -5551,7 +5551,7 @@
         {
           "stop_id": "70241",
           "direction_id": 0,
-          "headway_direction_name": "Heath St",
+          "headway_direction_name": "Heath Street",
           "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
@@ -5597,7 +5597,7 @@
         {
           "stop_id": "70239",
           "direction_id": 0,
-          "headway_direction_name": "Heath St",
+          "headway_direction_name": "Heath Street",
           "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
@@ -5632,7 +5632,7 @@
         {
           "stop_id": "70239",
           "direction_id": 0,
-          "headway_direction_name": "Westbound",
+          "headway_direction_name": "Heath Street",
           "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
