@@ -50,6 +50,7 @@ defmodule RealtimeSigns.Mixfile do
       {:logger_splunk_backend, "~> 2.0"},
       {:mox, "~> 1.0.0", only: [:test]},
       {:sentry, "~> 8.0"},
+      {:recon, "~> 2.5"},
       {:stream_data, "~> 0.1", only: [:dev, :test]},
       {:timex, "~> 3.1"},
       {:uuid, "~> 1.1", only: :test}

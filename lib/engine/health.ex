@@ -5,7 +5,7 @@ defmodule Engine.Health do
   defstruct [:timer_ref, :network_check_mod, :restart_fn, failed_requests: 0]
 
   @type t :: %__MODULE__{
-          timer_ref: any(),
+          timer_ref: :timer.tref(),
           failed_requests: integer(),
           network_check_mod: module(),
           restart_fn: (() -> :ok)
@@ -14,17 +14,26 @@ defmodule Engine.Health do
   @hackney_pools [:default, :arinc_pool]
   @default_period_ms 60_000
   @failed_request_limit 5
+  @process_health_interval_ms 5_000
+  @process_metrics ~w(memory binary_memory heap_size total_heap_size message_queue_len reductions)a
 
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts)
   end
 
+  @spec init(keyword) :: {:ok, Engine.Health.t()}
   def init(opts) do
     period_ms = Keyword.get(opts, :period_ms, @default_period_ms)
     network_check_mod = Keyword.get(opts, :network_check_mod, Engine.NetworkCheck.Hackney)
     restart_fn = Keyword.get(opts, :restart_fn, Application.get_env(:realtime_signs, :restart_fn))
 
     {:ok, timer_ref} = :timer.send_interval(period_ms, self(), :health_check)
+
+    Process.send_after(
+      self(),
+      {:process_health, @process_health_interval_ms},
+      @process_health_interval_ms
+    )
 
     {:ok,
      %__MODULE__{
@@ -42,6 +51,21 @@ defmodule Engine.Health do
       Logger.error("restarting_application")
       state.restart_fn.()
     end
+
+    {:noreply, state}
+  end
+
+  def handle_info({:process_health, interval}, state) do
+    diagnostic_processes()
+    |> Stream.map(&process_metrics/1)
+    |> Enum.each(fn {name, supervisor, metrics} ->
+      Logger.info([
+        'realtime_signs_process_health name="#{inspect(name)}" supervisor="#{inspect(supervisor)}" ',
+        metrics
+      ])
+    end)
+
+    Process.send_after(self(), {:process_health, interval}, interval)
 
     {:noreply, state}
   end
@@ -83,5 +107,67 @@ defmodule Engine.Health do
     # For configuration, releases don't allow function literals, so this is
     # to be used in config.exs like `&Engine.Health.restart_noop/0`.
     :ok
+  end
+
+  @type process_info() :: {pid(), name :: term(), supervisor :: term()}
+
+  @spec diagnostic_processes() :: Enumerable.t()
+  defp diagnostic_processes do
+    [
+      descendants_of(RealtimeSigns),
+      top_processes_by(:memory, limit: 20),
+      top_processes_by(:binary_memory, limit: 20)
+    ]
+    |> Stream.concat()
+    |> Stream.uniq_by(&elem(&1, 0))
+  end
+
+  @spec descendants_of(module()) :: Enumerable.t()
+  defp descendants_of(supervisor) do
+    Stream.flat_map(Supervisor.which_children(supervisor), &child_entries(&1, supervisor))
+  end
+
+  @spec top_processes_by(atom(), limit: non_neg_integer()) :: Enumerable.t()
+  defp top_processes_by(attribute, limit: limit) do
+    Stream.map(:recon.proc_count(attribute, limit), &recon_entry/1)
+  end
+
+  @spec child_entries(
+          {name :: term(), child :: Supervisor.child() | :restarting,
+           type :: :worker | :supervisor, modules :: [module()] | :dynamic},
+          supervisor :: term()
+        ) :: nil | [] | [process_info()]
+  defp child_entries({_name, status, _type, _modules}, _supervisor) when is_atom(status), do: []
+
+  defp child_entries({name, pid, :supervisor, _modules}, _supervisor) do
+    if Process.alive?(pid) do
+      pid |> Supervisor.which_children() |> Stream.flat_map(&child_entries(&1, name))
+    end
+  end
+
+  defp child_entries({name, pid, _, _}, supervisor), do: [{pid, name, supervisor}]
+
+  @spec recon_entry(:recon.proc_attrs()) :: process_info()
+  defp recon_entry({pid, _count, [name | _]}) when is_atom(name), do: {pid, name, nil}
+  defp recon_entry({pid, _count, _info}), do: {pid, nil, nil}
+
+  @spec process_metrics({pid(), term() | nil, term() | nil}) :: {term(), term(), iodata()}
+  defp process_metrics({pid, name, supervisor}) do
+    metrics =
+      pid
+      |> safe_recon_info(@process_metrics)
+      |> Stream.map(fn {metric, value} -> "#{metric}=#{value}" end)
+      |> Enum.intersperse(" ")
+
+    {name, supervisor, metrics}
+  end
+
+  # work around https://github.com/ferd/recon/issues/95
+  @spec safe_recon_info(pid(), [atom()]) ::
+          [] | [{:recon.info_type(), [{:recon.info_key(), term()}]}]
+  defp safe_recon_info(pid, metrics) do
+    :recon.info(pid, metrics)
+  rescue
+    FunctionClauseError -> []
   end
 end

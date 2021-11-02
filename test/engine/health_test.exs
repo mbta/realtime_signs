@@ -78,6 +78,25 @@ defmodule Engine.HealthTest do
     assert Process.alive?(pid)
   end
 
+  test "logs metrics of main app tree" do
+    log =
+      capture_log([level: :info], fn ->
+        Engine.Health.handle_info({:process_health, 1_000}, %Engine.Health{})
+      end)
+
+    assert log =~ ~r/
+      realtime_signs_process_health
+      \ name="Engine.Config"
+      \ supervisor="RealtimeSigns"
+      \ memory=\d+
+      \ binary_memory=\d+
+      \ heap_size=\d+
+      \ total_heap_size=\d+
+      \ message_queue_len=\d+
+      \ reductions=\d+
+    /x
+  end
+
   describe "restart_noop/0" do
     test "does nothing and returns :ok" do
       assert Engine.Health.restart_noop() == :ok
