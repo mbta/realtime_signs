@@ -81,7 +81,7 @@ defmodule Engine.HealthTest do
   test "logs metrics of main app tree" do
     log =
       capture_log([level: :info], fn ->
-        Engine.Health.handle_info({:process_health, 1_000}, %Engine.Health{})
+        Engine.Health.handle_info(:process_health, %Engine.Health{})
       end)
 
     assert log =~ ~r/

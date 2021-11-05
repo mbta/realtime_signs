@@ -2,10 +2,9 @@ defmodule Engine.Health do
   use GenServer
   require Logger
 
-  defstruct [:timer_ref, :network_check_mod, :restart_fn, failed_requests: 0]
+  defstruct [:network_check_mod, :restart_fn, failed_requests: 0]
 
   @type t :: %__MODULE__{
-          timer_ref: :timer.tref(),
           failed_requests: integer(),
           network_check_mod: module(),
           restart_fn: (() -> :ok)
@@ -14,7 +13,7 @@ defmodule Engine.Health do
   @hackney_pools [:default, :arinc_pool]
   @default_period_ms 60_000
   @failed_request_limit 5
-  @process_health_interval_ms 5_000
+  @process_health_interval_ms 300_000
   @process_metrics ~w(memory binary_memory heap_size total_heap_size message_queue_len reductions)a
 
   def start_link(opts \\ []) do
@@ -27,17 +26,11 @@ defmodule Engine.Health do
     network_check_mod = Keyword.get(opts, :network_check_mod, Engine.NetworkCheck.Hackney)
     restart_fn = Keyword.get(opts, :restart_fn, Application.get_env(:realtime_signs, :restart_fn))
 
-    {:ok, timer_ref} = :timer.send_interval(period_ms, self(), :health_check)
-
-    Process.send_after(
-      self(),
-      {:process_health, @process_health_interval_ms},
-      @process_health_interval_ms
-    )
+    {:ok, _timer_ref} = :timer.send_interval(period_ms, self(), :health_check)
+    {:ok, _timer_ref} = :timer.send_interval(@process_health_interval_ms, self(), :process_health)
 
     {:ok,
      %__MODULE__{
-       timer_ref: timer_ref,
        network_check_mod: network_check_mod,
        restart_fn: restart_fn
      }}
@@ -55,7 +48,7 @@ defmodule Engine.Health do
     {:noreply, state}
   end
 
-  def handle_info({:process_health, interval}, state) do
+  def handle_info(:process_health, state) do
     diagnostic_processes()
     |> Stream.map(&process_metrics/1)
     |> Enum.each(fn {name, supervisor, metrics} ->
@@ -64,8 +57,6 @@ defmodule Engine.Health do
         metrics
       ])
     end)
-
-    Process.send_after(self(), {:process_health, interval}, interval)
 
     {:noreply, state}
   end
@@ -114,7 +105,7 @@ defmodule Engine.Health do
   @spec diagnostic_processes() :: Enumerable.t()
   defp diagnostic_processes do
     [
-      descendants_of(RealtimeSigns),
+      Stream.flat_map(Supervisor.which_children(RealtimeSigns), &descendants(&1, RealtimeSigns)),
       top_processes_by(:memory, limit: 20),
       top_processes_by(:binary_memory, limit: 20)
     ]
@@ -122,30 +113,25 @@ defmodule Engine.Health do
     |> Stream.uniq_by(&elem(&1, 0))
   end
 
-  @spec descendants_of(module()) :: Enumerable.t()
-  defp descendants_of(supervisor) do
-    Stream.flat_map(Supervisor.which_children(supervisor), &child_entries(&1, supervisor))
-  end
-
   @spec top_processes_by(atom(), limit: non_neg_integer()) :: Enumerable.t()
   defp top_processes_by(attribute, limit: limit) do
     Stream.map(:recon.proc_count(attribute, limit), &recon_entry/1)
   end
 
-  @spec child_entries(
+  @spec descendants(
           {name :: term(), child :: Supervisor.child() | :restarting,
            type :: :worker | :supervisor, modules :: [module()] | :dynamic},
           supervisor :: term()
         ) :: nil | [] | [process_info()]
-  defp child_entries({_name, status, _type, _modules}, _supervisor) when is_atom(status), do: []
+  defp descendants({_name, status, _type, _modules}, _supervisor) when is_atom(status), do: []
 
-  defp child_entries({name, pid, :supervisor, _modules}, _supervisor) do
+  defp descendants({name, pid, :supervisor, _modules}, _supervisor) do
     if Process.alive?(pid) do
-      pid |> Supervisor.which_children() |> Stream.flat_map(&child_entries(&1, name))
+      pid |> Supervisor.which_children() |> Stream.flat_map(&descendants(&1, name))
     end
   end
 
-  defp child_entries({name, pid, _, _}, supervisor), do: [{pid, name, supervisor}]
+  defp descendants({name, pid, _, _}, supervisor), do: [{pid, name, supervisor}]
 
   @spec recon_entry(:recon.proc_attrs()) :: process_info()
   defp recon_entry({pid, _count, [name | _]}) when is_atom(name), do: {pid, name, nil}
