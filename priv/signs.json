@@ -5115,6 +5115,98 @@
     ]
   },
   {
+    "id": "babcock_st_eastbound",
+    "headway_group": "green_b",
+    "pa_ess_loc": "GBAB",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "170136",
+          "direction_id": 1,
+          "headway_direction_name": "Government Center",
+          "routes": ["Green-B"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "babcock_st_westbound",
+    "headway_group": "green_b",
+    "pa_ess_loc": "GBAB",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "170137",
+          "direction_id": 0,
+          "headway_direction_name": "Boston College",
+          "routes": ["Green-B"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "amory_st_eastbound",
+    "headway_group": "green_b",
+    "pa_ess_loc": "GAMO",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "170140",
+          "direction_id": 1,
+          "headway_direction_name": "Government Center",
+          "routes": ["Green-B"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "amory_st_westbound",
+    "headway_group": "green_b",
+    "pa_ess_loc": "GAMO",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": ["w"],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "170141",
+          "direction_id": 0,
+          "headway_direction_name": "Boston College",
+          "routes": ["Green-B"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
     "id": "kenmore_b_eastbound",
     "headway_group": "green_trunk",
     "pa_ess_loc": "GKEN",
