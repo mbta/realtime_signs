@@ -90,7 +90,8 @@ defmodule Signs.Utilities.SourceConfig do
   * stop_id: The GTFS stop_id that it uses for prediction data.
   * routes: A list of routes that are relevant to this sign regarding alerts.
   * direction_id: 0 or 1, used in tandem with the stop ID for predictions
-  * headway_direction_name: The headsign to use when in "headway mode"
+  * headway_direction_name: The headsign used to generate the "trains every X minutes" message in
+    headway mode. Must be a value recognized by `PaEss.Utilities.headsign_to_destination/1`.
   * platform: mostly null, but :ashmont | :braintree for JFK/UMass, where it's used for the "next
     train to X is approaching, on the Y platform" audio.
   * terminal: whether this is a "terminal", and should use arrival or departure times in its
