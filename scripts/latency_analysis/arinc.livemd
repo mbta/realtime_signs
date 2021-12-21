@@ -1,0 +1,298 @@
+# ARINC
+
+## Deps
+
+```elixir
+Mix.install([:nimble_csv, :vega_lite, :kino])
+alias VegaLite, as: Vl
+alias NimbleCSV.RFC4180, as: CSV
+```
+
+## Helpers
+
+```elixir
+defmodule Helpers do
+  def parse_date(date_str) do
+    {date, _rest} = String.split_at(date_str, 10)
+
+    case Date.from_iso8601(date) do
+      {:ok, dt} -> dt
+      _ -> nil
+    end
+  end
+
+  def parse_line(cols) do
+    [
+      key,
+      sent_at,
+      uid,
+      station,
+      zone,
+      line,
+      content,
+      seconds_to_head,
+      sign_num,
+      seconds_to_sign
+    ] = cols
+
+    if seconds_to_sign != "" do
+      <<_::bytes-size(11)>> <> <<hour::bytes-size(2)>> <> _ = sent_at
+
+      [
+        %{
+          key: key,
+          sent_at: sent_at,
+          sent_hour: String.to_integer(hour),
+          uid: uid,
+          station: station,
+          zone: zone,
+          line: line,
+          content: content,
+          seconds_to_head: seconds_to_head,
+          sign_num: sign_num,
+          seconds_to_sign: String.to_integer(seconds_to_sign)
+        }
+      ]
+    else
+      []
+    end
+  end
+end
+```
+
+## Data
+
+```elixir
+# file = "/Users/gdurazo/Downloads/analysis.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/davis.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/davis_sunday.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/davis_10_1.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/davis_10_3.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/davis_10_15.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/davis_10_16.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/davis_10_18.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/davis_10_26.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_bair.csv"
+file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_bbea.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_gken.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_glon.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_gwab.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_mbut.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_mcen.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_oasq.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_ofor.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_rale.csv"
+# file = "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_rhar.csv"
+
+data =
+  File.read!(file)
+  |> CSV.parse_string()
+  |> Enum.flat_map(&Helpers.parse_line/1)
+```
+
+## Explore
+
+```elixir
+data =
+  Enum.map(data, fn d ->
+    %{sent_at: <<_::bytes-size(11)>> <> <<hour::bytes-size(2)>> <> _} = d
+    Map.put(d, :sent_hour, String.to_integer(hour))
+  end)
+
+relevant =
+  Enum.filter(data, fn d ->
+    d.seconds_to_sign != "" and d.sent_hour == 16
+  end)
+```
+
+```elixir
+Vl.new(width: 700, height: 500)
+|> Vl.data_from_values(relevant)
+|> Vl.mark(:bar)
+|> Vl.encode_field(:x, "sent_hour", type: :quantitative)
+|> Vl.encode_field(:y, "seconds_to_sign", aggregate: :average)
+```
+
+```elixir
+IO.puts("Filtered #{length(data)} records to #{length(relevant)}")
+
+Vl.new(width: 1500, height: 800)
+|> Vl.data_from_values(relevant)
+|> Vl.mark(:point)
+|> Vl.encode_field(:x, "sent_at", type: :temporal)
+|> Vl.encode_field(:y, "seconds_to_sign", type: :quantitative)
+|> Vl.encode_field(:color, "sign_num")
+```
+
+```elixir
+IO.puts("Filtered #{length(data)} records to #{length(relevant)}")
+
+Vl.new(width: 1500, height: 800)
+|> Vl.data_from_values(relevant)
+|> Vl.mark(:line)
+|> Vl.encode_field(:x, "sent_at", type: :temporal)
+|> Vl.encode_field(:y, "seconds_to_sign", aggregate: :max, tooltip: true)
+|> Vl.encode_field(:color, "sign_num")
+```
+
+```elixir
+IO.puts("Filtered #{length(data)} records to #{length(relevant)}")
+
+Vl.new(width: 700, height: 500)
+|> Vl.data_from_values(relevant)
+|> Vl.mark(:bar)
+|> Vl.encode_field(:x, "seconds_to_sign", type: :quantitative, bin: %{maxbins: 20})
+|> Vl.encode_field(:y, "count", aggregate: :count)
+```
+
+```elixir
+six_or_less = Enum.filter(relevant, fn d -> d.seconds_to_sign <= 6 end)
+total_count = length(relevant)
+six_or_less_count = length(six_or_less)
+
+"total: #{total_count}, six_or_less: #{six_or_less_count}, ratio: #{six_or_less_count / total_count}"
+```
+
+```elixir
+relevant =
+  Enum.filter(relevant, fn d ->
+    d.seconds_to_sign != "" and String.contains?(d.content, "BRD")
+  end)
+
+IO.puts("Filtered #{length(data)} records to #{length(relevant)}")
+
+Vl.new(width: 700, height: 500)
+|> Vl.data_from_values(relevant)
+|> Vl.mark(:bar)
+|> Vl.encode_field(:x, "seconds_to_sign", type: :quantitative, bin: %{maxbins: 20})
+|> Vl.encode_field(:y, "count", aggregate: :count)
+```
+
+```elixir
+IO.puts("Filtered #{length(data)} records to #{length(relevant)}")
+
+Vl.new(width: 700, height: 500)
+|> Vl.data_from_values(relevant)
+|> Vl.concat(
+  [
+    Vl.new()
+    |> Vl.layers([
+      Vl.new(width: 700, height: 500)
+      |> Vl.mark(:line)
+      |> Vl.encode_field(:x, "sent_at", type: :temporal, bin: %{maxbins: 100})
+      |> Vl.encode_field(:y, "seconds_to_sign", aggregate: :average),
+      Vl.new(width: 700, height: 500)
+      |> Vl.mark(:line)
+      |> Vl.encode_field(:x, "sent_at", type: :temporal, bin: %{maxbins: 100})
+      |> Vl.encode_field(:y, "seconds_to_sign", aggregate: :q3)
+    ]),
+    Vl.new(width: 700, height: 500)
+    |> Vl.mark(:bar)
+    |> Vl.encode_field(:x, "sent_at", type: :temporal, bin: %{maxbins: 100})
+    |> Vl.encode_field(:y, "count", aggregate: :count)
+  ],
+  :vertical
+)
+```
+
+```elixir
+# filtered =
+#   Enum.filter(data, fn d ->
+#     dt = Helpers.parse_date(d.sent_at)
+#     dt && dt.month == 3 and dt.day == 1
+#   end)
+
+# IO.puts("Filtered from #{length(data)} to #{length(filtered)} records")
+
+filtered = data
+
+Vl.new(width: 700, height: 400)
+|> Vl.data_from_values(filtered)
+|> Vl.transform(quantile: "seconds_to_sign", probs: [0.25, 0.5, 0.75], as: "quants")
+|> Vl.mark(:line)
+|> Vl.encode_field(:x, "sent_at", type: :temporal, bin: %{maxbins: 48})
+|> Vl.encode_field(:y, "quants")
+
+# |> Vl.encode_field(:size, "seconds_to_sign", bin: true)
+```
+
+```elixir
+files = [
+  "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_bair.csv",
+  "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_bbea.csv",
+  "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_gken.csv",
+  "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_glon.csv",
+  "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_gwab.csv",
+  "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_mbut.csv",
+  "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_mcen.csv",
+  "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_oasq.csv",
+  "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_ofor.csv",
+  "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_rale.csv",
+  "/Users/gdurazo/mbta/realtime_signs/scripts/latency_analysis/output/10_28_rhar.csv"
+]
+
+all_data =
+  Enum.flat_map(files, fn file ->
+    File.read!(file)
+    |> CSV.parse_string()
+    |> Enum.flat_map(&Helpers.parse_line/1)
+  end)
+```
+
+```elixir
+DateTime.from_iso8601("2021-10-28 16:00:07Z")
+```
+
+```elixir
+all_relevant =
+  Enum.filter(all_data, fn d ->
+    d.seconds_to_sign != "" and d.sent_hour == 16
+  end)
+  |> Enum.map(fn d ->
+    dt = binary_part(d.sent_at, 0, 10) <> "T" <> binary_part(d.sent_at, 11, 8) <> "Z"
+    Map.put(d, :dt, dt)
+  end)
+```
+
+```elixir
+Vl.new(width: 1500, height: 800)
+|> Vl.data_from_values(all_relevant)
+|> Vl.mark(:line)
+|> Vl.encode_field(:x, "dt", type: :temporal)
+|> Vl.encode_field(:y, "seconds_to_sign", aggregate: :average, tooltip: true)
+|> Vl.encode_field(:color, "station")
+```
+
+```elixir
+response_time_data =
+  File.read!("/Users/gdurazo/Downloads/splunk_arinc_response_times.csv")
+  |> CSV.parse_string()
+  |> Enum.map(fn [dt, avg_ms] ->
+    # {:ok, dt, _} = DateTime.from_iso8601(dt)
+    dt = binary_part(dt, 0, 19)
+    {ms, _} = Float.parse(avg_ms)
+
+    %{
+      dt: dt <> "Z",
+      ms: ms
+    }
+  end)
+```
+
+```elixir
+Vl.new()
+|> Vl.layers([
+  Vl.new(width: 1500, height: 800)
+  |> Vl.data_from_values(all_relevant)
+  |> Vl.mark(:point)
+  |> Vl.encode_field(:x, "dt", type: :temporal)
+  |> Vl.encode_field(:y, "seconds_to_sign", aggregate: :average, tooltip: true)
+  |> Vl.encode_field(:color, "station"),
+  Vl.new(width: 1500, height: 800)
+  |> Vl.data_from_values(response_time_data)
+  |> Vl.mark(:line)
+  |> Vl.encode_field(:x, "dt", type: :temporal)
+  |> Vl.encode_field(:y, "ms", aggregate: :average, tooltip: true)
+])
+|> Vl.resolve(:scale, y: :independent)
+```
