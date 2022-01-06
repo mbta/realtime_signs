@@ -15,7 +15,7 @@ defmodule PaEss.HttpUpdater do
           {:ok, :sent} | {:ok, :no_audio} | {:error, :bad_status} | {:error, :post_error}
 
   # Normally an anti-pattern! But we mix compile --force with every deploy
-  @max_send_rate_per_sec (32 / Application.get_env(:realtime_signs, :number_of_http_updaters))
+  @max_send_rate_per_sec (8/ Application.get_env(:realtime_signs, :number_of_http_updaters))
                          |> Float.ceil()
                          |> Kernel.trunc()
   @avg_ms_between_sends round(1000 / @max_send_rate_per_sec)
