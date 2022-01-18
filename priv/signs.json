@@ -6171,7 +6171,7 @@
           "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
-          "announce_arriving": false,
+          "announce_arriving": true,
           "announce_boarding": false
         }
       ]
@@ -6194,7 +6194,7 @@
           "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
-          "announce_arriving": false,
+          "announce_arriving": true,
           "announce_boarding": false
         }
       ]
@@ -6217,7 +6217,7 @@
           "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
-          "announce_arriving": false,
+          "announce_arriving": true,
           "announce_boarding": false
         },
         {
@@ -6249,7 +6249,7 @@
           "headway_direction_name": "Heath Street",
           "routes": ["Green-E"],
           "platform": null,
-          "terminal": false,
+          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
         }
@@ -6272,7 +6272,7 @@
           "headway_direction_name": "Heath Street",
           "routes": ["Green-E"],
           "platform": null,
-          "terminal": false,
+          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
         }
@@ -6295,7 +6295,7 @@
           "headway_direction_name": "Heath Street",
           "routes": ["Green-E"],
           "platform": null,
-          "terminal": false,
+          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
         },
@@ -6305,7 +6305,7 @@
           "headway_direction_name": "Heath Street",
           "routes": ["Green-E"],
           "platform": null,
-          "terminal": false,
+          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
         }
