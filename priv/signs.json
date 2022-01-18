@@ -6155,7 +6155,30 @@
     ]
   },
   {
-    "id": "lechmere_green_line",
+    "id": "lechmere_green_line_eastbound",
+    "headway_group": "green_trunk",
+    "pa_ess_loc": "GLEC",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": ["e"],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70501",
+          "direction_id": 1,
+          "headway_direction_name": "Eastbound",
+          "routes": ["Green-D", "Green-E"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "lechmere_green_line_westbound",
     "headway_group": "green_trunk",
     "pa_ess_loc": "GLEC",
     "read_loop_offset": 90,
@@ -6165,12 +6188,45 @@
     "source_config": [
       [
         {
-          "stop_id": "70210",
+          "stop_id": "70502",
           "direction_id": 0,
-          "headway_direction_name": "Heath Street",
-          "routes": ["Green-E"],
+          "headway_direction_name": "Westbound",
+          "routes": ["Green-D", "Green-E"],
           "platform": null,
-          "terminal": true,
+          "terminal": false,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "lechmere_green_line_mezzanine",
+    "headway_group": "green_trunk",
+    "pa_ess_loc": "GLEC",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": ["m"],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70501",
+          "direction_id": 1,
+          "headway_direction_name": "Eastbound",
+          "routes": ["Green-D", "Green-E"],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
+        {
+          "stop_id": "70502",
+          "direction_id": 0,
+          "headway_direction_name": "Westbound",
+          "routes": ["Green-D", "Green-E"],
+          "platform": null,
+          "terminal": false,
           "announce_arriving": false,
           "announce_boarding": false
         }
