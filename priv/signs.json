@@ -6167,8 +6167,8 @@
         {
           "stop_id": "70501",
           "direction_id": 1,
-          "headway_direction_name": "Eastbound",
-          "routes": ["Green-D", "Green-E"],
+          "headway_direction_name": "Union Square",
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
@@ -6190,8 +6190,8 @@
         {
           "stop_id": "70502",
           "direction_id": 0,
-          "headway_direction_name": "Westbound",
-          "routes": ["Green-D", "Green-E"],
+          "headway_direction_name": "Heath Street",
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
@@ -6213,8 +6213,8 @@
         {
           "stop_id": "70501",
           "direction_id": 1,
-          "headway_direction_name": "Eastbound",
-          "routes": ["Green-D", "Green-E"],
+          "headway_direction_name": "Union Square",
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
@@ -6223,8 +6223,8 @@
         {
           "stop_id": "70502",
           "direction_id": 0,
-          "headway_direction_name": "Westbound",
-          "routes": ["Green-D", "Green-E"],
+          "headway_direction_name": "Heath Street",
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
@@ -6234,7 +6234,7 @@
     ]
   },
   {
-    "id": "union_sq_eastbound",
+    "id": "union_sq_east",
     "headway_group": "green_trunk",
     "pa_ess_loc": "GUNS",
     "read_loop_offset": 30,
@@ -6245,9 +6245,9 @@
       [
         {
           "stop_id": "70503",
-          "direction_id": 1,
-          "headway_direction_name": "Eastbound",
-          "routes": ["Green-D", "Green-E"],
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
@@ -6257,7 +6257,7 @@
     ]
   },
   {
-    "id": "union_sq_westbound",
+    "id": "union_sq_west",
     "headway_group": "green_trunk",
     "pa_ess_loc": "GUNS",
     "read_loop_offset": 90,
@@ -6269,8 +6269,8 @@
         {
           "stop_id": "70504",
           "direction_id": 0,
-          "headway_direction_name": "Westbound",
-          "routes": ["Green-D", "Green-E"],
+          "headway_direction_name": "Heath Street",
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
@@ -6291,9 +6291,9 @@
       [
         {
           "stop_id": "70503",
-          "direction_id": 1,
-          "headway_direction_name": "Eastbound",
-          "routes": ["Green-D", "Green-E"],
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
@@ -6302,8 +6302,8 @@
         {
           "stop_id": "70504",
           "direction_id": 0,
-          "headway_direction_name": "Westbound",
-          "routes": ["Green-D", "Green-E"],
+          "headway_direction_name": "Heath Street",
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
