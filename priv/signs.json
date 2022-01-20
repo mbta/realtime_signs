@@ -6227,7 +6227,7 @@
           "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
-          "announce_arriving": false,
+          "announce_arriving": true,
           "announce_boarding": false
         }
       ]
