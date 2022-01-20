@@ -6239,12 +6239,22 @@
     "pa_ess_loc": "GUNS",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": ["e"],
+    "audio_zones": [],
     "type": "realtime",
     "source_config": [
       [
         {
           "stop_id": "70503",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": ["Green-E"],
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
+        {
+          "stop_id": "70504",
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
           "routes": ["Green-E"],
@@ -6260,12 +6270,22 @@
     "id": "union_sq_west",
     "headway_group": "green_trunk",
     "pa_ess_loc": "GUNS",
-    "read_loop_offset": 90,
+    "read_loop_offset": 30,
     "text_zone": "w",
-    "audio_zones": ["w"],
+    "audio_zones": ["e", "w", "m"],
     "type": "realtime",
     "source_config": [
       [
+        {
+          "stop_id": "70503",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": ["Green-E"],
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        },
         {
           "stop_id": "70504",
           "direction_id": 0,
@@ -6283,9 +6303,9 @@
     "id": "union_sq_mezzanine",
     "headway_group": "green_trunk",
     "pa_ess_loc": "GUNS",
-    "read_loop_offset": 120,
+    "read_loop_offset": 30,
     "text_zone": "m",
-    "audio_zones": ["m"],
+    "audio_zones": [],
     "type": "realtime",
     "source_config": [
       [
