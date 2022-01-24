@@ -6270,9 +6270,9 @@
     "id": "union_sq_south",
     "headway_group": "green_trunk",
     "pa_ess_loc": "GUNS",
-    "read_loop_offset": 30,
+    "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": ["e", "w", "m"],
+    "audio_zones": [],
     "type": "realtime",
     "source_config": [
       [
@@ -6303,9 +6303,9 @@
     "id": "union_sq_mezzanine",
     "headway_group": "green_trunk",
     "pa_ess_loc": "GUNS",
-    "read_loop_offset": 30,
+    "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [],
+    "audio_zones": ["e", "w", "m"],
     "type": "realtime",
     "source_config": [
       [
