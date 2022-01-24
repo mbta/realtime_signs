@@ -6234,7 +6234,7 @@
     ]
   },
   {
-    "id": "union_sq_east",
+    "id": "union_sq_north",
     "headway_group": "green_trunk",
     "pa_ess_loc": "GUNS",
     "read_loop_offset": 30,
@@ -6267,7 +6267,7 @@
     ]
   },
   {
-    "id": "union_sq_west",
+    "id": "union_sq_south",
     "headway_group": "green_trunk",
     "pa_ess_loc": "GUNS",
     "read_loop_offset": 30,
