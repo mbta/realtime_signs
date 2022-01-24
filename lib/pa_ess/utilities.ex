@@ -193,6 +193,7 @@ defmodule PaEss.Utilities do
   def destination_var(:reservoir), do: {:ok, "4076"}
   def destination_var(:riverside), do: {:ok, "4084"}
   def destination_var(:heath_street), do: {:ok, "4204"}
+  def destination_var(:union_square), do: {:ok, "695"}
   def destination_var(_), do: {:error, :unknown}
 
   @spec headsign_to_destination(String.t()) :: {:ok, PaEss.destination()} | {:error, :unknown}
