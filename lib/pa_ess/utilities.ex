@@ -193,6 +193,7 @@ defmodule PaEss.Utilities do
   def destination_var(:reservoir), do: {:ok, "4076"}
   def destination_var(:riverside), do: {:ok, "4084"}
   def destination_var(:heath_street), do: {:ok, "4204"}
+  def destination_var(:union_square), do: {:ok, "695"}
   def destination_var(_), do: {:error, :unknown}
 
   @spec headsign_to_destination(String.t()) :: {:ok, PaEss.destination()} | {:error, :unknown}
@@ -220,6 +221,7 @@ defmodule PaEss.Utilities do
   def headsign_to_destination("Southbound"), do: {:ok, :southbound}
   def headsign_to_destination("Eastbound"), do: {:ok, :eastbound}
   def headsign_to_destination("Westbound"), do: {:ok, :westbound}
+  def headsign_to_destination("Union Square"), do: {:ok, :union_square}
   def headsign_to_destination(_unknown), do: {:error, :unknown}
 
   @spec destination_to_sign_string(PaEss.destination()) :: String.t()
@@ -247,6 +249,7 @@ defmodule PaEss.Utilities do
   def destination_to_sign_string(:southbound), do: "Southbound"
   def destination_to_sign_string(:eastbound), do: "Eastbound"
   def destination_to_sign_string(:westbound), do: "Westbound"
+  def destination_to_sign_string(:union_square), do: "Union Sq"
 
   @spec destination_to_ad_hoc_string(PaEss.destination()) ::
           {:ok, String.t()} | {:error, :unknown}
@@ -274,6 +277,7 @@ defmodule PaEss.Utilities do
   def destination_to_ad_hoc_string(:southbound), do: {:ok, "Southbound"}
   def destination_to_ad_hoc_string(:eastbound), do: {:ok, "Eastbound"}
   def destination_to_ad_hoc_string(:westbound), do: {:ok, "Westbound"}
+  def destination_to_ad_hoc_string(:union_square), do: {:ok, "Union Square"}
   def destination_to_ad_hoc_string(_unknown), do: {:error, :unknown}
 
   @spec route_to_ad_hoc_string(String.t()) :: {:ok, String.t()} | {:error, :unknown}
