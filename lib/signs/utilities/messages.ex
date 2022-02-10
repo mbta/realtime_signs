@@ -56,7 +56,8 @@ defmodule Signs.Utilities.Messages do
     end
   end
 
-  @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status(), boolean()) :: sign_messages() | nil
+  @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status(), boolean()) ::
+          sign_messages() | nil
   defp get_alert_messages(alert_status, uses_shuttles) do
     case {alert_status, uses_shuttles} do
       {:shuttles_transfer_station, _} ->

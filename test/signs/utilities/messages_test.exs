@@ -265,8 +265,7 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :shuttles_closed_station
 
       assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{nil, %Content.Message.Alert.NoService{}},
-                {nil, Content.Message.Empty.new()}}
+               {{nil, %Content.Message.Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
     end
 
     test "when sign is at a station closed by shuttles and there are departure predictions, it shows them" do
