@@ -59,7 +59,8 @@ defmodule Signs.Utilities.HeadwaysTest do
     tick_audit: 240,
     tick_read: 240,
     expiration_seconds: 130,
-    read_period_seconds: 240
+    read_period_seconds: 240,
+    uses_shuttles: true
   }
 
   @spec source_config_for_stop_id(String.t()) :: %Signs.Utilities.SourceConfig{}

@@ -108,7 +108,8 @@ defmodule Signs.RealtimeTest do
     tick_read: 1,
     tick_audit: 1,
     expiration_seconds: 100,
-    read_period_seconds: 100
+    read_period_seconds: 100,
+    uses_shuttles: true
   }
 
   describe "run loop" do

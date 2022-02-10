@@ -53,7 +53,8 @@ defmodule Signs.Utilities.UpdaterTest do
     tick_audit: 240,
     tick_read: 60,
     expiration_seconds: 100,
-    read_period_seconds: 100
+    read_period_seconds: 100,
+    uses_shuttles: true
   }
 
   describe "update_sign/3" do

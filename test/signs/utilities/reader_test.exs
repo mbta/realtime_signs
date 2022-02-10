@@ -47,7 +47,8 @@ defmodule Signs.Utilities.ReaderTest do
     tick_audit: 240,
     tick_read: 1,
     expiration_seconds: 100,
-    read_period_seconds: 100
+    read_period_seconds: 100,
+    uses_shuttles: true
   }
 
   describe "read_sign/1" do

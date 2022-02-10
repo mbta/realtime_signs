@@ -30,8 +30,7 @@ defmodule Signs.Realtime do
     :tick_audit,
     :tick_read,
     :expiration_seconds,
-    :read_period_seconds,
-    :uses_shuttles
+    :read_period_seconds
   ]
 
   defstruct @enforce_keys ++
@@ -39,7 +38,8 @@ defmodule Signs.Realtime do
                 :headway_stop_id,
                 announced_arrivals: [],
                 announced_approachings: [],
-                announced_passthroughs: []
+                announced_passthroughs: [],
+                uses_shuttles: true
               ]
 
   @type line_content :: {Utilities.SourceConfig.source() | nil, Content.Message.t()}
