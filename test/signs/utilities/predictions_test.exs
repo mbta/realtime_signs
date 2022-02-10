@@ -596,8 +596,7 @@ defmodule Signs.Utilities.PredictionsTest do
     tick_audit: 240,
     tick_read: 240,
     expiration_seconds: 130,
-    read_period_seconds: 240,
-    uses_shuttles: true
+    read_period_seconds: 240
   }
 
   describe "get_messages/2" do

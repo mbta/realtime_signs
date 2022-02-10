@@ -40,8 +40,7 @@ defmodule Signs.Utilities.AudioTest do
     tick_audit: 1,
     tick_read: 1,
     expiration_seconds: 100,
-    read_period_seconds: 100,
-    uses_shuttles: true
+    read_period_seconds: 100
   }
 
   describe "should_interrupting_read?/3" do
