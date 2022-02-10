@@ -250,6 +250,25 @@ defmodule Signs.Utilities.MessagesTest do
                 {nil, %Content.Message.Alert.UseShuttleBus{}}}
     end
 
+    test "when sign is at a station closed and there are no departure predictions, but shuttles do not run at this station" do
+      src = %{@src | stop_id: "no_departures", direction_id: 0}
+
+      sign = %{
+        @sign
+        | source_config: {[src]},
+          current_content_top: {src, Content.Message.Empty.new()},
+          current_content_bottom: {src, Content.Message.Empty.new()},
+          uses_shuttles: false
+      }
+
+      sign_config = :auto
+      alert_status = :shuttles_closed_station
+
+      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
+               {{nil, %Content.Message.Alert.NoService{}},
+                {nil, Content.Message.Empty.new()}}
+    end
+
     test "when sign is at a station closed by shuttles and there are departure predictions, it shows them" do
       src = %{@src | stop_id: "1", direction_id: 0}
 
