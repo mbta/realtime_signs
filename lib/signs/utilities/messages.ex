@@ -49,8 +49,8 @@ defmodule Signs.Utilities.Messages do
           DateTime.t(),
           Engine.Alerts.Fetcher.stop_status()
         ) :: sign_messages()
-  defp get_headway_or_alert_messages(%Signs.Realtime{uses_shuttles: uses_shuttles} = sign, current_time, alert_status) do
-    case get_alert_messages(alert_status, uses_shuttles) do
+  defp get_headway_or_alert_messages(sign, current_time, alert_status) do
+    case get_alert_messages(alert_status, sign.uses_shuttles) do
       nil -> Signs.Utilities.Headways.get_messages(sign, current_time)
       messages -> messages
     end
