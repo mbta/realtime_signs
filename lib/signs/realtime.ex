@@ -30,7 +30,8 @@ defmodule Signs.Realtime do
     :tick_audit,
     :tick_read,
     :expiration_seconds,
-    :read_period_seconds
+    :read_period_seconds,
+    :uses_shuttles
   ]
 
   defstruct @enforce_keys ++
@@ -65,7 +66,8 @@ defmodule Signs.Realtime do
           read_period_seconds: non_neg_integer(),
           announced_arrivals: [Predictions.Prediction.trip_id()],
           announced_approachings: [Predictions.Prediction.trip_id()],
-          announced_passthroughs: [Predictions.Prediction.trip_id()]
+          announced_passthroughs: [Predictions.Prediction.trip_id()],
+          uses_shuttles: boolean()
         }
 
   def start_link(%{"type" => "realtime"} = config, opts \\ []) do
@@ -98,7 +100,8 @@ defmodule Signs.Realtime do
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       expiration_seconds: 130,
       read_period_seconds: 240,
-      headway_stop_id: Map.get(config, "headway_stop_id")
+      headway_stop_id: Map.get(config, "headway_stop_id"),
+      uses_shuttles: Map.get(config, "uses_shuttles", true)
     }
 
     GenServer.start_link(__MODULE__, sign)
