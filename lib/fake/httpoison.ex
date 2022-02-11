@@ -427,25 +427,25 @@ defmodule Fake.HTTPoison do
   end
 
   def mock_response(
-        "https://green.dev.api.mbtace.com/schedules?filter[stop]=500_error&filter[direction_id]=0,1"
+        "https://api-dev-green.mbtace.com/schedules?filter[stop]=500_error&filter[direction_id]=0,1"
       ) do
     {:ok, %HTTPoison.Response{status_code: 500, body: ""}}
   end
 
   def mock_response(
-        "https://green.dev.api.mbtace.com/schedules?filter[stop]=unknown_error&filter[direction_id]=0,1"
+        "https://api-dev-green.mbtace.com/schedules?filter[stop]=unknown_error&filter[direction_id]=0,1"
       ) do
     {:error, %HTTPoison.Error{reason: "Bad URL"}}
   end
 
   def mock_response(
-        "https://green.dev.api.mbtace.com/schedules?filter[stop]=parse_error&filter[direction_id]=0,1"
+        "https://api-dev-green.mbtace.com/schedules?filter[stop]=parse_error&filter[direction_id]=0,1"
       ) do
     {:ok, %HTTPoison.Response{status_code: 200, body: "BAD JSON"}}
   end
 
   def mock_response(
-        "https://green.dev.api.mbtace.com/schedules?filter[stop]=valid_json&filter[direction_id]=0,1"
+        "https://api-dev-green.mbtace.com/schedules?filter[stop]=valid_json&filter[direction_id]=0,1"
       ) do
     json = %{"data" => [%{"relationships" => "trip"}]}
     encoded = Jason.encode!(json)
@@ -456,13 +456,13 @@ defmodule Fake.HTTPoison do
     {:error, "unknown response"}
   end
 
-  def mock_response("https://green.dev.api.mbtace.com/schedules" <> _) do
+  def mock_response("https://api-dev-green.mbtace.com/schedules" <> _) do
     json = %{"data" => []}
     encoded = Jason.encode!(json)
     {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
   end
 
-  def mock_response("https://green.dev.api.mbtace.com/alerts") do
+  def mock_response("https://api-dev-green.mbtace.com/alerts") do
     response = %{
       "data" => [
         %{
