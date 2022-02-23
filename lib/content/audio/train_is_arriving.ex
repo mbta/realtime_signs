@@ -48,6 +48,7 @@ defmodule Content.Audio.TrainIsArriving do
     defp audio_params(%{destination: :forest_hills}), do: {"103", ["32103"]}
     defp audio_params(%{destination: :oak_grove}), do: {"103", ["32102"]}
     defp audio_params(%{destination: :lechmere}), do: {"90016", []}
+    defp audio_params(%{destination: :union_square}), do: {"90019", []}
     defp audio_params(%{destination: :north_station}), do: {"90017", []}
     defp audio_params(%{destination: :government_center}), do: {"90015", []}
     defp audio_params(%{destination: :park_street}), do: {"90014", []}
