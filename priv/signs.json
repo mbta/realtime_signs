@@ -5221,7 +5221,7 @@
 	{
           "stop_id": "71150",
           "direction_id": 1,
-          "headway_direction_name": "Union Square",
+          "headway_direction_name": "Eastbound",
           "routes": ["Green-B", "Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
