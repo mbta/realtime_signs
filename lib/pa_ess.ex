@@ -24,6 +24,7 @@ defmodule PaEss do
           | :chelsea
           | :south_station
           | :lechmere
+          | :union_square
           | :north_station
           | :government_center
           | :park_street

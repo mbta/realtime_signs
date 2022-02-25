@@ -144,6 +144,7 @@ defmodule Content.Audio.VehiclesToDestination do
     defp message_id(%{language: :english, destination: :forest_hills}), do: "176"
     defp message_id(%{language: :english, destination: :oak_grove}), do: "177"
     defp message_id(%{language: :english, destination: :lechmere}), do: "170"
+    defp message_id(%{language: :english, destination: :union_square}), do: "194"
     defp message_id(%{language: :english, destination: :north_station}), do: "169"
     defp message_id(%{language: :english, destination: :government_center}), do: "167"
     defp message_id(%{language: :english, destination: :park_street}), do: "168"
