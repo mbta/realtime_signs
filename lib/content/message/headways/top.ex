@@ -34,6 +34,7 @@ defmodule Content.Message.Headways.Top do
         "#{PaEss.Utilities.destination_to_sign_string(destination)} #{signify_vehicle_type(type)}"
 
       Logger.info("Headway top message: #{IO.puts(message)}")
+      message
     end
 
     @spec signify_vehicle_type(Content.Message.Headways.Top.vehicle_type()) :: String.t()
