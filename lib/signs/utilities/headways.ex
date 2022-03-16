@@ -12,20 +12,14 @@ defmodule Signs.Utilities.Headways do
     headways = sign.config_engine.headway_config(sign.headway_group, current_time)
     stop_ids = get_stop_ids(sign, config)
 
+    if config !== nil do
+      Logger.info("Stop id: #{config.stop_id}")
+      Logger.info("Stop id: #{config.headway_destination}")
+    end
+
     if display_headways?(sign, stop_ids, current_time, headways) do
-      if config.headway_destination === :union_square do
-        Logger.info("Head direction from config: #{config.headway_destination}")
-      end
-
       destination = get_destination(config)
-
-      {{config, top_message}, {config, bottom_message}} =
-        get_headway_messages(config, destination, headways)
-
-      Logger.info("top headway message: #{IO.inspect(top_message)}")
-      Logger.info("bottom headway message: #{IO.inspect(bottom_message)}")
-
-      {{config, top_message}, {config, bottom_message}}
+      get_headway_messages(config, destination, headways)
     else
       get_empty_messages(config)
     end
