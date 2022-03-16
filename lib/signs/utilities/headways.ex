@@ -13,7 +13,7 @@ defmodule Signs.Utilities.Headways do
     stop_ids = get_stop_ids(sign, config)
 
     if display_headways?(sign, stop_ids, current_time, headways) do
-      if config.headway_direction === :union_square do
+      if config.headway_destination === :union_square do
         Logger.info("Head direction from config: #{config.headway_destination}")
       end
 
