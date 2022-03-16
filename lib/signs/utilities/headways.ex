@@ -18,11 +18,14 @@ defmodule Signs.Utilities.Headways do
       end
 
       destination = get_destination(config)
-      messages = get_headway_messages(config, destination, headways)
 
-      Logger.info("Full headway message: #{IO.inspect(messages)}")
+      {{config, top_message}, {config, bottom_message}} =
+        get_headway_messages(config, destination, headways)
 
-      messages
+      Logger.info("top headway message: #{IO.inspect(top_message)}")
+      Logger.info("bottom headway message: #{IO.inspect(bottom_message)}")
+
+      {{config, top_message}, {config, bottom_message}}
     else
       get_empty_messages(config)
     end
