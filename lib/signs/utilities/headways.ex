@@ -12,8 +12,8 @@ defmodule Signs.Utilities.Headways do
     headways = sign.config_engine.headway_config(sign.headway_group, current_time)
     stop_ids = get_stop_ids(sign, config)
 
-    Logger.info(IO.inspect(headways, label: "headways"))
-    Logger.info(IO.inspect(config, label: "config"))
+    Logger.info("headways: #{inspect(headways)}")
+    Logger.info("config: #{inspect(config)}")
 
     if display_headways?(sign, stop_ids, current_time, headways) do
       destination = get_destination(config)
