@@ -26,10 +26,13 @@ defmodule Content.Message.Headways.Top do
       }"
     end
 
-    def to_string(%Content.Message.Headways.Top{
-          destination: destination,
-          vehicle_type: type
-        }) do
+    def to_string(
+          %Content.Message.Headways.Top{
+            destination: destination,
+            vehicle_type: type
+          } = top_message
+        ) do
+      Logger.info("Top headway message input: #{IO.inspect(top_message)}")
       "#{PaEss.Utilities.destination_to_sign_string(destination)} #{signify_vehicle_type(type)}"
     end
 
