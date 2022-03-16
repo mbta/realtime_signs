@@ -63,7 +63,7 @@ defmodule Signs.Utilities.Headways do
   @spec get_empty_messages(SourceConfig.source() | nil) ::
           Signs.Utilities.Messages.sign_messages()
   defp get_empty_messages(config) do
-    Logger.info("Empty headway message being triggered for #{config.id}")
+    Logger.info("Empty headway message being triggered for #{config.stop_id}")
     {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
   end
 
