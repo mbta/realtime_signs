@@ -46,7 +46,7 @@ defmodule Signs.Utilities.Headways do
           Engine.Config.Headway.t()
         ) :: Signs.Utilities.Messages.sign_messages()
   defp get_headway_messages(config, destination, headways) do
-    Logger.info("destination: #{IO.inspect(destination)}, headways: #{IO.inspect(headways)}")
+    Logger.info("Headway destination: #{IO.inspect(destination)}")
 
     {{config,
       %Content.Message.Headways.Top{
