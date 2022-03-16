@@ -33,7 +33,7 @@ defmodule Content.Message.Headways.Top do
       message =
         "#{PaEss.Utilities.destination_to_sign_string(destination)} #{signify_vehicle_type(type)}"
 
-      Logger.info("Headway top message: #{IO.puts(message)}")
+      Logger.info("Headway top message: #{message}")
       message
     end
 
