@@ -12,6 +12,8 @@ defmodule Signs.Utilities.Headways do
     headways = sign.config_engine.headway_config(sign.headway_group, current_time)
     stop_ids = get_stop_ids(sign, config)
 
+    Logger.info("Headway destination: #{config.headway_destination}")
+
     if display_headways?(sign, stop_ids, current_time, headways) do
       destination = get_destination(config)
       get_headway_messages(config, destination, headways)
@@ -46,8 +48,6 @@ defmodule Signs.Utilities.Headways do
           Engine.Config.Headway.t()
         ) :: Signs.Utilities.Messages.sign_messages()
   defp get_headway_messages(config, destination, headways) do
-    Logger.info("Headway destination: #{IO.inspect(destination)}")
-
     {{config,
       %Content.Message.Headways.Top{
         destination: destination,
@@ -63,7 +63,6 @@ defmodule Signs.Utilities.Headways do
   @spec get_empty_messages(SourceConfig.source() | nil) ::
           Signs.Utilities.Messages.sign_messages()
   defp get_empty_messages(config) do
-    Logger.info("Empty headway message being triggered for #{config.stop_id}")
     {{config, %Content.Message.Empty{}}, {config, %Content.Message.Empty{}}}
   end
 
