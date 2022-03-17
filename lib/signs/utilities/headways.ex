@@ -14,6 +14,11 @@ defmodule Signs.Utilities.Headways do
 
     if display_headways?(sign, stop_ids, current_time, headways) do
       destination = get_destination(config)
+
+      Logger.info(
+        "Will display headways for sign: #{inspect(sign)} with destination #{inspect(destination)}"
+      )
+
       get_headway_messages(config, destination, headways)
     else
       get_empty_messages(config)

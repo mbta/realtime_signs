@@ -117,6 +117,12 @@ defmodule Engine.ScheduledHeadways do
       |> Enum.map(&elem(&1, 1))
       |> min_time()
 
+    Logger.info(
+      "Stop Ids: #{inspect(stop_ids)} and first and last departures: #{inspect(earliest_first)}, #{
+        inspect(earliest_last)
+      }"
+    )
+
     case {earliest_first, earliest_last} do
       {%DateTime{} = first, %DateTime{} = last} ->
         first = DateTime.add(first, -1 * buffer_mins * 60)
