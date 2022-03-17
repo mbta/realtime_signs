@@ -41,7 +41,7 @@ config :realtime_signs,
   s3_bucket: nil,
   s3_path: nil,
   api_v3_key: nil,
-  api_v3_url: "https://api-dev-green.mbtace.com",
+  api_v3_url: "https://api-dev-blue.mbtace.com",
   number_of_http_updaters: 4,
   restart_fn: &Engine.Health.restart_noop/0
 
