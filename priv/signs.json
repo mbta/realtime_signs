@@ -1024,7 +1024,7 @@
           "announce_boarding": true,
           "source_for_headway": true
         },
-	{
+        {
           "stop_id": "Oak Grove-01",
           "routes": ["Orange"],
           "direction_id": 0,
@@ -1033,8 +1033,8 @@
           "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
-	},
-	{
+        },
+        {
           "stop_id": "Oak Grove-02",
           "routes": ["Orange"],
           "direction_id": 0,
@@ -1068,7 +1068,7 @@
           "announce_boarding": true,
           "source_for_headway": true
         },
-	{
+        {
           "stop_id": "Oak Grove-01",
           "routes": ["Orange"],
           "direction_id": 0,
@@ -1077,8 +1077,8 @@
           "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
-	},
-	{
+        },
+        {
           "stop_id": "Oak Grove-02",
           "routes": ["Orange"],
           "direction_id": 0,
@@ -1112,7 +1112,7 @@
           "announce_boarding": true,
           "source_for_headway": true
         },
-	{
+        {
           "stop_id": "Oak Grove-01",
           "routes": ["Orange"],
           "direction_id": 0,
@@ -1121,8 +1121,8 @@
           "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
-  },
-	{
+        },
+        {
           "stop_id": "Oak Grove-02",
           "routes": ["Orange"],
           "direction_id": 0,
@@ -2659,7 +2659,7 @@
           "announce_boarding": true,
           "source_for_headway": true
         },
-	{
+        {
           "stop_id": "Forest Hills-01",
           "routes": ["Orange"],
           "direction_id": 1,
@@ -2669,7 +2669,7 @@
           "announce_arriving": false,
           "announce_boarding": true
         },
-	{
+        {
           "stop_id": "Forest Hills-02",
           "routes": ["Orange"],
           "direction_id": 1,
@@ -2703,7 +2703,7 @@
           "announce_boarding": true,
           "source_for_headway": true
         },
-	{
+        {
           "stop_id": "Forest Hills-01",
           "routes": ["Orange"],
           "direction_id": 1,
@@ -2713,7 +2713,7 @@
           "announce_arriving": false,
           "announce_boarding": true
         },
-	{
+        {
           "stop_id": "Forest Hills-02",
           "routes": ["Orange"],
           "direction_id": 1,
@@ -2747,7 +2747,7 @@
           "announce_boarding": true,
           "source_for_headway": true
         },
-	{
+        {
           "stop_id": "Forest Hills-01",
           "routes": ["Orange"],
           "direction_id": 1,
@@ -2757,7 +2757,7 @@
           "announce_arriving": false,
           "announce_boarding": true
         },
-	{
+        {
           "stop_id": "Forest Hills-02",
           "routes": ["Orange"],
           "direction_id": 1,
@@ -2826,7 +2826,7 @@
           "announce_boarding": true,
           "source_for_headway": true
         },
-	{
+        {
           "stop_id": "Alewife-01",
           "routes": ["Red"],
           "direction_id": 0,
@@ -2835,8 +2835,8 @@
           "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
-	},
-	{
+        },
+        {
           "stop_id": "Alewife-02",
           "routes": ["Red"],
           "direction_id": 0,
@@ -2870,7 +2870,7 @@
           "announce_boarding": true,
           "source_for_headway": true
         },
-	{
+        {
           "stop_id": "Alewife-01",
           "routes": ["Red"],
           "direction_id": 0,
@@ -2879,8 +2879,8 @@
           "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
-	},
-	{
+        },
+        {
           "stop_id": "Alewife-02",
           "routes": ["Red"],
           "direction_id": 0,
@@ -4325,7 +4325,7 @@
           "announce_boarding": true,
           "source_for_headway": true
         },
-	{
+        {
           "stop_id": "Braintree-01",
           "routes": ["Red"],
           "direction_id": 1,
@@ -4335,7 +4335,7 @@
           "announce_arriving": false,
           "announce_boarding": true
         },
-	{
+        {
           "stop_id": "Braintree-02",
           "routes": ["Red"],
           "direction_id": 1,
@@ -4369,7 +4369,7 @@
           "announce_boarding": true,
           "source_for_headway": true
         },
-	{
+        {
           "stop_id": "Braintree-01",
           "routes": ["Red"],
           "direction_id": 1,
@@ -4379,7 +4379,7 @@
           "announce_arriving": false,
           "announce_boarding": true
         },
-	{
+        {
           "stop_id": "Braintree-02",
           "routes": ["Red"],
           "direction_id": 1,
@@ -5218,7 +5218,7 @@
     "type": "realtime",
     "source_config": [
       [
-	{
+        {
           "stop_id": "71150",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
@@ -5241,7 +5241,7 @@
     "type": "realtime",
     "source_config": [
       [
-	{
+        {
           "stop_id": "71151",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
@@ -5320,7 +5320,7 @@
           "announce_arriving": true,
           "announce_boarding": false
         },
-	{
+        {
           "stop_id": "71150",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
@@ -5342,7 +5342,7 @@
           "announce_arriving": true,
           "announce_boarding": false
         },
-	{
+        {
           "stop_id": "71151",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
@@ -5746,7 +5746,7 @@
     "type": "realtime",
     "source_config": [
       [
-	{
+        {
           "stop_id": "71199",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
@@ -5756,7 +5756,7 @@
           "announce_arriving": true,
           "announce_boarding": false,
           "source_for_headway": true
-	},
+        },
         {
           "stop_id": "70200",
           "direction_id": 1,
@@ -5780,7 +5780,7 @@
     "type": "realtime",
     "source_config": [
       [
-	{
+        {
           "stop_id": "71199",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
@@ -5790,7 +5790,7 @@
           "announce_arriving": true,
           "announce_boarding": false,
           "source_for_headway": true
-	},
+        },
         {
           "stop_id": "70200",
           "direction_id": 1,
@@ -6254,16 +6254,6 @@
           "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
-        },
-        {
-          "stop_id": "70504",
-          "direction_id": 0,
-          "headway_direction_name": "Heath Street",
-          "routes": ["Green-E"],
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": false
         }
       ]
     ]
@@ -6278,16 +6268,6 @@
     "type": "realtime",
     "source_config": [
       [
-        {
-          "stop_id": "70503",
-          "direction_id": 0,
-          "headway_direction_name": "Heath Street",
-          "routes": ["Green-E"],
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": false
-        },
         {
           "stop_id": "70504",
           "direction_id": 0,
@@ -6313,16 +6293,6 @@
       [
         {
           "stop_id": "70503",
-          "direction_id": 0,
-          "headway_direction_name": "Heath Street",
-          "routes": ["Green-E"],
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": false
-        },
-        {
-          "stop_id": "70504",
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
           "routes": ["Green-E"],
