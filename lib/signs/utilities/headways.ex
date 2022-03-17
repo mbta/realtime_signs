@@ -23,7 +23,7 @@ defmodule Signs.Utilities.Headways do
       Logger.info(
         "Stop ids: #{inspect(stop_ids)}, Top message: #{inspect(top_message)}, Bottom message: #{
           inspect(bottom_message)
-        }"
+        } where config is: #{inspect(config)}"
       )
 
       {{config, top_message}, {config, bottom_message}}
