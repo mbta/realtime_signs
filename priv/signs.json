@@ -6254,16 +6254,6 @@
           "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
-        },
-        {
-          "stop_id": "70504",
-          "direction_id": 0,
-          "headway_direction_name": "Heath Street",
-          "routes": ["Green-E"],
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": false
         }
       ]
     ]
@@ -6278,16 +6268,6 @@
     "type": "realtime",
     "source_config": [
       [
-        {
-          "stop_id": "70503",
-          "direction_id": 0,
-          "headway_direction_name": "Heath Street",
-          "routes": ["Green-E"],
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": false
-        },
         {
           "stop_id": "70504",
           "direction_id": 0,
@@ -6313,16 +6293,6 @@
       [
         {
           "stop_id": "70503",
-          "direction_id": 0,
-          "headway_direction_name": "Heath Street",
-          "routes": ["Green-E"],
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": false
-        },
-        {
-          "stop_id": "70504",
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
           "routes": ["Green-E"],
