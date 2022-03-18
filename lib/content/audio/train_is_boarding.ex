@@ -47,7 +47,14 @@ defmodule Content.Audio.TrainIsBoarding do
     end
 
     defp do_to_params(%{destination: destination, route_id: "Green-" <> _branch}, destination_var)
-         when destination in [:lechmere, :north_station, :government_center, :park_st, :kenmore] do
+         when destination in [
+                :lechmere,
+                :north_station,
+                :government_center,
+                :park_st,
+                :kenmore,
+                :union_square
+              ] do
       vars = [
         @the_next,
         @train_to,

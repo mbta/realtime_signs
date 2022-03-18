@@ -59,6 +59,7 @@ defmodule Content.Audio.UtilitiesTest do
     assert destination_var(:reservoir) == {:ok, "4076"}
     assert destination_var(:riverside) == {:ok, "4084"}
     assert destination_var(:wonderland) == {:ok, "4044"}
+    assert destination_var(:union_square) == {:ok, "695"}
   end
 
   test "headsign_to_destination/1" do
@@ -72,6 +73,7 @@ defmodule Content.Audio.UtilitiesTest do
     assert headsign_to_destination("Government Center") == {:ok, :government_center}
     assert headsign_to_destination("Heath Street") == {:ok, :heath_street}
     assert headsign_to_destination("Lechmere") == {:ok, :lechmere}
+    assert headsign_to_destination("Union Square") == {:ok, :union_square}
     assert headsign_to_destination("Mattapan") == {:ok, :mattapan}
     assert headsign_to_destination("North Station") == {:ok, :north_station}
     assert headsign_to_destination("Oak Grove") == {:ok, :oak_grove}
