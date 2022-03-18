@@ -9,6 +9,12 @@
     {"station": "G Government Center eastbound", "stop_ids": ["70201"]},
     {"station": "G Haymarket eastbound", "stop_ids": ["70203"]},
     {"station": "G North Station eastbound", "stop_ids": ["70205"]},
+    {"station": "G Science Park eastbound", "stop_ids": ["70207"]},
+    {"station": "G Lechmere eastbound", "stop_ids": ["70501"]},
+    {"station": "G Union Square eastbound", "stop_ids": ["70503"]},
+    {"station": "G Union Square westbound", "stop_ids": ["70504"]},
+    {"station": "G Lechmere westbound", "stop_ids": ["70502"]},
+    {"station": "G Science Park westbound", "stop_ids": ["70208"]},
     {"station": "G North Station westbound", "stop_ids": ["70206"]},
     {"station": "G Haymarket westbound", "stop_ids": ["70204"]},
     {"station": "G Government Center westbound", "stop_ids": ["70202"]},
@@ -22,18 +28,12 @@
   "Green-E-eastbound": [
     {"station": "G Symphony eastbound", "stop_ids": ["70242"]},
     {"station": "G Prudential eastbound", "stop_ids": ["70240"]},
-    {"station": "G Copley eastbound", "stop_ids": ["70154"]},
-    {"station": "G Science Park eastbound", "stop_ids": ["70207"]},
-    {"station": "G Lechmere eastbound", "stop_ids": ["70501"]},
-    {"station": "G Union Square eastbound", "stop_ids": ["70503"]}
+    {"station": "G Copley eastbound", "stop_ids": ["70154"]}
   ],
   "Green-E-westbound": [
     {"station": "G Symphony westbound", "stop_ids": ["70241"]},
     {"station": "G Prudential westbound", "stop_ids": ["70239"]},
-    {"station": "G Copley westbound", "stop_ids": ["70155"]},
-    {"station": "G Science Park westbound", "stop_ids": ["70208"]},
-    {"station": "G Lechmere westbound", "stop_ids": ["70502"]},
-    {"station": "G Union Square westbound", "stop_ids": ["70504"]}
+    {"station": "G Copley westbound", "stop_ids": ["70155"]}
   ],
   "Green-D": [
     {"station": "G Kenmore outbound", "stop_ids": ["70151"]},
