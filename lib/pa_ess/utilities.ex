@@ -336,7 +336,14 @@ defmodule PaEss.Utilities do
   end
 
   def ad_hoc_trip_description(destination, route_id)
-      when destination in [:lechmere, :north_station, :government_center, :park_street, :kenmore] and
+      when destination in [
+             :lechmere,
+             :north_station,
+             :government_center,
+             :park_street,
+             :kenmore,
+             :union_square
+           ] and
              route_id in ["Green-B", "Green-C", "Green-D", "Green-E"] do
     ad_hoc_trip_description(destination)
   end
