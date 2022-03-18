@@ -6077,7 +6077,7 @@
   },
   {
     "id": "science_park_eastbound",
-    "headway_group": "green_trunk",
+    "headway_group": "green_e",
     "pa_ess_loc": "GSCI",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -6100,7 +6100,7 @@
   },
   {
     "id": "science_park_westbound",
-    "headway_group": "green_trunk",
+    "headway_group": "green_e",
     "pa_ess_loc": "GSCI",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -6111,7 +6111,7 @@
         {
           "stop_id": "70208",
           "direction_id": 0,
-          "headway_direction_name": "Westbound",
+          "headway_direction_name": "Heath Street",
           "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
@@ -6123,7 +6123,7 @@
   },
   {
     "id": "science_park_mezzanine",
-    "headway_group": "green_trunk",
+    "headway_group": "green_e",
     "pa_ess_loc": "GSCI",
     "read_loop_offset": 120,
     "text_zone": "m",
@@ -6146,7 +6146,7 @@
         {
           "stop_id": "70208",
           "direction_id": 0,
-          "headway_direction_name": "Westbound",
+          "headway_direction_name": "Heath Street",
           "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
@@ -6158,7 +6158,7 @@
   },
   {
     "id": "lechmere_green_line_eastbound",
-    "headway_group": "green_trunk",
+    "headway_group": "green_e",
     "pa_ess_loc": "GLEC",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -6181,7 +6181,7 @@
   },
   {
     "id": "lechmere_green_line_westbound",
-    "headway_group": "green_trunk",
+    "headway_group": "green_e",
     "pa_ess_loc": "GLEC",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -6204,7 +6204,7 @@
   },
   {
     "id": "lechmere_green_line_mezzanine",
-    "headway_group": "green_trunk",
+    "headway_group": "green_e",
     "pa_ess_loc": "GLEC",
     "read_loop_offset": 120,
     "text_zone": "m",
@@ -6237,7 +6237,7 @@
   },
   {
     "id": "union_sq_track_one",
-    "headway_group": "green_trunk",
+    "headway_group": "green_e",
     "pa_ess_loc": "GUNS",
     "read_loop_offset": 30,
     "text_zone": "e",
@@ -6245,16 +6245,6 @@
     "type": "realtime",
     "source_config": [
       [
-        {
-          "stop_id": "70503",
-          "direction_id": 0,
-          "headway_direction_name": "Heath Street",
-          "routes": ["Green-E"],
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": false
-        },
         {
           "stop_id": "70504",
           "direction_id": 0,
@@ -6270,7 +6260,7 @@
   },
   {
     "id": "union_sq_track_two",
-    "headway_group": "green_trunk",
+    "headway_group": "green_e",
     "pa_ess_loc": "GUNS",
     "read_loop_offset": 90,
     "text_zone": "w",
@@ -6278,16 +6268,6 @@
     "type": "realtime",
     "source_config": [
       [
-        {
-          "stop_id": "70503",
-          "direction_id": 0,
-          "headway_direction_name": "Heath Street",
-          "routes": ["Green-E"],
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": false
-        },
         {
           "stop_id": "70504",
           "direction_id": 0,
@@ -6303,7 +6283,7 @@
   },
   {
     "id": "union_sq_mezzanine",
-    "headway_group": "green_trunk",
+    "headway_group": "green_e",
     "pa_ess_loc": "GUNS",
     "read_loop_offset": 120,
     "text_zone": "m",
@@ -6311,16 +6291,6 @@
     "type": "realtime",
     "source_config": [
       [
-        {
-          "stop_id": "70503",
-          "direction_id": 0,
-          "headway_direction_name": "Heath Street",
-          "routes": ["Green-E"],
-          "platform": null,
-          "terminal": true,
-          "announce_arriving": false,
-          "announce_boarding": false
-        },
         {
           "stop_id": "70504",
           "direction_id": 0,
