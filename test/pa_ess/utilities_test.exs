@@ -123,7 +123,7 @@ defmodule Content.Audio.UtilitiesTest do
         assert ad_hoc_trip_description(:eastbound, route) == {:ok, "Eastbound train"}
 
         Enum.each(
-          [:lechmere, :north_station, :government_center, :park_street, :kenmore],
+          [:lechmere, :north_station, :government_center, :park_street, :kenmore, :union_square],
           fn destination ->
             assert ad_hoc_trip_description(destination, route) ==
                      {:ok,
