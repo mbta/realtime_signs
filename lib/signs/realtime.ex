@@ -98,7 +98,7 @@ defmodule Signs.Realtime do
       tick_top: 130,
       tick_audit: 60,
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
-      expiration_seconds: 130,
+      expiration_seconds: 150,
       read_period_seconds: 240,
       headway_stop_id: Map.get(config, "headway_stop_id"),
       uses_shuttles: Map.get(config, "uses_shuttles", true)
