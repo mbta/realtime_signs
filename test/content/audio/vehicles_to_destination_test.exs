@@ -181,6 +181,11 @@ defmodule Content.Audio.VehiclesToDestinationTest do
 
       assert %Content.Audio.VehiclesToDestination{
                language: :english,
+               destination: :union_sq
+             } = from_headway_message(%Content.Message.Headways.Top{destination: :union_sq}, @msg)
+
+      assert %Content.Audio.VehiclesToDestination{
+               language: :english,
                destination: :government_center
              } =
                from_headway_message(
