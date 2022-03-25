@@ -1,8 +1,8 @@
 defmodule Engine.Uids do
   use GenServer
 
-  def start_link(id_initial) do
-    {:ok, deploy_counter_text} = File.read("deploy_counter.txt")
+  def start_link(id_initial, file_name, name \\ __MODULE__) do
+    {:ok, deploy_counter_text} = File.read(file_name)
     {deploy_count, _} = Integer.parse(deploy_counter_text)
 
     new_deploy_count =
@@ -10,12 +10,12 @@ defmodule Engine.Uids do
       |> increment_deploy_count()
       |> Integer.to_string()
 
-    File.write("deploy_counter.txt", new_deploy_count)
+    File.write(file_name, new_deploy_count)
 
     GenServer.start_link(
       __MODULE__,
       [id_initial: id_initial, deploy_num: deploy_count],
-      name: __MODULE__
+      name: name
     )
   end
 

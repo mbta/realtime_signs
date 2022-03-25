@@ -23,7 +23,7 @@ defmodule RealtimeSigns do
         worker(Engine.Static, []),
         worker(Engine.Alerts, []),
         worker(MessageQueue, []),
-        worker(Engine.Uids, [0])
+        worker(Engine.Uids, [0, "deploy_counter.txt"])
       ] ++
         http_updater_children() ++
         [

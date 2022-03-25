@@ -299,7 +299,10 @@ defmodule PaEss.HttpUpdaterTest do
 
   test "handle_info pulls from queue" do
     state = make_state(%{queue_mod: Fake.MessageQueue})
-    assert PaEss.HttpUpdater.handle_info(:check_queue, state) == {:noreply, %{state | uid: 1}}
+    {response, %{uid: uid}} = PaEss.HttpUpdater.handle_info(:check_queue, state)
+
+    assert response == :noreply
+    assert is_integer(uid) and uid > 0
   end
 
   describe "to_command/5" do
@@ -319,6 +322,6 @@ defmodule PaEss.HttpUpdaterTest do
   end
 
   defp make_state(init \\ %{}) do
-    Map.merge(%{http_poster: Fake.HTTPoison, uid: 0}, init)
+    Map.merge(%{http_poster: Fake.HTTPoison, uid: 0, uid_engine: Engine.Uids}, init)
   end
 end
