@@ -33,7 +33,7 @@ defmodule Engine.Uids do
   end
 
   defp append_deploy_count(id, deploy_count) do
-    digits = deploy_count |> Integer.digits()
+    digits = Integer.digits(deploy_count)
 
     case digits do
       [digit | []] ->
@@ -56,7 +56,6 @@ defmodule Engine.Uids do
   @impl true
   def handle_call(:get_uid, _from, state) do
     next_id = state.id_counter + 1
-    uid = next_id |> append_deploy_count(state.deploy_num)
-    {:reply, uid, %{state | id_counter: next_id}}
+    {:reply, append_deploy_count(next_id, state.deploy_num), %{state | id_counter: next_id}}
   end
 end
