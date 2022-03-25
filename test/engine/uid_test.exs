@@ -9,7 +9,7 @@ defmodule Engine.UidTest do
     GenServer.stop(pid)
   end
 
-  defp read_deploy_counter_text(path) do
+  defp read_deploy_counter_from_file(path) do
     {:ok, deploy_counter_text} = File.read(path)
     File.rm(path)
     deploy_counter_text
@@ -18,12 +18,12 @@ defmodule Engine.UidTest do
   describe "Test deploy counting" do
     test "File counter updates correctly on start" do
       setup_counter_file("0", "deploy_test_counter.txt")
-      assert read_deploy_counter_text("deploy_test_counter.txt") == "1"
+      assert read_deploy_counter_from_file("deploy_test_counter.txt") == "1"
     end
 
     test "File counter resets at 99 on start" do
       setup_counter_file("99", "deploy_test_counter.txt")
-      assert read_deploy_counter_text("deploy_test_counter.txt") == "0"
+      assert read_deploy_counter_from_file("deploy_test_counter.txt") == "0"
     end
   end
 
