@@ -33,17 +33,26 @@ defmodule PaEss.HttpUpdater do
   def start_link(opts \\ []) do
     http_poster = opts[:http_poster] || Application.get_env(:realtime_signs, :http_poster_mod)
     queue_mod = opts[:queue_mod] || MessageQueue
+    uid_engine = Engine.Uids
 
     GenServer.start_link(
       __MODULE__,
       http_poster: http_poster,
-      queue_mod: queue_mod
+      queue_mod: queue_mod,
+      uid_engine: uid_engine
     )
   end
 
   def init(opts) do
     schedule_check_queue(self(), 30)
-    {:ok, %{http_poster: opts[:http_poster], queue_mod: opts[:queue_mod], uid: 0}}
+
+    {:ok,
+     %{
+       http_poster: opts[:http_poster],
+       queue_mod: opts[:queue_mod],
+       uid: Engine.Uids.get_uid(opts[:uid_engine]),
+       uid_engine: opts[:uid_engine]
+     }}
   end
 
   def handle_info(:check_queue, state) do
@@ -57,7 +66,7 @@ defmodule PaEss.HttpUpdater do
     wait_time = max(0, @avg_ms_between_sends - send_time)
     schedule_check_queue(self(), wait_time)
 
-    {:noreply, %{state | uid: state.uid + 1}}
+    {:noreply, %{state | uid: Engine.Uids.get_uid(state.uid_engine)}}
   end
 
   @spec process({atom, [any]}, __MODULE__.t()) :: post_result
