@@ -28,7 +28,7 @@ defmodule Engine.UidTest do
   end
 
   describe "handle_call/2" do
-    test "Returns UID in expected format" do
+    test "Returns UID in expected format for one-digit deploy number" do
       existing_state = %{
         id_counter: 0,
         deploy_num: 0
@@ -38,6 +38,18 @@ defmodule Engine.UidTest do
       assert uid == 100
 
       assert updated_state == %{id_counter: 1, deploy_num: 0}
+    end
+
+    test "Returns UID in expected format for two-digit deploy number" do
+      existing_state = %{
+        id_counter: 0,
+        deploy_num: 10
+      }
+
+      {:reply, uid, updated_state} = handle_call(:get_uid, [], existing_state)
+      assert uid == 110
+
+      assert updated_state == %{id_counter: 1, deploy_num: 10}
     end
   end
 end
