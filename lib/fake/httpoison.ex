@@ -11,8 +11,6 @@ defmodule Fake.HTTPoison do
   end
 
   def post(_url, body, _headers \\ [], _params \\ []) do
-    IO.puts(body)
-
     cond do
       body =~ "timeout" ->
         {:error, %HTTPoison.Error{reason: :timeout}}
