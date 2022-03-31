@@ -320,6 +320,28 @@ defmodule PaEss.HttpUpdaterTest do
     end
   end
 
+  describe "test uids" do
+    test "internal counter increments and timestamp does not change" do
+      state = make_state(%{queue_mod: Fake.MessageQueue})
+
+      {response, new_state} = PaEss.HttpUpdater.handle_info(:check_queue, state)
+      assert response == :noreply
+      assert new_state.internal_counter > state.internal_counter
+      assert new_state.timestamp == state.timestamp
+    end
+
+    test "internal counter resets and timestamp does change" do
+      state = make_state(%{queue_mod: Fake.MessageQueue, internal_counter: 15})
+
+      :timer.sleep(500)
+      {response, new_state} = PaEss.HttpUpdater.handle_info(:check_queue, state)
+
+      assert response == :noreply
+      assert new_state.internal_counter == 0
+      assert new_state.timestamp != state.timestamp
+    end
+  end
+
   defp make_state(init \\ %{}) do
     Map.merge(
       %{
