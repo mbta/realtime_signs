@@ -77,7 +77,7 @@ defmodule PaEss.HttpUpdater do
   @spec process({atom, [any]}, __MODULE__.t()) :: post_result
   def process({:update_single_line, [{station, zone}, line_no, msg, duration, start_secs]}, state) do
     cmd = to_command(msg, duration, start_secs, zone, line_no)
-    uid = get_uid(state.timestamp, state.updater_index, state.internal_counter)
+    uid = get_uid(state)
     encoded = URI.encode_query(MsgType: "SignContent", uid: uid, sta: station, c: cmd)
 
     {arinc_time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
@@ -117,7 +117,7 @@ defmodule PaEss.HttpUpdater do
       ) do
     top_cmd = to_command(top_line, duration, start_secs, zone, 1)
     bottom_cmd = to_command(bottom_line, duration, start_secs, zone, 2)
-    uid = get_uid(state.timestamp, state.updater_index, state.internal_counter)
+    uid = get_uid(state)
 
     encoded =
       URI.encode_query(
@@ -178,7 +178,7 @@ defmodule PaEss.HttpUpdater do
         encoded =
           [
             MsgType: "Canned",
-            uid: get_uid(state.timestamp, state.updater_index, state.internal_counter),
+            uid: get_uid(state),
             mid: message_id,
             var: Enum.join(vars, ","),
             typ: audio_type(type),
@@ -205,7 +205,7 @@ defmodule PaEss.HttpUpdater do
         encoded =
           [
             MsgType: "AdHoc",
-            uid: get_uid(state.timestamp, state.updater_index, state.internal_counter),
+            uid: get_uid(state),
             msg: PaEss.Utilities.replace_abbreviations(text),
             typ: audio_type(type),
             sta: "#{station}#{zone_bitmap(zones)}",
@@ -344,10 +344,10 @@ defmodule PaEss.HttpUpdater do
     end
   end
 
-  defp get_uid(timestamp, updater_index, internal_counter) do
+  defp get_uid(state) do
     <<uid::unsigned-integer-31>> =
-      <<timestamp::unsigned-integer-22, updater_index::unsigned-integer-5,
-        internal_counter::unsigned-integer-4>>
+      <<state.timestamp::unsigned-integer-22, state.updater_index::unsigned-integer-5,
+        state.internal_counter::unsigned-integer-4>>
 
     uid
   end
