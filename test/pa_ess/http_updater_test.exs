@@ -129,7 +129,7 @@ defmodule PaEss.HttpUpdaterTest do
 
   describe "send_audio/4" do
     test "Buses to Chelsea" do
-      state = make_state(%{uid: 1000})
+      state = make_state()
 
       audio = %Content.Audio.VehiclesToDestination{
         language: :english,
@@ -150,7 +150,7 @@ defmodule PaEss.HttpUpdaterTest do
     end
 
     test "Buses to South Station" do
-      state = make_state(%{uid: 1001})
+      state = make_state()
 
       audio = %Content.Audio.VehiclesToDestination{
         language: :english,
@@ -163,7 +163,7 @@ defmodule PaEss.HttpUpdaterTest do
     end
 
     test "Buses to Chelsea, in Spanish" do
-      state = make_state(%{uid: 1003})
+      state = make_state()
 
       audio = %Content.Audio.VehiclesToDestination{
         language: :spanish,
@@ -176,7 +176,7 @@ defmodule PaEss.HttpUpdaterTest do
     end
 
     test "Next train to Ashmont arrives in 4 minutes" do
-      state = make_state(%{uid: 1004})
+      state = make_state()
 
       audio = %Content.Audio.NextTrainCountdown{
         destination: :ashmont,
@@ -191,7 +191,7 @@ defmodule PaEss.HttpUpdaterTest do
     end
 
     test "Train to Mattapan arriving" do
-      state = make_state(%{uid: 1005})
+      state = make_state()
 
       audio = %Content.Audio.TrainIsArriving{
         destination: :mattapan
@@ -202,7 +202,7 @@ defmodule PaEss.HttpUpdaterTest do
     end
 
     test "Train to Ashmont arriving" do
-      state = make_state(%{uid: 1006})
+      state = make_state()
 
       audio = %Content.Audio.TrainIsArriving{
         destination: :ashmont,
@@ -214,7 +214,7 @@ defmodule PaEss.HttpUpdaterTest do
     end
 
     test "sends custom audio messages" do
-      state = make_state(%{uid: 1006})
+      state = make_state()
 
       audio = %Content.Audio.Custom{
         message: "Custom Message"
@@ -234,7 +234,7 @@ defmodule PaEss.HttpUpdaterTest do
     end
 
     test "sends custom audio messages with replacements" do
-      state = make_state(%{uid: 1006})
+      state = make_state()
 
       audio = %Content.Audio.Custom{
         message: "Custom OL Message"
@@ -299,7 +299,9 @@ defmodule PaEss.HttpUpdaterTest do
 
   test "handle_info pulls from queue" do
     state = make_state(%{queue_mod: Fake.MessageQueue})
-    assert PaEss.HttpUpdater.handle_info(:check_queue, state) == {:noreply, %{state | uid: 1}}
+    {response, _} = PaEss.HttpUpdater.handle_info(:check_queue, state)
+
+    assert response == :noreply
   end
 
   describe "to_command/5" do
@@ -318,7 +320,37 @@ defmodule PaEss.HttpUpdaterTest do
     end
   end
 
+  describe "test uids" do
+    test "internal counter increments and timestamp does not change" do
+      state = make_state(%{queue_mod: Fake.MessageQueue})
+
+      {response, new_state} = PaEss.HttpUpdater.handle_info(:check_queue, state)
+      assert response == :noreply
+      assert new_state.internal_counter > state.internal_counter
+      assert new_state.timestamp == state.timestamp
+    end
+
+    test "internal counter resets and timestamp does change" do
+      state = make_state(%{queue_mod: Fake.MessageQueue, internal_counter: 15})
+
+      :timer.sleep(500)
+      {response, new_state} = PaEss.HttpUpdater.handle_info(:check_queue, state)
+
+      assert response == :noreply
+      assert new_state.internal_counter == 0
+      assert new_state.timestamp != state.timestamp
+    end
+  end
+
   defp make_state(init \\ %{}) do
-    Map.merge(%{http_poster: Fake.HTTPoison, uid: 0}, init)
+    Map.merge(
+      %{
+        http_poster: Fake.HTTPoison,
+        updater_index: 1,
+        internal_counter: 0,
+        timestamp: div(System.system_time(:millisecond), 500)
+      },
+      init
+    )
   end
 end

@@ -26,7 +26,7 @@ defmodule PaEss.HttpUpdater do
   def child_spec(nth) do
     %{
       id: :"http_updater#{nth}",
-      start: {__MODULE__, :start_link, []}
+      start: {__MODULE__, :start_link, [[updater_index: nth]]}
     }
   end
 
@@ -37,13 +37,22 @@ defmodule PaEss.HttpUpdater do
     GenServer.start_link(
       __MODULE__,
       http_poster: http_poster,
-      queue_mod: queue_mod
+      queue_mod: queue_mod,
+      updater_index: opts[:updater_index]
     )
   end
 
   def init(opts) do
     schedule_check_queue(self(), 30)
-    {:ok, %{http_poster: opts[:http_poster], queue_mod: opts[:queue_mod], uid: 0}}
+
+    {:ok,
+     %{
+       http_poster: opts[:http_poster],
+       queue_mod: opts[:queue_mod],
+       updater_index: opts[:updater_index],
+       internal_counter: 0,
+       timestamp: div(System.system_time(:millisecond), 500)
+     }}
   end
 
   def handle_info(:check_queue, state) do
@@ -57,13 +66,19 @@ defmodule PaEss.HttpUpdater do
     wait_time = max(0, @avg_ms_between_sends - send_time)
     schedule_check_queue(self(), wait_time)
 
-    {:noreply, %{state | uid: state.uid + 1}}
+    if state.internal_counter >= 15 do
+      {:noreply,
+       %{state | timestamp: div(System.system_time(:millisecond), 500), internal_counter: 0}}
+    else
+      {:noreply, %{state | internal_counter: state.internal_counter + 1}}
+    end
   end
 
   @spec process({atom, [any]}, __MODULE__.t()) :: post_result
   def process({:update_single_line, [{station, zone}, line_no, msg, duration, start_secs]}, state) do
     cmd = to_command(msg, duration, start_secs, zone, line_no)
-    encoded = URI.encode_query(MsgType: "SignContent", uid: state.uid, sta: station, c: cmd)
+    uid = get_uid(state)
+    encoded = URI.encode_query(MsgType: "SignContent", uid: uid, sta: station, c: cmd)
 
     {arinc_time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
 
@@ -102,11 +117,12 @@ defmodule PaEss.HttpUpdater do
       ) do
     top_cmd = to_command(top_line, duration, start_secs, zone, 1)
     bottom_cmd = to_command(bottom_line, duration, start_secs, zone, 2)
+    uid = get_uid(state)
 
     encoded =
       URI.encode_query(
         MsgType: "SignContent",
-        uid: state.uid,
+        uid: uid,
         sta: station,
         c: top_cmd,
         c: bottom_cmd
@@ -162,7 +178,7 @@ defmodule PaEss.HttpUpdater do
         encoded =
           [
             MsgType: "Canned",
-            uid: state.uid,
+            uid: get_uid(state),
             mid: message_id,
             var: Enum.join(vars, ","),
             typ: audio_type(type),
@@ -189,7 +205,7 @@ defmodule PaEss.HttpUpdater do
         encoded =
           [
             MsgType: "AdHoc",
-            uid: state.uid,
+            uid: get_uid(state),
             msg: PaEss.Utilities.replace_abbreviations(text),
             typ: audio_type(type),
             sta: "#{station}#{zone_bitmap(zones)}",
@@ -326,6 +342,14 @@ defmodule PaEss.HttpUpdater do
         Logger.info("sign_ui_post_error: #{inspect(reason)}")
         {:error, :post_error}
     end
+  end
+
+  defp get_uid(state) do
+    <<uid::unsigned-integer-31>> =
+      <<state.timestamp::unsigned-integer-22, state.updater_index::unsigned-integer-5,
+        state.internal_counter::unsigned-integer-4>>
+
+    uid
   end
 
   defp schedule_check_queue(pid, ms) do
