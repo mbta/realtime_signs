@@ -12,7 +12,7 @@ Here's a general overview of the realtime_signs application which should be help
 
 ## Relevant environment variables
 
-These can all be set with `export VARIABLE=value`, or e.g. `OCS_PORT=1234 iex -S mix`. Note that some are overridden completely in particular environments.
+[`WinSW 2.9`](https://github.com/winsw/winsw/releases/tag/v2.9.0) is used to update environment variables. This is done by by editing the XML file located in `/c/Users/RTRUser/apps/` for the respective Realtime Signs environment. Updates should also be made to the copy of the XML file in 1Password.
 
 * `SIGN_HEAD_END_HOST`: hostname or IP of the head-end server that drives the actual physical signs, which `realtime_signs` pushes data to. Defaults to `127.0.0.1`, a test server.
 * `SIGN_UI_URL`: hostname or IP of the instance of `signs_ui` to which `realtime_signs` pushes data. Defaults to `signs-dev.mbtace.com`, a test server.
@@ -20,6 +20,8 @@ These can all be set with `export VARIABLE=value`, or e.g. `OCS_PORT=1234 iex -S
 * `TRIP_UPDATE_URL` and `VEHICLE_POSITIONS_URL`: URLs of the enhanced trip-update and vehicle-position feeds. Default to the real feed URLs.
 * `API_V3_KEY` and `API_V3_URL`: Access key and URL for V3 API. Default respectively to a blank string and the URL of the dev-green API instance.
 * `NUMBER_OF_HTTP_UPDATERS`: Number of `PaEss.HttpUpdater` processes that should run. These are responsible for posting updates to the PA/ESS head-end server, so this number is also the number of concurrent HTTP requests to that server.
+
+After editing an environment variable's value and saving the XML file, restart service by finding `Realtime Signs (Dev/Prod)` in the Windows `Services` application and hitting `restart`. You don't need to build a new release if there are no code changes.
 
 ## Deploys
 
@@ -60,4 +62,4 @@ The `realtime_signs` code is `git clone`d to `/c/Users/RTRUser/GitHub/realtime_s
 
 We build the application via Elixir-native `mix release`, setting the `PATH` to include the aforementioned versions of Elixir and Erlang. The release gets built into `_build/prod/rel/`.
 
-To manage the Windows service we use [`WinSW 2.9`](https://github.com/winsw/winsw/releases/tag/v2.9.0). The service is configured via an XML file in `/c/Users/RTRUser/apps/`. In particular, environment variables are updated by editing the XML file. Updates should also be made to the copy of the XML file in 1Password.
+To manage the Windows service we use [`WinSW 2.9`](https://github.com/winsw/winsw/releases/tag/v2.9.0). The service is configured via an XML file in `/c/Users/RTRUser/apps/`.
