@@ -12,7 +12,7 @@ Here's a general overview of the realtime_signs application which should be help
 
 ## Relevant environment variables
 
-[`WinSW 2.9`](https://github.com/winsw/winsw/releases/tag/v2.9.0) is used to update environment variables. This is done by by editing the XML file located in `/c/Users/RTRUser/apps/` for the respective Realtime Signs environment. Updates should also be made to the copy of the XML file in 1Password.
+[`WinSW 2.9`](https://github.com/winsw/winsw/releases/tag/v2.9.0) is used to update environment variables. This is done by editing the XML file located in `/c/Users/RTRUser/apps/` for the respective Realtime Signs environment. Updates should also be made to the copy of the XML file in 1Password.
 
 * `SIGN_HEAD_END_HOST`: hostname or IP of the head-end server that drives the actual physical signs, which `realtime_signs` pushes data to. Defaults to `127.0.0.1`, a test server.
 * `SIGN_UI_URL`: hostname or IP of the instance of `signs_ui` to which `realtime_signs` pushes data. Defaults to `signs-dev.mbtace.com`, a test server.
