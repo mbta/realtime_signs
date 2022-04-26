@@ -47,7 +47,7 @@ config :realtime_signs,
 
 config :realtime_signs, RealtimeSignsWeb.Endpoint,
   url: [host: "localhost"],
-  http: [port: 4000],
+  http: [port: 8081],
   render_errors: [view: RealtimeSignsWeb.ErrorView, accepts: ~w(html json)]
 
 config :ex_aws,
