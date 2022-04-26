@@ -53,7 +53,11 @@ defmodule RealtimeSigns.Mixfile do
       {:recon, "~> 2.5"},
       {:stream_data, "~> 0.1", only: [:dev, :test]},
       {:timex, "~> 3.1"},
-      {:uuid, "~> 1.1", only: :test}
+      {:uuid, "~> 1.1", only: :test},
+      {:phoenix, "~> 1.6.6"},
+      {:phoenix_html, "~> 3.0"},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:plug_cowboy, "~> 2.5"}
     ]
   end
 

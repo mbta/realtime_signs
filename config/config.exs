@@ -45,6 +45,11 @@ config :realtime_signs,
   number_of_http_updaters: 4,
   restart_fn: &Engine.Health.restart_noop/0
 
+config :realtime_signs, RealtimeSignsWeb.Endpoint,
+  url: [host: "localhost"],
+  http: [port: 4000],
+  render_errors: [view: RealtimeSignsWeb.ErrorView, accepts: ~w(html json)]
+
 config :ex_aws,
   access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],
   secret_access_key: [{:system, "SIGNS_S3_CONFIG_SECRET"}, :instance_role]
@@ -58,6 +63,8 @@ config :sentry, json_library: Jason
 # Have to use Timex's DB for now because Timex.parse can return times in
 # "Etc/UTC-4" time zone, which is invalid by IANA and TzData.TimeZoneDatabase
 config :elixir, :time_zone_database, Timex.Timezone.Database
+
+config :phoenix, :json_library, Jason
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
