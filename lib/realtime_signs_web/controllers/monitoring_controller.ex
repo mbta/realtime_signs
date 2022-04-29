@@ -27,7 +27,7 @@ defmodule RealtimeSignsWeb.MonitoringController do
         end)
       end)
 
-    Logger.info(["arinc_device_status_to_splunk_ms: ", splunk_time |> div(1000) |> inspect])
+    Logger.info(["arinc_status_to_splunk_ms: ", splunk_time |> div(1000) |> inspect])
     send_resp(conn, 200, "")
   end
 
