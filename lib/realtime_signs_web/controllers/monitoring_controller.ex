@@ -15,14 +15,14 @@ defmodule RealtimeSignsWeb.MonitoringController do
       :timer.tc(fn ->
         Enum.each(nodes, fn %{"description" => description, "is_online" => is_online} ->
           Logger.info([
-            "device_type: ",
+            "date_time: ",
+            DateTime.to_string(date_time),
+            " device_type: ",
             device_type,
             " description: ",
             description,
             " is_online: ",
-            is_online,
-            " date_time: ",
-            DateTime.to_string(date_time)
+            is_online
           ])
         end)
       end)
