@@ -46,10 +46,8 @@ config :realtime_signs,
   restart_fn: &Engine.Health.restart_noop/0
 
 config :realtime_signs, RealtimeSignsWeb.Endpoint,
-  url: [host: "localhost"],
-  http: [port: 8081],
-  render_errors: [view: RealtimeSignsWeb.ErrorView, accepts: ~w(html json)],
-  server: true
+  http: [port: 8082],
+  render_errors: [view: RealtimeSignsWeb.ErrorView, accepts: ~w(html json)]
 
 config :ex_aws,
   access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],

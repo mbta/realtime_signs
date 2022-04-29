@@ -1,7 +1,11 @@
 use Mix.Config
 
+config :realtime_signs, RealtimeSignsWeb.Endpoint,
+  url: [host: "localhost"],
+  server: true
+
 config :logger,
-  backends: [{Logger.Backend.Splunk, :splunk}, :console]
+  backends: [:console]
 
 config :logger, :splunk,
   connector: Logger.Backend.Splunk.Output.Http,

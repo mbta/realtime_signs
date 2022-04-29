@@ -2,25 +2,36 @@ defmodule RealtimeSignsWeb.MonitoringController do
   require Logger
   use RealtimeSignsWeb, :controller
 
-  def sign_uptime(conn, %{"data" => %{"nodes" => signs}} = _params) do
-    Logger.info("Received sign statuses from ARINC for #{Enum.count(signs)} signs")
+  def uptime(
+        conn,
+        %{"time" => arinc_time, "device_type" => device_type, "data" => %{"nodes" => nodes}} =
+          _params
+      ) do
+    Logger.info("Received #{device_type} statuses from ARINC for #{Enum.count(nodes)} nodes")
 
-    {splunk_time, result} =
+    {:ok, date_time} = DateTime.from_unix(arinc_time, :second)
+
+    {splunk_time, _result} =
       :timer.tc(fn ->
-        Enum.each(signs, fn %{"description" => description, "is_online" => is_online} ->
-          Logger.info(["sign_description: ", description, " is_online: ", is_online])
+        Enum.each(nodes, fn %{"description" => description, "is_online" => is_online} ->
+          Logger.info([
+            "device_type: ",
+            device_type,
+            " description: ",
+            description,
+            " is_online: ",
+            is_online,
+            " date_time: ",
+            DateTime.to_string(date_time)
+          ])
         end)
       end)
 
-    Logger.info(["sign_status_to_splunk_ms: ", splunk_time |> div(1000) |> inspect])
+    Logger.info(["arinc_device_status_to_splunk_ms: ", splunk_time |> div(1000) |> inspect])
     send_resp(conn, 200, "")
   end
 
-  def scu_uptime(conn, _params) do
-    send_resp(conn, 200, "")
-  end
-
-  def index(conn, params) do
+  def index(conn, _params) do
     send_resp(conn, 200, "Hello")
   end
 end

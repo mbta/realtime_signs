@@ -1,5 +1,9 @@
 use Mix.Config
 
+config :realtime_signs, RealtimeSignsWeb.Endpoint,
+  url: [host: "localhost"],
+  server: true
+
 config :sentry,
   dsn: System.get_env("SENTRY_DSN") || "",
   environment_name: :prod,
