@@ -126,10 +126,18 @@ defmodule Content.Message.Predictions do
       track_number = Content.Utilities.stop_track_number(stop_id)
 
       if track_number do
-        [
-          {Content.Utilities.width_padded_string(headsign, duration_string, width), 3},
-          {Content.Utilities.width_padded_string(headsign, "Trk #{track_number}", width), 3}
-        ]
+        if destination in [:ashmont, :braintree] and stop_id in ["Alewife-01", "Alewife-02"] do
+          Content.Utilities.width_padded_string(
+            headsign,
+            "Trk #{track_number} #{duration_string}",
+            width
+          )
+        else
+          [
+            {Content.Utilities.width_padded_string(headsign, duration_string, width), 3},
+            {Content.Utilities.width_padded_string(headsign, "Trk #{track_number}", width), 3}
+          ]
+        end
       else
         Content.Utilities.width_padded_string(headsign, duration_string, width)
       end
