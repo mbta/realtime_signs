@@ -129,7 +129,7 @@ defmodule Content.Message.Predictions do
         if destination in [:ashmont, :braintree] and stop_id in ["Alewife-01", "Alewife-02"] do
           Content.Utilities.width_padded_string(
             headsign,
-            "Trk #{track_number} #{duration_string}",
+            "Trk #{track_number} - #{duration_string}",
             width
           )
         else
