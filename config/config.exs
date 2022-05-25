@@ -43,8 +43,7 @@ config :realtime_signs,
   api_v3_key: nil,
   api_v3_url: "https://api-dev-green.mbtace.com",
   number_of_http_updaters: 4,
-  restart_fn: &Engine.Health.restart_noop/0,
-  monitor_sign_scu_uptime: "false"
+  restart_fn: &Engine.Health.restart_noop/0
 
 config :realtime_signs, RealtimeSignsWeb.Endpoint,
   http: [port: 80],
