@@ -47,7 +47,7 @@ defmodule RealtimeSigns do
     :ok = Config.update_env(env, :s3_path, "SIGNS_S3_PATH")
     :ok = Config.update_env(env, :api_v3_key, "API_V3_KEY", private?: true)
     :ok = Config.update_env(env, :api_v3_url, "API_V3_URL")
-    :ok = Config.update_env(env, :monitor_sign_scu_uptime, "MONITOR_SIGN_SCU_UPTIME")
+    :ok = Config.update_env(env, :monitor_sign_scu_uptime, "MONITOR_SIGN_SCU_UPTIME", type: :boolean)
 
     :ok =
       Config.update_env(env, :filter_uncertain_predictions?, "FILTER_UNCERTAIN_PREDICTIONS",
