@@ -22,10 +22,10 @@ defmodule RealtimeSigns do
         worker(Engine.Departures, []),
         worker(Engine.Static, []),
         worker(Engine.Alerts, []),
-        worker(MessageQueue, []),
-        RealtimeSignsWeb.Endpoint
+        worker(MessageQueue, [])
       ] ++
         http_updater_children() ++
+        monitor_sign_scu_uptime() ++
         [
           supervisor(Signs.Supervisor, [])
         ]
@@ -47,6 +47,7 @@ defmodule RealtimeSigns do
     :ok = Config.update_env(env, :s3_path, "SIGNS_S3_PATH")
     :ok = Config.update_env(env, :api_v3_key, "API_V3_KEY", private?: true)
     :ok = Config.update_env(env, :api_v3_url, "API_V3_URL")
+    :ok = Config.update_env(env, :monitor_sign_scu_uptime, "MONITOR_SIGN_SCU_UPTIME", type: :boolean)
 
     :ok =
       Config.update_env(env, :filter_uncertain_predictions?, "FILTER_UNCERTAIN_PREDICTIONS",
@@ -55,6 +56,14 @@ defmodule RealtimeSigns do
 
     :ok =
       Config.update_env(env, :number_of_http_updaters, "NUMBER_OF_HTTP_UPDATERS", type: :integer)
+  end
+
+  def monitor_sign_scu_uptime do
+    if (Application.get_env(:realtime_signs, :monitor_sign_scu_uptime)) do
+      [RealtimeSignsWeb.Endpoint]
+    else
+      []
+    end
   end
 
   def http_updater_children do

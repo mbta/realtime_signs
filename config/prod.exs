@@ -30,5 +30,4 @@ config :logger, :splunk,
 config :realtime_signs,
   external_config_getter: ExternalConfig.S3,
   sign_updater_mod: MessageQueue,
-  restart_fn: &System.restart/0,
-  monitor_sign_scu_uptime: System.get_env("MONITOR_SIGN_SCU_UPTIME")
+  restart_fn: &System.restart/0
