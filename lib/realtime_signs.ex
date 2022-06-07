@@ -22,7 +22,8 @@ defmodule RealtimeSigns do
         worker(Engine.Departures, []),
         worker(Engine.Static, []),
         worker(Engine.Alerts, []),
-        worker(MessageQueue, [])
+        worker(MessageQueue, []),
+        worker(RealtimeSigns.Scheduler, [])
       ] ++
         http_updater_children() ++
         [
