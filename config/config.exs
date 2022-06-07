@@ -43,7 +43,9 @@ config :realtime_signs,
   api_v3_key: nil,
   api_v3_url: "https://api-dev-green.mbtace.com",
   number_of_http_updaters: 4,
-  restart_fn: &Engine.Health.restart_noop/0
+  restart_fn: &Engine.Health.restart_noop/0,
+  message_log_s3_bucket: nil,
+  message_log_s3_path: nil
 
 config :ex_aws,
   access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],
@@ -59,13 +61,13 @@ config :sentry, json_library: Jason
 # "Etc/UTC-4" time zone, which is invalid by IANA and TzData.TimeZoneDatabase
 config :elixir, :time_zone_database, Timex.Timezone.Database
 
-config :realtime_signs, RealtimeSigns.Scheduler,
-jobs: [
-  paess_monitoring_job: [
-      schedule: "*/2 * * * *",
-      task: {RealtimeSigns.MessageLogJob, :work, []},
-    ]
-]
+# config :realtime_signs, RealtimeSigns.Scheduler,
+# jobs: [
+#   paess_monitoring_job: [
+#       schedule: "* * * * *",
+#       task: {RealtimeSigns.MessageLogJob, :work, []},
+#     ]
+# ]
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
