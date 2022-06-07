@@ -19,7 +19,8 @@ defmodule Engine.Predictions do
 
   @trip_updates_table :trip_updates
 
-  def start_link do
+  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
+  def start_link([]) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 

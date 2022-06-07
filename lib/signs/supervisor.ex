@@ -19,9 +19,15 @@ defmodule Signs.Supervisor do
   weird cases?)
   """
   require Signs.Utilities.SignsConfig
+  use Supervisor
 
-  def start_link do
-    Supervisor.start_link(children(), name: __MODULE__, strategy: :one_for_one)
+  def start_link([]) do
+    Supervisor.start_link(__MODULE__, name: __MODULE__, strategy: :one_for_one)
+  end
+
+  @impl true
+  def init(_init_arg) do
+    Supervisor.init(children(), strategy: :one_for_one)
   end
 
   defp children() do
