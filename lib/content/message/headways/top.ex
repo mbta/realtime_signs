@@ -21,9 +21,7 @@ defmodule Content.Message.Headways.Top do
           vehicle_type: type
         })
         when type in [:bus] do
-      "#{type |> signify_vehicle_type() |> String.capitalize()} to #{
-        PaEss.Utilities.destination_to_sign_string(destination)
-      }"
+      "#{type |> signify_vehicle_type() |> String.capitalize()} to #{PaEss.Utilities.destination_to_sign_string(destination)}"
     end
 
     def to_string(%Content.Message.Headways.Top{

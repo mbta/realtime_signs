@@ -64,9 +64,7 @@ defmodule Content.Audio.TrackChange do
 
         {route, berth, destination} ->
           Logger.error(
-            "TrackChange.to_params unknown route, berth, destination: #{
-              inspect({route, berth, destination})
-            }"
+            "TrackChange.to_params unknown route, berth, destination: #{inspect({route, berth, destination})}"
           )
 
           nil

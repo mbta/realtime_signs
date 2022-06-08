@@ -71,9 +71,7 @@ defmodule Content.Audio.Approaching do
     @spec handle_unknown_destination(Content.Audio.Approaching.t()) :: nil
     defp handle_unknown_destination(audio) do
       Logger.info(
-        "unknown_approaching_audio: destination=#{audio.destination} route_id=#{audio.route_id} platform=#{
-          audio.platform
-        }"
+        "unknown_approaching_audio: destination=#{audio.destination} route_id=#{audio.route_id} platform=#{audio.platform}"
       )
 
       nil

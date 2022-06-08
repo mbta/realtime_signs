@@ -104,9 +104,7 @@ defmodule Engine.Alerts do
         :ets.insert(state.tables.routes_table, Enum.into(route_statuses, []))
 
         Logger.info(
-          "Engine.Alerts Stop alert statuses: #{inspect(stop_statuses)} Route alert statuses #{
-            inspect(route_statuses)
-          }"
+          "Engine.Alerts Stop alert statuses: #{inspect(stop_statuses)} Route alert statuses #{inspect(route_statuses)}"
         )
 
       {:error, e} ->

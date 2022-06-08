@@ -15,18 +15,18 @@ defmodule RealtimeSigns do
       [
         :hackney_pool.child_spec(:default, []),
         :hackney_pool.child_spec(:arinc_pool, []),
-        worker(Engine.Health, []),
-        worker(Engine.Config, []),
-        worker(Engine.Predictions, []),
-        worker(Engine.ScheduledHeadways, []),
-        worker(Engine.Departures, []),
-        worker(Engine.Static, []),
-        worker(Engine.Alerts, []),
-        worker(MessageQueue, [])
+        Engine.Health,
+        Engine.Config,
+        Engine.Predictions,
+        Engine.ScheduledHeadways,
+        Engine.Departures,
+        Engine.Static,
+        Engine.Alerts,
+        MessageQueue
       ] ++
         http_updater_children() ++
         [
-          supervisor(Signs.Supervisor, [])
+          Signs.Supervisor
         ]
 
     opts = [strategy: :one_for_one, name: __MODULE__]
