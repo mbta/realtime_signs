@@ -79,9 +79,7 @@ defmodule Content.Audio.FollowingTrain do
               min_or_mins = if audio.minutes == 1, do: "minute", else: "minutes"
 
               text =
-                "The following #{trip_description} #{audio.verb} in #{audio.minutes} #{
-                  min_or_mins
-                }"
+                "The following #{trip_description} #{audio.verb} in #{audio.minutes} #{min_or_mins}"
 
               {:ad_hoc, {text, :audio}}
 

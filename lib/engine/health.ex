@@ -73,9 +73,7 @@ defmodule Engine.Health do
         stats = :hackney_pool.get_stats(pool)
 
         Logger.info(
-          "event=pool_info name=#{pool} pool_max=#{stats[:max]} in_use_count=#{
-            stats[:in_use_count]
-          } free_count=#{stats[:free_count]} queue_count=#{stats[:queue_count]}"
+          "event=pool_info name=#{pool} pool_max=#{stats[:max]} in_use_count=#{stats[:in_use_count]} free_count=#{stats[:free_count]} queue_count=#{stats[:queue_count]}"
         )
       end
     )
