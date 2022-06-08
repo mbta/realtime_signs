@@ -22,8 +22,8 @@ defmodule Engine.Config do
   @table_signs :config_engine_signs
   @table_headways :config_engine_headways
 
-  def start_link(name \\ __MODULE__) do
-    GenServer.start_link(__MODULE__, [], name: name)
+  def start_link([]) do
+    GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   @spec sign_config(:ets.tab(), String.t()) :: sign_config()
