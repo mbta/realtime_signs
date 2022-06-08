@@ -54,7 +54,7 @@ defmodule RealtimeSigns.Mixfile do
       {:stream_data, "~> 0.1", only: [:dev, :test]},
       {:timex, "~> 3.1"},
       {:uuid, "~> 1.1", only: :test},
-      {:quantum, "~> 2.3"}
+      {:quantum, "~> 3.0"}
     ]
   end
 
