@@ -61,13 +61,10 @@ config :sentry, json_library: Jason
 # "Etc/UTC-4" time zone, which is invalid by IANA and TzData.TimeZoneDatabase
 config :elixir, :time_zone_database, Timex.Timezone.Database
 
-# config :realtime_signs, RealtimeSigns.Scheduler,
-# jobs: [
-#   paess_monitoring_job: [
-#       schedule: "* * * * *",
-#       task: {RealtimeSigns.MessageLogJob, :work, []},
-#     ]
-# ]
+config :realtime_signs, RealtimeSigns.Scheduler,
+jobs: [
+  {"* * * * *", {RealtimeSigns.MessageLogJob, :work, []}}
+]
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment

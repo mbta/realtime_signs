@@ -22,7 +22,8 @@ defmodule RealtimeSigns do
         Engine.Departures,
         Engine.Static,
         Engine.Alerts,
-        MessageQueue
+        MessageQueue,
+        RealtimeSigns.Scheduler
       ] ++
         http_updater_children() ++
         [
