@@ -1,6 +1,7 @@
 defmodule Monitoring.Uptime do
   require Logger
 
+  @spec monitor_device_uptime(list(map()), integer()) :: :ok
   def monitor_device_uptime(nodes, timestamp) do
     {:ok, date_time} = DateTime.from_unix(timestamp, :second)
     device_type = get_device_type(nodes)
