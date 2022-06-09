@@ -57,12 +57,13 @@ defmodule Monitoring.Uptime do
     end
   end
 
-  defp get_device_type(nodes) do
-    [%{"node_type" => node_type} | _] = nodes
-
+  defp get_device_type([%{"node_type" => node_type} | _] = _nodes) do
     case node_type do
       "SGN" -> "sign"
       "PSS" -> "scu"
+      _ -> "unknown"
     end
   end
+
+  defp get_device_type(_), do: "unspecified"
 end
