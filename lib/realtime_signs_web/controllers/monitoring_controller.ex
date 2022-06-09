@@ -1,37 +1,14 @@
 defmodule RealtimeSignsWeb.MonitoringController do
   require Logger
   use RealtimeSignsWeb, :controller
+  import Monitoring.Uptime
 
   def uptime(
         conn,
-        %{"time" => arinc_time, "device_type" => device_type, "data" => %{"nodes" => nodes}} =
-          _params
+        %{"time" => timestamp, "data" => %{"nodes" => nodes}} = _params
       ) do
-    Logger.info("Received #{device_type} statuses from ARINC for #{Enum.count(nodes)} nodes")
-
-    {:ok, date_time} = DateTime.from_unix(arinc_time, :second)
-
-    {splunk_time, _result} =
-      :timer.tc(fn ->
-        Enum.each(nodes, fn %{"description" => description, "is_online" => is_online} ->
-          Logger.info([
-            "date_time: ",
-            DateTime.to_string(date_time),
-            " device_type: ",
-            device_type,
-            " description: ",
-            description,
-            " is_online: ",
-            is_online
-          ])
-        end)
-      end)
-
-    Logger.info(["arinc_status_to_splunk_ms: ", splunk_time |> div(1000) |> inspect])
+    Logger.info("Received device statuses from ARINC: Device count=#{Enum.count(nodes)}")
+    monitor_device_uptime(nodes, timestamp)
     send_resp(conn, 200, "")
-  end
-
-  def index(conn, _params) do
-    send_resp(conn, 200, "Hello")
   end
 end
