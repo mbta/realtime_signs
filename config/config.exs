@@ -48,7 +48,8 @@ config :realtime_signs,
 
 config :realtime_signs, RealtimeSignsWeb.Endpoint,
   http: [port: 80],
-  render_errors: [view: RealtimeSignsWeb.ErrorView, accepts: ~w(html json)]
+  url: [host: "localhost"],
+  server: true
 
 config :ex_aws,
   access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],
