@@ -39,9 +39,7 @@ defmodule Engine.Config.Headways do
 
           :error ->
             Logger.error(
-              "event=group_headways_parse_error headway_id=#{inspect({group, time_period})} group_conf=#{
-                inspect(group_conf)
-              }"
+              "event=group_headways_parse_error headway_id=#{inspect({group, time_period})} group_conf=#{inspect(group_conf)}"
             )
 
             []
