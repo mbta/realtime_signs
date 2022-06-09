@@ -4,26 +4,29 @@ defmodule Monitoring.Uptime do
   @spec monitor_device_uptime(list(map()), integer()) :: :ok
   def monitor_device_uptime(nodes, timestamp) do
     {:ok, date_time} = DateTime.from_unix(timestamp, :second)
-    device_type = get_device_type(nodes)
 
     {splunk_time, :ok} =
       :timer.tc(fn ->
-        Enum.each(nodes, fn %{"description" => description, "is_online" => is_online} ->
-          log_device_status(device_type, description, is_online, date_time)
+        Enum.each(nodes, fn node ->
+          log_device_status(node, date_time)
         end)
       end)
 
     Logger.info(["arinc_status_to_splunk_ms: ", splunk_time |> div(1000) |> inspect])
   end
 
-  defp log_device_status(device_type, description, is_online, date_time) do
-    case String.split(description, ":") do
-      [line, station, scu_id, "SCU"] ->
+  defp log_device_status(
+         %{"description" => description, "is_online" => is_online} = node,
+         date_time
+       ) do
+    case get_device_type(node) do
+      "scu" ->
+        [line, station, scu_id | _] = String.split(description, ":")
+
         Logger.info([
           "date_time=",
           DateTime.to_string(date_time),
-          " device_type=",
-          device_type,
+          " device_type=scu",
           " line=",
           line,
           " station=",
@@ -34,12 +37,13 @@ defmodule Monitoring.Uptime do
           is_online
         ])
 
-      [line, station, sign_id, sign_zone] ->
+      "sign" ->
+        [line, station, sign_id, sign_zone] = String.split(description, ":")
+
         Logger.info([
           "date_time=",
           DateTime.to_string(date_time),
-          " device_type=",
-          device_type,
+          " device_type=sign",
           " line=",
           line,
           " station=",
@@ -57,7 +61,7 @@ defmodule Monitoring.Uptime do
     end
   end
 
-  defp get_device_type([%{"node_type" => node_type} | _] = _nodes) do
+  defp get_device_type(%{"node_type" => node_type} = _node) do
     case node_type do
       "SGN" -> "sign"
       "PSS" -> "scu"
