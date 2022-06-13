@@ -58,8 +58,6 @@ defmodule RealtimeSigns do
   end
 
   def monitor_sign_scu_uptime do
-    IO.inspect(Application.get_env(:realtime_signs, RealtimeSignsWeb.Endpoint))
-
     if Application.get_env(:realtime_signs, RealtimeSignsWeb.Endpoint)
        |> Keyword.get(:http)
        |> Keyword.get(:port) do
