@@ -24,6 +24,7 @@ defmodule Monitoring.Uptime do
         [line, station, scu_id | _] = String.split(description, ":")
 
         Logger.info([
+          "device_uptime: ",
           "date_time=",
           DateTime.to_string(date_time),
           " device_type=scu",
@@ -41,6 +42,7 @@ defmodule Monitoring.Uptime do
         [line, station, sign_id, sign_zone] = String.split(description, ":")
 
         Logger.info([
+          "device_uptime: ",
           "date_time=",
           DateTime.to_string(date_time),
           " device_type=sign",
