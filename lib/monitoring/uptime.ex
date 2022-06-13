@@ -20,7 +20,7 @@ defmodule Monitoring.Uptime do
          date_time
        ) do
     case get_device_type(node) do
-      "scu" ->
+      :scu ->
         [line, station, scu_id | _] = String.split(description, ":")
 
         Logger.info([
@@ -37,7 +37,7 @@ defmodule Monitoring.Uptime do
           is_online
         ])
 
-      "sign" ->
+      :sign ->
         [line, station, sign_id, sign_zone] = String.split(description, ":")
 
         Logger.info([
@@ -57,17 +57,19 @@ defmodule Monitoring.Uptime do
         ])
 
       _ ->
-        nil
+        Logger.warn(
+          "Received uptime info of a node with an unknown or unspecified type #{inspect(node)}"
+        )
     end
   end
 
   defp get_device_type(%{"node_type" => node_type} = _node) do
     case node_type do
-      "SGN" -> "sign"
-      "PSS" -> "scu"
-      _ -> "unknown"
+      "SGN" -> :sign
+      "PSS" -> :scu
+      _ -> :unknown
     end
   end
 
-  defp get_device_type(_), do: "unspecified"
+  defp get_device_type(_), do: :unspecified
 end

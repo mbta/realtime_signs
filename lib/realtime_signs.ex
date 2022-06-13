@@ -49,9 +49,6 @@ defmodule RealtimeSigns do
     :ok = Config.update_env(env, :api_v3_url, "API_V3_URL")
 
     :ok =
-      Config.update_env(env, :monitor_sign_scu_uptime, "MONITOR_SIGN_SCU_UPTIME", type: :boolean)
-
-    :ok =
       Config.update_env(env, :filter_uncertain_predictions?, "FILTER_UNCERTAIN_PREDICTIONS",
         type: :boolean
       )
@@ -61,7 +58,11 @@ defmodule RealtimeSigns do
   end
 
   def monitor_sign_scu_uptime do
-    if Application.get_env(:realtime_signs, :monitor_sign_scu_uptime) do
+    IO.inspect(Application.get_env(:realtime_signs, RealtimeSignsWeb.Endpoint))
+
+    if Application.get_env(:realtime_signs, RealtimeSignsWeb.Endpoint)
+       |> Keyword.get(:http)
+       |> Keyword.get(:port) do
       [RealtimeSignsWeb.Endpoint]
     else
       []

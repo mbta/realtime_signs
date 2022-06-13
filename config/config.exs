@@ -1,6 +1,6 @@
 # This file is responsible for configuring your application
 # and its dependencies with the aid of the Mix.Config module.
-use Mix.Config
+import Config
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
@@ -43,13 +43,7 @@ config :realtime_signs,
   api_v3_key: nil,
   api_v3_url: "https://api-dev-green.mbtace.com",
   number_of_http_updaters: 4,
-  restart_fn: &Engine.Health.restart_noop/0,
-  monitor_sign_scu_uptime: false
-
-config :realtime_signs, RealtimeSignsWeb.Endpoint,
-  http: [port: 80],
-  url: [host: "localhost"],
-  server: true
+  restart_fn: &Engine.Health.restart_noop/0
 
 config :ex_aws,
   access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],
@@ -73,4 +67,4 @@ config :phoenix, :json_library, Jason
 # Configuration from the imported file will override the ones defined
 # here (which is why it is important to import them last).
 #
-import_config "#{Mix.env()}.exs"
+import_config "#{config_env()}.exs"
