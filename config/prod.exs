@@ -27,3 +27,5 @@ config :realtime_signs,
   external_config_getter: ExternalConfig.S3,
   sign_updater_mod: MessageQueue,
   restart_fn: &System.restart/0
+
+config :realtime_signs, RealtimeSignsWeb.Endpoint, secret_key_base: System.fetch_env!("SECRET_KEY_BASE")
