@@ -12,7 +12,7 @@ defmodule Monitoring.Uptime do
         end)
       end)
 
-    Logger.info(["arinc_status_to_splunk_ms: ", splunk_time |> div(1000) |> inspect])
+    Logger.info("arinc_status_to_splunk_ms: #{div(splunk_time, 1000)}")
   end
 
   defp log_device_status(
