@@ -6,16 +6,12 @@
     "pa_ess_loc": "MCED",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70263",
-          "routes": [
-            "Mattapan"
-          ],
+          "routes": ["Mattapan"],
           "direction_id": 0,
           "headway_direction_name": "Mattapan",
           "platform": null,
@@ -33,16 +29,12 @@
     "pa_ess_loc": "MCED",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70264",
-          "routes": [
-            "Mattapan"
-          ],
+          "routes": ["Mattapan"],
           "direction_id": 1,
           "headway_direction_name": "Ashmont",
           "platform": null,
@@ -60,16 +52,12 @@
     "pa_ess_loc": "MBUT",
     "read_loop_offset": 150,
     "text_zone": "c",
-    "audio_zones": [
-      "c"
-    ],
+    "audio_zones": ["c"],
     "source_config": [
       [
         {
           "stop_id": "70266",
-          "routes": [
-            "Mattapan"
-          ],
+          "routes": ["Mattapan"],
           "direction_id": 1,
           "headway_direction_name": "Ashmont",
           "platform": null,
@@ -81,9 +69,7 @@
       [
         {
           "stop_id": "70265",
-          "routes": [
-            "Mattapan"
-          ],
+          "routes": ["Mattapan"],
           "direction_id": 0,
           "headway_direction_name": "Mattapan",
           "platform": null,
@@ -101,16 +87,12 @@
     "pa_ess_loc": "MMIL",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70267",
-          "routes": [
-            "Mattapan"
-          ],
+          "routes": ["Mattapan"],
           "direction_id": 0,
           "headway_direction_name": "Mattapan",
           "platform": null,
@@ -128,16 +110,12 @@
     "pa_ess_loc": "MMIL",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70268",
-          "routes": [
-            "Mattapan"
-          ],
+          "routes": ["Mattapan"],
           "direction_id": 1,
           "headway_direction_name": "Ashmont",
           "platform": null,
@@ -155,16 +133,12 @@
     "pa_ess_loc": "MCEN",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70269",
-          "routes": [
-            "Mattapan"
-          ],
+          "routes": ["Mattapan"],
           "direction_id": 0,
           "headway_direction_name": "Mattapan",
           "platform": null,
@@ -182,16 +156,12 @@
     "pa_ess_loc": "MCEN",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70270",
-          "routes": [
-            "Mattapan"
-          ],
+          "routes": ["Mattapan"],
           "direction_id": 1,
           "headway_direction_name": "Ashmont",
           "platform": null,
@@ -209,16 +179,12 @@
     "pa_ess_loc": "MVAL",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70271",
-          "routes": [
-            "Mattapan"
-          ],
+          "routes": ["Mattapan"],
           "direction_id": 0,
           "headway_direction_name": "Mattapan",
           "platform": null,
@@ -236,16 +202,12 @@
     "pa_ess_loc": "MVAL",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70272",
-          "routes": [
-            "Mattapan"
-          ],
+          "routes": ["Mattapan"],
           "direction_id": 1,
           "headway_direction_name": "Ashmont",
           "platform": null,
@@ -263,16 +225,12 @@
     "pa_ess_loc": "MCAP",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70274",
-          "routes": [
-            "Mattapan"
-          ],
+          "routes": ["Mattapan"],
           "direction_id": 1,
           "headway_direction_name": "Ashmont",
           "platform": null,
@@ -290,16 +248,12 @@
     "pa_ess_loc": "BWON",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
           "stop_id": "70059",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -317,16 +271,12 @@
     "pa_ess_loc": "BWON",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70059",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -344,16 +294,12 @@
     "pa_ess_loc": "BREV",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
           "stop_id": "70058",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -371,16 +317,12 @@
     "pa_ess_loc": "BREV",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70058",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -392,9 +334,7 @@
       [
         {
           "stop_id": "70057",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -412,16 +352,12 @@
     "pa_ess_loc": "BREV",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
           "stop_id": "70057",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -439,16 +375,12 @@
     "pa_ess_loc": "BBEA",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
           "stop_id": "70056",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -466,16 +398,12 @@
     "pa_ess_loc": "BBEA",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
           "stop_id": "70055",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -493,16 +421,12 @@
     "pa_ess_loc": "BSUF",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
           "stop_id": "70054",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -520,16 +444,12 @@
     "pa_ess_loc": "BSUF",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
           "stop_id": "70053",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -547,16 +467,12 @@
     "pa_ess_loc": "BORH",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
           "stop_id": "70052",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -574,16 +490,12 @@
     "pa_ess_loc": "BORH",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70052",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -595,9 +507,7 @@
       [
         {
           "stop_id": "70051",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -615,16 +525,12 @@
     "pa_ess_loc": "BORH",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
           "stop_id": "70051",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -642,16 +548,12 @@
     "pa_ess_loc": "BWOO",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
           "stop_id": "70050",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -669,16 +571,12 @@
     "pa_ess_loc": "BWOO",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70050",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -690,9 +588,7 @@
       [
         {
           "stop_id": "70049",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -710,16 +606,12 @@
     "pa_ess_loc": "BWOO",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
           "stop_id": "70049",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -737,16 +629,12 @@
     "pa_ess_loc": "BAIR",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
           "stop_id": "70048",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -764,16 +652,12 @@
     "pa_ess_loc": "BAIR",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
           "stop_id": "70047",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -791,16 +675,12 @@
     "pa_ess_loc": "BMAV",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
           "stop_id": "70046",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -818,16 +698,12 @@
     "pa_ess_loc": "BMAV",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
           "stop_id": "70045",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -845,16 +721,12 @@
     "pa_ess_loc": "BAQU",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
           "stop_id": "70044",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -872,16 +744,12 @@
     "pa_ess_loc": "BAQU",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70044",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -893,9 +761,7 @@
       [
         {
           "stop_id": "70043",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -913,16 +779,12 @@
     "pa_ess_loc": "BAQU",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
           "stop_id": "70043",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -940,16 +802,12 @@
     "pa_ess_loc": "BSTA",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
           "stop_id": "70042",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -967,16 +825,12 @@
     "pa_ess_loc": "BSTA",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70042",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -988,9 +842,7 @@
       [
         {
           "stop_id": "70041",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -1008,16 +860,12 @@
     "pa_ess_loc": "BSTA",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
           "stop_id": "70041",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -1035,16 +883,12 @@
     "pa_ess_loc": "BGOV",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
           "stop_id": "70040",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -1062,16 +906,12 @@
     "pa_ess_loc": "BGOV",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70040",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -1083,9 +923,7 @@
       [
         {
           "stop_id": "70039",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -1103,16 +941,12 @@
     "pa_ess_loc": "BGOV",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
           "stop_id": "70039",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 0,
           "headway_direction_name": "Bowdoin",
           "platform": null,
@@ -1130,16 +964,12 @@
     "pa_ess_loc": "BBOW",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
           "stop_id": "70038",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -1157,16 +987,12 @@
     "pa_ess_loc": "BBOW",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70038",
-          "routes": [
-            "Blue"
-          ],
+          "routes": ["Blue"],
           "direction_id": 1,
           "headway_direction_name": "Wonderland",
           "platform": null,
@@ -1184,16 +1010,12 @@
     "pa_ess_loc": "OOAK",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70036",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1204,9 +1026,7 @@
         },
         {
           "stop_id": "Oak Grove-01",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1216,9 +1036,7 @@
         },
         {
           "stop_id": "Oak Grove-02",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1236,16 +1054,12 @@
     "pa_ess_loc": "OOAK",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
           "stop_id": "70036",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1256,9 +1070,7 @@
         },
         {
           "stop_id": "Oak Grove-01",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1268,9 +1080,7 @@
         },
         {
           "stop_id": "Oak Grove-02",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1288,16 +1098,12 @@
     "pa_ess_loc": "OOAK",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70036",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1308,9 +1114,7 @@
         },
         {
           "stop_id": "Oak Grove-01",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1320,9 +1124,7 @@
         },
         {
           "stop_id": "Oak Grove-02",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1340,16 +1142,12 @@
     "pa_ess_loc": "OMAL",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70035",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1361,9 +1159,7 @@
       [
         {
           "stop_id": "70034",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1381,16 +1177,12 @@
     "pa_ess_loc": "OMAL",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70035",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1402,9 +1194,7 @@
       [
         {
           "stop_id": "70034",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1422,16 +1212,12 @@
     "pa_ess_loc": "OWEL",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70033",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1443,9 +1229,7 @@
       [
         {
           "stop_id": "70032",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1463,16 +1247,12 @@
     "pa_ess_loc": "OWEL",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70033",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1490,16 +1270,12 @@
     "pa_ess_loc": "OWEL",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70032",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1509,9 +1285,7 @@
         },
         {
           "stop_id": "70032",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1529,16 +1303,12 @@
     "pa_ess_loc": "OASQ",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70279",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1550,9 +1320,7 @@
       [
         {
           "stop_id": "70278",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1570,16 +1338,12 @@
     "pa_ess_loc": "OASQ",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70279",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1597,16 +1361,12 @@
     "pa_ess_loc": "OASQ",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70278",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1624,16 +1384,12 @@
     "pa_ess_loc": "OSUL",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70031",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1645,9 +1401,7 @@
       [
         {
           "stop_id": "70030",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1665,16 +1419,12 @@
     "pa_ess_loc": "OSUL",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70031",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1692,16 +1442,12 @@
     "pa_ess_loc": "OSUL",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70030",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1719,16 +1465,12 @@
     "pa_ess_loc": "OCOM",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70029",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1740,9 +1482,7 @@
       [
         {
           "stop_id": "70028",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1760,16 +1500,12 @@
     "pa_ess_loc": "OCOM",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70029",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1787,16 +1523,12 @@
     "pa_ess_loc": "OCOM",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70028",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1814,16 +1546,12 @@
     "pa_ess_loc": "ONST",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70027",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1841,16 +1569,12 @@
     "pa_ess_loc": "ONST",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70026",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1868,16 +1592,12 @@
     "pa_ess_loc": "ONST",
     "read_loop_offset": 150,
     "text_zone": "c",
-    "audio_zones": [
-      "c"
-    ],
+    "audio_zones": ["c"],
     "source_config": [
       [
         {
           "stop_id": "70027",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1889,9 +1609,7 @@
       [
         {
           "stop_id": "70026",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1909,16 +1627,12 @@
     "pa_ess_loc": "ONST",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70027",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1930,9 +1644,7 @@
       [
         {
           "stop_id": "70026",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1950,16 +1662,12 @@
     "pa_ess_loc": "OHAY",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70025",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -1971,9 +1679,7 @@
       [
         {
           "stop_id": "70024",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -1991,16 +1697,12 @@
     "pa_ess_loc": "OHAY",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70025",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2018,16 +1720,12 @@
     "pa_ess_loc": "OHAY",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70024",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2045,16 +1743,12 @@
     "pa_ess_loc": "OSTN",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70023",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2066,9 +1760,7 @@
       [
         {
           "stop_id": "70022",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2086,16 +1778,12 @@
     "pa_ess_loc": "OSTN",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70023",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2113,16 +1801,12 @@
     "pa_ess_loc": "OSTS",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70022",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2140,16 +1824,12 @@
     "pa_ess_loc": "ODTN",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70021",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2167,16 +1847,12 @@
     "pa_ess_loc": "ODTS",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70020",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2194,16 +1870,12 @@
     "pa_ess_loc": "OCHN",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70019",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2221,16 +1893,12 @@
     "pa_ess_loc": "OCHS",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70018",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2248,16 +1916,12 @@
     "pa_ess_loc": "OCHN",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70019",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2275,16 +1939,12 @@
     "pa_ess_loc": "OCHS",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70018",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2302,16 +1962,12 @@
     "pa_ess_loc": "ONEM",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70017",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2323,9 +1979,7 @@
       [
         {
           "stop_id": "70016",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2343,16 +1997,12 @@
     "pa_ess_loc": "ONEM",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70017",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2370,16 +2020,12 @@
     "pa_ess_loc": "ONEM",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70016",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2397,16 +2043,12 @@
     "pa_ess_loc": "OBAC",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70015",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2418,9 +2060,7 @@
       [
         {
           "stop_id": "70014",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2438,16 +2078,12 @@
     "pa_ess_loc": "OBAC",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70015",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2465,16 +2101,12 @@
     "pa_ess_loc": "OBAC",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70014",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2492,16 +2124,12 @@
     "pa_ess_loc": "OMAS",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70013",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2513,9 +2141,7 @@
       [
         {
           "stop_id": "70012",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2533,16 +2159,12 @@
     "pa_ess_loc": "OMAS",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70013",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2560,16 +2182,12 @@
     "pa_ess_loc": "OMAS",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70012",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2587,16 +2205,12 @@
     "pa_ess_loc": "ORUG",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70011",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2614,16 +2228,12 @@
     "pa_ess_loc": "ORUG",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70010",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2641,16 +2251,12 @@
     "pa_ess_loc": "ORUG",
     "read_loop_offset": 150,
     "text_zone": "c",
-    "audio_zones": [
-      "c"
-    ],
+    "audio_zones": ["c"],
     "source_config": [
       [
         {
           "stop_id": "70011",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2662,9 +2268,7 @@
       [
         {
           "stop_id": "70010",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2682,16 +2286,12 @@
     "pa_ess_loc": "ORUG",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70011",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2703,9 +2303,7 @@
       [
         {
           "stop_id": "70010",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2723,16 +2321,12 @@
     "pa_ess_loc": "OROX",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70009",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2744,9 +2338,7 @@
       [
         {
           "stop_id": "70008",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2764,16 +2356,12 @@
     "pa_ess_loc": "OROX",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70009",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2791,16 +2379,12 @@
     "pa_ess_loc": "OROX",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70008",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2818,16 +2402,12 @@
     "pa_ess_loc": "OJAC",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70007",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2839,9 +2419,7 @@
       [
         {
           "stop_id": "70006",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2859,16 +2437,12 @@
     "pa_ess_loc": "OJAC",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70007",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2886,16 +2460,12 @@
     "pa_ess_loc": "OJAC",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70006",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2913,16 +2483,12 @@
     "pa_ess_loc": "OSTO",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70005",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2934,9 +2500,7 @@
       [
         {
           "stop_id": "70004",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -2954,16 +2518,12 @@
     "pa_ess_loc": "OSTO",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70005",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -2981,16 +2541,12 @@
     "pa_ess_loc": "OSTO",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70004",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -3008,16 +2564,12 @@
     "pa_ess_loc": "OGRE",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70003",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -3029,9 +2581,7 @@
       [
         {
           "stop_id": "70002",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -3049,16 +2599,12 @@
     "pa_ess_loc": "OGRE",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70003",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -3076,16 +2622,12 @@
     "pa_ess_loc": "OGRE",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70002",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -3103,16 +2645,12 @@
     "pa_ess_loc": "OFOR",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70001",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -3123,9 +2661,7 @@
         },
         {
           "stop_id": "Forest Hills-01",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -3135,9 +2671,7 @@
         },
         {
           "stop_id": "Forest Hills-02",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -3155,16 +2689,12 @@
     "pa_ess_loc": "OFOR",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70001",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -3175,9 +2705,7 @@
         },
         {
           "stop_id": "Forest Hills-01",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -3187,9 +2715,7 @@
         },
         {
           "stop_id": "Forest Hills-02",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -3207,16 +2733,12 @@
     "pa_ess_loc": "SFOR",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70001",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -3227,9 +2749,7 @@
         },
         {
           "stop_id": "Forest Hills-01",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -3239,9 +2759,7 @@
         },
         {
           "stop_id": "Forest Hills-02",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -3259,16 +2777,12 @@
     "pa_ess_loc": "SRUG",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70011",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 1,
           "headway_direction_name": "Forest Hills",
           "platform": null,
@@ -3280,9 +2794,7 @@
       [
         {
           "stop_id": "70010",
-          "routes": [
-            "Orange"
-          ],
+          "routes": ["Orange"],
           "direction_id": 0,
           "headway_direction_name": "Oak Grove",
           "platform": null,
@@ -3300,16 +2812,12 @@
     "pa_ess_loc": "RALE",
     "read_loop_offset": 150,
     "text_zone": "c",
-    "audio_zones": [
-      "c"
-    ],
+    "audio_zones": ["c"],
     "source_config": [
       [
         {
           "stop_id": "70061",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3320,9 +2828,7 @@
         },
         {
           "stop_id": "Alewife-01",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3332,9 +2838,7 @@
         },
         {
           "stop_id": "Alewife-02",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3352,16 +2856,12 @@
     "pa_ess_loc": "RALE",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70061",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3372,9 +2872,7 @@
         },
         {
           "stop_id": "Alewife-01",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3384,9 +2882,7 @@
         },
         {
           "stop_id": "Alewife-02",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3404,16 +2900,12 @@
     "pa_ess_loc": "RDAV",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70064",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -3425,9 +2917,7 @@
       [
         {
           "stop_id": "70063",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3445,16 +2935,12 @@
     "pa_ess_loc": "RDAV",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70064",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -3472,16 +2958,12 @@
     "pa_ess_loc": "RDAV",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70063",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3499,16 +2981,12 @@
     "pa_ess_loc": "RPOR",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70066",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -3520,9 +2998,7 @@
       [
         {
           "stop_id": "70065",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3540,16 +3016,12 @@
     "pa_ess_loc": "RPOR",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70066",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -3567,16 +3039,12 @@
     "pa_ess_loc": "RPOR",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70065",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3594,16 +3062,12 @@
     "pa_ess_loc": "RHAR",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70068",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -3615,9 +3079,7 @@
       [
         {
           "stop_id": "70067",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3635,16 +3097,12 @@
     "pa_ess_loc": "RHAR",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70068",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -3662,16 +3120,12 @@
     "pa_ess_loc": "RHAR",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70067",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3689,16 +3143,12 @@
     "pa_ess_loc": "RCEN",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70070",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -3716,16 +3166,12 @@
     "pa_ess_loc": "RCEN",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70069",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3743,16 +3189,12 @@
     "pa_ess_loc": "RKEN",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70072",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -3770,16 +3212,12 @@
     "pa_ess_loc": "RKEN",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70071",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3797,16 +3235,12 @@
     "pa_ess_loc": "RMGH",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70074",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -3824,16 +3258,12 @@
     "pa_ess_loc": "RMGH",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70073",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3851,17 +3281,12 @@
     "pa_ess_loc": "RPRK",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n",
-      "c"
-    ],
+    "audio_zones": ["n", "c"],
     "source_config": [
       [
         {
           "stop_id": "70076",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -3879,17 +3304,12 @@
     "pa_ess_loc": "RPRK",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s",
-      "c"
-    ],
+    "audio_zones": ["s", "c"],
     "source_config": [
       [
         {
           "stop_id": "70075",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3912,9 +3332,7 @@
       [
         {
           "stop_id": "70076",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -3926,9 +3344,7 @@
       [
         {
           "stop_id": "70075",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -3946,16 +3362,12 @@
     "pa_ess_loc": "RDTC",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70078",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -3973,16 +3385,12 @@
     "pa_ess_loc": "RDTC",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70077",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -4000,16 +3408,12 @@
     "pa_ess_loc": "RSOU",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70080",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4021,9 +3425,7 @@
       [
         {
           "stop_id": "70079",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -4041,16 +3443,12 @@
     "pa_ess_loc": "RSOU",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70080",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4068,16 +3466,12 @@
     "pa_ess_loc": "RSOU",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70079",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -4095,16 +3489,12 @@
     "pa_ess_loc": "SSOU",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
           "stop_id": "70080",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4116,9 +3506,7 @@
       [
         {
           "stop_id": "70079",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -4136,16 +3524,12 @@
     "pa_ess_loc": "RBRO",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70082",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4157,9 +3541,7 @@
       [
         {
           "stop_id": "70081",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -4177,16 +3559,12 @@
     "pa_ess_loc": "RBRO",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70082",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4204,16 +3582,12 @@
     "pa_ess_loc": "RBRO",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70081",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -4231,16 +3605,12 @@
     "pa_ess_loc": "RAND",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70084",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4252,9 +3622,7 @@
       [
         {
           "stop_id": "70083",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -4272,16 +3640,12 @@
     "pa_ess_loc": "RAND",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70084",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4299,16 +3663,12 @@
     "pa_ess_loc": "RAND",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70083",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Southbound",
           "platform": null,
@@ -4326,16 +3686,12 @@
     "pa_ess_loc": "RSAV",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70088",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4347,9 +3703,7 @@
       [
         {
           "stop_id": "70087",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Ashmont",
           "platform": null,
@@ -4367,16 +3721,12 @@
     "pa_ess_loc": "RSAV",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70088",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4394,16 +3744,12 @@
     "pa_ess_loc": "RSAV",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70087",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Ashmont",
           "platform": null,
@@ -4421,16 +3767,12 @@
     "pa_ess_loc": "RFIE",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70090",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4442,9 +3784,7 @@
       [
         {
           "stop_id": "70089",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Ashmont",
           "platform": null,
@@ -4462,16 +3802,12 @@
     "pa_ess_loc": "RFIE",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70090",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4489,16 +3825,12 @@
     "pa_ess_loc": "RFIE",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70089",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Ashmont",
           "platform": null,
@@ -4516,16 +3848,12 @@
     "pa_ess_loc": "RSHA",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70092",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4537,9 +3865,7 @@
       [
         {
           "stop_id": "70091",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Ashmont",
           "platform": null,
@@ -4557,16 +3883,12 @@
     "pa_ess_loc": "RSHA",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70092",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4584,16 +3906,12 @@
     "pa_ess_loc": "RSHA",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70091",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Ashmont",
           "platform": null,
@@ -4611,16 +3929,12 @@
     "pa_ess_loc": "RASH",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70094",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4632,9 +3946,7 @@
       [
         {
           "stop_id": "70261",
-          "routes": [
-            "Mattapan"
-          ],
+          "routes": ["Mattapan"],
           "direction_id": 0,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4652,16 +3964,12 @@
     "pa_ess_loc": "RASH",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70094",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4679,16 +3987,12 @@
     "pa_ess_loc": "RNQU",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70098",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4700,9 +4004,7 @@
       [
         {
           "stop_id": "70097",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Braintree",
           "platform": null,
@@ -4720,16 +4022,12 @@
     "pa_ess_loc": "RNQU",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70098",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4747,16 +4045,12 @@
     "pa_ess_loc": "RNQU",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70097",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Braintree",
           "platform": null,
@@ -4774,16 +4068,12 @@
     "pa_ess_loc": "RWOL",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70100",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4795,9 +4085,7 @@
       [
         {
           "stop_id": "70099",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Braintree",
           "platform": null,
@@ -4815,16 +4103,12 @@
     "pa_ess_loc": "RWOL",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70100",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4842,16 +4126,12 @@
     "pa_ess_loc": "RWOL",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70099",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Braintree",
           "platform": null,
@@ -4869,16 +4149,12 @@
     "pa_ess_loc": "RQUC",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70102",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4890,9 +4166,7 @@
       [
         {
           "stop_id": "70101",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Braintree",
           "platform": null,
@@ -4910,16 +4184,12 @@
     "pa_ess_loc": "RQUC",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70102",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4937,16 +4207,12 @@
     "pa_ess_loc": "RQUC",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70101",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Braintree",
           "platform": null,
@@ -4964,16 +4230,12 @@
     "pa_ess_loc": "RQUA",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70104",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -4985,9 +4247,7 @@
       [
         {
           "stop_id": "70103",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Braintree",
           "platform": null,
@@ -5005,16 +4265,12 @@
     "pa_ess_loc": "RQUA",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70104",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -5032,16 +4288,12 @@
     "pa_ess_loc": "RQUA",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70103",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Braintree",
           "platform": null,
@@ -5059,16 +4311,12 @@
     "pa_ess_loc": "RBRA",
     "read_loop_offset": 150,
     "text_zone": "c",
-    "audio_zones": [
-      "c"
-    ],
+    "audio_zones": ["c"],
     "source_config": [
       [
         {
           "stop_id": "70105",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -5079,9 +4327,7 @@
         },
         {
           "stop_id": "Braintree-01",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -5091,9 +4337,7 @@
         },
         {
           "stop_id": "Braintree-02",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -5111,16 +4355,12 @@
     "pa_ess_loc": "RBRA",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70105",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -5131,9 +4371,7 @@
         },
         {
           "stop_id": "Braintree-01",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -5143,9 +4381,7 @@
         },
         {
           "stop_id": "Braintree-02",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": null,
@@ -5163,16 +4399,12 @@
     "pa_ess_loc": "RJFK",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "source_config": [
       [
         {
           "stop_id": "70085",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Ashmont",
           "platform": null,
@@ -5190,16 +4422,12 @@
     "pa_ess_loc": "RJFK",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "source_config": [
       [
         {
           "stop_id": "70095",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 0,
           "headway_direction_name": "Braintree",
           "platform": null,
@@ -5217,16 +4445,12 @@
     "pa_ess_loc": "RJFK",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "source_config": [
       [
         {
           "stop_id": "70086",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": "ashmont",
@@ -5244,16 +4468,12 @@
     "pa_ess_loc": "RJFK",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "source_config": [
       [
         {
           "stop_id": "70096",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": "braintree",
@@ -5271,16 +4491,12 @@
     "pa_ess_loc": "RJFK",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "source_config": [
       [
         {
           "stop_id": "70086",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "direction_id": 1,
           "headway_direction_name": "Alewife",
           "platform": "ashmont",
@@ -5292,9 +4508,7 @@
           "stop_id": "70096",
           "direction_id": 1,
           "headway_direction_name": "Alewife",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "platform": "braintree",
           "terminal": false,
           "announce_arriving": true,
@@ -5306,9 +4520,7 @@
           "stop_id": "70085",
           "direction_id": 0,
           "headway_direction_name": "Southbound",
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5320,9 +4532,7 @@
           "headway_direction_name": "Southbound",
           "platform": null,
           "terminal": false,
-          "routes": [
-            "Red"
-          ],
+          "routes": ["Red"],
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5335,9 +4545,7 @@
     "pa_ess_loc": "GRIV",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5345,9 +4553,7 @@
           "stop_id": "70160",
           "direction_id": 1,
           "headway_direction_name": "North Station",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
@@ -5362,9 +4568,7 @@
     "pa_ess_loc": "GWOO",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5372,9 +4576,7 @@
           "stop_id": "70162",
           "direction_id": 1,
           "headway_direction_name": "North Station",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5389,9 +4591,7 @@
     "pa_ess_loc": "GWOO",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5399,9 +4599,7 @@
           "stop_id": "70163",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5416,9 +4614,7 @@
     "pa_ess_loc": "GWAB",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5426,9 +4622,7 @@
           "stop_id": "70164",
           "direction_id": 1,
           "headway_direction_name": "North Station",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5443,9 +4637,7 @@
     "pa_ess_loc": "GWAB",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5453,9 +4645,7 @@
           "stop_id": "70165",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5470,9 +4660,7 @@
     "pa_ess_loc": "GELI",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5480,9 +4668,7 @@
           "stop_id": "70166",
           "direction_id": 1,
           "headway_direction_name": "North Station",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5497,9 +4683,7 @@
     "pa_ess_loc": "GELI",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5507,9 +4691,7 @@
           "stop_id": "70167",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5524,9 +4706,7 @@
     "pa_ess_loc": "GNEH",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5534,9 +4714,7 @@
           "stop_id": "70168",
           "direction_id": 1,
           "headway_direction_name": "North Station",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5551,9 +4729,7 @@
     "pa_ess_loc": "GNEH",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5561,9 +4737,7 @@
           "stop_id": "70169",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5578,9 +4752,7 @@
     "pa_ess_loc": "GNEC",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5588,9 +4760,7 @@
           "stop_id": "70170",
           "direction_id": 1,
           "headway_direction_name": "North Station",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5605,9 +4775,7 @@
     "pa_ess_loc": "GNEC",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5615,9 +4783,7 @@
           "stop_id": "70171",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5632,9 +4798,7 @@
     "pa_ess_loc": "GCHE",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5642,9 +4806,7 @@
           "stop_id": "70172",
           "direction_id": 1,
           "headway_direction_name": "North Station",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5659,9 +4821,7 @@
     "pa_ess_loc": "GCHE",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5669,9 +4829,7 @@
           "stop_id": "70173",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5686,9 +4844,7 @@
     "pa_ess_loc": "GRES",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5696,9 +4852,7 @@
           "stop_id": "70174",
           "direction_id": 1,
           "headway_direction_name": "North Station",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5713,9 +4867,7 @@
     "pa_ess_loc": "GRES",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5723,9 +4875,7 @@
           "stop_id": "70175",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5740,9 +4890,7 @@
     "pa_ess_loc": "GBEA",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "uses_shuttles": false,
     "source_config": [
@@ -5751,9 +4899,7 @@
           "stop_id": "70176",
           "direction_id": 1,
           "headway_direction_name": "North Station",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5768,9 +4914,7 @@
     "pa_ess_loc": "GBEA",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "uses_shuttles": false,
     "source_config": [
@@ -5779,9 +4923,7 @@
           "stop_id": "70177",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5796,9 +4938,7 @@
     "pa_ess_loc": "GBRH",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5806,9 +4946,7 @@
           "stop_id": "70178",
           "direction_id": 1,
           "headway_direction_name": "North Station",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5823,9 +4961,7 @@
     "pa_ess_loc": "GBRH",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5833,9 +4969,7 @@
           "stop_id": "70179",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5850,9 +4984,7 @@
     "pa_ess_loc": "GBRV",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5860,9 +4992,7 @@
           "stop_id": "70180",
           "direction_id": 1,
           "headway_direction_name": "North Station",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5877,9 +5007,7 @@
     "pa_ess_loc": "GBRV",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5887,9 +5015,7 @@
           "stop_id": "70181",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5904,9 +5030,7 @@
     "pa_ess_loc": "GLON",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5914,9 +5038,7 @@
           "stop_id": "70182",
           "direction_id": 1,
           "headway_direction_name": "North Station",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5931,9 +5053,7 @@
     "pa_ess_loc": "GLON",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5941,9 +5061,7 @@
           "stop_id": "70183",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5958,9 +5076,7 @@
     "pa_ess_loc": "GFEN",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -5968,9 +5084,7 @@
           "stop_id": "70186",
           "direction_id": 1,
           "headway_direction_name": "North Station",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -5985,9 +5099,7 @@
     "pa_ess_loc": "GFEN",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -5995,9 +5107,7 @@
           "stop_id": "70187",
           "direction_id": 0,
           "headway_direction_name": "Riverside",
-          "routes": [
-            "Green-D"
-          ],
+          "routes": ["Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6012,9 +5122,7 @@
     "pa_ess_loc": "GBAB",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -6022,9 +5130,7 @@
           "stop_id": "170136",
           "direction_id": 1,
           "headway_direction_name": "Government Center",
-          "routes": [
-            "Green-B"
-          ],
+          "routes": ["Green-B"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6039,9 +5145,7 @@
     "pa_ess_loc": "GBAB",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -6049,9 +5153,7 @@
           "stop_id": "170137",
           "direction_id": 0,
           "headway_direction_name": "Boston College",
-          "routes": [
-            "Green-B"
-          ],
+          "routes": ["Green-B"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6066,9 +5168,7 @@
     "pa_ess_loc": "GAMO",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -6076,9 +5176,7 @@
           "stop_id": "170140",
           "direction_id": 1,
           "headway_direction_name": "Government Center",
-          "routes": [
-            "Green-B"
-          ],
+          "routes": ["Green-B"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6093,9 +5191,7 @@
     "pa_ess_loc": "GAMO",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -6103,9 +5199,7 @@
           "stop_id": "170141",
           "direction_id": 0,
           "headway_direction_name": "Boston College",
-          "routes": [
-            "Green-B"
-          ],
+          "routes": ["Green-B"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6120,9 +5214,7 @@
     "pa_ess_loc": "GKEN",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -6130,11 +5222,7 @@
           "stop_id": "71150",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6149,9 +5237,7 @@
     "pa_ess_loc": "GKEN",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -6159,11 +5245,7 @@
           "stop_id": "71151",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6178,9 +5260,7 @@
     "pa_ess_loc": "GKEN",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "type": "realtime",
     "source_config": [
       [
@@ -6188,11 +5268,7 @@
           "stop_id": "70150",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6207,9 +5283,7 @@
     "pa_ess_loc": "GKEN",
     "read_loop_offset": 60,
     "text_zone": "s",
-    "audio_zones": [
-      "s"
-    ],
+    "audio_zones": ["s"],
     "type": "realtime",
     "source_config": [
       [
@@ -6217,11 +5291,7 @@
           "stop_id": "70151",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6236,9 +5306,7 @@
     "pa_ess_loc": "GKEN",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -6246,12 +5314,7 @@
           "stop_id": "70150",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6261,12 +5324,7 @@
           "stop_id": "71150",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6278,12 +5336,7 @@
           "stop_id": "70151",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6293,12 +5346,7 @@
           "stop_id": "71151",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6313,9 +5361,7 @@
     "pa_ess_loc": "GAUD",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -6323,11 +5369,7 @@
           "stop_id": "70152",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6342,9 +5384,7 @@
     "pa_ess_loc": "GAUD",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -6352,11 +5392,7 @@
           "stop_id": "70153",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6371,9 +5407,7 @@
     "pa_ess_loc": "GAUD",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -6381,11 +5415,7 @@
           "stop_id": "70152",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6397,11 +5427,7 @@
           "stop_id": "70153",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6416,9 +5442,7 @@
     "pa_ess_loc": "GCOP",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -6426,12 +5450,7 @@
           "stop_id": "70154",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6446,9 +5465,7 @@
     "pa_ess_loc": "GCOP",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -6456,12 +5473,7 @@
           "stop_id": "70155",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6476,9 +5488,7 @@
     "pa_ess_loc": "GARL",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -6486,12 +5496,7 @@
           "stop_id": "70156",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6506,9 +5511,7 @@
     "pa_ess_loc": "GARL",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -6516,12 +5519,7 @@
           "stop_id": "70157",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6536,9 +5534,7 @@
     "pa_ess_loc": "GARL",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -6546,12 +5542,7 @@
           "stop_id": "70156",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6563,12 +5554,7 @@
           "stop_id": "70157",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6583,9 +5569,7 @@
     "pa_ess_loc": "GBOY",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -6593,12 +5577,7 @@
           "stop_id": "70158",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6613,9 +5592,7 @@
     "pa_ess_loc": "GBOY",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -6623,12 +5600,7 @@
           "stop_id": "70159",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6643,9 +5615,7 @@
     "pa_ess_loc": "GSYM",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -6653,9 +5623,7 @@
           "stop_id": "70242",
           "direction_id": 1,
           "headway_direction_name": "Union Square",
-          "routes": [
-            "Green-E"
-          ],
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6670,9 +5638,7 @@
     "pa_ess_loc": "GSYM",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -6680,9 +5646,7 @@
           "stop_id": "70241",
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
-          "routes": [
-            "Green-E"
-          ],
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6697,9 +5661,7 @@
     "pa_ess_loc": "GPRU",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -6707,9 +5669,7 @@
           "stop_id": "70240",
           "direction_id": 1,
           "headway_direction_name": "Union Square",
-          "routes": [
-            "Green-E"
-          ],
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6724,9 +5684,7 @@
     "pa_ess_loc": "GPRU",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -6734,9 +5692,7 @@
           "stop_id": "70239",
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
-          "routes": [
-            "Green-E"
-          ],
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6751,9 +5707,7 @@
     "pa_ess_loc": "GPRU",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -6761,9 +5715,7 @@
           "stop_id": "70240",
           "direction_id": 1,
           "headway_direction_name": "Union Square",
-          "routes": [
-            "Green-E"
-          ],
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6775,9 +5727,7 @@
           "stop_id": "70239",
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
-          "routes": [
-            "Green-E"
-          ],
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6792,9 +5742,7 @@
     "pa_ess_loc": "GPRKE",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -6802,12 +5750,7 @@
           "stop_id": "71199",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6818,12 +5761,7 @@
           "stop_id": "70200",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6838,9 +5776,7 @@
     "pa_ess_loc": "GPRKE",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -6848,12 +5784,7 @@
           "stop_id": "71199",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6864,12 +5795,7 @@
           "stop_id": "70200",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -6884,39 +5810,28 @@
     "pa_ess_loc": "GPRKW",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
         {
-          "stop_id": "70198",
+          "stop_id": "70197",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
           "terminal": false,
           "announce_arriving": false,
           "announce_boarding": true,
-          "multi_berth": true
+          "multi_berth": true,
+          "source_for_headway": true
         },
         {
           "stop_id": "70199",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
           "platform": null,
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "terminal": false,
           "announce_arriving": false,
           "announce_boarding": true,
@@ -6931,9 +5846,7 @@
     "pa_ess_loc": "GPRKW",
     "read_loop_offset": 0,
     "text_zone": "n",
-    "audio_zones": [
-      "n"
-    ],
+    "audio_zones": ["n"],
     "type": "realtime",
     "source_config": [
       [
@@ -6941,12 +5854,7 @@
           "stop_id": "70196",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
@@ -6955,34 +5863,27 @@
           "source_for_headway": true
         },
         {
-          "stop_id": "70197",
+          "stop_id": "70198",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
           "platform": null,
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "terminal": false,
           "announce_arriving": false,
           "announce_boarding": true,
-          "multi_berth": true,
-          "source_for_headway": true
+          "multi_berth": true
         }
       ]
     ]
   },
+
   {
     "id": "green_government_center_eastbound",
     "headway_group": "green_trunk",
     "pa_ess_loc": "GGOV",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -6990,12 +5891,7 @@
           "stop_id": "70201",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
@@ -7010,9 +5906,7 @@
     "pa_ess_loc": "GGOV",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -7020,12 +5914,7 @@
           "stop_id": "70202",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
@@ -7040,9 +5929,7 @@
     "pa_ess_loc": "GGOV",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -7050,12 +5937,7 @@
           "stop_id": "70201",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -7067,12 +5949,7 @@
           "stop_id": "70202",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -7081,15 +5958,14 @@
       ]
     ]
   },
+
   {
     "id": "green_haymarket_eastbound",
     "headway_group": "green_trunk",
     "pa_ess_loc": "GHAY",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -7097,12 +5973,7 @@
           "stop_id": "70203",
           "direction_id": 1,
           "headway_direction_name": "Eastbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -7117,9 +5988,7 @@
     "pa_ess_loc": "GHAY",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -7127,12 +5996,7 @@
           "stop_id": "70204",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -7141,15 +6005,14 @@
       ]
     ]
   },
+
   {
     "id": "green_north_station_eastbound",
     "headway_group": "green_trunk",
     "pa_ess_loc": "GNST",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -7157,12 +6020,7 @@
           "stop_id": "70205",
           "direction_id": 1,
           "headway_direction_name": "Union Square",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
@@ -7177,9 +6035,7 @@
     "pa_ess_loc": "GNST",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -7187,12 +6043,7 @@
           "stop_id": "70206",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
@@ -7207,9 +6058,7 @@
     "pa_ess_loc": "GNST",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -7217,12 +6066,7 @@
           "stop_id": "70206",
           "direction_id": 0,
           "headway_direction_name": "Westbound",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
@@ -7237,9 +6081,7 @@
     "pa_ess_loc": "GSCI",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -7247,12 +6089,7 @@
           "stop_id": "70207",
           "direction_id": 1,
           "headway_direction_name": "Union Square",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -7267,9 +6104,7 @@
     "pa_ess_loc": "GSCI",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -7277,12 +6112,7 @@
           "stop_id": "70208",
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -7297,9 +6127,7 @@
     "pa_ess_loc": "GSCI",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -7307,12 +6135,7 @@
           "stop_id": "70207",
           "direction_id": 1,
           "headway_direction_name": "Union Square",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -7324,12 +6147,7 @@
           "stop_id": "70208",
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
+          "routes": ["Green-B", "Green-C", "Green-D", "Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -7344,9 +6162,7 @@
     "pa_ess_loc": "GLEC",
     "read_loop_offset": 30,
     "text_zone": "e",
-    "audio_zones": [
-      "e"
-    ],
+    "audio_zones": ["e"],
     "type": "realtime",
     "source_config": [
       [
@@ -7354,9 +6170,7 @@
           "stop_id": "70501",
           "direction_id": 1,
           "headway_direction_name": "Union Square",
-          "routes": [
-            "Green-E"
-          ],
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -7371,9 +6185,7 @@
     "pa_ess_loc": "GLEC",
     "read_loop_offset": 90,
     "text_zone": "w",
-    "audio_zones": [
-      "w"
-    ],
+    "audio_zones": ["w"],
     "type": "realtime",
     "source_config": [
       [
@@ -7381,9 +6193,7 @@
           "stop_id": "70502",
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
-          "routes": [
-            "Green-E"
-          ],
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -7398,9 +6208,7 @@
     "pa_ess_loc": "GLEC",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "m"
-    ],
+    "audio_zones": ["m"],
     "type": "realtime",
     "source_config": [
       [
@@ -7408,9 +6216,7 @@
           "stop_id": "70501",
           "direction_id": 1,
           "headway_direction_name": "Union Square",
-          "routes": [
-            "Green-E"
-          ],
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -7420,9 +6226,7 @@
           "stop_id": "70502",
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
-          "routes": [
-            "Green-E"
-          ],
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
@@ -7445,9 +6249,7 @@
           "stop_id": "70504",
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
-          "routes": [
-            "Green-E"
-          ],
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
@@ -7470,9 +6272,7 @@
           "stop_id": "70504",
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
-          "routes": [
-            "Green-E"
-          ],
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
@@ -7487,11 +6287,7 @@
     "pa_ess_loc": "GUNS",
     "read_loop_offset": 120,
     "text_zone": "m",
-    "audio_zones": [
-      "e",
-      "w",
-      "m"
-    ],
+    "audio_zones": ["e", "w", "m"],
     "type": "realtime",
     "source_config": [
       [
@@ -7499,9 +6295,7 @@
           "stop_id": "70504",
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
-          "routes": [
-            "Green-E"
-          ],
+          "routes": ["Green-E"],
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
