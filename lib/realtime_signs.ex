@@ -22,11 +22,11 @@ defmodule RealtimeSigns do
         Engine.Departures,
         Engine.Static,
         Engine.Alerts,
-        MessageQueue,
-        RealtimeSigns.Scheduler
+        MessageQueue
       ] ++
         http_updater_children() ++
         monitor_sign_scu_uptime() ++
+        consume_message_logs() ++
         [
           Signs.Supervisor
         ]
@@ -48,8 +48,6 @@ defmodule RealtimeSigns do
     :ok = Config.update_env(env, :s3_path, "SIGNS_S3_PATH")
     :ok = Config.update_env(env, :api_v3_key, "API_V3_KEY", private?: true)
     :ok = Config.update_env(env, :api_v3_url, "API_V3_URL")
-    :ok = Config.update_env(env, :message_log_s3_bucket, "MESSAGE_LOG_S3_BUCKET")
-    :ok = Config.update_env(env, :message_log_s3_path, "MESSAGE_LOG_S3_PATH")
 
     :ok =
       Config.update_env(env, :filter_uncertain_predictions?, "FILTER_UNCERTAIN_PREDICTIONS",
@@ -65,6 +63,14 @@ defmodule RealtimeSigns do
        |> Keyword.get(:http)
        |> Keyword.get(:port) do
       [RealtimeSignsWeb.Endpoint]
+    else
+      []
+    end
+  end
+
+  defp consume_message_logs do
+    if Application.get_env(:realtime_signs, :message_log_zip_url) do
+      [RealtimeSigns.Scheduler]
     else
       []
     end

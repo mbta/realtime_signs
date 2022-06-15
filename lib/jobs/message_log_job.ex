@@ -4,40 +4,33 @@ defmodule RealtimeSigns.MessageLogJob do
   def work do
     yesterday = Date.utc_today() |> Date.add(-1) |> Date.to_string()
     Logger.info("Fetching message logs for #{yesterday}")
-    logs = get_logs(yesterday)
 
-    Logger.info(inspect(logs))
+    case get_logs(yesterday) do
+      {:ok, %{body: body}} ->
+        store_logs(body, s3_bucket(), s3_folder(), yesterday)
 
-    # bucket = Application.get_env(:realtime_signs, :message_log_s3_bucket)
-    # path = Application.get_env(:realtime_signs, :message_log_s3_path)
-
-    # if bucket and path do
-    #   Logger.info("Received message logs and storing in S3")
-    #   store_logs([], yesterday)
-    # end
+      {:error, reason} ->
+        Logger.error("Message logs were not able to fetched. Response: #{inspect(reason)}")
+    end
   end
 
   defp get_logs(date) do
-    # 1. Request ARINC Headend server for logs for today's date as request param
     http_client = Application.get_env(:realtime_signs, :http_poster_mod)
-    date = String.replace(date, "-", "")
-    Logger.info("Making request to #{zip_file_url()}/#{date}")
-    http_client.get("#{zip_file_url()}/#{date}")
+    request_url = "#{zip_file_url()}/#{String.replace(date, "-", "")}"
+    Logger.info("Making request to #{request_url}")
+    http_client.get(request_url)
   end
 
-  # defp store_logs(_, date) do
-  #   # 2. Dump logs into S3
-  #   s3_client = Application.get_env(:realtime_signs, :s3_client)
-  #   aws_client = Application.get_env(:realtime_signs, :aws_client)
-  #   bucket = Application.get_env(:realtime_signs, :message_log_s3_bucket)
-  #   path = Application.get_env(:realtime_signs, :message_log_s3_path)
+  defp store_logs(file, bucket, folder, date) do
+    s3_client = Application.get_env(:realtime_signs, :s3_client)
+    aws_client = Application.get_env(:realtime_signs, :aws_client)
+    path = "#{folder}/#{date}.zip"
 
-  #   Logger.info("Storing logs at path #{bucket}/#{path}#{date}...")
-  #   # path should include today's date
-  #   # s3_client.put_object(bucket, "#{path}/#{date}", logs) |> aws_client.request()
-  # end
+    Logger.info("Storing logs in S3 at #{bucket}/#{path}...")
+    s3_client.put_object(bucket, path, file) |> aws_client.request()
+  end
 
-  # defp head_end_host, do: Application.get_env(:realtime_signs, :sign_head_end_host)
-  # TODO: update when we know the endpoint that ARINC sets up
-  defp zip_file_url, do: "http://172.20.145.28:3000/reports/date"
+  defp zip_file_url, do: Application.get_env(:realtime_signs, :message_log_zip_url)
+  defp s3_bucket, do: Application.get_env(:realtime_signs, :message_log_s3_bucket)
+  defp s3_folder, do: Application.get_env(:realtime_signs, :message_log_s3_folder)
 end

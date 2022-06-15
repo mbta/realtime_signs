@@ -43,9 +43,7 @@ config :realtime_signs,
   api_v3_key: nil,
   api_v3_url: "https://api-dev-green.mbtace.com",
   number_of_http_updaters: 4,
-  restart_fn: &Engine.Health.restart_noop/0,
-  message_log_s3_bucket: nil,
-  message_log_s3_path: nil
+  restart_fn: &Engine.Health.restart_noop/0
 
 config :realtime_signs, RealtimeSignsWeb.Endpoint, secret_key_base: "local_secret_key_base_at_least_64_bytes_________________________________"
 
