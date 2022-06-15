@@ -10,6 +10,11 @@ config :realtime_signs,
   message_log_s3_bucket: System.get_env("MESSAGE_LOG_S3_BUCKET"),
   message_log_s3_folder: System.get_env("MESSAGE_LOG_S3_FOLDER")
 
+config :realtime_signs, RealtimeSigns.Scheduler,
+  jobs: [
+    {System.get_env("MESSAGE_LOG_CRON_SCHEDULE"), {RealtimeSigns.MessageLogJob, :work, []}}
+  ]
+
 if config_env() == :prod do
   config :realtime_signs, RealtimeSignsWeb.Endpoint, secret_key_base: System.fetch_env!("SECRET_KEY_BASE")
 end

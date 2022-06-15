@@ -1,13 +1,20 @@
 defmodule RealtimeSigns.MessageLogJob do
   require Logger
 
-  def work do
-    yesterday = Date.utc_today() |> Date.add(-1) |> Date.to_string()
-    Logger.info("Fetching message logs for #{yesterday}")
+  def work(date) do
+    get_and_store_logs(date)
+  end
 
-    case get_logs(yesterday) do
+  def work() do
+    Date.utc_today() |> Date.add(-1) |> Date.to_string() |> get_and_store_logs()
+  end
+
+  def get_and_store_logs(date) do
+    Logger.info("Fetching message logs for #{date}")
+
+    case get_logs(date) do
       {:ok, %{body: body}} ->
-        store_logs(body, s3_bucket(), s3_folder(), yesterday)
+        store_logs(body, s3_bucket(), s3_folder(), date)
 
       {:error, reason} ->
         Logger.error("Message logs were not able to fetched. Response: #{inspect(reason)}")

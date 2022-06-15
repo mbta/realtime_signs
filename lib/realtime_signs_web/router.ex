@@ -10,5 +10,6 @@ defmodule RealtimeSignsWeb.Router do
   scope "/", RealtimeSignsWeb do
     pipe_through([:api])
     post("/uptime", MonitoringController, :uptime)
+    get("/run_message_log_job/:date", MonitoringController, :run_message_log_job)
   end
 end
