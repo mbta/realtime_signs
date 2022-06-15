@@ -21,8 +21,8 @@ defmodule Signs.Supervisor do
   require Signs.Utilities.SignsConfig
   use Supervisor
 
-  def start_link([]) do
-    Supervisor.start_link(__MODULE__, name: __MODULE__, strategy: :one_for_one)
+  def start_link(init_arg) do
+    Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
   end
 
   @impl true

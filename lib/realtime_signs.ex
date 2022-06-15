@@ -26,6 +26,7 @@ defmodule RealtimeSigns do
         RealtimeSigns.Scheduler
       ] ++
         http_updater_children() ++
+        monitor_sign_scu_uptime() ++
         [
           Signs.Supervisor
         ]
@@ -57,6 +58,16 @@ defmodule RealtimeSigns do
 
     :ok =
       Config.update_env(env, :number_of_http_updaters, "NUMBER_OF_HTTP_UPDATERS", type: :integer)
+  end
+
+  def monitor_sign_scu_uptime do
+    if Application.get_env(:realtime_signs, RealtimeSignsWeb.Endpoint)
+       |> Keyword.get(:http)
+       |> Keyword.get(:port) do
+      [RealtimeSignsWeb.Endpoint]
+    else
+      []
+    end
   end
 
   def http_updater_children do

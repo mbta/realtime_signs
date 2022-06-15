@@ -1,6 +1,6 @@
 # This file is responsible for configuring your application
 # and its dependencies with the aid of the Mix.Config module.
-use Mix.Config
+import Config
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
@@ -47,6 +47,8 @@ config :realtime_signs,
   message_log_s3_bucket: nil,
   message_log_s3_path: nil
 
+config :realtime_signs, RealtimeSignsWeb.Endpoint, secret_key_base: "local_secret_key_base_at_least_64_bytes_________________________________"
+
 config :ex_aws,
   access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],
   secret_access_key: [{:system, "SIGNS_S3_CONFIG_SECRET"}, :instance_role]
@@ -66,10 +68,12 @@ jobs: [
   {"* * * * *", {RealtimeSigns.MessageLogJob, :work, []}}
 ]
 
+config :phoenix, :json_library, Jason
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.
 # Configuration from the imported file will override the ones defined
 # here (which is why it is important to import them last).
 #
-import_config "#{Mix.env()}.exs"
+import_config "#{config_env()}.exs"

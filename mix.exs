@@ -14,7 +14,7 @@ defmodule RealtimeSigns.Mixfile do
       elixirc_paths: elixirc_paths(Mix.env()),
       dialyzer: [
         plt_add_apps: [:mix, :hackney, :httpd, :inets],
-        plt_add_deps: true,
+        plt_add_deps: :app_tree,
         ignore_warnings: ".dialyzer.ignore-warnings"
       ],
       releases: [
@@ -54,7 +54,11 @@ defmodule RealtimeSigns.Mixfile do
       {:stream_data, "~> 0.1", only: [:dev, :test]},
       {:timex, "~> 3.1"},
       {:uuid, "~> 1.1", only: :test},
-      {:quantum, "~> 3.0"}
+      {:quantum, "~> 3.0"},
+      {:phoenix, "~> 1.6.6"},
+      {:phoenix_html, "~> 3.0"},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:plug_cowboy, "~> 2.5"}
     ]
   end
 

@@ -10,7 +10,7 @@ if [ $# -eq 0 ]; then
 fi
 
 ERL_DIR="erl10.7" # erlang/otp 22.3
-ELIXIR_DIR="elixir1.10.3"
+ELIXIR_DIR="elixir1.12.3"
 
 rm -rf _build-prev
 test -e "_build" && mv _build _build-prev
