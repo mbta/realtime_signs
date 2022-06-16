@@ -46,7 +46,14 @@ defmodule RealtimeSigns.MessageLogJob do
     path = "#{folder}/#{date}.zip"
 
     Logger.info("Storing logs in S3 at #{bucket}/#{path}...")
-    s3_client.put_object(bucket, path, file) |> aws_client.request()
+
+    case s3_client.put_object(bucket, path, file) |> aws_client.request() do
+      {:ok, _} ->
+        Logger.info("Message logs were successfully stored in S3")
+
+      {:error, response} ->
+        Logger.error("Message logs were not able to be stored. Response: #{inspect(response)}")
+    end
   end
 
   defp zip_file_url, do: Application.get_env(:realtime_signs, :message_log_zip_url)
