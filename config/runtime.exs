@@ -12,7 +12,13 @@ config :realtime_signs,
 
 config :realtime_signs, RealtimeSigns.Scheduler,
   jobs: [
-    {System.get_env("MESSAGE_LOG_CRON_SCHEDULE"), {RealtimeSigns.MessageLogJob, :work, []}}
+    {
+      System.get_env("MESSAGE_LOG_CRON_SCHEDULE"),
+      {
+        RealtimeSigns.MessageLogJob, :get_and_store_logs,
+        [Date.utc_today() |> Date.add(-1) |> Date.to_string()]
+      }
+    }
   ]
 
 if config_env() == :prod do

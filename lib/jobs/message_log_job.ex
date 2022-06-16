@@ -1,14 +1,6 @@
 defmodule RealtimeSigns.MessageLogJob do
   require Logger
 
-  def work(date) do
-    get_and_store_logs(date)
-  end
-
-  def work() do
-    Date.utc_today() |> Date.add(-1) |> Date.to_string() |> get_and_store_logs()
-  end
-
   def get_and_store_logs(date) do
     Logger.info("Fetching message logs for #{date}")
 
