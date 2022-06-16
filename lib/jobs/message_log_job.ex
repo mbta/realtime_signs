@@ -1,5 +1,25 @@
 defmodule RealtimeSigns.MessageLogJob do
+  @moduledoc """
+  This PR adds a CRON job which will request an endpoint that is hosted on ARINC's test server
+  which serves a zip file containing log files with data on message latencies for every MBTA
+  station with PA/ESS equipment for a given date.
+
+  After fetching the zip file, the job simply stores them in an S3 bucket which is meant to be
+  the mbta-ctd-dataplatform-dev-archive bucket in a folder named /paess. The logs will be used
+  for regular auditing of message latencies across the system.
+
+  An endpoint in RealtimeSignsWeb.MonitoringController was also added that can be used to manually
+  run the job. The purpose of this is twofold:
+    1. Allow for easy test runs of the job.
+    2. Allow for manual re-runs in case the job fails to run for some reason. This could be
+    for a number reasons such as the ARINC server being unreachable, their aggregation script
+    failing to collect all the logs, opstech3 being down, etc.
+  """
   require Logger
+
+  def get_and_store_logs() do
+    Date.utc_today() |> Date.add(-1) |> Date.to_string() |> get_and_store_logs()
+  end
 
   def get_and_store_logs(date) do
     Logger.info("Fetching message logs for #{date}")

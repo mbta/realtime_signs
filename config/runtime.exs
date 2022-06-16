@@ -16,7 +16,7 @@ config :realtime_signs, RealtimeSigns.Scheduler,
       System.get_env("MESSAGE_LOG_CRON_SCHEDULE"),
       {
         RealtimeSigns.MessageLogJob, :get_and_store_logs,
-        [Date.utc_today() |> Date.add(-1) |> Date.to_string()]
+        []
       }
     }
   ]
