@@ -11,6 +11,12 @@ defmodule RealtimeSigns do
 
     runtime_config()
 
+    RealtimeSigns.Scheduler.start_link()
+
+    if Application.get_env(:realtime_signs, :message_log_cron_schedule) do
+      consume_message_logs()
+    end
+
     children =
       [
         :hackney_pool.child_spec(:default, []),
@@ -26,7 +32,6 @@ defmodule RealtimeSigns do
       ] ++
         http_updater_children() ++
         monitor_sign_scu_uptime() ++
-        consume_message_logs() ++
         [
           Signs.Supervisor
         ]
@@ -69,11 +74,15 @@ defmodule RealtimeSigns do
   end
 
   defp consume_message_logs do
-    if Application.get_env(:realtime_signs, :message_log_zip_url) do
-      [RealtimeSigns.Scheduler]
-    else
-      []
-    end
+    {:ok, cron_expression} =
+      Crontab.CronExpression.Parser.parse(
+        Application.get_env(:realtime_signs, :message_log_cron_schedule)
+      )
+
+    RealtimeSigns.Scheduler.new_job()
+    |> Quantum.Job.set_task({RealtimeSigns.MessageLogJob, :get_and_store_logs, []})
+    |> Quantum.Job.set_schedule(cron_expression)
+    |> RealtimeSigns.Scheduler.add_job()
   end
 
   def http_updater_children do
