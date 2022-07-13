@@ -49,7 +49,7 @@ defmodule Monitoring.Uptime do
           " line=",
           line,
           " station=",
-          station,
+          String.replace(station, " ", "_"),
           " sign_id=",
           sign_id,
           " sign_zone=",
