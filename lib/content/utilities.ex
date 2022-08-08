@@ -61,6 +61,7 @@ defmodule Content.Utilities do
   def destination_for_prediction(_, 1, "70174"), do: {:ok, :reservoir}
 
   def destination_for_prediction(_, _, "Government Center-Brattle"), do: {:ok, :government_center}
+  def destination_for_prediction("Green-D", 1, "70207"), do: {:ok, :union_square}
 
   def destination_for_prediction("Green-B", 0, _), do: {:ok, :boston_college}
   def destination_for_prediction("Green-C", 0, _), do: {:ok, :cleveland_circle}
