@@ -18,12 +18,6 @@ defmodule Fake.HTTPoison do
       body =~ "bad_sign" ->
         {:ok, %HTTPoison.Response{status_code: 404}}
 
-      body =~ "uid=11" ->
-        {:ok, %HTTPoison.Response{status_code: 500}}
-
-      body =~ "uid=12" ->
-        {:error, %HTTPoison.Error{reason: :timeout}}
-
       body =~ "MsgType=SignContent&uid=" ->
         {:ok, %HTTPoison.Response{status_code: 200}}
 
