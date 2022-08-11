@@ -58,6 +58,60 @@ defmodule Monitoring.Uptime do
           is_online
         ])
 
+      :dsp ->
+        [line, station, dsp_id | _] = String.split(description, ":")
+
+        Logger.info([
+          "device_uptime: ",
+          "date_time=",
+          DateTime.to_string(date_time),
+          " device_type=dsp",
+          " line=",
+          line,
+          " station=",
+          String.replace(station, " ", "_"),
+          " dsp_id=",
+          dsp_id,
+          " is_online=",
+          is_online
+        ])
+
+      :amplifier ->
+        [line, station, amp_id | _] = String.split(description, ":")
+
+        Logger.info([
+          "device_uptime: ",
+          "date_time=",
+          DateTime.to_string(date_time),
+          " device_type=amp",
+          " line=",
+          line,
+          " station=",
+          String.replace(station, " ", "_"),
+          " amp_id=",
+          amp_id,
+          " is_online=",
+          is_online
+        ])
+
+      :comrex ->
+        [line, station, comrex_id | _] = String.split(description, ":")
+
+        Logger.info([
+          "device_uptime: ",
+          "date_time=",
+          DateTime.to_string(date_time),
+          " device_type=comrex",
+          " line=",
+          line,
+          " station=",
+          String.replace(station, " ", "_"),
+          " comrex_id=",
+          comrex_id,
+          " is_online=",
+          is_online
+        ])
+
       _ ->
         Logger.warn(
           "Received uptime info of a node with an unknown or unspecified type #{inspect(node)}"
@@ -67,9 +121,23 @@ defmodule Monitoring.Uptime do
 
   defp get_device_type(%{"node_type" => node_type} = _node) do
     case node_type do
-      "SGN" -> :sign
-      "PSS" -> :scu
-      _ -> :unknown
+      "SGN" ->
+        :sign
+
+      "PSS" ->
+        :scu
+
+      "P8810" ->
+        :dsp
+
+      "C4200" ->
+        :amplifier
+
+      "DGTY" ->
+        :comrex
+
+      _ ->
+        :unknown
     end
   end
 
