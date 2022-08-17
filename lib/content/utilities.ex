@@ -54,6 +54,9 @@ defmodule Content.Utilities do
 
   def destination_for_prediction(_, 1, "70205"), do: {:ok, :north_station}
   def destination_for_prediction(_, 1, "70503"), do: {:ok, :union_square}
+  def destination_for_prediction(_, 1, "70501"), do: {:ok, :union_square}
+  def destination_for_prediction(_, 1, "70207"), do: {:ok, :union_square}
+
   def destination_for_prediction(_, 1, "70201"), do: {:ok, :government_center}
   def destination_for_prediction(_, 1, "70200"), do: {:ok, :park_street}
   def destination_for_prediction(_, 1, "71199"), do: {:ok, :park_street}
