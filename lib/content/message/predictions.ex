@@ -152,16 +152,14 @@ defmodule Content.Message.Predictions do
       cond do
         station_code == "RJFK" ->
           if destination == :alewife and zone == "m" do
-            platform =
-              case track_number do
-                1 -> "Ashmont"
-                2 -> "Braintree"
-              end
+            platform_name = Content.Utilities.stop_platform_name(stop_id)
 
             {headsign_message, platform_message} =
               if minutes == :max_time,
                 do: {headsign, " (Platform TBD)"},
-                else: {headsign <> " (#{String.slice(platform, 0..0)})", " (#{platform} plat)"}
+                else:
+                  {headsign <> " (#{String.slice(platform_name, 0..0)})",
+                   " (#{platform_name} plat)"}
 
             [
               {Content.Utilities.width_padded_string(
