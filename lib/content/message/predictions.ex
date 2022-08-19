@@ -18,7 +18,17 @@ defmodule Content.Message.Predictions do
   @terminal_prediction_offset_seconds -60
 
   @enforce_keys [:destination, :minutes]
-  defstruct [:destination, :minutes, :route_id, :stop_id, :trip_id, width: 18, new_cars?: false]
+  defstruct [
+    :destination,
+    :minutes,
+    :route_id,
+    :station_code,
+    :stop_id,
+    :trip_id,
+    :zone,
+    width: 18,
+    new_cars?: false
+  ]
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
@@ -27,7 +37,9 @@ defmodule Content.Message.Predictions do
           stop_id: String.t(),
           trip_id: Predictions.Prediction.trip_id() | nil,
           width: integer(),
-          new_cars?: boolean()
+          new_cars?: boolean(),
+          station_code: String.t() | nil,
+          zone: String.t() | nil
         }
 
   @spec non_terminal(Predictions.Prediction.t(), integer()) :: t() | nil
@@ -66,6 +78,11 @@ defmodule Content.Message.Predictions do
         Logger.warn("no_destination_for_prediction #{inspect(prediction)}")
         nil
     end
+  end
+
+  def non_terminal(prediction, station_code, zone) do
+    prediction = non_terminal(prediction)
+    %{prediction | station_code: station_code, zone: zone}
   end
 
   @spec terminal(Predictions.Prediction.t(), integer()) :: t() | nil
@@ -111,7 +128,14 @@ defmodule Content.Message.Predictions do
     @arriving "ARR"
     @max_time "20+ min"
 
-    def to_string(%{destination: destination, minutes: minutes, width: width, stop_id: stop_id}) do
+    def to_string(%{
+          destination: destination,
+          minutes: minutes,
+          width: width,
+          stop_id: stop_id,
+          station_code: station_code,
+          zone: zone
+        }) do
       headsign = PaEss.Utilities.destination_to_sign_string(destination)
 
       duration_string =
@@ -125,13 +149,40 @@ defmodule Content.Message.Predictions do
 
       track_number = Content.Utilities.stop_track_number(stop_id)
 
-      if track_number do
-        [
-          {Content.Utilities.width_padded_string(headsign, duration_string, width), 3},
-          {Content.Utilities.width_padded_string(headsign, "Trk #{track_number}", width), 3}
-        ]
-      else
-        Content.Utilities.width_padded_string(headsign, duration_string, width)
+      cond do
+        station_code == "RJFK" ->
+          if destination == :alewife and zone == "m" do
+            platform =
+              case track_number do
+                1 -> "Ashmont"
+                2 -> "Braintree"
+              end
+
+            {headsign_message, platform_message} =
+              if minutes == :max_time,
+                do: {headsign, " (Platform TBD)"},
+                else: {headsign <> " (#{String.slice(platform, 0..0)})", " (#{platform} plat)"}
+
+            [
+              {Content.Utilities.width_padded_string(
+                 headsign_message,
+                 "#{duration_string}",
+                 width
+               ), 3},
+              {headsign <> platform_message, 3}
+            ]
+          else
+            Content.Utilities.width_padded_string(headsign, duration_string, width)
+          end
+
+        track_number ->
+          [
+            {Content.Utilities.width_padded_string(headsign, duration_string, width), 3},
+            {Content.Utilities.width_padded_string(headsign, "Trk #{track_number}", width), 3}
+          ]
+
+        true ->
+          Content.Utilities.width_padded_string(headsign, duration_string, width)
       end
     end
 

@@ -231,6 +231,60 @@ defmodule Content.Message.PredictionsTest do
 
       assert msg.new_cars?
     end
+
+    test "Includes Ashmont platform when northbound to JFK/UMass Mezzanine" do
+      prediction = %Predictions.Prediction{
+        stop_id: "70086",
+        seconds_until_arrival: 125,
+        direction_id: 1,
+        route_id: "Red",
+        stopped?: false,
+        stops_away: 2
+      }
+
+      msg = Content.Message.Predictions.non_terminal(prediction, "RJFK", "m")
+
+      assert Content.Message.to_string(msg) == [
+               {"Alewife (A)  2 min", 3},
+               {"Alewife (Ashmont plat)", 3}
+             ]
+    end
+
+    test "Includes Braintree platform when northbound to JFK/UMass Mezzanine" do
+      prediction = %Predictions.Prediction{
+        stop_id: "70096",
+        seconds_until_arrival: 125,
+        direction_id: 1,
+        route_id: "Red",
+        stopped?: false,
+        stops_away: 2
+      }
+
+      msg = Content.Message.Predictions.non_terminal(prediction, "RJFK", "m")
+
+      assert Content.Message.to_string(msg) == [
+               {"Alewife (B)  2 min", 3},
+               {"Alewife (Braintree plat)", 3}
+             ]
+    end
+
+    test "Platform TBD when northbound to JFK/UMass Mezzanine and over 20 min" do
+      prediction = %Predictions.Prediction{
+        stop_id: "70096",
+        seconds_until_arrival: 1200,
+        direction_id: 1,
+        route_id: "Red",
+        stopped?: false,
+        stops_away: 2
+      }
+
+      msg = Content.Message.Predictions.non_terminal(prediction, "RJFK", "m")
+
+      assert Content.Message.to_string(msg) == [
+               {"Alewife    20+ min", 3},
+               {"Alewife (Platform TBD)", 3}
+             ]
+    end
   end
 
   describe "terminal/3" do
