@@ -58,7 +58,8 @@ defmodule Content.Audio.NextTrainCountdown do
             audio.minutes == 1 ->
               {:canned, {"142", [dest_var, platform_var(audio), verb_var(audio)], :audio}}
 
-            audio.station_code == "RJFK" and audio.zone == "m" and audio.minutes >= 20 ->
+            audio.destination == :alewife and audio.station_code == "RJFK" and audio.zone == "m" and
+                audio.minutes >= 20 ->
               platform_tbd_params(audio, dest_var)
 
             true ->
