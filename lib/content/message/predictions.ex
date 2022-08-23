@@ -42,10 +42,10 @@ defmodule Content.Message.Predictions do
           zone: String.t() | nil
         }
 
-  @spec non_terminal(Predictions.Prediction.t(), integer()) :: t() | nil
-  def non_terminal(prediction, width \\ 18)
+  @spec non_terminal(Predictions.Prediction.t(), String.t(), String.t(), integer()) :: t() | nil
+  def non_terminal(prediction, station_code, zone, width \\ 18)
 
-  def non_terminal(prediction, width) do
+  def non_terminal(prediction, station_code, zone, width) do
     # e.g., North Station which is non-terminal but has trips that begin there
     predicted_time = prediction.seconds_until_arrival || prediction.seconds_until_departure
 
@@ -71,18 +71,15 @@ defmodule Content.Message.Predictions do
           stop_id: prediction.stop_id,
           trip_id: prediction.trip_id,
           width: width,
-          new_cars?: prediction.new_cars?
+          new_cars?: prediction.new_cars?,
+          station_code: station_code,
+          zone: zone
         }
 
       {:error, _} ->
         Logger.warn("no_destination_for_prediction #{inspect(prediction)}")
         nil
     end
-  end
-
-  def non_terminal(prediction, station_code, zone) do
-    prediction = non_terminal(prediction)
-    %{prediction | station_code: station_code, zone: zone}
   end
 
   @spec terminal(Predictions.Prediction.t(), integer()) :: t() | nil
@@ -150,28 +147,24 @@ defmodule Content.Message.Predictions do
       track_number = Content.Utilities.stop_track_number(stop_id)
 
       cond do
-        station_code == "RJFK" ->
-          if destination == :alewife and zone == "m" do
-            platform_name = Content.Utilities.stop_platform_name(stop_id)
+        station_code == "RJFK" and destination == :alewife and zone == "m" ->
+          platform_name = Content.Utilities.stop_platform_name(stop_id)
 
-            {headsign_message, platform_message} =
-              if minutes == :max_time,
-                do: {headsign, " (Platform TBD)"},
-                else:
-                  {headsign <> " (#{String.slice(platform_name, 0..0)})",
-                   " (#{platform_name} plat)"}
+          {headsign_message, platform_message} =
+            if minutes == :max_time,
+              do: {headsign, " (Platform TBD)"},
+              else:
+                {headsign <> " (#{String.slice(platform_name, 0..0)})",
+                 " (#{platform_name} plat)"}
 
-            [
-              {Content.Utilities.width_padded_string(
-                 headsign_message,
-                 "#{duration_string}",
-                 width
-               ), 3},
-              {headsign <> platform_message, 3}
-            ]
-          else
-            Content.Utilities.width_padded_string(headsign, duration_string, width)
-          end
+          [
+            {Content.Utilities.width_padded_string(
+               headsign_message,
+               "#{duration_string}",
+               width
+             ), 3},
+            {headsign <> platform_message, 3}
+          ]
 
         track_number ->
           [
