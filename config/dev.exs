@@ -1,7 +1,8 @@
 use Mix.Config
 
 config :logger,
-  backends: [{Logger.Backend.Splunk, :splunk}, :console]
+  backends: [{Logger.Backend.Splunk, :splunk}, :console],
+  utc_log: true
 
 config :logger, :splunk,
   connector: Logger.Backend.Splunk.Output.Http,
