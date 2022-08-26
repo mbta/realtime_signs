@@ -11,7 +11,8 @@ config :sentry,
   included_environments: [:prod]
 
 config :logger,
-  backends: [{Logger.Backend.Splunk, :splunk}, :console]
+  backends: [{Logger.Backend.Splunk, :splunk}, :console],
+  utc_log: true
 
 config :logger, :console, level: :warn
 
