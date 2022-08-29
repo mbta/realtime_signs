@@ -300,7 +300,7 @@ defmodule PaEss.HttpUpdater do
            ],
            query
          )
-         |> Finch.request(HttpPoster) do
+         |> Finch.request(HttpClient) do
       {:ok, %Finch.Response{status: status}} when status >= 200 and status < 300 ->
         {:ok, :sent}
 
@@ -328,7 +328,7 @@ defmodule PaEss.HttpUpdater do
            ],
            query
          )
-         |> Finch.request(HttpPoster) do
+         |> Finch.request(HttpClient) do
       {:ok, %Finch.Response{status: status}} when status >= 200 and status < 300 ->
         {:ok, :sent}
 

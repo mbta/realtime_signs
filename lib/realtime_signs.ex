@@ -24,7 +24,7 @@ defmodule RealtimeSigns do
         Engine.Alerts,
         MessageQueue,
         RealtimeSigns.Scheduler,
-        {Finch, name: HttpPoster}
+        {Finch, name: HttpClient}
       ] ++
         http_updater_children() ++
         monitor_sign_scu_uptime() ++
