@@ -7,7 +7,6 @@ defmodule PaEss.HttpUpdater do
   """
 
   @type t :: %{
-          http_poster: module(),
           queue_mod: module(),
           uid: integer()
         }
@@ -31,12 +30,10 @@ defmodule PaEss.HttpUpdater do
   end
 
   def start_link(opts \\ []) do
-    http_poster = opts[:http_poster] || Application.get_env(:realtime_signs, :http_poster_mod)
     queue_mod = opts[:queue_mod] || MessageQueue
 
     GenServer.start_link(
       __MODULE__,
-      http_poster: http_poster,
       queue_mod: queue_mod,
       updater_index: opts[:updater_index]
     )
@@ -47,7 +44,6 @@ defmodule PaEss.HttpUpdater do
 
     {:ok,
      %{
-       http_poster: opts[:http_poster],
        queue_mod: opts[:queue_mod],
        updater_index: opts[:updater_index],
        internal_counter: 0,
@@ -80,11 +76,11 @@ defmodule PaEss.HttpUpdater do
     uid = get_uid(state)
     encoded = URI.encode_query(MsgType: "SignContent", uid: uid, sta: station, c: cmd)
 
-    {arinc_time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
+    {arinc_time, result} = :timer.tc(fn -> send_post(encoded) end)
 
     case result do
       {:ok, _} ->
-        {ui_time, _} = :timer.tc(fn -> update_ui(state.http_poster, encoded) end)
+        {ui_time, _} = :timer.tc(fn -> update_ui(encoded) end)
 
         Logger.info([
           "update_single_line: ",
@@ -128,11 +124,11 @@ defmodule PaEss.HttpUpdater do
         c: bottom_cmd
       )
 
-    {arinc_time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
+    {arinc_time, result} = :timer.tc(fn -> send_post(encoded) end)
 
     case result do
       {:ok, _} ->
-        {ui_time, _} = :timer.tc(fn -> update_ui(state.http_poster, encoded) end)
+        {ui_time, _} = :timer.tc(fn -> update_ui(encoded) end)
 
         Logger.info([
           "update_sign: ",
@@ -188,7 +184,7 @@ defmodule PaEss.HttpUpdater do
           ]
           |> URI.encode_query()
 
-        {time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
+        {time, result} = :timer.tc(fn -> send_post(encoded) end)
 
         Logger.info([
           "send_audio: ",
@@ -214,7 +210,7 @@ defmodule PaEss.HttpUpdater do
           ]
           |> URI.encode_query()
 
-        {time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
+        {time, result} = :timer.tc(fn -> send_post(encoded) end)
 
         Logger.info([
           "send_custom_audio: ",
@@ -294,52 +290,54 @@ defmodule PaEss.HttpUpdater do
   defp audio_type(:audio), do: "1"
   defp audio_type(:visual), do: "2"
 
-  @spec send_post(module(), binary()) :: post_result()
-  defp send_post(http_poster, query) do
-    case http_poster.post(
+  @spec send_post(binary()) :: post_result()
+  defp send_post(query) do
+    case Finch.build(
+           :post,
            sign_url(),
-           query,
            [
              {"Content-type", "application/x-www-form-urlencoded"}
            ],
-           hackney: [pool: :arinc_pool]
-         ) do
-      {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
+           query
+         )
+         |> Finch.request(HttpPoster) do
+      {:ok, %Finch.Response{status: status}} when status >= 200 and status < 300 ->
         {:ok, :sent}
 
-      {:ok, %HTTPoison.Response{status_code: status}} ->
+      {:ok, %Finch.Response{status: status}} ->
         Logger.warn("head_end_post_error: response had status code: #{inspect(status)}")
         {:error, :bad_status}
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("head_end_post_error: #{inspect(reason)}")
+      {:error, exception} ->
+        Logger.warn("head_end_post_error: #{inspect(exception.reason)}")
         {:error, :post_error}
     end
   end
 
-  @spec update_ui(module(), String.t()) ::
+  @spec update_ui(String.t()) ::
           {:ok, :sent} | {:error, :bad_status} | {:error, :post_error}
-  def update_ui(http_poster, query) do
+  def update_ui(query) do
     key = Application.get_env(:realtime_signs, :sign_ui_api_key)
 
-    case http_poster.post(
+    case Finch.build(
+           :post,
            sign_ui_url(),
-           query,
            [
              {"Content-type", "application/x-www-form-urlencoded"},
              {"x-api-key", key}
            ],
-           hackney: [pool: :arinc_pool]
-         ) do
-      {:ok, %HTTPoison.Response{status_code: status}} when status == 201 ->
+           query
+         )
+         |> Finch.request(HttpPoster) do
+      {:ok, %Finch.Response{status: status}} when status >= 200 and status < 300 ->
         {:ok, :sent}
 
-      {:ok, %HTTPoison.Response{status_code: status}} ->
+      {:ok, %Finch.Response{status: status}} ->
         Logger.warn("sign_ui_post_error: response had status code: #{inspect(status)}")
         {:error, :bad_status}
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.info("sign_ui_post_error: #{inspect(reason)}")
+      {:error, exception} ->
+        Logger.info("sign_ui_post_error: #{inspect(exception.reason)}")
         {:error, :post_error}
     end
   end
