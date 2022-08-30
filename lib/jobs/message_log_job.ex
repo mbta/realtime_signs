@@ -24,7 +24,7 @@ defmodule RealtimeSigns.MessageLogJob do
     Logger.info("Fetching message logs for #{date}")
 
     case get_logs(date) do
-      {:ok, %{body: body}} ->
+      {:ok, %Finch.Response{body: body}} ->
         store_logs(body, s3_bucket(), s3_folder(), date)
 
       {:error, reason} ->
@@ -33,10 +33,9 @@ defmodule RealtimeSigns.MessageLogJob do
   end
 
   defp get_logs(date) do
-    http_client = Application.get_env(:realtime_signs, :http_poster_mod)
     request_url = "#{zip_file_url()}/#{String.replace(date, "-", "")}"
     Logger.info("Making request to #{request_url}")
-    http_client.get(request_url)
+    Finch.build(:get, request_url) |> Finch.request(HttpClient)
   end
 
   defp store_logs(file, bucket, folder, date) do

@@ -22,7 +22,6 @@ import Config
 #
 
 config :realtime_signs,
-  http_client: HTTPoison,
   posts_log_dir: "log/posts/",
   sign_head_end_host: "127.0.0.1",
   sign_ui_url: "signs-dev.mbtace.com",
@@ -32,7 +31,6 @@ config :realtime_signs,
   vehicle_positions_url:
     "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/VehiclePositions_enhanced.json",
   sign_updater_mod: PaEss.Logger,
-  http_poster_mod: HTTPoison,
   scheduled_headway_requester: Headway.Request,
   headway_calculator: Headway.HeadwayDisplay,
   external_config_getter: ExternalConfig.Local,

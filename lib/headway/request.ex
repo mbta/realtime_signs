@@ -3,15 +3,21 @@ defmodule Headway.Request do
 
   @spec get_schedules([GTFS.station_id()]) :: [%{}] | :error
   def get_schedules(station_ids) do
-    http_client = Application.get_env(:realtime_signs, :http_client)
     api_v3_key = Application.get_env(:realtime_signs, :api_v3_key)
+
+    headers = api_key_header(api_v3_key)
+
+    opts = [
+      pool_timeout: 5000,
+      receive_timeout: 5000
+    ]
 
     results =
       Enum.group_by(station_ids, &directions_for_station_id/1)
-      |> Enum.map(&build_request/1)
-      |> Enum.map(
-        &http_client.get(&1, api_key_header(api_v3_key), timeout: 5000, recv_timeout: 5000)
-      )
+      |> Enum.map(fn direction_and_station_ids ->
+        build_request(direction_and_station_ids, headers, opts)
+      end)
+      |> Enum.map(fn request -> Finch.request(request, HttpClient) end)
       |> Enum.map(&validate_and_parse_response/1)
 
     if Enum.any?(results, &(&1 == :error)) do
@@ -21,12 +27,14 @@ defmodule Headway.Request do
     end
   end
 
-  @spec build_request({[String.t()], [GTFS.station_id()]}) :: String.t()
-  def build_request({direction_ids, station_ids}) do
+  @spec build_request({[String.t()], [GTFS.station_id()]}, List.t(), List.t()) ::
+          Finch.Request.t()
+  def build_request({direction_ids, station_ids}, headers, opts) do
     id_filter = station_ids |> Enum.map(&URI.encode/1) |> Enum.join(",")
     direction_filter = direction_ids |> Enum.map(&URI.encode/1) |> Enum.join(",")
     schedule_api_url = Application.get_env(:realtime_signs, :api_v3_url) <> "/schedules"
     schedule_api_url <> "?filter[stop]=#{id_filter}&filter[direction_id]=#{direction_filter}"
+    Finch.build(:get, schedule_api_url, headers, "", opts)
   end
 
   @spec validate_and_parse_response({atom, %HTTPoison.Response{}} | {atom, %HTTPoison.Error{}}) ::
@@ -36,19 +44,19 @@ defmodule Headway.Request do
           | :error
   defp validate_and_parse_response(response) do
     case response do
-      {:ok, %HTTPoison.Response{status_code: status, body: body}}
+      {:ok, %Finch.Response{status: status, body: body}}
       when status >= 200 and status < 300 ->
         parse_body(body)
 
-      {:ok, %HTTPoison.Response{status_code: status}} ->
+      {:ok, %Finch.Response{status: status}} ->
         Logger.warn(
           "Could not load schedules. Response returned with status code #{inspect(status)}"
         )
 
         :error
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("Could not load schedules: #{inspect(reason)}")
+      {:error, exception} ->
+        Logger.warn("Could not load schedules: #{inspect(exception.reason)}")
         :error
     end
   end
