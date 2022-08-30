@@ -140,30 +140,32 @@ defmodule Engine.Predictions do
   @spec download_data(String.t(), String.t() | nil) ::
           {:ok, String.t(), String.t() | nil} | :error
   defp download_data(full_url, last_modified) do
-    http_client = Application.get_env(:realtime_signs, :http_client)
+    headers = if last_modified, do: [{"If-Modified-Since", last_modified}], else: []
+    opts = [pool_timeout: 2000, receive_timeout: 2000]
 
-    case http_client.get(
+    case Finch.build(
+           :get,
            full_url,
-           if last_modified do
-             [{"If-Modified-Since", last_modified}]
-           else
-             []
-           end,
-           timeout: 2000,
-           recv_timeout: 2000
-         ) do
-      {:ok, %HTTPoison.Response{body: body, status_code: status, headers: headers}}
+           headers,
+           "",
+           opts
+         )
+         |> Finch.request(HttpClient) do
+      {:ok, %Finch.Response{body: body, status: status, headers: headers}}
       when status >= 200 and status < 300 ->
         case Enum.find(headers, fn {header, _value} -> header == "Last-Modified" end) do
           {"Last-Modified", last_modified} -> {:ok, body, last_modified}
           _ -> {:ok, body, nil}
         end
 
-      {:ok, %HTTPoison.Response{}} ->
+      {:ok, %Finch.Response{}} ->
         :error
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("Could not fetch file from #{inspect(full_url)}: #{inspect(reason)}")
+      {:error, exception} ->
+        Logger.warn(
+          "Could not fetch file from #{inspect(full_url)}: #{inspect(exception.reason)}"
+        )
+
         :error
     end
   end

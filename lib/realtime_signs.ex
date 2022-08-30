@@ -24,7 +24,16 @@ defmodule RealtimeSigns do
         Engine.Alerts,
         MessageQueue,
         RealtimeSigns.Scheduler,
-        {Finch, name: HttpClient}
+        {Finch,
+         name: HttpClient,
+         pools: %{
+           :default => [size: 10],
+           "http://#{Application.get_env(:realtime_signs, :sign_head_end_host)}/mbta/cgi-bin/RemoteMsgsCgi.exe" =>
+             [size: 30],
+           "http://#{Application.get_env(:realtime_signs, :sign_ui_url)}/messages" => [
+             size: 30
+           ]
+         }}
       ] ++
         http_updater_children() ++
         monitor_sign_scu_uptime() ++

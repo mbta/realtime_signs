@@ -36,23 +36,28 @@ defmodule Engine.Alerts.ApiFetcher do
   @spec get_alerts() :: {:ok, [%{}]} | {:error, atom()}
   defp get_alerts do
     alerts_url = Application.get_env(:realtime_signs, :api_v3_url) <> "/alerts"
-
     headers = api_key_headers(Application.get_env(:realtime_signs, :api_v3_key))
-    http_client = Application.get_env(:realtime_signs, :http_client)
+
+    query =
+      "?filter[route]=Green-B,Green-C,Green-D,Green-E,Red,Orange,Blue,Mattapan,741,742,743,746&filter[datetime]=NOW"
+
+    opts = [
+      pool_timeout: 2000,
+      receive_timeout: 2000
+    ]
+
+    request =
+      Finch.build(
+        :get,
+        alerts_url <> query,
+        headers,
+        "",
+        opts
+      )
 
     with {:ok, req} <-
-           http_client.get(
-             alerts_url,
-             headers,
-             timeout: 2000,
-             recv_timeout: 2000,
-             params: %{
-               "filter[route]" =>
-                 "Green-B,Green-C,Green-D,Green-E,Red,Orange,Blue,Mattapan,741,742,743,746",
-               "filter[datetime]" => "NOW"
-             }
-           ),
-         %{status_code: 200, body: body} <- req,
+           Finch.request(request, HttpClient),
+         %{status: 200, body: body} <- req,
          {:ok, parsed} <- Jason.decode(body),
          {:ok, data} <- Map.fetch(parsed, "data") do
       {:ok, data}
