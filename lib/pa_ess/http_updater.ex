@@ -312,8 +312,8 @@ defmodule PaEss.HttpUpdater do
         Logger.warn("head_end_post_error: response had status code: #{inspect(status)}")
         {:error, :bad_status}
 
-      {:error, exception} ->
-        Logger.warn("head_end_post_error: #{inspect(exception.reason)}")
+      {:error, %Finch.Error{reason: reason}} ->
+        Logger.warn("head_end_post_error: #{inspect(reason)}")
         {:error, :post_error}
     end
   end
@@ -340,8 +340,8 @@ defmodule PaEss.HttpUpdater do
         Logger.warn("sign_ui_post_error: response had status code: #{inspect(status)}")
         {:error, :bad_status}
 
-      {:error, exception} ->
-        Logger.info("sign_ui_post_error: #{inspect(exception.reason)}")
+      {:error, %Finch.Error{reason: reason}} ->
+        Logger.info("sign_ui_post_error: #{inspect(reason)}")
         {:error, :post_error}
     end
   end

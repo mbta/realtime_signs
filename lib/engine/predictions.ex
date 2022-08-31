@@ -162,10 +162,8 @@ defmodule Engine.Predictions do
       {:ok, %Finch.Response{}} ->
         :error
 
-      {:error, exception} ->
-        Logger.warn(
-          "Could not fetch file from #{inspect(full_url)}: #{inspect(exception.reason)}"
-        )
+      {:error, %Finch.Error{reason: reason}} ->
+        Logger.warn("Could not fetch file from #{inspect(full_url)}: #{inspect(reason)}")
 
         :error
     end

@@ -57,8 +57,8 @@ defmodule Headway.Request do
 
         :error
 
-      {:error, exception} ->
-        Logger.warn("Could not load schedules: #{inspect(exception.reason)}")
+      {:error, %Finch.Error{reason: reason}} ->
+        Logger.warn("Could not load schedules: #{inspect(reason)}")
         :error
     end
   end
