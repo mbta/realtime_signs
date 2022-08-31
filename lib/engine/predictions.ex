@@ -140,6 +140,7 @@ defmodule Engine.Predictions do
   @spec download_data(String.t(), String.t() | nil) ::
           {:ok, String.t(), String.t() | nil} | :error
   defp download_data(full_url, last_modified) do
+    http_client = Application.get_env(:realtime_signs, :http_client)
     headers = if last_modified, do: [{"If-Modified-Since", last_modified}], else: []
     opts = [pool_timeout: 2000, receive_timeout: 2000]
 
@@ -150,7 +151,7 @@ defmodule Engine.Predictions do
            "",
            opts
          )
-         |> Finch.request(HttpClient) do
+         |> http_client.request(HttpClient) do
       {:ok, %Finch.Response{body: body, status: status, headers: headers}}
       when status >= 200 and status < 300 ->
         case Enum.find(headers, fn {header, _value} -> header == "Last-Modified" end) do

@@ -30,7 +30,8 @@ defmodule RealtimeSigns.Mixfile do
   def application do
     [
       extra_applications: [
-        :logger
+        :logger,
+        :inets
       ],
       mod: {RealtimeSigns, []}
     ]

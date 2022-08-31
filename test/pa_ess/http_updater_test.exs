@@ -9,9 +9,9 @@ defmodule PaEss.HttpUpdaterTest do
   import ExUnit.CaptureLog
 
   defmodule FakePoster do
-    def post(_, q, _, _) do
-      send(self(), {:post, q})
-      {:ok, %HTTPoison.Response{status_code: 200}}
+    def request(q, _) do
+      send(self(), {:post, q.body})
+      {:ok, %Finch.Response{status: 200}}
     end
   end
 
@@ -345,7 +345,7 @@ defmodule PaEss.HttpUpdaterTest do
   defp make_state(init \\ %{}) do
     Map.merge(
       %{
-        http_poster: Fake.HTTPoison,
+        http_poster: Fake.Finch,
         updater_index: 1,
         internal_counter: 0,
         timestamp: div(System.system_time(:millisecond), 500)

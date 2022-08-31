@@ -35,6 +35,7 @@ defmodule Engine.Alerts.ApiFetcher do
 
   @spec get_alerts() :: {:ok, [%{}]} | {:error, atom()}
   defp get_alerts do
+    http_client = Application.get_env(:realtime_signs, :http_client)
     alerts_url = Application.get_env(:realtime_signs, :api_v3_url) <> "/alerts"
     headers = api_key_headers(Application.get_env(:realtime_signs, :api_v3_key))
 
@@ -56,7 +57,7 @@ defmodule Engine.Alerts.ApiFetcher do
       )
 
     with {:ok, req} <-
-           Finch.request(request, HttpClient),
+           http_client.request(request, HttpClient),
          %{status: 200, body: body} <- req,
          {:ok, parsed} <- Jason.decode(body),
          {:ok, data} <- Map.fetch(parsed, "data") do

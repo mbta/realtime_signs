@@ -3,6 +3,7 @@ defmodule Headway.Request do
 
   @spec get_schedules([GTFS.station_id()]) :: [%{}] | :error
   def get_schedules(station_ids) do
+    http_client = Application.get_env(:realtime_signs, :http_client)
     api_v3_key = Application.get_env(:realtime_signs, :api_v3_key)
 
     headers = api_key_header(api_v3_key)
@@ -15,9 +16,11 @@ defmodule Headway.Request do
     results =
       Enum.group_by(station_ids, &directions_for_station_id/1)
       |> Enum.map(fn direction_and_station_ids ->
-        build_request(direction_and_station_ids, headers, opts)
+        build_url(direction_and_station_ids)
       end)
-      |> Enum.map(fn request -> Finch.request(request, HttpClient) end)
+      |> Enum.map(fn url ->
+        Finch.build(:get, url, headers, "", opts) |> http_client.request(HttpClient)
+      end)
       |> Enum.map(&validate_and_parse_response/1)
 
     if Enum.any?(results, &(&1 == :error)) do
@@ -27,14 +30,13 @@ defmodule Headway.Request do
     end
   end
 
-  @spec build_request({[String.t()], [GTFS.station_id()]}, List.t(), List.t()) ::
-          Finch.Request.t()
-  def build_request({direction_ids, station_ids}, headers, opts) do
+  @spec build_url({[String.t()], [GTFS.station_id()]}) ::
+          String.t()
+  def build_url({direction_ids, station_ids}) do
     id_filter = station_ids |> Enum.map(&URI.encode/1) |> Enum.join(",")
     direction_filter = direction_ids |> Enum.map(&URI.encode/1) |> Enum.join(",")
     schedule_api_url = Application.get_env(:realtime_signs, :api_v3_url) <> "/schedules"
     schedule_api_url <> "?filter[stop]=#{id_filter}&filter[direction_id]=#{direction_filter}"
-    Finch.build(:get, schedule_api_url, headers, "", opts)
   end
 
   @spec validate_and_parse_response({atom, %HTTPoison.Response{}} | {atom, %HTTPoison.Error{}}) ::

@@ -1,66 +1,63 @@
-defmodule Fake.HTTPoison do
-  def get(url, headers \\ [], options \\ []) do
-    if options[:stream_to] do
-      send(options[:stream_to], %HTTPoison.AsyncStatus{code: 200})
-      send(options[:stream_to], %HTTPoison.AsyncChunk{chunk: "lol"})
-      send(options[:stream_to], %HTTPoison.AsyncEnd{})
-    end
-
-    {url, headers, options}
-    mock_response(url)
+defmodule Fake.Finch do
+  def request(%Finch.Request{method: "GET"} = request, _name) do
+    mock_response(request)
   end
 
-  def post(_url, body, _headers \\ [], _params \\ []) do
+  def request(%Finch.Request{method: "POST", body: body}, _name) do
     cond do
       body =~ "timeout" ->
         {:error, %HTTPoison.Error{reason: :timeout}}
 
       body =~ "bad_sign" ->
-        {:ok, %HTTPoison.Response{status_code: 404}}
+        {:ok, %Finch.Response{status: 404}}
 
       body =~ "MsgType=SignContent&uid=" ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
+        {:ok, %Finch.Response{status: 200}}
 
       body =~ "mid=133&var=5508%2C5512&typ=1&sta=SBOX010000&pri=5&tim=60" ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
+        {:ok, %Finch.Response{status: 200}}
 
       body =~
           ~r/MsgType=Canned&uid=[0-9]+&mid=133&var=5508%2C5512&typ=1&sta=SBOX010000&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
+        {:ok, %Finch.Response{status: 200}}
 
       body =~
           ~r/MsgType=Canned&uid=[0-9]+&mid=134&var=5508%2C5512&typ=1&sta=SBSQ100000&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
+        {:ok, %Finch.Response{status: 200}}
 
       body =~ ~r/MsgType=Canned&uid=[0-9]+&mid=135&var=5510&typ=0&sta=SCHS000001&pri=5&tim=200/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
+        {:ok, %Finch.Response{status: 200}}
 
       body =~
           ~r/MsgType=Canned&uid=[0-9]+&mid=150&var=37008%2C37014&typ=1&sta=SBOX000010&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
+        {:ok, %Finch.Response{status: 200}}
 
       body =~
           ~r/MsgType=Canned&uid=[0-9]+&mid=90&var=4016%2C503%2C5004&typ=1&sta=MCED001000&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
+        {:ok, %Finch.Response{status: 200}}
 
       body =~
           ~r/MsgType=Canned&uid=[0-9]+&mid=90128&var=&typ=0&sta=MCED000100&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
+        {:ok, %Finch.Response{status: 200}}
 
       body =~ ~r/MsgType=Canned&uid=[0-9]+&mid=90129&var=&typ=0&sta=MCAP001000&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
+        {:ok, %Finch.Response{status: 200}}
 
       body =~ ~r/MsgType=AdHoc&uid=[0-9]+&msg=Custom\+Message&typ=1&sta=MCAP001000&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
+        {:ok, %Finch.Response{status: 200}}
 
       body =~
           ~r/MsgType=AdHoc&uid=[0-9]+&msg=Custom\+Orange\+Line\+Message&typ=1&sta=MCAP001000&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
+        {:ok, %Finch.Response{status: 200}}
     end
   end
 
-  @spec mock_response(String.t()) :: {:ok, %HTTPoison.Response{}} | {:error, %HTTPoison.Error{}}
-  def mock_response("https://fake_update/mbta-gtfs-s3/fake_trip_update.json") do
+  @spec mock_response(Finch.Request.t()) ::
+          {:ok, %Finch.Response{}} | {:error, %Mint.TransportError{}}
+  def mock_response(%Finch.Request{
+        host: "fake_update",
+        path: "/mbta-gtfs-s3/fake_trip_update.json"
+      }) do
     feed_message =
       %{
         "entity" => [
@@ -121,14 +118,17 @@ defmodule Fake.HTTPoison do
       |> Jason.encode!()
 
     {:ok,
-     %HTTPoison.Response{
-       status_code: 200,
+     %Finch.Response{
+       status: 200,
        body: feed_message,
        headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:30:58 GMT"}]
      }}
   end
 
-  def mock_response("fake_trip_update2.json") do
+  def mock_response(%Finch.Request{
+        host: "fake.s3.com",
+        path: "/mbta-gtfs-s3/rtr/fake_trip_update2.json"
+      }) do
     feed_message =
       %{
         "entity" => [
@@ -179,14 +179,17 @@ defmodule Fake.HTTPoison do
       |> Jason.encode!()
 
     {:ok,
-     %HTTPoison.Response{
-       status_code: 200,
+     %Finch.Response{
+       status: 200,
        body: feed_message,
        headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:30:58 GMT"}]
      }}
   end
 
-  def mock_response("trip_updates_out_of_service_1") do
+  def mock_response(%Finch.Request{
+        host: "fake.s3.com",
+        path: "/mbta-gtfs-s3/rtr/trip_updates_out_of_service_1"
+      }) do
     feed_message =
       %{
         "entity" => [
@@ -238,14 +241,17 @@ defmodule Fake.HTTPoison do
       |> Jason.encode!()
 
     {:ok,
-     %HTTPoison.Response{
-       status_code: 200,
+     %Finch.Response{
+       status: 200,
        body: feed_message,
        headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:30:58 GMT"}]
      }}
   end
 
-  def mock_response("vehicle_positions_out_of_service_1") do
+  def mock_response(%Finch.Request{
+        host: "fake.s3.com",
+        path: "/mbta-gtfs-s3/rtr/vehicle_positions_out_of_service_1"
+      }) do
     feed_message =
       %{
         "entity" => [
@@ -293,14 +299,17 @@ defmodule Fake.HTTPoison do
       |> Jason.encode!()
 
     {:ok,
-     %HTTPoison.Response{
-       status_code: 200,
+     %Finch.Response{
+       status: 200,
        body: feed_message,
        headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:30:58 GMT"}]
      }}
   end
 
-  def mock_response("trip_updates_out_of_service_2") do
+  def mock_response(%Finch.Request{
+        host: "fake.s3.com",
+        path: "/mbta-gtfs-s3/rtr/trip_updates_out_of_service_2"
+      }) do
     feed_message =
       %{
         "entity" => [
@@ -349,14 +358,17 @@ defmodule Fake.HTTPoison do
       |> Jason.encode!()
 
     {:ok,
-     %HTTPoison.Response{
-       status_code: 200,
+     %Finch.Response{
+       status: 200,
        body: feed_message,
        headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:32:58 GMT"}]
      }}
   end
 
-  def mock_response("vehicle_positions_out_of_service_2") do
+  def mock_response(%Finch.Request{
+        host: "fake.s3.com",
+        path: "/mbta-gtfs-s3/rtr/vehicle_positions_out_of_service_2"
+      }) do
     feed_message =
       %{
         "entity" => [
@@ -404,62 +416,81 @@ defmodule Fake.HTTPoison do
       |> Jason.encode!()
 
     {:ok,
-     %HTTPoison.Response{
-       status_code: 200,
+     %Finch.Response{
+       status: 200,
        body: feed_message,
        headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:32:58 GMT"}]
      }}
   end
 
-  def mock_response("trip_updates_304") do
-    {:ok, %HTTPoison.Response{status_code: 304}}
+  def mock_response(%Finch.Request{
+        host: "fake.s3.com",
+        path: "/mbta-gtfs-s3/rtr/trip_updates_304"
+      }) do
+    {:ok, %Finch.Response{status: 304}}
   end
 
-  def mock_response("vehicle_positions_304") do
-    {:ok, %HTTPoison.Response{status_code: 304}}
+  def mock_response(%Finch.Request{
+        host: "fake.s3.com",
+        path: "/mbta-gtfs-s3/rtr/vehicle_positions_304"
+      }) do
+    {:ok, %Finch.Response{status: 304}}
   end
 
-  def mock_response("trip_updates_error") do
-    {:error, %HTTPoison.Error{reason: :timeout}}
+  def mock_response(%Finch.Request{
+        host: "fake.s3.com",
+        path: "/mbta-gtfs-s3/rtr/trip_updates_error"
+      }) do
+    {:error, %Mint.TransportError{reason: :timeout}}
   end
 
-  def mock_response(
-        "https://api-dev-green.mbtace.com/schedules?filter[stop]=500_error&filter[direction_id]=0,1"
-      ) do
-    {:ok, %HTTPoison.Response{status_code: 500, body: ""}}
+  def mock_response(%Finch.Request{
+        host: "api-dev-green.mbtace.com",
+        path: "/schedules",
+        query: "filter[stop]=500_error&filter[direction_id]=0,1"
+      }) do
+    {:ok, %Finch.Response{status: 500, body: ""}}
   end
 
-  def mock_response(
-        "https://api-dev-green.mbtace.com/schedules?filter[stop]=unknown_error&filter[direction_id]=0,1"
-      ) do
-    {:error, %HTTPoison.Error{reason: "Bad URL"}}
+  def mock_response(%Finch.Request{
+        host: "api-dev-green.mbtace.com",
+        path: "/schedules",
+        query: "filter[stop]=unknown_error&filter[direction_id]=0,1"
+      }) do
+    {:error, %Mint.TransportError{reason: "Bad URL"}}
   end
 
-  def mock_response(
-        "https://api-dev-green.mbtace.com/schedules?filter[stop]=parse_error&filter[direction_id]=0,1"
-      ) do
-    {:ok, %HTTPoison.Response{status_code: 200, body: "BAD JSON"}}
+  def mock_response(%Finch.Request{
+        host: "api-dev-green.mbtace.com",
+        path: "/schedules",
+        query: "filter[stop]=parse_error&filter[direction_id]=0,1"
+      }) do
+    {:ok, %Finch.Response{status: 200, body: "BAD JSON"}}
   end
 
-  def mock_response(
-        "https://api-dev-green.mbtace.com/schedules?filter[stop]=valid_json&filter[direction_id]=0,1"
-      ) do
+  def mock_response(%Finch.Request{query: "filter[stop]=valid_json&filter[direction_id]=0,1"}) do
     json = %{"data" => [%{"relationships" => "trip"}]}
     encoded = Jason.encode!(json)
-    {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
+    {:ok, %Finch.Response{status: 200, body: encoded}}
   end
 
   def mock_response("unknown") do
     {:error, "unknown response"}
   end
 
-  def mock_response("https://api-dev-green.mbtace.com/schedules" <> _) do
+  def mock_response(%Finch.Request{
+        host: "api-dev-green.mbtace.com",
+        path: "/schedules"
+      }) do
     json = %{"data" => []}
     encoded = Jason.encode!(json)
-    {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
+    {:ok, %Finch.Response{status: 200, body: encoded}}
   end
 
-  def mock_response("https://api-dev-green.mbtace.com/alerts") do
+  def mock_response(%Finch.Request{
+        host: "api-dev-green.mbtace.com",
+        path: "/alerts"
+      }) do
     response = %{
       "data" => [
         %{
@@ -583,8 +614,8 @@ defmodule Fake.HTTPoison do
       ]
     }
 
-    {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(response)}}
+    {:ok, %Finch.Response{status: 200, body: Jason.encode!(response)}}
   end
 
-  def mock_response(_), do: {:ok, %HTTPoison.Response{status_code: 200, body: ""}}
+  def mock_response(_), do: {:ok, %Finch.Response{status: 200, body: ""}}
 end

@@ -7,6 +7,7 @@ defmodule PaEss.HttpUpdater do
   """
 
   @type t :: %{
+          http_poster: module(),
           queue_mod: module(),
           uid: integer()
         }
@@ -30,10 +31,12 @@ defmodule PaEss.HttpUpdater do
   end
 
   def start_link(opts \\ []) do
+    http_poster = opts[:http_poster] || Application.get_env(:realtime_signs, :http_poster_mod)
     queue_mod = opts[:queue_mod] || MessageQueue
 
     GenServer.start_link(
       __MODULE__,
+      http_poster: http_poster,
       queue_mod: queue_mod,
       updater_index: opts[:updater_index]
     )
@@ -44,6 +47,7 @@ defmodule PaEss.HttpUpdater do
 
     {:ok,
      %{
+       http_poster: opts[:http_poster],
        queue_mod: opts[:queue_mod],
        updater_index: opts[:updater_index],
        internal_counter: 0,
@@ -76,11 +80,11 @@ defmodule PaEss.HttpUpdater do
     uid = get_uid(state)
     encoded = URI.encode_query(MsgType: "SignContent", uid: uid, sta: station, c: cmd)
 
-    {arinc_time, result} = :timer.tc(fn -> send_post(encoded) end)
+    {arinc_time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
 
     case result do
       {:ok, _} ->
-        {ui_time, _} = :timer.tc(fn -> update_ui(encoded) end)
+        {ui_time, _} = :timer.tc(fn -> update_ui(state.http_poster, encoded) end)
 
         Logger.info([
           "update_single_line: ",
@@ -124,11 +128,11 @@ defmodule PaEss.HttpUpdater do
         c: bottom_cmd
       )
 
-    {arinc_time, result} = :timer.tc(fn -> send_post(encoded) end)
+    {arinc_time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
 
     case result do
       {:ok, _} ->
-        {ui_time, _} = :timer.tc(fn -> update_ui(encoded) end)
+        {ui_time, _} = :timer.tc(fn -> update_ui(state.http_poster, encoded) end)
 
         Logger.info([
           "update_sign: ",
@@ -184,7 +188,7 @@ defmodule PaEss.HttpUpdater do
           ]
           |> URI.encode_query()
 
-        {time, result} = :timer.tc(fn -> send_post(encoded) end)
+        {time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
 
         Logger.info([
           "send_audio: ",
@@ -210,7 +214,7 @@ defmodule PaEss.HttpUpdater do
           ]
           |> URI.encode_query()
 
-        {time, result} = :timer.tc(fn -> send_post(encoded) end)
+        {time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
 
         Logger.info([
           "send_custom_audio: ",
@@ -290,8 +294,8 @@ defmodule PaEss.HttpUpdater do
   defp audio_type(:audio), do: "1"
   defp audio_type(:visual), do: "2"
 
-  @spec send_post(binary()) :: post_result()
-  defp send_post(query) do
+  @spec send_post(module(), binary()) :: post_result()
+  defp send_post(http_poster, query) do
     case Finch.build(
            :post,
            sign_url(),
@@ -300,7 +304,7 @@ defmodule PaEss.HttpUpdater do
            ],
            query
          )
-         |> Finch.request(HttpClient) do
+         |> http_poster.request(HttpClient) do
       {:ok, %Finch.Response{status: status}} when status >= 200 and status < 300 ->
         {:ok, :sent}
 
@@ -314,9 +318,9 @@ defmodule PaEss.HttpUpdater do
     end
   end
 
-  @spec update_ui(String.t()) ::
+  @spec update_ui(module(), String.t()) ::
           {:ok, :sent} | {:error, :bad_status} | {:error, :post_error}
-  def update_ui(query) do
+  def update_ui(http_poster, query) do
     key = Application.get_env(:realtime_signs, :sign_ui_api_key)
 
     case Finch.build(
@@ -328,7 +332,7 @@ defmodule PaEss.HttpUpdater do
            ],
            query
          )
-         |> Finch.request(HttpClient) do
+         |> http_poster.request(HttpClient) do
       {:ok, %Finch.Response{status: status}} when status >= 200 and status < 300 ->
         {:ok, :sent}
 

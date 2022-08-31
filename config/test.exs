@@ -1,9 +1,9 @@
 use Mix.Config
 
 config :realtime_signs,
-  http_client: Fake.HTTPoison,
+  http_client: Fake.Finch,
   trip_update_url: "https://fake_update/mbta-gtfs-s3/fake_trip_update.json",
-  http_poster_mod: Fake.HTTPoison,
+  http_poster_mod: Fake.Finch,
   scheduled_headway_requester: Fake.Headway.Request,
   headway_calculator: Fake.Headway.HeadwayDisplay,
   external_config_getter: Fake.ExternalConfig.Local,

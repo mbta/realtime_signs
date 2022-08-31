@@ -7,8 +7,18 @@ defmodule Engine.PredictionsTest do
     test "keeps existing states when trip_update url has not been modified" do
       trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
       position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
-      Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_304")
-      Application.put_env(:realtime_signs, :vehicle_positions_url, "vehicle_positions_304")
+
+      Application.put_env(
+        :realtime_signs,
+        :trip_update_url,
+        "https://fake.s3.com/mbta-gtfs-s3/rtr/trip_updates_304"
+      )
+
+      Application.put_env(
+        :realtime_signs,
+        :vehicle_positions_url,
+        "https://fake.s3.com/mbta-gtfs-s3/rtr/vehicle_positions_304"
+      )
 
       on_exit(fn ->
         Application.put_env(:realtime_signs, :trip_update_url, trip_update_url)
@@ -28,8 +38,18 @@ defmodule Engine.PredictionsTest do
     test "logs error when invalid HTTP response returned" do
       trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
       position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
-      Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_error")
-      Application.put_env(:realtime_signs, :vehicle_positions_url, "vehicle_positions_304")
+
+      Application.put_env(
+        :realtime_signs,
+        :trip_update_url,
+        "https://fake.s3.com/mbta-gtfs-s3/rtr/trip_updates_error"
+      )
+
+      Application.put_env(
+        :realtime_signs,
+        :vehicle_positions_url,
+        "https://fake.s3.com/mbta-gtfs-s3/rtr/vehicle_positions_304"
+      )
 
       on_exit(fn ->
         Application.put_env(:realtime_signs, :trip_update_url, trip_update_url)
@@ -55,8 +75,18 @@ defmodule Engine.PredictionsTest do
     test "instead of deleting old predictions, overwrites them with :none" do
       trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
       position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
-      Application.put_env(:realtime_signs, :trip_update_url, "fake_trip_update2.json")
-      Application.put_env(:realtime_signs, :vehicle_positions_url, "vehicle_positions_304")
+
+      Application.put_env(
+        :realtime_signs,
+        :trip_update_url,
+        "https://fake.s3.com/mbta-gtfs-s3/rtr/fake_trip_update2.json"
+      )
+
+      Application.put_env(
+        :realtime_signs,
+        :vehicle_positions_url,
+        "https://fake.s3.com/mbta-gtfs-s3/rtr/vehicle_positions_304"
+      )
 
       on_exit(fn ->
         Application.put_env(:realtime_signs, :trip_update_url, trip_update_url)
@@ -116,22 +146,30 @@ defmodule Engine.PredictionsTest do
 
       send(Engine.Departures, :daily_reset)
 
-      Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_out_of_service_1")
+      Application.put_env(
+        :realtime_signs,
+        :trip_update_url,
+        "https://fake.s3.com/mbta-gtfs-s3/rtr/trip_updates_out_of_service_1"
+      )
 
       Application.put_env(
         :realtime_signs,
         :vehicle_positions_url,
-        "vehicle_positions_out_of_service_1"
+        "https://fake.s3.com/mbta-gtfs-s3/rtr/vehicle_positions_out_of_service_1"
       )
 
       {:noreply, state} = handle_info(:update, state)
 
-      Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_out_of_service_2")
+      Application.put_env(
+        :realtime_signs,
+        :trip_update_url,
+        "https://fake.s3.com/mbta-gtfs-s3/rtr/trip_updates_out_of_service_2"
+      )
 
       Application.put_env(
         :realtime_signs,
         :vehicle_positions_url,
-        "vehicle_positions_out_of_service_2"
+        "https://fake.s3.com/mbta-gtfs-s3/rtr/vehicle_positions_out_of_service_2"
       )
 
       {:noreply, _} = handle_info(:update, state)
