@@ -39,7 +39,7 @@ defmodule Headway.Request do
     schedule_api_url <> "?filter[stop]=#{id_filter}&filter[direction_id]=#{direction_filter}"
   end
 
-  @spec validate_and_parse_response({atom, %HTTPoison.Response{}} | {atom, %HTTPoison.Error{}}) ::
+  @spec validate_and_parse_response({atom, %Finch.Response{}} | {atom, %Finch.Error{}}) ::
           [
             map()
           ]
