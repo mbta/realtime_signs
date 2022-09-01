@@ -210,9 +210,7 @@ defmodule Signs.Utilities.MessagesTest do
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
-                   width: 18,
-                   station_code: "TEST",
-                   zone: "x"
+                   width: 18
                  }},
                 {%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
@@ -230,9 +228,7 @@ defmodule Signs.Utilities.MessagesTest do
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
-                   width: 18,
-                   station_code: "TEST",
-                   zone: "x"
+                   width: 18
                  }}}
     end
 
@@ -302,9 +298,7 @@ defmodule Signs.Utilities.MessagesTest do
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
-                   width: 18,
-                   station_code: "TEST",
-                   zone: "x"
+                   width: 18
                  }},
                 {%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
@@ -322,9 +316,7 @@ defmodule Signs.Utilities.MessagesTest do
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
-                   width: 18,
-                   station_code: "TEST",
-                   zone: "x"
+                   width: 18
                  }}}
     end
 
@@ -392,9 +384,7 @@ defmodule Signs.Utilities.MessagesTest do
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
-                   width: 18,
-                   station_code: "TEST",
-                   zone: "x"
+                   width: 18
                  }},
                 {%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
@@ -412,9 +402,7 @@ defmodule Signs.Utilities.MessagesTest do
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
-                   width: 18,
-                   station_code: "TEST",
-                   zone: "x"
+                   width: 18
                  }}}
     end
 
@@ -440,9 +428,7 @@ defmodule Signs.Utilities.MessagesTest do
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
-                   width: 18,
-                   station_code: "TEST",
-                   zone: "x"
+                   width: 18
                  }},
                 {%Signs.Utilities.SourceConfig{
                    announce_arriving?: false,
@@ -460,9 +446,7 @@ defmodule Signs.Utilities.MessagesTest do
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
-                   width: 18,
-                   station_code: "TEST",
-                   zone: "x"
+                   width: 18
                  }}}
     end
 

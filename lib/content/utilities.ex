@@ -86,9 +86,6 @@ defmodule Content.Utilities do
   def stop_track_number("Oak Grove-02"), do: 2
   def stop_track_number(_), do: nil
 
-  def stop_platform_name("70086"), do: "Ashmont"
-  def stop_platform_name("70096"), do: "Braintree"
-
   @spec route_and_destination_branch_letter(String.t(), PaEss.destination()) ::
           green_line_branch() | nil
   def route_and_destination_branch_letter("Green-B", :boston_college), do: :b
