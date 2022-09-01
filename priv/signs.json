@@ -5277,32 +5277,6 @@
     "source_config": [
       [
         {
-          "stop_id": "70086",
-          "routes": [
-            "Red"
-          ],
-          "direction_id": 1,
-          "headway_direction_name": "Alewife",
-          "platform": "ashmont",
-          "terminal": false,
-          "announce_arriving": true,
-          "announce_boarding": false
-        },
-        {
-          "stop_id": "70096",
-          "direction_id": 1,
-          "headway_direction_name": "Alewife",
-          "routes": [
-            "Red"
-          ],
-          "platform": "braintree",
-          "terminal": false,
-          "announce_arriving": true,
-          "announce_boarding": false
-        }
-      ],
-      [
-        {
           "stop_id": "70085",
           "direction_id": 0,
           "headway_direction_name": "Southbound",
@@ -5323,6 +5297,32 @@
           "routes": [
             "Red"
           ],
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ],
+      [
+        {
+          "stop_id": "70086",
+          "routes": [
+            "Red"
+          ],
+          "direction_id": 1,
+          "headway_direction_name": "Alewife",
+          "platform": "ashmont",
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        },
+        {
+          "stop_id": "70096",
+          "direction_id": 1,
+          "headway_direction_name": "Alewife",
+          "routes": [
+            "Red"
+          ],
+          "platform": "braintree",
+          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
