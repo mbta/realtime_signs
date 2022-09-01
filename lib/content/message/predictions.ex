@@ -163,7 +163,7 @@ defmodule Content.Message.Predictions do
                "#{duration_string}",
                width
              ), 3},
-            {headsign <> platform_message, 3}
+            {headsign <> platform_message, 6}
           ]
 
         track_number ->
