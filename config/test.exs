@@ -9,3 +9,7 @@ config :realtime_signs,
   external_config_getter: Fake.ExternalConfig.Local,
   aws_client: Fake.ExAws,
   s3_client: Fake.ExAws
+
+config :realtime_signs, http_pool_config: %{
+    :default => [size: 25]
+  }

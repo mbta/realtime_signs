@@ -6,7 +6,7 @@ defmodule Fake.Finch do
   def request(%Finch.Request{method: "POST", body: body}, _name) do
     cond do
       body =~ "timeout" ->
-        {:error, %HTTPoison.Error{reason: :timeout}}
+        {:error, %Finch.Error{reason: :timeout}}
 
       body =~ "bad_sign" ->
         {:ok, %Finch.Response{status: 404}}
@@ -53,7 +53,7 @@ defmodule Fake.Finch do
   end
 
   @spec mock_response(Finch.Request.t()) ::
-          {:ok, %Finch.Response{}} | {:error, %Mint.TransportError{}}
+          {:ok, %Finch.Response{}} | {:error, %Finch.Error{}}
   def mock_response(%Finch.Request{
         host: "fake_update",
         path: "/mbta-gtfs-s3/fake_trip_update.json"
@@ -441,7 +441,7 @@ defmodule Fake.Finch do
         host: "fake.s3.com",
         path: "/mbta-gtfs-s3/rtr/trip_updates_error"
       }) do
-    {:error, %Mint.TransportError{reason: :timeout}}
+    {:error, %Finch.Error{reason: :timeout}}
   end
 
   def mock_response(%Finch.Request{
@@ -457,7 +457,7 @@ defmodule Fake.Finch do
         path: "/schedules",
         query: "filter[stop]=unknown_error&filter[direction_id]=0,1"
       }) do
-    {:error, %Mint.TransportError{reason: "Bad URL"}}
+    {:error, %Finch.Error{reason: "Bad URL"}}
   end
 
   def mock_response(%Finch.Request{
