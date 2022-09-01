@@ -12,24 +12,20 @@ defmodule Signs.Utilities.Predictions do
   @spec get_messages(Signs.Realtime.t()) ::
           {{SourceConfig.source() | nil, Content.Message.t()},
            {SourceConfig.source() | nil, Content.Message.t()}}
-  def get_messages(
-        %{source_config: {top_line_sources, bottom_line_sources}, text_id: {station_code, zone}} =
-          sign
-      ) do
-    {top, _} = get_predictions(sign.prediction_engine, top_line_sources, station_code, zone)
-    {bottom, _} = get_predictions(sign.prediction_engine, bottom_line_sources, station_code, zone)
-
+  def get_messages(%{source_config: {top_line_sources, bottom_line_sources}} = sign) do
+    {top, _} = get_predictions(sign.prediction_engine, top_line_sources)
+    {bottom, _} = get_predictions(sign.prediction_engine, bottom_line_sources)
     {top, bottom}
   end
 
-  def get_messages(%{source_config: {both_lines_sources}, text_id: {station_code, zone}} = sign) do
-    get_predictions(sign.prediction_engine, both_lines_sources, station_code, zone)
+  def get_messages(%{source_config: {both_lines_sources}} = sign) do
+    get_predictions(sign.prediction_engine, both_lines_sources)
   end
 
-  @spec get_predictions(module(), [Signs.Utilities.SourceConfig.source()], String.t(), String.t()) ::
+  @spec get_predictions(module(), [Signs.Utilities.SourceConfig.source()]) ::
           {{SourceConfig.source() | nil, Content.Message.t()},
            {SourceConfig.source() | nil, Content.Message.t()}}
-  defp get_predictions(prediction_engine, source_list, station_code, zone) do
+  defp get_predictions(prediction_engine, source_list) do
     source_list
     |> get_source_list_predictions(prediction_engine)
     |> Enum.filter(fn {_, p} ->
@@ -55,7 +51,7 @@ defmodule Signs.Utilities.Predictions do
           {source, Content.Message.Predictions.terminal(prediction)}
 
         true ->
-          {source, Content.Message.Predictions.non_terminal(prediction, station_code, zone)}
+          {source, Content.Message.Predictions.non_terminal(prediction)}
       end
     end)
     |> Enum.reject(fn {_source, message} -> is_nil(message) end)
