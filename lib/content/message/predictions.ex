@@ -162,7 +162,7 @@ defmodule Content.Message.Predictions do
                headsign_message,
                "#{duration_string}",
                width
-             ), 3},
+             ), 6},
             {headsign <> platform_message, 6}
           ]
 
