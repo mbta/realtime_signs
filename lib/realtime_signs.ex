@@ -15,16 +15,7 @@ defmodule RealtimeSigns do
       [
         :hackney_pool.child_spec(:default, []),
         :hackney_pool.child_spec(:arinc_pool, []),
-        {Finch,
-         name: HttpClient,
-         pools: %{
-           :default => [size: 10],
-           "http://#{Application.get_env(:realtime_signs, :sign_head_end_host)}/mbta/cgi-bin/RemoteMsgsCgi.exe" =>
-             [size: 25],
-           "http://#{Application.get_env(:realtime_signs, :sign_ui_url)}/messages" => [
-             size: 25
-           ]
-         }},
+        {Finch, name: HttpClient, pools: Application.get_env(:realtime_signs, :http_pool_config)},
         Engine.Health,
         Engine.Config,
         Engine.Predictions,

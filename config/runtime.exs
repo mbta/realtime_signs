@@ -26,4 +26,11 @@ config :realtime_signs, RealtimeSigns.Scheduler, jobs: scheduler_jobs
 
 if config_env() == :prod do
   config :realtime_signs, RealtimeSignsWeb.Endpoint, secret_key_base: System.fetch_env!("SECRET_KEY_BASE")
+
+  config :realtime_signs,
+  http_pool_config: %{
+    :default => [size: Integer.parse(System.get_env("DEFAULT_POOL_SIZE", "15"))],
+    "http://#{Application.get_env(:realtime_signs, :sign_head_end_host)}" => [size: Integer.parse(System.get_env("ARINC_POOL_SIZE", "25"))],
+    "http://#{Application.get_env(:realtime_signs, :sign_ui_url)}" => [size: Integer.parse(System.get_env("SIGNS_UI_POOL_SIZE", "25"))]
+  }
 end
