@@ -29,8 +29,8 @@ if config_env() == :prod do
 
   config :realtime_signs,
   http_pool_config: %{
-    :default => [size: Integer.parse(System.get_env("DEFAULT_POOL_SIZE", "15"))],
-    "http://#{Application.get_env(:realtime_signs, :sign_head_end_host)}" => [size: Integer.parse(System.get_env("ARINC_POOL_SIZE", "25"))],
-    "http://#{Application.get_env(:realtime_signs, :sign_ui_url)}" => [size: Integer.parse(System.get_env("SIGNS_UI_POOL_SIZE", "25"))]
+    :default => [size: String.to_integer(System.get_env("DEFAULT_POOL_SIZE", "15"))],
+    "http://#{Application.get_env(:realtime_signs, :sign_head_end_host)}" => [size: String.to_integer(System.get_env("ARINC_POOL_SIZE", "25"))],
+    "http://#{Application.get_env(:realtime_signs, :sign_ui_url)}" => [size: String.to_integer(System.get_env("SIGNS_UI_POOL_SIZE", "25"))]
   }
 end
