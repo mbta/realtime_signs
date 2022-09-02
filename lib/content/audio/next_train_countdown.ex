@@ -4,7 +4,7 @@ defmodule Content.Audio.NextTrainCountdown do
   """
 
   @enforce_keys [:destination, :route_id, :verb, :minutes, :track_number]
-  defstruct @enforce_keys ++ [platform: nil]
+  defstruct @enforce_keys ++ [:station_code, :zone, platform: nil]
 
   @type verb :: :arrives | :departs
 
@@ -14,7 +14,9 @@ defmodule Content.Audio.NextTrainCountdown do
           verb: verb(),
           minutes: integer(),
           track_number: Content.Utilities.track_number() | nil,
-          platform: Content.platform() | nil
+          platform: Content.platform() | nil,
+          station_code: String.t() | nil,
+          zone: String.t() | nil
         }
 
   require Logger
@@ -29,6 +31,7 @@ defmodule Content.Audio.NextTrainCountdown do
     @in_ "504"
     @minutes "505"
     @minute "532"
+    @platform_tbd "849"
 
     def to_params(audio) do
       case Utilities.destination_var(audio.destination) do
@@ -54,6 +57,10 @@ defmodule Content.Audio.NextTrainCountdown do
 
             audio.minutes == 1 ->
               {:canned, {"142", [dest_var, platform_var(audio), verb_var(audio)], :audio}}
+
+            audio.destination == :alewife and audio.station_code == "RJFK" and audio.zone == "m" and
+                audio.minutes >= 20 ->
+              platform_tbd_params(audio, dest_var)
 
             true ->
               {:canned,
@@ -120,6 +127,21 @@ defmodule Content.Audio.NextTrainCountdown do
         minutes_var(audio),
         minute_or_minutes(audio),
         track(audio.track_number)
+      ]
+
+      Utilities.take_message(vars, :audio)
+    end
+
+    defp platform_tbd_params(audio, destination_var) do
+      vars = [
+        @the_next,
+        @train_to,
+        destination_var,
+        verb_var(audio),
+        @in_,
+        minutes_var(audio),
+        minute_or_minutes(audio),
+        @platform_tbd
       ]
 
       Utilities.take_message(vars, :audio)
