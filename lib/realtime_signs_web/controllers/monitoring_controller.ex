@@ -7,8 +7,8 @@ defmodule RealtimeSignsWeb.MonitoringController do
         conn,
         %{"time" => timestamp, "data" => %{"nodes" => nodes}} = _params
       ) do
-    Logger.info("Received device statuses from ARINC: Device count=#{Enum.count(nodes)}")
-    monitor_device_uptime(nodes, timestamp)
+    Logger.info("Received uptime statuses from ARINC: Node count=#{Enum.count(nodes)}")
+    monitor_node_uptime(nodes, timestamp)
     send_resp(conn, 200, "")
   end
 
