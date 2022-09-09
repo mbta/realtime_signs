@@ -118,7 +118,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:canned, {"99", ["4000", "4016", "503", "5005"], :audio}}
+               {:canned, {"98", ["4000", "503", "5005", "4016"], :audio}}
     end
 
     test "Next train to Alewife on the Ashmont platform arrives in one minute" do
@@ -145,7 +145,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:canned, {"99", ["4000", "4021", "503", "5005"], :audio}}
+               {:canned, {"98", ["4000", "503", "5005", "4021"], :audio}}
     end
 
     test "Next train to Alewife platform TBD (JFK/UMass Mezzanine only)" do

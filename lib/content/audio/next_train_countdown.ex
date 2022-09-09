@@ -64,7 +64,7 @@ defmodule Content.Audio.NextTrainCountdown do
 
             true ->
               {:canned,
-               {"99", [dest_var, platform_var(audio), verb_var(audio), minutes_var(audio)],
+               {"98", [dest_var, verb_var(audio), minutes_var(audio), platform_var(audio)],
                 :audio}}
           end
 
