@@ -19,7 +19,6 @@ defmodule Content.Audio.Approaching do
 
   defimpl Content.Audio do
     @attention_passengers "783"
-    @now_approaching_new_ol_cars "785"
     @now_approaching_new_rl_cars "786"
     @space "21000"
 
@@ -56,11 +55,6 @@ defmodule Content.Audio.Approaching do
         nil ->
           to_params(%Content.Audio.Approaching{audio | new_cars?: false})
 
-        {destination_var, approaching_var} when route_id == "Orange" ->
-          # can't use take_message/2 directly as the spaces cause problems
-          vars = [@attention_passengers, destination_var, approaching_var]
-          {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio_visual}}
-
         {destination_var, approaching_var} when route_id == "Red" ->
           # Red Line message, however, requires one space.
           vars = [@attention_passengers, destination_var, @space, approaching_var]
@@ -90,8 +84,6 @@ defmodule Content.Audio.Approaching do
     defp destination_var(_destination, _platform, _route_id), do: nil
 
     @spec new_cars_vars(PaEss.destination(), String.t()) :: {String.t(), String.t()} | nil
-    defp new_cars_vars(:oak_grove, "Orange"), do: {"4022", @now_approaching_new_ol_cars}
-    defp new_cars_vars(:forest_hills, "Orange"), do: {"4043", @now_approaching_new_ol_cars}
     defp new_cars_vars(:alewife, "Red"), do: {"4000", @now_approaching_new_rl_cars}
     defp new_cars_vars(:ashmont, "Red"), do: {"4016", @now_approaching_new_rl_cars}
     defp new_cars_vars(:braintree, "Red"), do: {"4021", @now_approaching_new_rl_cars}
