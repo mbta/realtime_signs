@@ -7355,6 +7355,9 @@
           "direction_id": 1,
           "headway_direction_name": "Union Square",
           "routes": [
+            "Green-B",
+            "Green-C",
+            "Green-D",
             "Green-E"
           ],
           "platform": null,
@@ -7382,6 +7385,9 @@
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
           "routes": [
+            "Green-B",
+            "Green-C",
+            "Green-D",
             "Green-E"
           ],
           "platform": null,
@@ -7409,6 +7415,9 @@
           "direction_id": 1,
           "headway_direction_name": "Union Square",
           "routes": [
+            "Green-B",
+            "Green-C",
+            "Green-D",
             "Green-E"
           ],
           "platform": null,
@@ -7421,6 +7430,9 @@
           "direction_id": 0,
           "headway_direction_name": "Heath Street",
           "routes": [
+            "Green-B",
+            "Green-C",
+            "Green-D",
             "Green-E"
           ],
           "platform": null,
