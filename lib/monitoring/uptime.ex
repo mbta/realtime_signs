@@ -137,9 +137,7 @@ defmodule Monitoring.Uptime do
         ])
 
       _ ->
-        Logger.warn(
-          "Received uptime info of a node with an unknown or unspecified type #{inspect(node)}"
-        )
+        Logger.info("unknown_node_type: #{inspect(node)}")
     end
   end
 
@@ -162,6 +160,9 @@ defmodule Monitoring.Uptime do
         :scu
 
       "P8810" ->
+        :dsp
+
+      "BLU-80" ->
         :dsp
 
       "C4200" ->
