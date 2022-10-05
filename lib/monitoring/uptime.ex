@@ -137,9 +137,7 @@ defmodule Monitoring.Uptime do
         ])
 
       _ ->
-        Logger.warn(
-          "Received uptime info of a node with an unknown or unspecified type #{inspect(node)}"
-        )
+        Logger.info("Warning: unspecified device type - node: #{inspect(node)}")
     end
   end
 
