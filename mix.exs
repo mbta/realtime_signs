@@ -47,7 +47,6 @@ defmodule RealtimeSigns.Mixfile do
       {:hackney, "== 1.17.4"},
       {:httpoison, "~> 1.0"},
       {:jason, "~> 1.2.0"},
-      {:logger_splunk_backend, "~> 2.0"},
       {:mox, "~> 1.0.0", only: [:test]},
       {:sentry, "~> 8.0"},
       {:recon, "~> 2.5"},
