@@ -1,0 +1,5 @@
+*
+!/lib
+!/config
+!/mix.*
+!/rel
