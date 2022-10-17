@@ -24,8 +24,6 @@ defmodule PaEss.Logger do
       "#{start_secs}"
     ]
 
-    File.mkdir("log")
-    File.write!("log/pa_ess_updates.log", line ++ ["\n"], [:append])
     Logger.info(line)
     {:ok, :sent}
   end
@@ -46,8 +44,6 @@ defmodule PaEss.Logger do
       "#{start_secs}"
     ]
 
-    File.mkdir("log")
-    File.write!("log/pa_ess_updates.log", line ++ ["\n"], [:append])
     Logger.info(line)
     {:ok, :sent}
   end
@@ -73,8 +69,6 @@ defmodule PaEss.Logger do
     ]
 
     Logger.info(line)
-    File.mkdir("log")
-    File.write!("log/pa_ess_updates.log", line ++ ["\n"], [:append])
     {:ok, :sent}
   end
 
