@@ -1,6 +1,6 @@
 defmodule PaEss.Logger do
   @moduledoc """
-  A behaviour that signs can use to append their updates to a file,
+  A behaviour that signs can use to log their updates
   rather than sending it to the Pa/Ess HTTP server.
   """
 
