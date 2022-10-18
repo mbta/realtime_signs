@@ -2,7 +2,11 @@ defmodule Engine.Alerts.StationConfig do
   defstruct [:stop_to_station, :station_to_stops, :station_neighbors]
 
   def load_config do
-    stops_data = File.read!("priv/stops.json") |> Jason.decode!()
+    stops_data =
+      :realtime_signs
+      |> :code.priv_dir()
+      |> Path.join("stops.json")
+      |> File.read!()
 
     {stop_to_station, station_to_stops, station_neighbors} =
       Enum.reduce(stops_data, {%{}, %{}, %{}}, fn {_segment, stops},

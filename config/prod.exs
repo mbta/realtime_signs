@@ -12,7 +12,7 @@ config :sentry,
 
 config :logger, backends: [:console]
 
-config :logger, :console, level: :warn
+config :logger, :console, level: :info
 
 config :realtime_signs,
   external_config_getter: ExternalConfig.S3,
