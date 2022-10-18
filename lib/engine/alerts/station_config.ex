@@ -7,6 +7,7 @@ defmodule Engine.Alerts.StationConfig do
       |> :code.priv_dir()
       |> Path.join("stops.json")
       |> File.read!()
+      |> Jason.decode!()
 
     {stop_to_station, station_to_stops, station_neighbors} =
       Enum.reduce(stops_data, {%{}, %{}, %{}}, fn {_segment, stops},
