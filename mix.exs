@@ -58,7 +58,8 @@ defmodule RealtimeSigns.Mixfile do
       {:phoenix, "~> 1.6.6"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:configparser_ex, "~> 4.0", only: [:prod]}
     ]
   end
 
