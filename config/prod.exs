@@ -24,3 +24,4 @@ config :ex_aws,
   secret_access_key: [
     {:system, "AWS_SECRET_ACCESS_KEY"},
     {:awscli, "default", 30}
+  ]
