@@ -28,6 +28,21 @@ if config_env() == :prod do
   config :realtime_signs, RealtimeSignsWeb.Endpoint, secret_key_base: System.fetch_env!("SECRET_KEY_BASE")
 end
 
+# For maintaining backwards compatibility with opstech3
+splunk_token = System.get_env("PROD_SIGNS_SPLUNK_TOKEN", "")
+
+if config_env() == :prod and splunk_token != "" do
+  config :logger, backends: [Logger.Backend.Splunk, :console]
+
+  config :logger, :splunk,
+    connector: Logger.Backend.Splunk.Output.Http,
+    host: 'https://http-inputs-mbta.splunkcloud.com/services/collector/event',
+    token: splunk_token,
+    format: "$dateT$time [$level]$levelpad node=$node $metadata$message\n",
+    metadata: [:request_id],
+    max_buffer: 100
+end
+
 if System.get_env("DRY_RUN") == "true" do
   config :realtime_signs, sign_updater_mod: PaEss.Logger
 end

@@ -53,6 +53,10 @@ config :ex_aws,
 
 config :logger, backends: [:console]
 
+config :logger, :console,
+  format: "$dateT$time [$level]$levelpad node=$node $metadata$message\n",
+  metadata: [:request_id]
+
 config :ehmon, :report_mf, {:ehmon, :info_report}
 
 config :sentry, json_library: Jason
