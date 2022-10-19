@@ -27,3 +27,7 @@ config :realtime_signs, RealtimeSigns.Scheduler, jobs: scheduler_jobs
 if config_env() == :prod do
   config :realtime_signs, RealtimeSignsWeb.Endpoint, secret_key_base: System.fetch_env!("SECRET_KEY_BASE")
 end
+
+if System.get_env("DRY_RUN") == "true" do
+  config :realtime_signs, sign_updater_mod: PaEss.Logger
+end
