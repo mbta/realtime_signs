@@ -1151,6 +1151,33 @@
     ]
   },
   {
+    "id": "bowdoin_drop_off",
+    "headway_group": "blue_trunk",
+    "type": "realtime",
+    "pa_ess_loc": "BBOW",
+    "read_loop_offset": 60,
+    "text_zone": "w",
+    "audio_zones": [
+      "w"
+    ],
+    "source_config": [
+      [
+        {
+          "stop_id": "70038",
+          "routes": [
+            "Blue"
+          ],
+          "direction_id": 1,
+          "headway_direction_name": "Wonderland",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
     "id": "bowdoin_mezzanine",
     "headway_group": "blue_trunk",
     "type": "realtime",
