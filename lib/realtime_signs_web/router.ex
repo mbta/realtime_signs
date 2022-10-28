@@ -11,5 +11,6 @@ defmodule RealtimeSignsWeb.Router do
     pipe_through([:api])
     post("/uptime", MonitoringController, :uptime)
     get("/run_message_log_job/:date", MonitoringController, :run_message_log_job)
+    get("/run_message_latency_report/:days", MonitoringController, :run_message_latency_report)
   end
 end
