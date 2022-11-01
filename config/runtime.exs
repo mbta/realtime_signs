@@ -28,7 +28,7 @@ message_log_report_job =
     [
       {
         System.get_env("MESSAGE_LOG_REPORT_CRON_SCHEDULE"),
-        {Jobs.MessageLatencyReport, :generate_message_latency_report, []}
+        {Jobs.MessageLatencyReport, :generate_message_latency_reports, []}
       }
     ]
   else
