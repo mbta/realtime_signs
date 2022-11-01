@@ -39,8 +39,16 @@ defmodule Jobs.MessageLatencyReport do
     with {:ok, response} <- get_zip_file(date),
          {:ok, files} <- :zip.unzip(response.body) do
       unzipped_directory = String.replace(date, "-", "")
-      # TODO: Switch this to Windows equivalent
-      :os.cmd(:"cat #{unzipped_directory}/*.csv > #{unzipped_directory}/all.csv")
+
+      case :os.type() do
+        {:unix, _} ->
+          :os.cmd(:"cat #{unzipped_directory}/*.csv > #{unzipped_directory}/all.csv")
+
+        {:win32, _} ->
+          :os.cmd(:"type #{unzipped_directory}/*.csv > #{unzipped_directory}/all.csv")
+      end
+
+      :os.cmd(:"type #{unzipped_directory}/*.csv > #{unzipped_directory}/all.csv")
 
       [get_csv_row("#{unzipped_directory}/all.csv") | Enum.map(files, &get_csv_row/1)]
       |> format_csv_data()
