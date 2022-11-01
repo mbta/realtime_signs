@@ -42,13 +42,14 @@ defmodule Jobs.MessageLatencyReport do
 
       case :os.type() do
         {:unix, _} ->
+          # Only useful for running the job locally since realtime_signs is deployed to a windows container
+          Logger.debug("OS is unix")
           :os.cmd(:"cat #{unzipped_directory}/*.csv > #{unzipped_directory}/all.csv")
 
         {:win32, _} ->
-          :os.cmd(:"type #{unzipped_directory}/*.csv > #{unzipped_directory}/all.csv")
+          Logger.debug("OS is windows")
+          :os.cmd(:"type #{unzipped_directory}\\*.csv > #{unzipped_directory}\\all.csv")
       end
-
-      :os.cmd(:"type #{unzipped_directory}/*.csv > #{unzipped_directory}/all.csv")
 
       [get_csv_row("#{unzipped_directory}/all.csv") | Enum.map(files, &get_csv_row/1)]
       |> format_csv_data()
