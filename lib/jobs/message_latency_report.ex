@@ -9,10 +9,10 @@ defmodule Jobs.MessageLatencyReport do
   * days_to_analyze: The number of days to go back. This value will default to 7 because
   we plan to schedule the job to run on a weekly basis.
 
-  The job will download the zip file containing message latency log files for each
-  station and calculate the 95th and 99th percentiles along with the total
-  row count for each one. It will aggregate the stats both for the combined logs
-  from every station as well as on a per station basis for a given day in a CSV file.
+  The job downloads the zip file containing message latency log files for each
+  station and calculates the 95th and 99th percentiles along with the total
+  row count for each one. It then aggregates into a CSV file the stats both for the combined logs
+  from every station as well as on a per station basis for a given day.
   The job will then store this file in S3.
   """
   require Logger
