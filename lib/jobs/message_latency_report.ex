@@ -18,8 +18,19 @@ defmodule Jobs.MessageLatencyReport do
   defp analyze_files_for_date(date) do
     with {:ok, response} <- get_zip_file(date),
          {:ok, files} <- :zip.unzip(response.body) do
-      Logger.info("Calculating results...")
-      Enum.map(files, &get_csv_row/1) |> put_csv_in_s3(date)
+      unzipped_directory = String.replace(date, "-", "")
+      # TODO: Switch this to Windows equivalent
+      :os.cmd(:"cat #{unzipped_directory}/*.csv > #{unzipped_directory}/all.csv")
+
+      [
+        get_csv_row("#{unzipped_directory}/all.csv")
+        | Enum.map(files, &get_csv_row/1)
+      ]
+      |> get_csv_data()
+      |> put_csv_in_s3(date)
+
+      Logger.info("Done processing. Deleting #{unzipped_directory}...")
+      File.rm_rf!(unzipped_directory)
     else
       {:error, {:http_error, 404, _}} ->
         Logger.info("S3 response error: Unable to find zip file")
@@ -30,9 +41,6 @@ defmodule Jobs.MessageLatencyReport do
       {:error, reason} ->
         Logger.info("Message latency error: #{inspect(reason)}")
     end
-
-    Logger.info("Deleting folder #{date}")
-    File.rm_rf!(date |> String.replace("-", ""))
   end
 
   defp get_zip_file(date) do
@@ -46,7 +54,7 @@ defmodule Jobs.MessageLatencyReport do
 
   defp get_csv_row(file) do
     row = [
-      get_station_code_from_filename(file) | File.stream!(file) |> analyze_file()
+      get_id_from_filename(file) | File.stream!(file) |> analyze_file()
     ]
 
     row
@@ -96,17 +104,19 @@ defmodule Jobs.MessageLatencyReport do
     |> Enum.with_index()
   end
 
-  defp put_csv_in_s3(rows, date) do
-    # Put the data in CSV format with header rows
-    Logger.info("Creating CSV File...")
-    csv_data =
-      for row <- rows, into: "station,95th_percentile,99th_percentile,count\n" do
-        Enum.join(row, ",") <> "\n"
-      end
+  defp get_csv_data(rows) do
+    # Put the data in CSV format with header row
+    Logger.info("Creating CSV rows...")
 
+    for row <- rows, into: "id,95th_percentile,99th_percentile,count\n" do
+      Enum.join(row, ",") <> "\n"
+    end
+  end
+
+  defp put_csv_in_s3(rows, date) do
     report_filename = "#{date}-message_latency.csv"
 
-    with :ok <- File.write!(report_filename, csv_data) do
+    with :ok <- File.write!(report_filename, rows) do
       s3_client = Application.get_env(:realtime_signs, :s3_client)
       aws_client = Application.get_env(:realtime_signs, :aws_client)
 
@@ -134,7 +144,7 @@ defmodule Jobs.MessageLatencyReport do
     File.rm!(report_filename)
   end
 
-  defp get_station_code_from_filename(file_name) do
+  defp get_id_from_filename(file_name) do
     [_date, station_code] =
       file_name |> to_string |> String.upcase() |> String.trim(".CSV") |> String.split("/")
 
