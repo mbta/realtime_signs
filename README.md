@@ -14,8 +14,8 @@ If you need to run realtime signs in a local docker container, there are a few e
 
 1. Follow the instructions in [this notion doc](https://www.notion.so/mbta-downtown-crossing/Creating-debugging-a-Windows-Docker-container-2f21af809c894aab8038d12ae9c54361) for your OS to set up docker
 2. Once docker is running on either your Windows machine or your Windows VM, run `docker build .` in the root directory of realtime_signs.
-3. In order to run the image, you'll need a number of env variables. It's probably easiest to add a env.list file to your local repo containing. You can read about setting env variables in a container [here](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file)
-4. Run the image in a container with `docker run --env-file env.list [IMAGE]`
+3. In order to run the image, you'll need a number of env variables. It's probably easiest to add a env.list file to your local repo containing the neeed values. You can read about setting env variables in a container [here](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file)
+4. Run the image in a container with `docker run --env-file env.list [IMAG TAG]`
 
 ## Environment variables
 Environment variables are stored in AWS Secrets Manager. If a new env variable needs to be added, Secrets Manager will need to be updated and then the application will need to be re-deployed.
