@@ -7639,5 +7639,98 @@
         }
       ]
     ]
+  },
+  {
+    "id": "gilman_square_eastbound",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GGSS",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": [
+      "e"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70505",
+          "direction_id": 1,
+          "headway_direction_name": "Medford",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "gilman_square_westbound",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GGSS",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": [
+      "w"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70506",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "gilman_square_mezzanine",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GGSS",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": [
+      "m"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70505",
+          "direction_id": 1,
+          "headway_direction_name": "Medford",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        },
+        {
+          "stop_id": "70506",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
   }
 ]
