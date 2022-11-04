@@ -38,4 +38,6 @@ defmodule PaEss do
           | :southbound
           | :eastbound
           | :westbound
+          | :inbound
+          | :outbound
 end
