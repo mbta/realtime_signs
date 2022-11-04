@@ -158,6 +158,7 @@ defmodule Content.Audio.VehiclesToDestination do
     defp message_id(%{language: :english, destination: :southbound}), do: "184"
     defp message_id(%{language: :english, destination: :eastbound}), do: "181"
     defp message_id(%{language: :english, destination: :westbound}), do: "182"
+    # TODO: Add message for "Trains to Medford Tufts"
 
     defp message_id(%{language: :english, destination: :chelsea}), do: "133"
     defp message_id(%{language: :english, destination: :south_station}), do: "134"

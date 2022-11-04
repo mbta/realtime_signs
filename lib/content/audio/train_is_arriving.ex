@@ -58,6 +58,7 @@ defmodule Content.Audio.TrainIsArriving do
     defp audio_params(%{destination: :reservoir}), do: {"90009", []}
     defp audio_params(%{destination: :riverside}), do: {"90008", []}
     defp audio_params(%{destination: :heath_street}), do: {"90011", []}
+    defp audio_params(%{destination: :medford_tufts}), do: {"103", ["853"]}
     defp audio_params(_), do: nil
   end
 end
