@@ -51,7 +51,10 @@ defmodule Jobs.MessageLatencyReport do
           :os.cmd(:"type #{unzipped_directory}\\*.csv > #{unzipped_directory}\\all.csv")
       end
 
-      [get_csv_row("#{unzipped_directory}/all.csv") | Enum.map(files, &get_csv_row/1)]
+      [
+        get_csv_row("#{unzipped_directory}/all.csv", date)
+        | Enum.map(files, &get_csv_row(&1, date))
+      ]
       |> format_csv_data()
       |> put_csv_in_s3(date)
 
@@ -78,29 +81,38 @@ defmodule Jobs.MessageLatencyReport do
     s3_client.get_object(s3_bucket(), path) |> aws_client.request()
   end
 
-  defp get_csv_row(file) do
-    [get_id_from_filename(file) | File.stream!(file) |> get_stats()]
+  defp get_csv_row(file, date) do
+    [get_id_from_filename(file) | File.stream!(file) |> get_stats(date)]
   end
 
-  defp get_stats(file_contents) do
-    rows_with_indices = parse_rows_and_add_indices(file_contents)
+  defp get_stats(file_contents, date) do
+    parsed_rows = parse_rows(file_contents)
+    # Grab this value so we can track how many throwaway logs we're getting in each file
+    num_rows_pre_filter = Enum.count(parsed_rows)
 
-    num_rows = Enum.count(rows_with_indices)
+    # Filter out bad dates, sort the rows, and add indices
+    rows_filtered_and_indexed =
+      parsed_rows
+      |> Stream.filter(&filter_by_date(&1, date))
+      |> Enum.sort_by(fn row -> row[:seconds] end)
+      |> Enum.with_index()
+
+    num_rows = Enum.count(rows_filtered_and_indexed)
 
     percentile_95_row =
       num_rows
       |> calculate_percentile_index(@percentile_95)
-      |> get_percentile_row(rows_with_indices)
+      |> get_percentile_row(rows_filtered_and_indexed)
 
     percentile_99_row =
       num_rows
       |> calculate_percentile_index(@percentile_99)
-      |> get_percentile_row(rows_with_indices)
+      |> get_percentile_row(rows_filtered_and_indexed)
 
-    [percentile_95_row[:seconds], percentile_99_row[:seconds], num_rows]
+    [percentile_95_row[:seconds], percentile_99_row[:seconds], num_rows, num_rows_pre_filter]
   end
 
-  defp parse_rows_and_add_indices(file_contents) do
+  defp parse_rows(file_contents) do
     file_contents
     |> Stream.map(&String.trim(&1, "\n"))
     |> Stream.map(&String.split(&1, ","))
@@ -123,15 +135,39 @@ defmodule Jobs.MessageLatencyReport do
         station: station
       ]
     end)
-    |> Enum.sort_by(fn row -> row[:seconds] end)
-    |> Enum.with_index()
+  end
+
+  defp filter_by_date(row, date) do
+    # Get the day of month (0-31) from the date for which the logic is running
+    [_, _, current_day] = date |> String.split("-")
+    current_day = String.trim_leading(current_day, "0")
+
+    # Also use the next day to account for the end of the service day
+    next_day = (Date.from_iso8601!(date) |> Date.add(1)).day
+
+    # Extract the day of month (0-31) from the row.
+    # ARINC's logs are a little inconsistent with datetime formatting and we're not
+    # sure when it will be fixed so we have to account for both formats.
+    # For example
+    #   1. [2022-10-31T21:16:18.355]
+    #   2. Mon Oct 31 21:16:18 2022
+    [_, _, row_day | _] =
+      row[:begin_date]
+      |> String.replace(" ", "-")
+      |> String.split("-")
+
+    [row_day | _] = String.split(row_day, "T")
+    row_day = String.trim_leading(row_day, "0")
+
+    # Filter out logs that aren't part of the current service day
+    row_day == current_day or row_day == to_string(next_day)
   end
 
   defp format_csv_data(rows) do
     # Put the data in CSV format with header row
     Logger.info("Creating CSV rows...")
 
-    for row <- rows, into: "id,95th_percentile,99th_percentile,count\n" do
+    for row <- rows, into: "id,95th_percentile,99th_percentile,count,count_prefilter\n" do
       Enum.join(row, ",") <> "\n"
     end
   end
