@@ -48,11 +48,8 @@ config :realtime_signs,
 config :realtime_signs, RealtimeSignsWeb.Endpoint, secret_key_base: "local_secret_key_base_at_least_64_bytes_________________________________"
 
 config :ex_aws,
-  access_key_id: [{:system, "AWS_ACCESS_KEY_ID"}, {:awscli, "default", 30}],
-  secret_access_key: [
-    {:system, "AWS_SECRET_ACCESS_KEY"},
-    {:awscli, "default", 30}
-  ]
+  access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],
+  secret_access_key: [{:system, "SIGNS_S3_CONFIG_SECRET"}, :instance_role]
 
 config :logger, backends: [:console], utc_log: true
 
