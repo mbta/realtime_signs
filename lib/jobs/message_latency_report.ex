@@ -138,12 +138,12 @@ defmodule Jobs.MessageLatencyReport do
   end
 
   defp filter_by_date(row, date) do
+    date = Date.from_iso8601!(date)
     # Get the day of month (0-31) from the date for which the logic is running
-    [_, _, current_day] = date |> String.split("-")
-    current_day = String.trim_leading(current_day, "0")
+    current_day = date.day
 
     # Also use the next day to account for the end of the service day
-    next_day = (Date.from_iso8601!(date) |> Date.add(1)).day
+    next_day = Date.add(date, 1).day
 
     # Extract the day of month (0-31) from the row.
     # ARINC's logs are a little inconsistent with datetime formatting and we're not
@@ -160,7 +160,7 @@ defmodule Jobs.MessageLatencyReport do
     row_day = String.trim_leading(row_day, "0")
 
     # Filter out logs that aren't part of the current service day
-    row_day == current_day or row_day == to_string(next_day)
+    row_day == to_string(current_day) or row_day == to_string(next_day)
   end
 
   defp format_csv_data(rows) do
