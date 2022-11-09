@@ -65,6 +65,12 @@
     {"station": "G Fenway inbound", "stop_ids": ["70186"]},
     {"station": "G Kenmore inbound", "stop_ids": ["70150"]}
   ],
+  "Green-B": [
+    {"station": "G Babock eastbound", "stop_ids": ["170136"]},
+    {"station": "G Amory eastbound", "stop_ids": ["170140"]},
+    {"station": "G Amory westbound", "stop_ids": ["170141"]},
+    {"station": "G Babcock westbound", "stop_ids": ["170137"]}
+  ],
   "Mattapan": [
     {"station": "M Mattapan inbound", "stop_ids": ["70276"]},
     {"station": "M Capen St. inbound", "stop_ids": ["70274"]},
