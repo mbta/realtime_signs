@@ -43,6 +43,7 @@ defmodule Jobs.MessageLatencyReport do
     with {:ok, response} <- get_zip_file(date),
          {:ok, files} <- :zip.unzip(response.body) do
       unzipped_directory = String.replace(date, "-", "")
+      Logger.info("Unzipped files: #{inspect(files)}")
 
       case :os.type() do
         {:unix, _} ->
