@@ -33,9 +33,13 @@ defmodule Jobs.MessageLatencyReport do
 
       Logger.info("Starting task to generate message latency report for #{date}...")
 
-      Task.Supervisor.start_child(RealtimeSigns.TaskSupervisor, fn ->
-        analyze_files_for_date(date)
-      end)
+      Task.Supervisor.start_child(
+        RealtimeSigns.TaskSupervisor,
+        fn ->
+          analyze_files_for_date(date)
+        end,
+        shutdown: 35_000
+      )
     end)
   end
 
@@ -55,8 +59,10 @@ defmodule Jobs.MessageLatencyReport do
         {:win32, _} ->
           Logger.info("Consolidating CSVs...")
           output = :os.cmd(:"type #{unzipped_directory}\\*.csv > #{unzipped_directory}\\all.csv")
-          Logger.info("cmd output: #{output}")
+          Logger.info("cmd output: #{inspect(output)}")
       end
+
+      Logger.info("Processing CSV files...")
 
       [
         get_csv_row("#{unzipped_directory}/all.csv", date)
