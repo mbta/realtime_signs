@@ -30,8 +30,12 @@ defmodule Jobs.MessageLatencyReport do
       ) do
     Enum.each(0..(days_to_analyze - 1), fn diff ->
       date = start_date |> Date.add(-diff) |> Date.to_string()
-      Logger.info("Generating message latency report for #{date}...")
-      analyze_files_for_date(date)
+
+      Logger.info("Starting task to generate message latency report for #{date}...")
+
+      Task.Supervisor.start_child(RealtimeSigns.TaskSupervisor, fn ->
+        analyze_files_for_date(date)
+      end)
     end)
   end
 

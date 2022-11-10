@@ -32,12 +32,10 @@ defmodule RealtimeSignsWeb.MonitoringController do
       "Beginning manual run of message latency report starting from #{start_date} going back #{days} days"
     )
 
-    Task.Supervisor.start_child(RealtimeSigns.TaskSupervisor, fn ->
-      Jobs.MessageLatencyReport.generate_message_latency_reports(
-        Date.from_iso8601!(start_date),
-        String.to_integer(days)
-      )
-    end)
+    Jobs.MessageLatencyReport.generate_message_latency_reports(
+      Date.from_iso8601!(start_date),
+      String.to_integer(days)
+    )
 
     send_resp(conn, 200, "")
   end
