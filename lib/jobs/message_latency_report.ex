@@ -51,8 +51,9 @@ defmodule Jobs.MessageLatencyReport do
           :os.cmd(:"cat #{unzipped_directory}/*.csv > #{unzipped_directory}/all.csv")
 
         {:win32, _} ->
-          Logger.debug("OS is windows")
-          :os.cmd(:"type #{unzipped_directory}\\*.csv > #{unzipped_directory}\\all.csv")
+          Logger.info("Consolidating CSVs...")
+          output = :os.cmd(:"type #{unzipped_directory}\\*.csv > #{unzipped_directory}\\all.csv")
+          Logger.info("cmd output: #{output}")
       end
 
       [
@@ -66,10 +67,10 @@ defmodule Jobs.MessageLatencyReport do
       File.rm_rf!(unzipped_directory)
     else
       {:error, {:http_error, 404, _}} ->
-        Logger.info("S3 response error: Unable to find zip file")
+        Logger.info("Message latency report error: Unable to find zip file")
 
       {:error, :einval} ->
-        Logger.info("Unzip error: Occured while attempting to unzip")
+        Logger.info("Message latency report error: Occured while attempting to unzip")
 
       {:error, reason} ->
         Logger.info("Message latency report error: #{inspect(reason)}")
