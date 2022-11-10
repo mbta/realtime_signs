@@ -20,7 +20,7 @@ jobs:
   deploy:
     name: Deploy
     needs: build
-    uses: mbta/workflows/.github/workflows/deploy-on-prem.yml@main
+    uses: mbta/workflows/.github/workflows/deploy-on-prem.yml@ps-onprem-concurrency
     with:
       app-name: realtime-signs
       environment: dev
