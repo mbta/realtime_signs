@@ -38,7 +38,7 @@ defmodule Jobs.MessageLatencyReport do
         fn ->
           analyze_files_for_date(date)
         end,
-        shutdown: 35_000
+        shutdown: 60_000
       )
     end)
   end
@@ -47,8 +47,7 @@ defmodule Jobs.MessageLatencyReport do
     with {:ok, response} <- get_zip_file(date),
          {:ok, files} <- :zip.unzip(response.body) do
       unzipped_directory = String.replace(date, "-", "")
-      Logger.info("S3 response: #{inspect(response)}")
-      Logger.info("Unzipped files: #{inspect(files)}")
+      Logger.info("Task PID: #{self()}")
 
       case :os.type() do
         {:unix, _} ->
@@ -57,11 +56,11 @@ defmodule Jobs.MessageLatencyReport do
           :os.cmd(:"cat #{unzipped_directory}/*.csv > #{unzipped_directory}/all.csv")
 
         {:win32, _} ->
-          Logger.info("Consolidating CSVs...")
-          output = :os.cmd(:"type #{unzipped_directory}\\*.csv > #{unzipped_directory}\\all.csv")
-          Logger.info("cmd output: #{inspect(output)}")
+          Logger.debug("OS is windows")
+          :os.cmd(:"type #{unzipped_directory}\\*.csv > #{unzipped_directory}\\all.csv")
       end
 
+      Logger.info("Run ls: #{System.cmd("ls", [])}")
       Logger.info("Processing CSV files...")
 
       [
@@ -95,10 +94,12 @@ defmodule Jobs.MessageLatencyReport do
   end
 
   defp get_csv_row(file, date) do
+    Logger.info("Getting stats for #{get_id_from_filename(file)}")
     [get_id_from_filename(file) | File.stream!(file) |> get_stats(date)]
   end
 
   defp get_stats(file_contents, date) do
+    Logger.info("Starting calculations")
     parsed_rows = parse_rows(file_contents)
     # Grab this value so we can track how many throwaway logs we're getting in each file
     num_rows_pre_filter = Enum.count(parsed_rows)
@@ -122,6 +123,7 @@ defmodule Jobs.MessageLatencyReport do
       |> calculate_percentile_index(@percentile_99)
       |> get_percentile_row(rows_filtered_and_indexed)
 
+    Logger.info("Done calculating")
     [percentile_95_row[:seconds], percentile_99_row[:seconds], num_rows, num_rows_pre_filter]
   end
 
