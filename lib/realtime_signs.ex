@@ -13,6 +13,7 @@ defmodule RealtimeSigns do
 
     children =
       [
+        {Task.Supervisor, name: RealtimeSigns.TaskSupervisor},
         :hackney_pool.child_spec(:default, []),
         :hackney_pool.child_spec(:arinc_pool, []),
         Engine.Health,
