@@ -47,7 +47,7 @@ defmodule Jobs.MessageLatencyReport do
     with {:ok, response} <- get_zip_file(date),
          {:ok, files} <- :zip.unzip(response.body) do
       unzipped_directory = String.replace(date, "-", "")
-      Logger.info("Task PID: #{self()}")
+      Logger.info("Task PID: #{inspect(self())}")
 
       case :os.type() do
         {:unix, _} ->
@@ -60,7 +60,6 @@ defmodule Jobs.MessageLatencyReport do
           :os.cmd(:"type #{unzipped_directory}\\*.csv > #{unzipped_directory}\\all.csv")
       end
 
-      Logger.info("Run ls: #{System.cmd("ls", [])}")
       Logger.info("Processing CSV files...")
 
       [
@@ -70,8 +69,8 @@ defmodule Jobs.MessageLatencyReport do
       |> format_csv_data()
       |> put_csv_in_s3(date)
 
-      Logger.info("Done processing. Deleting #{unzipped_directory}...")
       File.rm_rf!(unzipped_directory)
+      Logger.info("Done processing. Deleted #{unzipped_directory}")
     else
       {:error, {:http_error, 404, _}} ->
         Logger.info("Message latency report error: Unable to find zip file")
