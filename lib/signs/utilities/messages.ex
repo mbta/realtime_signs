@@ -3,7 +3,6 @@ defmodule Signs.Utilities.Messages do
   Helper functions for deciding which message a sign should
   be displaying
   """
-  require Logger
 
   @type sign_messages ::
           {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
@@ -51,18 +50,16 @@ defmodule Signs.Utilities.Messages do
           Engine.Alerts.Fetcher.stop_status()
         ) :: sign_messages()
   defp get_headway_or_alert_messages(sign, current_time, alert_status) do
-    case get_alert_messages(alert_status, sign) do
+    case get_alert_messages(alert_status, sign.uses_shuttles) do
       nil -> Signs.Utilities.Headways.get_messages(sign, current_time)
       messages -> messages
     end
   end
 
-  @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status(), Signs.Realtime.t()) ::
+  @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status(), boolean()) ::
           sign_messages() | nil
-  defp get_alert_messages(alert_status, sign) do
-    Logger.info("alert_status: #{alert_status} sign: #{inspect(sign)}")
-
-    case {alert_status, sign.uses_shuttles} do
+  defp get_alert_messages(alert_status, uses_shuttles) do
+    case {alert_status, uses_shuttles} do
       {:shuttles_transfer_station, _} ->
         {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
 
