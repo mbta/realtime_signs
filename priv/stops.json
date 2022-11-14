@@ -30,10 +30,24 @@
     {"station": "G Prudential eastbound", "stop_ids": ["70240"]},
     {"station": "G Copley eastbound", "stop_ids": ["70154"]}
   ],
+  "Green-E-eastbound-glx": [
+    {"station": "G East Somerville eastbound", "stop_ids": ["70513"]},
+    {"station": "G Gilman Square eastbound", "stop_ids": ["70505"]},
+    {"station": "G Magoun Square eastbound", "stop_ids": ["70507"]},
+    {"station": "G Ball Square eastbound", "stop_ids": ["70509"]},
+    {"station": "G College Ave eastbound", "stop_ids": ["70513"]}
+  ],
   "Green-E-westbound": [
     {"station": "G Symphony westbound", "stop_ids": ["70241"]},
     {"station": "G Prudential westbound", "stop_ids": ["70239"]},
     {"station": "G Copley westbound", "stop_ids": ["70155"]}
+  ],
+  "Green-E-westbound-glx": [
+    {"station": "G East Somerville westbound", "stop_ids": ["70514"]},
+    {"station": "G Gilman Square westbound", "stop_ids": ["70506"]},
+    {"station": "G Magoun Square westbound", "stop_ids": ["70508"]},
+    {"station": "G Ball Square westbound", "stop_ids": ["70510"]},
+    {"station": "G College Ave westbound", "stop_ids": ["70512"]}
   ],
   "Green-D": [
     {"station": "G Kenmore outbound", "stop_ids": ["70151"]},
