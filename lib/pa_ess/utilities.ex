@@ -346,7 +346,8 @@ defmodule PaEss.Utilities do
              :government_center,
              :park_street,
              :kenmore,
-             :union_square
+             :union_square,
+             :medford_tufts
            ] and
              route_id in ["Green-B", "Green-C", "Green-D", "Green-E"] do
     ad_hoc_trip_description(destination)
