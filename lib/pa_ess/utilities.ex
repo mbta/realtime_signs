@@ -218,11 +218,13 @@ defmodule PaEss.Utilities do
   def headsign_to_destination("Reservoir"), do: {:ok, :reservoir}
   def headsign_to_destination("Riverside"), do: {:ok, :riverside}
   def headsign_to_destination("Heath Street"), do: {:ok, :heath_street}
+  def headsign_to_destination("Union Square"), do: {:ok, :union_square}
   def headsign_to_destination("Northbound"), do: {:ok, :northbound}
   def headsign_to_destination("Southbound"), do: {:ok, :southbound}
   def headsign_to_destination("Eastbound"), do: {:ok, :eastbound}
   def headsign_to_destination("Westbound"), do: {:ok, :westbound}
-  def headsign_to_destination("Union Square"), do: {:ok, :union_square}
+  def headsign_to_destination("Inbound"), do: {:ok, :inbound}
+  def headsign_to_destination("Outbound"), do: {:ok, :outbound}
   def headsign_to_destination("Medford Tufts"), do: {:ok, :medford_tufts}
   def headsign_to_destination(_unknown), do: {:error, :unknown}
 
@@ -247,11 +249,13 @@ defmodule PaEss.Utilities do
   def destination_to_sign_string(:reservoir), do: "Reservoir"
   def destination_to_sign_string(:riverside), do: "Riverside"
   def destination_to_sign_string(:heath_street), do: "Heath St"
+  def destination_to_sign_string(:union_square), do: "Union Sq"
   def destination_to_sign_string(:northbound), do: "Northbound"
   def destination_to_sign_string(:southbound), do: "Southbound"
   def destination_to_sign_string(:eastbound), do: "Eastbound"
   def destination_to_sign_string(:westbound), do: "Westbound"
-  def destination_to_sign_string(:union_square), do: "Union Sq"
+  def destination_to_sign_string(:inbound), do: "Inbound"
+  def destination_to_sign_string(:outbound), do: "Outbound"
   def destination_to_sign_string(:medford_tufts), do: "Medfd/Tufts"
 
   @spec destination_to_ad_hoc_string(PaEss.destination()) ::
@@ -276,11 +280,13 @@ defmodule PaEss.Utilities do
   def destination_to_ad_hoc_string(:reservoir), do: {:ok, "Reservoir"}
   def destination_to_ad_hoc_string(:riverside), do: {:ok, "Riverside"}
   def destination_to_ad_hoc_string(:heath_street), do: {:ok, "Heath Street"}
+  def destination_to_ad_hoc_string(:union_square), do: {:ok, "Union Square"}
   def destination_to_ad_hoc_string(:northbound), do: {:ok, "Northbound"}
   def destination_to_ad_hoc_string(:southbound), do: {:ok, "Southbound"}
   def destination_to_ad_hoc_string(:eastbound), do: {:ok, "Eastbound"}
   def destination_to_ad_hoc_string(:westbound), do: {:ok, "Westbound"}
-  def destination_to_ad_hoc_string(:union_square), do: {:ok, "Union Square"}
+  def destination_to_ad_hoc_string(:inbound), do: {:ok, "Inbound"}
+  def destination_to_ad_hoc_string(:outbound), do: {:ok, "Outbound"}
   def destination_to_ad_hoc_string(:medford_tufts), do: {:ok, "Medford Tufts"}
   def destination_to_ad_hoc_string(_unknown), do: {:error, :unknown}
 

@@ -38,5 +38,7 @@ defmodule PaEss do
           | :southbound
           | :eastbound
           | :westbound
+          | :inbound
+          | :outbound
           | :medford_tufts
 end
