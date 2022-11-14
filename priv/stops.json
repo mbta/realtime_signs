@@ -31,6 +31,7 @@
     {"station": "G Copley eastbound", "stop_ids": ["70154"]}
   ],
   "Green-E-eastbound-glx": [
+    {"station": "G Lechmere eastbound", "stop_ids": ["70501"]},
     {"station": "G East Somerville eastbound", "stop_ids": ["70513"]},
     {"station": "G Gilman Square eastbound", "stop_ids": ["70505"]},
     {"station": "G Magoun Square eastbound", "stop_ids": ["70507"]},
@@ -43,6 +44,7 @@
     {"station": "G Copley westbound", "stop_ids": ["70155"]}
   ],
   "Green-E-westbound-glx": [
+    {"station": "G Lechmere westbound", "stop_ids": ["70502"]},
     {"station": "G East Somerville westbound", "stop_ids": ["70514"]},
     {"station": "G Gilman Square westbound", "stop_ids": ["70506"]},
     {"station": "G Magoun Square westbound", "stop_ids": ["70508"]},
