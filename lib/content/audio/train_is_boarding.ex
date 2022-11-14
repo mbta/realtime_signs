@@ -53,7 +53,8 @@ defmodule Content.Audio.TrainIsBoarding do
                 :government_center,
                 :park_st,
                 :kenmore,
-                :union_square
+                :union_square,
+                :medford_tufts
               ] do
       vars = [
         @the_next,
