@@ -26,7 +26,7 @@ defmodule Jobs.MessageLatencyReport do
   @spec generate_message_latency_reports(Date.t(), integer) :: :ok
   def generate_message_latency_reports(
         start_date \\ Date.utc_today() |> Date.add(-1),
-        days_to_analyze \\ 7
+        days_to_analyze \\ 1
       ) do
     Enum.each(0..(days_to_analyze - 1), fn diff ->
       date = start_date |> Date.add(-diff) |> Date.to_string()
