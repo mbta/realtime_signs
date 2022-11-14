@@ -60,6 +60,7 @@ defmodule Content.Audio.UtilitiesTest do
     assert destination_var(:riverside) == {:ok, "4084"}
     assert destination_var(:wonderland) == {:ok, "4044"}
     assert destination_var(:union_square) == {:ok, "695"}
+    assert destination_var(:medford_tufts) == {:ok, "852"}
   end
 
   test "headsign_to_destination/1" do
@@ -81,6 +82,7 @@ defmodule Content.Audio.UtilitiesTest do
     assert headsign_to_destination("Reservoir") == {:ok, :reservoir}
     assert headsign_to_destination("Riverside") == {:ok, :riverside}
     assert headsign_to_destination("Wonderland") == {:ok, :wonderland}
+    assert headsign_to_destination("Medford Tufts") == {:ok, :medford_tufts}
     assert headsign_to_destination("Unknown") == {:error, :unknown}
   end
 
@@ -123,7 +125,15 @@ defmodule Content.Audio.UtilitiesTest do
         assert ad_hoc_trip_description(:eastbound, route) == {:ok, "Eastbound train"}
 
         Enum.each(
-          [:lechmere, :north_station, :government_center, :park_street, :kenmore, :union_square],
+          [
+            :lechmere,
+            :north_station,
+            :government_center,
+            :park_street,
+            :kenmore,
+            :union_square,
+            :medford_tufts
+          ],
           fn destination ->
             assert ad_hoc_trip_description(destination, route) ==
                      {:ok,
