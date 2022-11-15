@@ -197,6 +197,9 @@ defmodule PaEss.Utilities do
   def destination_var(:medford_tufts), do: {:ok, "852"}
   def destination_var(_), do: {:error, :unknown}
 
+  @doc """
+  Used for parsing headway_direction_name from the source config to a PaEss.destination
+  """
   @spec headsign_to_destination(String.t()) :: {:ok, PaEss.destination()} | {:error, :unknown}
   def headsign_to_destination("Alewife"), do: {:ok, :alewife}
   def headsign_to_destination("Ashmont"), do: {:ok, :ashmont}
@@ -228,6 +231,9 @@ defmodule PaEss.Utilities do
   def headsign_to_destination("Medford Tufts"), do: {:ok, :medford_tufts}
   def headsign_to_destination(_unknown), do: {:error, :unknown}
 
+  @doc """
+  Used to translate a PaEss.destination to a string to post to countdown clocks
+  """
   @spec destination_to_sign_string(PaEss.destination()) :: String.t()
   def destination_to_sign_string(:alewife), do: "Alewife"
   def destination_to_sign_string(:ashmont), do: "Ashmont"
