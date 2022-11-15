@@ -6679,7 +6679,7 @@
         {
           "stop_id": "70242",
           "direction_id": 1,
-          "headway_direction_name": "Lechmere",
+          "headway_direction_name": "Medford Tufts",
           "routes": [
             "Green-E"
           ],
@@ -6733,7 +6733,7 @@
         {
           "stop_id": "70240",
           "direction_id": 1,
-          "headway_direction_name": "Lechmere",
+          "headway_direction_name": "Medford Tufts",
           "routes": [
             "Green-E"
           ],
@@ -6787,7 +6787,7 @@
         {
           "stop_id": "70240",
           "direction_id": 1,
-          "headway_direction_name": "Lechmere",
+          "headway_direction_name": "Medford Tufts",
           "routes": [
             "Green-E"
           ],
