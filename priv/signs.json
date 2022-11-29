@@ -4700,6 +4700,33 @@
     ]
   },
   {
+    "id": "red_ashmont_southbound",
+    "headway_group": "mattapan_trunk",
+    "type": "realtime",
+    "pa_ess_loc": "RASH",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": [
+      "s"
+    ],
+    "source_config": [
+      [
+        {
+          "stop_id": "70261",
+          "routes": [
+            "Mattapan"
+          ],
+          "direction_id": 0,
+          "headway_direction_name": "Mattapan",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": true,
+          "announce_boarding": true
+        }
+      ]
+    ]
+  },
+  {
     "id": "north_quincy_mezzanine",
     "headway_group": "red_braintree",
     "type": "realtime",
