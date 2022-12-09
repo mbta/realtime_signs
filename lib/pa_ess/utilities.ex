@@ -294,7 +294,7 @@ defmodule PaEss.Utilities do
   def destination_to_ad_hoc_string(:westbound), do: {:ok, "Westbound"}
   def destination_to_ad_hoc_string(:inbound), do: {:ok, "Inbound"}
   def destination_to_ad_hoc_string(:outbound), do: {:ok, "Outbound"}
-  def destination_to_ad_hoc_string(:medford_tufts), do: {:ok, "Medford Tufts"}
+  def destination_to_ad_hoc_string(:medford_tufts), do: {:ok, "Medford/Tufts"}
   def destination_to_ad_hoc_string(_unknown), do: {:error, :unknown}
 
   @spec route_to_ad_hoc_string(String.t()) :: {:ok, String.t()} | {:error, :unknown}
