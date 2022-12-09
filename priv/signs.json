@@ -6706,7 +6706,7 @@
         {
           "stop_id": "70242",
           "direction_id": 1,
-          "headway_direction_name": "Lechmere",
+          "headway_direction_name": "Medford/Tufts",
           "routes": [
             "Green-E"
           ],
@@ -6760,7 +6760,7 @@
         {
           "stop_id": "70240",
           "direction_id": 1,
-          "headway_direction_name": "Lechmere",
+          "headway_direction_name": "Medford/Tufts",
           "routes": [
             "Green-E"
           ],
@@ -6814,7 +6814,7 @@
         {
           "stop_id": "70240",
           "direction_id": 1,
-          "headway_direction_name": "Lechmere",
+          "headway_direction_name": "Medford/Tufts",
           "routes": [
             "Green-E"
           ],
@@ -7567,6 +7567,455 @@
           "headway_direction_name": "Riverside",
           "routes": [
             "Green-D"
+          ],
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "east_somerville_eastbound",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GESS",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": [
+      "e"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70513",
+          "direction_id": 1,
+          "headway_direction_name": "Medford/Tufts",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "east_somerville_westbound",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GESS",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": [
+      "w"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70514",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "east_somerville_mezzanine",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GESS",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": [],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70513",
+          "direction_id": 1,
+          "headway_direction_name": "Medford/Tufts",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        },
+        {
+          "stop_id": "70514",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "gilman_square_eastbound",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GGSS",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": [
+      "e"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70505",
+          "direction_id": 1,
+          "headway_direction_name": "Medford/Tufts",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "gilman_square_westbound",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GGSS",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": [
+      "w"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70506",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "gilman_square_mezzanine",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GGSS",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": [
+      "m"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70505",
+          "direction_id": 1,
+          "headway_direction_name": "Medford/Tufts",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        },
+        {
+          "stop_id": "70506",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "magoun_square_eastbound",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GMSS",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": [
+      "e"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70507",
+          "direction_id": 1,
+          "headway_direction_name": "Medford/Tufts",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "magoun_square_westbound",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GMSS",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": [
+      "w"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70508",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "magoun_square_mezzanine",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GMSS",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": [
+      "m"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70507",
+          "direction_id": 1,
+          "headway_direction_name": "Medford/Tufts",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        },
+        {
+          "stop_id": "70508",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "ball_square_eastbound",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GBSS",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": [
+      "e"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70509",
+          "direction_id": 1,
+          "headway_direction_name": "Medford/Tufts",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "ball_square_westbound",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GBSS",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": [
+      "w"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70510",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "ball_square_mezzanine",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GBSS",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": [
+      "m"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70509",
+          "direction_id": 1,
+          "headway_direction_name": "Medford/Tufts",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        },
+        {
+          "stop_id": "70510",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "college_ave_eastbound",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GCOS",
+    "read_loop_offset": 30,
+    "text_zone": "e",
+    "audio_zones": [],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70512",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "college_ave_westbound",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GCOS",
+    "read_loop_offset": 90,
+    "text_zone": "w",
+    "audio_zones": [],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70512",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": [
+            "Green-E"
+          ],
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
+    "id": "college_ave_mezzanine",
+    "headway_group": "green_e",
+    "pa_ess_loc": "GCOS",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": [
+      "e",
+      "w",
+      "m"
+    ],
+    "type": "realtime",
+    "source_config": [
+      [
+        {
+          "stop_id": "70512",
+          "direction_id": 0,
+          "headway_direction_name": "Heath Street",
+          "routes": [
+            "Green-E"
           ],
           "platform": null,
           "terminal": true,

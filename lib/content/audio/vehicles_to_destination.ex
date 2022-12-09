@@ -161,6 +161,7 @@ defmodule Content.Audio.VehiclesToDestination do
     defp message_id(%{language: :english, destination: :reservoir}), do: "165"
     defp message_id(%{language: :english, destination: :riverside}), do: "163"
     defp message_id(%{language: :english, destination: :heath_street}), do: "164"
+    defp message_id(%{language: :english, destination: :medford_tufts}), do: "196"
     defp message_id(%{language: :english, destination: :northbound}), do: "183"
     defp message_id(%{language: :english, destination: :southbound}), do: "184"
     defp message_id(%{language: :english, destination: :eastbound}), do: "181"

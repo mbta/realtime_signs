@@ -40,4 +40,5 @@ defmodule PaEss do
           | :westbound
           | :inbound
           | :outbound
+          | :medford_tufts
 end
