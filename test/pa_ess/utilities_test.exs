@@ -82,7 +82,7 @@ defmodule Content.Audio.UtilitiesTest do
     assert headsign_to_destination("Reservoir") == {:ok, :reservoir}
     assert headsign_to_destination("Riverside") == {:ok, :riverside}
     assert headsign_to_destination("Wonderland") == {:ok, :wonderland}
-    assert headsign_to_destination("Medford Tufts") == {:ok, :medford_tufts}
+    assert headsign_to_destination("Medford/Tufts") == {:ok, :medford_tufts}
     assert headsign_to_destination("Unknown") == {:error, :unknown}
   end
 

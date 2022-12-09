@@ -35,6 +35,7 @@ defmodule PaEss.Utilities do
     {~r"\bBox Dist\b", "Box District"},
     {~r"\bBellingham\b", "Bellingham Square"},
     {~r"\bMedfd/Tufts\b", "Medford Tufts"},
+    {~r"\bMedfd/Tufts\b", "Medford/Tufts"},
     {~r"\bBall Sq\b", "Ball Square"},
     {~r"\bMagoun Sq\b", "Magoun Square"},
     {~r"\bGilman Sq\b", "Gilman Square"},
@@ -228,7 +229,7 @@ defmodule PaEss.Utilities do
   def headsign_to_destination("Westbound"), do: {:ok, :westbound}
   def headsign_to_destination("Inbound"), do: {:ok, :inbound}
   def headsign_to_destination("Outbound"), do: {:ok, :outbound}
-  def headsign_to_destination("Medford Tufts"), do: {:ok, :medford_tufts}
+  def headsign_to_destination("Medford/Tufts"), do: {:ok, :medford_tufts}
   def headsign_to_destination(_unknown), do: {:error, :unknown}
 
   @doc """
@@ -293,7 +294,7 @@ defmodule PaEss.Utilities do
   def destination_to_ad_hoc_string(:westbound), do: {:ok, "Westbound"}
   def destination_to_ad_hoc_string(:inbound), do: {:ok, "Inbound"}
   def destination_to_ad_hoc_string(:outbound), do: {:ok, "Outbound"}
-  def destination_to_ad_hoc_string(:medford_tufts), do: {:ok, "Medford Tufts"}
+  def destination_to_ad_hoc_string(:medford_tufts), do: {:ok, "Medford/Tufts"}
   def destination_to_ad_hoc_string(_unknown), do: {:error, :unknown}
 
   @spec route_to_ad_hoc_string(String.t()) :: {:ok, String.t()} | {:error, :unknown}
