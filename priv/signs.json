@@ -6679,7 +6679,7 @@
         {
           "stop_id": "70242",
           "direction_id": 1,
-          "headway_direction_name": "Medford Tufts",
+          "headway_direction_name": "Medford/Tufts",
           "routes": [
             "Green-E"
           ],
@@ -6733,7 +6733,7 @@
         {
           "stop_id": "70240",
           "direction_id": 1,
-          "headway_direction_name": "Medford Tufts",
+          "headway_direction_name": "Medford/Tufts",
           "routes": [
             "Green-E"
           ],
@@ -6787,7 +6787,7 @@
         {
           "stop_id": "70240",
           "direction_id": 1,
-          "headway_direction_name": "Medford Tufts",
+          "headway_direction_name": "Medford/Tufts",
           "routes": [
             "Green-E"
           ],
@@ -7564,7 +7564,7 @@
         {
           "stop_id": "70513",
           "direction_id": 1,
-          "headway_direction_name": "Medford Tufts",
+          "headway_direction_name": "Medford/Tufts",
           "routes": [
             "Green-E"
           ],
@@ -7616,7 +7616,7 @@
         {
           "stop_id": "70513",
           "direction_id": 1,
-          "headway_direction_name": "Medford Tufts",
+          "headway_direction_name": "Medford/Tufts",
           "routes": [
             "Green-E"
           ],
@@ -7655,7 +7655,7 @@
         {
           "stop_id": "70505",
           "direction_id": 1,
-          "headway_direction_name": "Medford Tufts",
+          "headway_direction_name": "Medford/Tufts",
           "routes": [
             "Green-E"
           ],
@@ -7709,7 +7709,7 @@
         {
           "stop_id": "70505",
           "direction_id": 1,
-          "headway_direction_name": "Medford Tufts",
+          "headway_direction_name": "Medford/Tufts",
           "routes": [
             "Green-E"
           ],
@@ -7748,7 +7748,7 @@
         {
           "stop_id": "70507",
           "direction_id": 1,
-          "headway_direction_name": "Medford Tufts",
+          "headway_direction_name": "Medford/Tufts",
           "routes": [
             "Green-E"
           ],
@@ -7802,7 +7802,7 @@
         {
           "stop_id": "70507",
           "direction_id": 1,
-          "headway_direction_name": "Medford Tufts",
+          "headway_direction_name": "Medford/Tufts",
           "routes": [
             "Green-E"
           ],
@@ -7841,7 +7841,7 @@
         {
           "stop_id": "70509",
           "direction_id": 1,
-          "headway_direction_name": "Medford Tufts",
+          "headway_direction_name": "Medford/Tufts",
           "routes": [
             "Green-E"
           ],
@@ -7895,7 +7895,7 @@
         {
           "stop_id": "70509",
           "direction_id": 1,
-          "headway_direction_name": "Medford Tufts",
+          "headway_direction_name": "Medford/Tufts",
           "routes": [
             "Green-E"
           ],
