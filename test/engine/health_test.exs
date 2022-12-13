@@ -6,17 +6,6 @@ defmodule Engine.HealthTest do
 
   setup :verify_on_exit!
 
-  test "logs pool stats" do
-    {:ok, _pid} = Engine.Health.start_link(period_ms: 500)
-
-    log =
-      capture_log(fn ->
-        Process.sleep(600)
-      end)
-
-    assert log =~ "event=pool_info"
-  end
-
   test "restarts after 5 consecutive failed network checks" do
     test_pid = self()
 
