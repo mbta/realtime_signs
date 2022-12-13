@@ -105,7 +105,14 @@ defmodule Content.Audio.VehiclesToDestination do
       case PaEss.Utilities.destination_to_ad_hoc_string(audio.destination) do
         {:ok, destination_string} ->
           vehicles_to_destination =
-            if audio.destination in [:northbound, :southbound, :eastbound, :westbound] do
+            if audio.destination in [
+                 :northbound,
+                 :southbound,
+                 :eastbound,
+                 :westbound,
+                 :inbound,
+                 :outbound
+               ] do
               destination_string <> " trains"
             else
               "Trains to " <> destination_string
@@ -158,6 +165,8 @@ defmodule Content.Audio.VehiclesToDestination do
     defp message_id(%{language: :english, destination: :southbound}), do: "184"
     defp message_id(%{language: :english, destination: :eastbound}), do: "181"
     defp message_id(%{language: :english, destination: :westbound}), do: "182"
+    defp message_id(%{language: :english, destination: :inbound}), do: "197"
+    defp message_id(%{language: :english, destination: :outbound}), do: "198"
 
     defp message_id(%{language: :english, destination: :chelsea}), do: "133"
     defp message_id(%{language: :english, destination: :south_station}), do: "134"

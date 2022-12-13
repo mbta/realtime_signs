@@ -1151,6 +1151,33 @@
     ]
   },
   {
+    "id": "bowdoin_drop_off",
+    "headway_group": "blue_trunk",
+    "type": "realtime",
+    "pa_ess_loc": "BBOW",
+    "read_loop_offset": 60,
+    "text_zone": "w",
+    "audio_zones": [
+      "w"
+    ],
+    "source_config": [
+      [
+        {
+          "stop_id": "70038",
+          "routes": [
+            "Blue"
+          ],
+          "direction_id": 1,
+          "headway_direction_name": "Wonderland",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": false
+        }
+      ]
+    ]
+  },
+  {
     "id": "bowdoin_mezzanine",
     "headway_group": "blue_trunk",
     "type": "realtime",
@@ -4673,6 +4700,33 @@
     ]
   },
   {
+    "id": "red_ashmont_southbound",
+    "headway_group": "mattapan_trunk",
+    "type": "realtime",
+    "pa_ess_loc": "RASH",
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": [
+      "s"
+    ],
+    "source_config": [
+      [
+        {
+          "stop_id": "70261",
+          "routes": [
+            "Mattapan"
+          ],
+          "direction_id": 0,
+          "headway_direction_name": "Mattapan",
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": true,
+          "announce_boarding": true
+        }
+      ]
+    ]
+  },
+  {
     "id": "north_quincy_mezzanine",
     "headway_group": "red_braintree",
     "type": "realtime",
@@ -5344,7 +5398,7 @@
         {
           "stop_id": "70160",
           "direction_id": 1,
-          "headway_direction_name": "North Station",
+          "headway_direction_name": "Union Square",
           "routes": [
             "Green-D"
           ],
@@ -5371,7 +5425,7 @@
         {
           "stop_id": "70162",
           "direction_id": 1,
-          "headway_direction_name": "North Station",
+          "headway_direction_name": "Union Square",
           "routes": [
             "Green-D"
           ],
@@ -5425,7 +5479,7 @@
         {
           "stop_id": "70164",
           "direction_id": 1,
-          "headway_direction_name": "North Station",
+          "headway_direction_name": "Union Square",
           "routes": [
             "Green-D"
           ],
@@ -5479,7 +5533,7 @@
         {
           "stop_id": "70166",
           "direction_id": 1,
-          "headway_direction_name": "North Station",
+          "headway_direction_name": "Union Square",
           "routes": [
             "Green-D"
           ],
@@ -5533,7 +5587,7 @@
         {
           "stop_id": "70168",
           "direction_id": 1,
-          "headway_direction_name": "North Station",
+          "headway_direction_name": "Union Square",
           "routes": [
             "Green-D"
           ],
@@ -5587,7 +5641,7 @@
         {
           "stop_id": "70170",
           "direction_id": 1,
-          "headway_direction_name": "North Station",
+          "headway_direction_name": "Union Square",
           "routes": [
             "Green-D"
           ],
@@ -5641,7 +5695,7 @@
         {
           "stop_id": "70172",
           "direction_id": 1,
-          "headway_direction_name": "North Station",
+          "headway_direction_name": "Union Square",
           "routes": [
             "Green-D"
           ],
@@ -5695,7 +5749,7 @@
         {
           "stop_id": "70174",
           "direction_id": 1,
-          "headway_direction_name": "North Station",
+          "headway_direction_name": "Union Square",
           "routes": [
             "Green-D"
           ],
@@ -5750,7 +5804,7 @@
         {
           "stop_id": "70176",
           "direction_id": 1,
-          "headway_direction_name": "North Station",
+          "headway_direction_name": "Union Square",
           "routes": [
             "Green-D"
           ],
@@ -5805,7 +5859,7 @@
         {
           "stop_id": "70178",
           "direction_id": 1,
-          "headway_direction_name": "North Station",
+          "headway_direction_name": "Union Square",
           "routes": [
             "Green-D"
           ],
@@ -5913,7 +5967,7 @@
         {
           "stop_id": "70182",
           "direction_id": 1,
-          "headway_direction_name": "North Station",
+          "headway_direction_name": "Union Square",
           "routes": [
             "Green-D"
           ],
@@ -5967,7 +6021,7 @@
         {
           "stop_id": "70186",
           "direction_id": 1,
-          "headway_direction_name": "North Station",
+          "headway_direction_name": "Union Square",
           "routes": [
             "Green-D"
           ],
@@ -6652,7 +6706,7 @@
         {
           "stop_id": "70242",
           "direction_id": 1,
-          "headway_direction_name": "Union Square",
+          "headway_direction_name": "Lechmere",
           "routes": [
             "Green-E"
           ],
@@ -6706,7 +6760,7 @@
         {
           "stop_id": "70240",
           "direction_id": 1,
-          "headway_direction_name": "Union Square",
+          "headway_direction_name": "Lechmere",
           "routes": [
             "Green-E"
           ],
@@ -6760,7 +6814,7 @@
         {
           "stop_id": "70240",
           "direction_id": 1,
-          "headway_direction_name": "Union Square",
+          "headway_direction_name": "Lechmere",
           "routes": [
             "Green-E"
           ],
@@ -7156,7 +7210,7 @@
         {
           "stop_id": "70205",
           "direction_id": 1,
-          "headway_direction_name": "Union Square",
+          "headway_direction_name": "Outbound",
           "routes": [
             "Green-B",
             "Green-C",
@@ -7186,7 +7240,7 @@
         {
           "stop_id": "70206",
           "direction_id": 0,
-          "headway_direction_name": "Westbound",
+          "headway_direction_name": "Inbound",
           "routes": [
             "Green-B",
             "Green-C",
@@ -7216,7 +7270,7 @@
         {
           "stop_id": "70206",
           "direction_id": 0,
-          "headway_direction_name": "Westbound",
+          "headway_direction_name": "Inbound",
           "routes": [
             "Green-B",
             "Green-C",
@@ -7246,7 +7300,7 @@
         {
           "stop_id": "70207",
           "direction_id": 1,
-          "headway_direction_name": "Union Square",
+          "headway_direction_name": "Outbound",
           "routes": [
             "Green-B",
             "Green-C",
@@ -7276,7 +7330,7 @@
         {
           "stop_id": "70208",
           "direction_id": 0,
-          "headway_direction_name": "Heath Street",
+          "headway_direction_name": "Inbound",
           "routes": [
             "Green-B",
             "Green-C",
@@ -7306,7 +7360,7 @@
         {
           "stop_id": "70207",
           "direction_id": 1,
-          "headway_direction_name": "Union Square",
+          "headway_direction_name": "Outbound",
           "routes": [
             "Green-B",
             "Green-C",
@@ -7323,7 +7377,7 @@
         {
           "stop_id": "70208",
           "direction_id": 0,
-          "headway_direction_name": "Heath Street",
+          "headway_direction_name": "Inbound",
           "routes": [
             "Green-B",
             "Green-C",
@@ -7353,8 +7407,11 @@
         {
           "stop_id": "70501",
           "direction_id": 1,
-          "headway_direction_name": "Union Square",
+          "headway_direction_name": "Outbound",
           "routes": [
+            "Green-B",
+            "Green-C",
+            "Green-D",
             "Green-E"
           ],
           "platform": null,
@@ -7380,8 +7437,11 @@
         {
           "stop_id": "70502",
           "direction_id": 0,
-          "headway_direction_name": "Heath Street",
+          "headway_direction_name": "Inbound",
           "routes": [
+            "Green-B",
+            "Green-C",
+            "Green-D",
             "Green-E"
           ],
           "platform": null,
@@ -7407,8 +7467,11 @@
         {
           "stop_id": "70501",
           "direction_id": 1,
-          "headway_direction_name": "Union Square",
+          "headway_direction_name": "Outbound",
           "routes": [
+            "Green-B",
+            "Green-C",
+            "Green-D",
             "Green-E"
           ],
           "platform": null,
@@ -7419,8 +7482,11 @@
         {
           "stop_id": "70502",
           "direction_id": 0,
-          "headway_direction_name": "Heath Street",
+          "headway_direction_name": "Inbound",
           "routes": [
+            "Green-B",
+            "Green-C",
+            "Green-D",
             "Green-E"
           ],
           "platform": null,
@@ -7444,9 +7510,9 @@
         {
           "stop_id": "70504",
           "direction_id": 0,
-          "headway_direction_name": "Heath Street",
+          "headway_direction_name": "Riverside",
           "routes": [
-            "Green-E"
+            "Green-D"
           ],
           "platform": null,
           "terminal": true,
@@ -7469,9 +7535,9 @@
         {
           "stop_id": "70504",
           "direction_id": 0,
-          "headway_direction_name": "Heath Street",
+          "headway_direction_name": "Riverside",
           "routes": [
-            "Green-E"
+            "Green-D"
           ],
           "platform": null,
           "terminal": true,
@@ -7498,9 +7564,9 @@
         {
           "stop_id": "70504",
           "direction_id": 0,
-          "headway_direction_name": "Heath Street",
+          "headway_direction_name": "Riverside",
           "routes": [
-            "Green-E"
+            "Green-D"
           ],
           "platform": null,
           "terminal": true,

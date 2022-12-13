@@ -1,0 +1,36 @@
+name: Deploy to Dev
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  Build:
+    runs-on: windows-2019
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - uses: mbta/actions/build-push-ecr@v1
+        id: build-push
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          docker-repo: ${{ secrets.DOCKER_REPO }}
+  deploy:
+    name: Deploy
+    needs: build
+    uses: mbta/workflows/.github/workflows/deploy-on-prem.yml@main
+    with:
+      app-name: realtime-signs
+      environment: dev
+      on-prem-cluster: hsctd-dev-managers
+      splunk-index: realtime-signs-dev
+      task-cpu: .5
+      task-memory: 1024M
+      task-port: 80
+    secrets:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      docker-repo: ${{ secrets.DOCKER_REPO }}
+      slack-webhook: ${{ secrets.SLACK_WEBHOOK }}

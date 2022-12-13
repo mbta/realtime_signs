@@ -89,6 +89,7 @@ defmodule Signs.Utilities.SourceConfig do
 
   * stop_id: The GTFS stop_id that it uses for prediction data.
   * routes: A list of routes that are relevant to this sign regarding alerts.
+    Predictions are also filtered based on this field.
   * direction_id: 0 or 1, used in tandem with the stop ID for predictions
   * headway_direction_name: The headsign used to generate the "trains every X minutes" message in
     headway mode. Must be a value recognized by `PaEss.Utilities.headsign_to_destination/1`.

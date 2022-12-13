@@ -1,0 +1,22 @@
+name: Deploy to Prod
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy
+    uses: mbta/workflows/.github/workflows/deploy-on-prem.yml@main
+    with:
+      app-name: realtime-signs
+      environment: prod
+      on-prem-cluster: hsctd-prod-managers
+      splunk-index: realtime-signs-prod
+      task-cpu: .5
+      task-memory: 1024M
+      task-port: 80
+    secrets:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      docker-repo: ${{ secrets.DOCKER_REPO }}
+      slack-webhook: ${{ secrets.SLACK_WEBHOOK }}

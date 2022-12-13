@@ -245,8 +245,8 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.non_terminal(prediction, "RJFK", "m")
 
       assert Content.Message.to_string(msg) == [
-               {"Alewife (A)  2 min", 3},
-               {"Alewife (Ashmont plat)", 3}
+               {"Alewife (A)  2 min", 6},
+               {"Alewife (Ashmont plat)", 6}
              ]
     end
 
@@ -263,8 +263,8 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.non_terminal(prediction, "RJFK", "m")
 
       assert Content.Message.to_string(msg) == [
-               {"Alewife (B)  2 min", 3},
-               {"Alewife (Braintree plat)", 3}
+               {"Alewife (B)  2 min", 6},
+               {"Alewife (Braintree plat)", 6}
              ]
     end
 
@@ -281,8 +281,8 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.non_terminal(prediction, "RJFK", "m")
 
       assert Content.Message.to_string(msg) == [
-               {"Alewife    20+ min", 3},
-               {"Alewife (Platform TBD)", 3}
+               {"Alewife    20+ min", 6},
+               {"Alewife (Platform TBD)", 6}
              ]
     end
   end

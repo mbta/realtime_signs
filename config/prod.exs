@@ -10,20 +10,18 @@ config :sentry,
   },
   included_environments: [:prod]
 
-config :logger,
-  backends: [{Logger.Backend.Splunk, :splunk}, :console]
+config :logger, backends: [:console]
 
-config :logger, :console, level: :warn
-
-config :logger, :splunk,
-  connector: Logger.Backend.Splunk.Output.Http,
-  host: 'https://http-inputs-mbta.splunkcloud.com/services/collector/event',
-  token: {:system, "PROD_SIGNS_SPLUNK_TOKEN"},
-  format: "$dateT$time [$level]$levelpad node=$node $metadata$message\n",
-  metadata: [:request_id],
-  max_buffer: 100
+config :logger, :console, level: :info
 
 config :realtime_signs,
   external_config_getter: ExternalConfig.S3,
   sign_updater_mod: MessageQueue,
   restart_fn: &System.restart/0
+
+config :ex_aws,
+  access_key_id: [{:system, "AWS_ACCESS_KEY_ID"}, {:awscli, "default", 30}],
+  secret_access_key: [
+    {:system, "AWS_SECRET_ACCESS_KEY"},
+    {:awscli, "default", 30}
+  ]
