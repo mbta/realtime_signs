@@ -13,8 +13,6 @@ defmodule RealtimeSigns do
 
     children =
       [
-        :hackney_pool.child_spec(:default, []),
-        :hackney_pool.child_spec(:arinc_pool, []),
         {Finch, name: HttpClient, pools: Application.get_env(:realtime_signs, :http_pool_config)},
         Engine.Health,
         Engine.Config,

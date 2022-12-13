@@ -1,4 +1,4 @@
-defmodule Engine.NetworkCheck.Hackney do
+defmodule Engine.NetworkCheck.Finch do
   require Logger
 
   @behaviour Engine.NetworkCheck
@@ -6,14 +6,14 @@ defmodule Engine.NetworkCheck.Hackney do
   @impl Engine.NetworkCheck
   def check(url \\ "https://www.google.com/") do
     response =
-      :hackney.request(:head, url, [], "", [
-        :skip_body,
-        connect_timeout: 1000,
-        recv_timeout: 1000
-      ])
+      Finch.build(
+        :get,
+        url
+      )
+      |> Finch.request(HttpClient)
 
     case response do
-      {:ok, status, _} when status >= 200 and status < 300 ->
+      {:ok, %Finch.Response{status: status}} when status >= 200 and status <= 302 ->
         Logger.info("#{__MODULE__} check_network result=success")
         :ok
 

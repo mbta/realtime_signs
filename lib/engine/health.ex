@@ -10,7 +10,6 @@ defmodule Engine.Health do
           restart_fn: (() -> :ok)
         }
 
-  @hackney_pools [:default, :arinc_pool]
   @default_period_ms 60_000
   @failed_request_limit 5
   @process_health_interval_ms 300_000
@@ -23,7 +22,7 @@ defmodule Engine.Health do
   @spec init(keyword) :: {:ok, Engine.Health.t()}
   def init(opts) do
     period_ms = Keyword.get(opts, :period_ms, @default_period_ms)
-    network_check_mod = Keyword.get(opts, :network_check_mod, Engine.NetworkCheck.Hackney)
+    network_check_mod = Keyword.get(opts, :network_check_mod, Engine.NetworkCheck.Finch)
     restart_fn = Keyword.get(opts, :restart_fn, Application.get_env(:realtime_signs, :restart_fn))
 
     {:ok, _timer_ref} = :timer.send_interval(period_ms, self(), :health_check)
@@ -37,7 +36,6 @@ defmodule Engine.Health do
   end
 
   def handle_info(:health_check, state) do
-    log_hackney_pools()
     state = check_network(state)
 
     if state.failed_requests >= @failed_request_limit do
@@ -64,19 +62,6 @@ defmodule Engine.Health do
   def handle_info(msg, state) do
     Logger.info("Engine.Health unknown_message msg=#{inspect(msg)}")
     {:noreply, state}
-  end
-
-  defp log_hackney_pools do
-    Enum.each(
-      @hackney_pools,
-      fn pool ->
-        stats = :hackney_pool.get_stats(pool)
-
-        Logger.info(
-          "event=pool_info name=#{pool} pool_max=#{stats[:max]} in_use_count=#{stats[:in_use_count]} free_count=#{stats[:free_count]} queue_count=#{stats[:queue_count]}"
-        )
-      end
-    )
   end
 
   @spec check_network(t()) :: t()
