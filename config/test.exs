@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :realtime_signs,
   http_client: Fake.HTTPoison,

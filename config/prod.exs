@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :sentry,
   dsn: System.get_env("SENTRY_DSN") || "",
