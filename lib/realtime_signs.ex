@@ -1,6 +1,5 @@
 defmodule RealtimeSigns do
   require Logger
-  alias RealtimeSignsConfig, as: Config
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
@@ -9,7 +8,7 @@ defmodule RealtimeSigns do
       "Starting realtime_signs version #{inspect(Application.spec(:realtime_signs, :vsn))}"
     )
 
-    runtime_config()
+    log_runtime_config()
 
     children =
       [
@@ -36,26 +35,27 @@ defmodule RealtimeSigns do
     Supervisor.start_link(children, opts)
   end
 
-  @spec runtime_config() :: :ok
-  def runtime_config do
-    env = System.get_env()
-    :ok = Config.update_env(env, :sign_head_end_host, "SIGN_HEAD_END_HOST")
-    :ok = Config.update_env(env, :sign_ui_url, "SIGN_UI_URL")
-    :ok = Config.update_env(env, :sign_ui_api_key, "SIGN_UI_API_KEY", private?: true)
-    :ok = Config.update_env(env, :trip_update_url, "TRIP_UPDATE_URL")
-    :ok = Config.update_env(env, :vehicle_positions_url, "VEHICLE_POSITIONS_URL")
-    :ok = Config.update_env(env, :s3_bucket, "SIGNS_S3_BUCKET")
-    :ok = Config.update_env(env, :s3_path, "SIGNS_S3_PATH")
-    :ok = Config.update_env(env, :api_v3_key, "API_V3_KEY", private?: true)
-    :ok = Config.update_env(env, :api_v3_url, "API_V3_URL")
+  @spec log_runtime_config() :: :ok
+  def log_runtime_config do
+    Logger.info(
+      "environment_variable SIGN_HEAD_END_HOST=#{inspect(Application.get_env(:realtime_signs, :sign_head_end_host))}"
+    )
 
-    :ok =
-      Config.update_env(env, :filter_uncertain_predictions?, "FILTER_UNCERTAIN_PREDICTIONS",
-        type: :boolean
-      )
+    Logger.info(
+      "environment_variable NUMBER_OF_HTTP_UPDATERS=#{inspect(Application.get_env(:realtime_signs, :number_of_http_updaters))}"
+    )
 
-    :ok =
-      Config.update_env(env, :number_of_http_updaters, "NUMBER_OF_HTTP_UPDATERS", type: :integer)
+    Logger.info(
+      "environment_variable API_V3_URL=#{inspect(Application.get_env(:realtime_signs, :api_v3_url))}"
+    )
+
+    Logger.info(
+      "environment_variable TRIP_UPDATE_URL=#{inspect(Application.get_env(:realtime_signs, :trip_update_url))}"
+    )
+
+    Logger.info(
+      "environment_variable VEHICLE_POSITIONS_URL=#{inspect(Application.get_env(:realtime_signs, :vehicle_positions_url))}"
+    )
   end
 
   def monitor_sign_scu_uptime do
