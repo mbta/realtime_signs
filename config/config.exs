@@ -32,6 +32,11 @@ config :realtime_signs,
   external_config_getter: ExternalConfig.Local,
   aws_client: ExAws,
   s3_client: ExAws.S3,
+  s3_bucket: nil,
+  s3_path: nil,
+  api_v3_key: nil,
+  api_v3_url: "https://api-dev-green.mbtace.com",
+  number_of_http_updaters: 4,
   restart_fn: &Engine.Health.restart_noop/0
 
 config :realtime_signs, RealtimeSignsWeb.Endpoint, secret_key_base: "local_secret_key_base_at_least_64_bytes_________________________________"
@@ -43,6 +48,7 @@ config :ex_aws,
 config :logger, backends: [:console], utc_log: true
 
 config :logger, :console,
+  format: "$dateT$time [$level] node=$node $metadata$message\n",
   format: "$dateT$time [$level] node=$node $metadata$message\n",
   metadata: [:request_id]
 
