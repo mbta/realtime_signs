@@ -6,8 +6,8 @@ config :realtime_signs, RealtimeSignsWeb.Endpoint,
   server: true
 
 config :realtime_signs,
-  sign_head_end_host: System.get_env("SIGN_HEAD_END_HOST", "127.0.0.1"),
-  sign_ui_url: System.get_env("SIGN_UI_URL", "signs-dev.mbtace.com"),
+  sign_head_end_host: System.get_env("SIGN_HEAD_END_HOST", Application.get_env(:realtime_signs, :sign_head_end_host)),
+  sign_ui_url: System.get_env("SIGN_UI_URL", Application.get_env(:realtime_signs, :sign_ui_url)),
   sign_ui_api_key: System.get_env("SIGN_UI_API_KEY"),
   trip_update_url: System.get_env("TRIP_UPDATE_URL", "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/TripUpdates_enhanced.json"),
   vehicle_positions_url: System.get_env("VEHICLE_POSITIONS_URL", "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/VehiclePositions_enhanced.json"),
