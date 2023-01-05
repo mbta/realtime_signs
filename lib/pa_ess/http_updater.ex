@@ -40,7 +40,6 @@ defmodule PaEss.HttpUpdater do
       http_poster: http_poster,
       queue_mod: queue_mod,
       updater_index: opts[:updater_index],
-      max_send_rate_per_sec: max_send_rate_per_sec,
       avg_ms_between_sends: avg_ms_between_sends
     )
   end
@@ -55,7 +54,6 @@ defmodule PaEss.HttpUpdater do
        updater_index: opts[:updater_index],
        internal_counter: 0,
        timestamp: div(System.system_time(:millisecond), 500),
-       max_send_rate_per_sec: opts[:max_send_rate_per_sec],
        avg_ms_between_sends: opts[:avg_ms_between_sends]
      }}
   end
