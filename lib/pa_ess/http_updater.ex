@@ -14,12 +14,6 @@ defmodule PaEss.HttpUpdater do
   @type post_result ::
           {:ok, :sent} | {:ok, :no_audio} | {:error, :bad_status} | {:error, :post_error}
 
-  # Normally an anti-pattern! But we mix compile --force with every deploy
-  @max_send_rate_per_sec (32 / Application.compile_env(:realtime_signs, :number_of_http_updaters))
-                         |> Float.ceil()
-                         |> Kernel.trunc()
-  @avg_ms_between_sends round(1000 / @max_send_rate_per_sec)
-
   use GenServer
   require Logger
 
@@ -34,11 +28,19 @@ defmodule PaEss.HttpUpdater do
     http_poster = opts[:http_poster] || Application.get_env(:realtime_signs, :http_poster_mod)
     queue_mod = opts[:queue_mod] || MessageQueue
 
+    max_send_rate_per_sec =
+      (32 / Application.get_env(:realtime_signs, :number_of_http_updaters))
+      |> Float.ceil()
+      |> Kernel.trunc()
+
+    avg_ms_between_sends = round(1000 / max_send_rate_per_sec)
+
     GenServer.start_link(
       __MODULE__,
       http_poster: http_poster,
       queue_mod: queue_mod,
-      updater_index: opts[:updater_index]
+      updater_index: opts[:updater_index],
+      avg_ms_between_sends: avg_ms_between_sends
     )
   end
 
@@ -51,7 +53,8 @@ defmodule PaEss.HttpUpdater do
        queue_mod: opts[:queue_mod],
        updater_index: opts[:updater_index],
        internal_counter: 0,
-       timestamp: div(System.system_time(:millisecond), 500)
+       timestamp: div(System.system_time(:millisecond), 500),
+       avg_ms_between_sends: opts[:avg_ms_between_sends]
      }}
   end
 
@@ -63,7 +66,7 @@ defmodule PaEss.HttpUpdater do
     end
 
     send_time = System.monotonic_time(:millisecond) - before_time
-    wait_time = max(0, @avg_ms_between_sends - send_time)
+    wait_time = max(0, state.avg_ms_between_sends - send_time)
     schedule_check_queue(self(), wait_time)
 
     if state.internal_counter >= 15 do
