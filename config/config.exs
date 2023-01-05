@@ -24,13 +24,7 @@ import Config
 config :realtime_signs,
   http_client: HTTPoison,
   posts_log_dir: "log/posts/",
-  sign_head_end_host: "127.0.0.1",
-  sign_ui_url: "signs-dev.mbtace.com",
-  sign_ui_api_key: nil,
   time_zone: "America/New_York",
-  trip_update_url: "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/TripUpdates_enhanced.json",
-  vehicle_positions_url:
-    "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/VehiclePositions_enhanced.json",
   sign_updater_mod: PaEss.Logger,
   http_poster_mod: HTTPoison,
   scheduled_headway_requester: Headway.Request,
@@ -38,10 +32,6 @@ config :realtime_signs,
   external_config_getter: ExternalConfig.Local,
   aws_client: ExAws,
   s3_client: ExAws.S3,
-  s3_bucket: nil,
-  s3_path: nil,
-  api_v3_key: nil,
-  api_v3_url: "https://api-dev-green.mbtace.com",
   number_of_http_updaters: 4,
   restart_fn: &Engine.Health.restart_noop/0
 
@@ -54,7 +44,7 @@ config :ex_aws,
 config :logger, backends: [:console], utc_log: true
 
 config :logger, :console,
-  format: "$dateT$time [$level]$levelpad node=$node $metadata$message\n",
+  format: "$dateT$time [$level] node=$node $metadata$message\n",
   metadata: [:request_id]
 
 config :ehmon, :report_mf, {:ehmon, :info_report}
