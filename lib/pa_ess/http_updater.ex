@@ -296,51 +296,59 @@ defmodule PaEss.HttpUpdater do
 
   @spec send_post(module(), binary()) :: post_result()
   defp send_post(http_poster, query) do
-    case http_poster.post(
-           sign_url(),
-           query,
-           [
-             {"Content-type", "application/x-www-form-urlencoded"}
-           ],
-           hackney: [pool: :arinc_pool]
-         ) do
-      {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
-        {:ok, :sent}
+    if sign_host() do
+      case http_poster.post(
+             sign_url(),
+             query,
+             [
+               {"Content-type", "application/x-www-form-urlencoded"}
+             ],
+             hackney: [pool: :arinc_pool]
+           ) do
+        {:ok, %HTTPoison.Response{status_code: status}} when status >= 200 and status < 300 ->
+          {:ok, :sent}
 
-      {:ok, %HTTPoison.Response{status_code: status}} ->
-        Logger.warn("head_end_post_error: response had status code: #{inspect(status)}")
-        {:error, :bad_status}
+        {:ok, %HTTPoison.Response{status_code: status}} ->
+          Logger.warn("head_end_post_error: response had status code: #{inspect(status)}")
+          {:error, :bad_status}
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("head_end_post_error: #{inspect(reason)}")
-        {:error, :post_error}
+        {:error, %HTTPoison.Error{reason: reason}} ->
+          Logger.warn("head_end_post_error: #{inspect(reason)}")
+          {:error, :post_error}
+      end
+    else
+      {:ok, :sent}
     end
   end
 
   @spec update_ui(module(), String.t()) ::
           {:ok, :sent} | {:error, :bad_status} | {:error, :post_error}
   def update_ui(http_poster, query) do
-    key = Application.get_env(:realtime_signs, :sign_ui_api_key)
+    if sign_ui_host() do
+      key = Application.get_env(:realtime_signs, :sign_ui_api_key)
 
-    case http_poster.post(
-           sign_ui_url(),
-           query,
-           [
-             {"Content-type", "application/x-www-form-urlencoded"},
-             {"x-api-key", key}
-           ],
-           hackney: [pool: :arinc_pool]
-         ) do
-      {:ok, %HTTPoison.Response{status_code: status}} when status == 201 ->
-        {:ok, :sent}
+      case http_poster.post(
+             sign_ui_url(),
+             query,
+             [
+               {"Content-type", "application/x-www-form-urlencoded"},
+               {"x-api-key", key}
+             ],
+             hackney: [pool: :arinc_pool]
+           ) do
+        {:ok, %HTTPoison.Response{status_code: status}} when status == 201 ->
+          {:ok, :sent}
 
-      {:ok, %HTTPoison.Response{status_code: status}} ->
-        Logger.warn("sign_ui_post_error: response had status code: #{inspect(status)}")
-        {:error, :bad_status}
+        {:ok, %HTTPoison.Response{status_code: status}} ->
+          Logger.warn("sign_ui_post_error: response had status code: #{inspect(status)}")
+          {:error, :bad_status}
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.info("sign_ui_post_error: #{inspect(reason)}")
-        {:error, :post_error}
+        {:error, %HTTPoison.Error{reason: reason}} ->
+          Logger.info("sign_ui_post_error: #{inspect(reason)}")
+          {:error, :post_error}
+      end
+    else
+      {:ok, :sent}
     end
   end
 
