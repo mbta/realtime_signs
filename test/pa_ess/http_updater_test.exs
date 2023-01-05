@@ -348,7 +348,9 @@ defmodule PaEss.HttpUpdaterTest do
         http_poster: Fake.HTTPoison,
         updater_index: 1,
         internal_counter: 0,
-        timestamp: div(System.system_time(:millisecond), 500)
+        timestamp: div(System.system_time(:millisecond), 500),
+        max_send_rate_per_sec: 10,
+        avg_ms_between_sends: 100
       },
       init
     )
