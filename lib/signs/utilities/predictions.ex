@@ -45,7 +45,6 @@ defmodule Signs.Utilities.Predictions do
          end
        end, prediction.seconds_until_departure, prediction.seconds_until_arrival}
     end)
-    |> Enum.take(2)
     |> Enum.map(fn {source, prediction} ->
       cond do
         stopped_train?(prediction) ->
@@ -59,6 +58,19 @@ defmodule Signs.Utilities.Predictions do
       end
     end)
     |> Enum.reject(fn {_source, message} -> is_nil(message) end)
+    # Take next two predictions, but if the list has multiple destinations, prefer showing
+    # distinct ones. This helps e.g. the red line trunk where people may need to know about
+    # a particular branch.
+    |> case do
+      [{_, p1} = msg1, msg2 | rest] ->
+        case Enum.find([msg2 | rest], fn {_, p2} -> p2.destination != p1.destination end) do
+          nil -> [msg1, msg2]
+          preferred -> [msg1, preferred]
+        end
+
+      messages ->
+        messages
+    end
     |> case do
       [] ->
         {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
