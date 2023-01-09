@@ -569,6 +569,41 @@ defmodule Signs.Utilities.PredictionsTest do
       ]
     end
 
+    def for_stop("multiple_destinations", 0) do
+      [
+        %Predictions.Prediction{
+          stop_id: "multiple_destinations",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
+          destination_stop_id: "70085",
+          seconds_until_arrival: 120,
+          seconds_until_departure: 180
+        },
+        %Predictions.Prediction{
+          stop_id: "multiple_destinations",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
+          destination_stop_id: "70085",
+          seconds_until_arrival: 500,
+          seconds_until_departure: 600
+        },
+        %Predictions.Prediction{
+          stop_id: "multiple_destinations",
+          direction_id: 0,
+          route_id: "Red",
+          stopped?: false,
+          stops_away: 1,
+          destination_stop_id: "70099",
+          seconds_until_arrival: 700,
+          seconds_until_departure: 800
+        }
+      ]
+    end
+
     def for_stop(_stop_id, _direction_id) do
       []
     end
@@ -1123,6 +1158,26 @@ defmodule Signs.Utilities.PredictionsTest do
         end)
 
       assert log =~ "no_passthrough_audio_for_prediction"
+    end
+
+    test "prefers showing distinct destinations when present" do
+      s = %SourceConfig{
+        stop_id: "multiple_destinations",
+        headway_destination: :southbound,
+        direction_id: 0,
+        terminal?: false,
+        platform: nil,
+        routes: nil,
+        announce_arriving?: true,
+        announce_boarding?: false
+      }
+
+      sign = %{@sign | source_config: {[s]}}
+
+      assert {
+               {^s, %Content.Message.Predictions{destination: :ashmont}},
+               {^s, %Content.Message.Predictions{destination: :braintree}}
+             } = Signs.Utilities.Predictions.get_messages(sign)
     end
   end
 end
