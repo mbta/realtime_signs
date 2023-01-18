@@ -88,7 +88,9 @@ defmodule Content.Audio.Predictions do
           minutes: predictions.minutes,
           verb: if(src.terminal?, do: :departs, else: :arrives),
           track_number: Content.Utilities.stop_track_number(predictions.stop_id),
-          platform: src.platform
+          platform: src.platform,
+          station_code: predictions.station_code,
+          zone: predictions.zone
         }
     end
   end
