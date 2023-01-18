@@ -37,10 +37,14 @@ defmodule Content.Audio.NextTrainCountdown do
       case Utilities.destination_var(audio.destination) do
         {:ok, dest_var} ->
           green_line_branch =
-            Content.Utilities.route_and_destination_branch_letter(
-              audio.route_id,
-              audio.destination
-            )
+            if audio.station_code == "GKEN" do
+              Content.Utilities.route_branch_letter(audio.route_id)
+            else
+              Content.Utilities.route_and_destination_branch_letter(
+                audio.route_id,
+                audio.destination
+              )
+            end
 
           cond do
             !is_nil(audio.track_number) ->

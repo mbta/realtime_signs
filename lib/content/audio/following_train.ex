@@ -3,7 +3,7 @@ defmodule Content.Audio.FollowingTrain do
   The following train to [destination] arrives in [n] minutes.
   """
 
-  @enforce_keys [:destination, :route_id, :verb, :minutes]
+  @enforce_keys [:destination, :route_id, :verb, :minutes, :station_code]
   defstruct @enforce_keys
 
   @type verb :: :arrives | :departs
@@ -12,7 +12,8 @@ defmodule Content.Audio.FollowingTrain do
           destination: PaEss.destination(),
           route_id: String.t(),
           verb: verb(),
-          minutes: integer()
+          minutes: integer(),
+          station_code: String.t()
         }
 
   require Logger
@@ -25,14 +26,20 @@ defmodule Content.Audio.FollowingTrain do
         %{
           terminal?: terminal
         },
-        %Content.Message.Predictions{minutes: n, destination: destination, route_id: route_id}
+        %Content.Message.Predictions{
+          minutes: n,
+          destination: destination,
+          route_id: route_id,
+          station_code: station_code
+        }
       })
       when is_integer(n) do
     %__MODULE__{
       destination: destination,
       route_id: route_id,
       minutes: n,
-      verb: arrives_or_departs(terminal)
+      verb: arrives_or_departs(terminal),
+      station_code: station_code
     }
   end
 
@@ -57,10 +64,14 @@ defmodule Content.Audio.FollowingTrain do
       case Utilities.destination_var(audio.destination) do
         {:ok, dest_var} ->
           green_line_branch =
-            Content.Utilities.route_and_destination_branch_letter(
-              audio.route_id,
-              audio.destination
-            )
+            if audio.station_code == "GKEN" do
+              Content.Utilities.route_branch_letter(audio.route_id)
+            else
+              Content.Utilities.route_and_destination_branch_letter(
+                audio.route_id,
+                audio.destination
+              )
+            end
 
           cond do
             !is_nil(green_line_branch) ->
