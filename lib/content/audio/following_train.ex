@@ -3,8 +3,8 @@ defmodule Content.Audio.FollowingTrain do
   The following train to [destination] arrives in [n] minutes.
   """
 
-  @enforce_keys [:destination, :route_id, :verb, :minutes, :station_code]
-  defstruct @enforce_keys
+  @enforce_keys [:destination, :route_id, :verb, :minutes]
+  defstruct @enforce_keys ++ [station_code: nil]
 
   @type verb :: :arrives | :departs
 
@@ -13,7 +13,7 @@ defmodule Content.Audio.FollowingTrain do
           route_id: String.t(),
           verb: verb(),
           minutes: integer(),
-          station_code: String.t()
+          station_code: String.t() | nil
         }
 
   require Logger
