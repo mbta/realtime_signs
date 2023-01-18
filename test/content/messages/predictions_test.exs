@@ -235,7 +235,7 @@ defmodule Content.Message.PredictionsTest do
     test "Includes Ashmont platform when northbound to JFK/UMass Mezzanine" do
       prediction = %Predictions.Prediction{
         stop_id: "70086",
-        seconds_until_arrival: 125,
+        seconds_until_arrival: 300,
         direction_id: 1,
         route_id: "Red",
         stopped?: false,
@@ -245,7 +245,7 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.non_terminal(prediction, "RJFK", "m")
 
       assert Content.Message.to_string(msg) == [
-               {"Alewife (A)  2 min", 6},
+               {"Alewife (A)  5 min", 6},
                {"Alewife (Ashmont plat)", 6}
              ]
     end
@@ -253,7 +253,7 @@ defmodule Content.Message.PredictionsTest do
     test "Includes Braintree platform when northbound to JFK/UMass Mezzanine" do
       prediction = %Predictions.Prediction{
         stop_id: "70096",
-        seconds_until_arrival: 125,
+        seconds_until_arrival: 300,
         direction_id: 1,
         route_id: "Red",
         stopped?: false,
@@ -263,15 +263,15 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.non_terminal(prediction, "RJFK", "m")
 
       assert Content.Message.to_string(msg) == [
-               {"Alewife (B)  2 min", 6},
+               {"Alewife (B)  5 min", 6},
                {"Alewife (Braintree plat)", 6}
              ]
     end
 
-    test "Platform TBD when northbound to JFK/UMass Mezzanine and over 20 min" do
+    test "Platform TBD when northbound to JFK/UMass Mezzanine and over 5 min" do
       prediction = %Predictions.Prediction{
         stop_id: "70096",
-        seconds_until_arrival: 1200,
+        seconds_until_arrival: 360,
         direction_id: 1,
         route_id: "Red",
         stopped?: false,
@@ -281,7 +281,7 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.non_terminal(prediction, "RJFK", "m")
 
       assert Content.Message.to_string(msg) == [
-               {"Alewife    20+ min", 6},
+               {"Alewife      6 min", 6},
                {"Alewife (Platform TBD)", 6}
              ]
     end
