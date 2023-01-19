@@ -20,6 +20,12 @@ defmodule Signs.Utilities.Headways do
     end
   end
 
+  def get_paging_message(sign, config, current_time) do
+    headways = sign.config_engine.headway_config(sign.headway_group, current_time)
+    destination = get_destination(config)
+    get_paging_headway_message(config, destination, headways)
+  end
+
   @spec display_headways?(
           Signs.Realtime.t(),
           [String.t()],
@@ -38,6 +44,17 @@ defmodule Signs.Utilities.Headways do
 
   @spec get_destination(SourceConfig.source() | nil) :: PaEss.destination() | nil
   defp get_destination(nil), do: nil
+
+  defp get_destination(config) when is_list(config) do
+    config
+    |> Enum.map(& &1.headway_destination)
+    |> Enum.uniq()
+    |> case do
+      [destination] -> destination
+      _ -> nil
+    end
+  end
+
   defp get_destination(config), do: config.headway_destination
 
   @spec get_headway_messages(
@@ -56,6 +73,15 @@ defmodule Signs.Utilities.Headways do
         range: {headways.range_low, headways.range_high},
         prev_departure_mins: nil
       }}}
+  end
+
+  defp get_paging_headway_message(config, destination, headways) do
+    {config,
+     %Content.Message.Headways.Paging{
+       destination: destination,
+       vehicle_type: :train,
+       range: {headways.range_low, headways.range_high}
+     }}
   end
 
   @spec get_empty_messages(SourceConfig.source() | nil) ::
