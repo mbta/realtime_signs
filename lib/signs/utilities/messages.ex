@@ -38,6 +38,9 @@ defmodule Signs.Utilities.Messages do
           {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}} ->
             get_headway_or_alert_messages(sign, current_time, alert_status)
 
+          {top_message, {nil, %Content.Message.Empty{}}} ->
+            {top_message, get_paging_headway_message(sign, current_time)}
+
           messages ->
             messages
         end
@@ -54,6 +57,22 @@ defmodule Signs.Utilities.Messages do
       nil -> Signs.Utilities.Headways.get_messages(sign, current_time)
       messages -> messages
     end
+  end
+
+  # If the sign sources is a single list, then it's most likely going to
+  # be redundant to page the headways on the second line so skip it
+  defp get_paging_headway_message(
+         %Signs.Realtime{source_config: {[_config]}} = _sign,
+         _current_time
+       ) do
+    {nil, %Content.Message.Empty{}}
+  end
+
+  defp get_paging_headway_message(
+         %Signs.Realtime{source_config: {_, second_line_config}} = sign,
+         current_time
+       ) do
+    Signs.Utilities.Headways.get_paging_message(sign, second_line_config, current_time)
   end
 
   @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status(), boolean()) ::
