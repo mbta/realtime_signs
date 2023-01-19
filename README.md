@@ -9,6 +9,13 @@ Here's a general overview of the realtime_signs application which should be help
 * At this point you should be able to run `mix test` and get a clean build.
 * To start the server, run `mix run --no-halt`. See "relevant environment variables" below for parameters you might want to pass to the server.
 
+### Developing locally with [signs_ui](https://github.com/mbta/signs_ui)
+
+First, ensure you have a basic working environment as described above, and in the signs_ui README.
+1. Start signs_ui and tell it what API key to accept: `MESSAGES_API_KEYS=realtime_signs:a6975e41192b888c NODE_ENV=development mix run --no-halt`. The key is arbitrary but it must match what you provide in the next step.
+2. Start realtime_signs, and provide the local URL and API key: `SIGN_UI_URL=localhost:5000 SIGN_UI_API_KEY=a6975e41192b888c mix run --no-halt`
+3. Open up http://localhost:5000 and you should see the signs data being populated by your local app.
+
 ### Running locally in a docker container
 If you need to run realtime signs in a local docker container, there are a few extra steps you'll need to take.
 
