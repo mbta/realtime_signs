@@ -6,21 +6,21 @@ defmodule Engine.ConfigTest do
     test "is auto when the sign is enabled" do
       Engine.Config.update()
 
-      :timer.sleep(100)
+      Process.sleep(50)
       assert Engine.Config.sign_config("chelsea_inbound") == :auto
     end
 
     test "is off when the sign is disabled" do
       Engine.Config.update()
 
-      :timer.sleep(100)
+      Process.sleep(50)
       assert Engine.Config.sign_config("chelsea_outbound") == :off
     end
 
     test "is auto when the sign is unspecified" do
       Engine.Config.update()
 
-      :timer.sleep(100)
+      Process.sleep(50)
       assert Engine.Config.sign_config("unspecified_sign") == :auto
     end
 
@@ -46,7 +46,7 @@ defmodule Engine.ConfigTest do
     test "properly returns headway mode" do
       Engine.Config.update()
 
-      :timer.sleep(100)
+      Process.sleep(50)
       assert Engine.Config.sign_config("headway_test") == :headway
     end
   end

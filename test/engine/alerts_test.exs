@@ -11,7 +11,7 @@ defmodule Engine.AlertsTest do
           routes_ets_table_name: :routes_ets_table_test
         )
 
-      Process.sleep(500)
+      Process.sleep(50)
       assert Process.alive?(pid)
 
       log =

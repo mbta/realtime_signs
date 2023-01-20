@@ -333,7 +333,7 @@ defmodule PaEss.HttpUpdaterTest do
     test "internal counter resets and timestamp does change" do
       state = make_state(%{queue_mod: Fake.MessageQueue, internal_counter: 15})
 
-      :timer.sleep(500)
+      Process.sleep(500)
       {response, new_state} = PaEss.HttpUpdater.handle_info(:check_queue, state)
 
       assert response == :noreply

@@ -118,7 +118,7 @@ defmodule Signs.RealtimeTest do
       log =
         capture_log([level: :warn], fn ->
           send(pid, :foo)
-          :timer.sleep(50)
+          Process.sleep(50)
         end)
 
       assert Process.alive?(pid)
