@@ -36,7 +36,7 @@
     {"station": "G Gilman Square eastbound", "stop_ids": ["70505"]},
     {"station": "G Magoun Square eastbound", "stop_ids": ["70507"]},
     {"station": "G Ball Square eastbound", "stop_ids": ["70509"]},
-    {"station": "G College Ave eastbound", "stop_ids": ["70513"]}
+    {"station": "G College Ave eastbound", "stop_ids": ["70511"]}
   ],
   "Green-E-westbound": [
     {"station": "G Symphony westbound", "stop_ids": ["70241"]},
