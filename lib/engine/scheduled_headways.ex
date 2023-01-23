@@ -28,7 +28,7 @@ defmodule Engine.ScheduledHeadways do
       Keyword.put_new(
         opts,
         :stop_ids,
-        Signs.Utilities.SignsConfig.all_stop_ids()
+        Signs.Utilities.SignsConfig.all_train_stop_ids()
       ),
       name: name
     )
