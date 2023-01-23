@@ -151,10 +151,10 @@ defmodule Content.Message.Predictions do
           platform_name = Content.Utilities.stop_platform_name(stop_id)
 
           {headsign_message, platform_message} =
-            unless minutes == :max_time or (is_integer(minutes) and minutes > 5) do
-              {headsign <> " (#{String.slice(platform_name, 0..0)})", " (#{platform_name} plat)"}
-            else
+            if minutes == :max_time or (is_integer(minutes) and minutes > 5) do
               {headsign, " (Platform TBD)"}
+            else
+              {headsign <> " (#{String.slice(platform_name, 0..0)})", " (#{platform_name} plat)"}
             end
 
           [
