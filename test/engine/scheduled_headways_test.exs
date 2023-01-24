@@ -20,7 +20,7 @@ defmodule Engine.ScheduledHeadwaysTest do
       log =
         capture_log([level: :warn], fn ->
           send(pid, :unknown_message)
-          Process.sleep(500)
+          Process.sleep(50)
         end)
 
       assert Process.alive?(pid)

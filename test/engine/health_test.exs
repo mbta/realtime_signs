@@ -7,11 +7,11 @@ defmodule Engine.HealthTest do
   setup :verify_on_exit!
 
   test "logs pool stats" do
-    {:ok, _pid} = Engine.Health.start_link(period_ms: 500)
+    {:ok, _pid} = Engine.Health.start_link(period_ms: 50)
 
     log =
       capture_log(fn ->
-        Process.sleep(600)
+        Process.sleep(60)
       end)
 
     assert log =~ "event=pool_info"
@@ -72,6 +72,7 @@ defmodule Engine.HealthTest do
     log =
       capture_log(fn ->
         send(pid, :ssl_closed)
+        Process.sleep(50)
       end)
 
     assert log =~ "unknown_message"
