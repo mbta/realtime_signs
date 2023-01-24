@@ -42,7 +42,7 @@ defmodule Signs.Utilities.Headways do
   defp get_stop_ids(sign, nil), do: Signs.Utilities.SourceConfig.sign_stop_ids(sign.source_config)
   defp get_stop_ids(sign, config), do: [sign.headway_stop_id || config.stop_id]
 
-  @spec get_destination(SourceConfig.source() | nil) :: PaEss.destination() | nil
+  @spec get_destination(SourceConfig.source() | List.t() | nil) :: PaEss.destination() | nil
   defp get_destination(nil), do: nil
 
   defp get_destination(config) when is_list(config) do
