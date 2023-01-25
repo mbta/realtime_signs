@@ -123,6 +123,8 @@ defmodule Headway.HeadwayDisplay do
   def format_headway_range({:up_to, x}), do: "Up to every #{x} min"
   def format_headway_range({x, y}), do: "Every #{x} to #{y} min"
 
+  def format_paging_headway_range({x, y}), do: "#{x} to #{y} min"
+
   @spec format_bottom(Content.Message.Headways.Bottom.t()) :: String.t()
   def format_bottom(%Content.Message.Headways.Bottom{prev_departure_mins: nil, range: range}) do
     format_headway_range(range)
