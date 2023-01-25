@@ -270,6 +270,25 @@ defmodule Signs.Utilities.AudioTest do
                %Audio.FollowingTrain{destination: :ashmont, minutes: 4}}, ^sign} = from_sign(sign)
     end
 
+    test "If top line prediction and bottom line paging headways, announce both" do
+      sign = %{
+        @sign
+        | current_content_top:
+            {@src, %Message.Predictions{destination: :medford_tufts, minutes: 3}},
+          current_content_bottom:
+            {@src,
+             %Message.Headways.Paging{
+               destination: :heath_street,
+               vehicle_type: :train,
+               range: {5, 7}
+             }}
+      }
+
+      assert {{%Audio.NextTrainCountdown{destination: :medford_tufts, minutes: 3},
+               %Audio.VehiclesToDestination{destination: :heath_street, headway_range: {5, 7}}},
+              ^sign} = from_sign(sign)
+    end
+
     test "Ignores 'following train' if same headsign but it's arriving (we don't have audio)" do
       sign = %{
         @sign
