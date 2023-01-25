@@ -59,17 +59,20 @@ defmodule Signs.Utilities.Messages do
     end
   end
 
-  # If the sign sources is a single list, then it's most likely going to
-  # be redundant to page the headways on the second line so skip it
+  # If the sign source is a single list, then it most likely means
+  # all predictions are in the same direction. In this case, it's redundant
+  # to show headways on the second line.
   defp get_paging_headway_message(
-         %Signs.Realtime{source_config: {[_config]}} = _sign,
+         %Signs.Realtime{source_config: {_config}} = _sign,
          _current_time
        ) do
     {nil, %Content.Message.Empty{}}
   end
 
   defp get_paging_headway_message(
-         %Signs.Realtime{source_config: {_, second_line_config}} = sign,
+         %Signs.Realtime{
+           source_config: {_, second_line_config}
+         } = sign,
          current_time
        ) do
     Signs.Utilities.Headways.get_paging_message(sign, second_line_config, current_time)
