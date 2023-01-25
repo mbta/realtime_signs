@@ -37,6 +37,13 @@ defmodule Content.Audio.VehiclesToDestination do
     nil
   end
 
+  def from_paging_headway_message(%Content.Message.Headways.Paging{
+        destination: destination,
+        range: range
+      }) do
+    create(:english, destination, range, nil)
+  end
+
   @spec create(
           Content.Audio.language(),
           PaEss.destination() | nil,
