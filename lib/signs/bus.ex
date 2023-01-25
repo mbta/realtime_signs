@@ -2,36 +2,36 @@ defmodule Signs.Bus do
   use GenServer
   require Logger
 
-  def start_link(sign, opts \\ []) do
-    %{
-      "type" => "bus",
-      "id" => id,
-      "pa_ess_loc" => pa_ess_loc,
-      "text_zone" => text_zone,
-      "audio_zones" => audio_zones,
-      "sources" => sources
-    } = sign
+  @enforce_keys [
+    :id,
+    :pa_ess_loc,
+    :text_zone,
+    :audio_zones,
+    :sources,
+    :config_engine,
+    :prediction_engine
+  ]
+  defstruct @enforce_keys
 
-    state = %{
-      sign: %{
-        id: id,
-        pa_ess_loc: pa_ess_loc,
-        text_zone: text_zone,
-        audio_zones: audio_zones,
-        sources:
-          for %{"stop_id" => stop_id, "routes" => routes} <- sources do
-            %{
-              stop_id: stop_id,
-              routes:
-                for %{"route_id" => route_id, "direction_id" => direction_id} <- routes do
-                  %{
-                    route_id: route_id,
-                    direction_id: direction_id
-                  }
-                end
-            }
-          end
-      },
+  def start_link(sign, opts \\ []) do
+    state = %__MODULE__{
+      id: Map.fetch!(sign, "id"),
+      pa_ess_loc: Map.fetch!(sign, "pa_ess_loc"),
+      text_zone: Map.fetch!(sign, "text_zone"),
+      audio_zones: Map.fetch!(sign, "audio_zones"),
+      sources:
+        for source <- Map.fetch!(sign, "sources") do
+          %{
+            stop_id: Map.fetch!(source, "stop_id"),
+            routes:
+              for route <- Map.fetch!(source, "routes") do
+                %{
+                  route_id: Map.fetch!(route, "route_id"),
+                  direction_id: Map.fetch!(route, "direction_id")
+                }
+              end
+          }
+        end,
       config_engine: opts[:config_engine] || Engine.Config,
       prediction_engine: opts[:prediction_engine] || Engine.BusPredictions
     }
@@ -46,36 +46,41 @@ defmodule Signs.Bus do
 
   def handle_info(:run_loop, state) do
     schedule_run_loop(self())
-    %{sign: sign, config_engine: config_engine, prediction_engine: predictions_engine} = state
-    config = config_engine.sign_config(sign.id)
+
+    %__MODULE__{
+      id: id,
+      sources: sources,
+      config_engine: config_engine,
+      prediction_engine: predictions_engine
+    } = state
+
+    _config = config_engine.sign_config(id)
     current_time = Timex.now()
 
-    predictions =
-      for %{stop_id: stop_id, routes: routes} <- sign.sources,
+    _predictions =
+      for %{stop_id: stop_id, routes: routes} <- sources,
           prediction <- predictions_engine.predictions_for_stop(stop_id),
           Enum.any?(
             routes,
             &(&1.route_id == prediction.route_id && &1.direction_id == prediction.direction_id)
-          ),
-          # Exclude predictions that are too old
-          prediction.departure_time >= Timex.shift(current_time, seconds: -5),
-          # Special case: exclude 89.2 OB to Davis
-          !(prediction.stop_id == "5104" && String.starts_with?(prediction.headsign, "Davis")),
-          # Special case: exclude routes terminating at Braintree (230.4 IB, 236.3 OB)
-          !(prediction.stop_id == "38671" && String.starts_with?(prediction.headsign, "Braintree")),
-          # Special case: exclude routes terminating at Mattapan, in case those variants of route 24 come back.
-          !(prediction.stop_id in ["185", "18511"] &&
-              String.starts_with?(prediction.headsign, "Mattapan")) do
+          ) do
         prediction
       end
+      # Exclude predictions that are too old
+      |> Enum.reject(&Timex.before?(&1.departure_time, Timex.shift(current_time, seconds: -5)))
+      # Special case: exclude 89.2 OB to Davis
+      |> Enum.reject(&(&1.stop_id == "5104" && String.starts_with?(&1.headsign, "Davis")))
+      # Special case: exclude routes terminating at Braintree (230.4 IB, 236.3 OB)
+      |> Enum.reject(&(&1.stop_id == "38671" && String.starts_with?(&1.headsign, "Braintree")))
+      # Special case: exclude routes terminating at Mattapan, in case those variants of route 24 come back.
+      |> Enum.reject(
+        &(&1.stop_id in ["185", "18511"] && String.starts_with?(&1.headsign, "Mattapan"))
+      )
 
     # Exclude missing headsign and/or display route (error?)
 
     # Hold prediction in case of count-up
     # Special case: Hold prediction for inbound SL1 with stale prediction
-
-    _ = predictions
-    _ = config
 
     {:noreply, state}
   end

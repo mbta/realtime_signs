@@ -21,7 +21,7 @@ defmodule Engine.BusPredictions do
     api_key = Application.get_env(:realtime_signs, :api_v3_key)
     http_client = Application.get_env(:realtime_signs, :http_client)
 
-    with {:ok, req} <-
+    with {:ok, %{status_code: 200, body: body}} <-
            http_client.get(
              api_url <> "/predictions",
              if api_key do
@@ -39,17 +39,16 @@ defmodule Engine.BusPredictions do
                "filter[stop]" => Enum.join(Signs.Utilities.SignsConfig.all_bus_stop_ids(), ",")
              }
            ),
-         %{status_code: 200, body: body} <- req,
          {:ok, %{"data" => data, "included" => included}} <- Jason.decode(body) do
       vehicles_lookup =
         for %{
               "type" => "vehicle",
               "id" => id,
               "attributes" => %{"updated_at" => updated_at}
-            } <- included do
-          %{id: id, updated_at: updated_at}
+            } <- included,
+            into: %{} do
+          {id, %{id: id, updated_at: updated_at}}
         end
-        |> index_by(& &1.id)
 
       trips_lookup =
         for %{
@@ -59,10 +58,10 @@ defmodule Engine.BusPredictions do
               "relationships" => %{
                 "route" => %{"data" => %{"id" => route_id}}
               }
-            } <- included do
-          %{id: id, headsign: headsign, route_id: route_id}
+            } <- included,
+            into: %{} do
+          {id, %{id: id, headsign: headsign, route_id: route_id}}
         end
-        |> index_by(& &1.id)
 
       new_predictions =
         for %{
@@ -82,7 +81,8 @@ defmodule Engine.BusPredictions do
             route_id == trips_lookup[trip_id].route_id do
           %{
             direction_id: direction_id,
-            departure_time: Timex.parse!(departure_time, "{ISO:Extended}"),
+            departure_time:
+              if(departure_time, do: Timex.parse!(departure_time, "{ISO:Extended}")),
             route_id: route_id,
             stop_id: stop_id,
             headsign: trips_lookup[trip_id].headsign,
@@ -114,9 +114,5 @@ defmodule Engine.BusPredictions do
 
   defp schedule_update(pid) do
     Process.send_after(pid, :update, 1_000)
-  end
-
-  defp index_by(enum, key_fun) do
-    Enum.into(enum, %{}, &{key_fun.(&1), &1})
   end
 end
