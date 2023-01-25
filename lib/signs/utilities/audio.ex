@@ -280,6 +280,10 @@ defmodule Signs.Utilities.Audio do
     Audio.Predictions.from_sign_content(content, line, multi_source?)
   end
 
+  defp get_audio_for_line({_, %Message.Headways.Paging{} = message}, _line, _multi_source?) do
+    Audio.VehiclesToDestination.from_paging_headway_message(message)
+  end
+
   defp get_audio_for_line({_, %Message.Empty{}}, _line, _multi_source?) do
     nil
   end
