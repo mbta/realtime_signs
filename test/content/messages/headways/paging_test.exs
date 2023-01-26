@@ -8,7 +8,7 @@ defmodule Content.Message.Headways.PagingTest do
                vehicle_type: :train,
                range: {5, 7}
              }) == [
-               {"Heath St    Trains every", 3},
+               {"Heath St    trains every", 3},
                {"Heath St      5 to 7 min", 3}
              ]
     end
