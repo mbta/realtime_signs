@@ -66,14 +66,17 @@ defmodule Signs.Bus do
           ) do
         prediction
       end
-      # Exclude predictions that are too old
-      |> Enum.reject(&Timex.before?(&1.departure_time, Timex.shift(current_time, seconds: -5)))
+      # Exclude predictions whose times are missing or out of bounds
+      |> Stream.reject(
+        &(!&1.departure_time ||
+            Timex.before?(&1.departure_time, Timex.shift(current_time, seconds: -5)))
+      )
       # Special case: exclude 89.2 OB to Davis
-      |> Enum.reject(&(&1.stop_id == "5104" && String.starts_with?(&1.headsign, "Davis")))
+      |> Stream.reject(&(&1.stop_id == "5104" && String.starts_with?(&1.headsign, "Davis")))
       # Special case: exclude routes terminating at Braintree (230.4 IB, 236.3 OB)
-      |> Enum.reject(&(&1.stop_id == "38671" && String.starts_with?(&1.headsign, "Braintree")))
+      |> Stream.reject(&(&1.stop_id == "38671" && String.starts_with?(&1.headsign, "Braintree")))
       # Special case: exclude routes terminating at Mattapan, in case those variants of route 24 come back.
-      |> Enum.reject(
+      |> Stream.reject(
         &(&1.stop_id in ["185", "18511"] && String.starts_with?(&1.headsign, "Mattapan"))
       )
 
