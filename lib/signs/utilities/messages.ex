@@ -4,6 +4,8 @@ defmodule Signs.Utilities.Messages do
   be displaying
   """
 
+  alias Content.Message.Alert
+
   @type sign_messages ::
           {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
            {Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()}}
@@ -39,7 +41,26 @@ defmodule Signs.Utilities.Messages do
             get_headway_or_alert_messages(sign, current_time, alert_status)
 
           {top_message, {nil, %Content.Message.Empty{}}} ->
-            {top_message, get_paging_headway_message(sign, current_time)}
+            bottom_message =
+              get_paging_headway_or_alert_messages(
+                sign,
+                current_time,
+                alert_status,
+                :bottom
+              )
+
+            {top_message, bottom_message}
+
+          {{nil, %Content.Message.Empty{}}, bottom_message} ->
+            top_message =
+              get_paging_headway_or_alert_messages(
+                sign,
+                current_time,
+                alert_status,
+                :top
+              )
+
+            {bottom_message, top_message}
 
           messages ->
             messages
@@ -59,23 +80,37 @@ defmodule Signs.Utilities.Messages do
     end
   end
 
-  # If the sign source is a single list, then it most likely means
-  # all predictions are in the same direction. In this case, it's redundant
-  # to show headways on the second line.
-  defp get_paging_headway_message(
-         %Signs.Realtime{source_config: {_config}} = _sign,
-         _current_time
-       ) do
-    {nil, %Content.Message.Empty{}}
-  end
+  defp has_single_source_list?(%Signs.Realtime{source_config: {_}} = _sign), do: true
+  defp has_single_source_list?(_), do: false
 
-  defp get_paging_headway_message(
-         %Signs.Realtime{
-           source_config: {_, second_line_config}
-         } = sign,
-         current_time
+  defp get_paging_headway_or_alert_messages(
+         sign,
+         current_time,
+         alert_status,
+         line
        ) do
-    Signs.Utilities.Headways.get_paging_message(sign, second_line_config, current_time)
+    if has_single_source_list?(sign) do
+      {nil, Content.Message.Empty.new()}
+    else
+      source_config =
+        if line == :top do
+          %Signs.Realtime{source_config: {top_line_source, _}} = sign
+          top_line_source
+        else
+          %Signs.Realtime{source_config: {_, bottom_line_source}} = sign
+          bottom_line_source
+        end
+
+      if alert_status == :none do
+        Signs.Utilities.Headways.get_paging_message(sign, source_config, current_time)
+      else
+        get_paging_alert_message(
+          alert_status,
+          sign.uses_shuttles,
+          Signs.Utilities.Headways.get_headway_destination(source_config)
+        )
+      end
+    end
   end
 
   @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status(), boolean()) ::
@@ -86,19 +121,44 @@ defmodule Signs.Utilities.Messages do
         {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
 
       {:shuttles_closed_station, true} ->
-        {{nil, %Content.Message.Alert.NoService{}}, {nil, %Content.Message.Alert.UseShuttleBus{}}}
+        {{nil, %Alert.NoService{}}, {nil, %Alert.UseShuttleBus{}}}
 
       {:shuttles_closed_station, false} ->
-        {{nil, %Content.Message.Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
+        {{nil, %Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
 
       {:suspension_transfer_station, _} ->
         {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
 
       {:suspension_closed_station, _} ->
-        {{nil, %Content.Message.Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
+        {{nil, %Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
 
       {:station_closure, _} ->
-        {{nil, %Content.Message.Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
+        {{nil, %Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
+
+      _ ->
+        nil
+    end
+  end
+
+  defp get_paging_alert_message(alert_status, uses_shuttles, destination) do
+    case {alert_status, uses_shuttles} do
+      {:shuttles_transfer_station, _} ->
+        {nil, Content.Message.Empty.new()}
+
+      {:shuttles_closed_station, true} ->
+        {nil, %Alert.NoServiceUseShuttle{destination: destination}}
+
+      {:shuttles_closed_station, false} ->
+        {nil, %Alert.DestinationNoService{destination: destination}}
+
+      {:suspension_transfer_station, _} ->
+        {nil, Content.Message.Empty.new()}
+
+      {:suspension_closed_station, _} ->
+        {nil, %Alert.DestinationNoService{destination: destination}}
+
+      {:station_closure, _} ->
+        {nil, %Alert.DestinationNoService{destination: destination}}
 
       _ ->
         nil
