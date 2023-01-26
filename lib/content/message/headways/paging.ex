@@ -16,7 +16,7 @@ defmodule Content.Message.Headways.Paging do
           range: range
         }) do
       [
-        {"#{signify_vehicle_type(type)} every", 3},
+        {"#{signify_vehicle_type(type) |> String.capitalize()} every", 3},
         {Headway.HeadwayDisplay.format_paging_headway_range(range), 3}
       ]
     end
