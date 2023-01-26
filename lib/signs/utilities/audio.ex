@@ -201,15 +201,6 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_audio(
-         {_, %Message.Predictions{}} = top,
-         {_, %Message.Headways.Paging{} = bottom},
-         multi_source?
-       ) do
-    {Audio.Predictions.from_sign_content(top, :top, multi_source?),
-     Audio.VehiclesToDestination.from_paging_headway_message(bottom)}
-  end
-
-  defp get_audio(
          {_, %Message.Predictions{minutes: :arriving, route_id: route_id}} = top_content,
          _bottom_content,
          multi_source?
@@ -282,6 +273,22 @@ defmodule Signs.Utilities.Audio do
 
   defp get_audio_for_line({_, %Message.Headways.Paging{} = message}, _line, _multi_source?) do
     Audio.VehiclesToDestination.from_paging_headway_message(message)
+  end
+
+  defp get_audio_for_line(
+         {_, %Message.Alert.DestinationNoService{} = message},
+         _line,
+         _multi_source?
+       ) do
+    Audio.NoServiceToDestination.from_message(message)
+  end
+
+  defp get_audio_for_line(
+         {_, %Message.Alert.NoServiceUseShuttle{} = message},
+         _line,
+         _multi_source?
+       ) do
+    Audio.NoServiceToDestination.from_message(message)
   end
 
   defp get_audio_for_line({_, %Message.Empty{}}, _line, _multi_source?) do
