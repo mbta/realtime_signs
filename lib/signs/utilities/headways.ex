@@ -46,7 +46,8 @@ defmodule Signs.Utilities.Headways do
     get_destination(config)
   end
 
-  @spec get_destination(SourceConfig.source() | List.t() | nil) :: PaEss.destination() | nil
+  @spec get_destination(SourceConfig.source() | list(SourceConfig.source()) | nil) ::
+          PaEss.destination() | nil
   defp get_destination(nil), do: nil
 
   defp get_destination(config) when is_list(config) do

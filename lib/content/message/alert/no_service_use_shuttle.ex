@@ -7,7 +7,7 @@ defmodule Content.Message.Alert.NoServiceUseShuttle do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          destination: Paess.destination()
+          destination: PaEss.destination()
         }
 
   defimpl Content.Message do
