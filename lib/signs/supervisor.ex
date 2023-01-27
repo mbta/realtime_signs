@@ -12,11 +12,6 @@ defmodule Signs.Supervisor do
   its display message from (in priority order) Drupal static text,
   predictions if available, schedules for headways. We also support
   ...?
-
-  (If all the signs are similar "enough", maybe we only need one type of
-  GenServer. I'm forgetting all the use cases we discussed for how signs
-  could differ. One-liners vs. two? Stops Away vs time? GreenLine Park St
-  weird cases?)
   """
   require Signs.Utilities.SignsConfig
   use Supervisor
@@ -42,4 +37,5 @@ defmodule Signs.Supervisor do
   end
 
   defp sign_module(%{"type" => "realtime"}), do: Signs.Realtime
+  defp sign_module(%{"type" => "bus"}), do: Signs.Bus
 end
