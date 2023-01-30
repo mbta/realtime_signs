@@ -84,7 +84,6 @@ defmodule Signs.Utilities.Headways do
     {config,
      %Content.Message.Headways.Paging{
        destination: destination,
-       vehicle_type: :train,
        range: {headways.range_low, headways.range_high}
      }}
   end
