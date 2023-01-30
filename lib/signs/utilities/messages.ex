@@ -107,7 +107,7 @@ defmodule Signs.Utilities.Messages do
         get_paging_alert_message(
           alert_status,
           sign.uses_shuttles,
-          Signs.Utilities.Headways.get_headway_destination(source_config)
+          Signs.Utilities.Headways.source_list_destination(source_config)
         )
       end
     end

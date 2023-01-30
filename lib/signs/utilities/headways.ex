@@ -22,7 +22,7 @@ defmodule Signs.Utilities.Headways do
 
   def get_paging_message(sign, config, current_time) do
     headways = sign.config_engine.headway_config(sign.headway_group, current_time)
-    destination = get_destination(config)
+    destination = source_list_destination(config)
     get_paging_headway_message(config, destination, headways)
   end
 
@@ -42,15 +42,8 @@ defmodule Signs.Utilities.Headways do
   defp get_stop_ids(sign, nil), do: Signs.Utilities.SourceConfig.sign_stop_ids(sign.source_config)
   defp get_stop_ids(sign, config), do: [sign.headway_stop_id || config.stop_id]
 
-  def get_headway_destination(config) do
-    get_destination(config)
-  end
-
-  @spec get_destination(SourceConfig.source() | list(SourceConfig.source()) | nil) ::
-          PaEss.destination() | nil
-  defp get_destination(nil), do: nil
-
-  defp get_destination(config) when is_list(config) do
+  @spec source_list_destination(list(SourceConfig.source())) :: PaEss.destination() | nil
+  def source_list_destination(config) do
     config
     |> Enum.map(& &1.headway_destination)
     |> Enum.uniq()
@@ -59,6 +52,10 @@ defmodule Signs.Utilities.Headways do
       _ -> nil
     end
   end
+
+  @spec get_destination(SourceConfig.source() | nil) ::
+          PaEss.destination() | nil
+  defp get_destination(nil), do: nil
 
   defp get_destination(config), do: config.headway_destination
 
