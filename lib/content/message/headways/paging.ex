@@ -17,7 +17,7 @@ defmodule Content.Message.Headways.Paging do
         }) do
       [
         {"#{signify_vehicle_type(type) |> String.capitalize()} every", 3},
-        {Headway.HeadwayDisplay.format_paging_headway_range(range), 3}
+        {format_paging_headway_range(range), 3}
       ]
     end
 
@@ -56,9 +56,11 @@ defmodule Content.Message.Headways.Paging do
     defp destination_range_string(destination, range) do
       Content.Utilities.width_padded_string(
         PaEss.Utilities.destination_to_sign_string(destination),
-        Headway.HeadwayDisplay.format_paging_headway_range(range),
+        format_paging_headway_range(range),
         @default_page_width
       )
     end
+
+    defp format_paging_headway_range({x, y}), do: "#{x} to #{y} min"
   end
 end
