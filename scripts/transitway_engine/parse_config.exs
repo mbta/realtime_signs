@@ -47,13 +47,23 @@ end
 
 # |> IO.inspect
 
-for [line1, line2] <- Enum.chunk_every(abbrev_lines, 2) do
-  [name, number] = String.split(line1, ",")
-  abbreviations = String.split(line2, ",")
-  %{name: name, number: String.to_integer(number), abbreviations: abbreviations}
-end
-
-# |> IO.inspect
+abbreviations_code =
+  for [line1, line2] <- Enum.chunk_every(abbrev_lines, 2) do
+    [headsign, _] = String.split(line1, ",")
+    abbreviations =
+      for abbrev <- String.split(line2, ",") do
+        String.trim(abbrev)
+      end
+      |> Enum.uniq()
+    %{headsign: headsign, abbreviations: abbreviations}
+  end
+  |> Enum.map(fn (%{headsign: headsign, abbreviations: abbreviations}) ->
+    "    {#{inspect(headsign)}, #{inspect(abbreviations)}}"
+  end)
+  |> Enum.join(",\n")
+  |> (fn lines ->
+    "  @headsign_abbreviation_mappings [\n" <> lines <> "\n  ]"
+  end).()
 
 signs_json =
   for [line1, line2] <- Enum.chunk_every(initialize_lines, 2) do
@@ -80,11 +90,11 @@ signs_json =
         else
           _ -> []
         end,
-      max_preds: String.to_integer(max_preds),
       max_minutes: String.to_integer(max_minutes)
     )
   end
   |> Jason.encode!()
   |> Jason.Formatter.pretty_print()
 
-File.write!("priv/signs.json", signs_json)
+File.write!("priv/bus-signs.json", signs_json)
+File.write!("priv/abbreviations.ex", abbreviations_code)
