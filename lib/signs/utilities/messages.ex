@@ -107,15 +107,17 @@ defmodule Signs.Utilities.Messages do
           bottom_line_source
         end
 
-      if alert_status == :none do
-        {sign.source_config,
-         Signs.Utilities.Headways.get_paging_message(sign, source_config, current_time)}
-      else
-        get_paging_alert_message(
-          alert_status,
-          sign.uses_shuttles,
-          Signs.Utilities.Headways.source_list_destination(source_config)
-        )
+      case get_paging_alert_message(
+             alert_status,
+             sign.uses_shuttles,
+             Signs.Utilities.Headways.source_list_destination(source_config)
+           ) do
+        nil ->
+          {source_config,
+           Signs.Utilities.Headways.get_paging_message(sign, source_config, current_time)}
+
+        alert_message ->
+          alert_message
       end
     end
   end
