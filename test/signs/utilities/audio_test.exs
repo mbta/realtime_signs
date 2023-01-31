@@ -279,7 +279,6 @@ defmodule Signs.Utilities.AudioTest do
             {@src,
              %Message.Headways.Paging{
                destination: :heath_street,
-               vehicle_type: :train,
                range: {5, 7}
              }}
       }

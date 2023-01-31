@@ -5,7 +5,6 @@ defmodule Content.Message.Headways.PagingTest do
     test "When destination is not nil, page headways with destination" do
       assert Content.Message.to_string(%Content.Message.Headways.Paging{
                destination: :heath_street,
-               vehicle_type: :train,
                range: {5, 7}
              }) == [
                {"Heath St    trains every", 3},
@@ -16,7 +15,6 @@ defmodule Content.Message.Headways.PagingTest do
     test "When destination is nil, page generic headway message" do
       assert Content.Message.to_string(%Content.Message.Headways.Paging{
                destination: nil,
-               vehicle_type: :train,
                range: {5, 7}
              }) == [
                {"Trains every", 3},
