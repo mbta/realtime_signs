@@ -87,6 +87,18 @@ defmodule Signs.Utilities.Audio do
     false
   end
 
+  def should_interrupting_read?({_, %Content.Message.Headways.Paging{}}, _sign, _line) do
+    false
+  end
+
+  def should_interrupting_read?({_, %Content.Message.Alert.NoServiceUseShuttle{}}, _sign, _line) do
+    false
+  end
+
+  def should_interrupting_read?({_, %Content.Message.Alert.DestinationNoService{}}, _sign, _line) do
+    false
+  end
+
   def should_interrupting_read?(_content, _sign, _line) do
     true
   end
