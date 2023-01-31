@@ -83,6 +83,12 @@ defmodule Signs.Utilities.Messages do
   defp has_single_source_list?(%Signs.Realtime{source_config: {_}} = _sign), do: true
   defp has_single_source_list?(_), do: false
 
+  @spec get_paging_headway_or_alert_messages(
+          Signs.Realtime.t(),
+          DateTime.t(),
+          Engine.Alerts.Fetcher.stop_status(),
+          :top | :bottom
+        ) :: {Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()}
   defp get_paging_headway_or_alert_messages(
          sign,
          current_time,
@@ -102,7 +108,8 @@ defmodule Signs.Utilities.Messages do
         end
 
       if alert_status == :none do
-        Signs.Utilities.Headways.get_paging_message(sign, source_config, current_time)
+        {sign.source_config,
+         Signs.Utilities.Headways.get_paging_message(sign, source_config, current_time)}
       else
         get_paging_alert_message(
           alert_status,

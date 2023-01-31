@@ -20,10 +20,15 @@ defmodule Signs.Utilities.Headways do
     end
   end
 
+  @spec get_paging_message(
+          Signs.Realtime.t(),
+          list(SourceConfig.source()),
+          DateTime.t()
+        ) :: Content.Message.Headways.Paging.t()
   def get_paging_message(sign, config, current_time) do
     headways = sign.config_engine.headway_config(sign.headway_group, current_time)
     destination = source_list_destination(config)
-    get_paging_headway_message(config, destination, headways)
+    get_paging_headway_message(destination, headways)
   end
 
   @spec display_headways?(
@@ -77,12 +82,15 @@ defmodule Signs.Utilities.Headways do
       }}}
   end
 
-  defp get_paging_headway_message(config, destination, headways) do
-    {config,
-     %Content.Message.Headways.Paging{
-       destination: destination,
-       range: {headways.range_low, headways.range_high}
-     }}
+  @spec get_paging_headway_message(
+          PaEss.destination() | nil,
+          Engine.Config.Headway.t()
+        ) :: Content.Message.Headways.Paging.t()
+  defp get_paging_headway_message(destination, headways) do
+    %Content.Message.Headways.Paging{
+      destination: destination,
+      range: {headways.range_low, headways.range_high}
+    }
   end
 
   @spec get_empty_messages(SourceConfig.source() | nil) ::
