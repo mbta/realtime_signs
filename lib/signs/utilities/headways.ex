@@ -26,9 +26,13 @@ defmodule Signs.Utilities.Headways do
           DateTime.t()
         ) :: Content.Message.Headways.Paging.t()
   def get_paging_message(sign, config, current_time) do
-    headways = sign.config_engine.headway_config(sign.headway_group, current_time)
-    destination = source_list_destination(config)
-    get_paging_headway_message(destination, headways)
+    case sign.config_engine.headway_config(sign.headway_group, current_time) do
+      nil ->
+        %Content.Message.Empty{}
+
+      headways ->
+        config |> source_list_destination() |> get_paging_headway_message(headways)
+    end
   end
 
   @spec display_headways?(
