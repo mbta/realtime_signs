@@ -79,6 +79,12 @@ defmodule Engine.BusPredictions do
             # Multi-route trips will have duplicate predictions for each route.
             # To filter them out, we only keep the one whose route_id matches the trip's.
             route_id == trips_lookup[trip_id].route_id do
+          vehicle_id =
+            case vehicle_data do
+              %{"id" => vehicle_id} -> vehicle_id
+              _ -> nil
+            end
+
           %{
             direction_id: direction_id,
             departure_time:
@@ -86,11 +92,8 @@ defmodule Engine.BusPredictions do
             route_id: route_id,
             stop_id: stop_id,
             headsign: trips_lookup[trip_id].headsign,
-            updated_at:
-              case vehicle_data do
-                %{"id" => vehicle_id} -> vehicles_lookup[vehicle_id].updated_at
-                _ -> nil
-              end
+            vehicle_id: vehicle_id,
+            updated_at: if(vehicle_id, do: vehicles_lookup[vehicle_id].updated_at)
           }
         end
         |> Enum.group_by(& &1.stop_id)
