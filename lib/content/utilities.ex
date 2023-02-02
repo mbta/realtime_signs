@@ -8,9 +8,8 @@ defmodule Content.Utilities do
 
   def width_padded_string(left, right, width) do
     max_left_length = width - (String.length(right) + 1)
-    left = String.slice(left, 0, max_left_length)
-    padding = width - (String.length(left) + String.length(right))
-    Enum.join([left, String.duplicate(" ", padding), right])
+    new_left = left |> String.slice(0, max_left_length) |> String.pad_trailing(max_left_length)
+    "#{new_left} #{right}"
   end
 
   @spec destination_for_prediction(String.t(), 0 | 1, String.t()) ::

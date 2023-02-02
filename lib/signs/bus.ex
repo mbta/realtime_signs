@@ -152,7 +152,7 @@ defmodule Signs.Bus do
   defp display_route(%{route_id: route_id}), do: route_id
 
   defp prediction_minutes(prediction, current_time) do
-    Timex.diff(prediction.departure_time, current_time, :minutes)
+    round(Timex.diff(prediction.departure_time, current_time, :seconds) / 60)
   end
 
   defp prediction_key(prediction) do
@@ -165,9 +165,10 @@ defmodule Signs.Bus do
     for prediction <- [first, second] do
       if prediction do
         route = display_route(prediction)
-        # If both predictions are for the same route, pad both lines based on the second line's
-        # time string. That may use up extra space on the top line, but it means we'll choose
-        # the same abbreviation for both, so the text will line up nicely.
+        # If both predictions are for the same route, but the times are different sizes, we could
+        # end up using different abbreviations on the same page, e.g. "SouthSta" and "So Sta".
+        # To avoid that, format both times using the second one's potentially larger size. That
+        # may waste one space on the top line, but will ensure that the abbreviations match up.
         time =
           String.pad_leading(
             format_time(prediction, current_time),
@@ -178,15 +179,14 @@ defmodule Signs.Bus do
 
         # Choose the longest abbreviation that will fit within the remaining space.
         dest =
-          (PaEss.Utilities.headsign_abbreviations(prediction.headsign) ++ [prediction.headsign])
+          [prediction.headsign | PaEss.Utilities.headsign_abbreviations(prediction.headsign)]
           |> Enum.filter(&(String.length(&1) <= dest_max))
           |> Enum.max_by(&String.length/1, fn ->
             Logger.warn("No abbreviation for headsign: #{inspect(prediction.headsign)}")
-            String.slice(prediction.headsign, 0, dest_max)
+            prediction.headsign
           end)
-          |> String.pad_trailing(dest_max)
 
-        "#{route} #{dest} #{time}"
+        Content.Utilities.width_padded_string("#{route} #{dest}", time, @line_max)
       else
         ""
       end
