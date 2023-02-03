@@ -20,6 +20,21 @@ defmodule Signs.Utilities.Headways do
     end
   end
 
+  @spec get_paging_message(
+          Signs.Realtime.t(),
+          list(SourceConfig.source()),
+          DateTime.t()
+        ) :: Content.Message.Headways.Paging.t()
+  def get_paging_message(sign, config, current_time) do
+    case sign.config_engine.headway_config(sign.headway_group, current_time) do
+      nil ->
+        %Content.Message.Empty{}
+
+      headways ->
+        config |> source_list_destination() |> get_paging_headway_message(headways)
+    end
+  end
+
   @spec display_headways?(
           Signs.Realtime.t(),
           [String.t()],
@@ -36,8 +51,21 @@ defmodule Signs.Utilities.Headways do
   defp get_stop_ids(sign, nil), do: Signs.Utilities.SourceConfig.sign_stop_ids(sign.source_config)
   defp get_stop_ids(sign, config), do: [sign.headway_stop_id || config.stop_id]
 
-  @spec get_destination(SourceConfig.source() | nil) :: PaEss.destination() | nil
+  @spec source_list_destination(list(SourceConfig.source())) :: PaEss.destination() | nil
+  def source_list_destination(config) do
+    config
+    |> Enum.map(& &1.headway_destination)
+    |> Enum.uniq()
+    |> case do
+      [destination] -> destination
+      _ -> nil
+    end
+  end
+
+  @spec get_destination(SourceConfig.source() | nil) ::
+          PaEss.destination() | nil
   defp get_destination(nil), do: nil
+
   defp get_destination(config), do: config.headway_destination
 
   @spec get_headway_messages(
@@ -56,6 +84,17 @@ defmodule Signs.Utilities.Headways do
         range: {headways.range_low, headways.range_high},
         prev_departure_mins: nil
       }}}
+  end
+
+  @spec get_paging_headway_message(
+          PaEss.destination() | nil,
+          Engine.Config.Headway.t()
+        ) :: Content.Message.Headways.Paging.t()
+  defp get_paging_headway_message(destination, headways) do
+    %Content.Message.Headways.Paging{
+      destination: destination,
+      range: {headways.range_low, headways.range_high}
+    }
   end
 
   @spec get_empty_messages(SourceConfig.source() | nil) ::

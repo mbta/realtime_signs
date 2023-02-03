@@ -87,6 +87,18 @@ defmodule Signs.Utilities.Audio do
     false
   end
 
+  def should_interrupting_read?({_, %Content.Message.Headways.Paging{}}, _sign, _line) do
+    false
+  end
+
+  def should_interrupting_read?({_, %Content.Message.Alert.NoServiceUseShuttle{}}, _sign, _line) do
+    false
+  end
+
+  def should_interrupting_read?({_, %Content.Message.Alert.DestinationNoService{}}, _sign, _line) do
+    false
+  end
+
   def should_interrupting_read?(_content, _sign, _line) do
     true
   end
@@ -269,6 +281,26 @@ defmodule Signs.Utilities.Audio do
 
   defp get_audio_for_line({_, %Message.Predictions{}} = content, line, multi_source?) do
     Audio.Predictions.from_sign_content(content, line, multi_source?)
+  end
+
+  defp get_audio_for_line({_, %Message.Headways.Paging{} = message}, _line, _multi_source?) do
+    Audio.VehiclesToDestination.from_paging_headway_message(message)
+  end
+
+  defp get_audio_for_line(
+         {_, %Message.Alert.DestinationNoService{} = message},
+         _line,
+         _multi_source?
+       ) do
+    Audio.NoServiceToDestination.from_message(message)
+  end
+
+  defp get_audio_for_line(
+         {_, %Message.Alert.NoServiceUseShuttle{} = message},
+         _line,
+         _multi_source?
+       ) do
+    Audio.NoServiceToDestination.from_message(message)
   end
 
   defp get_audio_for_line({_, %Message.Empty{}}, _line, _multi_source?) do

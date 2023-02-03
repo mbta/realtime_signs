@@ -7478,7 +7478,9 @@
           "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
-        },
+        }
+      ],
+      [
         {
           "stop_id": "70502",
           "direction_id": 0,
@@ -7651,7 +7653,9 @@
           "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
-        },
+        }
+      ],
+      [
         {
           "stop_id": "70514",
           "direction_id": 0,
@@ -7744,7 +7748,9 @@
           "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
-        },
+        }
+      ],
+      [
         {
           "stop_id": "70506",
           "direction_id": 0,
@@ -7837,7 +7843,9 @@
           "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
-        },
+        }
+      ],
+      [
         {
           "stop_id": "70508",
           "direction_id": 0,
@@ -7930,7 +7938,9 @@
           "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
-        },
+        }
+      ],
+      [
         {
           "stop_id": "70510",
           "direction_id": 0,
