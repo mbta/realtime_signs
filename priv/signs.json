@@ -4653,7 +4653,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         }
       ],
       [
@@ -4663,7 +4664,7 @@
             "Mattapan"
           ],
           "direction_id": 0,
-          "headway_direction_name": "Alewife",
+          "headway_direction_name": "Mattapan",
           "platform": null,
           "terminal": true,
           "announce_arriving": true,
