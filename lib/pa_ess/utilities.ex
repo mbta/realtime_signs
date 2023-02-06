@@ -470,7 +470,8 @@ defmodule PaEss.Utilities do
     {"Nubian", ["Nubian", "NubianSta"]},
     {"Adams & Gallivan", ["Gallivn", "Gallivan"]},
     {"Waltham", ["Waltham"]},
-    {"Haymarket", ["Haymrkt", "Haymarkt", "Haymarket"]}
+    {"Haymarket", ["Haymrkt", "Haymarkt", "Haymarket"]},
+    {"Silver Line Way", ["Slvr Ln Way"]}
   ]
 
   @spec headsign_abbreviations(String.t()) :: [String.t()]

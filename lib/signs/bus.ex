@@ -13,7 +13,9 @@ defmodule Signs.Bus do
     :sources,
     :config_engine,
     :prediction_engine,
-    :prev_predictions
+    :prev_predictions,
+    :current_content,
+    :last_update
   ]
   defstruct @enforce_keys
 
@@ -39,7 +41,9 @@ defmodule Signs.Bus do
         end,
       config_engine: opts[:config_engine] || Engine.Config,
       prediction_engine: opts[:prediction_engine] || Engine.BusPredictions,
-      prev_predictions: []
+      prev_predictions: [],
+      current_content: {nil, nil},
+      last_update: nil
     }
 
     GenServer.start_link(__MODULE__, state)
@@ -55,11 +59,15 @@ defmodule Signs.Bus do
 
     %__MODULE__{
       id: id,
+      pa_ess_loc: pa_ess_loc,
+      text_zone: text_zone,
       max_minutes: max_minutes,
       sources: sources,
       config_engine: config_engine,
       prediction_engine: predictions_engine,
-      prev_predictions: prev_predictions
+      prev_predictions: prev_predictions,
+      current_content: current_content,
+      last_update: last_update
     } = state
 
     _config = config_engine.sign_config(id)
@@ -112,16 +120,57 @@ defmodule Signs.Bus do
       end)
       |> Enum.sort_by(& &1.departure_time)
 
-    Stream.uniq_by(predictions, &{&1.route_id, &1.headsign})
-    |> Stream.chunk_every(2, 2, [nil])
-    |> Enum.map(&format_predictions(&1, current_time))
-    |> IO.inspect()
+    # Normally display one prediction per route, but if all the predictions are for the same
+    # route, then show a single page of two.
+    [top, bottom] =
+      case Enum.uniq_by(predictions, &{prediction_route_name(&1), &1.headsign}) do
+        [_] -> Enum.take(predictions, 2)
+        list -> list
+      end
+      |> Stream.chunk_every(2, 2, [nil])
+      |> Stream.map(&format_predictions(&1, current_time))
+      |> Enum.zip()
+      |> case do
+        [] -> [{}, {}]
+        [_, _] = list -> list
+      end
+      |> Enum.map(fn pages ->
+        message =
+          case pages do
+            {} -> ""
+            {s} -> s
+            _ -> for s <- Tuple.to_list(pages), do: {s, 6}
+          end
+
+        %Content.Message.BusPredictions{message: message}
+      end)
+
+    # Update the sign if:
+    # 1. it has never been updated before (we just booted up)
+    # 2. the sign is about to auto-blank, so refresh it
+    # 3. the content has changed, but wait until the existing content has paged at least once
+    should_update =
+      !last_update ||
+        Timex.after?(current_time, Timex.shift(last_update, seconds: 150)) ||
+        (current_content != {top, bottom} &&
+           Timex.after?(
+             current_time,
+             Timex.shift(last_update, seconds: content_duration(current_content))
+           ))
+
+    new_state =
+      if should_update do
+        MessageQueue.update_sign({pa_ess_loc, text_zone}, top, bottom, 180, :now)
+        %{state | current_content: {top, bottom}, last_update: current_time}
+      else
+        state
+      end
 
     # Exclude missing headsign and/or display route (error?)
 
     # Special case: Hold prediction for inbound SL1 with stale prediction
 
-    {:noreply, %{state | prev_predictions: predictions}}
+    {:noreply, %{new_state | prev_predictions: predictions}}
   end
 
   def handle_info(msg, state) do
@@ -133,15 +182,22 @@ defmodule Signs.Bus do
     Process.send_after(pid, :run_loop, 1_000)
   end
 
-  defp display_route(%{route_id: "746"}), do: "SLW"
-  defp display_route(%{route_id: "749"}), do: "SL5"
-  defp display_route(%{route_id: "751"}), do: "SL4"
-  defp display_route(%{route_id: "743"}), do: "SL3"
-  defp display_route(%{route_id: "742"}), do: "SL2"
-  defp display_route(%{route_id: "741"}), do: "SL1"
-  defp display_route(%{route_id: "77", headsign: "North Cambridge"}), do: "77A"
+  # Don't display "SLW" route name when its outbound headsign already says "Silver Line Way".
+  defp prediction_route_name(%{route_id: "746", headsign: "Silver Line Way"}), do: nil
+  # Heading inbound from Silver Line Way to South Station, all routes take the same path, so
+  # treat them as one unit and don't display route names.
+  defp prediction_route_name(%{stop_id: stop_id, headsign: "South Station"})
+       when stop_id in ["74615", "74616"],
+       do: nil
 
-  defp display_route(%{route_id: "2427", stop_id: "185", headsign: headsign}) do
+  defp prediction_route_name(%{route_id: "749"}), do: "SL5"
+  defp prediction_route_name(%{route_id: "751"}), do: "SL4"
+  defp prediction_route_name(%{route_id: "743"}), do: "SL3"
+  defp prediction_route_name(%{route_id: "742"}), do: "SL2"
+  defp prediction_route_name(%{route_id: "741"}), do: "SL1"
+  defp prediction_route_name(%{route_id: "77", headsign: "North Cambridge"}), do: "77A"
+
+  defp prediction_route_name(%{route_id: "2427", stop_id: "185", headsign: headsign}) do
     cond do
       String.starts_with?(headsign, "Ashmont") -> "27"
       String.starts_with?(headsign, "Wakefield Av") -> "24"
@@ -149,7 +205,7 @@ defmodule Signs.Bus do
     end
   end
 
-  defp display_route(%{route_id: route_id}), do: route_id
+  defp prediction_route_name(%{route_id: route_id}), do: route_id
 
   defp prediction_minutes(prediction, current_time) do
     round(Timex.diff(prediction.departure_time, current_time, :seconds) / 60)
@@ -160,11 +216,22 @@ defmodule Signs.Bus do
   end
 
   defp format_predictions([first, second], current_time) do
-    same = second && first.route_id == second.route_id && first.headsign == second.headsign
+    same = second && first.headsign == second.headsign
+
+    max_route_length =
+      for prediction <- [first, second], prediction do
+        String.length(format_route(prediction))
+      end
+      |> Enum.max()
 
     for prediction <- [first, second] do
       if prediction do
-        route = display_route(prediction)
+        route =
+          case format_route(prediction) do
+            "" -> ""
+            str -> String.pad_trailing(str, max_route_length)
+          end
+
         # If both predictions are for the same route, but the times are different sizes, we could
         # end up using different abbreviations on the same page, e.g. "SouthSta" and "So Sta".
         # To avoid that, format both times using the second one's potentially larger size. That
@@ -175,7 +242,7 @@ defmodule Signs.Bus do
             String.length(format_time(if(same, do: second, else: prediction), current_time))
           )
 
-        dest_max = @line_max - String.length(route) - String.length(time) - 2
+        dest_max = @line_max - String.length(route) - String.length(time) - 1
 
         # Choose the longest abbreviation that will fit within the remaining space.
         dest =
@@ -186,10 +253,17 @@ defmodule Signs.Bus do
             prediction.headsign
           end)
 
-        Content.Utilities.width_padded_string("#{route} #{dest}", time, @line_max)
+        Content.Utilities.width_padded_string("#{route}#{dest}", time, @line_max)
       else
         ""
       end
+    end
+  end
+
+  defp format_route(prediction) do
+    case prediction_route_name(prediction) do
+      nil -> ""
+      str -> "#{str} "
     end
   end
 
@@ -198,5 +272,15 @@ defmodule Signs.Bus do
       0 -> "ARR"
       minutes -> "#{minutes} min"
     end
+  end
+
+  defp content_duration({top, bottom}) do
+    for message <- [top, bottom] do
+      case Content.Message.to_string(message) do
+        pages when is_list(pages) -> Enum.map(pages, fn {_, n} -> n end) |> Enum.sum()
+        str when is_binary(str) -> 0
+      end
+    end
+    |> Enum.max()
   end
 end

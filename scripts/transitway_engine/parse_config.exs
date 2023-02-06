@@ -60,6 +60,7 @@ abbreviations_code =
   |> Enum.map(fn (%{headsign: headsign, abbreviations: abbreviations}) ->
     "    {#{inspect(headsign)}, #{inspect(abbreviations)}}"
   end)
+  |> Enum.concat(["    {\"Silver Line Way\", [\"Slvr Ln Way\"]}"])
   |> Enum.join(",\n")
   |> (fn lines ->
     "  @headsign_abbreviation_mappings [\n" <> lines <> "\n  ]"
