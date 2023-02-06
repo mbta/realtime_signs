@@ -123,7 +123,7 @@ defmodule Signs.Bus do
     # Normally display one prediction per route, but if all the predictions are for the same
     # route, then show a single page of two.
     [top, bottom] =
-      case Enum.uniq_by(predictions, &{display_route(&1), &1.headsign}) do
+      case Enum.uniq_by(predictions, &{prediction_route_name(&1), &1.headsign}) do
         [_] -> Enum.take(predictions, 2)
         list -> list
       end
@@ -183,21 +183,21 @@ defmodule Signs.Bus do
   end
 
   # Don't display "SLW" route name when its outbound headsign already says "Silver Line Way".
-  defp display_route(%{route_id: "746", headsign: "Silver Line Way"}), do: nil
+  defp prediction_route_name(%{route_id: "746", headsign: "Silver Line Way"}), do: nil
   # Heading inbound from Silver Line Way to South Station, all routes take the same path, so
   # treat them as one unit and don't display route names.
-  defp display_route(%{stop_id: stop_id, headsign: "South Station"})
+  defp prediction_route_name(%{stop_id: stop_id, headsign: "South Station"})
        when stop_id in ["74615", "74616"],
        do: nil
 
-  defp display_route(%{route_id: "749"}), do: "SL5"
-  defp display_route(%{route_id: "751"}), do: "SL4"
-  defp display_route(%{route_id: "743"}), do: "SL3"
-  defp display_route(%{route_id: "742"}), do: "SL2"
-  defp display_route(%{route_id: "741"}), do: "SL1"
-  defp display_route(%{route_id: "77", headsign: "North Cambridge"}), do: "77A"
+  defp prediction_route_name(%{route_id: "749"}), do: "SL5"
+  defp prediction_route_name(%{route_id: "751"}), do: "SL4"
+  defp prediction_route_name(%{route_id: "743"}), do: "SL3"
+  defp prediction_route_name(%{route_id: "742"}), do: "SL2"
+  defp prediction_route_name(%{route_id: "741"}), do: "SL1"
+  defp prediction_route_name(%{route_id: "77", headsign: "North Cambridge"}), do: "77A"
 
-  defp display_route(%{route_id: "2427", stop_id: "185", headsign: headsign}) do
+  defp prediction_route_name(%{route_id: "2427", stop_id: "185", headsign: headsign}) do
     cond do
       String.starts_with?(headsign, "Ashmont") -> "27"
       String.starts_with?(headsign, "Wakefield Av") -> "24"
@@ -205,7 +205,7 @@ defmodule Signs.Bus do
     end
   end
 
-  defp display_route(%{route_id: route_id}), do: route_id
+  defp prediction_route_name(%{route_id: route_id}), do: route_id
 
   defp prediction_minutes(prediction, current_time) do
     round(Timex.diff(prediction.departure_time, current_time, :seconds) / 60)
@@ -261,7 +261,7 @@ defmodule Signs.Bus do
   end
 
   defp format_route(prediction) do
-    case display_route(prediction) do
+    case prediction_route_name(prediction) do
       nil -> ""
       str -> "#{str} "
     end
