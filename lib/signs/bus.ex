@@ -11,6 +11,8 @@ defmodule Signs.Bus do
     :audio_zones,
     :max_minutes,
     :sources,
+    :top_sources,
+    :bottom_sources,
     :config_engine,
     :prediction_engine,
     :prev_predictions,
@@ -26,19 +28,9 @@ defmodule Signs.Bus do
       text_zone: Map.fetch!(sign, "text_zone"),
       audio_zones: Map.fetch!(sign, "audio_zones"),
       max_minutes: Map.fetch!(sign, "max_minutes"),
-      sources:
-        for source <- Map.fetch!(sign, "sources") do
-          %{
-            stop_id: Map.fetch!(source, "stop_id"),
-            routes:
-              for route <- Map.fetch!(source, "routes") do
-                %{
-                  route_id: Map.fetch!(route, "route_id"),
-                  direction_id: Map.fetch!(route, "direction_id")
-                }
-              end
-          }
-        end,
+      sources: parse_sources(sign["sources"]),
+      top_sources: parse_sources(sign["top_sources"]),
+      bottom_sources: parse_sources(sign["bottom_sources"]),
       config_engine: opts[:config_engine] || Engine.Config,
       prediction_engine: opts[:prediction_engine] || Engine.BusPredictions,
       prev_predictions: [],
@@ -47,6 +39,23 @@ defmodule Signs.Bus do
     }
 
     GenServer.start_link(__MODULE__, state)
+  end
+
+  defp parse_sources(nil), do: nil
+
+  defp parse_sources(sources) do
+    for source <- sources do
+      %{
+        stop_id: Map.fetch!(source, "stop_id"),
+        routes:
+          for route <- Map.fetch!(source, "routes") do
+            %{
+              route_id: Map.fetch!(route, "route_id"),
+              direction_id: Map.fetch!(route, "direction_id")
+            }
+          end
+      }
+    end
   end
 
   def init(state) do
@@ -63,6 +72,8 @@ defmodule Signs.Bus do
       text_zone: text_zone,
       max_minutes: max_minutes,
       sources: sources,
+      top_sources: top_sources,
+      bottom_sources: bottom_sources,
       config_engine: config_engine,
       prediction_engine: predictions_engine,
       prev_predictions: prev_predictions,
@@ -79,13 +90,10 @@ defmodule Signs.Bus do
         {prediction_key(prediction), prediction}
       end
 
-    predictions =
-      for %{stop_id: stop_id, routes: routes} <- sources,
+    fetch_predictions = fn source_list ->
+      for %{stop_id: stop_id, routes: routes} <- source_list,
           prediction <- predictions_engine.predictions_for_stop(stop_id),
-          Enum.any?(
-            routes,
-            &(&1.route_id == prediction.route_id && &1.direction_id == prediction.direction_id)
-          ) do
+          Map.take(prediction, [:route_id, :direction_id]) in routes do
         prediction
       end
       # Exclude predictions whose times are missing or out of bounds
@@ -119,31 +127,44 @@ defmodule Signs.Bus do
         %{prediction | departure_time: departure_time}
       end)
       |> Enum.sort_by(& &1.departure_time)
+    end
 
-    # Normally display one prediction per route, but if all the predictions are for the same
-    # route, then show a single page of two.
+    [predictions, top_predictions, bottom_predictions] =
+      for source_list <- [sources, top_sources, bottom_sources] do
+        if source_list, do: fetch_predictions.(source_list), else: []
+      end
+
     [top, bottom] =
-      case Enum.uniq_by(predictions, &{PaEss.Utilities.prediction_route_name(&1), &1.headsign}) do
-        [_] -> Enum.take(predictions, 2)
-        list -> list
-      end
-      |> Stream.chunk_every(2, 2, [nil])
-      |> Stream.map(&format_predictions(&1, current_time))
-      |> Enum.zip()
-      |> case do
-        [] -> [{}, {}]
-        [_, _] = list -> list
-      end
-      |> Enum.map(fn pages ->
-        message =
-          case pages do
-            {} -> ""
-            {s} -> s
-            _ -> for s <- Tuple.to_list(pages), do: {s, 6}
-          end
+      cond do
+        sources ->
+          # Platform mode. Display one prediction per route, but if all the predictions are for the
+          # same route, then show a single page of two.
+          pairs =
+            case Enum.uniq_by(predictions, &route_key(&1)) do
+              [_] -> Enum.take(predictions, 2)
+              list -> list
+            end
+            |> Stream.chunk_every(2, 2, [nil])
+            |> Stream.map(fn [first, second] ->
+              [
+                format_prediction(first, second, current_time),
+                format_prediction(second, first, current_time)
+              ]
+            end)
 
-        %Content.Message.BusPredictions{message: message}
-      end)
+          [
+            paginate_message(for [x, _] <- pairs, do: x),
+            paginate_message(for [_, x] <- pairs, do: x)
+          ]
+
+        true ->
+          # Mezzanine mode. Display and paginate each line separately.
+          for predictions_list <- [top_predictions, bottom_predictions] do
+            Stream.uniq_by(predictions_list, &route_key(&1))
+            |> Enum.map(&format_prediction(&1, nil, current_time))
+            |> paginate_message()
+          end
+      end
 
     # Update the sign if:
     # 1. it has never been updated before (we just booted up)
@@ -170,7 +191,11 @@ defmodule Signs.Bus do
 
     # Special case: Hold prediction for inbound SL1 with stale prediction
 
-    {:noreply, %{new_state | prev_predictions: predictions}}
+    {:noreply,
+     %{
+       new_state
+       | prev_predictions: Enum.concat([predictions, top_predictions, bottom_predictions])
+     }}
   end
 
   def handle_info(msg, state) do
@@ -190,49 +215,47 @@ defmodule Signs.Bus do
     Map.take(prediction, [:stop_id, :route_id, :vehicle_id, :direction_id])
   end
 
-  defp format_predictions([first, second], current_time) do
-    same = second && first.headsign == second.headsign
+  defp route_key(prediction) do
+    {PaEss.Utilities.prediction_route_name(prediction), prediction.headsign}
+  end
 
-    max_route_length =
-      for prediction <- [first, second], prediction do
-        String.length(format_route(prediction))
+  defp format_prediction(nil, _, _), do: ""
+
+  defp format_prediction(prediction, other, current_time) do
+    %{headsign: headsign} = prediction
+
+    other_route_length = if other, do: String.length(format_route(other)), else: 0
+
+    route =
+      case format_route(prediction) do
+        "" -> ""
+        str -> String.pad_trailing(str, other_route_length)
       end
-      |> Enum.max()
 
-    for prediction <- [first, second] do
-      if prediction do
-        route =
-          case format_route(prediction) do
-            "" -> ""
-            str -> String.pad_trailing(str, max_route_length)
-          end
-
-        # If both predictions are for the same route, but the times are different sizes, we could
-        # end up using different abbreviations on the same page, e.g. "SouthSta" and "So Sta".
-        # To avoid that, format both times using the second one's potentially larger size. That
-        # may waste one space on the top line, but will ensure that the abbreviations match up.
-        time =
-          String.pad_leading(
-            format_time(prediction, current_time),
-            String.length(format_time(if(same, do: second, else: prediction), current_time))
-          )
-
-        dest_max = @line_max - String.length(route) - String.length(time) - 1
-
-        # Choose the longest abbreviation that will fit within the remaining space.
-        dest =
-          [prediction.headsign | PaEss.Utilities.headsign_abbreviations(prediction.headsign)]
-          |> Enum.filter(&(String.length(&1) <= dest_max))
-          |> Enum.max_by(&String.length/1, fn ->
-            Logger.warn("No abbreviation for headsign: #{inspect(prediction.headsign)}")
-            prediction.headsign
-          end)
-
-        Content.Utilities.width_padded_string("#{route}#{dest}", time, @line_max)
-      else
-        ""
+    # If both predictions are for the same route, but the times are different sizes, we could
+    # end up using different abbreviations on the same page, e.g. "SouthSta" and "So Sta".
+    # To avoid that, format both times using the other one's potentially larger size. That
+    # may waste one space on the top line, but will ensure that the abbreviations match up.
+    other_time_length =
+      case other do
+        %{headsign: ^headsign} -> String.length(format_time(other, current_time))
+        _ -> 0
       end
-    end
+
+    time = String.pad_leading(format_time(prediction, current_time), other_time_length)
+
+    dest_max = @line_max - String.length(route) - String.length(time) - 1
+
+    # Choose the longest abbreviation that will fit within the remaining space.
+    dest =
+      [headsign | PaEss.Utilities.headsign_abbreviations(headsign)]
+      |> Enum.filter(&(String.length(&1) <= dest_max))
+      |> Enum.max_by(&String.length/1, fn ->
+        Logger.warn("No abbreviation for headsign: #{inspect(headsign)}")
+        headsign
+      end)
+
+    Content.Utilities.width_padded_string("#{route}#{dest}", time, @line_max)
   end
 
   defp format_route(prediction) do
@@ -247,5 +270,16 @@ defmodule Signs.Bus do
       0 -> "ARR"
       minutes -> "#{minutes} min"
     end
+  end
+
+  defp paginate_message(pages) do
+    message =
+      case pages do
+        [] -> ""
+        [s] -> s
+        _ -> for s <- pages, do: {s, 6}
+      end
+
+    %Content.Message.BusPredictions{message: message}
   end
 end

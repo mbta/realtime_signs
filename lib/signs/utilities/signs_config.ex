@@ -26,8 +26,10 @@ defmodule Signs.Utilities.SignsConfig do
 
   @spec all_bus_stop_ids() :: [String.t()]
   def all_bus_stop_ids do
-    for %{"type" => "bus", "sources" => sources} <- children_config(),
-        %{"stop_id" => stop_id} <- sources,
+    for %{"type" => "bus"} = sign <- children_config(),
+        source_list <- [sign["sources"], sign["top_sources"], sign["bottom_sources"]],
+        source_list,
+        %{"stop_id" => stop_id} <- source_list,
         uniq: true do
       stop_id
     end
