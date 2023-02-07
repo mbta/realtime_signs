@@ -85,7 +85,7 @@ defmodule Engine.BusPredictions do
               _ -> nil
             end
 
-          %{
+          %Predictions.BusPrediction{
             direction_id: direction_id,
             departure_time:
               if(departure_time, do: Timex.parse!(departure_time, "{ISO:Extended}")),

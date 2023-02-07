@@ -480,4 +480,30 @@ defmodule PaEss.Utilities do
       if String.starts_with?(headsign, prefix), do: abbreviations
     end)
   end
+
+  @spec prediction_route_name(Predictions.BusPrediction.t()) :: String.t() | nil
+  # Don't display "SLW" route name when its outbound headsign already says "Silver Line Way".
+  def prediction_route_name(%{route_id: "746", headsign: "Silver Line Way"}), do: nil
+  # Heading inbound from Silver Line Way to South Station, all routes take the same path, so
+  # treat them as one unit and don't display route names.
+  def prediction_route_name(%{stop_id: stop_id, headsign: "South Station"})
+      when stop_id in ["74615", "74616"],
+      do: nil
+
+  def prediction_route_name(%{route_id: "749"}), do: "SL5"
+  def prediction_route_name(%{route_id: "751"}), do: "SL4"
+  def prediction_route_name(%{route_id: "743"}), do: "SL3"
+  def prediction_route_name(%{route_id: "742"}), do: "SL2"
+  def prediction_route_name(%{route_id: "741"}), do: "SL1"
+  def prediction_route_name(%{route_id: "77", headsign: "North Cambridge"}), do: "77A"
+
+  def prediction_route_name(%{route_id: "2427", stop_id: "185", headsign: headsign}) do
+    cond do
+      String.starts_with?(headsign, "Ashmont") -> "27"
+      String.starts_with?(headsign, "Wakefield Av") -> "24"
+      true -> "2427"
+    end
+  end
+
+  def prediction_route_name(%{route_id: route_id}), do: route_id
 end

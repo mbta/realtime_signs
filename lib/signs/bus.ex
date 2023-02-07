@@ -123,7 +123,7 @@ defmodule Signs.Bus do
     # Normally display one prediction per route, but if all the predictions are for the same
     # route, then show a single page of two.
     [top, bottom] =
-      case Enum.uniq_by(predictions, &{prediction_route_name(&1), &1.headsign}) do
+      case Enum.uniq_by(predictions, &{PaEss.Utilities.prediction_route_name(&1), &1.headsign}) do
         [_] -> Enum.take(predictions, 2)
         list -> list
       end
@@ -155,7 +155,7 @@ defmodule Signs.Bus do
         (current_content != {top, bottom} &&
            Timex.after?(
              current_time,
-             Timex.shift(last_update, seconds: content_duration(current_content))
+             Timex.shift(last_update, seconds: Content.Utilities.content_duration(current_content))
            ))
 
     new_state =
@@ -181,31 +181,6 @@ defmodule Signs.Bus do
   def schedule_run_loop(pid) do
     Process.send_after(pid, :run_loop, 1_000)
   end
-
-  # Don't display "SLW" route name when its outbound headsign already says "Silver Line Way".
-  defp prediction_route_name(%{route_id: "746", headsign: "Silver Line Way"}), do: nil
-  # Heading inbound from Silver Line Way to South Station, all routes take the same path, so
-  # treat them as one unit and don't display route names.
-  defp prediction_route_name(%{stop_id: stop_id, headsign: "South Station"})
-       when stop_id in ["74615", "74616"],
-       do: nil
-
-  defp prediction_route_name(%{route_id: "749"}), do: "SL5"
-  defp prediction_route_name(%{route_id: "751"}), do: "SL4"
-  defp prediction_route_name(%{route_id: "743"}), do: "SL3"
-  defp prediction_route_name(%{route_id: "742"}), do: "SL2"
-  defp prediction_route_name(%{route_id: "741"}), do: "SL1"
-  defp prediction_route_name(%{route_id: "77", headsign: "North Cambridge"}), do: "77A"
-
-  defp prediction_route_name(%{route_id: "2427", stop_id: "185", headsign: headsign}) do
-    cond do
-      String.starts_with?(headsign, "Ashmont") -> "27"
-      String.starts_with?(headsign, "Wakefield Av") -> "24"
-      true -> "2427"
-    end
-  end
-
-  defp prediction_route_name(%{route_id: route_id}), do: route_id
 
   defp prediction_minutes(prediction, current_time) do
     round(Timex.diff(prediction.departure_time, current_time, :seconds) / 60)
@@ -261,7 +236,7 @@ defmodule Signs.Bus do
   end
 
   defp format_route(prediction) do
-    case prediction_route_name(prediction) do
+    case PaEss.Utilities.prediction_route_name(prediction) do
       nil -> ""
       str -> "#{str} "
     end
@@ -272,15 +247,5 @@ defmodule Signs.Bus do
       0 -> "ARR"
       minutes -> "#{minutes} min"
     end
-  end
-
-  defp content_duration({top, bottom}) do
-    for message <- [top, bottom] do
-      case Content.Message.to_string(message) do
-        pages when is_list(pages) -> Enum.map(pages, fn {_, n} -> n end) |> Enum.sum()
-        str when is_binary(str) -> 0
-      end
-    end
-    |> Enum.max()
   end
 end
