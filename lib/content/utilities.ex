@@ -12,6 +12,17 @@ defmodule Content.Utilities do
     "#{new_left} #{right}"
   end
 
+  @spec content_duration({Content.Message.t(), Content.Message.t()}) :: integer()
+  def content_duration({top, bottom}) do
+    for message <- [top, bottom] do
+      case Content.Message.to_string(message) do
+        pages when is_list(pages) -> Enum.map(pages, fn {_, n} -> n end) |> Enum.sum()
+        str when is_binary(str) -> 0
+      end
+    end
+    |> Enum.max()
+  end
+
   @spec destination_for_prediction(String.t(), 0 | 1, String.t()) ::
           {:ok, PaEss.destination()} | {:error, :not_found}
   def destination_for_prediction("Mattapan", 0, _), do: {:ok, :mattapan}
