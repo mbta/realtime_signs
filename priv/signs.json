@@ -1233,7 +1233,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
         {
           "stop_id": "Oak Grove-01",
@@ -1286,7 +1287,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
         {
           "stop_id": "Oak Grove-01",
@@ -1339,7 +1341,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
         {
           "stop_id": "Oak Grove-01",
@@ -3175,7 +3178,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
         {
           "stop_id": "Forest Hills-01",
@@ -3228,7 +3232,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
         {
           "stop_id": "Forest Hills-01",
@@ -3281,7 +3286,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
         {
           "stop_id": "Forest Hills-01",
@@ -3376,7 +3382,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
         {
           "stop_id": "Alewife-01",
@@ -3429,7 +3436,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
         {
           "stop_id": "Alewife-01",
@@ -4710,8 +4718,8 @@
             "Mattapan"
           ],
           "direction_id": 0,
-          "headway_direction_name": "Mattapan",
-          "headway_group": "mattapan_trunk",
+          "headway_direction_name": "Alewife",
+          "headway_group": "red_ashmont",
           "platform": null,
           "terminal": true,
           "announce_arriving": true,
@@ -5180,7 +5188,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
         {
           "stop_id": "Braintree-01",
@@ -5233,7 +5242,8 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true
         },
         {
           "stop_id": "Braintree-01",
@@ -6926,7 +6936,8 @@
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
-          "announce_boarding": false
+          "announce_boarding": false,
+          "source_for_headway": true
         },
         {
           "stop_id": "70200",
@@ -6972,7 +6983,8 @@
           "platform": null,
           "terminal": false,
           "announce_arriving": true,
-          "announce_boarding": false
+          "announce_boarding": false,
+          "source_for_headway": true
         },
         {
           "stop_id": "70200",
@@ -7018,7 +7030,8 @@
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "multi_berth": true
         },
         {
           "stop_id": "70199",
@@ -7034,7 +7047,8 @@
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "multi_berth": true
         }
       ]
     ]
@@ -7064,7 +7078,9 @@
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true,
+          "multi_berth": true
         },
         {
           "stop_id": "70197",
@@ -7080,7 +7096,9 @@
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
-          "announce_boarding": true
+          "announce_boarding": true,
+          "source_for_headway": true,
+          "multi_berth": true
         }
       ]
     ]
