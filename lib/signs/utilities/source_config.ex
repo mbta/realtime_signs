@@ -218,4 +218,34 @@ defmodule Signs.Utilities.SourceConfig do
   def sign_routes({s}) do
     Enum.flat_map(s, &(&1.routes || []))
   end
+
+  @doc """
+  Returns the headway group from the source list. Always use the headway group from the first source in the list.
+  """
+  def headway_group_from_source_list(source_list) do
+    get_first_headway_group(source_list)
+  end
+
+  @doc """
+  Returns the headway group from the source config. Always use the headway group from the first source in the first list.
+
+  We don't care about the headway group from the second list because this is only used for headway messages that take up
+  the full sign in which case, we default to the top line's headway group because headway_group will be the same for both lines.
+  The only current exception is the Ashmont mezzanine which uses the Ashmont headway group for the top line and the Mattapan
+  headway group for the bottom line but we will still default to the Alewife headway group.
+  """
+  def headway_group_from_source_config({source_list}) do
+    get_first_headway_group(source_list)
+  end
+
+  def headway_group_from_source_config({source_list, _}) do
+    get_first_headway_group(source_list)
+  end
+
+  defp get_first_headway_group(source) do
+    case List.first(source, "") do
+      %__MODULE__{headway_group: headway_group} -> headway_group
+      _ -> ""
+    end
+  end
 end

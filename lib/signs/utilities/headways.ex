@@ -9,7 +9,17 @@ defmodule Signs.Utilities.Headways do
   @spec get_messages(Signs.Realtime.t(), DateTime.t()) :: Signs.Utilities.Messages.sign_messages()
   def get_messages(sign, current_time) do
     config = single_source_config(sign) || config_by_headway_id(sign)
-    headways = sign.config_engine.headway_config(sign.headway_group, current_time)
+
+    # If the sign is single source or there is a source marked as source_for_headway, prefer that one.
+    # Otherwise, default to using the first source available.
+    headways =
+      if config do
+        sign.config_engine.headway_config(config.headway_group, current_time)
+      else
+        SourceConfig.headway_group_from_source_config(sign.source_config)
+        |> sign.config_engine.headway_config(current_time)
+      end
+
     stop_ids = get_stop_ids(sign, config)
 
     if display_headways?(sign, stop_ids, current_time, headways) do
@@ -26,7 +36,10 @@ defmodule Signs.Utilities.Headways do
           DateTime.t()
         ) :: Content.Message.Headways.Paging.t()
   def get_paging_message(sign, config, current_time) do
-    case sign.config_engine.headway_config(sign.headway_group, current_time) do
+    case sign.config_engine.headway_config(
+           SourceConfig.headway_group_from_source_list(config),
+           current_time
+         ) do
       nil ->
         %Content.Message.Empty{}
 
