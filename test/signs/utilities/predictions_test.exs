@@ -614,7 +614,6 @@ defmodule Signs.Utilities.PredictionsTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
-    headway_group: "headway_group",
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: {[], []},
@@ -639,6 +638,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s1 = %SourceConfig{
         stop_id: "1",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -649,6 +649,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s2 = %SourceConfig{
         stop_id: "2",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -669,6 +670,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s1 = %SourceConfig{
         stop_id: "3",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -679,6 +681,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s2 = %SourceConfig{
         stop_id: "4",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -699,6 +702,7 @@ defmodule Signs.Utilities.PredictionsTest do
       src = %SourceConfig{
         stop_id: "arrival_vs_departure_time",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -719,6 +723,7 @@ defmodule Signs.Utilities.PredictionsTest do
       src = %SourceConfig{
         stop_id: "stopped_not_too_long_away",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -739,6 +744,7 @@ defmodule Signs.Utilities.PredictionsTest do
       src = %SourceConfig{
         stop_id: "stopped_a_long_time_away_terminal",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: true,
         platform: nil,
@@ -759,6 +765,7 @@ defmodule Signs.Utilities.PredictionsTest do
       src = %SourceConfig{
         stop_id: "stopped_a_long_time_away",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -779,6 +786,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s = %SourceConfig{
         stop_id: "7",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -799,6 +807,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s = %SourceConfig{
         stop_id: "n/a",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -819,6 +828,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s = %SourceConfig{
         stop_id: "8",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -839,6 +849,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s = %SourceConfig{
         stop_id: "9",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -859,6 +870,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s = %SourceConfig{
         stop_id: "stop_with_nil_departure_prediction",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -879,6 +891,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s1 = %SourceConfig{
         stop_id: "filterable_by_route",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -910,6 +923,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s = %SourceConfig{
         stop_id: "both_brd",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -953,6 +967,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s1 = %SourceConfig{
         stop_id: "arr_multi_berth1",
         headway_destination: :mattapan,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -989,6 +1004,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s1 = %SourceConfig{
         stop_id: "multiple_brd_some_first_stop_1",
         headway_destination: :westbound,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -1014,6 +1030,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s = %SourceConfig{
         stop_id: "terminal_dont_sort_0_stops_first",
         headway_destination: :southbound,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: true,
         platform: nil,
@@ -1035,6 +1052,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s = %SourceConfig{
         stop_id: "indeterminate_destination",
         headway_destination: :southbound,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: true,
         platform: nil,
@@ -1056,6 +1074,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s1 = %SourceConfig{
         stop_id: "passthrough_trains",
         headway_destination: :southbound,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -1067,6 +1086,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s2 = %SourceConfig{
         stop_id: "passthrough_trains",
         headway_destination: :alewife,
+        headway_group: "headway_group",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -1091,6 +1111,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s = %SourceConfig{
         stop_id: "passthrough_trains",
         headway_destination: :southbound,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -1116,6 +1137,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s = %SourceConfig{
         stop_id: "passthrough_trains_southbound_red_line_destination",
         headway_destination: :alewife,
+        headway_group: "headway_group",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -1141,6 +1163,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s = %SourceConfig{
         stop_id: "passthrough_trains_bad_destination",
         headway_destination: :alewife,
+        headway_group: "headway_group",
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -1164,6 +1187,7 @@ defmodule Signs.Utilities.PredictionsTest do
       s = %SourceConfig{
         stop_id: "multiple_destinations",
         headway_destination: :southbound,
+        headway_group: "headway_group",
         direction_id: 0,
         terminal?: false,
         platform: nil,

@@ -12,6 +12,7 @@ defmodule Signs.Utilities.SourceConfigTest do
         "routes": ["Foo"],
         "direction_id": 0,
         "headway_direction_name": "Southbound",
+        "headway_group": "headway_group",
         "platform": null,
         "terminal": false,
         "announce_arriving": false,
@@ -20,6 +21,7 @@ defmodule Signs.Utilities.SourceConfigTest do
       {
         "stop_id": "234",
         "headway_direction_name": "Southbound",
+        "headway_group": "headway_group",
         "routes": ["Bar"],
         "direction_id": 1,
         "platform": "ashmont",
@@ -38,6 +40,7 @@ defmodule Signs.Utilities.SourceConfigTest do
       {
         "stop_id": "123",
         "headway_direction_name": "Southbound",
+        "headway_group": "headway_group",
         "routes": ["Foo"],
         "direction_id": 0,
         "platform": null,
@@ -50,6 +53,7 @@ defmodule Signs.Utilities.SourceConfigTest do
       {
         "stop_id": "234",
         "headway_direction_name": "Southbound",
+        "headway_group": "headway_group",
         "routes": ["Bar"],
         "direction_id": 1,
         "platform": "braintree",
@@ -69,6 +73,7 @@ defmodule Signs.Utilities.SourceConfigTest do
         "routes": ["Foo"],
         "direction_id": 0,
         "headway_direction_name": "Bar",
+        "headway_group": "headway_group",
         "platform": null,
         "terminal": false,
         "announce_arriving": false,
@@ -77,6 +82,7 @@ defmodule Signs.Utilities.SourceConfigTest do
       {
         "stop_id": "234",
         "headway_direction_name": "Bar",
+        "headway_group": "headway_group",
         "routes": ["Bar"],
         "direction_id": 1,
         "platform": "ashmont",
@@ -97,6 +103,7 @@ defmodule Signs.Utilities.SourceConfigTest do
                    %SourceConfig{
                      stop_id: "123",
                      headway_destination: :southbound,
+                     headway_group: "headway_group",
                      routes: ["Foo"],
                      direction_id: 0,
                      platform: nil,
@@ -108,6 +115,7 @@ defmodule Signs.Utilities.SourceConfigTest do
                    %SourceConfig{
                      stop_id: "234",
                      headway_destination: :southbound,
+                     headway_group: "headway_group",
                      routes: ["Bar"],
                      direction_id: 1,
                      platform: :ashmont,
@@ -127,6 +135,7 @@ defmodule Signs.Utilities.SourceConfigTest do
                    %SourceConfig{
                      stop_id: "123",
                      headway_destination: :southbound,
+                     headway_group: "headway_group",
                      routes: ["Foo"],
                      direction_id: 0,
                      platform: nil,
@@ -139,6 +148,7 @@ defmodule Signs.Utilities.SourceConfigTest do
                    %SourceConfig{
                      stop_id: "234",
                      headway_destination: :southbound,
+                     headway_group: "headway_group",
                      routes: ["Bar"],
                      direction_id: 1,
                      platform: :braintree,
@@ -158,6 +168,7 @@ defmodule Signs.Utilities.SourceConfigTest do
               %SourceConfig{
                 stop_id: "123",
                 headway_destination: nil,
+                headway_group: "headway_group",
                 routes: ["Foo"],
                 direction_id: 0,
                 platform: nil,
@@ -169,6 +180,7 @@ defmodule Signs.Utilities.SourceConfigTest do
               %SourceConfig{
                 stop_id: "234",
                 headway_destination: nil,
+                headway_group: "headway_group",
                 routes: ["Bar"],
                 direction_id: 1,
                 platform: :ashmont,

@@ -42,7 +42,6 @@ defmodule Signs.Utilities.HeadwaysTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
-    headway_group: "headway_group",
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: {[], []},
@@ -63,11 +62,12 @@ defmodule Signs.Utilities.HeadwaysTest do
   }
 
   @spec source_config_for_stop_id(String.t()) :: %Signs.Utilities.SourceConfig{}
-  defp source_config_for_stop_id(stop_id) do
+  defp source_config_for_stop_id(stop_id, headway_group \\ "headway_group") do
     %Signs.Utilities.SourceConfig{
       stop_id: stop_id,
       routes: ["Red"],
       headway_destination: :southbound,
+      headway_group: headway_group,
       direction_id: 0,
       platform: nil,
       terminal?: false,
@@ -90,15 +90,14 @@ defmodule Signs.Utilities.HeadwaysTest do
     test "displays the headway at a single-source stop" do
       sign = %{
         @sign
-        | source_config: {[source_config_for_stop_id("a")]},
-          config_engine: FakeHeadwayConfigEngine,
-          headway_group: "8-11"
+        | source_config: {[source_config_for_stop_id("a", "8-11")]},
+          config_engine: FakeHeadwayConfigEngine
       }
 
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
-               {{source_config_for_stop_id("a"),
+               {{source_config_for_stop_id("a", "8-11"),
                  %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}},
-                {source_config_for_stop_id("a"),
+                {source_config_for_stop_id("a", "8-11"),
                  %Content.Message.Headways.Bottom{
                    range: {8, 11},
                    prev_departure_mins: nil
@@ -106,7 +105,7 @@ defmodule Signs.Utilities.HeadwaysTest do
     end
 
     test "displays the headway at multi-source stop that has a source_for_headway" do
-      source_with_headway = %{source_config_for_stop_id("a") | source_for_headway?: true}
+      source_with_headway = %{source_config_for_stop_id("a", "8-11") | source_for_headway?: true}
 
       sign = %{
         @sign
@@ -116,8 +115,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                source_with_headway,
                source_config_for_stop_id("c")
              ]},
-          config_engine: FakeHeadwayConfigEngine,
-          headway_group: "8-11"
+          config_engine: FakeHeadwayConfigEngine
       }
 
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
@@ -136,8 +134,7 @@ defmodule Signs.Utilities.HeadwaysTest do
       sign = %{
         @sign
         | source_config: {[config]},
-          config_engine: FakeHeadwayConfigEngine,
-          headway_group: "none_configured"
+          config_engine: FakeHeadwayConfigEngine
       }
 
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
@@ -150,8 +147,7 @@ defmodule Signs.Utilities.HeadwaysTest do
       sign = %{
         @sign
         | source_config: {[config]},
-          config_engine: FakeHeadwayConfigEngine,
-          headway_group: "8-11"
+          config_engine: FakeHeadwayConfigEngine
       }
 
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
@@ -161,9 +157,8 @@ defmodule Signs.Utilities.HeadwaysTest do
     test "generates non-directional headway message at center/mezz signs" do
       sign = %{
         @sign
-        | source_config: {[source_config_for_stop_id("mezz")], []},
-          config_engine: FakeHeadwayConfigEngine,
-          headway_group: "8-11"
+        | source_config: {[source_config_for_stop_id("mezz", "8-11")], []},
+          config_engine: FakeHeadwayConfigEngine
       }
 
       assert {
