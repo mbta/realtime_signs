@@ -84,19 +84,6 @@ defmodule Signs.Utilities.MessagesTest do
     end
   end
 
-  defp source_config_with_headway_group(headway_group \\ "headway_group") do
-    %Signs.Utilities.SourceConfig{
-      stop_id: "1",
-      direction_id: 0,
-      headway_destination: :mattapan,
-      headway_group: headway_group,
-      platform: nil,
-      terminal?: false,
-      announce_arriving?: false,
-      announce_boarding?: false
-    }
-  end
-
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     direction_id: 0,
