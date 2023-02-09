@@ -81,7 +81,7 @@ defmodule Signs.Bus do
       last_update: last_update
     } = state
 
-    _config = config_engine.sign_config(id)
+    config = config_engine.sign_config(id)
     current_time = Timex.now()
 
     prev_predictions_lookup =
@@ -136,6 +136,25 @@ defmodule Signs.Bus do
 
     [top, bottom] =
       cond do
+        config == :off ->
+          [Content.Message.Empty.new(), Content.Message.Empty.new()]
+
+        match?({:static_text, _}, config) ->
+          {_, {line1, line2}} = config
+          [Content.Message.Custom.new(line1, :top), Content.Message.Custom.new(line2, :bottom)]
+
+        # Special case: 71 and 73 buses board on the Harvard upper busway at certain times. If
+        # they are predicted there, let people on the lower busway know.
+        id == "bus.Harvard_lower" &&
+            Enum.any?(
+              predictions_engine.predictions_for_stop("20761"),
+              &(&1.route_id in ["71", "73"])
+            ) ->
+          [
+            Content.Message.Custom.new("Board routes 71", :top),
+            Content.Message.Custom.new("and 73 on upper level", :bottom)
+          ]
+
         sources ->
           # Platform mode. Display one prediction per route, but if all the predictions are for the
           # same route, then show a single page of two.
