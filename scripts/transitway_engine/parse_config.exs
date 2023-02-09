@@ -24,7 +24,7 @@ lines =
   |> Enum.filter(&(!String.match?(&1, ~r/^\s*$/) && !String.match?(&1, ~r/^\s*\/\//)))
 
 [_, _ | lines] = Enum.drop_while(lines, &(&1 != "int view_InitializeSignageLogic()"))
-{initialize_lines, lines} = Enum.split_while(lines, &(&1 != "  if (view_processRoutesFile())"))
+{initialize_lines, _lines} = Enum.split_while(lines, &(&1 != "  if (view_processRoutesFile())"))
 # TODO continue parsing audio zones
 
 routes_lookup =
@@ -41,10 +41,11 @@ routes_lookup =
     {id, routes}
   end
 
-for line <- route_lines do
-  [name, number] = String.split(line, ",")
-  %{name: name, number: String.to_integer(number)}
-end
+_route_takes =
+  for line <- route_lines do
+    [name, number] = String.split(line, ",")
+    %{name: name, number: String.to_integer(number)}
+  end
 
 # |> IO.inspect
 
@@ -71,7 +72,7 @@ abbreviations_code =
 
 signs_json =
   for [line1, line2] <- Enum.chunk_every(initialize_lines, 2) do
-    [_, id, pa_ess_loc, text_zone, audio_zones, stop_id, max_preds, max_minutes] =
+    [_, id, pa_ess_loc, text_zone, audio_zones, stop_id, _max_preds, max_minutes] =
       Regex.run(
         ~r/  InitializeStop\([^,]+, "([\w.]+)", "(\w+)", '(\w)', "(\d*)", ([^,]+), +(\d), (\d+)\)/,
         line1 <> " " <> String.trim(line2)
@@ -110,5 +111,8 @@ signs_json =
   |> Jason.encode!()
   |> Jason.Formatter.pretty_print()
 
-File.write!("priv/bus-signs.json", signs_json)
-File.write!("priv/abbreviations.ex", abbreviations_code)
+case System.argv() do
+  ["signs"] -> File.write!("priv/bus-signs.json", signs_json)
+  ["abbreviations"] -> File.write!("priv/abbreviations.ex", abbreviations_code)
+  _ -> IO.puts("ERROR: specify a command")
+end
