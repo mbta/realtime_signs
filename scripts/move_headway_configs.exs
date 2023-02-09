@@ -3,17 +3,66 @@ Mix.install([{:jason, "~> 1.4.0"}])
 parse_source = fn (sign, source_config) ->
   Enum.map(source_config, fn source_list ->
     Enum.map(source_list, fn source ->
-        Jason.OrderedObject.new(
-          stop_id: source["stop_id"],
-          routes: source["routes"],
-          direction_id: source["direction_id"],
-          headway_direction_name: source["headway_direction_name"],
-          headway_group: sign["headway_group"],
-          platform: source["platform"],
-          terminal: source["terminal"],
-          announce_arriving: source["announce_arriving"],
-          announce_boarding: source["announce_boarding"]
-        )
+      source_for_headway = Map.get(source, "source_for_headway", false)
+      multi_berth = Map.get(source, "multi_berth", false)
+
+      cond do
+        source_for_headway and multi_berth ->
+          Jason.OrderedObject.new(
+            stop_id: source["stop_id"],
+            routes: source["routes"],
+            direction_id: source["direction_id"],
+            headway_direction_name: source["headway_direction_name"],
+            headway_group: sign["headway_group"],
+            platform: source["platform"],
+            terminal: source["terminal"],
+            announce_arriving: source["announce_arriving"],
+            announce_boarding: source["announce_boarding"],
+            source_for_headway: true,
+            multi_berth: true
+            )
+
+        source_for_headway ->
+          Jason.OrderedObject.new(
+            stop_id: source["stop_id"],
+            routes: source["routes"],
+            direction_id: source["direction_id"],
+            headway_direction_name: source["headway_direction_name"],
+            headway_group: sign["headway_group"],
+            platform: source["platform"],
+            terminal: source["terminal"],
+            announce_arriving: source["announce_arriving"],
+            announce_boarding: source["announce_boarding"],
+            source_for_headway: true
+            )
+
+        multi_berth ->
+          Jason.OrderedObject.new(
+            stop_id: source["stop_id"],
+            routes: source["routes"],
+            direction_id: source["direction_id"],
+            headway_direction_name: source["headway_direction_name"],
+            headway_group: sign["headway_group"],
+            platform: source["platform"],
+            terminal: source["terminal"],
+            announce_arriving: source["announce_arriving"],
+            announce_boarding: source["announce_boarding"],
+            multi_berth: true
+          )
+
+          true ->
+            Jason.OrderedObject.new(
+              stop_id: source["stop_id"],
+              routes: source["routes"],
+              direction_id: source["direction_id"],
+              headway_direction_name: source["headway_direction_name"],
+              headway_group: sign["headway_group"],
+              platform: source["platform"],
+              terminal: source["terminal"],
+              announce_arriving: source["announce_arriving"],
+              announce_boarding: source["announce_boarding"]
+              )
+        end
       end)
     end)
   end
