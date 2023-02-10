@@ -48,7 +48,7 @@ defmodule Signs.Realtime do
           id: String.t(),
           text_id: PaEss.text_id(),
           audio_id: PaEss.audio_id(),
-          headway_group: String.t(),
+          headway_group: String.t() | list(String.t()),
           source_config: Utilities.SourceConfig.config(),
           current_content_top: line_content(),
           current_content_bottom: line_content(),
