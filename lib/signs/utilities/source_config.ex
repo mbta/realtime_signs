@@ -214,4 +214,8 @@ defmodule Signs.Utilities.SourceConfig do
   def sign_routes({s}) do
     Enum.flat_map(s, &(&1.routes || []))
   end
+
+  def default_headway_group([headway_group, _]), do: headway_group
+
+  def default_headway_group(headway_group) when is_binary(headway_group), do: headway_group
 end

@@ -98,13 +98,21 @@ defmodule Signs.Utilities.Messages do
     if has_single_source_list?(sign) do
       {nil, Content.Message.Empty.new()}
     else
-      source_config =
+      {source_config, headway_group} =
         if line == :top do
           %Signs.Realtime{source_config: {top_line_source, _}} = sign
-          top_line_source
+          headway_group = Signs.Utilities.SourceConfig.default_headway_group(sign.headway_group)
+          {top_line_source, headway_group}
         else
           %Signs.Realtime{source_config: {_, bottom_line_source}} = sign
-          bottom_line_source
+
+          headway_group =
+            case sign.headway_group do
+              [_, bottom_headway_group] -> bottom_headway_group
+              _ -> sign.headway_group
+            end
+
+          {bottom_line_source, headway_group}
         end
 
       case get_paging_alert_message(
@@ -114,7 +122,12 @@ defmodule Signs.Utilities.Messages do
            ) do
         nil ->
           {source_config,
-           Signs.Utilities.Headways.get_paging_message(sign, source_config, current_time)}
+           Signs.Utilities.Headways.get_paging_message(
+             sign,
+             source_config,
+             headway_group,
+             current_time
+           )}
 
         alert_message ->
           alert_message
