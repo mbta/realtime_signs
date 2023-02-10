@@ -110,7 +110,6 @@ defmodule Signs.Utilities.SourceConfig do
   @enforce_keys [
     :stop_id,
     :headway_destination,
-    :headway_group,
     :direction_id,
     :platform,
     :terminal?,
@@ -124,7 +123,6 @@ defmodule Signs.Utilities.SourceConfig do
           stop_id: String.t(),
           headway_stop_id: String.t() | nil,
           headway_destination: PaEss.destination(),
-          headway_group: String.t(),
           direction_id: 0 | 1,
           routes: [String.t()] | nil,
           platform: Content.platform() | nil,
@@ -153,7 +151,6 @@ defmodule Signs.Utilities.SourceConfig do
          %{
            "stop_id" => stop_id,
            "headway_direction_name" => headway_direction_name,
-           "headway_group" => headway_group,
            "direction_id" => direction_id,
            "platform" => platform,
            "terminal" => terminal?,
@@ -185,7 +182,6 @@ defmodule Signs.Utilities.SourceConfig do
     %__MODULE__{
       stop_id: stop_id,
       headway_destination: headway_destination,
-      headway_group: headway_group,
       direction_id: direction_id,
       routes: source["routes"],
       platform: platform,
