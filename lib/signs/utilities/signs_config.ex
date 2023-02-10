@@ -6,9 +6,13 @@ defmodule Signs.Utilities.SignsConfig do
   @doc "Pulls the entire signs.json configuration"
   @spec children_config() :: [map()]
   def children_config() do
+    # This override allows testing the in-progress bus work, and is off by default.
+    # It should be removed once the work is complete.
+    test_bus_mode = Application.get_env(:realtime_signs, :test_bus_mode)
+
     :realtime_signs
     |> :code.priv_dir()
-    |> Path.join("signs.json")
+    |> Path.join(if test_bus_mode, do: "bus-signs.json", else: "signs.json")
     |> File.read!()
     |> Jason.decode!()
   end
