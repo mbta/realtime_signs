@@ -11,7 +11,6 @@ defmodule Content.Audio.PredictionsTest do
     stop_id: "70196",
     direction_id: 0,
     headway_destination: :heath_street,
-    headway_group: "green_e",
     platform: nil,
     terminal?: false,
     announce_arriving?: false,

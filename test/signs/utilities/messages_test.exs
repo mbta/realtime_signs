@@ -84,24 +84,10 @@ defmodule Signs.Utilities.MessagesTest do
     end
   end
 
-  defp source_config_with_headway_group(headway_group \\ "headway_group") do
-    %Signs.Utilities.SourceConfig{
-      stop_id: "1",
-      direction_id: 0,
-      headway_destination: :mattapan,
-      headway_group: headway_group,
-      platform: nil,
-      terminal?: false,
-      announce_arriving?: false,
-      announce_boarding?: false
-    }
-  end
-
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     direction_id: 0,
     headway_destination: :mattapan,
-    headway_group: "headway_group",
     platform: nil,
     terminal?: false,
     announce_arriving?: false,
@@ -110,6 +96,7 @@ defmodule Signs.Utilities.MessagesTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
+    headway_group: "headway_group",
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: {[@src]},
@@ -212,7 +199,6 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_boarding?: false,
                    direction_id: 0,
                    headway_destination: :mattapan,
-                   headway_group: "headway_group",
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -233,7 +219,6 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_boarding?: false,
                    direction_id: 0,
                    headway_destination: :mattapan,
-                   headway_group: "headway_group",
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -306,7 +291,6 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_boarding?: false,
                    direction_id: 0,
                    headway_destination: :mattapan,
-                   headway_group: "headway_group",
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -327,7 +311,6 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_boarding?: false,
                    direction_id: 0,
                    headway_destination: :mattapan,
-                   headway_group: "headway_group",
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -398,7 +381,6 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_boarding?: false,
                    direction_id: 0,
                    headway_destination: :mattapan,
-                   headway_group: "headway_group",
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -419,7 +401,6 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_boarding?: false,
                    direction_id: 0,
                    headway_destination: :mattapan,
-                   headway_group: "headway_group",
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -448,7 +429,6 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_boarding?: false,
                    direction_id: 0,
                    headway_destination: :mattapan,
-                   headway_group: "headway_group",
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -469,7 +449,6 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_boarding?: false,
                    direction_id: 0,
                    headway_destination: :mattapan,
-                   headway_group: "headway_group",
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -490,8 +469,9 @@ defmodule Signs.Utilities.MessagesTest do
     test "when there are no predictions and only one source config, puts headways on the sign" do
       sign = %{
         @sign
-        | source_config: {[%{@src | stop_id: "no_preds", headway_group: "8-11"}]},
-          config_engine: FakeConfigEngine
+        | source_config: {[%{@src | stop_id: "no_preds"}]},
+          config_engine: FakeConfigEngine,
+          headway_group: "8-11"
       }
 
       sign_config = :auto
@@ -505,7 +485,6 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_boarding?: false,
                    direction_id: 0,
                    headway_destination: :mattapan,
-                   headway_group: "8-11",
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -521,7 +500,6 @@ defmodule Signs.Utilities.MessagesTest do
                    announce_boarding?: false,
                    direction_id: 0,
                    headway_destination: :mattapan,
-                   headway_group: "8-11",
                    multi_berth?: false,
                    platform: nil,
                    routes: nil,
@@ -548,12 +526,7 @@ defmodule Signs.Utilities.MessagesTest do
     end
 
     test "when sign is forced into headway mode but no alerts are present, displays headways" do
-      sign = %{
-        @sign
-        | source_config: {[%{@src | headway_group: "8-11"}]},
-          config_engine: FakeConfigEngine
-      }
-
+      sign = %{@sign | config_engine: FakeConfigEngine, headway_group: "8-11"}
       sign_config = :headway
       alert_status = :none
 

@@ -27,7 +27,6 @@ defmodule Signs.Utilities.UpdaterTest do
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     headway_destination: :southbound,
-    headway_group: "headway_group",
     direction_id: 0,
     platform: nil,
     terminal?: false,
@@ -37,6 +36,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
+    headway_group: "headway_group",
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: {[]},
