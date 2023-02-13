@@ -4633,7 +4633,7 @@
   },
   {
     "id": "ashmont_mezzanine",
-    "headway_group": "red_ashmont",
+    "headway_group": ["red_ashmont", "mattapan_trunk"],
     "type": "realtime",
     "pa_ess_loc": "RASH",
     "read_loop_offset": 120,
@@ -4663,7 +4663,7 @@
             "Mattapan"
           ],
           "direction_id": 0,
-          "headway_direction_name": "Alewife",
+          "headway_direction_name": "Mattapan",
           "platform": null,
           "terminal": true,
           "announce_arriving": true,

@@ -214,4 +214,17 @@ defmodule Signs.Utilities.SourceConfig do
   def sign_routes({s}) do
     Enum.flat_map(s, &(&1.routes || []))
   end
+
+  def sign_headway_group(sign, line \\ :top) do
+    case sign.headway_group do
+      headway_group when is_binary(headway_group) ->
+        headway_group
+
+      headway_group when line == :top ->
+        List.first(headway_group)
+
+      headway_group when line == :bottom ->
+        List.last(headway_group)
+    end
+  end
 end

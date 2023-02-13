@@ -5,6 +5,7 @@ defmodule Signs.Utilities.Messages do
   """
 
   alias Content.Message.Alert
+  alias Signs.Utilities.SourceConfig
 
   @type sign_messages ::
           {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
@@ -114,7 +115,12 @@ defmodule Signs.Utilities.Messages do
            ) do
         nil ->
           {source_config,
-           Signs.Utilities.Headways.get_paging_message(sign, source_config, current_time)}
+           Signs.Utilities.Headways.get_paging_message(
+             sign,
+             source_config,
+             SourceConfig.sign_headway_group(sign, line),
+             current_time
+           )}
 
         alert_message ->
           alert_message
