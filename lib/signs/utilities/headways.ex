@@ -11,7 +11,7 @@ defmodule Signs.Utilities.Headways do
     config = single_source_config(sign) || config_by_headway_id(sign)
 
     headways =
-      SourceConfig.default_headway_group(sign.headway_group)
+      SourceConfig.sign_headway_group(sign)
       |> sign.config_engine.headway_config(current_time)
 
     stop_ids = get_stop_ids(sign, config)

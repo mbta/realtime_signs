@@ -5,6 +5,7 @@ defmodule Signs.Utilities.Messages do
   """
 
   alias Content.Message.Alert
+  alias Signs.Utilities.SourceConfig
 
   @type sign_messages ::
           {{Signs.Utilities.SourceConfig.config() | nil, Content.Message.t()},
@@ -98,21 +99,13 @@ defmodule Signs.Utilities.Messages do
     if has_single_source_list?(sign) do
       {nil, Content.Message.Empty.new()}
     else
-      {source_config, headway_group} =
+      source_config =
         if line == :top do
           %Signs.Realtime{source_config: {top_line_source, _}} = sign
-          headway_group = Signs.Utilities.SourceConfig.default_headway_group(sign.headway_group)
-          {top_line_source, headway_group}
+          top_line_source
         else
           %Signs.Realtime{source_config: {_, bottom_line_source}} = sign
-
-          headway_group =
-            case sign.headway_group do
-              [_, bottom_headway_group] -> bottom_headway_group
-              _ -> sign.headway_group
-            end
-
-          {bottom_line_source, headway_group}
+          bottom_line_source
         end
 
       case get_paging_alert_message(
@@ -125,7 +118,7 @@ defmodule Signs.Utilities.Messages do
            Signs.Utilities.Headways.get_paging_message(
              sign,
              source_config,
-             headway_group,
+             SourceConfig.sign_headway_group(sign, line),
              current_time
            )}
 
