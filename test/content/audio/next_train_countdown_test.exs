@@ -272,7 +272,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
                  ], :audio}}
     end
 
-    test "Eastbound Green Line trains don't get branch letters" do
+    test "Eastbound Green Line trains also get branch letters" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :park_street,
         route_id: "Green-B",
@@ -282,7 +282,26 @@ defmodule Content.Audio.NextTrainCountdownTest do
         platform: nil
       }
 
-      assert Content.Audio.to_params(audio) == {:canned, {"90", ["4007", "503", "5005"], :audio}}
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"117",
+                 [
+                   "501",
+                   "21000",
+                   "536",
+                   "21000",
+                   "507",
+                   "21000",
+                   "4007",
+                   "21000",
+                   "503",
+                   "21000",
+                   "504",
+                   "21000",
+                   "5005",
+                   "21000",
+                   "505"
+                 ], :audio}}
     end
 
     test "Next train to Braintree on track 1" do
