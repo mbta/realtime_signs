@@ -63,15 +63,7 @@ defmodule Content.Audio.FollowingTrain do
     def to_params(audio) do
       case Utilities.destination_var(audio.destination) do
         {:ok, dest_var} ->
-          green_line_branch =
-            if audio.station_code == "GKEN" do
-              Content.Utilities.route_branch_letter(audio.route_id)
-            else
-              Content.Utilities.route_and_destination_branch_letter(
-                audio.route_id,
-                audio.destination
-              )
-            end
+          green_line_branch = Content.Utilities.route_branch_letter(audio.route_id)
 
           cond do
             !is_nil(green_line_branch) ->
