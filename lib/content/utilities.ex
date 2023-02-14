@@ -99,18 +99,10 @@ defmodule Content.Utilities do
   def stop_platform_name("70086"), do: "Ashmont"
   def stop_platform_name("70096"), do: "Braintree"
 
-  @spec route_and_destination_branch_letter(String.t(), PaEss.destination()) ::
-          green_line_branch() | nil
-  def route_and_destination_branch_letter("Green-B", :boston_college), do: :b
-  def route_and_destination_branch_letter("Green-C", :cleveland_circle), do: :c
-  def route_and_destination_branch_letter("Green-D", :riverside), do: :d
-  def route_and_destination_branch_letter("Green-D", :reservoir), do: :d
-  def route_and_destination_branch_letter("Green-E", :heath_street), do: :e
-  def route_and_destination_branch_letter(_route_id, _destination), do: nil
-
-  @spec route_branch_letter(String.t()) :: green_line_branch()
+  @spec route_branch_letter(String.t()) :: green_line_branch() | nil
   def route_branch_letter("Green-B"), do: :b
   def route_branch_letter("Green-C"), do: :c
   def route_branch_letter("Green-D"), do: :d
   def route_branch_letter("Green-E"), do: :e
+  def route_branch_letter(_), do: nil
 end
