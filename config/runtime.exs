@@ -5,22 +5,24 @@ config :realtime_signs, RealtimeSignsWeb.Endpoint,
   url: [host: "localhost"],
   server: true
 
-config :realtime_signs,
-  sign_head_end_host: System.get_env("SIGN_HEAD_END_HOST", Application.get_env(:realtime_signs, :sign_head_end_host)),
-  sign_ui_url: System.get_env("SIGN_UI_URL", Application.get_env(:realtime_signs, :sign_ui_url)),
-  sign_ui_api_key: System.get_env("SIGN_UI_API_KEY"),
-  trip_update_url: System.get_env("TRIP_UPDATE_URL", "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/TripUpdates_enhanced.json"),
-  vehicle_positions_url: System.get_env("VEHICLE_POSITIONS_URL", "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/VehiclePositions_enhanced.json"),
-  s3_bucket: System.get_env("SIGNS_S3_BUCKET"),
-  s3_path: System.get_env("SIGNS_S3_PATH"),
-  api_v3_url: System.get_env("API_V3_URL", "https://api-dev-green.mbtace.com"),
-  api_v3_key: System.get_env("API_V3_KEY"),
-  filter_uncertain_predictions?: System.get_env("FILTER_UNCERTAIN_PREDICTIONS", "false") == "true",
-  number_of_http_updaters: System.get_env("NUMBER_OF_HTTP_UPDATERS", "4") |> String.to_integer(),
-  message_log_zip_url: System.get_env("MESSAGE_LOG_ZIP_URL"),
-  message_log_s3_bucket: System.get_env("MESSAGE_LOG_S3_BUCKET"),
-  message_log_s3_folder: System.get_env("MESSAGE_LOG_S3_FOLDER"),
-  message_log_report_s3_folder: System.get_env("MESSAGE_LOG_REPORT_S3_FOLDER")
+if config_env() != :test do
+  config :realtime_signs,
+    sign_head_end_host: System.get_env("SIGN_HEAD_END_HOST"),
+    sign_ui_url: System.get_env("SIGN_UI_URL"),
+    sign_ui_api_key: System.get_env("SIGN_UI_API_KEY"),
+    trip_update_url: System.get_env("TRIP_UPDATE_URL", "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/TripUpdates_enhanced.json"),
+    vehicle_positions_url: System.get_env("VEHICLE_POSITIONS_URL", "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/VehiclePositions_enhanced.json"),
+    s3_bucket: System.get_env("SIGNS_S3_BUCKET"),
+    s3_path: System.get_env("SIGNS_S3_PATH"),
+    api_v3_url: System.get_env("API_V3_URL", "https://api-dev-green.mbtace.com"),
+    api_v3_key: System.get_env("API_V3_KEY"),
+    filter_uncertain_predictions?: System.get_env("FILTER_UNCERTAIN_PREDICTIONS", "false") == "true",
+    number_of_http_updaters: System.get_env("NUMBER_OF_HTTP_UPDATERS", "4") |> String.to_integer(),
+    message_log_zip_url: System.get_env("MESSAGE_LOG_ZIP_URL"),
+    message_log_s3_bucket: System.get_env("MESSAGE_LOG_S3_BUCKET"),
+    message_log_s3_folder: System.get_env("MESSAGE_LOG_S3_FOLDER"),
+    message_log_report_s3_folder: System.get_env("MESSAGE_LOG_REPORT_S3_FOLDER")
+end
 
 message_log_job =
   if System.get_env("MESSAGE_LOG_CRON_SCHEDULE") do
