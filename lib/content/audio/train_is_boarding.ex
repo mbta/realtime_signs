@@ -67,14 +67,11 @@ defmodule Content.Audio.TrainIsBoarding do
     end
 
     defp do_to_params(
-           %{destination: destination, route_id: route_id, track_number: track_number},
+           %{route_id: route_id, track_number: track_number},
            destination_var
          ) do
       vars =
-        case {Content.Utilities.route_and_destination_branch_letter(
-                route_id,
-                destination
-              ), track_number} do
+        case {Content.Utilities.route_branch_letter(route_id), track_number} do
           {nil, nil} ->
             [
               @the_next,
