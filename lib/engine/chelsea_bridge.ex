@@ -23,9 +23,8 @@ defmodule Engine.ChelseaBridge do
 
     with {:ok, %{status_code: 200, body: body}} <-
            http_client.get(url, [{"Authorization", "Basic #{auth}"}]),
-         {:ok, data} <- Jason.decode(body) do
-      %{"bridge" => %{"bridgeStatusId" => %{"status" => status}}} = data
-
+         {:ok, data} <- Jason.decode(body),
+         %{"bridge" => %{"bridgeStatusId" => %{"status" => status}}} <- data do
       estimate =
         case data do
           %{"lift_estimate" => %{"estimate_time" => estimate}} ->
