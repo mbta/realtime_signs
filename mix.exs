@@ -46,7 +46,7 @@ defmodule RealtimeSigns.Mixfile do
       {:lcov_ex, "~> 0.2", only: [:dev, :test], runtime: false},
       {:hackney, "== 1.17.4"},
       {:httpoison, "~> 1.0"},
-      {:jason, "~> 1.2.0"},
+      {:jason, "~> 1.4.0"},
       {:logger_splunk_backend, "~> 2.0"},
       {:mox, "~> 1.0.0", only: [:test]},
       {:sentry, "~> 8.0"},
