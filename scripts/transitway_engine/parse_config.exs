@@ -103,6 +103,11 @@ signs_json =
           routes = Map.fetch!(routes_lookup, id)
           [sources: [Jason.OrderedObject.new(stop_id: sid, routes: routes)]]
         end ++
+        if Enum.any?(["Eastern_Ave", "Box_District", "Bellingham_Square", "Chelsea"], &String.contains?(id, &1)) do
+          [chelsea_bridge: true]
+        else
+          []
+        end ++
         [
           max_minutes: String.to_integer(max_minutes)
         ]

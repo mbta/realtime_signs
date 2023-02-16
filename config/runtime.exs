@@ -16,6 +16,8 @@ if config_env() != :test do
     s3_path: System.get_env("SIGNS_S3_PATH"),
     api_v3_url: System.get_env("API_V3_URL", "https://api-dev-green.mbtace.com"),
     api_v3_key: System.get_env("API_V3_KEY"),
+    chelsea_bridge_url: System.get_env("CHELSEA_BRIDGE_URL"),
+    chelsea_bridge_auth: System.get_env("CHELSEA_BRIDGE_AUTH"),
     filter_uncertain_predictions?: System.get_env("FILTER_UNCERTAIN_PREDICTIONS", "false") == "true",
     number_of_http_updaters: System.get_env("NUMBER_OF_HTTP_UPDATERS", "4") |> String.to_integer(),
     message_log_zip_url: System.get_env("MESSAGE_LOG_ZIP_URL"),
