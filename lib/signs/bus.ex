@@ -13,6 +13,7 @@ defmodule Signs.Bus do
     :sources,
     :top_sources,
     :bottom_sources,
+    :chelsea_bridge,
     :config_engine,
     :prediction_engine,
     :prev_predictions,
@@ -31,6 +32,7 @@ defmodule Signs.Bus do
       sources: parse_sources(sign["sources"]),
       top_sources: parse_sources(sign["top_sources"]),
       bottom_sources: parse_sources(sign["bottom_sources"]),
+      chelsea_bridge: sign["chelsea_bridge"] || false,
       config_engine: opts[:config_engine] || Engine.Config,
       prediction_engine: opts[:prediction_engine] || Engine.BusPredictions,
       prev_predictions: [],
@@ -74,6 +76,7 @@ defmodule Signs.Bus do
       sources: sources,
       top_sources: top_sources,
       bottom_sources: bottom_sources,
+      chelsea_bridge: chelsea_bridge,
       config_engine: config_engine,
       prediction_engine: predictions_engine,
       prev_predictions: prev_predictions,
@@ -82,6 +85,7 @@ defmodule Signs.Bus do
     } = state
 
     config = config_engine.sign_config(id)
+    chelsea_bridge_status = Engine.ChelseaBridge.bridge_status()
     current_time = Timex.now()
 
     prev_predictions_lookup =
@@ -134,6 +138,24 @@ defmodule Signs.Bus do
         if source_list, do: fetch_predictions.(source_list), else: []
       end
 
+    inject_bridge_message = fn pairs ->
+      if chelsea_bridge && chelsea_bridge_status.raised? do
+        mins = round(Timex.diff(chelsea_bridge_status.estimate, current_time, :seconds) / 60)
+
+        line2 =
+          case {mins > 0, predictions != []} do
+            {true, true} -> "SL3 delays #{mins} more min"
+            {true, false} -> "for #{mins} more minutes"
+            {false, true} -> "Expect SL3 delays"
+            {false, false} -> ""
+          end
+
+        Enum.take(pairs, 1) ++ [["Drawbridge is up", line2]]
+      else
+        pairs
+      end
+    end
+
     [top, bottom] =
       cond do
         config == :off ->
@@ -141,7 +163,10 @@ defmodule Signs.Bus do
 
         match?({:static_text, _}, config) ->
           {_, {line1, line2}} = config
-          [Content.Message.Custom.new(line1, :top), Content.Message.Custom.new(line2, :bottom)]
+
+          [[line1, line2]]
+          |> inject_bridge_message.()
+          |> paginate_pairs()
 
         # Special case: 71 and 73 buses board on the Harvard upper busway at certain times. If
         # they are predicted there, let people on the lower busway know.
@@ -158,23 +183,19 @@ defmodule Signs.Bus do
         sources ->
           # Platform mode. Display one prediction per route, but if all the predictions are for the
           # same route, then show a single page of two.
-          pairs =
-            case Enum.uniq_by(predictions, &route_key(&1)) do
-              [_] -> Enum.take(predictions, 2)
-              list -> list
-            end
-            |> Stream.chunk_every(2, 2, [nil])
-            |> Stream.map(fn [first, second] ->
-              [
-                format_prediction(first, second, current_time),
-                format_prediction(second, first, current_time)
-              ]
-            end)
-
-          [
-            paginate_message(for [x, _] <- pairs, do: x),
-            paginate_message(for [_, x] <- pairs, do: x)
-          ]
+          case Enum.uniq_by(predictions, &route_key(&1)) do
+            [_] -> Enum.take(predictions, 2)
+            list -> list
+          end
+          |> Stream.chunk_every(2, 2, [nil])
+          |> Stream.map(fn [first, second] ->
+            [
+              format_prediction(first, second, current_time),
+              format_prediction(second, first, current_time)
+            ]
+          end)
+          |> inject_bridge_message.()
+          |> paginate_pairs()
 
         true ->
           # Mezzanine mode. Display and paginate each line separately.
@@ -300,5 +321,12 @@ defmodule Signs.Bus do
       end
 
     %Content.Message.BusPredictions{message: message}
+  end
+
+  defp paginate_pairs(pairs) do
+    [
+      paginate_message(for [x, _] <- pairs, do: x),
+      paginate_message(for [_, x] <- pairs, do: x)
+    ]
   end
 end

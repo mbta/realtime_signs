@@ -81,7 +81,7 @@ defmodule RealtimeSigns do
   # They should be enabled and inlined once the work is complete.
   def bus_children do
     if Application.get_env(:realtime_signs, :test_bus_mode) do
-      [Engine.BusPredictions]
+      [Engine.BusPredictions, Engine.ChelseaBridge]
     else
       []
     end
