@@ -30,7 +30,7 @@ defmodule Jobs.MessageLatencyReport do
       ) do
     Enum.each(0..(days_to_analyze - 1), fn diff ->
       date = start_date |> Date.add(-diff) |> Date.to_string()
-      Logger.info("Generating message latency report for #{date}...")
+      Logger.info("message_latency_report: Generating message latency report for #{date}...")
       analyze_files_for_date(date)
     end)
   end
@@ -56,17 +56,17 @@ defmodule Jobs.MessageLatencyReport do
       |> format_csv_data()
       |> put_csv_in_s3(date)
 
-      Logger.info("Done processing. Deleting #{unzipped_directory}...")
+      Logger.info("message_latency_report: Done processing. Deleting #{unzipped_directory}...")
       File.rm_rf!(unzipped_directory)
     else
       {:error, {:http_error, 404, _}} ->
-        Logger.info("S3 response error: Unable to find zip file")
+        Logger.info("message_latency_report: S3 response error: Unable to find zip file")
 
       {:error, :einval} ->
-        Logger.info("Unzip error: Occured while attempting to unzip")
+        Logger.info("message_latency_report: Unzip error: Occured while attempting to unzip")
 
       {:error, reason} ->
-        Logger.info("Message latency report error: #{inspect(reason)}")
+        Logger.info("message_latency_report: Message latency report error: #{inspect(reason)}")
     end
   end
 
@@ -75,7 +75,7 @@ defmodule Jobs.MessageLatencyReport do
     aws_client = Application.get_env(:realtime_signs, :aws_client)
     path = "#{s3_paess_logs_path()}/#{date}.zip"
 
-    Logger.info("Getting message log files at #{path}")
+    Logger.info("message_latency_report: Getting message log files at #{path}")
     s3_client.get_object(s3_bucket(), path) |> aws_client.request()
   end
 
@@ -167,7 +167,7 @@ defmodule Jobs.MessageLatencyReport do
       aws_client = Application.get_env(:realtime_signs, :aws_client)
 
       Logger.info(
-        "Storing report in S3 at #{s3_bucket()}/#{s3_paess_reports_path()}/#{report_filename}..."
+        "message_latency_report: Storing report in S3 at #{s3_bucket()}/#{s3_paess_reports_path()}/#{report_filename}..."
       )
 
       case s3_client.put_object(
@@ -177,15 +177,17 @@ defmodule Jobs.MessageLatencyReport do
            )
            |> aws_client.request() do
         {:ok, _} ->
-          Logger.info("Message latency report was successfully stored in S3")
+          Logger.info(
+            "message_latency_report: Message latency report was successfully stored in S3"
+          )
 
         {:error, response} ->
           Logger.error(
-            "Message latency report was not able to be stored. Response: #{inspect(response)}"
+            "message_latency_report: Message latency report was not able to be stored. Response: #{inspect(response)}"
           )
       end
 
-      Logger.info("Deleting file at path #{report_filename}")
+      Logger.info("message_latency_report: Deleting file at path #{report_filename}")
       File.rm!(report_filename)
     end
   end
