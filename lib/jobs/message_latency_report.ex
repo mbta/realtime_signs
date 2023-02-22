@@ -94,6 +94,9 @@ defmodule Jobs.MessageLatencyReport do
       |> Stream.filter(&filter_by_date(&1, date))
       |> Stream.map(fn row -> row[:seconds] end)
       |> Enum.sort()
+      |> tap(fn _ ->
+        Logger.info("message_latency_report: Memory in use after sort: #{:erlang.memory(:total)}")
+      end)
       |> Stream.with_index()
       |> get_percentile_rows()
 
