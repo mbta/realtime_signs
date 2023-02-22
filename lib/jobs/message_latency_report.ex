@@ -38,6 +38,7 @@ defmodule Jobs.MessageLatencyReport do
   defp analyze_files_for_date(date) do
     with {:ok, response} <- get_zip_file(date),
          {:ok, files} <- :zip.unzip(response.body) do
+      record_log_files_size(files)
       unzipped_directory = String.replace(date, "-", "")
 
       case :os.type() do
@@ -51,10 +52,7 @@ defmodule Jobs.MessageLatencyReport do
           :os.cmd(:"type #{unzipped_directory}\\*.csv > #{unzipped_directory}\\all.csv")
       end
 
-      [
-        get_csv_row("#{unzipped_directory}/all.csv", date)
-        | Enum.map(files, &get_csv_row(&1, date))
-      ]
+      Enum.map(["#{unzipped_directory}/all.csv" | files], &get_csv_row(&1, date))
       |> format_csv_data()
       |> put_csv_in_s3(date)
 
@@ -91,25 +89,15 @@ defmodule Jobs.MessageLatencyReport do
     num_rows_pre_filter = Enum.count(parsed_rows)
 
     # Filter out bad dates, sort the rows, and add indices
-    rows_filtered_and_indexed =
+    {{percentile_95_row, percentile_99_row}, num_rows} =
       parsed_rows
       |> Stream.filter(&filter_by_date(&1, date))
-      |> Enum.sort_by(fn row -> row[:seconds] end)
-      |> Enum.with_index()
+      |> Stream.map(fn row -> row[:seconds] end)
+      |> Enum.sort()
+      |> Stream.with_index()
+      |> get_percentile_rows()
 
-    num_rows = Enum.count(rows_filtered_and_indexed)
-
-    percentile_95_row =
-      num_rows
-      |> calculate_percentile_index(@percentile_95)
-      |> get_percentile_row(rows_filtered_and_indexed)
-
-    percentile_99_row =
-      num_rows
-      |> calculate_percentile_index(@percentile_99)
-      |> get_percentile_row(rows_filtered_and_indexed)
-
-    [percentile_95_row[:seconds], percentile_99_row[:seconds], num_rows, num_rows_pre_filter]
+    [percentile_95_row, percentile_99_row, num_rows, num_rows_pre_filter]
   end
 
   defp parse_rows(file_contents) do
@@ -124,15 +112,11 @@ defmodule Jobs.MessageLatencyReport do
       _ ->
         true
     end)
-    |> Stream.map(fn [id, begin_date, end_date, count, seconds, station] ->
+    |> Stream.map(fn [_id, begin_date, _end_date, _count, seconds, _station] ->
       # Put into keyword list for easier accessing
       [
-        id: id,
         begin_date: begin_date,
-        end_date: end_date,
-        count: count,
-        seconds: Float.parse(seconds) |> elem(0),
-        station: station
+        seconds: Float.parse(seconds) |> elem(0)
       ]
     end)
   end
@@ -210,19 +194,46 @@ defmodule Jobs.MessageLatencyReport do
     id
   end
 
-  defp get_percentile_row(percentile_index, rows_with_index) do
-    {percentile_row, _index} =
-      Enum.find(rows_with_index, {[], nil}, fn {_row, index} ->
-        index == percentile_index
-      end)
+  defp get_percentile_rows(rows_with_index) do
+    num_rows = Enum.count(rows_with_index)
+    percentile_index_95 = calculate_percentile_index(num_rows, @percentile_95)
+    percentile_index_99 = calculate_percentile_index(num_rows, @percentile_99)
 
-    percentile_row
+    {Enum.reduce_while(rows_with_index, {[], []}, fn {current_row, index}, {row_95th, row_99th} ->
+       cond do
+         row_95th != [] and row_99th != [] ->
+           {:halt, {row_95th, row_99th}}
+
+         index == percentile_index_95 ->
+           {:cont, {current_row, row_99th}}
+
+         index == percentile_index_99 ->
+           {:cont, {row_95th, current_row}}
+
+         true ->
+           {:cont, {row_95th, row_99th}}
+       end
+     end), num_rows}
   end
 
   defp calculate_percentile_index(num_rows, percentile) do
     (num_rows - 1)
     |> Kernel.*(percentile)
     |> round()
+  end
+
+  defp record_log_files_size(log_files) do
+    Enum.reduce(log_files, 0, fn file, acc ->
+      case File.stat(file) do
+        {:ok, %{size: size}} ->
+          acc + size
+
+        {:error, reason} ->
+          Logger.info("message_latency_report: File stat error: #{inspect(reason)}")
+          acc
+      end
+    end)
+    |> tap(&Logger.info("message_latency_report: Total log files size: #{&1 / 1_000_000} MB"))
   end
 
   defp s3_bucket, do: Application.get_env(:realtime_signs, :message_log_s3_bucket)
