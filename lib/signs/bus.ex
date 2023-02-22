@@ -3,6 +3,11 @@ defmodule Signs.Bus do
   require Logger
 
   @line_max 18
+  @var_max 30
+  @drawbridge_minutes "135"
+  @drawbridge_soon "136"
+  @drawbridge_minutes_spanish "152"
+  @drawbridge_soon_spanish "157"
 
   @enforce_keys [
     :id,
@@ -32,7 +37,7 @@ defmodule Signs.Bus do
       sources: parse_sources(sign["sources"]),
       top_sources: parse_sources(sign["top_sources"]),
       bottom_sources: parse_sources(sign["bottom_sources"]),
-      chelsea_bridge: sign["chelsea_bridge"] || false,
+      chelsea_bridge: sign["chelsea_bridge"],
       config_engine: opts[:config_engine] || Engine.Config,
       prediction_engine: opts[:prediction_engine] || Engine.BusPredictions,
       prev_predictions: [],
@@ -139,8 +144,9 @@ defmodule Signs.Bus do
       end
 
     inject_bridge_message = fn pairs ->
-      if chelsea_bridge && chelsea_bridge_status.raised? do
-        mins = round(Timex.diff(chelsea_bridge_status.estimate, current_time, :seconds) / 60)
+      if chelsea_bridge == "audio_visual" &&
+           bridge_status_raised?(chelsea_bridge_status, current_time) do
+        mins = bridge_status_minutes(chelsea_bridge_status, current_time)
 
         line2 =
           case {mins > 0, predictions != []} do
@@ -156,17 +162,43 @@ defmodule Signs.Bus do
       end
     end
 
-    [top, bottom] =
+    bridge_audio =
+      if chelsea_bridge && bridge_status_raised?(chelsea_bridge_status, current_time) do
+        case bridge_status_minutes(chelsea_bridge_status, current_time) do
+          minutes when minutes < 2 ->
+            [{@drawbridge_soon, []}, {@drawbridge_soon_spanish, []}]
+
+          minutes ->
+            [
+              {@drawbridge_minutes, [PaEss.Utilities.number_var(minutes, :english)]},
+              {@drawbridge_minutes_spanish, [PaEss.Utilities.number_var(minutes, :spanish)]}
+            ]
+        end
+        |> Enum.map(fn {msg, vars} ->
+          %Content.Audio.BusPredictions{message: {:canned, {msg, vars, :audio_visual}}}
+        end)
+      else
+        []
+      end
+
+    {[top, bottom], _audio} =
       cond do
         config == :off ->
-          [Content.Message.Empty.new(), Content.Message.Empty.new()]
+          {[Content.Message.Empty.new(), Content.Message.Empty.new()], []}
 
         match?({:static_text, _}, config) ->
           {_, {line1, line2}} = config
 
-          [[line1, line2]]
-          |> inject_bridge_message.()
-          |> paginate_pairs()
+          content =
+            [[line1, line2]]
+            |> inject_bridge_message.()
+            |> paginate_pairs()
+
+          audio =
+            [%Content.Audio.Custom{message: "#{line1} #{line2}"}]
+            |> Enum.concat(bridge_audio)
+
+          {content, audio}
 
         # Special case: 71 and 73 buses board on the Harvard upper busway at certain times. If
         # they are predicted there, let people on the lower busway know.
@@ -175,35 +207,77 @@ defmodule Signs.Bus do
               predictions_engine.predictions_for_stop("20761"),
               &(&1.route_id in ["71", "73"])
             ) ->
-          [
+          content = [
             Content.Message.Custom.new("Board routes 71", :top),
             Content.Message.Custom.new("and 73 on upper level", :bottom)
           ]
 
+          audio = paginate_audio(["board routes 71 and 73 on upper level"])
+          {content, audio}
+
         sources ->
           # Platform mode. Display one prediction per route, but if all the predictions are for the
           # same route, then show a single page of two.
-          case Enum.uniq_by(predictions, &route_key(&1)) do
-            [_] -> Enum.take(predictions, 2)
-            list -> list
-          end
-          |> Stream.chunk_every(2, 2, [nil])
-          |> Stream.map(fn [first, second] ->
-            [
-              format_prediction(first, second, current_time),
-              format_prediction(second, first, current_time)
-            ]
-          end)
-          |> inject_bridge_message.()
-          |> paginate_pairs()
+          {selected_predictions, one_route?} =
+            case Enum.uniq_by(predictions, &route_key(&1)) do
+              [_] -> {Enum.take(predictions, 2), true}
+              list -> {list, false}
+            end
+
+          content =
+            selected_predictions
+            |> Stream.chunk_every(2, 2, [nil])
+            |> Stream.map(fn [first, second] ->
+              [
+                format_prediction(first, second, current_time),
+                format_prediction(second, first, current_time)
+              ]
+            end)
+            |> inject_bridge_message.()
+            |> paginate_pairs()
+
+          audio =
+            if one_route? do
+              selected_predictions
+              |> Enum.zip_with([:next, :following], &long_prediction_audio(&1, current_time, &2))
+            else
+              # TODO departures? SL special preamble?
+              selected_predictions
+              |> Enum.map(&prediction_audio(&1, current_time))
+              |> List.insert_at(0, ["upcoming arrivals"])
+            end
+            |> Stream.intersperse([","])
+            |> Stream.concat()
+            |> paginate_audio()
+            |> Enum.concat(bridge_audio)
+
+          {content, audio}
 
         true ->
           # Mezzanine mode. Display and paginate each line separately.
-          for predictions_list <- [top_predictions, bottom_predictions] do
-            Stream.uniq_by(predictions_list, &route_key(&1))
-            |> Enum.map(&format_prediction(&1, nil, current_time))
-            |> paginate_message()
-          end
+          [selected_top_predictions, selected_bottom_predictions] =
+            for predictions_list <- [top_predictions, bottom_predictions] do
+              Enum.uniq_by(predictions_list, &route_key(&1))
+            end
+
+          content =
+            for prediction_list <- [selected_top_predictions, selected_bottom_predictions] do
+              prediction_list
+              |> Enum.map(&format_prediction(&1, nil, current_time))
+              |> paginate_message()
+            end
+
+          # TODO departures? SL special preamble?
+          audio =
+            (selected_top_predictions ++ selected_bottom_predictions)
+            |> Enum.map(&prediction_audio(&1, current_time))
+            |> List.insert_at(0, ["upcoming arrivals"])
+            |> Stream.intersperse([","])
+            |> Stream.concat()
+            |> paginate_audio()
+            |> Enum.concat(bridge_audio)
+
+          {content, audio}
       end
 
     # Update the sign if:
@@ -253,6 +327,16 @@ defmodule Signs.Bus do
 
   defp prediction_key(prediction) do
     Map.take(prediction, [:stop_id, :route_id, :vehicle_id, :direction_id])
+  end
+
+  defp bridge_status_minutes(bridge_status, current_time) do
+    round(Timex.diff(bridge_status.estimate, current_time, :seconds) / 60)
+  end
+
+  defp bridge_status_raised?(bridge_status, current_time) do
+    # If the estimate is more than 30 mins ago, assume someone forgot to reset the status,
+    # and treat the bridge as lowered.
+    bridge_status.raised? && bridge_status_minutes(bridge_status, current_time) < -30
   end
 
   defp route_key(prediction) do
@@ -328,5 +412,63 @@ defmodule Signs.Bus do
       paginate_message(for [x, _] <- pairs, do: x),
       paginate_message(for [_, x] <- pairs, do: x)
     ]
+  end
+
+  defp prediction_audio(prediction, current_time) do
+    route =
+      case PaEss.Utilities.prediction_route_name(prediction) do
+        nil -> []
+        str -> [{:route, str}]
+      end
+
+    dest = [{:headsign, prediction.headsign}]
+
+    time =
+      case prediction_minutes(prediction, current_time) do
+        0 -> ["arriving"]
+        1 -> [{:minutes, 1}, "minute"]
+        m -> [{:minutes, m}, "minutes"]
+      end
+
+    Enum.concat([route, dest, time])
+  end
+
+  defp long_prediction_audio(prediction, current_time, next_or_following) do
+    preamble =
+      case next_or_following do
+        :next -> ["the next bus to"]
+        # TODO: route? SL speacial handling?
+        :following -> ["the following bus to"]
+      end
+
+    dest = [{:headsign, prediction.headsign}]
+
+    time =
+      case prediction_minutes(prediction, current_time) do
+        0 -> ["is now arriving"]
+        1 -> ["arrives", "in", {:minutes, 1}, "minute"]
+        m -> ["arrives", "in", {:minutes, m}, "minutes"]
+      end
+
+    Enum.concat([preamble, dest, time])
+  end
+
+  defp paginate_audio(items) do
+    for item <- items do
+      take = PaEss.Utilities.audio_take(item)
+
+      if take do
+        take
+      else
+        Logger.error("No audio for: #{inspect(item)}")
+        PaEss.Utilities.audio_take(",")
+      end
+    end
+    |> Stream.chunk_every(@var_max)
+    |> Enum.map(fn vars ->
+      %Content.Audio.BusPredictions{
+        message: {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
+      }
+    end)
   end
 end

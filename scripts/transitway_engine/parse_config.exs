@@ -24,8 +24,52 @@ lines =
   |> Enum.filter(&(!String.match?(&1, ~r/^\s*$/) && !String.match?(&1, ~r/^\s*\/\//)))
 
 [_, _ | lines] = Enum.drop_while(lines, &(&1 != "int view_InitializeSignageLogic()"))
-{initialize_lines, _lines} = Enum.split_while(lines, &(&1 != "  if (view_processRoutesFile())"))
+{initialize_lines, lines} = Enum.split_while(lines, &(&1 != "  if (view_processRoutesFile())"))
+[_, _, _, _ | audio_lines] = Enum.take_while(lines, &(&1 != "  return 0; // success"))
 # TODO continue parsing audio zones
+
+audio_lookup =
+  for [line1, _, line3] <- Enum.chunk_every(audio_lines, 3),
+      into: %{} do
+    [_, id, offset] = Regex.run(~r/^  \w+.(\w+)_audio\.\w+ = (\d+);/, line1)
+    [_, interval] = Regex.run(~r/ = (\d+);/, line3)
+    {id, %{interval: String.to_integer(interval), offset: String.to_integer(offset)}}
+  end
+
+audio_key = fn id ->
+  cond do
+    String.starts_with?(id, "Silver_Line.South_Station") ->
+      "SouthSta"
+
+    String.starts_with?(id, "Silver_Line.Courthouse") ->
+      "Courthouse"
+
+    String.starts_with?(id, "Silver_Line.World_Trade_Ctr") ->
+      "WTC"
+
+    String.starts_with?(id, "Silver_Line.Eastern_Ave") ->
+      "EasternAve"
+
+    String.starts_with?(id, "Silver_Line.Box_District") ->
+      "BoxDistrict"
+
+    String.starts_with?(id, "Silver_Line.Bellingham_Square") ->
+      "BellinghamSq"
+
+    String.starts_with?(id, "Silver_Line.Chelsea") ->
+      "Chelsea"
+
+    String.starts_with?(id, "bus.Nubian") ->
+      [_, letter] = Regex.run(~r/Platform_(\w)/, id)
+      "Nubian_#{letter}"
+
+    String.starts_with?(id, "bus.Lechmere") ->
+      "Lechmere"
+
+    true ->
+      id |> String.replace("bus.", "")
+  end
+end
 
 routes_lookup =
   for line <- station_lines,
@@ -41,17 +85,22 @@ routes_lookup =
     {id, routes}
   end
 
-_route_takes =
+route_takes_code =
   for line <- route_lines do
-    [name, number] = String.split(line, ",")
-    %{name: name, number: String.to_integer(number)}
+    [route, take_id] = String.split(line, ",")
+    %{route: route, take_id: String.to_integer(take_id)}
   end
+  |> Enum.map(fn %{route: route, take_id: take_id} ->
+    "    #{inspect(route)} => #{inspect(to_string(take_id))}"
+  end)
+  |> Enum.join(",\n")
+  |> (fn lines ->
+        "  @route_take_lookup %{\n" <> lines <> "\n  }"
+      end).()
 
-# |> IO.inspect
-
-abbreviations_code =
+destinations =
   for [line1, line2] <- Enum.chunk_every(abbrev_lines, 2) do
-    [headsign, _] = String.split(line1, ",")
+    [headsign, take_id] = String.split(line1, ",")
 
     abbreviations =
       for abbrev <- String.split(line2, ",") do
@@ -59,15 +108,35 @@ abbreviations_code =
       end
       |> Enum.uniq()
 
-    %{headsign: headsign, abbreviations: abbreviations}
+    %{headsign: headsign, take_id: String.to_integer(take_id), abbreviations: abbreviations}
   end
+
+abbreviations_code =
+  destinations
   |> Enum.map(fn %{headsign: headsign, abbreviations: abbreviations} ->
     "    {#{inspect(headsign)}, #{inspect(abbreviations)}}"
   end)
-  |> Enum.concat(["    {\"Silver Line Way\", [\"Slvr Ln Way\"]}"])
+  |> Enum.concat([
+    "    {\"Silver Line Way\", [\"Slvr Ln Way\"]}",
+    "    {\"Drydock\", [\"Drydock\"]}"
+  ])
   |> Enum.join(",\n")
   |> (fn lines ->
         "  @headsign_abbreviation_mappings [\n" <> lines <> "\n  ]"
+      end).()
+
+headsign_takes_code =
+  destinations
+  |> Enum.map(fn %{headsign: headsign, take_id: take_id} ->
+    "    {#{inspect(headsign)}, #{inspect(to_string(take_id))}}"
+  end)
+  |> Enum.concat([
+    "    {\"Silver Line Way\", \"570\"}",
+    "    {\"Drydock\", \"571\"}"
+  ])
+  |> Enum.join(",\n")
+  |> (fn lines ->
+        "  @headsign_take_mappings [\n" <> lines <> "\n  ]"
       end).()
 
 signs_json =
@@ -78,10 +147,14 @@ signs_json =
         line1 <> " " <> String.trim(line2)
       )
 
+    %{interval: interval, offset: offset} = audio_lookup[audio_key.(id)]
+
     Jason.OrderedObject.new(
       [
         id: id,
         pa_ess_loc: pa_ess_loc,
+        read_loop_interval: interval * 60,
+        read_loop_offset: offset * 60,
         text_zone: text_zone,
         audio_zones:
           for {c, i} <- Enum.with_index(["m", "c", "n", "s", "e", "w"]),
@@ -103,10 +176,21 @@ signs_json =
           routes = Map.fetch!(routes_lookup, id)
           [sources: [Jason.OrderedObject.new(stop_id: sid, routes: routes)]]
         end ++
-        if Enum.any?(["Eastern_Ave", "Box_District", "Bellingham_Square", "Chelsea"], &String.contains?(id, &1)) do
-          [chelsea_bridge: true]
-        else
-          []
+        cond do
+          Enum.any?(
+            ["Eastern_Ave", "Box_District", "Bellingham_Square", "Chelsea"],
+            &String.contains?(id, &1)
+          ) ->
+            [chelsea_bridge: "audio_visual"]
+
+          Enum.any?(
+            ["South_Station", "Courthouse", "World_Trade_Ctr"],
+            &String.contains?(id, &1)
+          ) ->
+            [chelsea_bridge: "audio"]
+
+          true ->
+            []
         end ++
         [
           max_minutes: String.to_integer(max_minutes)
@@ -117,7 +201,15 @@ signs_json =
   |> Jason.Formatter.pretty_print()
 
 case System.argv() do
-  ["signs"] -> File.write!("priv/bus-signs.json", signs_json)
-  ["abbreviations"] -> File.write!("priv/abbreviations.ex", abbreviations_code)
-  _ -> IO.puts("ERROR: specify a command")
+  ["signs"] ->
+    File.write!("priv/bus-signs.json", signs_json)
+
+  ["mappings"] ->
+    File.write!(
+      "priv/mappings.ex",
+      Enum.join([abbreviations_code, headsign_takes_code, route_takes_code], "\n")
+    )
+
+  _ ->
+    IO.puts("ERROR: specify a command")
 end
