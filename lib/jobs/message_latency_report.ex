@@ -88,8 +88,7 @@ defmodule Jobs.MessageLatencyReport do
     # Grab this value so we can track how many throwaway logs we're getting in each file
     num_rows_pre_filter = Enum.count(parsed_rows)
 
-    # Filter out bad dates, sort the rows, and add indices
-    {{percentile_95_row, percentile_99_row}, num_rows} =
+    {{percentile_95, percentile_99}, num_rows} =
       parsed_rows
       |> Stream.filter(&filter_by_date(&1, date))
       |> Stream.map(fn row -> row[:seconds] end)
@@ -98,9 +97,9 @@ defmodule Jobs.MessageLatencyReport do
         Logger.info("message_latency_report: Memory in use after sort: #{:erlang.memory(:total)}")
       end)
       |> Stream.with_index()
-      |> get_percentile_rows()
+      |> get_percentiles()
 
-    [percentile_95_row, percentile_99_row, num_rows, num_rows_pre_filter]
+    [percentile_95, percentile_99, num_rows, num_rows_pre_filter]
   end
 
   defp parse_rows(file_contents) do
@@ -199,24 +198,25 @@ defmodule Jobs.MessageLatencyReport do
     id
   end
 
-  defp get_percentile_rows(rows_with_index) do
+  defp get_percentiles(rows_with_index) do
     num_rows = Enum.count(rows_with_index)
-    percentile_index_95 = calculate_percentile_index(num_rows, @percentile_95)
-    percentile_index_99 = calculate_percentile_index(num_rows, @percentile_99)
+    percentile_95_index = calculate_percentile_index(num_rows, @percentile_95)
+    percentile_99_index = calculate_percentile_index(num_rows, @percentile_99)
 
-    {Enum.reduce_while(rows_with_index, {[], []}, fn {current_row, index}, {row_95th, row_99th} ->
+    {Enum.reduce_while(rows_with_index, {[], []}, fn {current_row, index},
+                                                     {percentile_95, percentile_99} ->
        cond do
-         row_95th != [] and row_99th != [] ->
-           {:halt, {row_95th, row_99th}}
+         percentile_95 != [] and percentile_99 != [] ->
+           {:halt, {percentile_95, percentile_99}}
 
-         index == percentile_index_95 ->
-           {:cont, {current_row, row_99th}}
+         index == percentile_95_index ->
+           {:cont, {current_row, percentile_99}}
 
-         index == percentile_index_99 ->
-           {:cont, {row_95th, current_row}}
+         index == percentile_99_index ->
+           {:cont, {percentile_95, current_row}}
 
          true ->
-           {:cont, {row_95th, row_99th}}
+           {:cont, {percentile_95, percentile_99}}
        end
      end), num_rows}
   end
