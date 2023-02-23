@@ -30,7 +30,11 @@ defmodule Jobs.MessageLatencyReport do
       ) do
     Enum.each(0..(days_to_analyze - 1), fn diff ->
       date = start_date |> Date.add(-diff) |> Date.to_string()
-      Logger.info("message_latency_report: Generating message latency report for #{date}...")
+
+      Logger.info(
+        with_message_latency_report_tag("Generating message latency report for #{date}...")
+      )
+
       analyze_files_for_date(date)
     end)
   end
@@ -56,17 +60,24 @@ defmodule Jobs.MessageLatencyReport do
       |> format_csv_data()
       |> put_csv_in_s3(date)
 
-      Logger.info("message_latency_report: Done processing. Deleting #{unzipped_directory}...")
+      Logger.info(
+        with_message_latency_report_tag("Done processing. Deleting #{unzipped_directory}...")
+      )
+
       File.rm_rf!(unzipped_directory)
     else
       {:error, {:http_error, 404, _}} ->
-        Logger.info("message_latency_report: S3 response error: Unable to find zip file")
+        Logger.info(with_message_latency_report_tag("S3 response error: Unable to find zip file"))
 
       {:error, :einval} ->
-        Logger.info("message_latency_report: Unzip error: Occured while attempting to unzip")
+        Logger.info(
+          with_message_latency_report_tag("Unzip error: Occured while attempting to unzip")
+        )
 
       {:error, reason} ->
-        Logger.info("message_latency_report: Message latency report error: #{inspect(reason)}")
+        Logger.info(
+          with_message_latency_report_tag("Message latency report error: #{inspect(reason)}")
+        )
     end
   end
 
@@ -75,7 +86,7 @@ defmodule Jobs.MessageLatencyReport do
     aws_client = Application.get_env(:realtime_signs, :aws_client)
     path = "#{s3_paess_logs_path()}/#{date}.zip"
 
-    Logger.info("message_latency_report: Getting message log files at #{path}")
+    Logger.info(with_message_latency_report_tag("Getting message log files at #{path}"))
     s3_client.get_object(s3_bucket(), path) |> aws_client.request()
   end
 
@@ -94,7 +105,9 @@ defmodule Jobs.MessageLatencyReport do
       |> Stream.map(fn row -> row[:seconds] end)
       |> Enum.sort()
       |> tap(fn _ ->
-        Logger.info("message_latency_report: Memory in use after sort: #{:erlang.memory(:total)}")
+        Logger.info(
+          with_message_latency_report_tag("Memory in use after sort: #{:erlang.memory(:total)}")
+        )
       end)
       |> Stream.with_index()
       |> get_percentiles()
@@ -151,7 +164,7 @@ defmodule Jobs.MessageLatencyReport do
 
   defp format_csv_data(rows) do
     # Put the data in CSV format with header row
-    Logger.info("Creating CSV rows...")
+    Logger.info(with_message_latency_report_tag("Creating CSV rows..."))
 
     for row <- rows, into: "id,95th_percentile,99th_percentile,count,count_prefilter\n" do
       Enum.join(row, ",") <> "\n"
@@ -166,7 +179,9 @@ defmodule Jobs.MessageLatencyReport do
       aws_client = Application.get_env(:realtime_signs, :aws_client)
 
       Logger.info(
-        "message_latency_report: Storing report in S3 at #{s3_bucket()}/#{s3_paess_reports_path()}/#{report_filename}..."
+        with_message_latency_report_tag(
+          "Storing report in S3 at #{s3_bucket()}/#{s3_paess_reports_path()}/#{report_filename}..."
+        )
       )
 
       case s3_client.put_object(
@@ -177,16 +192,20 @@ defmodule Jobs.MessageLatencyReport do
            |> aws_client.request() do
         {:ok, _} ->
           Logger.info(
-            "message_latency_report: Message latency report was successfully stored in S3"
+            with_message_latency_report_tag(
+              "Message latency report was successfully stored in S3"
+            )
           )
 
         {:error, response} ->
           Logger.error(
-            "message_latency_report: Message latency report was not able to be stored. Response: #{inspect(response)}"
+            with_message_latency_report_tag(
+              "Message latency report was not able to be stored. Response: #{inspect(response)}"
+            )
           )
       end
 
-      Logger.info("message_latency_report: Deleting file at path #{report_filename}")
+      Logger.info(with_message_latency_report_tag("Deleting file at path #{report_filename}"))
       File.rm!(report_filename)
     end
   end
@@ -203,20 +222,26 @@ defmodule Jobs.MessageLatencyReport do
     percentile_95_index = calculate_percentile_index(num_rows, @percentile_95)
     percentile_99_index = calculate_percentile_index(num_rows, @percentile_99)
 
-    {Enum.reduce_while(rows_with_index, {[], []}, fn {current_row, index},
-                                                     {percentile_95, percentile_99} ->
-       cond do
-         percentile_95 != [] and percentile_99 != [] ->
-           {:halt, {percentile_95, percentile_99}}
+    {Enum.reduce_while(rows_with_index, {0, 0}, fn {current_row, index},
+                                                   {percentile_95, percentile_99} ->
+       percentile_95 =
+         if index == percentile_95_index do
+           current_row
+         else
+           percentile_95
+         end
 
-         index == percentile_95_index ->
-           {:cont, {current_row, percentile_99}}
+       percentile_99 =
+         if index == percentile_99_index do
+           current_row
+         else
+           percentile_99
+         end
 
-         index == percentile_99_index ->
-           {:cont, {percentile_95, current_row}}
-
-         true ->
-           {:cont, {percentile_95, percentile_99}}
+       if index == percentile_99_index do
+         {:halt, {percentile_95, percentile_99}}
+       else
+         {:cont, {percentile_95, percentile_99}}
        end
      end), num_rows}
   end
@@ -234,11 +259,12 @@ defmodule Jobs.MessageLatencyReport do
           acc + size
 
         {:error, reason} ->
-          Logger.info("message_latency_report: File stat error: #{inspect(reason)}")
-          acc
+          Logger.info(with_message_latency_report_tag("File stat error: #{inspect(reason)}"))
       end
     end)
-    |> tap(&Logger.info("message_latency_report: Total log files size: #{&1 / 1_000_000} MB"))
+    |> tap(
+      &Logger.info(with_message_latency_report_tag("Total log files size: #{&1 / 1_000_000} MB"))
+    )
   end
 
   defp s3_bucket, do: Application.get_env(:realtime_signs, :message_log_s3_bucket)
@@ -246,4 +272,6 @@ defmodule Jobs.MessageLatencyReport do
 
   defp s3_paess_reports_path,
     do: Application.get_env(:realtime_signs, :message_log_report_s3_folder)
+
+  defp with_message_latency_report_tag(message), do: "message_latency_report: #{message}"
 end
