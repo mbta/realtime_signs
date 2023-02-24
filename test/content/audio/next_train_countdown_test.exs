@@ -148,12 +148,12 @@ defmodule Content.Audio.NextTrainCountdownTest do
                {:canned, {"98", ["4000", "503", "5005", "4021"], :audio}}
     end
 
-    test "Next train to Alewife platform TBD (JFK/UMass Mezzanine only)" do
+    test "Next train to Alewife platform TBD soon (JFK/UMass Mezzanine only)" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :alewife,
         route_id: "Red",
         verb: :arrives,
-        minutes: 20,
+        minutes: 9,
         track_number: nil,
         platform: :braintree,
         station_code: "RJFK",
@@ -174,11 +174,45 @@ defmodule Content.Audio.NextTrainCountdownTest do
                    "21000",
                    "504",
                    "21000",
-                   "5020",
+                   "5009",
                    "21000",
                    "505",
                    "21000",
                    "849"
+                 ], :audio}}
+    end
+
+    test "Next train to Alewife platform TBD when train closer (JFK/UMass Mezzanine only)" do
+      audio = %Content.Audio.NextTrainCountdown{
+        destination: :alewife,
+        route_id: "Red",
+        verb: :arrives,
+        minutes: 10,
+        track_number: nil,
+        platform: :braintree,
+        station_code: "RJFK",
+        zone: "m"
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"117",
+                 [
+                   "501",
+                   "21000",
+                   "507",
+                   "21000",
+                   "4000",
+                   "21000",
+                   "503",
+                   "21000",
+                   "504",
+                   "21000",
+                   "5010",
+                   "21000",
+                   "505",
+                   "21000",
+                   "857"
                  ], :audio}}
     end
 
