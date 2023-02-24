@@ -32,7 +32,7 @@ defmodule Content.Audio.NextTrainCountdown do
     @minutes "505"
     @minute "532"
     @platform_soon "849"
-    @platform_when_closer ""
+    @platform_when_closer "857"
 
     def to_params(audio) do
       case Utilities.destination_var(audio.destination) do
