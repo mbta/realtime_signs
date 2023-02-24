@@ -57,9 +57,11 @@ defmodule Content.Audio.NextTrainCountdown do
 
             audio.destination == :alewife and audio.station_code == "RJFK" and audio.zone == "m" and
                 audio.minutes > 5 ->
-              if audio.minutes < 10,
-                do: platform_tbd_params(audio, dest_var, @platform_soon),
-                else: platform_tbd_params(audio, dest_var, @platform_when_closer)
+              platform_tbd_params(
+                audio,
+                dest_var,
+                if(audio.minutes < 10, do: @platform_soon, else: @platform_when_closer)
+              )
 
             true ->
               {:canned,
