@@ -58,8 +58,8 @@ defmodule Content.Audio.NextTrainCountdown do
             audio.destination == :alewife and audio.station_code == "RJFK" and audio.zone == "m" and
                 audio.minutes > 5 ->
               if audio.minutes < 10,
-                do: platform_soon_params(audio, dest_var),
-                else: platform_when_closer_params(audio, dest_var)
+                do: platform_tbd_params(audio, dest_var, @platform_soon),
+                else: platform_tbd_params(audio, dest_var, @platform_when_closer)
 
             true ->
               {:canned,
@@ -131,7 +131,7 @@ defmodule Content.Audio.NextTrainCountdown do
       Utilities.take_message(vars, :audio)
     end
 
-    defp platform_soon_params(audio, destination_var) do
+    defp platform_tbd_params(audio, destination_var, platform_message_var) do
       vars = [
         @the_next,
         @train_to,
@@ -140,22 +140,7 @@ defmodule Content.Audio.NextTrainCountdown do
         @in_,
         minutes_var(audio),
         minute_or_minutes(audio),
-        @platform_soon
-      ]
-
-      Utilities.take_message(vars, :audio)
-    end
-
-    defp platform_when_closer_params(audio, destination_var) do
-      vars = [
-        @the_next,
-        @train_to,
-        destination_var,
-        verb_var(audio),
-        @in_,
-        minutes_var(audio),
-        minute_or_minutes(audio),
-        @platform_when_closer
+        platform_message_var
       ]
 
       Utilities.take_message(vars, :audio)
