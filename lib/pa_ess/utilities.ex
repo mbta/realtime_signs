@@ -644,22 +644,22 @@ defmodule PaEss.Utilities do
     "245" => "628"
   }
 
-  @string_take_lookup %{
-    "the next bus to" => "543",
-    "departs" => "502",
-    "arrives" => "503",
-    "in" => "504",
-    "upcoming departures" => "548",
-    "upcoming arrivals" => "550",
-    "is now arriving" => "24055",
-    "upper level departures" => "616",
-    "lower level departures" => "617",
-    "board routes 71 and 73 on upper level" => "618",
-    "departing" => "530",
-    "arriving" => "531",
-    "," => "21012",
-    "minute" => "532",
-    "minutes" => "505"
+  @atom_take_lookup %{
+    the_next_bus_to: "543",
+    departs: "502",
+    arrives: "503",
+    in: "504",
+    upcoming_departures: "548",
+    upcoming_arrivals: "550",
+    is_now_arriving: "24055",
+    upper_level_departures: "616",
+    lower_level_departures: "617",
+    board_routes_71_and_73_on_upper_level: "618",
+    departing: "530",
+    arriving: "531",
+    _: "21012",
+    minute: "532",
+    minutes: "505"
   }
 
   def audio_take({:minutes, minutes}), do: number_var(minutes, :english)
@@ -671,5 +671,5 @@ defmodule PaEss.Utilities do
   end
 
   def audio_take({:route, route}), do: @route_take_lookup[route]
-  def audio_take(str) when is_binary(str), do: @string_take_lookup[str]
+  def audio_take(atom) when is_atom(atom), do: @atom_take_lookup[atom]
 end

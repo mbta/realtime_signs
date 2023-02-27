@@ -212,7 +212,7 @@ defmodule Signs.Bus do
             Content.Message.Custom.new("and 73 on upper level", :bottom)
           ]
 
-          audio = paginate_audio(["board routes 71 and 73 on upper level"])
+          audio = paginate_audio([:board_routes_71_and_73_on_upper_level])
           {content, audio}
 
         sources ->
@@ -244,9 +244,9 @@ defmodule Signs.Bus do
               # TODO departures? SL special preamble?
               selected_predictions
               |> Enum.map(&prediction_audio(&1, current_time))
-              |> List.insert_at(0, ["upcoming arrivals"])
+              |> List.insert_at(0, [:upcoming_arrivals])
             end
-            |> Stream.intersperse([","])
+            |> Stream.intersperse([:_])
             |> Stream.concat()
             |> paginate_audio()
             |> Enum.concat(bridge_audio)
@@ -271,8 +271,8 @@ defmodule Signs.Bus do
           audio =
             (selected_top_predictions ++ selected_bottom_predictions)
             |> Enum.map(&prediction_audio(&1, current_time))
-            |> List.insert_at(0, ["upcoming arrivals"])
-            |> Stream.intersperse([","])
+            |> List.insert_at(0, [:upcoming_arrivals])
+            |> Stream.intersperse([:_])
             |> Stream.concat()
             |> paginate_audio()
             |> Enum.concat(bridge_audio)
@@ -425,9 +425,9 @@ defmodule Signs.Bus do
 
     time =
       case prediction_minutes(prediction, current_time) do
-        0 -> ["arriving"]
-        1 -> [{:minutes, 1}, "minute"]
-        m -> [{:minutes, m}, "minutes"]
+        0 -> [:arriving]
+        1 -> [{:minutes, 1}, :minute]
+        m -> [{:minutes, m}, :minutes]
       end
 
     Enum.concat([route, dest, time])
@@ -436,18 +436,18 @@ defmodule Signs.Bus do
   defp long_prediction_audio(prediction, current_time, next_or_following) do
     preamble =
       case next_or_following do
-        :next -> ["the next bus to"]
+        :next -> [:the_next_bus_to]
         # TODO: route? SL speacial handling?
-        :following -> ["the following bus to"]
+        :following -> [:the_following_bus_to]
       end
 
     dest = [{:headsign, prediction.headsign}]
 
     time =
       case prediction_minutes(prediction, current_time) do
-        0 -> ["is now arriving"]
-        1 -> ["arrives", "in", {:minutes, 1}, "minute"]
-        m -> ["arrives", "in", {:minutes, m}, "minutes"]
+        0 -> [:is_now_arriving]
+        1 -> [:arrives, :in, {:minutes, 1}, :minute]
+        m -> [:arrives, :in, {:minutes, m}, :minutes]
       end
 
     Enum.concat([preamble, dest, time])
@@ -455,14 +455,11 @@ defmodule Signs.Bus do
 
   defp paginate_audio(items) do
     for item <- items do
-      take = PaEss.Utilities.audio_take(item)
-
-      if take do
-        take
-      else
-        Logger.error("No audio for: #{inspect(item)}")
-        PaEss.Utilities.audio_take(",")
-      end
+      PaEss.Utilities.audio_take(item) ||
+        (
+          Logger.error("No audio for: #{inspect(item)}")
+          PaEss.Utilities.audio_take(:_)
+        )
     end
     |> Stream.chunk_every(@var_max)
     |> Enum.map(fn vars ->
