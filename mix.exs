@@ -55,9 +55,10 @@ defmodule RealtimeSigns.Mixfile do
       {:timex, "~> 3.1"},
       {:uuid, "~> 1.1", only: :test},
       {:quantum, "~> 3.0"},
-      {:phoenix, "~> 1.6.6"},
+      {:phoenix, "~> 1.7.0"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_view, "~> 2.0"},
       {:plug_cowboy, "~> 2.5"},
       {:configparser_ex, "~> 4.0", only: [:prod]}
     ]
