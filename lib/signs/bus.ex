@@ -19,11 +19,14 @@ defmodule Signs.Bus do
     :top_sources,
     :bottom_sources,
     :chelsea_bridge,
+    :read_loop_interval,
+    :read_loop_offset,
     :config_engine,
     :prediction_engine,
     :prev_predictions,
     :current_messages,
-    :last_update
+    :last_update,
+    :last_read_time
   ]
   defstruct @enforce_keys
 
@@ -38,11 +41,14 @@ defmodule Signs.Bus do
       top_sources: parse_sources(sign["top_sources"]),
       bottom_sources: parse_sources(sign["bottom_sources"]),
       chelsea_bridge: sign["chelsea_bridge"],
+      read_loop_interval: Map.fetch!(sign, "read_loop_interval"),
+      read_loop_offset: Map.fetch!(sign, "read_loop_offset"),
       config_engine: opts[:config_engine] || Engine.Config,
       prediction_engine: opts[:prediction_engine] || Engine.BusPredictions,
       prev_predictions: [],
       current_messages: {nil, nil},
-      last_update: nil
+      last_update: nil,
+      last_read_time: Timex.now()
     }
 
     GenServer.start_link(__MODULE__, state)
@@ -77,6 +83,7 @@ defmodule Signs.Bus do
       id: id,
       pa_ess_loc: pa_ess_loc,
       text_zone: text_zone,
+      audio_zones: audio_zones,
       sources: sources,
       top_sources: top_sources,
       bottom_sources: bottom_sources,
@@ -104,7 +111,7 @@ defmodule Signs.Bus do
       end
 
     # Compute new sign text and audio
-    {[top, bottom], _audio} =
+    {[top, bottom], audios} =
       cond do
         config == :off ->
           {[Content.Message.Empty.new(), Content.Message.Empty.new()], []}
@@ -135,23 +142,29 @@ defmodule Signs.Bus do
       end
 
     # Update the sign (if appropriate), and record changes in state
-    new_state =
+    state
+    |> then(fn state ->
       if should_update({top, bottom}, current_time, state) do
         MessageQueue.update_sign({pa_ess_loc, text_zone}, top, bottom, 180, :now)
         %{state | current_messages: {top, bottom}, last_update: current_time}
       else
         state
       end
+    end)
+    |> then(fn state ->
+      if should_read(current_time, state) do
+        if audios != [], do: MessageQueue.send_audio({pa_ess_loc, audio_zones}, audios, 5, 60)
+        %{state | last_read_time: current_time}
+      else
+        state
+      end
+    end)
+    |> Map.put(:prev_predictions, Enum.concat([predictions, top_predictions, bottom_predictions]))
+    |> then(fn state -> {:noreply, state} end)
 
     # TODO Exclude missing headsign and/or display route (error?)
 
     # TODO Special case: Hold prediction for inbound SL1 with stale prediction?
-
-    {:noreply,
-     %{
-       new_state
-       | prev_predictions: Enum.concat([predictions, top_predictions, bottom_predictions])
-     }}
   end
 
   def handle_info(msg, state) do
@@ -213,11 +226,11 @@ defmodule Signs.Bus do
       |> Enum.concat(bridge_message(chelsea_bridge_status, current_time, predictions, state))
       |> paginate_pairs()
 
-    audio =
+    audios =
       [%Content.Audio.Custom{message: "#{line1} #{line2}"}]
       |> Enum.concat(bridge_audio(chelsea_bridge_status, current_time, state))
 
-    {messages, audio}
+    {messages, audios}
   end
 
   # Platform mode. Display one prediction per route, but if all the predictions are for the
@@ -241,22 +254,21 @@ defmodule Signs.Bus do
       |> Enum.concat(bridge_message(chelsea_bridge_status, current_time, predictions, state))
       |> paginate_pairs()
 
-    audio =
+    audios =
       if one_route? do
         selected_predictions
         |> Enum.zip_with([:next, :following], &long_prediction_audio(&1, current_time, &2))
       else
-        # TODO departures? SL special preamble?
         selected_predictions
         |> Enum.map(&prediction_audio(&1, current_time))
-        |> List.insert_at(0, [:upcoming_arrivals])
+        |> add_preamble(state)
       end
       |> Stream.intersperse([:_])
       |> Stream.concat()
       |> paginate_audio()
       |> Enum.concat(bridge_audio(chelsea_bridge_status, current_time, state))
 
-    {messages, audio}
+    {messages, audios}
   end
 
   # Mezzanine mode. Display and paginate each line separately.
@@ -279,17 +291,16 @@ defmodule Signs.Bus do
         |> paginate_message()
       end
 
-    # TODO departures? SL special preamble?
-    audio =
+    audios =
       (selected_top_predictions ++ selected_bottom_predictions)
       |> Enum.map(&prediction_audio(&1, current_time))
-      |> List.insert_at(0, [:upcoming_arrivals])
+      |> add_preamble(state)
       |> Stream.intersperse([:_])
       |> Stream.concat()
       |> paginate_audio()
       |> Enum.concat(bridge_audio(chelsea_bridge_status, current_time, state))
 
-    {messages, audio}
+    {messages, audios}
   end
 
   defp special_harvard_content() do
@@ -298,8 +309,8 @@ defmodule Signs.Bus do
       Content.Message.Custom.new("and 73 on upper level", :bottom)
     ]
 
-    audio = paginate_audio([:board_routes_71_and_73_on_upper_level])
-    {messages, audio}
+    audios = paginate_audio([:board_routes_71_and_73_on_upper_level])
+    {messages, audios}
   end
 
   # Update the sign if:
@@ -316,6 +327,17 @@ defmodule Signs.Bus do
            current_time,
            Timex.shift(last_update, seconds: Content.Utilities.content_duration(current_messages))
          ))
+  end
+
+  defp should_read(current_time, state) do
+    %{
+      read_loop_interval: read_loop_interval,
+      read_loop_offset: read_loop_offset,
+      last_read_time: last_read_time
+    } = state
+
+    period = fn time -> div(Timex.to_unix(time) - read_loop_offset, read_loop_interval) end
+    period.(current_time) != period.(last_read_time)
   end
 
   defp prediction_minutes(prediction, current_time) do
@@ -453,6 +475,20 @@ defmodule Signs.Bus do
     [
       paginate_message(for [x, _] <- pairs, do: x),
       paginate_message(for [_, x] <- pairs, do: x)
+    ]
+  end
+
+  defp add_preamble([], _), do: []
+
+  # Special case: South Station is currently the only terminal we handle, so it should say
+  # "departures" instead of "arrivals".
+  defp add_preamble(items, state) do
+    [
+      case state.id do
+        "Silver_Line.South_Station_EB" -> [:upcoming_departures]
+        _ -> [:upcoming_arrivals]
+      end
+      | items
     ]
   end
 
