@@ -36,7 +36,13 @@ defmodule Signs.Utilities.Headways do
         %Content.Message.Empty{}
 
       headways ->
-        config |> source_list_destination() |> get_paging_headway_message(headways)
+        stop_ids = get_stop_ids(config)
+
+        if display_headways?(sign, stop_ids, current_time, headways) do
+          config |> source_list_destination() |> get_paging_headway_message(headways)
+        else
+          %Content.Message.Empty{}
+        end
     end
   end
 
@@ -55,6 +61,9 @@ defmodule Signs.Utilities.Headways do
   @spec get_stop_ids(Signs.Realtime.t(), SourceConfig.source() | nil) :: [String.t()]
   defp get_stop_ids(sign, nil), do: Signs.Utilities.SourceConfig.sign_stop_ids(sign.source_config)
   defp get_stop_ids(sign, config), do: [sign.headway_stop_id || config.stop_id]
+
+  @spec get_stop_ids(list(SourceConfig.source())) :: [String.t()]
+  defp get_stop_ids(sources), do: Enum.map(sources, & &1.stop_id)
 
   @spec source_list_destination(list(SourceConfig.source())) :: PaEss.destination() | nil
   def source_list_destination(config) do
