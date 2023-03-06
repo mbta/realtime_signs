@@ -144,7 +144,7 @@ defmodule Signs.Bus do
     # Update the sign (if appropriate), and record changes in state
     state
     |> then(fn state ->
-      if should_update({top, bottom}, current_time, state) do
+      if should_update?({top, bottom}, current_time, state) do
         MessageQueue.update_sign({pa_ess_loc, text_zone}, top, bottom, 180, :now)
         %{state | current_messages: {top, bottom}, last_update: current_time}
       else
@@ -152,8 +152,8 @@ defmodule Signs.Bus do
       end
     end)
     |> then(fn state ->
-      if should_read(current_time, state) do
-        if audios != [], do: MessageQueue.send_audio({pa_ess_loc, audio_zones}, audios, 5, 60)
+      if should_read?(current_time, state) do
+        if audios != [], do: MessageQueue.send_audio({pa_ess_loc, audio_zones}, audios, 5, 180)
         %{state | last_read_time: current_time}
       else
         state
@@ -261,7 +261,7 @@ defmodule Signs.Bus do
       else
         selected_predictions
         |> Enum.map(&prediction_audio(&1, current_time))
-        |> add_preamble(state)
+        |> add_preamble()
       end
       |> Stream.intersperse([:_])
       |> Stream.concat()
@@ -294,7 +294,7 @@ defmodule Signs.Bus do
     audios =
       (selected_top_predictions ++ selected_bottom_predictions)
       |> Enum.map(&prediction_audio(&1, current_time))
-      |> add_preamble(state)
+      |> add_preamble()
       |> Stream.intersperse([:_])
       |> Stream.concat()
       |> paginate_audio()
@@ -317,7 +317,7 @@ defmodule Signs.Bus do
   # 1. it has never been updated before (we just booted up)
   # 2. the sign is about to auto-blank, so refresh it
   # 3. the content has changed, but wait until the existing content has paged at least once
-  defp should_update(messages, current_time, state) do
+  defp should_update?(messages, current_time, state) do
     %{last_update: last_update, current_messages: current_messages} = state
 
     !last_update ||
@@ -329,7 +329,7 @@ defmodule Signs.Bus do
          ))
   end
 
-  defp should_read(current_time, state) do
+  defp should_read?(current_time, state) do
     %{
       read_loop_interval: read_loop_interval,
       read_loop_offset: read_loop_offset,
@@ -478,19 +478,8 @@ defmodule Signs.Bus do
     ]
   end
 
-  defp add_preamble([], _), do: []
-
-  # Special case: South Station is currently the only terminal we handle, so it should say
-  # "departures" instead of "arrivals".
-  defp add_preamble(items, state) do
-    [
-      case state.id do
-        "Silver_Line.South_Station_EB" -> [:upcoming_departures]
-        _ -> [:upcoming_arrivals]
-      end
-      | items
-    ]
-  end
+  defp add_preamble([]), do: []
+  defp add_preamble(items), do: [[:upcoming_departures] | items]
 
   # Returns a list of audio tokens describing the given prediction.
   defp prediction_audio(prediction, current_time) do
