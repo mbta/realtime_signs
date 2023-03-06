@@ -36,7 +36,11 @@ defmodule Signs.Utilities.Headways do
         %Content.Message.Empty{}
 
       headways ->
-        config |> source_list_destination() |> get_paging_headway_message(headways)
+        if display_headways?(sign, Enum.map(config, & &1.stop_id), current_time, headways) do
+          config |> source_list_destination() |> get_paging_headway_message(headways)
+        else
+          %Content.Message.Empty{}
+        end
     end
   end
 
