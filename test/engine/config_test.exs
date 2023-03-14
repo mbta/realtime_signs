@@ -26,9 +26,12 @@ defmodule Engine.ConfigTest do
 
     test "returns custom text when it's not expired" do
       state =
-        initialize_test_state(:config_test_non_expired, fn ->
-          Timex.to_datetime(~N[2017-07-04 07:00:00], "America/New_York")
-        end)
+        initialize_test_state(%{
+          table_name_signs: :config_test_non_expired,
+          time_fetcher: fn ->
+            Timex.to_datetime(~N[2017-07-04 07:00:00], "America/New_York")
+          end
+        })
 
       assert Engine.Config.sign_config(state.table_name_signs, "custom_text_test") ==
                {:static_text, {"Test message", "Please ignore"}}
@@ -36,9 +39,12 @@ defmodule Engine.ConfigTest do
 
     test "does not return custom text when it's expired" do
       state =
-        initialize_test_state(:config_test_expired, fn ->
-          Timex.to_datetime(~N[2017-07-04 09:00:00], "America/New_York")
-        end)
+        initialize_test_state(%{
+          table_name_signs: :config_test_expired,
+          time_fetcher: fn ->
+            Timex.to_datetime(~N[2017-07-04 09:00:00], "America/New_York")
+          end
+        })
 
       assert Engine.Config.sign_config(state.table_name_signs, "custom_text_test") == :auto
     end
@@ -53,47 +59,22 @@ defmodule Engine.ConfigTest do
 
   describe "handle_info/2" do
     test "does not update config when it is unchanged" do
-      Engine.Config.Headways.create_table(:test_headways)
-
-      {:noreply, state} =
-        Engine.Config.handle_info(:update, %{
-          table_name_signs: :test,
-          table_name_headways: :test_headways,
-          current_version: "unchanged",
-          time_fetcher: fn -> DateTime.utc_now() end
-        })
-
+      state = initialize_test_state(%{current_version: "unchanged"})
       assert state[:current_version] == "unchanged"
     end
 
     test "handles new format of config" do
-      :ets.new(:test_new_format, [:set, :protected, :named_table, read_concurrency: true])
-      Engine.Config.Headways.create_table(:test_headways)
+      initialize_test_state(%{table_name_signs: :test_new_format, current_version: "new_format"})
 
-      {:noreply, _state} =
-        Engine.Config.handle_info(:update, %{
-          table_name_signs: :test_new_format,
-          table_name_headways: :test_headways,
-          current_version: "new_format",
-          time_fetcher: &DateTime.utc_now/0
-        })
-
-      assert :ets.lookup(:test_new_format, "some_custom_sign") == [
-               {"some_custom_sign", {:static_text, {"custom", ""}}}
-             ]
+      assert Engine.Config.sign_config(:test_new_format, "some_custom_sign") ==
+               {:static_text, {"custom", ""}}
     end
 
     test "handles a config with multi-sign headways" do
-      :ets.new(:test_signs, [:set, :protected, :named_table, read_concurrency: true])
-      Engine.Config.Headways.create_table(:test_group_headways)
-
-      {:noreply, _state} =
-        Engine.Config.handle_info(:update, %{
-          table_name_signs: :test_signs,
-          table_name_headways: :test_group_headways,
-          current_version: "headway_config",
-          time_fetcher: &DateTime.utc_now/0
-        })
+      initialize_test_state(%{
+        table_name_headways: :test_group_headways,
+        current_version: "headway_config"
+      })
 
       test_time = DateTime.from_naive!(~N[2020-03-20 08:00:00], "America/New_York")
 
@@ -106,21 +87,21 @@ defmodule Engine.ConfigTest do
     end
 
     test "correctly loads config for a sign with a mode of \"off\"" do
-      _state = initialize_test_state(:config_test_off, fn -> DateTime.utc_now() end)
+      initialize_test_state(%{table_name_signs: :config_test_off})
 
-      assert :ets.lookup(:config_test_off, "off_test") == [{"off_test", :off}]
+      assert Engine.Config.sign_config(:config_test_off, "off_test") == :off
     end
 
     test "correctly loads config for a sign with a mode of \"auto\"" do
-      _state = initialize_test_state(:config_test_auto, fn -> DateTime.utc_now() end)
+      initialize_test_state(%{table_name_signs: :config_test_auto})
 
-      assert :ets.lookup(:config_test_auto, "auto_test") == [{"auto_test", :auto}]
+      assert Engine.Config.sign_config(:config_test_auto, "auto_test") == :auto
     end
 
     test "correctly loads config for a sign with a mode of \"headway\"" do
-      _state = initialize_test_state(:config_test_headway, fn -> DateTime.utc_now() end)
+      initialize_test_state(%{table_name_signs: :config_test_headway})
 
-      assert :ets.lookup(:config_test_headway, "headway_test") == [{"headway_test", :headway}]
+      assert Engine.Config.sign_config(:config_test_headway, "headway_test") == :headway
     end
 
     test "logs a when an unknown message is received" do
@@ -139,22 +120,21 @@ defmodule Engine.ConfigTest do
     end
   end
 
-  @spec initialize_test_state(:ets.tab(), (() -> DateTime.t())) :: Engine.Config.t()
-  defp initialize_test_state(table_name_signs, time_fetcher) do
-    ^table_name_signs =
-      :ets.new(table_name_signs, [:set, :protected, :named_table, read_concurrency: true])
+  @spec initialize_test_state(map()) :: Engine.Config.t()
+  defp initialize_test_state(overrides) do
+    state =
+      Map.merge(
+        %{
+          table_name_signs: :test_signs,
+          table_name_headways: :test_headways,
+          current_version: nil,
+          time_fetcher: &DateTime.utc_now/0
+        },
+        overrides
+      )
 
-    Engine.Config.Headways.create_table(:test_headways)
-
-    state = %{
-      table_name_signs: table_name_signs,
-      table_name_headways: :test_headways,
-      current_version: nil,
-      time_fetcher: time_fetcher
-    }
-
+    Engine.Config.create_tables(state)
     {:noreply, state} = Engine.Config.handle_info(:update, state)
-
     state
   end
 end
