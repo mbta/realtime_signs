@@ -104,6 +104,15 @@ defmodule Engine.ConfigTest do
       assert Engine.Config.sign_config(:config_test_headway, "headway_test") == :headway
     end
 
+    test "loads chelsea bridge config" do
+      initialize_test_state(%{
+        table_name_chelsea_bridge: :bridge_off,
+        current_version: "new_format"
+      })
+
+      assert Engine.Config.chelsea_bridge_config(:bridge_off) == :off
+    end
+
     test "logs a when an unknown message is received" do
       log =
         capture_log([level: :info], fn ->
@@ -127,6 +136,7 @@ defmodule Engine.ConfigTest do
         %{
           table_name_signs: :test_signs,
           table_name_headways: :test_headways,
+          table_name_chelsea_bridge: :test_chelsea_bridge,
           current_version: nil,
           time_fetcher: &DateTime.utc_now/0
         },

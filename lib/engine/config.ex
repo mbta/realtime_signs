@@ -13,6 +13,7 @@ defmodule Engine.Config do
   @type state :: %{
           table_name_signs: term(),
           table_name_headways: term(),
+          table_name_chelsea_bridge: term(),
           current_version: version_id,
           time_fetcher: (() -> DateTime.t())
         }
@@ -21,6 +22,7 @@ defmodule Engine.Config do
 
   @table_signs :config_engine_signs
   @table_headways :config_engine_headways
+  @table_chelsea_bridge :config_engine_chelsea_bridge
 
   def start_link([]) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -40,6 +42,14 @@ defmodule Engine.Config do
     Headways.get_headway(table_name, {headway_group, time_period})
   end
 
+  @spec chelsea_bridge_config(:ets.tab()) :: :off | :auto
+  def chelsea_bridge_config(table_name \\ @table_chelsea_bridge) do
+    case :ets.lookup(table_name, :status) do
+      [{_, "off"}] -> :off
+      _ -> :auto
+    end
+  end
+
   def update(pid \\ __MODULE__) do
     schedule_update(pid, 0)
   end
@@ -49,6 +59,7 @@ defmodule Engine.Config do
     state = %{
       table_name_signs: @table_signs,
       table_name_headways: @table_headways,
+      table_name_chelsea_bridge: @table_chelsea_bridge,
       current_version: nil,
       time_fetcher: opts[:time_fetcher] || fn -> DateTime.utc_now() end
     }
@@ -63,6 +74,13 @@ defmodule Engine.Config do
   def create_tables(state) do
     :ets.new(state.table_name_signs, [:set, :protected, :named_table, read_concurrency: true])
     Headways.create_table(state.table_name_headways)
+
+    :ets.new(state.table_name_chelsea_bridge, [
+      :set,
+      :protected,
+      :named_table,
+      read_concurrency: true
+    ])
   end
 
   @spec handle_info(:update, state) :: {:noreply, state}
@@ -88,8 +106,11 @@ defmodule Engine.Config do
             |> Map.get("configured_headways", %{})
             |> Headways.parse()
 
+          config_chelsea_bridge = Map.get(config, "chelsea_bridge_announcements", "auto")
+
           :ets.insert(state.table_name_signs, Enum.into(config_signs, []))
           :ok = Headways.update_table(state.table_name_headways, config_headways)
+          :ets.insert(state.table_name_chelsea_bridge, {:status, config_chelsea_bridge})
 
           version
 

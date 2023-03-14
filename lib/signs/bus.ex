@@ -18,12 +18,14 @@ defmodule Signs.Bus do
     :sources,
     :top_sources,
     :bottom_sources,
+    :extra_audio_sources,
     :chelsea_bridge,
     :read_loop_interval,
     :read_loop_offset,
     :config_engine,
     :prediction_engine,
     :prev_predictions,
+    :prev_bridge_status,
     :current_messages,
     :last_update,
     :last_read_time
@@ -40,12 +42,14 @@ defmodule Signs.Bus do
       sources: parse_sources(sign["sources"]),
       top_sources: parse_sources(sign["top_sources"]),
       bottom_sources: parse_sources(sign["bottom_sources"]),
+      extra_audio_sources: parse_sources(sign["extra_audio_sources"]),
       chelsea_bridge: sign["chelsea_bridge"],
       read_loop_interval: Map.fetch!(sign, "read_loop_interval"),
       read_loop_offset: Map.fetch!(sign, "read_loop_offset"),
       config_engine: opts[:config_engine] || Engine.Config,
       prediction_engine: opts[:prediction_engine] || Engine.BusPredictions,
       prev_predictions: [],
+      prev_bridge_status: nil,
       current_messages: {nil, nil},
       last_update: nil,
       last_read_time: Timex.now()
@@ -83,10 +87,10 @@ defmodule Signs.Bus do
       id: id,
       pa_ess_loc: pa_ess_loc,
       text_zone: text_zone,
-      audio_zones: audio_zones,
       sources: sources,
       top_sources: top_sources,
       bottom_sources: bottom_sources,
+      extra_audio_sources: extra_audio_sources,
       config_engine: config_engine,
       prediction_engine: prediction_engine,
       prev_predictions: prev_predictions
@@ -94,7 +98,8 @@ defmodule Signs.Bus do
 
     # Fetch the data we need to compute the updated sign content.
     config = config_engine.sign_config(id)
-    chelsea_bridge_status = Engine.ChelseaBridge.bridge_status()
+    bridge_enabled? = config_engine.chelsea_bridge_config() == :auto
+    bridge_status = Engine.ChelseaBridge.bridge_status()
     current_time = Timex.now()
 
     prev_predictions_lookup =
@@ -103,12 +108,15 @@ defmodule Signs.Bus do
         {prediction_key(prediction), prediction}
       end
 
-    [predictions, top_predictions, bottom_predictions] =
-      for source_list <- [sources, top_sources, bottom_sources] do
+    {[predictions, top_predictions, bottom_predictions, extra_audio_predictions], all_predictions} =
+      for source_list <- [sources, top_sources, bottom_sources, extra_audio_sources] do
         if source_list,
           do: fetch_predictions(source_list, prev_predictions_lookup, current_time, state),
           else: []
       end
+      |> then(fn lists ->
+        {Enum.map(lists, &filter_predictions(&1, current_time, state)), Enum.concat(lists)}
+      end)
 
     # Compute new sign text and audio
     {[top, bottom], audios} =
@@ -117,7 +125,14 @@ defmodule Signs.Bus do
           {[Content.Message.Empty.new(), Content.Message.Empty.new()], []}
 
         match?({:static_text, _}, config) ->
-          static_text_content(config, chelsea_bridge_status, current_time, predictions, state)
+          static_text_content(
+            config,
+            bridge_status,
+            bridge_enabled?,
+            current_time,
+            predictions,
+            state
+          )
 
         # Special case: 71 and 73 buses board on the Harvard upper busway at certain times. If
         # they are predicted there, let people on the lower busway know.
@@ -129,14 +144,22 @@ defmodule Signs.Bus do
           special_harvard_content()
 
         sources ->
-          platform_mode_content(predictions, current_time, chelsea_bridge_status, state)
+          platform_mode_content(
+            predictions,
+            extra_audio_predictions,
+            current_time,
+            bridge_status,
+            bridge_enabled?,
+            state
+          )
 
         true ->
           mezzanine_mode_content(
             top_predictions,
             bottom_predictions,
             current_time,
-            chelsea_bridge_status,
+            bridge_status,
+            bridge_enabled?,
             state
           )
       end
@@ -153,18 +176,20 @@ defmodule Signs.Bus do
     end)
     |> then(fn state ->
       if should_read?(current_time, state) do
-        if audios != [], do: MessageQueue.send_audio({pa_ess_loc, audio_zones}, audios, 5, 180)
+        send_audio(audios, state)
         %{state | last_read_time: current_time}
       else
+        if should_announce_drawbridge?(bridge_status, bridge_enabled?, current_time, state) do
+          bridge_audio(bridge_status, bridge_enabled?, current_time, state)
+          |> send_audio(state)
+        end
+
         state
       end
     end)
-    |> Map.put(:prev_predictions, Enum.concat([predictions, top_predictions, bottom_predictions]))
+    |> Map.put(:prev_predictions, all_predictions)
+    |> Map.put(:prev_bridge_status, bridge_status)
     |> then(fn state -> {:noreply, state} end)
-
-    # TODO Exclude missing headsign and/or display route (error?)
-
-    # TODO Special case: Hold prediction for inbound SL1 with stale prediction?
   end
 
   def handle_info(msg, state) do
@@ -177,73 +202,92 @@ defmodule Signs.Bus do
   end
 
   defp fetch_predictions(source_list, prev_predictions_lookup, current_time, state) do
-    %{prediction_engine: prediction_engine, max_minutes: max_minutes} = state
+    %{prediction_engine: prediction_engine} = state
 
     for %{stop_id: stop_id, routes: routes} <- source_list,
         prediction <- prediction_engine.predictions_for_stop(stop_id),
-        Map.take(prediction, [:route_id, :direction_id]) in routes do
-      prediction
-    end
-    # Exclude predictions whose times are missing or out of bounds
-    |> Stream.reject(
-      &(!&1.departure_time ||
-          Timex.before?(&1.departure_time, Timex.shift(current_time, seconds: -5)) ||
-          Timex.after?(&1.departure_time, Timex.shift(current_time, minutes: max_minutes)))
-    )
-    # Special cases:
-    # Exclude 89.2 OB to Davis
-    # Exclude routes terminating at Braintree (230.4 IB, 236.3 OB)
-    # Exclude routes terminating at Mattapan, in case those variants of route 24 come back.
-    |> Stream.reject(
-      &((&1.stop_id == "5104" && String.starts_with?(&1.headsign, "Davis")) ||
-          (&1.stop_id == "38671" && String.starts_with?(&1.headsign, "Braintree")) ||
-          (&1.stop_id in ["185", "18511"] && String.starts_with?(&1.headsign, "Mattapan")))
-    )
-    |> Stream.map(fn prediction ->
+        Map.take(prediction, [:route_id, :direction_id]) in routes,
+        prediction.departure_time do
       prev = prev_predictions_lookup[prediction_key(prediction)]
 
-      # If the new prediction would count up by 1 minute from the last, just keep the old one
+      # Prediction times can sometimes jump around from one update to the next, so we adjust them
+      # in certain cases. If the new prediction would count up by 1 minute, or would revive a
+      # previously stale entry, just keep the old time.
       departure_time =
         if prev &&
-             prediction_minutes(prediction, current_time) ==
-               prediction_minutes(prev, current_time) + 1 do
+             (prediction_minutes(prediction, current_time) ==
+                prediction_minutes(prev, current_time) + 1 ||
+                prediction_stale?(prev, current_time)) do
           prev.departure_time
         else
           prediction.departure_time
         end
 
       %{prediction | departure_time: departure_time}
-    end)
+    end
     |> Enum.sort_by(& &1.departure_time)
   end
 
+  defp filter_predictions(predictions, current_time, state) do
+    %{max_minutes: max_minutes} = state
+
+    predictions
+    # Exclude predictions that are too old or too far in the future
+    |> Stream.reject(
+      &(prediction_stale?(&1, current_time) ||
+          Timex.after?(&1.departure_time, Timex.shift(current_time, minutes: max_minutes)))
+    )
+    # Special cases:
+    # Exclude 89.2 OB to Davis
+    # Exclude routes terminating at Braintree (230.4 IB, 236.3 OB)
+    # Exclude routes terminating at Mattapan, in case those variants of route 24 come back.
+    |> Enum.reject(
+      &((&1.stop_id == "5104" && String.starts_with?(&1.headsign, "Davis")) ||
+          (&1.stop_id == "38671" && String.starts_with?(&1.headsign, "Braintree")) ||
+          (&1.stop_id in ["185", "18511"] && String.starts_with?(&1.headsign, "Mattapan")))
+    )
+  end
+
   # Static text mode. Just display the configured text, and possibly the bridge message.
-  defp static_text_content(config, chelsea_bridge_status, current_time, predictions, state) do
+  defp static_text_content(
+         config,
+         bridge_status,
+         bridge_enabled?,
+         current_time,
+         predictions,
+         state
+       ) do
     {_, {line1, line2}} = config
 
     messages =
       [[line1, line2]]
-      |> Enum.concat(bridge_message(chelsea_bridge_status, current_time, predictions, state))
+      |> Enum.concat(
+        bridge_message(bridge_status, bridge_enabled?, current_time, predictions, state)
+      )
       |> paginate_pairs()
 
     audios =
       [%Content.Audio.Custom{message: "#{line1} #{line2}"}]
-      |> Enum.concat(bridge_audio(chelsea_bridge_status, current_time, state))
+      |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
 
     {messages, audios}
   end
 
   # Platform mode. Display one prediction per route, but if all the predictions are for the
   # same route, then show a single page of two.
-  defp platform_mode_content(predictions, current_time, chelsea_bridge_status, state) do
-    {selected_predictions, one_route?} =
-      case Enum.uniq_by(predictions, &route_key(&1)) do
-        [_] -> {Enum.take(predictions, 2), true}
-        list -> {list, false}
-      end
-
+  defp platform_mode_content(
+         predictions,
+         extra_audio_predictions,
+         current_time,
+         bridge_status,
+         bridge_enabled?,
+         state
+       ) do
     messages =
-      selected_predictions
+      case Enum.uniq_by(predictions, &route_key(&1)) do
+        [_] -> Enum.take(predictions, 2)
+        list -> list
+      end
       |> Stream.chunk_every(2, 2, [nil])
       |> Stream.map(fn [first, second] ->
         [
@@ -251,22 +295,30 @@ defmodule Signs.Bus do
           format_prediction(second, first, current_time)
         ]
       end)
-      |> Enum.concat(bridge_message(chelsea_bridge_status, current_time, predictions, state))
+      |> Enum.concat(
+        bridge_message(bridge_status, bridge_enabled?, current_time, predictions, state)
+      )
       |> paginate_pairs()
 
+    # Special case: Nubian platform E has two separate text zones, but only one audio zone due
+    # to close proximity. One sign process is configured to read out the other sign's prediction
+    # list in addition to its own, while the other one stays silent.
+    audio_predictions = predictions ++ extra_audio_predictions
+
     audios =
-      if one_route? do
-        selected_predictions
-        |> Enum.zip_with([:next, :following], &long_prediction_audio(&1, current_time, &2))
-      else
-        selected_predictions
-        |> Enum.map(&prediction_audio(&1, current_time))
-        |> add_preamble()
+      case Enum.uniq_by(audio_predictions, &route_key(&1)) do
+        [_] ->
+          Enum.take(audio_predictions, 2)
+          |> Enum.zip_with([:next, :following], &long_prediction_audio(&1, current_time, &2))
+
+        list ->
+          Enum.map(list, &prediction_audio(&1, current_time))
+          |> add_preamble()
       end
       |> Stream.intersperse([:_])
       |> Stream.concat()
       |> paginate_audio()
-      |> Enum.concat(bridge_audio(chelsea_bridge_status, current_time, state))
+      |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
 
     {messages, audios}
   end
@@ -276,7 +328,8 @@ defmodule Signs.Bus do
          top_predictions,
          bottom_predictions,
          current_time,
-         chelsea_bridge_status,
+         bridge_status,
+         bridge_enabled?,
          state
        ) do
     [selected_top_predictions, selected_bottom_predictions] =
@@ -298,7 +351,7 @@ defmodule Signs.Bus do
       |> Stream.intersperse([:_])
       |> Stream.concat()
       |> paginate_audio()
-      |> Enum.concat(bridge_audio(chelsea_bridge_status, current_time, state))
+      |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
 
     {messages, audios}
   end
@@ -340,6 +393,23 @@ defmodule Signs.Bus do
     period.(current_time) != period.(last_read_time)
   end
 
+  # In addition to periodic audio messages, we also read the drawbridge message by itself if all
+  # of the following are true:
+  # 1. the drawbridge just went up
+  # 2. drawbridge messages are enabled
+  # 3. we are at a stop that is impacted, but does not show visual drawbridge messages
+  defp should_announce_drawbridge?(bridge_status, bridge_enabled?, current_time, state) do
+    %{chelsea_bridge: chelsea_bridge, prev_bridge_status: prev_bridge_status} = state
+
+    chelsea_bridge == "audio" && bridge_enabled? && prev_bridge_status &&
+      bridge_status_raised?(bridge_status, current_time) &&
+      !bridge_status_raised?(prev_bridge_status, current_time)
+  end
+
+  defp prediction_stale?(prediction, current_time) do
+    Timex.before?(prediction.departure_time, Timex.shift(current_time, seconds: -5))
+  end
+
   defp prediction_minutes(prediction, current_time) do
     round(Timex.diff(prediction.departure_time, current_time, :seconds) / 60)
   end
@@ -355,15 +425,15 @@ defmodule Signs.Bus do
   # If the estimate is more than 30 mins ago, assume someone forgot to reset the status,
   # and treat the bridge as lowered.
   defp bridge_status_raised?(bridge_status, current_time) do
-    bridge_status.raised? && bridge_status_minutes(bridge_status, current_time) < -30
+    bridge_status.raised? && bridge_status_minutes(bridge_status, current_time) > -30
   end
 
-  defp bridge_message(chelsea_bridge_status, current_time, predictions, state) do
+  defp bridge_message(bridge_status, bridge_enabled?, current_time, predictions, state) do
     %{chelsea_bridge: chelsea_bridge} = state
 
-    if chelsea_bridge == "audio_visual" &&
-         bridge_status_raised?(chelsea_bridge_status, current_time) do
-      mins = bridge_status_minutes(chelsea_bridge_status, current_time)
+    if bridge_enabled? && chelsea_bridge == "audio_visual" &&
+         bridge_status_raised?(bridge_status, current_time) do
+      mins = bridge_status_minutes(bridge_status, current_time)
 
       line2 =
         case {mins > 0, predictions != []} do
@@ -380,11 +450,12 @@ defmodule Signs.Bus do
   end
 
   # Returns a list of audio messages describing the bridge status
-  defp bridge_audio(chelsea_bridge_status, current_time, state) do
+  defp bridge_audio(bridge_status, bridge_enabled?, current_time, state) do
     %{chelsea_bridge: chelsea_bridge} = state
 
-    if chelsea_bridge && bridge_status_raised?(chelsea_bridge_status, current_time) do
-      case bridge_status_minutes(chelsea_bridge_status, current_time) do
+    if bridge_enabled? && chelsea_bridge &&
+         bridge_status_raised?(bridge_status, current_time) do
+      case bridge_status_minutes(bridge_status, current_time) do
         minutes when minutes < 2 ->
           [{@drawbridge_soon, []}, {@drawbridge_soon_spanish, []}]
 
@@ -505,10 +576,11 @@ defmodule Signs.Bus do
   # the given prediction.
   defp long_prediction_audio(prediction, current_time, next_or_following) do
     preamble =
-      case next_or_following do
-        :next -> [:the_next_bus_to]
-        # TODO: route? SL speacial handling?
-        :following -> [:the_following_bus_to]
+      case {PaEss.Utilities.prediction_route_name(prediction), next_or_following} do
+        {nil, :next} -> [:the_next_bus_to]
+        {nil, :following} -> [:the_following_bus_to]
+        {str, :next} -> [:the_next, {:route, str}, :bus_to]
+        {str, :following} -> [:the_following, {:route, str}, :bus_to]
       end
 
     dest = [{:headsign, prediction.headsign}]
@@ -539,5 +611,13 @@ defmodule Signs.Bus do
         message: {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
       }
     end)
+  end
+
+  defp send_audio(audios, state) do
+    %{pa_ess_loc: pa_ess_loc, audio_zones: audio_zones} = state
+
+    if audios != [] && audio_zones != [] do
+      MessageQueue.send_audio({pa_ess_loc, audio_zones}, audios, 5, 180)
+    end
   end
 end
