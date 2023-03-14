@@ -55,12 +55,14 @@ defmodule Engine.Config do
 
     schedule_update(self())
 
-    @table_signs =
-      :ets.new(state.table_name_signs, [:set, :protected, :named_table, read_concurrency: true])
-
-    @table_headways = Headways.create_table(@table_headways)
+    create_tables(state)
 
     {:ok, state}
+  end
+
+  def create_tables(state) do
+    :ets.new(state.table_name_signs, [:set, :protected, :named_table, read_concurrency: true])
+    Headways.create_table(state.table_name_headways)
   end
 
   @spec handle_info(:update, state) :: {:noreply, state}
