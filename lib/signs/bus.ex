@@ -393,8 +393,9 @@ defmodule Signs.Bus do
     period.(current_time) != period.(last_read_time)
   end
 
-  # In addition to periodic audio messages, we also read the drawbridge message by itself if all
-  # of the following are true:
+  # SL waterfront stops are impacted by the Chelsea bridge, but don't display a persistent visual
+  # message while it's up. To let people know about delays promptly, we read the drawbridge message
+  # by itself if all of the following are true:
   # 1. the drawbridge just went up
   # 2. drawbridge messages are enabled
   # 3. we are at a stop that is impacted, but does not show visual drawbridge messages
