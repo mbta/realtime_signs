@@ -24,6 +24,8 @@ defmodule Signs.Bus do
     :read_loop_offset,
     :config_engine,
     :prediction_engine,
+    :bridge_engine,
+    :sign_updater,
     :prev_predictions,
     :prev_bridge_status,
     :current_messages,
@@ -48,6 +50,8 @@ defmodule Signs.Bus do
       read_loop_offset: Map.fetch!(sign, "read_loop_offset"),
       config_engine: opts[:config_engine] || Engine.Config,
       prediction_engine: opts[:prediction_engine] || Engine.BusPredictions,
+      bridge_engine: opts[:bridge_engine] || Engine.ChelseaBridge,
+      sign_updater: opts[:sign_updater] || MessageQueue,
       prev_predictions: [],
       prev_bridge_status: nil,
       current_messages: {nil, nil},
@@ -93,13 +97,15 @@ defmodule Signs.Bus do
       extra_audio_sources: extra_audio_sources,
       config_engine: config_engine,
       prediction_engine: prediction_engine,
+      bridge_engine: bridge_engine,
+      sign_updater: sign_updater,
       prev_predictions: prev_predictions
     } = state
 
     # Fetch the data we need to compute the updated sign content.
     config = config_engine.sign_config(id)
     bridge_enabled? = config_engine.chelsea_bridge_config() == :auto
-    bridge_status = Engine.ChelseaBridge.bridge_status()
+    bridge_status = bridge_engine.bridge_status()
     current_time = Timex.now()
 
     prev_predictions_lookup =
@@ -168,7 +174,7 @@ defmodule Signs.Bus do
     state
     |> then(fn state ->
       if should_update?({top, bottom}, current_time, state) do
-        MessageQueue.update_sign({pa_ess_loc, text_zone}, top, bottom, 180, :now)
+        sign_updater.update_sign({pa_ess_loc, text_zone}, top, bottom, 180, :now)
         %{state | current_messages: {top, bottom}, last_update: current_time}
       else
         state
@@ -615,10 +621,10 @@ defmodule Signs.Bus do
   end
 
   defp send_audio(audios, state) do
-    %{pa_ess_loc: pa_ess_loc, audio_zones: audio_zones} = state
+    %{pa_ess_loc: pa_ess_loc, audio_zones: audio_zones, sign_updater: sign_updater} = state
 
     if audios != [] && audio_zones != [] do
-      MessageQueue.send_audio({pa_ess_loc, audio_zones}, audios, 5, 180)
+      sign_updater.send_audio({pa_ess_loc, audio_zones}, audios, 5, 180)
     end
   end
 end
