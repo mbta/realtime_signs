@@ -482,19 +482,20 @@ defmodule PaEss.Utilities do
   end
 
   @spec prediction_route_name(Predictions.BusPrediction.t()) :: String.t() | nil
-  # Don't display "SLW" route name when its outbound headsign already says "Silver Line Way".
-  def prediction_route_name(%{route_id: "746", headsign: "Silver Line Way"}), do: nil
-  # Heading inbound from Silver Line Way to South Station, all routes take the same path, so
-  # treat them as one unit and don't display route names.
-  def prediction_route_name(%{stop_id: stop_id, headsign: "South Station"})
-      when stop_id in ["74615", "74616"],
+  # Don't display route names for SL1, SL2, SL3, or SLW. This also has the effect of combining
+  # inbound predictions along the waterfront, where all routes follow the same path.
+  def prediction_route_name(%{route_id: route_id})
+      when route_id in ["741", "742", "743", "746"],
+      do: nil
+
+  # At Nubian platform A, all routes to Ruggles take the same path, so treat them as one unit
+  # and don't display route names.
+  def prediction_route_name(%{stop_id: "64000", headsign: "Ruggles", route_id: route_id})
+      when route_id in ["15", "23", "28", "44", "45"],
       do: nil
 
   def prediction_route_name(%{route_id: "749"}), do: "SL5"
   def prediction_route_name(%{route_id: "751"}), do: "SL4"
-  def prediction_route_name(%{route_id: "743"}), do: "SL3"
-  def prediction_route_name(%{route_id: "742"}), do: "SL2"
-  def prediction_route_name(%{route_id: "741"}), do: "SL1"
   def prediction_route_name(%{route_id: "77", headsign: "North Cambridge"}), do: "77A"
 
   def prediction_route_name(%{route_id: "2427", stop_id: "185", headsign: headsign}) do
@@ -646,6 +647,8 @@ defmodule PaEss.Utilities do
 
   @atom_take_lookup %{
     the_next_bus_to: "543",
+    the_next: "501",
+    the_following: "667",
     departs: "502",
     arrives: "503",
     in: "504",

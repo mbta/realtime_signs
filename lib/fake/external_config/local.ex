@@ -12,7 +12,8 @@ defmodule Fake.ExternalConfig.Local do
       %{
         "signs" => %{
           "some_custom_sign" => %{"line1" => "custom", "line2" => "", "expires" => nil}
-        }
+        },
+        "chelsea_bridge_announcements" => "off"
       }
     }
   end

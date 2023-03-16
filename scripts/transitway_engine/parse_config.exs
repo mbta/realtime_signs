@@ -157,9 +157,13 @@ signs_json =
         read_loop_offset: offset * 60,
         text_zone: text_zone,
         audio_zones:
-          for {c, i} <- Enum.with_index(["m", "c", "n", "s", "e", "w"]),
-              String.at(audio_zones, i) == "1" do
-            c
+          if id == "bus.Nubian_Platform_E_west" do
+            []
+          else
+            for {c, i} <- Enum.with_index(["m", "c", "n", "s", "e", "w"]),
+                String.at(audio_zones, i) == "1" do
+              c
+            end
           end,
         type: "bus"
       ] ++
@@ -174,7 +178,19 @@ signs_json =
         else
           [_, sid] = Regex.run(~r/STOP_ID_(\d+)_/, stop_id)
           routes = Map.fetch!(routes_lookup, id)
-          [sources: [Jason.OrderedObject.new(stop_id: sid, routes: routes)]]
+
+          [sources: [Jason.OrderedObject.new(stop_id: sid, routes: routes)]] ++
+            if id == "bus.Nubian_Platform_E_east" do
+              extra_routes = Map.fetch!(routes_lookup, "bus.Nubian_Platform_E_west")
+
+              [
+                extra_audio_sources: [
+                  Jason.OrderedObject.new(stop_id: "64000", routes: extra_routes)
+                ]
+              ]
+            else
+              []
+            end
         end ++
         cond do
           Enum.any?(
