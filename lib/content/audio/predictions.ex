@@ -49,7 +49,7 @@ defmodule Content.Audio.Predictions do
           route_id: predictions.route_id
         }
 
-      predictions.minutes == :approaching and (line == :top or multi_source?) and
+      predictions.minutes == :approaching and (line == :top or line == :neither or multi_source?) and
           predictions.route_id in @heavy_rail_routes ->
         %Approaching{
           destination: predictions.destination,
