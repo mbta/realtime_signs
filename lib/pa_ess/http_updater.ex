@@ -165,8 +165,10 @@ defmodule PaEss.HttpUpdater do
   def process({:send_audio, [{station, zones}, audios, priority, timeout]}, state) do
     case audios do
       list when is_list(list) ->
-        for audio <- list do
-          process_send_audio(station, zones, audio, priority, timeout, state)
+        combined_audios = combine_audio(list) |> IO.inspect()
+
+        for audio <- combined_audios do
+          process_send_combined_audio(station, zones, audio, priority, timeout, state)
         end
 
       {a1, a2} ->
@@ -176,6 +178,77 @@ defmodule PaEss.HttpUpdater do
       a ->
         process_send_audio(station, zones, a, priority, timeout, state)
     end
+  end
+
+  defp combine_audio(audios) do
+    Stream.map(
+      audios,
+      &Content.Audio.to_params/1
+    )
+    # For POC, only combine messages that are already a pure series of take ids for simplicity
+    |> Stream.filter(fn {msg_type, {message_id, _, _}} ->
+      message_id = String.to_integer(message_id)
+      msg_type == :canned and message_id >= 103 and message_id <= 132
+    end)
+    |> Enum.reduce([], fn {_, {_, vars, _}}, pages ->
+      # Drop the spaces because they're going to get interspersed again later
+      vars =
+        Enum.filter(vars, fn var ->
+          var != "21000"
+        end)
+
+      case pages do
+        # add the first message
+        [] ->
+          [vars | pages]
+
+        # Otherwise, check the combined length of the last page and new message.
+        # Add to page if less than 30, otheriwse add a new page.
+        [last_page | rest_of_pages] ->
+          if length(last_page) + length(vars) <= 15 do
+            [last_page ++ vars | rest_of_pages]
+          else
+            [vars | pages]
+          end
+      end
+    end)
+    |> Enum.reverse()
+    |> Enum.map(&PaEss.Utilities.take_message(&1, :audio))
+  end
+
+  defp process_send_combined_audio(
+         station,
+         zones,
+         {_, {message_id, vars, type}} = _audio,
+         priority,
+         timeout,
+         state
+       ) do
+    encoded =
+      [
+        MsgType: "Canned",
+        uid: get_uid(state),
+        mid: message_id,
+        var: Enum.join(vars, ","),
+        typ: audio_type(type),
+        sta: "#{station}#{zone_bitmap(zones)}",
+        pri: priority,
+        tim: timeout
+      ]
+      |> URI.encode_query()
+
+    {time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
+
+    Logger.info([
+      "send_audio: ",
+      encoded,
+      " pid=",
+      inspect(self()),
+      " arinc_ms=",
+      inspect(div(time, 1000))
+    ])
+
+    result
   end
 
   @spec process_send_audio(String.t(), [String.t()], Content.Audio.t(), integer(), integer(), t()) ::
