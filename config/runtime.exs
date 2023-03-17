@@ -7,7 +7,6 @@ config :realtime_signs, RealtimeSignsWeb.Endpoint,
 
 if config_env() != :test do
   config :realtime_signs,
-    sign_head_end_host: System.get_env("SIGN_HEAD_END_HOST"),
     sign_ui_url: System.get_env("SIGN_UI_URL"),
     sign_ui_api_key: System.get_env("SIGN_UI_API_KEY"),
     trip_update_url: System.get_env("TRIP_UPDATE_URL", "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/TripUpdates_enhanced.json"),
@@ -23,7 +22,8 @@ if config_env() != :test do
     message_log_zip_url: System.get_env("MESSAGE_LOG_ZIP_URL"),
     message_log_s3_bucket: System.get_env("MESSAGE_LOG_S3_BUCKET"),
     message_log_s3_folder: System.get_env("MESSAGE_LOG_S3_FOLDER"),
-    message_log_report_s3_folder: System.get_env("MESSAGE_LOG_REPORT_S3_FOLDER")
+    message_log_report_s3_folder: System.get_env("MESSAGE_LOG_REPORT_S3_FOLDER"),
+    s3_active_headend_path: System.get_env("HEADEND_S3_PATH")
 end
 
 message_log_job =
