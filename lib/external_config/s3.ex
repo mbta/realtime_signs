@@ -30,4 +30,39 @@ defmodule ExternalConfig.S3 do
         {nil, %{}}
     end
   end
+
+  def get_active_headend_ip() do
+    s3_client = Application.get_env(:realtime_signs, :s3_client)
+    aws_client = Application.get_env(:realtime_signs, :aws_client)
+    bucket = Application.get_env(:realtime_signs, :s3_bucket)
+    path = Application.get_env(:realtime_signs, :s3_active_headend_path)
+
+    case s3_client.get_object(bucket, path)
+         |> aws_client.request() do
+      {:ok, response} ->
+        body = Jason.decode!(response.body)
+        {:ok, body["active_headend_ip"]}
+
+      {:error, e} ->
+        Logger.error("active_headend_ip: s3 response error: #{inspect(e)}")
+        {:error, nil}
+    end
+  end
+
+  def put_active_headend_ip(ip) do
+    s3_client = Application.get_env(:realtime_signs, :s3_client)
+    aws_client = Application.get_env(:realtime_signs, :aws_client)
+    bucket = Application.get_env(:realtime_signs, :s3_bucket)
+    path = Application.get_env(:realtime_signs, :s3_active_headend_path)
+
+    case s3_client.put_object(bucket, path, Jason.encode!(%{active_headend_ip: ip}))
+         |> aws_client.request() do
+      {:ok, response} ->
+        {:ok, response}
+
+      {:error, e} ->
+        Logger.error("s3 response error: #{inspect(e)}")
+        {:error, nil}
+    end
+  end
 end
