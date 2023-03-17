@@ -39,7 +39,9 @@ defmodule Signs.Realtime do
                 announced_arrivals: [],
                 announced_approachings: [],
                 announced_passthroughs: [],
-                uses_shuttles: true
+                uses_shuttles: true,
+                extra_audio_sign_ids: [],
+                extra_audio_content: []
               ]
 
   @type line_content :: {Utilities.SourceConfig.source() | nil, Content.Message.t()}
@@ -67,7 +69,9 @@ defmodule Signs.Realtime do
           announced_arrivals: [Predictions.Prediction.trip_id()],
           announced_approachings: [Predictions.Prediction.trip_id()],
           announced_passthroughs: [Predictions.Prediction.trip_id()],
-          uses_shuttles: boolean()
+          uses_shuttles: boolean(),
+          extra_audio_sign_ids: [String.t()],
+          extra_audio_content: [Content.Message.t()]
         }
 
   def start_link(%{"type" => "realtime"} = config, opts \\ []) do
@@ -101,15 +105,20 @@ defmodule Signs.Realtime do
       expiration_seconds: 130,
       read_period_seconds: 240,
       headway_stop_id: Map.get(config, "headway_stop_id"),
-      uses_shuttles: Map.get(config, "uses_shuttles", true)
+      uses_shuttles: Map.get(config, "uses_shuttles", true),
+      extra_audio_sign_ids: Map.get(config, "additional_signs", [])
     }
 
-    GenServer.start_link(__MODULE__, sign)
+    GenServer.start_link(__MODULE__, sign, name: String.to_atom(sign.id))
   end
 
   def init(sign) do
     schedule_run_loop(self())
     {:ok, sign}
+  end
+
+  def get_sign_state(sign_id) do
+    GenServer.call(String.to_existing_atom(sign_id), :get_sign_state)
   end
 
   def handle_info(:run_loop, sign) do
@@ -138,6 +147,7 @@ defmodule Signs.Realtime do
       sign
       |> announce_passthrough_trains()
       |> Utilities.Updater.update_sign(top, bottom)
+      |> add_extra_audio()
       |> Utilities.Reader.read_sign()
       |> log_headway_accuracy()
       |> do_expiration()
@@ -150,6 +160,10 @@ defmodule Signs.Realtime do
   def handle_info(msg, state) do
     Logger.warn("Signs.Realtime unknown_message: #{inspect(msg)}")
     {:noreply, state}
+  end
+
+  def handle_call(:get_sign_state, _from, sign) do
+    {:reply, sign, sign}
   end
 
   def schedule_run_loop(pid) do
@@ -171,6 +185,18 @@ defmodule Signs.Realtime do
         sign
       end
     end)
+  end
+
+  defp add_extra_audio(%{extra_audio_sign_ids: extra_audio_sign_ids} = sign) do
+    Enum.map(extra_audio_sign_ids, fn sign_id ->
+      Signs.Realtime.get_sign_state(sign_id)
+      |> get_current_contents()
+    end)
+    |> then(fn content -> %Signs.Realtime{sign | extra_audio_content: content} end)
+  end
+
+  defp get_current_contents(%{current_content_top: top, current_content_bottom: bottom}) do
+    {top, bottom}
   end
 
   @spec do_expiration(Signs.Realtime.t()) :: Signs.Realtime.t()
