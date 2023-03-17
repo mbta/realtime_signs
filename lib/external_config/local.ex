@@ -16,4 +16,12 @@ defmodule ExternalConfig.Local do
       {etag, Jason.decode!(file)}
     end
   end
+
+  def get_active_headend_ip() do
+    nil
+  end
+
+  def put_active_headend_ip(_ip) do
+    nil
+  end
 end
