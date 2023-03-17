@@ -61,7 +61,7 @@ defmodule ExternalConfig.S3 do
         {:ok, response}
 
       {:error, e} ->
-        Logger.error("s3 response error: #{inspect(e)}")
+        Logger.error("active_headend_ip: s3 response error: #{inspect(e)}")
         {:error, nil}
     end
   end
