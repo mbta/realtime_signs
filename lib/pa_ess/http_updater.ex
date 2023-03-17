@@ -165,7 +165,7 @@ defmodule PaEss.HttpUpdater do
   def process({:send_audio, [{station, zones}, audios, priority, timeout]}, state) do
     case audios do
       list when is_list(list) ->
-        combined_audios = combine_audio(list) |> IO.inspect()
+        combined_audios = combine_audio(list)
 
         for audio <- combined_audios do
           process_send_combined_audio(station, zones, audio, priority, timeout, state)
