@@ -118,6 +118,14 @@ defmodule Engine.Config do
           state.current_version
       end
 
+    case updater.get_active_headend_ip() do
+      {:ok, active_headend_ip} ->
+        Application.put_env(:realtime_signs, :sign_head_end_host, active_headend_ip)
+
+      _ ->
+        Logger.warn("active_headend_ip: was not able to fetch active headend ip")
+    end
+
     {:noreply, Map.put(state, :current_version, latest_version)}
   end
 
