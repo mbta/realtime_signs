@@ -35,15 +35,84 @@ defmodule Signs.Utilities.Reader do
     end
   end
 
-  @spec send_audio_update(Signs.Realtime.t()) :: {boolean(), Signs.Realtime.t()}
   defp send_audio_update(sign) do
-    case Signs.Utilities.Audio.from_sign(sign) do
-      {nil, sign} ->
-        {false, sign}
+    if sign.extra_audio_content != [] do
+      all_content = [
+        {sign.current_content_top, sign.current_content_bottom} | sign.extra_audio_content
+      ]
 
-      {audios, sign} ->
-        send_audios(sign, audios)
-        {true, sign}
+      top_stopped_trains =
+        for {{_, top_content} = top, _bottom} <- all_content,
+            is_struct(top_content, Content.Message.StoppedTrain) do
+          top
+        end
+
+      bottom_stopped_trains =
+        for {_, {_, bottom_content} = bottom} <- all_content,
+            is_struct(bottom_content, Content.Message.StoppedTrain) do
+          bottom
+        end
+
+      predictions =
+        Enum.reduce(all_content, [], fn {{_, top_content} = top, {_, bottom_content} = bottom},
+                                        predictions ->
+          predictions =
+            if is_struct(top_content, Content.Message.Predictions),
+              do: [top | predictions],
+              else: predictions
+
+          if is_struct(bottom_content, Content.Message.Predictions),
+            do: [bottom | predictions],
+            else: predictions
+        end)
+        |> Enum.sort_by(fn {_, prediction} ->
+          case prediction.minutes do
+            :boarding -> -3
+            :arriving -> -2
+            :approaching -> -1
+            minutes when is_integer(minutes) -> minutes
+            :max_time -> 1000
+          end
+        end)
+
+      headways =
+        for {{_, top_content} = top, {_, bottom_content} = bottom} <- all_content,
+            is_struct(
+              top_content,
+              Content.Message.Headways.Top
+            ) and
+              is_struct(
+                bottom_content,
+                Content.Message.Headways.Bottom
+              ) do
+          {top, bottom}
+        end
+
+      paging_headways =
+        for {_, {_, bottom_content} = bottom} <- all_content,
+            is_struct(
+              bottom_content,
+              Content.Message.Headways.Paging
+            ) do
+          bottom
+        end
+
+      sorted_content =
+        top_stopped_trains ++ predictions ++ bottom_stopped_trains ++ paging_headways ++ headways
+
+      Signs.Utilities.Audio.from_content_list(sorted_content)
+      |> then(fn audios -> send_audios(sign, audios) end)
+
+      {true, sign}
+    else
+      case Signs.Utilities.Audio.from_sign(sign) do
+        {nil, sign} ->
+          {false, sign}
+
+        {audios, sign} ->
+          send_audios(sign, audios)
+          {true, sign}
+      end
     end
   end
 

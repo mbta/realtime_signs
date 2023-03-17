@@ -166,6 +166,25 @@ defmodule Signs.Utilities.Audio do
     {audio, sign}
   end
 
+  def from_content_list(content_list) do
+    Enum.map(content_list, fn content ->
+      case content do
+        {_, %Content.Message.StoppedTrain{} = stopped_train} ->
+          Content.Audio.StoppedTrain.from_message(stopped_train)
+
+        {_, %Content.Message.Predictions{}} = prediction ->
+          Audio.Predictions.from_sign_content(prediction, :neither, false)
+
+        {_, %Content.Message.Headways.Paging{} = paging_headways} ->
+          Audio.VehiclesToDestination.from_paging_headway_message(paging_headways)
+
+        {{_, %Content.Message.Headways.Top{} = top},
+         {_, %Content.Message.Headways.Bottom{} = bottom}} ->
+          Audio.VehiclesToDestination.from_headway_message(top, bottom)
+      end
+    end)
+  end
+
   @spec sort_audio([Content.Audio.t()]) :: [Content.Audio.t()]
   defp sort_audio(audios) do
     Enum.sort_by(audios, fn audio ->
