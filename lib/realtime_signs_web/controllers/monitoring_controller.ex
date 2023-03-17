@@ -44,15 +44,12 @@ defmodule RealtimeSignsWeb.MonitoringController do
   def update_active_headend(conn, %{"active_ip" => active_ip} = _params) do
     case Headend.update_active_headend_ip(active_ip) do
       {:ok, _} ->
-        Logger.info("active_headend_ip: Updated to #{active_ip}")
         send_resp(conn, 200, "ok")
 
       {:bad_request, message} ->
-        Logger.warn("active_headend_ip: Failed to update to #{active_ip}")
         send_resp(conn, 400, message)
 
       {:error, _} ->
-        Logger.warn("active_headend_ip: Failed to update to #{active_ip}")
         send_resp(conn, 500, "Internal server error")
     end
   end
