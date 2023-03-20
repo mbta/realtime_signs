@@ -1,7 +1,7 @@
 import Config
 
 config :realtime_signs, RealtimeSignsWeb.Endpoint,
-  http: [port: System.get_env("MONITOR_SIGN_SCU_PORT")],
+  http: [port: System.get_env("MONITOR_SIGN_SCU_PORT", "4000")],
   url: [host: "localhost"],
   server: true
 
