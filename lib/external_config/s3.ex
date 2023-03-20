@@ -59,7 +59,6 @@ defmodule ExternalConfig.S3 do
          |> aws_client.request() do
       {:ok, response} ->
         Logger.info("active_headend_ip: config changed to: #{ip}")
-        Application.put_env(:realtime_signs, :sign_head_end_host, ip)
         {:ok, response}
 
       {:error, e} ->
