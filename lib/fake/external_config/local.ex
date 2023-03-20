@@ -48,4 +48,8 @@ defmodule Fake.ExternalConfig.Local do
        "MVAL0" => %{"mode" => "auto"}
      }}
   end
+
+  def get_active_headend_ip() do
+    {:ok, "123.456.789"}
+  end
 end
