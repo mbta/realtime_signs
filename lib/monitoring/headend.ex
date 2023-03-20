@@ -15,7 +15,7 @@ defmodule Monitoring.Headend do
         ExternalConfig.S3.put_active_headend_ip(ip)
 
       true ->
-        Logger.info("active_headend_ip: current value: #{current_active_ip}")
+        Logger.info("active_headend_ip: received: #{current_active_ip}")
         {:ok, "unchanged"}
     end
   end

@@ -58,7 +58,8 @@ defmodule ExternalConfig.S3 do
     case s3_client.put_object(bucket, path, Jason.encode!(%{active_headend_ip: ip}))
          |> aws_client.request() do
       {:ok, response} ->
-        Logger.info("active_headend_ip: changed: #{ip}")
+        Logger.info("active_headend_ip: config changed to: #{ip}")
+        Application.put_env(:realtime_signs, :sign_head_end_host, ip)
         {:ok, response}
 
       {:error, e} ->
