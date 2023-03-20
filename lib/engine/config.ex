@@ -15,7 +15,8 @@ defmodule Engine.Config do
           table_name_headways: term(),
           table_name_chelsea_bridge: term(),
           current_version: version_id,
-          time_fetcher: (() -> DateTime.t())
+          time_fetcher: (() -> DateTime.t()),
+          last_active_headend_ip: String.t()
         }
 
   @type sign_config :: :auto | :headway | :off | {:static_text, {String.t(), String.t()}}
@@ -61,10 +62,12 @@ defmodule Engine.Config do
       table_name_headways: @table_headways,
       table_name_chelsea_bridge: @table_chelsea_bridge,
       current_version: nil,
-      time_fetcher: opts[:time_fetcher] || fn -> DateTime.utc_now() end
+      time_fetcher: opts[:time_fetcher] || fn -> DateTime.utc_now() end,
+      last_active_headend_ip: nil
     }
 
     schedule_update(self())
+    send(self(), :update_active_headend)
 
     create_tables(state)
 
@@ -118,15 +121,30 @@ defmodule Engine.Config do
           state.current_version
       end
 
+    {:noreply, Map.put(state, :current_version, latest_version)}
+  end
+
+  def handle_info(:update_active_headend, state) do
+    schedule_update_active_headend(self())
+    updater = Application.get_env(:realtime_signs, :external_config_getter)
+
     case updater.get_active_headend_ip() do
       {:ok, active_headend_ip} ->
-        Application.put_env(:realtime_signs, :sign_head_end_host, active_headend_ip)
+        # Update active headend ip if startup or after at least two consecutive checks
+        if state.last_active_headend_ip == nil or
+             active_headend_ip == state.last_active_headend_ip do
+          Application.put_env(:realtime_signs, :sign_head_end_host, active_headend_ip)
+          Logger.info("active_headend_ip: current: #{active_headend_ip}")
+        else
+          Logger.info("active_headend_ip: pending update to: #{active_headend_ip}")
+        end
+
+        {:noreply, Map.put(state, :last_active_headend_ip, active_headend_ip)}
 
       _ ->
         Logger.warn("active_headend_ip: was not able to fetch active headend ip")
+        {:noreply, state}
     end
-
-    {:noreply, Map.put(state, :current_version, latest_version)}
   end
 
   def handle_info(msg, state) do
@@ -183,5 +201,9 @@ defmodule Engine.Config do
 
   defp schedule_update(pid, time \\ 1_000) do
     Process.send_after(pid, :update, time)
+  end
+
+  defp schedule_update_active_headend(pid, time \\ 10_000) do
+    Process.send_after(pid, :update_active_headend, time)
   end
 end
