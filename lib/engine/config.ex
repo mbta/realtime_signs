@@ -16,7 +16,7 @@ defmodule Engine.Config do
           table_name_chelsea_bridge: term(),
           current_version: version_id,
           time_fetcher: (() -> DateTime.t()),
-          last_active_headend_ip: String.t()
+          last_active_headend_ip: String.t() | nil
         }
 
   @type sign_config :: :auto | :headway | :off | {:static_text, {String.t(), String.t()}}
