@@ -307,7 +307,7 @@ defmodule Signs.BusTest do
           prev_bridge_status: %{raised?: false, estimate: nil},
           current_messages: {
             %Content.Message.BusPredictions{message: "14 WakfldAv  2 min"},
-            %Content.Message.BusPredictions{message: "14 WakfldAv 11 min"},
+            %Content.Message.BusPredictions{message: "14 WakfldAv 11 min"}
           },
           last_update: Timex.shift(Timex.now(), seconds: -40),
           last_read_time: Timex.shift(Timex.now(), seconds: -30)
