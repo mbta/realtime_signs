@@ -1,5 +1,5 @@
 defmodule Signs.BusTest do
-  use ExUnit.Case, async: false
+  use ExUnit.Case, async: true
   import Mox
 
   defmodule FakeBusPredictions do
@@ -283,6 +283,34 @@ defmodule Signs.BusTest do
           ],
           chelsea_bridge: "audio_visual",
           bridge_engine: FakeChelseaBridgeRaised
+        })
+
+      Signs.Bus.handle_info(:run_loop, state)
+    end
+
+    test "standalone bridge announcement" do
+      expect_audios([
+        {:canned, {"135", ["5504"], :audio_visual}},
+        {:canned, {"152", ["37004"], :audio_visual}}
+      ])
+
+      state =
+        Map.merge(@sign_state, %{
+          sources: [
+            %{
+              stop_id: "stop1",
+              routes: [%{route_id: "14", direction_id: 0}]
+            }
+          ],
+          chelsea_bridge: "audio",
+          bridge_engine: FakeChelseaBridgeRaised,
+          prev_bridge_status: %{raised?: false, estimate: nil},
+          current_messages: {
+            %Content.Message.BusPredictions{message: "14 WakfldAv  2 min"},
+            %Content.Message.BusPredictions{message: "14 WakfldAv 11 min"},
+          },
+          last_update: Timex.shift(Timex.now(), seconds: -40),
+          last_read_time: Timex.shift(Timex.now(), seconds: -30)
         })
 
       Signs.Bus.handle_info(:run_loop, state)
