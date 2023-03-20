@@ -41,7 +41,7 @@ defmodule RealtimeSignsWeb.MonitoringController do
     send_resp(conn, 200, "")
   end
 
-  def update_active_headend(conn, %{"active_ip" => active_ip} = _params) do
+  def update_active_headend(conn, %{"ip" => active_ip} = _params) do
     case Headend.update_active_headend_ip(active_ip) do
       {:ok, _} ->
         send_resp(conn, 200, "ok")

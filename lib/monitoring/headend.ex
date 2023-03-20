@@ -3,12 +3,20 @@ defmodule Monitoring.Headend do
 
   def update_active_headend_ip(ip) do
     valid? = ip == "172.20.145.20" or ip == "172.20.145.22"
+    current_active_ip = Application.get_env(:realtime_signs, :sign_head_end_host)
+    change? = ip != current_active_ip
 
-    if valid? do
-      ExternalConfig.S3.put_active_headend_ip(ip)
-    else
-      Logger.warn("active_headend_ip: Invalid IP provided: #{ip}")
-      {:bad_request, "Bad request"}
+    cond do
+      not valid? ->
+        Logger.warn("active_headend_ip: invalid ip provided: #{ip}")
+        {:bad_request, "bad request"}
+
+      change? ->
+        ExternalConfig.S3.put_active_headend_ip(ip)
+
+      true ->
+        Logger.info("active_headend_ip: current value: #{current_active_ip}")
+        {:ok, "unchanged"}
     end
   end
 end
