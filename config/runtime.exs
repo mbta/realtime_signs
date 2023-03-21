@@ -23,7 +23,7 @@ if config_env() != :test do
     message_log_s3_bucket: System.get_env("MESSAGE_LOG_S3_BUCKET"),
     message_log_s3_folder: System.get_env("MESSAGE_LOG_S3_FOLDER"),
     message_log_report_s3_folder: System.get_env("MESSAGE_LOG_REPORT_S3_FOLDER"),
-    s3_active_headend_path: System.get_env("HEADEND_S3_PATH")
+    s3_active_headend_path: "/headend.json"
 end
 
 message_log_job =

@@ -18,10 +18,10 @@ defmodule ExternalConfig.Local do
   end
 
   def get_active_headend_ip() do
-    nil
+    {:ok, nil}
   end
 
   def put_active_headend_ip(_ip) do
-    nil
+    {:ok, nil}
   end
 end
