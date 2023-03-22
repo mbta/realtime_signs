@@ -11,7 +11,10 @@ defmodule Monitoring.Headend do
         {:bad_request, "bad request"}
 
       change? ->
-        ExternalConfig.S3.put_active_headend_ip(ip)
+        with {:ok, _} = response <- ExternalConfig.S3.put_active_headend_ip(ip) do
+          Application.put_env(:realtime_signs, :sign_head_end_host, ip)
+          response
+        end
 
       true ->
         Logger.info("active_headend_ip: received: #{ip}")
