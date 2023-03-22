@@ -131,8 +131,8 @@ defmodule Engine.Config do
         Application.put_env(:realtime_signs, :sign_head_end_host, active_headend_ip)
         Logger.info("active_headend_ip: current: #{active_headend_ip}")
 
-      _ ->
-        Logger.warn("active_headend_ip: was not able to fetch active headend ip")
+      {:error, e} ->
+        Logger.warn("active_headend_ip: unable to fetch: #{inspect(e)}")
     end
 
     {:noreply, state}
