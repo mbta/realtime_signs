@@ -22,11 +22,11 @@ defmodule RealtimeSigns do
         Engine.Static,
         Engine.Alerts,
         MessageQueue,
-        RealtimeSigns.Scheduler
+        RealtimeSigns.Scheduler,
+        RealtimeSignsWeb.Endpoint
       ] ++
         bus_children() ++
         http_updater_children() ++
-        monitor_sign_scu_uptime() ++
         [
           Signs.Supervisor
         ]
@@ -57,16 +57,6 @@ defmodule RealtimeSigns do
     Logger.info(
       "environment_variable VEHICLE_POSITIONS_URL=#{inspect(Application.get_env(:realtime_signs, :vehicle_positions_url))}"
     )
-  end
-
-  def monitor_sign_scu_uptime do
-    if Application.get_env(:realtime_signs, RealtimeSignsWeb.Endpoint)
-       |> Keyword.get(:http)
-       |> Keyword.get(:port) do
-      [RealtimeSignsWeb.Endpoint]
-    else
-      []
-    end
   end
 
   def http_updater_children do

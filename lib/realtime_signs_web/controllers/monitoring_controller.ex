@@ -1,14 +1,15 @@
 defmodule RealtimeSignsWeb.MonitoringController do
   require Logger
   use RealtimeSignsWeb, :controller
-  import Monitoring.Uptime
+  alias Monitoring.Headend
+  alias Monitoring.Uptime
 
   def uptime(
         conn,
         %{"time" => timestamp, "data" => %{"nodes" => nodes}} = _params
       ) do
     Logger.info("Received uptime statuses from ARINC: Node count=#{Enum.count(nodes)}")
-    monitor_node_uptime(nodes, timestamp)
+    Uptime.monitor_node_uptime(nodes, timestamp)
     send_resp(conn, 200, "")
   end
 
@@ -38,5 +39,18 @@ defmodule RealtimeSignsWeb.MonitoringController do
     )
 
     send_resp(conn, 200, "")
+  end
+
+  def update_active_headend(conn, %{"ip" => active_ip} = _params) do
+    case Headend.update_active_headend_ip(active_ip) do
+      {:ok, _} ->
+        send_resp(conn, 200, "ok")
+
+      {:bad_request, message} ->
+        send_resp(conn, 400, message)
+
+      {:error, _} ->
+        send_resp(conn, 500, "Internal server error")
+    end
   end
 end

@@ -17,5 +17,7 @@ defmodule RealtimeSignsWeb.Router do
       MonitoringController,
       :run_message_latency_report
     )
+
+    get("/update_active_headend/:ip", MonitoringController, :update_active_headend)
   end
 end

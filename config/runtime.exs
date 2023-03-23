@@ -1,13 +1,12 @@
 import Config
 
 config :realtime_signs, RealtimeSignsWeb.Endpoint,
-  http: [port: System.get_env("MONITOR_SIGN_SCU_PORT")],
+  http: [port: System.get_env("MONITOR_SIGN_SCU_PORT", "4000")],
   url: [host: "localhost"],
   server: true
 
 if config_env() != :test do
   config :realtime_signs,
-    sign_head_end_host: System.get_env("SIGN_HEAD_END_HOST"),
     sign_ui_url: System.get_env("SIGN_UI_URL"),
     sign_ui_api_key: System.get_env("SIGN_UI_API_KEY"),
     trip_update_url: System.get_env("TRIP_UPDATE_URL", "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/TripUpdates_enhanced.json"),

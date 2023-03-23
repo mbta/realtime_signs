@@ -65,6 +65,7 @@ defmodule Engine.Config do
     }
 
     schedule_update(self())
+    send(self(), :update_active_headend)
 
     create_tables(state)
 
@@ -121,6 +122,22 @@ defmodule Engine.Config do
     {:noreply, Map.put(state, :current_version, latest_version)}
   end
 
+  def handle_info(:update_active_headend, state) do
+    schedule_update_active_headend(self())
+    updater = Application.get_env(:realtime_signs, :external_config_getter)
+
+    case updater.get_active_headend_ip() do
+      {:ok, active_headend_ip} ->
+        Application.put_env(:realtime_signs, :sign_head_end_host, active_headend_ip)
+        Logger.info("active_headend_ip: current: #{active_headend_ip}")
+
+      {:error, e} ->
+        Logger.warn("active_headend_ip: unable to fetch: #{inspect(e)}")
+    end
+
+    {:noreply, state}
+  end
+
   def handle_info(msg, state) do
     Logger.info("#{__MODULE__} unknown message: #{inspect(msg)}")
     {:noreply, state}
@@ -175,5 +192,9 @@ defmodule Engine.Config do
 
   defp schedule_update(pid, time \\ 1_000) do
     Process.send_after(pid, :update, time)
+  end
+
+  defp schedule_update_active_headend(pid, time \\ 10_000) do
+    Process.send_after(pid, :update_active_headend, time)
   end
 end
