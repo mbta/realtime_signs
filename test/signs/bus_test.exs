@@ -110,7 +110,7 @@ defmodule Signs.BusTest do
           [
             "501",
             "575",
-            "21012",
+            "859",
             "621",
             "503",
             "504",
@@ -119,7 +119,7 @@ defmodule Signs.BusTest do
             "21012",
             "667",
             "575",
-            "21012",
+            "859",
             "621",
             "503",
             "504",
@@ -163,7 +163,7 @@ defmodule Signs.BusTest do
             "5507",
             "505",
             "21012",
-            "21012",
+            "860",
             "5504",
             "505"
           ], :audio}}
@@ -253,7 +253,7 @@ defmodule Signs.BusTest do
           [
             "501",
             "575",
-            "21012",
+            "859",
             "621",
             "503",
             "504",
@@ -262,7 +262,7 @@ defmodule Signs.BusTest do
             "21012",
             "667",
             "575",
-            "21012",
+            "859",
             "621",
             "503",
             "504",
@@ -310,7 +310,7 @@ defmodule Signs.BusTest do
             %Content.Message.BusPredictions{message: "14 WakfldAv 11 min"}
           },
           last_update: Timex.shift(Timex.now(), seconds: -40),
-          last_read_time: Timex.shift(Timex.now(), seconds: -30)
+          last_read_time: Timex.now()
         })
 
       Signs.Bus.handle_info(:run_loop, state)

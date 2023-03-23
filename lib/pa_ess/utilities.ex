@@ -584,7 +584,8 @@ defmodule PaEss.Utilities do
     {"Waltham", "561"},
     {"Haymarket", "4028"},
     {"Silver Line Way", "570"},
-    {"Drydock", "571"}
+    {"Drydock", "571"},
+    {"Chelsea", "860"}
   ]
 
   @route_take_lookup %{
@@ -647,8 +648,10 @@ defmodule PaEss.Utilities do
 
   @atom_take_lookup %{
     the_next_bus_to: "543",
+    the_following_bus_to: "858",
     the_next: "501",
     the_following: "667",
+    bus_to: "859",
     departs: "502",
     arrives: "503",
     in: "504",
