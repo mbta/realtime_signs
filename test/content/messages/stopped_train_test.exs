@@ -7,9 +7,9 @@ defmodule Content.Message.StoppedTrainTest do
 
       assert Content.Message.to_string(msg) ==
                [
-                 {"Braintree  Stopped", 6},
-                 {"Braintree  2 stops", 3},
-                 {"Braintree     away", 3}
+                 {"Braintree  Stopped", 4},
+                 {"Braintree  2 stops", 4},
+                 {"Braintree     away", 4}
                ]
     end
 
@@ -18,9 +18,9 @@ defmodule Content.Message.StoppedTrainTest do
 
       assert Content.Message.to_string(msg) ==
                [
-                 {"Braintree  Stopped", 6},
-                 {"Braintree   1 stop", 3},
-                 {"Braintree     away", 3}
+                 {"Braintree  Stopped", 4},
+                 {"Braintree   1 stop", 4},
+                 {"Braintree     away", 4}
                ]
     end
   end
