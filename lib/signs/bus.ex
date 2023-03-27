@@ -422,7 +422,7 @@ defmodule Signs.Bus do
   end
 
   defp prediction_key(prediction) do
-    Map.take(prediction, [:stop_id, :route_id, :vehicle_id, :direction_id])
+    Map.take(prediction, [:stop_id, :route_id, :vehicle_id, :direction_id, :trip_id])
   end
 
   defp bridge_status_minutes(bridge_status, current_time) do

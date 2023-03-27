@@ -6,6 +6,7 @@ defmodule Predictions.BusPrediction do
     :stop_id,
     :headsign,
     :vehicle_id,
+    :trip_id,
     :updated_at
   ]
   defstruct @enforce_keys
@@ -17,6 +18,7 @@ defmodule Predictions.BusPrediction do
           stop_id: String.t(),
           headsign: String.t(),
           vehicle_id: String.t() | nil,
+          trip_id: String.t(),
           updated_at: String.t() | nil
         }
 end

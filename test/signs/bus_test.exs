@@ -12,6 +12,7 @@ defmodule Signs.BusTest do
           stop_id: "stop1",
           headsign: "Wakefield Ave",
           vehicle_id: "a",
+          trip_id: "a",
           updated_at: ""
         },
         %Predictions.BusPrediction{
@@ -21,6 +22,7 @@ defmodule Signs.BusTest do
           stop_id: "stop1",
           headsign: "Wakefield Ave",
           vehicle_id: "b",
+          trip_id: "b",
           updated_at: ""
         },
         %Predictions.BusPrediction{
@@ -30,6 +32,7 @@ defmodule Signs.BusTest do
           stop_id: "stop1",
           headsign: "Clarendon Hill",
           vehicle_id: "c",
+          trip_id: "c",
           updated_at: ""
         },
         %Predictions.BusPrediction{
@@ -39,6 +42,7 @@ defmodule Signs.BusTest do
           stop_id: "stop1",
           headsign: "Chelsea",
           vehicle_id: "d",
+          trip_id: "d",
           updated_at: ""
         }
       ]
@@ -53,6 +57,7 @@ defmodule Signs.BusTest do
           stop_id: "stop2",
           headsign: "Nubian",
           vehicle_id: "e",
+          trip_id: "e",
           updated_at: ""
         }
       ]
