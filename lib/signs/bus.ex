@@ -231,7 +231,7 @@ defmodule Signs.Bus do
 
       %{prediction | departure_time: departure_time}
     end
-    |> Enum.sort_by(& &1.departure_time)
+    |> Enum.sort_by(& &1.departure_time, DateTime)
   end
 
   defp filter_predictions(predictions, current_time, state) do
