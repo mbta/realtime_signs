@@ -1,7 +1,6 @@
 defmodule RealtimeSignsWeb.Auth do
-  @moduledoc "Authenticates API requests using a set of keys defined in the environment."
+  @moduledoc "Authenticates API requests using a key defined in the environment."
   import Plug.Conn
-  require Logger
 
   def init(opts), do: opts
 
