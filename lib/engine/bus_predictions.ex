@@ -15,8 +15,7 @@ defmodule Engine.BusPredictions do
     {:ok, %{predictions: %{}, last_modified: nil}}
   end
 
-  def handle_info(:update, state) do
-    %{last_modified: last_modified} = state
+  def handle_info(:update, %{last_modified: last_modified} = state) do
     schedule_update(self())
     api_url = Application.get_env(:realtime_signs, :api_v3_url)
     api_key = Application.get_env(:realtime_signs, :api_v3_key)
