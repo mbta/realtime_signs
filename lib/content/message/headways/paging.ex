@@ -13,8 +13,8 @@ defmodule Content.Message.Headways.Paging do
           range: range
         }) do
       [
-        {"Trains every", 3},
-        {format_paging_headway_range(range), 3}
+        {"Trains every", 4},
+        {format_paging_headway_range(range), 4}
       ]
     end
 
@@ -23,8 +23,8 @@ defmodule Content.Message.Headways.Paging do
           range: range
         }) do
       [
-        {destination_trains_every_string(destination), 3},
-        {destination_range_string(destination, range), 3}
+        {destination_trains_every_string(destination), 4},
+        {destination_range_string(destination, range), 4}
       ]
     end
 

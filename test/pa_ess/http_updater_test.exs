@@ -316,7 +316,7 @@ defmodule PaEss.HttpUpdaterTest do
       msg = %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 3}
 
       assert PaEss.HttpUpdater.to_command(msg, 55, :now, "n", 1) ==
-               "e55~n1-\"Ashmont       away\".2-\"Ashmont    Stopped\".5-\"Ashmont    3 stops\".2"
+               "e55~n1-\"Ashmont       away\".3-\"Ashmont    Stopped\".3-\"Ashmont    3 stops\".3"
     end
   end
 

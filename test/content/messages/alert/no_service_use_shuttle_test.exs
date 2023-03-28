@@ -6,8 +6,8 @@ defmodule Content.Message.Alert.NoServiceUseShuttleTest do
       msg = %Content.Message.Alert.NoServiceUseShuttle{destination: :medford_tufts}
 
       assert Content.Message.to_string(msg) == [
-               {"Medfd/Tufts   no service", 3},
-               {"Medfd/Tufts  use shuttle", 3}
+               {"Medfd/Tufts   no service", 4},
+               {"Medfd/Tufts  use shuttle", 4}
              ]
     end
   end
