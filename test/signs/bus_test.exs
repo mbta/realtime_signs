@@ -143,8 +143,8 @@ defmodule Signs.BusTest do
 
     test "platform mode, multiple pages" do
       expect_messages([
-        [{"14 WakefldAv 2 min", 6}, {"Chelsea      4 min", 6}],
-        [{"34 Clarendon 7 min", 6}, {"", 6}]
+        [{"14 WakefldAv 2 min", 6}, {"34 Clarendon 7 min", 6}],
+        [{"Chelsea      4 min", 6}, {"", 6}]
       ])
 
       expect_audios([
@@ -158,13 +158,13 @@ defmodule Signs.BusTest do
             "5502",
             "505",
             "21012",
+            "860",
+            "5504",
+            "505",
+            "21012",
             "678",
             "605",
             "5507",
-            "505",
-            "21012",
-            "860",
-            "5504",
             "505"
           ], :audio}}
       ])
