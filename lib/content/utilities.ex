@@ -17,7 +17,7 @@ defmodule Content.Utilities do
     for message <- [top, bottom] do
       case Content.Message.to_string(message) do
         pages when is_list(pages) -> Enum.map(pages, fn {_, n} -> n end) |> Enum.sum()
-        str when is_binary(str) -> 0
+        str when is_binary(str) -> 6
       end
     end
     |> Enum.max()
