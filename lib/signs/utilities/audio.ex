@@ -1,7 +1,6 @@
 defmodule Signs.Utilities.Audio do
   @moduledoc """
-  Takes a sign and returns the audio struct or tuple of
-  two audio structs to be sent to ARINC.
+  Takes a sign and returns the list of audio structs to be sent to ARINC.
   """
 
   alias Content.Message
@@ -103,21 +102,15 @@ defmodule Signs.Utilities.Audio do
     true
   end
 
-  @spec from_sign(Signs.Realtime.t()) ::
-          {nil | Content.Audio.t() | {Content.Audio.t(), Content.Audio.t()}, Signs.Realtime.t()}
+  @spec from_sign(Signs.Realtime.t()) :: {[Content.Audio.t()], Signs.Realtime.t()}
   def from_sign(sign) do
     multi_source? = Signs.Utilities.SourceConfig.multi_source?(sign.source_config)
-    audio = get_audio(sign.current_content_top, sign.current_content_bottom, multi_source?)
 
-    audio_list =
-      case audio do
-        multi_audios when is_tuple(multi_audios) -> Tuple.to_list(multi_audios)
-        single_audio -> List.wrap(single_audio)
-      end
+    audios = get_audio(sign.current_content_top, sign.current_content_bottom, multi_source?)
 
     {new_audios, new_approaching_trips, new_arriving_trips} =
       Enum.reduce(
-        audio_list,
+        audios,
         {[], sign.announced_approachings, sign.announced_arrivals},
         fn audio, {new_audios, new_approaching_trips, new_arriving_trips} ->
           case audio do
@@ -156,14 +149,7 @@ defmodule Signs.Utilities.Audio do
         new_audios
       end
 
-    audio =
-      case new_audios do
-        [] -> nil
-        [audio1] -> audio1
-        [audio1, audio2] -> {audio1, audio2}
-      end
-
-    {audio, sign}
+    {new_audios, sign}
   end
 
   @spec sort_audio([Content.Audio.t()]) :: [Content.Audio.t()]
@@ -179,7 +165,7 @@ defmodule Signs.Utilities.Audio do
   end
 
   @spec get_audio(Signs.Realtime.line_content(), Signs.Realtime.line_content(), boolean()) ::
-          nil | Content.Audio.t() | {Content.Audio.t(), Content.Audio.t()}
+          [Content.Audio.t()]
   defp get_audio(
          {_, %Message.Alert.NoService{} = top},
          {_, bottom},
@@ -235,12 +221,8 @@ defmodule Signs.Utilities.Audio do
          {_, %Message.Predictions{destination: same}} = content_bottom,
          multi_source?
        ) do
-    top_audio = Audio.Predictions.from_sign_content(content_top, :top, multi_source?)
-
-    case Audio.FollowingTrain.from_predictions_message(content_bottom) do
-      nil -> top_audio
-      bottom_audio -> {top_audio, bottom_audio}
-    end
+    Audio.Predictions.from_sign_content(content_top, :top, multi_source?) ++
+      Audio.FollowingTrain.from_predictions_message(content_bottom)
   end
 
   defp get_audio(
@@ -268,13 +250,12 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_audio(top, bottom, multi_source?) do
-    top_audio = get_audio_for_line(top, :top, multi_source?)
-    bottom_audio = get_audio_for_line(bottom, :bottom, multi_source?)
-    normalize(top_audio, bottom_audio)
+    get_audio_for_line(top, :top, multi_source?) ++
+      get_audio_for_line(bottom, :bottom, multi_source?)
   end
 
   @spec get_audio_for_line(Signs.Realtime.line_content(), Content.line_location(), boolean()) ::
-          Content.Audio.t() | nil
+          [Content.Audio.t()]
   defp get_audio_for_line({_, %Message.StoppedTrain{} = message}, _line, _multi_source?) do
     Audio.StoppedTrain.from_message(message)
   end
@@ -304,16 +285,11 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_audio_for_line({_, %Message.Empty{}}, _line, _multi_source?) do
-    nil
+    []
   end
 
   defp get_audio_for_line(content, _line, _multi_source?) do
     Logger.error("message_to_audio_error Utilities.Audio unknown_line #{inspect(content)}")
-    nil
+    []
   end
-
-  defp normalize(nil, nil), do: nil
-  defp normalize(nil, a), do: a
-  defp normalize(a, nil), do: a
-  defp normalize(a1, a2), do: {a1, a2}
 end

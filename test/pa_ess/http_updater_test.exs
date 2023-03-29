@@ -123,7 +123,7 @@ defmodule PaEss.HttpUpdaterTest do
       audio = %Fake.UnknownAudio{}
 
       assert {:ok, :no_audio} ==
-               PaEss.HttpUpdater.process({:send_audio, [{"GKEN", ["m"]}, audio, 5, 60]}, state)
+               PaEss.HttpUpdater.process({:send_audio, [{"GKEN", ["m"]}, [audio], 5, 60]}, state)
     end
   end
 
@@ -141,7 +141,7 @@ defmodule PaEss.HttpUpdaterTest do
         capture_log(fn ->
           assert {:ok, :sent} ==
                    PaEss.HttpUpdater.process(
-                     {:send_audio, [{"SBOX", ["c"]}, audio, 5, 60]},
+                     {:send_audio, [{"SBOX", ["c"]}, [audio], 5, 60]},
                      state
                    )
         end)
@@ -159,7 +159,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process({:send_audio, [{"SBSQ", ["m"]}, audio, 5, 60]}, state)
+               PaEss.HttpUpdater.process({:send_audio, [{"SBSQ", ["m"]}, [audio], 5, 60]}, state)
     end
 
     test "Buses to Chelsea, in Spanish" do
@@ -172,7 +172,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process({:send_audio, [{"SBOX", ["e"]}, audio, 5, 60]}, state)
+               PaEss.HttpUpdater.process({:send_audio, [{"SBOX", ["e"]}, [audio], 5, 60]}, state)
     end
 
     test "Next train to Ashmont arrives in 4 minutes" do
@@ -187,7 +187,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process({:send_audio, [{"MCED", ["n"]}, audio, 5, 60]}, state)
+               PaEss.HttpUpdater.process({:send_audio, [{"MCED", ["n"]}, [audio], 5, 60]}, state)
     end
 
     test "Train to Mattapan arriving" do
@@ -198,7 +198,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process({:send_audio, [{"MCED", ["s"]}, audio, 5, 60]}, state)
+               PaEss.HttpUpdater.process({:send_audio, [{"MCED", ["s"]}, [audio], 5, 60]}, state)
     end
 
     test "Train to Ashmont arriving" do
@@ -210,7 +210,7 @@ defmodule PaEss.HttpUpdaterTest do
       }
 
       assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process({:send_audio, [{"MCAP", ["n"]}, audio, 5, 60]}, state)
+               PaEss.HttpUpdater.process({:send_audio, [{"MCAP", ["n"]}, [audio], 5, 60]}, state)
     end
 
     test "sends custom audio messages" do
@@ -224,7 +224,7 @@ defmodule PaEss.HttpUpdaterTest do
         capture_log(fn ->
           assert {:ok, :sent} ==
                    PaEss.HttpUpdater.process(
-                     {:send_audio, [{"MCAP", ["n"]}, audio, 5, 60]},
+                     {:send_audio, [{"MCAP", ["n"]}, [audio], 5, 60]},
                      state
                    )
         end)
@@ -244,7 +244,7 @@ defmodule PaEss.HttpUpdaterTest do
         capture_log(fn ->
           assert {:ok, :sent} =
                    PaEss.HttpUpdater.process(
-                     {:send_audio, [{"MCAP", ["n"]}, audio, 5, 60]},
+                     {:send_audio, [{"MCAP", ["n"]}, [audio], 5, 60]},
                      state
                    )
         end)
@@ -272,7 +272,7 @@ defmodule PaEss.HttpUpdaterTest do
         minutes: 7
       }
 
-      PaEss.HttpUpdater.process({:send_audio, [{"RPRK", ["s"]}, {audio1, audio2}, 5, 60]}, state)
+      PaEss.HttpUpdater.process({:send_audio, [{"RPRK", ["s"]}, [audio1, audio2], 5, 60]}, state)
 
       assert_received {:post, q1}
       assert_received {:post, q2}
@@ -292,7 +292,7 @@ defmodule PaEss.HttpUpdaterTest do
       minutes: 2
     }
 
-    PaEss.HttpUpdater.process({:send_audio, [{"RPRK", ["m", "s", "c"]}, audio, 5, 60]}, state)
+    PaEss.HttpUpdater.process({:send_audio, [{"RPRK", ["m", "s", "c"]}, [audio], 5, 60]}, state)
     assert_received {:post, q}
     assert q =~ "sta=RPRK110100"
   end

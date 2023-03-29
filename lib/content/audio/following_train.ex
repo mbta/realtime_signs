@@ -21,7 +21,7 @@ defmodule Content.Audio.FollowingTrain do
   @spec from_predictions_message({
           Signs.Utilities.SourceConfig.source(),
           Content.Message.Predictions.t()
-        }) :: Content.Audio.FollowingTrain.t() | nil
+        }) :: [Content.Audio.FollowingTrain.t()]
   def from_predictions_message({
         %{
           terminal?: terminal
@@ -34,17 +34,19 @@ defmodule Content.Audio.FollowingTrain do
         }
       })
       when is_integer(n) do
-    %__MODULE__{
-      destination: destination,
-      route_id: route_id,
-      minutes: n,
-      verb: arrives_or_departs(terminal),
-      station_code: station_code
-    }
+    [
+      %__MODULE__{
+        destination: destination,
+        route_id: route_id,
+        minutes: n,
+        verb: arrives_or_departs(terminal),
+        station_code: station_code
+      }
+    ]
   end
 
   def from_predictions_message({_src, _msg}) do
-    nil
+    []
   end
 
   @spec arrives_or_departs(boolean) :: :arrives | :departs

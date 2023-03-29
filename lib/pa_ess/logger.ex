@@ -50,11 +50,7 @@ defmodule PaEss.Logger do
 
   @impl true
   def send_audio(audio_id, audios, priority, timeout) do
-    audio_text =
-      case audios do
-        {a1, a2} -> inspect([Content.Audio.to_params(a1), Content.Audio.to_params(a2)])
-        a -> inspect(Content.Audio.to_params(a))
-      end
+    audio_text = Enum.map(audios, &Content.Audio.to_params(&1)) |> inspect()
 
     line = [
       now(),

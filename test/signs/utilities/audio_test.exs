@@ -198,7 +198,7 @@ defmodule Signs.Utilities.AudioTest do
       }
 
       assert {
-               %Audio.Closure{alert: :shuttles_closed_station},
+               [%Audio.Closure{alert: :shuttles_closed_station}],
                ^sign
              } = from_sign(sign)
     end
@@ -211,7 +211,7 @@ defmodule Signs.Utilities.AudioTest do
       }
 
       assert {
-               %Audio.Custom{message: "Custom Top Custom Bottom"},
+               [%Audio.Custom{message: "Custom Top Custom Bottom"}],
                ^sign
              } = from_sign(sign)
     end
@@ -224,7 +224,7 @@ defmodule Signs.Utilities.AudioTest do
       }
 
       assert {
-               %Audio.Custom{message: "Custom Bottom"},
+               [%Audio.Custom{message: "Custom Bottom"}],
                ^sign
              } = from_sign(sign)
     end
@@ -237,11 +237,13 @@ defmodule Signs.Utilities.AudioTest do
       }
 
       assert {
-               %Audio.VehiclesToDestination{
-                 language: :english,
-                 destination: :alewife,
-                 headway_range: {1, 3}
-               },
+               [
+                 %Audio.VehiclesToDestination{
+                   language: :english,
+                   destination: :alewife,
+                   headway_range: {1, 3}
+                 }
+               ],
                ^sign
              } = from_sign(sign)
     end
@@ -253,10 +255,10 @@ defmodule Signs.Utilities.AudioTest do
           current_content_bottom: {@src, %Message.Headways.Bottom{range: {1, 3}}}
       }
 
-      assert {{
+      assert {[
                 %Audio.VehiclesToDestination{language: :english},
                 %Audio.VehiclesToDestination{language: :spanish}
-              }, ^sign} = from_sign(sign)
+              ], ^sign} = from_sign(sign)
     end
 
     test "Countdowns say 'following train' if second line is same headsign" do
@@ -266,8 +268,10 @@ defmodule Signs.Utilities.AudioTest do
           current_content_bottom: {@src, %Message.Predictions{destination: :ashmont, minutes: 4}}
       }
 
-      assert {{%Audio.NextTrainCountdown{destination: :ashmont, minutes: 3},
-               %Audio.FollowingTrain{destination: :ashmont, minutes: 4}}, ^sign} = from_sign(sign)
+      assert {[
+                %Audio.NextTrainCountdown{destination: :ashmont, minutes: 3},
+                %Audio.FollowingTrain{destination: :ashmont, minutes: 4}
+              ], ^sign} = from_sign(sign)
     end
 
     test "If top line prediction and bottom line paging headways, announce both" do
@@ -283,9 +287,10 @@ defmodule Signs.Utilities.AudioTest do
              }}
       }
 
-      assert {{%Audio.NextTrainCountdown{destination: :medford_tufts, minutes: 3},
-               %Audio.VehiclesToDestination{destination: :heath_street, headway_range: {5, 7}}},
-              ^sign} = from_sign(sign)
+      assert {[
+                %Audio.NextTrainCountdown{destination: :medford_tufts, minutes: 3},
+                %Audio.VehiclesToDestination{destination: :heath_street, headway_range: {5, 7}}
+              ], ^sign} = from_sign(sign)
     end
 
     test "Ignores 'following train' if same headsign but it's arriving (we don't have audio)" do
@@ -297,7 +302,7 @@ defmodule Signs.Utilities.AudioTest do
             {@src, %Message.Predictions{destination: :ashmont, minutes: :arriving}}
       }
 
-      assert {%Audio.TrainIsBoarding{destination: :ashmont}, ^sign} = from_sign(sign)
+      assert {[%Audio.TrainIsBoarding{destination: :ashmont}], ^sign} = from_sign(sign)
     end
 
     test "reads the approaching and bottom line when top line is approaching" do
@@ -311,8 +316,10 @@ defmodule Signs.Utilities.AudioTest do
       }
 
       assert {
-               {%Audio.Approaching{destination: :alewife},
-                %Audio.FollowingTrain{destination: :alewife, minutes: 5, verb: :arrives}},
+               [
+                 %Audio.Approaching{destination: :alewife},
+                 %Audio.FollowingTrain{destination: :alewife, minutes: 5, verb: :arrives}
+               ],
                ^sign
              } = from_sign(sign)
     end
@@ -327,7 +334,7 @@ defmodule Signs.Utilities.AudioTest do
       }
 
       assert {
-               %Audio.TrainIsArriving{destination: :alewife},
+               [%Audio.TrainIsArriving{destination: :alewife}],
                ^sign
              } = from_sign(sign)
     end
@@ -342,14 +349,16 @@ defmodule Signs.Utilities.AudioTest do
       }
 
       assert {
-               {%Audio.TrainIsBoarding{destination: :ashmont},
-                %Audio.NextTrainCountdown{
-                  destination: :braintree,
-                  verb: :arrives,
-                  minutes: 1,
-                  track_number: nil,
-                  platform: nil
-                }},
+               [
+                 %Audio.TrainIsBoarding{destination: :ashmont},
+                 %Audio.NextTrainCountdown{
+                   destination: :braintree,
+                   verb: :arrives,
+                   minutes: 1,
+                   track_number: nil,
+                   platform: nil
+                 }
+               ],
                ^sign
              } = from_sign(sign)
     end
@@ -364,7 +373,7 @@ defmodule Signs.Utilities.AudioTest do
             {@src, %Message.Predictions{destination: :alewife, minutes: 5, route_id: "Red"}}
       }
 
-      assert {%Audio.TrainIsArriving{destination: :alewife}, ^sign} = from_sign(sign)
+      assert {[%Audio.TrainIsArriving{destination: :alewife}], ^sign} = from_sign(sign)
     end
 
     test "reads both lines when the top line is arriving and light rail" do
@@ -377,8 +386,10 @@ defmodule Signs.Utilities.AudioTest do
             {@src, %Message.Predictions{destination: :ashmont, minutes: 5, route_id: "Mattapan"}}
       }
 
-      assert {{%Audio.TrainIsArriving{destination: :ashmont, route_id: "Mattapan"},
-               %Audio.FollowingTrain{destination: :ashmont, minutes: 5}}, ^sign} = from_sign(sign)
+      assert {[
+                %Audio.TrainIsArriving{destination: :ashmont, route_id: "Mattapan"},
+                %Audio.FollowingTrain{destination: :ashmont, minutes: 5}
+              ], ^sign} = from_sign(sign)
     end
 
     test "only reads the bottom line when the bottom line is arriving on a multi_source sign for heavy rail" do
@@ -392,7 +403,7 @@ defmodule Signs.Utilities.AudioTest do
           source_config: {[@src], [@src]}
       }
 
-      assert {%Audio.TrainIsArriving{destination: :braintree}, ^sign} = from_sign(sign)
+      assert {[%Audio.TrainIsArriving{destination: :braintree}], ^sign} = from_sign(sign)
     end
 
     test "reads both lines in order when the bottom line is arriving on a multi_source sign for light rail" do
@@ -410,9 +421,10 @@ defmodule Signs.Utilities.AudioTest do
           source_config: {[@src], [@src]}
       }
 
-      assert {{%Audio.TrainIsArriving{destination: :riverside},
-               %Audio.NextTrainCountdown{destination: :lechmere, minutes: 3}},
-              ^sign} = from_sign(sign)
+      assert {[
+                %Audio.TrainIsArriving{destination: :riverside},
+                %Audio.NextTrainCountdown{destination: :lechmere, minutes: 3}
+              ], ^sign} = from_sign(sign)
     end
 
     test "Two stopped train messages only plays once if both same headsign" do
@@ -425,7 +437,7 @@ defmodule Signs.Utilities.AudioTest do
       }
 
       assert {
-               %Audio.StoppedTrain{destination: :alewife, stops_away: 2},
+               [%Audio.StoppedTrain{destination: :alewife, stops_away: 2}],
                ^sign
              } = from_sign(sign)
     end
@@ -439,7 +451,7 @@ defmodule Signs.Utilities.AudioTest do
       }
 
       assert {
-               %Audio.StoppedTrain{destination: :alewife, stops_away: 2},
+               [%Audio.StoppedTrain{destination: :alewife, stops_away: 2}],
                ^sign
              } = from_sign(sign)
     end
@@ -453,7 +465,7 @@ defmodule Signs.Utilities.AudioTest do
       }
 
       assert {
-               %Audio.NextTrainCountdown{destination: :alewife, minutes: 4},
+               [%Audio.NextTrainCountdown{destination: :alewife, minutes: 4}],
                ^sign
              } = from_sign(sign)
     end
@@ -466,10 +478,10 @@ defmodule Signs.Utilities.AudioTest do
             {@src, %Message.Predictions{destination: :braintree, minutes: 4}}
       }
 
-      assert {{
+      assert {[
                 %Audio.NextTrainCountdown{destination: :ashmont, minutes: 3},
                 %Audio.NextTrainCountdown{destination: :braintree, minutes: 4}
-              }, ^sign} = from_sign(sign)
+              ], ^sign} = from_sign(sign)
     end
 
     test "One countdown and one stopped train, with different headsigns, both are read" do
@@ -480,10 +492,10 @@ defmodule Signs.Utilities.AudioTest do
             {@src, %Message.StoppedTrain{destination: :braintree, stops_away: 4}}
       }
 
-      assert {{
+      assert {[
                 %Audio.NextTrainCountdown{destination: :ashmont, minutes: 3},
                 %Audio.StoppedTrain{destination: :braintree, stops_away: 4}
-              }, ^sign} = from_sign(sign)
+              ], ^sign} = from_sign(sign)
     end
 
     test "When bottom line is empty, reads top" do
@@ -493,7 +505,7 @@ defmodule Signs.Utilities.AudioTest do
           current_content_bottom: {nil, %Message.Empty{}}
       }
 
-      assert {%Audio.NextTrainCountdown{destination: :ashmont, minutes: 3}, ^sign} =
+      assert {[%Audio.NextTrainCountdown{destination: :ashmont, minutes: 3}], ^sign} =
                from_sign(sign)
     end
 
@@ -504,7 +516,7 @@ defmodule Signs.Utilities.AudioTest do
           current_content_bottom: {@src, %Message.Predictions{destination: :ashmont, minutes: 3}}
       }
 
-      assert {%Audio.NextTrainCountdown{destination: :ashmont, minutes: 3}, ^sign} =
+      assert {[%Audio.NextTrainCountdown{destination: :ashmont, minutes: 3}], ^sign} =
                from_sign(sign)
     end
 
@@ -515,7 +527,7 @@ defmodule Signs.Utilities.AudioTest do
           current_content_bottom: {nil, %Message.Empty{}}
       }
 
-      assert {nil, ^sign} = from_sign(sign)
+      assert {[], ^sign} = from_sign(sign)
     end
 
     test "When one train is boarding and another is a countdown, audio is ordered correctly" do
@@ -527,10 +539,10 @@ defmodule Signs.Utilities.AudioTest do
             {@src, %Message.Predictions{destination: :riverside, minutes: 4}}
       }
 
-      assert {{
+      assert {[
                 %Audio.TrainIsBoarding{destination: :boston_college},
                 %Audio.NextTrainCountdown{destination: :riverside}
-              }, _sign} = from_sign(sign)
+              ], _sign} = from_sign(sign)
     end
 
     test "Reads ARR on sign even if announce_arriving? is false" do
@@ -542,7 +554,7 @@ defmodule Signs.Utilities.AudioTest do
             {src, %Message.Predictions{destination: :alewife, minutes: :arriving}}
       }
 
-      assert {%Audio.TrainIsArriving{destination: :alewife}, _sign} = from_sign(sign)
+      assert {[%Audio.TrainIsArriving{destination: :alewife}], _sign} = from_sign(sign)
     end
 
     test "Reads BRD on sign even if announce_boarding? is false" do
@@ -554,7 +566,7 @@ defmodule Signs.Utilities.AudioTest do
             {src, %Message.Predictions{destination: :alewife, minutes: :boarding}}
       }
 
-      assert {%Audio.TrainIsBoarding{destination: :alewife}, _sign} = from_sign(sign)
+      assert {[%Audio.TrainIsBoarding{destination: :alewife}], _sign} = from_sign(sign)
     end
 
     test "Logs error and returns nil if unknown message type" do
@@ -568,7 +580,7 @@ defmodule Signs.Utilities.AudioTest do
       log =
         capture_log([level: :error], fn ->
           assert {
-                   %Audio.StoppedTrain{destination: :alewife, stops_away: 2},
+                   [%Audio.StoppedTrain{destination: :alewife, stops_away: 2}],
                    ^sign
                  } = from_sign(sign)
         end)
@@ -587,10 +599,10 @@ defmodule Signs.Utilities.AudioTest do
 
       {audio, new_sign} = from_sign(sign)
 
-      assert %Content.Audio.TrainIsArriving{} = audio
+      assert [%Content.Audio.TrainIsArriving{}] = audio
       assert new_sign.announced_arrivals == ["trip1"]
 
-      assert {nil, ^new_sign} = from_sign(new_sign)
+      assert {[], ^new_sign} = from_sign(new_sign)
     end
 
     test "announces approaching, then skips approaching for the same trip" do
@@ -609,10 +621,10 @@ defmodule Signs.Utilities.AudioTest do
 
       {audio, new_sign} = from_sign(sign)
 
-      assert %Content.Audio.Approaching{} = audio
+      assert [%Content.Audio.Approaching{}] = audio
       assert new_sign.announced_approachings == ["trip1"]
 
-      assert {nil, ^new_sign} = from_sign(new_sign)
+      assert {[], ^new_sign} = from_sign(new_sign)
     end
 
     test "Announces higher priority message first even on bottom of multi-source sign" do
@@ -627,10 +639,10 @@ defmodule Signs.Utilities.AudioTest do
       }
 
       assert {
-               {
+               [
                  %Content.Audio.Approaching{destination: :ashmont},
                  %Content.Audio.NextTrainCountdown{minutes: 5, destination: :alewife}
-               },
+               ],
                ^sign
              } = from_sign(sign)
     end

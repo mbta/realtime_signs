@@ -14,19 +14,19 @@ defmodule Content.Audio.StoppedTrain do
           stops_away: non_neg_integer()
         }
 
-  @spec from_message(Content.Message.t()) :: t() | nil
+  @spec from_message(Content.Message.t()) :: [t()]
   def from_message(%Content.Message.StoppedTrain{destination: destination, stops_away: stops_away})
       when stops_away > 0 do
-    %__MODULE__{destination: destination, stops_away: stops_away}
+    [%__MODULE__{destination: destination, stops_away: stops_away}]
   end
 
   def from_message(%Content.Message.StoppedTrain{stops_away: 0}) do
-    nil
+    []
   end
 
   def from_message(message) do
     Logger.error("message_to_audio_error Audio.StoppedTrain #{inspect(message)}")
-    nil
+    []
   end
 
   defimpl Content.Audio do

@@ -12,9 +12,8 @@ defmodule Content.Audio.CustomTest do
       message: "Bottom Message"
     }
 
-    assert Content.Audio.Custom.from_messages(top, bottom) == %Content.Audio.Custom{
-             message: "Top Message Bottom Message"
-           }
+    assert Content.Audio.Custom.from_messages(top, bottom) ==
+             [%Content.Audio.Custom{message: "Top Message Bottom Message"}]
   end
 
   test "Makes an audio message when the top is empty" do
@@ -25,9 +24,8 @@ defmodule Content.Audio.CustomTest do
       message: "Bottom Message"
     }
 
-    assert Content.Audio.Custom.from_messages(top, bottom) == %Content.Audio.Custom{
-             message: "Bottom Message"
-           }
+    assert Content.Audio.Custom.from_messages(top, bottom) ==
+             [%Content.Audio.Custom{message: "Bottom Message"}]
   end
 
   test "Makes an audio message when the bottom is empty" do
@@ -38,8 +36,7 @@ defmodule Content.Audio.CustomTest do
 
     bottom = %Content.Message.Empty{}
 
-    assert Content.Audio.Custom.from_messages(top, bottom) == %Content.Audio.Custom{
-             message: "Top Message"
-           }
+    assert Content.Audio.Custom.from_messages(top, bottom) ==
+             [%Content.Audio.Custom{message: "Top Message"}]
   end
 end
