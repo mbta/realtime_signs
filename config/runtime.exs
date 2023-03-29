@@ -22,8 +22,7 @@ if config_env() != :test do
     message_log_zip_url: System.get_env("MESSAGE_LOG_ZIP_URL"),
     message_log_s3_bucket: System.get_env("MESSAGE_LOG_S3_BUCKET"),
     message_log_s3_folder: System.get_env("MESSAGE_LOG_S3_FOLDER"),
-    message_log_report_s3_folder: System.get_env("MESSAGE_LOG_REPORT_S3_FOLDER"),
-    monitoring_api_key: System.get_env("MONITORING_API_KEY")
+    message_log_report_s3_folder: System.get_env("MESSAGE_LOG_REPORT_S3_FOLDER")
 end
 
 message_log_job =
