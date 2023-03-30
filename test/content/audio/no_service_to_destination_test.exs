@@ -7,9 +7,7 @@ defmodule Content.Audio.NoServiceToDestinationTest do
     }
 
     assert Content.Audio.NoServiceToDestination.from_message(message) ==
-             %Content.Audio.NoServiceToDestination{
-               message: "No service to Medford/Tufts"
-             }
+             [%Content.Audio.NoServiceToDestination{message: "No service to Medford/Tufts"}]
   end
 
   test "Inserts destination into audio for paging shuttle alert" do
@@ -18,8 +16,10 @@ defmodule Content.Audio.NoServiceToDestinationTest do
     }
 
     assert Content.Audio.NoServiceToDestination.from_message(message) ==
-             %Content.Audio.NoServiceToDestination{
-               message: "No service to Medford/Tufts use shuttle"
-             }
+             [
+               %Content.Audio.NoServiceToDestination{
+                 message: "No service to Medford/Tufts use shuttle"
+               }
+             ]
   end
 end

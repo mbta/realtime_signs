@@ -16,17 +16,13 @@ defmodule Content.Audio.VehiclesToDestination do
           previous_departure_mins: integer() | nil
         }
 
-  @spec from_headway_message(Content.Message.t(), Content.Message.t()) :: t() | {t(), t()} | nil
+  @spec from_headway_message(Content.Message.t(), Content.Message.t()) :: [t()]
   def from_headway_message(
         %Content.Message.Headways.Top{destination: destination},
         %Content.Message.Headways.Bottom{range: range} = msg
       ) do
-    case {create(:english, destination, range, msg.prev_departure_mins),
-          create(:spanish, destination, range, msg.prev_departure_mins)} do
-      {%__MODULE__{} = a1, %__MODULE__{} = a2} -> {a1, a2}
-      {%__MODULE__{} = a, nil} -> a
-      _ -> nil
-    end
+    create(:english, destination, range, msg.prev_departure_mins) ++
+      create(:spanish, destination, range, msg.prev_departure_mins)
   end
 
   def from_headway_message(top, bottom) do
@@ -34,7 +30,7 @@ defmodule Content.Audio.VehiclesToDestination do
       "message_to_audio_error Audio.VehiclesToDestination: #{inspect(top)}, #{inspect(bottom)}"
     )
 
-    nil
+    []
   end
 
   def from_paging_headway_message(%Content.Message.Headways.Paging{
@@ -49,30 +45,36 @@ defmodule Content.Audio.VehiclesToDestination do
           PaEss.destination() | nil,
           Headway.HeadwayDisplay.headway_range(),
           integer() | nil
-        ) :: t() | nil
+        ) :: [t()]
 
   defp create(:english, nil, range, nil) do
-    %__MODULE__{
-      language: :english,
-      destination: nil,
-      headway_range: range,
-      previous_departure_mins: nil
-    }
+    [
+      %__MODULE__{
+        language: :english,
+        destination: nil,
+        headway_range: range,
+        previous_departure_mins: nil
+      }
+    ]
   end
 
   defp create(:spanish, nil, _range, nil) do
-    nil
+    []
   end
 
   defp create(language, destination, headway_range, previous_departure_mins) do
     if Utilities.valid_destination?(destination, language) and
          not (language == :spanish and !is_nil(previous_departure_mins)) do
-      %__MODULE__{
-        language: language,
-        destination: destination,
-        headway_range: headway_range,
-        previous_departure_mins: previous_departure_mins
-      }
+      [
+        %__MODULE__{
+          language: language,
+          destination: destination,
+          headway_range: headway_range,
+          previous_departure_mins: previous_departure_mins
+        }
+      ]
+    else
+      []
     end
   end
 

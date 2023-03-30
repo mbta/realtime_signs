@@ -83,18 +83,18 @@ defmodule Content.Audio.StoppedTrainTest do
       msg = %Content.Message.StoppedTrain{destination: :forest_hills, stops_away: 1}
 
       assert Content.Audio.StoppedTrain.from_message(msg) ==
-               %Content.Audio.StoppedTrain{destination: :forest_hills, stops_away: 1}
+               [%Content.Audio.StoppedTrain{destination: :forest_hills, stops_away: 1}]
     end
 
     test "Returns nil for irrelevant message" do
       msg = %Content.Message.Empty{}
-      assert Content.Audio.StoppedTrain.from_message(msg) == nil
+      assert Content.Audio.StoppedTrain.from_message(msg) == []
     end
 
     test "when the trian is stopped 0 stops away, does not announce that it is stopped 0 stops away" do
       msg = %Content.Message.StoppedTrain{destination: :forest_hills, stops_away: 0}
 
-      assert Content.Audio.StoppedTrain.from_message(msg) == nil
+      assert Content.Audio.StoppedTrain.from_message(msg) == []
     end
   end
 end

@@ -19,16 +19,14 @@ defmodule Content.Audio.NoServiceToDestination do
       {:ok, destination} ->
         audio = "No service to #{destination}"
 
-        %__MODULE__{
-          message: audio
-        }
+        [%__MODULE__{message: audio}]
 
       {:error, :unknown} ->
         Logger.error(
           "NoServiceToDestination.from_message unknown destination: #{inspect(message)}"
         )
 
-        nil
+        []
     end
   end
 
@@ -37,16 +35,14 @@ defmodule Content.Audio.NoServiceToDestination do
       {:ok, destination} ->
         audio = "No service to #{destination} use shuttle"
 
-        %__MODULE__{
-          message: audio
-        }
+        [%__MODULE__{message: audio}]
 
       {:error, :unknown} ->
         Logger.error(
           "NoServiceToDestination.from_message unknown destination: #{inspect(message)}"
         )
 
-        nil
+        []
     end
   end
 

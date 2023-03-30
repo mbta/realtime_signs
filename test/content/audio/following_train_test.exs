@@ -29,12 +29,14 @@ defmodule Content.Audio.FollowingTrainTest do
            }, message}
         )
 
-      assert audio == %Content.Audio.FollowingTrain{
-               destination: :ashmont,
-               route_id: "Mattapan",
-               minutes: 5,
-               verb: :arrives
-             }
+      assert audio == [
+               %Content.Audio.FollowingTrain{
+                 destination: :ashmont,
+                 route_id: "Mattapan",
+                 minutes: 5,
+                 verb: :arrives
+               }
+             ]
     end
 
     test "when its a terminal it uses departs" do
@@ -52,12 +54,14 @@ defmodule Content.Audio.FollowingTrainTest do
            }, message}
         )
 
-      assert audio == %Content.Audio.FollowingTrain{
-               destination: :ashmont,
-               route_id: "Mattapan",
-               minutes: 5,
-               verb: :departs
-             }
+      assert audio == [
+               %Content.Audio.FollowingTrain{
+                 destination: :ashmont,
+                 route_id: "Mattapan",
+                 minutes: 5,
+                 verb: :departs
+               }
+             ]
     end
 
     test "when its 1 minute, uses the right singular announcement" do

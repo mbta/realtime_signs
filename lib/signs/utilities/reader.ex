@@ -38,20 +38,12 @@ defmodule Signs.Utilities.Reader do
   @spec send_audio_update(Signs.Realtime.t()) :: {boolean(), Signs.Realtime.t()}
   defp send_audio_update(sign) do
     case Signs.Utilities.Audio.from_sign(sign) do
-      {nil, sign} ->
+      {[], sign} ->
         {false, sign}
 
       {audios, sign} ->
-        send_audios(sign, audios)
+        sign.sign_updater.send_audio(sign.audio_id, audios, 5, 60)
         {true, sign}
     end
-  end
-
-  @spec send_audios(
-          Signs.Realtime.t(),
-          Content.Audio.t() | {Content.Audio.t(), Content.Audio.t()}
-        ) :: {:ok, :sent} | {:error, any()}
-  defp send_audios(sign, audio) do
-    sign.sign_updater.send_audio(sign.audio_id, audio, 5, 60)
   end
 end

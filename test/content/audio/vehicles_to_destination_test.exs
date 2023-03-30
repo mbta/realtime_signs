@@ -166,116 +166,149 @@ defmodule Content.Audio.VehiclesToDestinationTest do
     @msg %Content.Message.Headways.Bottom{range: {5, 7}}
 
     test "returns an audio message from a headway message to chelsea" do
-      assert {
+      assert [
                %Content.Audio.VehiclesToDestination{language: :english, destination: :chelsea},
                %Content.Audio.VehiclesToDestination{language: :spanish, destination: :chelsea}
-             } = from_headway_message(%Content.Message.Headways.Top{destination: :chelsea}, @msg)
+             ] = from_headway_message(%Content.Message.Headways.Top{destination: :chelsea}, @msg)
     end
 
     test "returns an audio message from a headway message to red/orange/blue/green line terminals" do
       # green line
-      assert %Content.Audio.VehiclesToDestination{
-               language: :english,
-               destination: :lechmere
-             } = from_headway_message(%Content.Message.Headways.Top{destination: :lechmere}, @msg)
+      assert [
+               %Content.Audio.VehiclesToDestination{
+                 language: :english,
+                 destination: :lechmere
+               }
+             ] = from_headway_message(%Content.Message.Headways.Top{destination: :lechmere}, @msg)
 
-      assert %Content.Audio.VehiclesToDestination{
-               language: :english,
-               destination: :union_sq
-             } = from_headway_message(%Content.Message.Headways.Top{destination: :union_sq}, @msg)
+      assert [
+               %Content.Audio.VehiclesToDestination{
+                 language: :english,
+                 destination: :union_sq
+               }
+             ] = from_headway_message(%Content.Message.Headways.Top{destination: :union_sq}, @msg)
 
-      assert %Content.Audio.VehiclesToDestination{
-               language: :english,
-               destination: :government_center
-             } =
+      assert [
+               %Content.Audio.VehiclesToDestination{
+                 language: :english,
+                 destination: :government_center
+               }
+             ] =
                from_headway_message(
                  %Content.Message.Headways.Top{destination: :government_center},
                  @msg
                )
 
-      assert %Content.Audio.VehiclesToDestination{
-               language: :english,
-               destination: :north_station
-             } =
+      assert [
+               %Content.Audio.VehiclesToDestination{
+                 language: :english,
+                 destination: :north_station
+               }
+             ] =
                from_headway_message(
                  %Content.Message.Headways.Top{destination: :north_station},
                  @msg
                )
 
-      assert %Content.Audio.VehiclesToDestination{language: :english, destination: :park_street} =
+      assert [
+               %Content.Audio.VehiclesToDestination{
+                 language: :english,
+                 destination: :park_street
+               }
+             ] =
                from_headway_message(
                  %Content.Message.Headways.Top{destination: :park_street},
                  @msg
                )
 
-      assert %Content.Audio.VehiclesToDestination{
-               language: :english,
-               destination: :heath_street
-             } =
+      assert [
+               %Content.Audio.VehiclesToDestination{
+                 language: :english,
+                 destination: :heath_street
+               }
+             ] =
                from_headway_message(
                  %Content.Message.Headways.Top{destination: :heath_street},
                  @msg
                )
 
-      assert %Content.Audio.VehiclesToDestination{
-               language: :english,
-               destination: :riverside
-             } =
+      assert [
+               %Content.Audio.VehiclesToDestination{
+                 language: :english,
+                 destination: :riverside
+               }
+             ] =
                from_headway_message(%Content.Message.Headways.Top{destination: :riverside}, @msg)
 
-      assert %Content.Audio.VehiclesToDestination{
-               language: :english,
-               destination: :boston_college
-             } =
+      assert [
+               %Content.Audio.VehiclesToDestination{
+                 language: :english,
+                 destination: :boston_college
+               }
+             ] =
                from_headway_message(
                  %Content.Message.Headways.Top{destination: :boston_college},
                  @msg
                )
 
-      assert %Content.Audio.VehiclesToDestination{
-               language: :english,
-               destination: :cleveland_circle
-             } =
+      assert [
+               %Content.Audio.VehiclesToDestination{
+                 language: :english,
+                 destination: :cleveland_circle
+               }
+             ] =
                from_headway_message(
                  %Content.Message.Headways.Top{destination: :cleveland_circle},
                  @msg
                )
 
       # blue line
-      assert %Content.Audio.VehiclesToDestination{
-               language: :english,
-               destination: :bowdoin
-             } = from_headway_message(%Content.Message.Headways.Top{destination: :bowdoin}, @msg)
+      assert [
+               %Content.Audio.VehiclesToDestination{
+                 language: :english,
+                 destination: :bowdoin
+               }
+             ] = from_headway_message(%Content.Message.Headways.Top{destination: :bowdoin}, @msg)
 
-      assert %Content.Audio.VehiclesToDestination{language: :english, destination: :wonderland} =
+      assert [
+               %Content.Audio.VehiclesToDestination{language: :english, destination: :wonderland}
+             ] =
                from_headway_message(%Content.Message.Headways.Top{destination: :wonderland}, @msg)
 
       # orange line
-      assert %Content.Audio.VehiclesToDestination{
-               language: :english,
-               destination: :forest_hills
-             } =
+      assert [
+               %Content.Audio.VehiclesToDestination{
+                 language: :english,
+                 destination: :forest_hills
+               }
+             ] =
                from_headway_message(
                  %Content.Message.Headways.Top{destination: :forest_hills},
                  @msg
                )
 
-      assert %Content.Audio.VehiclesToDestination{language: :english, destination: :oak_grove} =
+      assert [
+               %Content.Audio.VehiclesToDestination{language: :english, destination: :oak_grove}
+             ] =
                from_headway_message(%Content.Message.Headways.Top{destination: :oak_grove}, @msg)
 
       # red line
-      assert %Content.Audio.VehiclesToDestination{language: :english, destination: :alewife} =
-               from_headway_message(%Content.Message.Headways.Top{destination: :alewife}, @msg)
+      assert [
+               %Content.Audio.VehiclesToDestination{language: :english, destination: :alewife}
+             ] = from_headway_message(%Content.Message.Headways.Top{destination: :alewife}, @msg)
 
-      assert %Content.Audio.VehiclesToDestination{language: :english, destination: :ashmont} =
-               from_headway_message(%Content.Message.Headways.Top{destination: :ashmont}, @msg)
+      assert [
+               %Content.Audio.VehiclesToDestination{language: :english, destination: :ashmont}
+             ] = from_headway_message(%Content.Message.Headways.Top{destination: :ashmont}, @msg)
 
-      assert %Content.Audio.VehiclesToDestination{language: :english, destination: :braintree} =
+      assert [
+               %Content.Audio.VehiclesToDestination{language: :english, destination: :braintree}
+             ] =
                from_headway_message(%Content.Message.Headways.Top{destination: :braintree}, @msg)
     end
 
     test "returns an audio message from a headway message to south station" do
-      assert {
+      assert [
                %Content.Audio.VehiclesToDestination{
                  language: :english,
                  destination: :south_station
@@ -284,7 +317,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                  language: :spanish,
                  destination: :south_station
                }
-             } =
+             ] =
                from_headway_message(
                  %Content.Message.Headways.Top{destination: :south_station},
                  @msg
@@ -292,12 +325,14 @@ defmodule Content.Audio.VehiclesToDestinationTest do
     end
 
     test "handles a nil destination in English" do
-      assert %Content.Audio.VehiclesToDestination{
-               language: :english,
-               destination: nil,
-               headway_range: {8, 10},
-               previous_departure_mins: nil
-             } =
+      assert [
+               %Content.Audio.VehiclesToDestination{
+                 language: :english,
+                 destination: nil,
+                 headway_range: {8, 10},
+                 previous_departure_mins: nil
+               }
+             ] =
                from_headway_message(
                  %Content.Message.Headways.Top{destination: nil, vehicle_type: :train},
                  %Content.Message.Headways.Bottom{range: {8, 10}, prev_departure_mins: nil}
@@ -307,7 +342,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
     test "returns nils for an unknown destination" do
       log =
         capture_log([level: :warn], fn ->
-          assert from_headway_message(:foo, :bar) == nil
+          assert from_headway_message(:foo, :bar) == []
         end)
 
       assert log =~ "message_to_audio_error"

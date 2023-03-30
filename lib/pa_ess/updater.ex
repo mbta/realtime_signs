@@ -14,8 +14,5 @@ defmodule PaEss.Updater do
               {:ok, :sent} | {:error, any()}
             when priority: integer(),
                  timeout: integer(),
-                 audios:
-                   Content.Audio.t()
-                   | {Content.Audio.t(), Content.Audio.t()}
-                   | [Content.Audio.t()]
+                 audios: [Content.Audio.t()]
 end
