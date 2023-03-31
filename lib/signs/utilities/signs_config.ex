@@ -20,12 +20,12 @@ defmodule Signs.Utilities.SignsConfig do
   @doc "Extracts every train stop_id from the signs.json configuration"
   @spec all_train_stop_ids() :: [String.t()]
   def all_train_stop_ids do
-    children_config()
-    |> Enum.filter(&match?(%{"type" => "realtime"}, &1))
-    |> Enum.map(&get_stop_ids_for_sign(&1))
-    |> List.flatten()
-    |> Enum.reject(fn x -> x == nil end)
-    |> Enum.uniq()
+    for %{"type" => "realtime"} = sign <- children_config(),
+        %{"sources" => sources} <- List.wrap(sign["source_config"]),
+        %{"stop_id" => stop_id} <- sources,
+        uniq: true do
+      stop_id
+    end
   end
 
   @spec all_bus_stop_ids() :: [String.t()]

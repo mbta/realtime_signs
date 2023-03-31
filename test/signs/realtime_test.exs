@@ -81,7 +81,6 @@ defmodule Signs.RealtimeTest do
 
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
-    headway_destination: :southbound,
     direction_id: 0,
     platform: nil,
     terminal?: false,
@@ -91,10 +90,13 @@ defmodule Signs.RealtimeTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
-    headway_group: "headway_group",
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
-    source_config: {[@src]},
+    source_config: %{
+      sources: [@src],
+      headway_group: "headway_group",
+      headway_destination: :southbound
+    },
     current_content_top: {@src, %HT{destination: :southbound, vehicle_type: :train}},
     current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: nil}},
     prediction_engine: FakePredictions,

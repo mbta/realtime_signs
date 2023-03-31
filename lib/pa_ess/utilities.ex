@@ -201,7 +201,8 @@ defmodule PaEss.Utilities do
   @doc """
   Used for parsing headway_direction_name from the source config to a PaEss.destination
   """
-  @spec headsign_to_destination(String.t()) :: {:ok, PaEss.destination()} | {:error, :unknown}
+  @spec headsign_to_destination(String.t()) ::
+          {:ok, PaEss.destination() | nil} | {:error, :unknown}
   def headsign_to_destination("Alewife"), do: {:ok, :alewife}
   def headsign_to_destination("Ashmont"), do: {:ok, :ashmont}
   def headsign_to_destination("Braintree"), do: {:ok, :braintree}
@@ -230,6 +231,7 @@ defmodule PaEss.Utilities do
   def headsign_to_destination("Inbound"), do: {:ok, :inbound}
   def headsign_to_destination("Outbound"), do: {:ok, :outbound}
   def headsign_to_destination("Medford/Tufts"), do: {:ok, :medford_tufts}
+  def headsign_to_destination(nil), do: {:ok, nil}
   def headsign_to_destination(_unknown), do: {:error, :unknown}
 
   @doc """

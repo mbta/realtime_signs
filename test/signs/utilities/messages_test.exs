@@ -87,7 +87,6 @@ defmodule Signs.Utilities.MessagesTest do
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     direction_id: 0,
-    headway_destination: :mattapan,
     platform: nil,
     terminal?: false,
     announce_arriving?: false,
@@ -96,10 +95,9 @@ defmodule Signs.Utilities.MessagesTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
-    headway_group: "headway_group",
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
-    source_config: {[@src]},
+    source_config: %{sources: [@src]},
     current_content_top: {@src, %Content.Message.Predictions{destination: :alewife, minutes: 4}},
     current_content_bottom:
       {@src, %Content.Message.Predictions{destination: :ashmont, minutes: 3}},
@@ -142,7 +140,7 @@ defmodule Signs.Utilities.MessagesTest do
 
       sign = %{
         @sign
-        | source_config: {[src]},
+        | source_config: %{sources: [src]},
           current_content_top: {src, Content.Message.Empty.new()},
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
@@ -159,7 +157,7 @@ defmodule Signs.Utilities.MessagesTest do
 
       sign = %{
         @sign
-        | source_config: {[src]},
+        | source_config: %{sources: [src]},
           current_content_top: {src, Content.Message.Empty.new()},
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
@@ -176,7 +174,7 @@ defmodule Signs.Utilities.MessagesTest do
 
       sign = %{
         @sign
-        | source_config: {[src]},
+        | source_config: %{sources: [src]},
           current_content_top: {src, Content.Message.Empty.new()},
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
@@ -194,17 +192,7 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :shuttles_transfer_station
 
       assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{%Signs.Utilities.SourceConfig{
-                   announce_arriving?: false,
-                   announce_boarding?: false,
-                   direction_id: 0,
-                   headway_destination: :mattapan,
-                   multi_berth?: false,
-                   platform: nil,
-                   routes: nil,
-                   stop_id: "1",
-                   terminal?: false
-                 },
+               {{@src,
                  %Content.Message.Predictions{
                    destination: :ashmont,
                    minutes: 2,
@@ -214,17 +202,7 @@ defmodule Signs.Utilities.MessagesTest do
                    station_code: "TEST",
                    zone: "x"
                  }},
-                {%Signs.Utilities.SourceConfig{
-                   announce_arriving?: false,
-                   announce_boarding?: false,
-                   direction_id: 0,
-                   headway_destination: :mattapan,
-                   multi_berth?: false,
-                   platform: nil,
-                   routes: nil,
-                   stop_id: "1",
-                   terminal?: false
-                 },
+                {@src,
                  %Content.Message.Predictions{
                    destination: :ashmont,
                    minutes: 4,
@@ -241,7 +219,7 @@ defmodule Signs.Utilities.MessagesTest do
 
       sign = %{
         @sign
-        | source_config: {[src]},
+        | source_config: %{sources: [src]},
           current_content_top: {src, Content.Message.Empty.new()},
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
@@ -259,7 +237,7 @@ defmodule Signs.Utilities.MessagesTest do
 
       sign = %{
         @sign
-        | source_config: {[src]},
+        | source_config: %{sources: [src]},
           current_content_top: {src, Content.Message.Empty.new()},
           current_content_bottom: {src, Content.Message.Empty.new()},
           uses_shuttles: false
@@ -277,7 +255,7 @@ defmodule Signs.Utilities.MessagesTest do
 
       sign = %{
         @sign
-        | source_config: {[src]},
+        | source_config: %{sources: [src]},
           current_content_top: {src, Content.Message.Empty.new()},
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
@@ -286,17 +264,7 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :shuttles_closed_station
 
       assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{%Signs.Utilities.SourceConfig{
-                   announce_arriving?: false,
-                   announce_boarding?: false,
-                   direction_id: 0,
-                   headway_destination: :mattapan,
-                   multi_berth?: false,
-                   platform: nil,
-                   routes: nil,
-                   stop_id: "1",
-                   terminal?: false
-                 },
+               {{src,
                  %Content.Message.Predictions{
                    destination: :ashmont,
                    minutes: 2,
@@ -306,17 +274,7 @@ defmodule Signs.Utilities.MessagesTest do
                    station_code: "TEST",
                    zone: "x"
                  }},
-                {%Signs.Utilities.SourceConfig{
-                   announce_arriving?: false,
-                   announce_boarding?: false,
-                   direction_id: 0,
-                   headway_destination: :mattapan,
-                   multi_berth?: false,
-                   platform: nil,
-                   routes: nil,
-                   stop_id: "1",
-                   terminal?: false
-                 },
+                {src,
                  %Content.Message.Predictions{
                    destination: :ashmont,
                    minutes: 4,
@@ -333,7 +291,7 @@ defmodule Signs.Utilities.MessagesTest do
 
       sign = %{
         @sign
-        | source_config: {[src]},
+        | source_config: %{sources: [src]},
           current_content_top: {src, Content.Message.Empty.new()},
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
@@ -350,7 +308,7 @@ defmodule Signs.Utilities.MessagesTest do
 
       sign = %{
         @sign
-        | source_config: {[src]},
+        | source_config: %{sources: [src]},
           current_content_top: {src, Content.Message.Empty.new()},
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
@@ -367,7 +325,7 @@ defmodule Signs.Utilities.MessagesTest do
 
       sign = %{
         @sign
-        | source_config: {[src]},
+        | source_config: %{sources: [src]},
           current_content_top: {src, Content.Message.Empty.new()},
           current_content_bottom: {src, Content.Message.Empty.new()}
       }
@@ -376,17 +334,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
 
       assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{%Signs.Utilities.SourceConfig{
-                   announce_arriving?: false,
-                   announce_boarding?: false,
-                   direction_id: 0,
-                   headway_destination: :mattapan,
-                   multi_berth?: false,
-                   platform: nil,
-                   routes: nil,
-                   stop_id: "1",
-                   terminal?: false
-                 },
+               {{src,
                  %Content.Message.Predictions{
                    destination: :ashmont,
                    minutes: 2,
@@ -396,17 +344,7 @@ defmodule Signs.Utilities.MessagesTest do
                    station_code: "TEST",
                    zone: "x"
                  }},
-                {%Signs.Utilities.SourceConfig{
-                   announce_arriving?: false,
-                   announce_boarding?: false,
-                   direction_id: 0,
-                   headway_destination: :mattapan,
-                   multi_berth?: false,
-                   platform: nil,
-                   routes: nil,
-                   stop_id: "1",
-                   terminal?: false
-                 },
+                {src,
                  %Content.Message.Predictions{
                    destination: :ashmont,
                    minutes: 4,
@@ -424,17 +362,7 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :none
 
       assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{%Signs.Utilities.SourceConfig{
-                   announce_arriving?: false,
-                   announce_boarding?: false,
-                   direction_id: 0,
-                   headway_destination: :mattapan,
-                   multi_berth?: false,
-                   platform: nil,
-                   routes: nil,
-                   stop_id: "1",
-                   terminal?: false
-                 },
+               {{@src,
                  %Content.Message.Predictions{
                    destination: :ashmont,
                    minutes: 2,
@@ -444,17 +372,7 @@ defmodule Signs.Utilities.MessagesTest do
                    station_code: "TEST",
                    zone: "x"
                  }},
-                {%Signs.Utilities.SourceConfig{
-                   announce_arriving?: false,
-                   announce_boarding?: false,
-                   direction_id: 0,
-                   headway_destination: :mattapan,
-                   multi_berth?: false,
-                   platform: nil,
-                   routes: nil,
-                   stop_id: "1",
-                   terminal?: false
-                 },
+                {@src,
                  %Content.Message.Predictions{
                    destination: :ashmont,
                    minutes: 4,
@@ -469,9 +387,12 @@ defmodule Signs.Utilities.MessagesTest do
     test "when there are no predictions and only one source config, puts headways on the sign" do
       sign = %{
         @sign
-        | source_config: {[%{@src | stop_id: "no_preds"}]},
-          config_engine: FakeConfigEngine,
-          headway_group: "8-11"
+        | source_config: %{
+            headway_group: "8-11",
+            headway_destination: :mattapan,
+            sources: [%{@src | stop_id: "no_preds"}]
+          },
+          config_engine: FakeConfigEngine
       }
 
       sign_config = :auto
@@ -480,32 +401,12 @@ defmodule Signs.Utilities.MessagesTest do
       current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
       assert Messages.get_messages(sign, sign_config, current_time, alert_status) ==
-               {{%Signs.Utilities.SourceConfig{
-                   announce_arriving?: false,
-                   announce_boarding?: false,
-                   direction_id: 0,
-                   headway_destination: :mattapan,
-                   multi_berth?: false,
-                   platform: nil,
-                   routes: nil,
-                   stop_id: "no_preds",
-                   terminal?: false
-                 },
+               {{nil,
                  %Content.Message.Headways.Top{
                    destination: :mattapan,
                    vehicle_type: :train
                  }},
-                {%Signs.Utilities.SourceConfig{
-                   announce_arriving?: false,
-                   announce_boarding?: false,
-                   direction_id: 0,
-                   headway_destination: :mattapan,
-                   multi_berth?: false,
-                   platform: nil,
-                   routes: nil,
-                   stop_id: "no_preds",
-                   terminal?: false
-                 },
+                {nil,
                  %Content.Message.Headways.Bottom{
                    range: {8, 11},
                    prev_departure_mins: nil
@@ -515,7 +416,11 @@ defmodule Signs.Utilities.MessagesTest do
     test "when there are no predictions and more than one source config, puts nothing on the sign" do
       sign = %{
         @sign
-        | source_config: {[%{@src | stop_id: "no_preds"}, %{@src | stop_id: "no_preds"}]}
+        | source_config: %{
+            headway_group: "headway_group",
+            headway_destination: :mattapan,
+            sources: [%{@src | stop_id: "no_preds"}, %{@src | stop_id: "no_preds"}]
+          }
       }
 
       sign_config = :auto
@@ -526,7 +431,12 @@ defmodule Signs.Utilities.MessagesTest do
     end
 
     test "when sign is forced into headway mode but no alerts are present, displays headways" do
-      sign = %{@sign | config_engine: FakeConfigEngine, headway_group: "8-11"}
+      sign = %{
+        @sign
+        | config_engine: FakeConfigEngine,
+          source_config: %{sources: [], headway_group: "8-11", headway_destination: :mattapan}
+      }
+
       sign_config = :headway
       alert_status = :none
 

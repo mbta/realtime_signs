@@ -104,7 +104,7 @@ defmodule Signs.Utilities.Audio do
 
   @spec from_sign(Signs.Realtime.t()) :: {[Content.Audio.t()], Signs.Realtime.t()}
   def from_sign(sign) do
-    multi_source? = Signs.Utilities.SourceConfig.multi_source?(sign.source_config)
+    multi_source? = SourceConfig.multi_source?(sign.source_config)
 
     audios = get_audio(sign.current_content_top, sign.current_content_bottom, multi_source?)
 
@@ -143,7 +143,7 @@ defmodule Signs.Utilities.Audio do
     }
 
     new_audios =
-      if Signs.Utilities.SourceConfig.multi_source?(sign.source_config) do
+      if SourceConfig.multi_source?(sign.source_config) do
         sort_audio(new_audios)
       else
         new_audios
