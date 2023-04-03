@@ -12,10 +12,4 @@ defmodule Signs.Utilities.SignsConfigTest do
       assert Enum.member?(Signs.Utilities.SignsConfig.all_train_stop_ids(), "70056")
     end
   end
-
-  describe "all_bus_stop_ids" do
-    test "empty for now" do
-      assert Signs.Utilities.SignsConfig.all_bus_stop_ids() == []
-    end
-  end
 end
