@@ -21,7 +21,6 @@ defmodule Signs.Utilities.ReaderTest do
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     direction_id: 0,
-    headway_destination: :southbound,
     platform: nil,
     terminal?: false,
     announce_arriving?: false,
@@ -30,10 +29,9 @@ defmodule Signs.Utilities.ReaderTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
-    headway_group: "headway_group",
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
-    source_config: {[@src]},
+    source_config: %{sources: [@src]},
     current_content_top: {@src, %Predictions{destination: :alewife, minutes: 4}},
     current_content_bottom: {@src, %Predictions{destination: :ashmont, minutes: 3}},
     prediction_engine: FakePredictions,

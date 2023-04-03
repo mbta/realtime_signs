@@ -9,12 +9,12 @@ defmodule Signs.Utilities.Predictions do
   require Content.Utilities
   alias Signs.Utilities.SourceConfig
 
-  @spec get_messages(Signs.Realtime.t()) ::
-          {{SourceConfig.source() | nil, Content.Message.t()},
-           {SourceConfig.source() | nil, Content.Message.t()}}
+  @spec get_messages(Signs.Realtime.t()) :: Signs.Realtime.sign_messages()
   def get_messages(
-        %{source_config: {top_line_sources, bottom_line_sources}, text_id: {station_code, zone}} =
-          sign
+        %{
+          source_config: {%{sources: top_line_sources}, %{sources: bottom_line_sources}},
+          text_id: {station_code, zone}
+        } = sign
       ) do
     {top, _} = get_predictions(sign.prediction_engine, top_line_sources, station_code, zone)
     {bottom, _} = get_predictions(sign.prediction_engine, bottom_line_sources, station_code, zone)
@@ -22,13 +22,14 @@ defmodule Signs.Utilities.Predictions do
     {top, bottom}
   end
 
-  def get_messages(%{source_config: {both_lines_sources}, text_id: {station_code, zone}} = sign) do
+  def get_messages(
+        %{source_config: %{sources: both_lines_sources}, text_id: {station_code, zone}} = sign
+      ) do
     get_predictions(sign.prediction_engine, both_lines_sources, station_code, zone)
   end
 
-  @spec get_predictions(module(), [Signs.Utilities.SourceConfig.source()], String.t(), String.t()) ::
-          {{SourceConfig.source() | nil, Content.Message.t()},
-           {SourceConfig.source() | nil, Content.Message.t()}}
+  @spec get_predictions(module(), [SourceConfig.source()], String.t(), String.t()) ::
+          Signs.Realtime.sign_messages()
   defp get_predictions(prediction_engine, source_list, station_code, zone) do
     source_list
     |> get_source_list_predictions(prediction_engine)
@@ -94,12 +95,16 @@ defmodule Signs.Utilities.Predictions do
   end
 
   @spec get_passthrough_train_audio(Signs.Realtime.t()) :: [Content.Audio.t()]
-  def get_passthrough_train_audio(%Signs.Realtime{source_config: {single_source}} = sign) do
+  def get_passthrough_train_audio(
+        %Signs.Realtime{source_config: %{sources: single_source}} = sign
+      ) do
     single_source |> get_source_list_passthrough_audio(sign.prediction_engine) |> List.wrap()
   end
 
   def get_passthrough_train_audio(
-        %Signs.Realtime{source_config: {top_line_sources, bottom_line_sources}} = sign
+        %Signs.Realtime{
+          source_config: {%{sources: top_line_sources}, %{sources: bottom_line_sources}}
+        } = sign
       ) do
     (top_line_sources
      |> get_source_list_passthrough_audio(sign.prediction_engine)
@@ -109,7 +114,7 @@ defmodule Signs.Utilities.Predictions do
        |> List.wrap())
   end
 
-  @spec get_source_list_passthrough_audio([Signs.Utilities.SourceConfig.source()], module()) ::
+  @spec get_source_list_passthrough_audio([SourceConfig.source()], module()) ::
           Content.Audio.t() | nil
   defp get_source_list_passthrough_audio(source_list, prediction_engine) do
     source_list
@@ -149,7 +154,7 @@ defmodule Signs.Utilities.Predictions do
     |> Enum.at(0)
   end
 
-  @spec get_source_list_predictions([Signs.Utilities.SourceConfig.source()], module()) :: [
+  @spec get_source_list_predictions([SourceConfig.source()], module()) :: [
           Predictions.Prediction.t()
         ]
   defp get_source_list_predictions(source_list, prediction_engine) do

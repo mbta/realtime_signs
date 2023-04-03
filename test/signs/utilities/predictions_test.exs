@@ -614,10 +614,9 @@ defmodule Signs.Utilities.PredictionsTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
-    headway_group: "headway_group",
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
-    source_config: {[], []},
+    source_config: {%{sources: []}, %{sources: []}},
     current_content_top: {nil, Content.Message.Empty.new()},
     current_content_bottom: {nil, Content.Message.Empty.new()},
     prediction_engine: FakePredictions,
@@ -638,7 +637,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "when given two source lists, returns earliest result from each" do
       s1 = %SourceConfig{
         stop_id: "1",
-        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -648,7 +646,6 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s2 = %SourceConfig{
         stop_id: "2",
-        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -656,7 +653,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[s1], [s2]}
+      config = {%{sources: [s1]}, %{sources: [s2]}}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -668,7 +665,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "when given one source list, returns earliest two results" do
       s1 = %SourceConfig{
         stop_id: "3",
-        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -678,7 +674,6 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s2 = %SourceConfig{
         stop_id: "4",
-        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -686,7 +681,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[s1, s2]}
+      config = %{sources: [s1, s2]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -698,7 +693,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "sorts by arrival or departure depending on which is present" do
       src = %SourceConfig{
         stop_id: "arrival_vs_departure_time",
-        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -706,7 +700,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[src]}
+      config = %{sources: [src]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -718,7 +712,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "When the train is stopped a long time away, but not quite max time, shows stopped" do
       src = %SourceConfig{
         stop_id: "stopped_not_too_long_away",
-        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -726,7 +719,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[src]}
+      config = %{sources: [src]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -738,7 +731,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "When the train is stopped a long time away from a terminal, shows max time instead of stopped" do
       src = %SourceConfig{
         stop_id: "stopped_a_long_time_away_terminal",
-        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: true,
         platform: nil,
@@ -746,7 +738,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[src]}
+      config = %{sources: [src]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -758,7 +750,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "When the train is stopped a long time away, shows max time instead of stopped" do
       src = %SourceConfig{
         stop_id: "stopped_a_long_time_away",
-        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -766,7 +757,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[src]}
+      config = %{sources: [src]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -778,7 +769,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "pads out results if only one prediction" do
       s = %SourceConfig{
         stop_id: "7",
-        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -786,7 +776,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[s]}
+      config = %{sources: [s]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -798,7 +788,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "pads out results if no predictions" do
       s = %SourceConfig{
         stop_id: "n/a",
-        headway_destination: :mattapan,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -806,7 +795,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[s]}
+      config = %{sources: [s]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -818,7 +807,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "only the first prediction in a source list can be BRD" do
       s = %SourceConfig{
         stop_id: "8",
-        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -826,7 +814,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[s]}
+      config = %{sources: [s]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -838,7 +826,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Returns stopped train message" do
       s = %SourceConfig{
         stop_id: "9",
-        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -846,7 +833,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[s]}
+      config = %{sources: [s]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -858,7 +845,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Only includes predictions if a departure prediction is present" do
       s = %SourceConfig{
         stop_id: "stop_with_nil_departure_prediction",
-        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -866,7 +852,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[s]}
+      config = %{sources: [s]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -878,7 +864,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Filters by route if present" do
       s1 = %SourceConfig{
         stop_id: "filterable_by_route",
-        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -889,8 +874,8 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s2 = %{s1 | routes: ["Green-D"]}
 
-      config1 = {[s1]}
-      config2 = {[s2]}
+      config1 = %{sources: [s1]}
+      config2 = %{sources: [s2]}
 
       sign1 = %{@sign | source_config: config1}
       sign2 = %{@sign | source_config: config2}
@@ -909,7 +894,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Sorts boarding status to the top" do
       s = %SourceConfig{
         stop_id: "both_brd",
-        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -918,7 +902,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[s]}
+      config = %{sources: [s]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -929,7 +913,7 @@ defmodule Signs.Utilities.PredictionsTest do
              } = Signs.Utilities.Predictions.get_messages(sign)
 
       s = %{s | stop_id: "second_brd"}
-      config = {[s]}
+      config = %{sources: [s]}
       sign = %{sign | source_config: config}
 
       assert {
@@ -939,7 +923,7 @@ defmodule Signs.Utilities.PredictionsTest do
              } = Signs.Utilities.Predictions.get_messages(sign)
 
       s = %{s | stop_id: "first_brd"}
-      config = {[s]}
+      config = %{sources: [s]}
       sign = %{sign | source_config: config}
 
       assert {
@@ -952,7 +936,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Does not allow ARR on second line unless platform has multiple berths" do
       s1 = %SourceConfig{
         stop_id: "arr_multi_berth1",
-        headway_destination: :mattapan,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -964,7 +947,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s2 = %{s1 | stop_id: "arr_multi_berth2"}
 
-      config = {[s1, s2]}
+      config = %{sources: [s1, s2]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -975,7 +958,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s1 = %{s1 | multi_berth?: false}
       s2 = %{s2 | multi_berth?: false}
-      config = {[s1, s2]}
+      config = %{sources: [s1, s2]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -988,7 +971,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "Correctly orders BRD predictions between trains mid-trip and those starting their trip" do
       s1 = %SourceConfig{
         stop_id: "multiple_brd_some_first_stop_1",
-        headway_destination: :westbound,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -1000,7 +982,7 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s2 = %{s1 | stop_id: "multiple_brd_some_first_stop_2"}
 
-      config = {[s1, s2]}
+      config = %{sources: [s1, s2]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -1013,7 +995,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "doesn't sort 0 stops away to first for terminals when another departure is sooner" do
       s = %SourceConfig{
         stop_id: "terminal_dont_sort_0_stops_first",
-        headway_destination: :southbound,
         direction_id: 0,
         terminal?: true,
         platform: nil,
@@ -1022,7 +1003,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: true
       }
 
-      config = {[s]}
+      config = %{sources: [s]}
       sign = %{@sign | source_config: config}
 
       assert {
@@ -1034,7 +1015,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "properly handles case where destination can't be determined" do
       s = %SourceConfig{
         stop_id: "indeterminate_destination",
-        headway_destination: :southbound,
         direction_id: 0,
         terminal?: true,
         platform: nil,
@@ -1043,7 +1023,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: true
       }
 
-      config = {[s]}
+      config = %{sources: [s]}
       sign = %{@sign | source_config: config}
 
       assert Signs.Utilities.Predictions.get_messages(sign) ==
@@ -1055,7 +1035,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "returns appropriate audio structs for multi-source sign" do
       s1 = %SourceConfig{
         stop_id: "passthrough_trains",
-        headway_destination: :southbound,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -1066,7 +1045,6 @@ defmodule Signs.Utilities.PredictionsTest do
 
       s2 = %SourceConfig{
         stop_id: "passthrough_trains",
-        headway_destination: :alewife,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -1075,7 +1053,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[s1], [s2]}
+      config = {%{sources: [s1]}, %{sources: [s2]}}
       sign = %{@sign | source_config: config}
 
       assert Signs.Utilities.Predictions.get_passthrough_train_audio(sign) == [
@@ -1090,7 +1068,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "returns appropriate audio structs for single-source sign" do
       s = %SourceConfig{
         stop_id: "passthrough_trains",
-        headway_destination: :southbound,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -1099,7 +1076,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[s]}
+      config = %{sources: [s]}
       sign = %{@sign | source_config: config}
 
       assert Signs.Utilities.Predictions.get_passthrough_train_audio(sign) ==
@@ -1115,7 +1092,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "handles \"Southbound\" headsign" do
       s = %SourceConfig{
         stop_id: "passthrough_trains_southbound_red_line_destination",
-        headway_destination: :alewife,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -1124,7 +1100,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[s]}
+      config = %{sources: [s]}
       sign = %{@sign | source_config: config}
 
       assert Signs.Utilities.Predictions.get_passthrough_train_audio(sign) ==
@@ -1140,7 +1116,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "handles case where headsign can't be determined" do
       s = %SourceConfig{
         stop_id: "passthrough_trains_bad_destination",
-        headway_destination: :alewife,
         direction_id: 1,
         terminal?: false,
         platform: nil,
@@ -1149,7 +1124,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      config = {[s]}
+      config = %{sources: [s]}
       sign = %{@sign | source_config: config}
 
       log =
@@ -1163,7 +1138,6 @@ defmodule Signs.Utilities.PredictionsTest do
     test "prefers showing distinct destinations when present" do
       s = %SourceConfig{
         stop_id: "multiple_destinations",
-        headway_destination: :southbound,
         direction_id: 0,
         terminal?: false,
         platform: nil,
@@ -1172,7 +1146,7 @@ defmodule Signs.Utilities.PredictionsTest do
         announce_boarding?: false
       }
 
-      sign = %{@sign | source_config: {[s]}}
+      sign = %{@sign | source_config: %{sources: [s]}}
 
       assert {
                {^s, %Content.Message.Predictions{destination: :ashmont}},

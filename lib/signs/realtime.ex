@@ -8,6 +8,7 @@ defmodule Signs.Realtime do
   require Logger
 
   alias Signs.Utilities
+  alias Utilities.SourceConfig
 
   @announced_history_length 5
 
@@ -15,7 +16,6 @@ defmodule Signs.Realtime do
     :id,
     :text_id,
     :audio_id,
-    :headway_group,
     :source_config,
     :current_content_top,
     :current_content_bottom,
@@ -42,14 +42,14 @@ defmodule Signs.Realtime do
                 uses_shuttles: true
               ]
 
-  @type line_content :: {Utilities.SourceConfig.source() | nil, Content.Message.t()}
+  @type line_content :: {SourceConfig.source() | nil, Content.Message.t()}
+  @type sign_messages :: {line_content(), line_content()}
 
   @type t :: %__MODULE__{
           id: String.t(),
           text_id: PaEss.text_id(),
           audio_id: PaEss.audio_id(),
-          headway_group: String.t() | list(String.t()),
-          source_config: Utilities.SourceConfig.config(),
+          source_config: SourceConfig.config() | {SourceConfig.config(), SourceConfig.config()},
           current_content_top: line_content(),
           current_content_bottom: line_content(),
           prediction_engine: module(),
@@ -71,7 +71,7 @@ defmodule Signs.Realtime do
         }
 
   def start_link(%{"type" => "realtime"} = config, opts \\ []) do
-    source_config = config |> Map.fetch!("source_config") |> Utilities.SourceConfig.parse!()
+    source_config = config |> Map.fetch!("source_config") |> SourceConfig.parse!()
 
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
     headway_engine = opts[:headway_engine] || Engine.ScheduledHeadways
@@ -84,7 +84,6 @@ defmodule Signs.Realtime do
       id: Map.fetch!(config, "id"),
       text_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
       audio_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "audio_zones")},
-      headway_group: Map.fetch!(config, "headway_group"),
       source_config: source_config,
       current_content_top: {nil, Content.Message.Empty.new()},
       current_content_bottom: {nil, Content.Message.Empty.new()},
@@ -113,14 +112,8 @@ defmodule Signs.Realtime do
   end
 
   def handle_info(:run_loop, sign) do
-    sign_stop_ids =
-      sign.source_config
-      |> Signs.Utilities.SourceConfig.sign_stop_ids()
-
-    sign_routes =
-      sign.source_config
-      |> Signs.Utilities.SourceConfig.sign_routes()
-
+    sign_stop_ids = SourceConfig.sign_stop_ids(sign.source_config)
+    sign_routes = SourceConfig.sign_routes(sign.source_config)
     alert_status = sign.alerts_engine.max_stop_status(sign_stop_ids, sign_routes)
     sign_config = sign.config_engine.sign_config(sign.id)
     time_zone = Application.get_env(:realtime_signs, :time_zone)
@@ -241,7 +234,7 @@ defmodule Signs.Realtime do
     max_headway = Headway.HeadwayDisplay.max_headway(range)
 
     Logger.info(
-      "headway_accuracy_check stop_id=#{List.first(Signs.Utilities.SourceConfig.sign_stop_ids(source_config))} headway_max=#{max_headway} last_departure=#{last_departure} in_range=#{max_headway > last_departure}"
+      "headway_accuracy_check stop_id=#{List.first(SourceConfig.sign_stop_ids(source_config))} headway_max=#{max_headway} last_departure=#{last_departure} in_range=#{max_headway > last_departure}"
     )
 
     %{sign | tick_audit: 60}
