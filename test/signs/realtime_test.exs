@@ -211,7 +211,7 @@ defmodule Signs.RealtimeTest do
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
       assert sign.announced_passthroughs == ["123"]
-      assert_received({:send_audio, _, %Content.Audio.Passthrough{}, _, _})
+      assert_received({:send_audio, _, [%Content.Audio.Passthrough{}], _, _})
     end
   end
 
