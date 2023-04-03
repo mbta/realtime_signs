@@ -45,7 +45,10 @@ defmodule Signs.Utilities.SourceConfig do
   object as defined below. For mezzanine signs, this will be a list of two of these objects,
   which will cause each line to display separately using the corresponding config.
 
-  * headway_group: This references the signs-ui values that the PIOs set for headways.
+  * headway_group: This determines which headway group to look up when getting headyway time
+    ranges, and must match the values set by signs-ui. Most mezzanine signs show both directions
+    of the same headway group, and so will have the same value for both configs. A notable
+    exception is Ashmont, which handles both the Ashmont and Mattapan headway groups.
   * headway_direction_name: The headsign used to generate the "trains every X minutes" message in
     headway mode. Must be a value recognized by `PaEss.Utilities.headsign_to_destination/1`.
   * sources: A list of source objects (see below for details). The sources determine which
