@@ -21,11 +21,12 @@ defmodule RealtimeSigns do
         Engine.Departures,
         Engine.Static,
         Engine.Alerts,
+        Engine.BusPredictions,
+        Engine.ChelseaBridge,
         MessageQueue,
         RealtimeSigns.Scheduler,
         RealtimeSignsWeb.Endpoint
       ] ++
-        bus_children() ++
         http_updater_children() ++
         [
           Signs.Supervisor
@@ -64,16 +65,6 @@ defmodule RealtimeSigns do
 
     for i <- 1..num_children do
       {PaEss.HttpUpdater, i}
-    end
-  end
-
-  # These modules are specific to the in-progress bus work, and are disabled by default.
-  # They should be enabled and inlined once the work is complete.
-  def bus_children do
-    if Application.get_env(:realtime_signs, :test_bus_mode) do
-      [Engine.BusPredictions, Engine.ChelseaBridge]
-    else
-      []
     end
   end
 end

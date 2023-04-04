@@ -34,6 +34,7 @@ Environment variables are stored in AWS Secrets Manager. If a new env variable n
 * `SIGN_UI_API_KEY`: API key used when making requests to `signs_ui`. Not set by default.
 * `TRIP_UPDATE_URL` and `VEHICLE_POSITIONS_URL`: URLs of the enhanced trip-update and vehicle-position feeds. Default to the real feed URLs.
 * `API_V3_KEY` and `API_V3_URL`: Access key and URL for V3 API. Default respectively to a blank string and the URL of the dev-green API instance.
+* `CHELSEA_BRIDGE_URL` and `CHELSEA_BRIDGE_AUTH`: URL and auth key for the Chelsea bridge API. These values can be found in the shared 1Password vault, in the "Chelsea Street Bridge Application" entry, in fields `url` and `auth`.
 * `NUMBER_OF_HTTP_UPDATERS`: Number of `PaEss.HttpUpdater` processes that should run. These are responsible for posting updates to the PA/ESS head-end server, so this number is also the number of concurrent HTTP requests to that server.
 
 ## Deploying

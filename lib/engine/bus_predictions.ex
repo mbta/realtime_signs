@@ -12,10 +12,19 @@ defmodule Engine.BusPredictions do
 
   def init(_) do
     schedule_update(self())
-    {:ok, %{predictions: %{}, last_modified: nil}}
+
+    {:ok,
+     %{
+       predictions: %{},
+       last_modified: nil,
+       all_bus_stop_ids: Signs.Utilities.SignsConfig.all_bus_stop_ids()
+     }}
   end
 
-  def handle_info(:update, %{last_modified: last_modified} = state) do
+  def handle_info(
+        :update,
+        %{last_modified: last_modified, all_bus_stop_ids: all_bus_stop_ids} = state
+      ) do
     schedule_update(self())
     api_url = Application.get_env(:realtime_signs, :api_v3_url)
     api_key = Application.get_env(:realtime_signs, :api_v3_key)
@@ -34,11 +43,12 @@ defmodule Engine.BusPredictions do
              "fields[prediction]" => "departure_time,direction_id",
              "fields[trip]" => "headsign",
              "fields[vehicle]" => "updated_at",
-             "filter[stop]" => Enum.join(Signs.Utilities.SignsConfig.all_bus_stop_ids(), ",")
+             "filter[stop]" => Enum.join(all_bus_stop_ids, ",")
            }
          ) do
       {:ok, %{status_code: 200, body: body, headers: headers}} ->
-        %{"data" => data, "included" => included} = Jason.decode!(body)
+        %{"data" => data} = payload = Jason.decode!(body)
+        included = Map.get(payload, "included", [])
 
         vehicles_lookup =
           for %{
@@ -117,7 +127,7 @@ defmodule Engine.BusPredictions do
   end
 
   def handle_call({:predictions_for_stop, id}, _from, state) do
-    {:reply, state.predictions[id], state}
+    {:reply, Map.get(state.predictions, id, []), state}
   end
 
   defp schedule_update(pid) do
