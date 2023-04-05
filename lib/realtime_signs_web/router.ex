@@ -5,6 +5,7 @@ defmodule RealtimeSignsWeb.Router do
 
   pipeline :api do
     plug(:accepts, ["json"])
+    plug(RealtimeSignsWeb.Auth)
   end
 
   scope "/", RealtimeSignsWeb do
