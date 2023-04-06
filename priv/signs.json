@@ -8266,5 +8266,111 @@
         }
       ]
     }
+  },
+  {
+    "id": "Silver_Line.Courthouse_WB",
+    "pa_ess_loc": "SCOU",
+    "read_loop_interval": 360,
+    "read_loop_offset": 60,
+    "text_zone": "w",
+    "audio_zones": [
+      "w"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "74616",
+        "routes": [
+          {
+            "route_id": "741",
+            "direction_id": 1
+          },
+          {
+            "route_id": "742",
+            "direction_id": 1
+          },
+          {
+            "route_id": "743",
+            "direction_id": 1
+          },
+          {
+            "route_id": "746",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "chelsea_bridge": "audio",
+    "max_minutes": 30
+  },
+  {
+    "id": "Silver_Line.Courthouse_EB",
+    "pa_ess_loc": "SCOU",
+    "read_loop_interval": 360,
+    "read_loop_offset": 60,
+    "text_zone": "e",
+    "audio_zones": [
+      "e"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "74612",
+        "routes": [
+          {
+            "route_id": "741",
+            "direction_id": 0
+          },
+          {
+            "route_id": "742",
+            "direction_id": 0
+          },
+          {
+            "route_id": "743",
+            "direction_id": 0
+          },
+          {
+            "route_id": "746",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "chelsea_bridge": "audio",
+    "max_minutes": 30
+  },
+  {
+    "id": "Silver_Line.Courthouse_mezz",
+    "pa_ess_loc": "SCOU",
+    "read_loop_interval": 360,
+    "read_loop_offset": 60,
+    "text_zone": "m",
+    "audio_zones": [],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "74616",
+        "routes": [
+          {
+            "route_id": "741",
+            "direction_id": 1
+          },
+          {
+            "route_id": "742",
+            "direction_id": 1
+          },
+          {
+            "route_id": "743",
+            "direction_id": 1
+          },
+          {
+            "route_id": "746",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "chelsea_bridge": "audio",
+    "max_minutes": 30
   }
 ]
