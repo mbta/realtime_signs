@@ -18,7 +18,7 @@ defmodule MessageQueue do
           length: integer()
         }
 
-  @max_size 300
+  @max_size 400
   @too_full_drop 30
 
   use GenServer
@@ -62,6 +62,8 @@ defmodule MessageQueue do
 
   @impl GenServer
   def handle_call({:queue_update, msg}, _from, state) do
+    IO.inspect(state.length)
+
     {queue, length} =
       if state.length >= @max_size do
         Logger.warn(["Message queue too full; dropping ", inspect(@too_full_drop)])
