@@ -8372,5 +8372,52 @@
     ],
     "chelsea_bridge": "audio",
     "max_minutes": 30
+  },
+  {
+    "id": "bus.Davis",
+    "pa_ess_loc": "SDAV",
+    "read_loop_interval": 360,
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": [
+      "m"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "5104",
+        "routes": [
+          {
+            "route_id": "87",
+            "direction_id": 0
+          },
+          {
+            "route_id": "88",
+            "direction_id": 0
+          },
+          {
+            "route_id": "89",
+            "direction_id": 0
+          },
+          {
+            "route_id": "89",
+            "direction_id": 1
+          },
+          {
+            "route_id": "90",
+            "direction_id": 1
+          },
+          {
+            "route_id": "94",
+            "direction_id": 0
+          },
+          {
+            "route_id": "96",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
   }
 ]
