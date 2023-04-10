@@ -55,7 +55,13 @@ defmodule Signs.Utilities.Predictions do
           {source, Content.Message.Predictions.terminal(prediction)}
 
         true ->
-          {source, Content.Message.Predictions.non_terminal(prediction, station_code, zone)}
+          {source,
+           Content.Message.Predictions.non_terminal(
+             prediction,
+             station_code,
+             zone,
+             source.platform
+           )}
       end
     end)
     |> Enum.reject(fn {_source, message} -> is_nil(message) end)
