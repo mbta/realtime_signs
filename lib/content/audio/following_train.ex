@@ -18,20 +18,15 @@ defmodule Content.Audio.FollowingTrain do
 
   require Logger
 
-  @spec from_predictions_message({
-          Signs.Utilities.SourceConfig.source(),
-          Content.Message.Predictions.t()
-        }) :: [Content.Audio.FollowingTrain.t()]
-  def from_predictions_message({
-        %{
-          terminal?: terminal
-        },
-        %Content.Message.Predictions{
-          minutes: n,
-          destination: destination,
-          route_id: route_id,
-          station_code: station_code
-        }
+  @spec from_predictions_message(Content.Message.Predictions.t()) :: [
+          Content.Audio.FollowingTrain.t()
+        ]
+  def from_predictions_message(%Content.Message.Predictions{
+        minutes: n,
+        destination: destination,
+        route_id: route_id,
+        station_code: station_code,
+        terminal?: terminal
       })
       when is_integer(n) do
     [
@@ -45,7 +40,7 @@ defmodule Content.Audio.FollowingTrain do
     ]
   end
 
-  def from_predictions_message({_src, _msg}) do
+  def from_predictions_message(_msg) do
     []
   end
 
