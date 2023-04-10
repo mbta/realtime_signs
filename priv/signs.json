@@ -8345,7 +8345,9 @@
     "read_loop_interval": 360,
     "read_loop_offset": 60,
     "text_zone": "m",
-    "audio_zones": [],
+    "audio_zones": [
+      "m"
+    ],
     "type": "bus",
     "sources": [
       {
