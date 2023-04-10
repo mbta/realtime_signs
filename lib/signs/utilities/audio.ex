@@ -17,25 +17,15 @@ defmodule Signs.Utilities.Audio do
           Signs.Realtime.t(),
           Content.line_location()
         ) :: boolean()
-  def should_interrupting_read?({_src, %Content.Message.Predictions{minutes: x}}, _sign, _line)
+  # If minutes is an integer, we don't interrupt
+  def should_interrupting_read?(%Content.Message.Predictions{minutes: x}, _sign, _line)
       when is_integer(x) do
     false
   end
 
+  # If train is approaching and it's not a heavy rail route, we don't interrupt
   def should_interrupting_read?(
-        {
-          %SourceConfig{announce_arriving?: false},
-          %Content.Message.Predictions{minutes: arriving_or_approaching}
-        },
-        _sign,
-        _line
-      )
-      when arriving_or_approaching in [:arriving, :approaching] do
-    false
-  end
-
-  def should_interrupting_read?(
-        {_src, %Content.Message.Predictions{minutes: :approaching, route_id: route_id}},
+        %Content.Message.Predictions{minutes: :approaching, route_id: route_id},
         _sign,
         _line
       )
@@ -43,58 +33,76 @@ defmodule Signs.Utilities.Audio do
     false
   end
 
+  # If train is arriving or approaching and it's being shown on the bottom line, check if it is multi source and if we announce arriving
   def should_interrupting_read?(
-        {
-          %SourceConfig{announce_arriving?: true},
-          %Content.Message.Predictions{minutes: arriving_or_approaching}
-        },
+        %Content.Message.Predictions{minutes: arriving_or_approaching, stop_id: stop_id},
         %Signs.Realtime{source_config: config},
         :bottom
       )
       when arriving_or_approaching in [:arriving, :approaching] do
-    SourceConfig.multi_source?(config)
+    SourceConfig.multi_source?(config) and
+      SourceConfig.announce_arriving_for_stop?(config, stop_id)
   end
 
+  # If train is arriving or approaching, check if we announce arriving for this stop
   def should_interrupting_read?(
-        {
-          %SourceConfig{announce_boarding?: false},
-          %Content.Message.Predictions{minutes: :boarding, trip_id: trip_id}
+        %Content.Message.Predictions{minutes: arriving_or_approaching, stop_id: stop_id},
+        %Signs.Realtime{source_config: config},
+        _line
+      )
+      when arriving_or_approaching in [:arriving, :approaching] do
+    SourceConfig.announce_arriving_for_stop?(config, stop_id)
+  end
+
+  # If train is boarding, check if we announce boarding for this stop
+  # Special case: if arriving announcement was skipped, then interrupt and announce boarding even if we don't normally announce boarding
+  def should_interrupting_read?(
+        %Content.Message.Predictions{minutes: :boarding, trip_id: trip_id, stop_id: stop_id},
+        %Signs.Realtime{
+          id: sign_id,
+          announced_arrivals: announced_arrivals,
+          source_config: source_config
         },
-        %Signs.Realtime{id: sign_id, announced_arrivals: announced_arrivals},
         _line
       ) do
-    if trip_id not in announced_arrivals do
-      Logger.info(
-        "announced_brd_when_arr_skipped trip_id=#{inspect(trip_id)} sign_id=#{inspect(sign_id)}"
-      )
+    case SourceConfig.announce_boarding_for_stop?(source_config, stop_id) do
+      true ->
+        true
 
-      true
-    else
-      false
+      false ->
+        if trip_id not in announced_arrivals do
+          Logger.info(
+            "announced_brd_when_arr_skipped trip_id=#{inspect(trip_id)} sign_id=#{inspect(sign_id)}"
+          )
+
+          true
+        else
+          false
+        end
     end
   end
 
-  def should_interrupting_read?({_, %Content.Message.Empty{}}, _sign, _line) do
+  def should_interrupting_read?(%Content.Message.Empty{}, _sign, _line) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.StoppedTrain{}}, _sign, :bottom) do
+  def should_interrupting_read?(%Content.Message.StoppedTrain{}, _sign, :bottom) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.Headways.Bottom{}}, _sign, _line) do
+  def should_interrupting_read?(%Content.Message.Headways.Bottom{}, _sign, _line) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.Headways.Paging{}}, _sign, _line) do
+  def should_interrupting_read?(%Content.Message.Headways.Paging{}, _sign, _line) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.Alert.NoServiceUseShuttle{}}, _sign, _line) do
+  def should_interrupting_read?(%Content.Message.Alert.NoServiceUseShuttle{}, _sign, _line) do
     false
   end
 
-  def should_interrupting_read?({_, %Content.Message.Alert.DestinationNoService{}}, _sign, _line) do
+  def should_interrupting_read?(%Content.Message.Alert.DestinationNoService{}, _sign, _line) do
     false
   end
 
@@ -167,39 +175,39 @@ defmodule Signs.Utilities.Audio do
   @spec get_audio(Signs.Realtime.line_content(), Signs.Realtime.line_content(), boolean()) ::
           [Content.Audio.t()]
   defp get_audio(
-         {_, %Message.Alert.NoService{} = top},
-         {_, bottom},
+         %Message.Alert.NoService{} = top,
+         bottom,
          _multi_source?
        ) do
     Audio.Closure.from_messages(top, bottom)
   end
 
   defp get_audio(
-         {_, %Message.Custom{} = top},
-         {_, bottom},
+         %Message.Custom{} = top,
+         bottom,
          _multi_source?
        ) do
     Audio.Custom.from_messages(top, bottom)
   end
 
   defp get_audio(
-         {_, top},
-         {_, %Message.Custom{} = bottom},
+         top,
+         %Message.Custom{} = bottom,
          _multi_source?
        ) do
     Audio.Custom.from_messages(top, bottom)
   end
 
   defp get_audio(
-         {_, %Message.Headways.Top{} = top},
-         {_, bottom},
+         %Message.Headways.Top{} = top,
+         bottom,
          _multi_source?
        ) do
     Audio.VehiclesToDestination.from_headway_message(top, bottom)
   end
 
   defp get_audio(
-         {_, %Message.Predictions{minutes: :arriving, route_id: route_id}} = top_content,
+         %Message.Predictions{minutes: :arriving, route_id: route_id} = top_content,
          _bottom_content,
          multi_source?
        )
@@ -209,7 +217,7 @@ defmodule Signs.Utilities.Audio do
 
   defp get_audio(
          _top_content,
-         {_, %Message.Predictions{minutes: :arriving, route_id: route_id}} = bottom_content,
+         %Message.Predictions{minutes: :arriving, route_id: route_id} = bottom_content,
          multi_source?
        )
        when multi_source? and route_id in @heavy_rail_routes do
@@ -217,8 +225,8 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_audio(
-         {_, %Message.Predictions{destination: same}} = content_top,
-         {_, %Message.Predictions{destination: same}} = content_bottom,
+         %Message.Predictions{destination: same} = content_top,
+         %Message.Predictions{destination: same} = content_bottom,
          multi_source?
        ) do
     Audio.Predictions.from_sign_content(content_top, :top, multi_source?) ++
@@ -226,24 +234,24 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_audio(
-         {_, %Message.StoppedTrain{destination: same} = top},
-         {_, %Message.StoppedTrain{destination: same}},
+         %Message.StoppedTrain{destination: same} = top,
+         %Message.StoppedTrain{destination: same},
          _multi_source?
        ) do
     Audio.StoppedTrain.from_message(top)
   end
 
   defp get_audio(
-         {_, %Message.StoppedTrain{destination: same} = top},
-         {_, %Message.Predictions{destination: same}},
+         %Message.StoppedTrain{destination: same} = top,
+         %Message.Predictions{destination: same},
          _multi_source?
        ) do
     Audio.StoppedTrain.from_message(top)
   end
 
   defp get_audio(
-         {_, %Message.Predictions{destination: same}} = top_content,
-         {_, %Message.StoppedTrain{destination: same}},
+         %Message.Predictions{destination: same} = top_content,
+         %Message.StoppedTrain{destination: same},
          multi_source?
        ) do
     Audio.Predictions.from_sign_content(top_content, :top, multi_source?)
@@ -256,20 +264,20 @@ defmodule Signs.Utilities.Audio do
 
   @spec get_audio_for_line(Signs.Realtime.line_content(), Content.line_location(), boolean()) ::
           [Content.Audio.t()]
-  defp get_audio_for_line({_, %Message.StoppedTrain{} = message}, _line, _multi_source?) do
+  defp get_audio_for_line(%Message.StoppedTrain{} = message, _line, _multi_source?) do
     Audio.StoppedTrain.from_message(message)
   end
 
-  defp get_audio_for_line({_, %Message.Predictions{}} = content, line, multi_source?) do
+  defp get_audio_for_line(%Message.Predictions{} = content, line, multi_source?) do
     Audio.Predictions.from_sign_content(content, line, multi_source?)
   end
 
-  defp get_audio_for_line({_, %Message.Headways.Paging{} = message}, _line, _multi_source?) do
+  defp get_audio_for_line(%Message.Headways.Paging{} = message, _line, _multi_source?) do
     Audio.VehiclesToDestination.from_paging_headway_message(message)
   end
 
   defp get_audio_for_line(
-         {_, %Message.Alert.DestinationNoService{} = message},
+         %Message.Alert.DestinationNoService{} = message,
          _line,
          _multi_source?
        ) do
@@ -277,14 +285,14 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_audio_for_line(
-         {_, %Message.Alert.NoServiceUseShuttle{} = message},
+         %Message.Alert.NoServiceUseShuttle{} = message,
          _line,
          _multi_source?
        ) do
     Audio.NoServiceToDestination.from_message(message)
   end
 
-  defp get_audio_for_line({_, %Message.Empty{}}, _line, _multi_source?) do
+  defp get_audio_for_line(%Message.Empty{}, _line, _multi_source?) do
     []
   end
 
