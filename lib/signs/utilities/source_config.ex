@@ -198,4 +198,36 @@ defmodule Signs.Utilities.SourceConfig do
   def sign_routes(%{sources: sources}) do
     Enum.flat_map(sources, &(&1.routes || []))
   end
+
+  def announce_arriving_for_stop?({top, bottom}, stop_id) do
+    announce_arriving_for_stop?(top, stop_id) or announce_arriving_for_stop?(bottom, stop_id)
+  end
+
+  def announce_arriving_for_stop?(%{sources: sources}, stop_id) do
+    sources
+    |> Enum.find(&(&1.stop_id == stop_id))
+    |> case do
+      nil ->
+        false
+
+      source ->
+        source.announce_arriving?
+    end
+  end
+
+  def announce_boarding_for_stop?({top, bottom}, stop_id) do
+    announce_boarding_for_stop?(top, stop_id) or announce_boarding_for_stop?(bottom, stop_id)
+  end
+
+  def announce_boarding_for_stop?(%{sources: sources}, stop_id) do
+    sources
+    |> Enum.find(&(&1.stop_id == stop_id))
+    |> case do
+      nil ->
+        false
+
+      source ->
+        source.announce_boarding?
+    end
+  end
 end
