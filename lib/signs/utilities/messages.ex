@@ -17,25 +17,24 @@ defmodule Signs.Utilities.Messages do
       match?({:static_text, {_, _}}, sign_config) ->
         {:static_text, {line1, line2}} = sign_config
 
-        {{nil, Content.Message.Custom.new(line1, :top)},
-         {nil, Content.Message.Custom.new(line2, :bottom)}}
+        {Content.Message.Custom.new(line1, :top), Content.Message.Custom.new(line2, :bottom)}
 
       sign_config == :off ->
-        {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+        {Content.Message.Empty.new(), Content.Message.Empty.new()}
 
       sign_config == :headway ->
         get_headway_or_alert_messages(sign, current_time, alert_status)
 
       true ->
         case Signs.Utilities.Predictions.get_messages(sign) do
-          {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}} ->
+          {%Content.Message.Empty{}, %Content.Message.Empty{}} ->
             get_headway_or_alert_messages(sign, current_time, alert_status)
 
-          {top_message, {nil, %Content.Message.Empty{}}} ->
+          {top_message, %Content.Message.Empty{}} ->
             {top_message,
              get_paging_headway_or_alert_messages(sign, current_time, alert_status, :bottom)}
 
-          {{nil, %Content.Message.Empty{}}, bottom_message} ->
+          {%Content.Message.Empty{}, bottom_message} ->
             {bottom_message,
              get_paging_headway_or_alert_messages(sign, current_time, alert_status, :top)}
 
@@ -74,7 +73,7 @@ defmodule Signs.Utilities.Messages do
   end
 
   defp get_paging_headway_or_alert_messages(_, _, _, _) do
-    {nil, Content.Message.Empty.new()}
+    Content.Message.Empty.new()
   end
 
   @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status(), boolean()) ::
@@ -82,22 +81,22 @@ defmodule Signs.Utilities.Messages do
   defp get_alert_messages(alert_status, uses_shuttles) do
     case {alert_status, uses_shuttles} do
       {:shuttles_transfer_station, _} ->
-        {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+        {Content.Message.Empty.new(), Content.Message.Empty.new()}
 
       {:shuttles_closed_station, true} ->
-        {{nil, %Alert.NoService{}}, {nil, %Alert.UseShuttleBus{}}}
+        {%Alert.NoService{}, %Alert.UseShuttleBus{}}
 
       {:shuttles_closed_station, false} ->
-        {{nil, %Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
+        {%Alert.NoService{}, Content.Message.Empty.new()}
 
       {:suspension_transfer_station, _} ->
-        {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+        {Content.Message.Empty.new(), Content.Message.Empty.new()}
 
       {:suspension_closed_station, _} ->
-        {{nil, %Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
+        {%Alert.NoService{}, Content.Message.Empty.new()}
 
       {:station_closure, _} ->
-        {{nil, %Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
+        {%Alert.NoService{}, Content.Message.Empty.new()}
 
       _ ->
         nil
@@ -107,22 +106,22 @@ defmodule Signs.Utilities.Messages do
   defp get_paging_alert_message(alert_status, uses_shuttles, destination) do
     case {alert_status, uses_shuttles} do
       {:shuttles_transfer_station, _} ->
-        {nil, Content.Message.Empty.new()}
+        Content.Message.Empty.new()
 
       {:shuttles_closed_station, true} ->
-        {nil, %Alert.NoServiceUseShuttle{destination: destination}}
+        %Alert.NoServiceUseShuttle{destination: destination}
 
       {:shuttles_closed_station, false} ->
-        {nil, %Alert.DestinationNoService{destination: destination}}
+        %Alert.DestinationNoService{destination: destination}
 
       {:suspension_transfer_station, _} ->
-        {nil, Content.Message.Empty.new()}
+        Content.Message.Empty.new()
 
       {:suspension_closed_station, _} ->
-        {nil, %Alert.DestinationNoService{destination: destination}}
+        %Alert.DestinationNoService{destination: destination}
 
       {:station_closure, _} ->
-        {nil, %Alert.DestinationNoService{destination: destination}}
+        %Alert.DestinationNoService{destination: destination}
 
       _ ->
         nil
