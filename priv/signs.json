@@ -8376,6 +8376,80 @@
     "max_minutes": 30
   },
   {
+    "id": "bus.Nubian_Platform_A",
+    "pa_ess_loc": "SDUD",
+    "read_loop_interval": 420,
+    "read_loop_offset": 180,
+    "text_zone": "w",
+    "audio_zones": [
+      "c"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "64000",
+        "routes": [
+          {
+            "route_id": "15",
+            "direction_id": 1
+          },
+          {
+            "route_id": "23",
+            "direction_id": 1
+          },
+          {
+            "route_id": "28",
+            "direction_id": 1
+          },
+          {
+            "route_id": "44",
+            "direction_id": 1
+          },
+          {
+            "route_id": "45",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Nubian_Platform_C",
+    "pa_ess_loc": "SDUD",
+    "read_loop_interval": 420,
+    "read_loop_offset": 240,
+    "text_zone": "s",
+    "audio_zones": [
+      "c"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "64000",
+        "routes": [
+          {
+            "route_id": "14",
+            "direction_id": 1
+          },
+          {
+            "route_id": "41",
+            "direction_id": 0
+          },
+          {
+            "route_id": "42",
+            "direction_id": 0
+          },
+          {
+            "route_id": "66",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
     "id": "bus.Davis",
     "pa_ess_loc": "SDAV",
     "read_loop_interval": 360,
