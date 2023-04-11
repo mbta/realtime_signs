@@ -15,7 +15,6 @@ if config_env() != :test do
     s3_path: System.get_env("SIGNS_S3_PATH"),
     api_v3_url: System.get_env("API_V3_URL", "https://api-dev-green.mbtace.com"),
     api_v3_key: System.get_env("API_V3_KEY"),
-    sign_config_file: System.get_env("SIGN_CONFIG_FILE"),
     chelsea_bridge_url: System.get_env("CHELSEA_BRIDGE_URL"),
     chelsea_bridge_auth: System.get_env("CHELSEA_BRIDGE_AUTH"),
     filter_uncertain_predictions?: System.get_env("FILTER_UNCERTAIN_PREDICTIONS", "false") == "true",
@@ -25,6 +24,11 @@ if config_env() != :test do
     message_log_s3_folder: System.get_env("MESSAGE_LOG_S3_FOLDER"),
     message_log_report_s3_folder: System.get_env("MESSAGE_LOG_REPORT_S3_FOLDER"),
     monitoring_api_key: System.get_env("MONITORING_API_KEY")
+end
+
+if config_env() == :dev do
+  config :realtime_signs,
+    sign_config_file: System.get_env("SIGN_CONFIG_FILE")
 end
 
 message_log_job =
