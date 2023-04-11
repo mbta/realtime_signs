@@ -149,11 +149,16 @@ defmodule Predictions.Predictions do
   end
 
   @spec sufficient_certainty?(map(), String.t()) :: boolean()
-  defp sufficient_certainty?(stop_time_event, route_id) when route_id in ["Red", "Blue"] do
-    is_nil(stop_time_event["uncertainty"]) or stop_time_event["uncertainty"] < 120
+  defp sufficient_certainty?(_stop_time_event, route_id)
+       when route_id in ["Mattapan", "Green-B", "Green-C", "Green-D", "Green-E"] do
+    true
   end
 
-  defp sufficient_certainty?(_stop_time_event, _route_id) do
-    true
+  defp sufficient_certainty?(stop_time_event, _route_id) do
+    if Application.get_env(:realtime_signs, :filter_uncertain_predictions?) do
+      is_nil(stop_time_event["uncertainty"]) or stop_time_event["uncertainty"] <= 300
+    else
+      true
+    end
   end
 end
