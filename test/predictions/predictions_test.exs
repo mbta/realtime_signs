@@ -882,7 +882,7 @@ defmodule Predictions.PredictionsTest do
               "timestamp" => nil,
               "trip" => %{
                 "direction_id" => 0,
-                "route_id" => "Red",
+                "route_id" => "Blue",
                 "schedule_relationship" => "SCHEDULED",
                 "start_date" => "20170329",
                 "start_time" => nil,
