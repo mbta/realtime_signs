@@ -127,4 +127,35 @@ defmodule Signs.Utilities.Messages do
         nil
     end
   end
+
+  @spec same_content?(Content.Message.t(), Content.Message.t()) :: boolean()
+  def same_content?(sign_msg, new_msg) do
+    sign_msg == new_msg or countup?(sign_msg, new_msg)
+  end
+
+  defp countup?(
+         %Content.Message.Predictions{destination: same, minutes: :arriving},
+         %Content.Message.Predictions{destination: same, minutes: :approaching}
+       ) do
+    true
+  end
+
+  defp countup?(
+         %Content.Message.Predictions{destination: same, minutes: :approaching},
+         %Content.Message.Predictions{destination: same, minutes: 1}
+       ) do
+    true
+  end
+
+  defp countup?(
+         %Content.Message.Predictions{destination: same, minutes: a},
+         %Content.Message.Predictions{destination: same, minutes: b}
+       )
+       when a + 1 == b do
+    true
+  end
+
+  defp countup?(_sign, _new) do
+    false
+  end
 end

@@ -119,7 +119,7 @@ defmodule Signs.Realtime do
     time_zone = Application.get_env(:realtime_signs, :time_zone)
     {:ok, current_time} = DateTime.utc_now() |> DateTime.shift_zone(time_zone)
 
-    {top, bottom} =
+    {new_top, new_bottom} =
       Utilities.Messages.get_messages(
         sign,
         sign_config,
@@ -130,7 +130,11 @@ defmodule Signs.Realtime do
     sign =
       sign
       |> announce_passthrough_trains()
-      |> Utilities.Updater.update_sign(top, bottom)
+      |> Utilities.Updater.update_sign(new_top, new_bottom)
+      |> Utilities.Reader.do_interrupting_reads(
+        sign.current_content_top,
+        sign.current_content_bottom
+      )
       |> Utilities.Reader.read_sign()
       |> log_headway_accuracy()
       |> do_expiration()
