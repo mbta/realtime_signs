@@ -199,35 +199,23 @@ defmodule Signs.Utilities.SourceConfig do
     Enum.flat_map(sources, &(&1.routes || []))
   end
 
-  def announce_arriving_for_stop?({top, bottom}, stop_id) do
-    announce_arriving_for_stop?(top, stop_id) or announce_arriving_for_stop?(bottom, stop_id)
+  def get_source_by_stop_and_direction(
+        {%{sources: top_source_list}, %{sources: bottom_source_list}},
+        stop_id,
+        direction_id
+      ) do
+    get_source_by_stop_and_direction(top_source_list, stop_id, direction_id) ||
+      get_source_by_stop_and_direction(bottom_source_list, stop_id, direction_id)
   end
 
-  def announce_arriving_for_stop?(%{sources: sources}, stop_id) do
-    sources
-    |> Enum.find(&(&1.stop_id == stop_id))
-    |> case do
-      nil ->
-        false
-
-      source ->
-        source.announce_arriving?
-    end
+  def get_source_by_stop_and_direction(%{sources: source_list}, stop_id, direction_id) do
+    get_source_by_stop_and_direction(source_list, stop_id, direction_id)
   end
 
-  def announce_boarding_for_stop?({top, bottom}, stop_id) do
-    announce_boarding_for_stop?(top, stop_id) or announce_boarding_for_stop?(bottom, stop_id)
-  end
-
-  def announce_boarding_for_stop?(%{sources: sources}, stop_id) do
-    sources
-    |> Enum.find(&(&1.stop_id == stop_id))
-    |> case do
-      nil ->
-        false
-
-      source ->
-        source.announce_boarding?
-    end
+  def get_source_by_stop_and_direction(source_list, stop_id, direction_id) do
+    Enum.find(
+      source_list,
+      &(&1.stop_id == stop_id and &1.direction_id == direction_id)
+    )
   end
 end
