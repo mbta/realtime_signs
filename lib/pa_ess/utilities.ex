@@ -148,6 +148,10 @@ defmodule PaEss.Utilities do
     end
   end
 
+  @spec generic_number_var(integer()) :: String.t() | nil
+  def generic_number_var(n) when n >= 1 and n <= 100, do: Integer.to_string(5000 + n)
+  def generic_number_var(_), do: nil
+
   @doc "Recording of the time from 12:01 to 12:59, given the minutes"
   @spec time_var(integer()) :: String.t()
   def time_var(n) when n > 0 and n < 60 do
@@ -670,7 +674,9 @@ defmodule PaEss.Utilities do
     minutes: "505"
   }
 
-  def audio_take({:minutes, minutes}), do: number_var(minutes, :english)
+  def audio_take({:minutes, minutes}) do
+    number_var(minutes, :english) || generic_number_var(minutes)
+  end
 
   def audio_take({:headsign, headsign}) do
     Enum.find_value(@headsign_take_mappings, fn {prefix, take} ->
