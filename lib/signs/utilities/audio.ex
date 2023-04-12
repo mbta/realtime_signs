@@ -33,39 +33,39 @@ defmodule Signs.Utilities.Audio do
     false
   end
 
-  # If train is arriving or approaching and it's being shown on the bottom line, check if it is multi source and if we announce arriving
+  # If train is arriving or approaching and it's being shown on the bottom line, check if it is multi-source and if we announce arriving
   def should_interrupting_read?(
-        %Content.Message.Predictions{minutes: arriving_or_approaching, stop_id: stop_id},
+        %Content.Message.Predictions{minutes: arriving_or_approaching} = prediction,
         %Signs.Realtime{source_config: config},
         :bottom
       )
       when arriving_or_approaching in [:arriving, :approaching] do
     SourceConfig.multi_source?(config) and
-      SourceConfig.announce_arriving_for_stop?(config, stop_id)
+      announce_arriving?(config, prediction)
   end
 
   # If train is arriving or approaching, check if we announce arriving for this stop
   def should_interrupting_read?(
-        %Content.Message.Predictions{minutes: arriving_or_approaching, stop_id: stop_id},
+        %Content.Message.Predictions{minutes: arriving_or_approaching} = prediction,
         %Signs.Realtime{source_config: config},
         _line
       )
       when arriving_or_approaching in [:arriving, :approaching] do
-    SourceConfig.announce_arriving_for_stop?(config, stop_id)
+    announce_arriving?(config, prediction)
   end
 
   # If train is boarding, check if we announce boarding for this stop
   # Special case: if arriving announcement was skipped, then interrupt and announce boarding even if we don't normally announce boarding
   def should_interrupting_read?(
-        %Content.Message.Predictions{minutes: :boarding, trip_id: trip_id, stop_id: stop_id},
+        %Content.Message.Predictions{minutes: :boarding, trip_id: trip_id} = prediction,
         %Signs.Realtime{
           id: sign_id,
           announced_arrivals: announced_arrivals,
-          source_config: source_config
+          source_config: config
         },
         _line
       ) do
-    case SourceConfig.announce_boarding_for_stop?(source_config, stop_id) do
+    case announce_boarding?(config, prediction) do
       true ->
         true
 
@@ -108,6 +108,30 @@ defmodule Signs.Utilities.Audio do
 
   def should_interrupting_read?(_content, _sign, _line) do
     true
+  end
+
+  defp announce_arriving?(source_config, prediction) do
+    source_config
+    |> SourceConfig.get_source_by_stop_and_direction(prediction.stop_id, prediction.direction_id)
+    |> case do
+      nil ->
+        false
+
+      source ->
+        source.announce_arriving?
+    end
+  end
+
+  defp announce_boarding?(source_config, prediction) do
+    source_config
+    |> SourceConfig.get_source_by_stop_and_direction(prediction.stop_id, prediction.direction_id)
+    |> case do
+      nil ->
+        false
+
+      source ->
+        source.announce_boarding?
+    end
   end
 
   @spec from_sign(Signs.Realtime.t()) :: {[Content.Audio.t()], Signs.Realtime.t()}
