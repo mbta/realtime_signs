@@ -481,7 +481,8 @@ defmodule Signs.Bus do
   end
 
   defp route_key(prediction) do
-    {PaEss.Utilities.prediction_route_name(prediction), prediction.headsign}
+    {PaEss.Utilities.prediction_route_name(prediction),
+     PaEss.Utilities.headsign_key(prediction.headsign)}
   end
 
   defp format_prediction(nil, _, _), do: ""

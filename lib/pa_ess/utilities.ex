@@ -487,6 +487,13 @@ defmodule PaEss.Utilities do
     end)
   end
 
+  @spec headsign_key(String.t()) :: String.t()
+  def headsign_key(headsign) do
+    Enum.find_value(@headsign_abbreviation_mappings, headsign, fn {prefix, _} ->
+      if String.starts_with?(headsign, prefix), do: prefix
+    end)
+  end
+
   @spec prediction_route_name(Predictions.BusPrediction.t()) :: String.t() | nil
   # Don't display route names for SL1, SL2, SL3, or SLW. This also has the effect of combining
   # inbound predictions along the waterfront, where all routes follow the same path.
