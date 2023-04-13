@@ -52,10 +52,10 @@ defmodule Content.Message.Predictions do
           Predictions.Prediction.t(),
           String.t(),
           String.t(),
-          Content.platform(),
+          Content.platform() | nil,
           integer()
         ) :: t() | nil
-  def non_terminal(prediction, station_code, zone, platform, width \\ 18)
+  def non_terminal(prediction, station_code, zone, platform \\ nil, width \\ 18)
 
   def non_terminal(prediction, station_code, zone, platform, width) do
     # e.g., North Station which is non-terminal but has trips that begin there
