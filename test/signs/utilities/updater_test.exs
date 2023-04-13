@@ -38,8 +38,8 @@ defmodule Signs.Utilities.UpdaterTest do
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: %{sources: []},
-    current_content_top: {@src, %P{destination: :alewife, minutes: 4}},
-    current_content_bottom: {@src, %P{destination: :ashmont, minutes: 3}},
+    current_content_top: %P{destination: :alewife, minutes: 4},
+    current_content_bottom: %P{destination: :ashmont, minutes: 3},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartures,
@@ -56,8 +56,8 @@ defmodule Signs.Utilities.UpdaterTest do
 
   describe "update_sign/3" do
     test "doesn't do anything if both lines are the same" do
-      same_top = {@src, %P{destination: :alewife, minutes: 4}}
-      same_bottom = {@src, %P{destination: :ashmont, minutes: 3}}
+      same_top = %P{destination: :alewife, minutes: 4}
+      same_bottom = %P{destination: :ashmont, minutes: 3}
 
       sign = Updater.update_sign(@sign, same_top, same_bottom)
 
@@ -69,8 +69,8 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "changes the top line if necessary" do
-      diff_top = {@src, %P{destination: :alewife, minutes: 3}}
-      same_bottom = {@src, %P{destination: :ashmont, minutes: 3}}
+      diff_top = %P{destination: :alewife, minutes: 3}
+      same_bottom = %P{destination: :ashmont, minutes: 3}
 
       sign = Updater.update_sign(@sign, diff_top, same_bottom)
 
@@ -130,8 +130,8 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "changes the bottom line if necessary" do
-      same_top = {@src, %P{destination: :alewife, minutes: 4}}
-      diff_bottom = {@src, %P{destination: :ashmont, minutes: 2}}
+      same_top = %P{destination: :alewife, minutes: 4}
+      diff_bottom = %P{destination: :ashmont, minutes: 2}
 
       sign = Updater.update_sign(@sign, same_top, diff_bottom)
 
@@ -143,8 +143,8 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "changes both lines if necessary" do
-      diff_top = {@src, %P{destination: :alewife, minutes: 3}}
-      diff_bottom = {@src, %P{destination: :ashmont, minutes: 2}}
+      diff_top = %P{destination: :alewife, minutes: 3}
+      diff_bottom = %P{destination: :ashmont, minutes: 2}
 
       sign = Updater.update_sign(@sign, diff_top, diff_bottom)
 
@@ -170,7 +170,7 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "logs when stopped train message turns on" do
-      diff_top = {@src, %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2}}
+      diff_top = %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2}
       same_bottom = @sign.current_content_bottom
 
       initial_tick_read = 10
@@ -187,18 +187,19 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "logs when stopped train message turns off" do
-      new_top = {@src, %P{destination: :alewife, minutes: 4}}
-      new_bottom = {@src, %P{destination: :alewife, minutes: 4}}
+      new_top = %P{destination: :alewife, minutes: 4}
+      new_bottom = %P{destination: :alewife, minutes: 4}
 
       initial_tick_read = 10
       read_period_seconds = 100
 
       sign = %{
         @sign
-        | current_content_top:
-            {@src, %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2}},
-          current_content_bottom:
-            {@src, %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2}},
+        | current_content_top: %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2},
+          current_content_bottom: %Content.Message.StoppedTrain{
+            destination: :alewife,
+            stops_away: 2
+          },
           tick_read: initial_tick_read,
           read_period_seconds: read_period_seconds
       }
@@ -213,18 +214,19 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "logs when stopped train message changes from zero to non-zero stops away" do
-      diff_top = {@src, %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2}}
-      same_bottom = {@src, %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 2}}
+      diff_top = %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2}
+      same_bottom = %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 2}
 
       initial_tick_read = 10
       read_period_seconds = 100
 
       sign = %{
         @sign
-        | current_content_top:
-            {@src, %Content.Message.StoppedTrain{destination: :alewife, stops_away: 0}},
-          current_content_bottom:
-            {@src, %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 0}},
+        | current_content_top: %Content.Message.StoppedTrain{destination: :alewife, stops_away: 0},
+          current_content_bottom: %Content.Message.StoppedTrain{
+            destination: :ashmont,
+            stops_away: 0
+          },
           tick_read: initial_tick_read,
           read_period_seconds: read_period_seconds
       }
@@ -239,18 +241,19 @@ defmodule Signs.Utilities.UpdaterTest do
     end
 
     test "logs when stopped train message changes from non-zero to zero stops away" do
-      diff_top = {@src, %Content.Message.StoppedTrain{destination: :alewife, stops_away: 0}}
-      same_bottom = {@src, %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 0}}
+      diff_top = %Content.Message.StoppedTrain{destination: :alewife, stops_away: 0}
+      same_bottom = %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 0}
 
       initial_tick_read = 10
       read_period_seconds = 100
 
       sign = %{
         @sign
-        | current_content_top:
-            {@src, %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2}},
-          current_content_bottom:
-            {@src, %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 2}},
+        | current_content_top: %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2},
+          current_content_bottom: %Content.Message.StoppedTrain{
+            destination: :ashmont,
+            stops_away: 2
+          },
           tick_read: initial_tick_read,
           read_period_seconds: read_period_seconds
       }
