@@ -25,8 +25,8 @@ defmodule Signs.Utilities.AudioTest do
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: %{sources: [@src]},
-    current_content_top: {nil, %Content.Message.Empty{}},
-    current_content_bottom: {nil, %Content.Message.Empty{}},
+    current_content_top: %Content.Message.Empty{},
+    current_content_bottom: %Content.Message.Empty{},
     prediction_engine: nil,
     headway_engine: nil,
     last_departure_engine: nil,
@@ -637,8 +637,6 @@ defmodule Signs.Utilities.AudioTest do
     end
 
     test "Reads ARR on sign even if announce_arriving? is false" do
-      src = %{@src | announce_arriving?: false}
-
       sign = %{
         @sign
         | current_content_top: %Message.Predictions{destination: :alewife, minutes: :arriving}
@@ -648,8 +646,6 @@ defmodule Signs.Utilities.AudioTest do
     end
 
     test "Reads BRD on sign even if announce_boarding? is false" do
-      src = %{@src | announce_boarding?: false}
-
       sign = %{
         @sign
         | current_content_top: %Message.Predictions{destination: :alewife, minutes: :boarding}
@@ -684,7 +680,7 @@ defmodule Signs.Utilities.AudioTest do
             trip_id: "trip1",
             destination: :alewife
           },
-          current_content_bottom: {nil, %Message.Empty{}}
+          current_content_bottom: %Message.Empty{}
       }
 
       {audio, new_sign} = from_sign(sign)
@@ -704,7 +700,7 @@ defmodule Signs.Utilities.AudioTest do
             destination: :alewife,
             route_id: "Red"
           },
-          current_content_bottom: {nil, %Message.Empty{}}
+          current_content_bottom: %Message.Empty{}
       }
 
       {audio, new_sign} = from_sign(sign)
