@@ -1,25 +1,12 @@
 defmodule Content.Audio.PredictionsTest do
   use ExUnit.Case, async: true
-  import ExUnit.CaptureLog
 
   alias Content.Message
   alias Content.Audio
-  alias Signs.Utilities.SourceConfig
   import Content.Audio.Predictions
-
-  @src %SourceConfig{
-    stop_id: "70196",
-    direction_id: 0,
-    platform: nil,
-    terminal?: false,
-    announce_arriving?: false,
-    announce_boarding?: true
-  }
 
   describe "from_sign_content/3" do
     test "returns a TrackChange audio when Green-B boarding at C berth at Park St" do
-      src = %{@src | stop_id: "70197", direction_id: 0}
-
       predictions = %Message.Predictions{
         destination: :boston_college,
         minutes: :boarding,
@@ -33,12 +20,10 @@ defmodule Content.Audio.PredictionsTest do
                  route_id: "Green-B",
                  berth: "70197"
                }
-             ] = from_sign_content({src, predictions}, :top, false)
+             ] = from_sign_content(predictions, :top, false)
     end
 
     test "returns a TrackChange audio when Green-E boarding at D berth at Park St" do
-      src = %{@src | stop_id: "70198", direction_id: 0}
-
       predictions = %Message.Predictions{
         destination: :heath_street,
         minutes: :boarding,
@@ -52,12 +37,10 @@ defmodule Content.Audio.PredictionsTest do
                  route_id: "Green-E",
                  berth: "70198"
                }
-             ] = from_sign_content({src, predictions}, :top, false)
+             ] = from_sign_content(predictions, :top, false)
     end
 
     test "returns a NextTrainCountdown if it's the wrong track but somehow not boarding" do
-      src = %{@src | stop_id: "70196", direction_id: 0}
-
       predictions = %Message.Predictions{
         destination: :heath_street,
         minutes: 2,
@@ -71,23 +54,17 @@ defmodule Content.Audio.PredictionsTest do
                  verb: :arrives,
                  minutes: 2
                }
-             ] = from_sign_content({src, predictions}, :top, false)
+             ] = from_sign_content(predictions, :top, false)
     end
 
     test "returns an Approaching audio if predictions say it's approaching on the top line" do
-      src = %{
-        @src
-        | stop_id: "70085",
-          direction_id: 0,
-          platform: :ashmont
-      }
-
       predictions = %Message.Predictions{
         destination: :ashmont,
         minutes: :approaching,
         route_id: "Red",
         stop_id: "70085",
         trip_id: "trip1",
+        platform: :ashmont,
         new_cars?: false
       }
 
@@ -99,23 +76,17 @@ defmodule Content.Audio.PredictionsTest do
                  route_id: "Red",
                  new_cars?: false
                }
-             ] = from_sign_content({src, predictions}, :top, false)
+             ] = from_sign_content(predictions, :top, false)
     end
 
     test "returns an Approaching audio with new cars flag set" do
-      src = %{
-        @src
-        | stop_id: "70085",
-          direction_id: 0,
-          platform: :ashmont
-      }
-
       predictions = %Message.Predictions{
         destination: :ashmont,
         minutes: :approaching,
         route_id: "Red",
         stop_id: "70085",
         trip_id: "trip1",
+        platform: :ashmont,
         new_cars?: true
       }
 
@@ -127,16 +98,10 @@ defmodule Content.Audio.PredictionsTest do
                  route_id: "Red",
                  new_cars?: true
                }
-             ] = from_sign_content({src, predictions}, :top, false)
+             ] = from_sign_content(predictions, :top, false)
     end
 
     test "returns a NextTrainCountdown audio for 'minutes: :approaching' and top line, but light rail" do
-      src = %{
-        @src
-        | stop_id: "70155",
-          direction_id: 0
-      }
-
       predictions = %Message.Predictions{
         destination: :riverside,
         minutes: :approaching,
@@ -146,12 +111,10 @@ defmodule Content.Audio.PredictionsTest do
       }
 
       assert [%Audio.NextTrainCountdown{destination: :riverside, minutes: 1}] =
-               from_sign_content({src, predictions}, :top, false)
+               from_sign_content(predictions, :top, false)
     end
 
     test "returns a NextTrainCountdown audio if predictions say it's approaching on the bottom line" do
-      src = %{@src | stop_id: "70065", direction_id: 0}
-
       predictions = %Message.Predictions{
         destination: :ashmont,
         minutes: :approaching,
@@ -167,12 +130,10 @@ defmodule Content.Audio.PredictionsTest do
                  track_number: nil,
                  platform: nil
                }
-             ] = from_sign_content({src, predictions}, :bottom, false)
+             ] = from_sign_content(predictions, :bottom, false)
     end
 
     test "returns a TrainIsBoarding audio if predictions say it's boarding" do
-      src = %{@src | stop_id: "70065", direction_id: 0}
-
       predictions = %Message.Predictions{
         destination: :ashmont,
         minutes: :boarding,
@@ -188,23 +149,17 @@ defmodule Content.Audio.PredictionsTest do
                  route_id: "Red",
                  track_number: nil
                }
-             ] = from_sign_content({src, predictions}, :top, false)
+             ] = from_sign_content(predictions, :top, false)
     end
 
     test "returns a TrainIsArriving audio if predictions say it's arriving" do
-      src = %{
-        @src
-        | stop_id: "70085",
-          direction_id: 0,
-          platform: :ashmont
-      }
-
       predictions = %Message.Predictions{
         destination: :ashmont,
         minutes: :arriving,
         route_id: "Red",
         stop_id: "70085",
-        trip_id: "trip1"
+        trip_id: "trip1",
+        platform: :ashmont
       }
 
       assert [
@@ -214,17 +169,10 @@ defmodule Content.Audio.PredictionsTest do
                  platform: :ashmont,
                  route_id: "Red"
                }
-             ] = from_sign_content({src, predictions}, :top, false)
+             ] = from_sign_content(predictions, :top, false)
     end
 
     test "returns a NextTrainCountdown arriving audio if prediction is minutes away and non-terminal source" do
-      src = %{
-        @src
-        | stop_id: "70065",
-          direction_id: 0,
-          terminal?: false
-      }
-
       predictions = %Message.Predictions{
         destination: :ashmont,
         minutes: 1,
@@ -233,41 +181,29 @@ defmodule Content.Audio.PredictionsTest do
       }
 
       assert [%Audio.NextTrainCountdown{destination: :ashmont, verb: :arrives, minutes: 1}] =
-               from_sign_content({src, predictions}, :top, false)
+               from_sign_content(predictions, :top, false)
     end
 
     test "returns a NextTrainCountdown departing audio if prediction is minutes away and terminal source" do
-      src = %{
-        @src
-        | stop_id: "70061",
-          direction_id: 0,
-          terminal?: true
-      }
-
       predictions = %Message.Predictions{
         destination: :ashmont,
         minutes: 1,
         route_id: "Red",
-        stop_id: "70061"
+        stop_id: "70061",
+        terminal?: true
       }
 
       assert [%Audio.NextTrainCountdown{destination: :ashmont, verb: :departs, minutes: 1}] =
-               from_sign_content({src, predictions}, :top, false)
+               from_sign_content(predictions, :top, false)
     end
 
     test "returns a NextTrainCountdown with appropriate platform" do
-      src = %{
-        @src
-        | stop_id: "70096",
-          direction_id: 1,
-          platform: :ashmont
-      }
-
       predictions = %Message.Predictions{
         destination: :alewife,
         minutes: 2,
         route_id: "Red",
-        stop_id: "70096"
+        stop_id: "70096",
+        platform: :ashmont
       }
 
       assert [
@@ -277,17 +213,10 @@ defmodule Content.Audio.PredictionsTest do
                  minutes: 2,
                  platform: :ashmont
                }
-             ] = from_sign_content({src, predictions}, :top, false)
+             ] = from_sign_content(predictions, :top, false)
     end
 
     test "returns a NextTrainCountdown with 30 mins if predictions is :max_time" do
-      src = %{
-        @src
-        | stop_id: "70065",
-          direction_id: 0,
-          terminal?: false
-      }
-
       predictions = %Message.Predictions{
         destination: :ashmont,
         minutes: :max_time,
@@ -296,7 +225,7 @@ defmodule Content.Audio.PredictionsTest do
       }
 
       assert [%Audio.NextTrainCountdown{destination: :ashmont, verb: :arrives, minutes: 20}] =
-               from_sign_content({src, predictions}, :top, false)
+               from_sign_content(predictions, :top, false)
     end
   end
 end
