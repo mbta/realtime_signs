@@ -1,11 +1,13 @@
 {
-  "chelsea_inbound": {
-    "mode": "headway"
-  },
-  "chelsea_outbound": {
-    "mode": "off"
-  },
-  "MVAL0": {
-    "mode": "auto"
+  "signs": {
+    "chelsea_inbound": {
+      "mode": "headway"
+    },
+    "chelsea_outbound": {
+      "mode": "off"
+    },
+    "MVAL0": {
+      "mode": "auto"
+    }
   }
 }

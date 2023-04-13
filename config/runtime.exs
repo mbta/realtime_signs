@@ -26,6 +26,11 @@ if config_env() != :test do
     monitoring_api_key: System.get_env("MONITORING_API_KEY")
 end
 
+if config_env() == :dev do
+  config :realtime_signs,
+    sign_config_file: System.get_env("SIGN_CONFIG_FILE")
+end
+
 message_log_job =
   if System.get_env("MESSAGE_LOG_CRON_SCHEDULE") do
     [

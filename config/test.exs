@@ -10,5 +10,6 @@ config :realtime_signs,
   scheduled_headway_requester: Fake.Headway.Request,
   headway_calculator: Fake.Headway.HeadwayDisplay,
   external_config_getter: Fake.ExternalConfig.Local,
+  sign_config_file: "priv/config.json",
   aws_client: Fake.ExAws,
   s3_client: Fake.ExAws

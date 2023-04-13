@@ -3,7 +3,13 @@ defmodule ExternalConfig.Local do
 
   @impl ExternalConfig.Interface
   def get(current_version) do
-    {:ok, file} = File.read("priv/config.json")
+    file =
+      with path when not is_nil(path) <- Application.get_env(:realtime_signs, :sign_config_file),
+           {:ok, file} <- File.read(path) do
+        file
+      else
+        _ -> "{}"
+      end
 
     etag =
       file
