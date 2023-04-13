@@ -97,8 +97,8 @@ defmodule Signs.RealtimeTest do
       headway_group: "headway_group",
       headway_destination: :southbound
     },
-    current_content_top: {@src, %HT{destination: :southbound, vehicle_type: :train}},
-    current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: nil}},
+    current_content_top: %HT{destination: :southbound, vehicle_type: :train},
+    current_content_bottom: %HB{range: {1, 5}, prev_departure_mins: nil},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartureEngine,
@@ -130,7 +130,7 @@ defmodule Signs.RealtimeTest do
     test "decrements ticks and doesn't send audio or text when sign is not expired" do
       sign = %{
         @sign
-        | current_content_bottom: {@src, %HB{range: {11, 13}, prev_departure_mins: nil}}
+        | current_content_bottom: %HB{range: {11, 13}, prev_departure_mins: nil}
       }
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
@@ -147,8 +147,8 @@ defmodule Signs.RealtimeTest do
         @sign
         | tick_top: 0,
           tick_bottom: 0,
-          current_content_top: {nil, %HT{destination: :southbound, vehicle_type: :train}},
-          current_content_bottom: {nil, %HB{range: {11, 13}}}
+          current_content_top: %HT{destination: :southbound, vehicle_type: :train},
+          current_content_bottom: %HB{range: {11, 13}}
       }
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
@@ -169,8 +169,8 @@ defmodule Signs.RealtimeTest do
         @sign
         | tick_top: 0,
           tick_bottom: 60,
-          current_content_top: {nil, %HT{destination: :southbound, vehicle_type: :train}},
-          current_content_bottom: {nil, %HB{range: {11, 13}}}
+          current_content_top: %HT{destination: :southbound, vehicle_type: :train},
+          current_content_bottom: %HB{range: {11, 13}}
       }
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
@@ -191,8 +191,8 @@ defmodule Signs.RealtimeTest do
         @sign
         | tick_top: 60,
           tick_bottom: 0,
-          current_content_top: {nil, %HT{destination: :southbound, vehicle_type: :train}},
-          current_content_bottom: {nil, %HB{range: {11, 13}}}
+          current_content_top: %HT{destination: :southbound, vehicle_type: :train},
+          current_content_bottom: %HB{range: {11, 13}}
       }
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
