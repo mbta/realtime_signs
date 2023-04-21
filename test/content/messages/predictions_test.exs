@@ -121,7 +121,7 @@ defmodule Content.Message.PredictionsTest do
         destination_stop_id: "70275"
       }
 
-      msg = Content.Message.Predictions.non_terminal(prediction, "test", "m", 15)
+      msg = Content.Message.Predictions.non_terminal(prediction, "test", "m", nil, 15)
       assert Content.Message.to_string(msg) == "Mattapan  9 min"
     end
 

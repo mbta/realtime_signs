@@ -16,15 +16,14 @@ defmodule Signs.Utilities.Headways do
 
     case fetch_headways(sign, group, sources, current_time) do
       nil ->
-        {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
+        {%Content.Message.Empty{}, %Content.Message.Empty{}}
 
       headways ->
-        {{nil, %Content.Message.Headways.Top{destination: destination, vehicle_type: :train}},
-         {nil,
-          %Content.Message.Headways.Bottom{
-            range: {headways.range_low, headways.range_high},
-            prev_departure_mins: nil
-          }}}
+        {%Content.Message.Headways.Top{destination: destination, vehicle_type: :train},
+         %Content.Message.Headways.Bottom{
+           range: {headways.range_low, headways.range_high},
+           prev_departure_mins: nil
+         }}
     end
   end
 
@@ -33,14 +32,13 @@ defmodule Signs.Utilities.Headways do
   def get_paging_message(sign, config, current_time) do
     case fetch_headways(sign, config.headway_group, config.sources, current_time) do
       nil ->
-        {nil, %Content.Message.Empty{}}
+        %Content.Message.Empty{}
 
       headways ->
-        {nil,
-         %Content.Message.Headways.Paging{
-           destination: config.headway_destination,
-           range: {headways.range_low, headways.range_high}
-         }}
+        %Content.Message.Headways.Paging{
+          destination: config.headway_destination,
+          range: {headways.range_low, headways.range_high}
+        }
     end
   end
 

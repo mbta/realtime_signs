@@ -42,7 +42,7 @@ defmodule Signs.Realtime do
                 uses_shuttles: true
               ]
 
-  @type line_content :: {SourceConfig.source() | nil, Content.Message.t()}
+  @type line_content :: Content.Message.t()
   @type sign_messages :: {line_content(), line_content()}
 
   @type t :: %__MODULE__{
@@ -85,8 +85,8 @@ defmodule Signs.Realtime do
       text_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
       audio_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "audio_zones")},
       source_config: source_config,
-      current_content_top: {nil, Content.Message.Empty.new()},
-      current_content_bottom: {nil, Content.Message.Empty.new()},
+      current_content_top: Content.Message.Empty.new(),
+      current_content_bottom: Content.Message.Empty.new(),
       prediction_engine: prediction_engine,
       headway_engine: headway_engine,
       last_departure_engine: last_departure_engine,
@@ -119,7 +119,7 @@ defmodule Signs.Realtime do
     time_zone = Application.get_env(:realtime_signs, :time_zone)
     {:ok, current_time} = DateTime.utc_now() |> DateTime.shift_zone(time_zone)
 
-    {top, bottom} =
+    {new_top, new_bottom} =
       Utilities.Messages.get_messages(
         sign,
         sign_config,
@@ -130,7 +130,11 @@ defmodule Signs.Realtime do
     sign =
       sign
       |> announce_passthrough_trains()
-      |> Utilities.Updater.update_sign(top, bottom)
+      |> Utilities.Updater.update_sign(new_top, new_bottom)
+      |> Utilities.Reader.do_interrupting_reads(
+        sign.current_content_top,
+        sign.current_content_bottom
+      )
       |> Utilities.Reader.read_sign()
       |> log_headway_accuracy()
       |> do_expiration()
@@ -168,21 +172,22 @@ defmodule Signs.Realtime do
 
   @spec do_expiration(Signs.Realtime.t()) :: Signs.Realtime.t()
   def do_expiration(%{tick_top: 0, tick_bottom: 0} = sign) do
-    {_src, top} = sign.current_content_top
-    {_src, bottom} = sign.current_content_bottom
-
-    sign.sign_updater.update_sign(sign.text_id, top, bottom, sign.expiration_seconds + 15, :now)
+    sign.sign_updater.update_sign(
+      sign.text_id,
+      sign.current_content_top,
+      sign.current_content_bottom,
+      sign.expiration_seconds + 15,
+      :now
+    )
 
     %{sign | tick_top: sign.expiration_seconds, tick_bottom: sign.expiration_seconds}
   end
 
   def do_expiration(%{tick_top: 0} = sign) do
-    {_src, top} = sign.current_content_top
-
     sign.sign_updater.update_single_line(
       sign.text_id,
       "1",
-      top,
+      sign.current_content_top,
       sign.expiration_seconds + 15,
       :now
     )
@@ -191,12 +196,10 @@ defmodule Signs.Realtime do
   end
 
   def do_expiration(%{tick_bottom: 0} = sign) do
-    {_src, bottom} = sign.current_content_bottom
-
     sign.sign_updater.update_single_line(
       sign.text_id,
       "2",
-      bottom,
+      sign.current_content_bottom,
       sign.expiration_seconds + 15,
       :now
     )

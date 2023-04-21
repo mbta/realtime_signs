@@ -25,9 +25,12 @@ defmodule Content.Message.Predictions do
     :station_code,
     :stop_id,
     :trip_id,
+    :direction_id,
     :zone,
     width: 18,
-    new_cars?: false
+    platform: nil,
+    new_cars?: false,
+    terminal?: false
   ]
 
   @type t :: %__MODULE__{
@@ -36,16 +39,25 @@ defmodule Content.Message.Predictions do
           route_id: String.t(),
           stop_id: String.t(),
           trip_id: Predictions.Prediction.trip_id() | nil,
+          direction_id: 0 | 1,
           width: integer(),
           new_cars?: boolean(),
           station_code: String.t() | nil,
-          zone: String.t() | nil
+          zone: String.t() | nil,
+          platform: Content.platform() | nil,
+          terminal?: boolean()
         }
 
-  @spec non_terminal(Predictions.Prediction.t(), String.t(), String.t(), integer()) :: t() | nil
-  def non_terminal(prediction, station_code, zone, width \\ 18)
+  @spec non_terminal(
+          Predictions.Prediction.t(),
+          String.t(),
+          String.t(),
+          Content.platform() | nil,
+          integer()
+        ) :: t() | nil
+  def non_terminal(prediction, station_code, zone, platform \\ nil, width \\ 18)
 
-  def non_terminal(prediction, station_code, zone, width) do
+  def non_terminal(prediction, station_code, zone, platform, width) do
     # e.g., North Station which is non-terminal but has trips that begin there
     predicted_time = prediction.seconds_until_arrival || prediction.seconds_until_departure
 
@@ -70,10 +82,12 @@ defmodule Content.Message.Predictions do
           route_id: prediction.route_id,
           stop_id: prediction.stop_id,
           trip_id: prediction.trip_id,
+          direction_id: prediction.direction_id,
           width: width,
           new_cars?: prediction.new_cars?,
           station_code: station_code,
-          zone: zone
+          zone: zone,
+          platform: platform
         }
 
       {:error, _} ->
@@ -108,8 +122,10 @@ defmodule Content.Message.Predictions do
           route_id: prediction.route_id,
           stop_id: prediction.stop_id,
           trip_id: prediction.trip_id,
+          direction_id: prediction.direction_id,
           width: width,
-          new_cars?: prediction.new_cars?
+          new_cars?: prediction.new_cars?,
+          terminal?: true
         }
 
       {:error, _} ->
