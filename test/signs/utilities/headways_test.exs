@@ -185,7 +185,7 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert {
                %Content.Message.Headways.Top{destination: nil},
                %Content.Message.Headways.Bottom{range: {8, 11}}
-             } = Signs.Utilities.Headways.get_messages(sign, @current_time) |> IO.inspect()
+             } = Signs.Utilities.Headways.get_messages(sign, @current_time)
     end
   end
 end
