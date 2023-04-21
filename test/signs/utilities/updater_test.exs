@@ -68,15 +68,14 @@ defmodule Signs.Utilities.UpdaterTest do
       assert sign.tick_bottom == 1
     end
 
-    test "changes the top line if necessary" do
+    test "Resets ticks for top if only top content changes" do
       diff_top = %P{destination: :alewife, minutes: 3}
       same_bottom = %P{destination: :ashmont, minutes: 3}
 
       sign = Updater.update_sign(@sign, diff_top, same_bottom)
 
       refute_received({:send_audio, _, _, _, _})
-      assert_received({:update_single_line, _id, "1", %P{minutes: 3}, _dur, _start})
-      refute_received({:update_sign, _, _, _, _, _})
+      assert_received({:update_sign, _, %P{destination: :alewife, minutes: 3}, _, _, _})
       assert sign.tick_top == 100
       assert sign.tick_bottom == 1
     end
@@ -129,15 +128,14 @@ defmodule Signs.Utilities.UpdaterTest do
       refute_received({:update_single_line, _id, "2", %P{minutes: :approaching}, _dur, _start})
     end
 
-    test "changes the bottom line if necessary" do
+    test "Resets ticks for bottom if only bottom content changes" do
       same_top = %P{destination: :alewife, minutes: 4}
       diff_bottom = %P{destination: :ashmont, minutes: 2}
 
       sign = Updater.update_sign(@sign, same_top, diff_bottom)
 
       refute_received({:send_audio, _, _, _, _})
-      assert_received({:update_single_line, _id, "2", %P{minutes: 2}, _dur, _start})
-      refute_received({:update_sign, _, _, _, _, _})
+      assert_received({:update_sign, _, _, %P{destination: :ashmont, minutes: 2}, _, _})
       assert sign.tick_top == 1
       assert sign.tick_bottom == 100
     end
