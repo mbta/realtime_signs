@@ -8268,6 +8268,43 @@
     }
   },
   {
+    "id": "Silver_Line.South_Station_EB",
+    "pa_ess_loc": "SSOU",
+    "read_loop_interval": 360,
+    "read_loop_offset": 0,
+    "text_zone": "e",
+    "audio_zones": [
+      "m",
+      "w"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "74611",
+        "routes": [
+          {
+            "route_id": "741",
+            "direction_id": 0
+          },
+          {
+            "route_id": "742",
+            "direction_id": 0
+          },
+          {
+            "route_id": "743",
+            "direction_id": 0
+          },
+          {
+            "route_id": "746",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "chelsea_bridge": "audio",
+    "max_minutes": 30
+  },
+  {
     "id": "Silver_Line.Courthouse_WB",
     "pa_ess_loc": "SCOU",
     "read_loop_interval": 360,
@@ -8345,7 +8382,9 @@
     "read_loop_interval": 360,
     "read_loop_offset": 60,
     "text_zone": "m",
-    "audio_zones": [],
+    "audio_zones": [
+      "m"
+    ],
     "type": "bus",
     "sources": [
       {
@@ -8372,5 +8411,918 @@
     ],
     "chelsea_bridge": "audio",
     "max_minutes": 30
+  },
+  {
+    "id": "Silver_Line.World_Trade_Ctr_WB",
+    "pa_ess_loc": "SWTC",
+    "read_loop_interval": 360,
+    "read_loop_offset": 120,
+    "text_zone": "w",
+    "audio_zones": [
+      "w"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "74615",
+        "routes": [
+          {
+            "route_id": "741",
+            "direction_id": 1
+          },
+          {
+            "route_id": "742",
+            "direction_id": 1
+          },
+          {
+            "route_id": "743",
+            "direction_id": 1
+          },
+          {
+            "route_id": "746",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "chelsea_bridge": "audio",
+    "max_minutes": 30
+  },
+  {
+    "id": "Silver_Line.World_Trade_Ctr_EB",
+    "pa_ess_loc": "SWTC",
+    "read_loop_interval": 360,
+    "read_loop_offset": 120,
+    "text_zone": "e",
+    "audio_zones": [
+      "e"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "74613",
+        "routes": [
+          {
+            "route_id": "741",
+            "direction_id": 0
+          },
+          {
+            "route_id": "742",
+            "direction_id": 0
+          },
+          {
+            "route_id": "743",
+            "direction_id": 0
+          },
+          {
+            "route_id": "746",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "chelsea_bridge": "audio",
+    "max_minutes": 30
+  },
+  {
+    "id": "Silver_Line.World_Trade_Ctr_mezz",
+    "pa_ess_loc": "SWTC",
+    "read_loop_interval": 360,
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": [
+      "m"
+    ],
+    "type": "bus",
+    "top_sources": [
+      {
+        "stop_id": "74615",
+        "routes": [
+          {
+            "route_id": "741",
+            "direction_id": 1
+          },
+          {
+            "route_id": "742",
+            "direction_id": 1
+          },
+          {
+            "route_id": "743",
+            "direction_id": 1
+          },
+          {
+            "route_id": "746",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "bottom_sources": [
+      {
+        "stop_id": "74613",
+        "routes": [
+          {
+            "route_id": "741",
+            "direction_id": 0
+          },
+          {
+            "route_id": "742",
+            "direction_id": 0
+          },
+          {
+            "route_id": "743",
+            "direction_id": 0
+          },
+          {
+            "route_id": "746",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "chelsea_bridge": "audio",
+    "max_minutes": 30
+  },
+  {
+    "id": "Silver_Line.Eastern_Ave_OB",
+    "pa_ess_loc": "SEAV",
+    "read_loop_interval": 360,
+    "read_loop_offset": 60,
+    "text_zone": "e",
+    "audio_zones": [
+      "e"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "74637",
+        "routes": [
+          {
+            "route_id": "743",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "chelsea_bridge": "audio_visual",
+    "max_minutes": 60
+  },
+  {
+    "id": "Silver_Line.Eastern_Ave_IB",
+    "pa_ess_loc": "SEAV",
+    "read_loop_interval": 360,
+    "read_loop_offset": 60,
+    "text_zone": "w",
+    "audio_zones": [
+      "w"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "74636",
+        "routes": [
+          {
+            "route_id": "743",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "chelsea_bridge": "audio_visual",
+    "max_minutes": 60
+  },
+  {
+    "id": "Silver_Line.Box_District_OB",
+    "pa_ess_loc": "SBOX",
+    "read_loop_interval": 360,
+    "read_loop_offset": 120,
+    "text_zone": "e",
+    "audio_zones": [
+      "e"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "74635",
+        "routes": [
+          {
+            "route_id": "743",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "chelsea_bridge": "audio_visual",
+    "max_minutes": 60
+  },
+  {
+    "id": "Silver_Line.Box_District_IB",
+    "pa_ess_loc": "SBOX",
+    "read_loop_interval": 360,
+    "read_loop_offset": 120,
+    "text_zone": "w",
+    "audio_zones": [
+      "w"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "74634",
+        "routes": [
+          {
+            "route_id": "743",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "chelsea_bridge": "audio_visual",
+    "max_minutes": 60
+  },
+  {
+    "id": "Silver_Line.Bellingham_Square_OB",
+    "pa_ess_loc": "SBSQ",
+    "read_loop_interval": 360,
+    "read_loop_offset": 180,
+    "text_zone": "e",
+    "audio_zones": [
+      "e"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "74633",
+        "routes": [
+          {
+            "route_id": "743",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "chelsea_bridge": "audio_visual",
+    "max_minutes": 60
+  },
+  {
+    "id": "Silver_Line.Bellingham_Square_IB",
+    "pa_ess_loc": "SBSQ",
+    "read_loop_interval": 360,
+    "read_loop_offset": 180,
+    "text_zone": "w",
+    "audio_zones": [
+      "w"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "74632",
+        "routes": [
+          {
+            "route_id": "743",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "chelsea_bridge": "audio_visual",
+    "max_minutes": 60
+  },
+  {
+    "id": "Silver_Line.Chelsea_IB",
+    "pa_ess_loc": "SCHS",
+    "read_loop_interval": 360,
+    "read_loop_offset": 240,
+    "text_zone": "w",
+    "audio_zones": [
+      "w"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "74630",
+        "routes": [
+          {
+            "route_id": "743",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "chelsea_bridge": "audio_visual",
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Nubian_Platform_A",
+    "pa_ess_loc": "SDUD",
+    "read_loop_interval": 420,
+    "read_loop_offset": 180,
+    "text_zone": "w",
+    "audio_zones": [
+      "c"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "64000",
+        "routes": [
+          {
+            "route_id": "15",
+            "direction_id": 1
+          },
+          {
+            "route_id": "23",
+            "direction_id": 1
+          },
+          {
+            "route_id": "28",
+            "direction_id": 1
+          },
+          {
+            "route_id": "44",
+            "direction_id": 1
+          },
+          {
+            "route_id": "45",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Nubian_Platform_C",
+    "pa_ess_loc": "SDUD",
+    "read_loop_interval": 420,
+    "read_loop_offset": 240,
+    "text_zone": "s",
+    "audio_zones": [
+      "c"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "64000",
+        "routes": [
+          {
+            "route_id": "14",
+            "direction_id": 1
+          },
+          {
+            "route_id": "41",
+            "direction_id": 0
+          },
+          {
+            "route_id": "42",
+            "direction_id": 0
+          },
+          {
+            "route_id": "66",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Nubian_Platform_D",
+    "pa_ess_loc": "SDUD",
+    "read_loop_interval": 420,
+    "read_loop_offset": 0,
+    "text_zone": "e",
+    "audio_zones": [
+      "n"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "64000",
+        "routes": [
+          {
+            "route_id": "15",
+            "direction_id": 0
+          },
+          {
+            "route_id": "41",
+            "direction_id": 1
+          },
+          {
+            "route_id": "45",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Nubian_Platform_E_east",
+    "pa_ess_loc": "SDUD",
+    "read_loop_interval": 420,
+    "read_loop_offset": 60,
+    "text_zone": "c",
+    "audio_zones": [
+      "w"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "64",
+        "routes": [
+          {
+            "route_id": "170",
+            "direction_id": 0
+          },
+          {
+            "route_id": "171",
+            "direction_id": 0
+          },
+          {
+            "route_id": "749",
+            "direction_id": 1
+          },
+          {
+            "route_id": "751",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "extra_audio_sources": [
+      {
+        "stop_id": "64000",
+        "routes": [
+          {
+            "route_id": "14",
+            "direction_id": 0
+          },
+          {
+            "route_id": "19",
+            "direction_id": 0
+          },
+          {
+            "route_id": "23",
+            "direction_id": 0
+          },
+          {
+            "route_id": "28",
+            "direction_id": 0
+          },
+          {
+            "route_id": "44",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Nubian_Platform_E_west",
+    "pa_ess_loc": "SDUD",
+    "read_loop_interval": 420,
+    "read_loop_offset": 60,
+    "text_zone": "m",
+    "audio_zones": [],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "64000",
+        "routes": [
+          {
+            "route_id": "14",
+            "direction_id": 0
+          },
+          {
+            "route_id": "19",
+            "direction_id": 0
+          },
+          {
+            "route_id": "23",
+            "direction_id": 0
+          },
+          {
+            "route_id": "28",
+            "direction_id": 0
+          },
+          {
+            "route_id": "44",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Nubian_Platform_F",
+    "pa_ess_loc": "SDUD",
+    "read_loop_interval": 420,
+    "read_loop_offset": 120,
+    "text_zone": "n",
+    "audio_zones": [
+      "e"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "64",
+        "routes": [
+          {
+            "route_id": "1",
+            "direction_id": 0
+          },
+          {
+            "route_id": "8",
+            "direction_id": 0
+          },
+          {
+            "route_id": "8",
+            "direction_id": 1
+          },
+          {
+            "route_id": "19",
+            "direction_id": 1
+          },
+          {
+            "route_id": "47",
+            "direction_id": 0
+          },
+          {
+            "route_id": "47",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Lechmere_bus_mezzanine",
+    "pa_ess_loc": "SLEC",
+    "read_loop_interval": 360,
+    "read_loop_offset": 180,
+    "text_zone": "m",
+    "audio_zones": [
+      "m"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "70500",
+        "routes": [
+          {
+            "route_id": "69",
+            "direction_id": 0
+          },
+          {
+            "route_id": "80",
+            "direction_id": 0
+          },
+          {
+            "route_id": "87",
+            "direction_id": 0
+          },
+          {
+            "route_id": "88",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Harvard_upper",
+    "pa_ess_loc": "SHAR",
+    "read_loop_interval": 360,
+    "read_loop_offset": 240,
+    "text_zone": "n",
+    "audio_zones": [
+      "n"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "20761",
+        "routes": [
+          {
+            "route_id": "71",
+            "direction_id": 0
+          },
+          {
+            "route_id": "72",
+            "direction_id": 0
+          },
+          {
+            "route_id": "73",
+            "direction_id": 0
+          },
+          {
+            "route_id": "74",
+            "direction_id": 0
+          },
+          {
+            "route_id": "75",
+            "direction_id": 0
+          },
+          {
+            "route_id": "77",
+            "direction_id": 0
+          },
+          {
+            "route_id": "78",
+            "direction_id": 0
+          },
+          {
+            "route_id": "86",
+            "direction_id": 0
+          },
+          {
+            "route_id": "96",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Harvard_lower",
+    "pa_ess_loc": "SHAR",
+    "read_loop_interval": 360,
+    "read_loop_offset": 60,
+    "text_zone": "m",
+    "audio_zones": [
+      "m"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "2076",
+        "routes": [
+          {
+            "route_id": "71",
+            "direction_id": 0
+          },
+          {
+            "route_id": "73",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Mattapan_north",
+    "pa_ess_loc": "MMAT",
+    "read_loop_interval": 420,
+    "read_loop_offset": 60,
+    "text_zone": "s",
+    "audio_zones": [
+      "s"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "185",
+        "routes": [
+          {
+            "route_id": "24",
+            "direction_id": 0
+          },
+          {
+            "route_id": "24",
+            "direction_id": 1
+          },
+          {
+            "route_id": "27",
+            "direction_id": 1
+          },
+          {
+            "route_id": "30",
+            "direction_id": 1
+          },
+          {
+            "route_id": "33",
+            "direction_id": 0
+          },
+          {
+            "route_id": "245",
+            "direction_id": 0
+          },
+          {
+            "route_id": "2427",
+            "direction_id": 0
+          },
+          {
+            "route_id": "2427",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Mattapan_south",
+    "pa_ess_loc": "MMAT",
+    "read_loop_interval": 420,
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": [
+      "n"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "18511",
+        "routes": [
+          {
+            "route_id": "28",
+            "direction_id": 1
+          },
+          {
+            "route_id": "29",
+            "direction_id": 1
+          },
+          {
+            "route_id": "31",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Davis",
+    "pa_ess_loc": "SDAV",
+    "read_loop_interval": 360,
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": [
+      "m"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "5104",
+        "routes": [
+          {
+            "route_id": "87",
+            "direction_id": 0
+          },
+          {
+            "route_id": "88",
+            "direction_id": 0
+          },
+          {
+            "route_id": "89",
+            "direction_id": 0
+          },
+          {
+            "route_id": "89",
+            "direction_id": 1
+          },
+          {
+            "route_id": "90",
+            "direction_id": 1
+          },
+          {
+            "route_id": "94",
+            "direction_id": 0
+          },
+          {
+            "route_id": "96",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Forest_Hills_upper_island",
+    "pa_ess_loc": "SFOR",
+    "read_loop_interval": 420,
+    "read_loop_offset": 180,
+    "text_zone": "s",
+    "audio_zones": [
+      "s"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "10642",
+        "routes": [
+          {
+            "route_id": "30",
+            "direction_id": 0
+          },
+          {
+            "route_id": "35",
+            "direction_id": 0
+          },
+          {
+            "route_id": "36",
+            "direction_id": 0
+          },
+          {
+            "route_id": "37",
+            "direction_id": 0
+          },
+          {
+            "route_id": "51",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Forest_Hills_upper_fence",
+    "pa_ess_loc": "SFOR",
+    "read_loop_interval": 420,
+    "read_loop_offset": 0,
+    "text_zone": "n",
+    "audio_zones": [
+      "n"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "10642",
+        "routes": [
+          {
+            "route_id": "34",
+            "direction_id": 0
+          },
+          {
+            "route_id": "34E",
+            "direction_id": 0
+          },
+          {
+            "route_id": "38",
+            "direction_id": 0
+          },
+          {
+            "route_id": "39",
+            "direction_id": 1
+          },
+          {
+            "route_id": "40",
+            "direction_id": 0
+          },
+          {
+            "route_id": "50",
+            "direction_id": 0
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Braintree",
+    "pa_ess_loc": "RBRA",
+    "read_loop_interval": 360,
+    "read_loop_offset": 240,
+    "text_zone": "n",
+    "audio_zones": [
+      "n"
+    ],
+    "type": "bus",
+    "sources": [
+      {
+        "stop_id": "38671",
+        "routes": [
+          {
+            "route_id": "226",
+            "direction_id": 0
+          },
+          {
+            "route_id": "230",
+            "direction_id": 0
+          },
+          {
+            "route_id": "230",
+            "direction_id": 1
+          },
+          {
+            "route_id": "236",
+            "direction_id": 0
+          },
+          {
+            "route_id": "236",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "max_minutes": 75
   }
 ]

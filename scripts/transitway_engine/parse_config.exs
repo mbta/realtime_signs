@@ -161,7 +161,7 @@ signs_json =
             []
           else
             for {c, i} <- Enum.with_index(["m", "c", "n", "s", "e", "w"]),
-                String.at(audio_zones, i) == "1" do
+                String.at(if(audio_zones == "", do: "100000", else: audio_zones), i) == "1" do
               c
             end
           end,

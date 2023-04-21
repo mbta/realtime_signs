@@ -13,7 +13,7 @@ Here's a general overview of the realtime_signs application which should be help
 
 First, ensure you have a basic working environment as described above, and in the signs_ui README.
 1. Start signs_ui and tell it what API key to accept: `MESSAGES_API_KEYS=realtime_signs:a6975e41192b888c NODE_ENV=development mix run --no-halt`. The key is arbitrary but it must match what you provide in the next step.
-2. Start realtime_signs, and provide the local URL and API key: `SIGN_UI_URL=localhost:5000 SIGN_UI_API_KEY=a6975e41192b888c mix run --no-halt`
+2. Start realtime_signs, and provide the local URL and API key, as well as the location of the config file: `SIGN_UI_URL=localhost:5000 SIGN_UI_API_KEY=a6975e41192b888c SIGN_CONFIG_FILE=../signs_ui/priv/config.json mix run --no-halt`
 3. Open up http://localhost:5000 and you should see the signs data being populated by your local app.
 
 ### Running locally in a docker container

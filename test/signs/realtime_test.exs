@@ -99,6 +99,8 @@ defmodule Signs.RealtimeTest do
     },
     current_content_top: %HT{destination: :southbound, vehicle_type: :train},
     current_content_bottom: %HB{range: {1, 5}, prev_departure_mins: nil},
+    current_content_top: %HT{destination: :southbound, vehicle_type: :train},
+    current_content_bottom: %HB{range: {1, 5}, prev_departure_mins: nil},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartureEngine,
@@ -129,6 +131,7 @@ defmodule Signs.RealtimeTest do
     test "decrements ticks and doesn't send audio or text when sign is not expired" do
       sign = %{
         @sign
+        | current_content_bottom: %HB{range: {11, 13}, prev_departure_mins: nil}
         | current_content_bottom: %HB{range: {11, 13}, prev_departure_mins: nil}
       }
 

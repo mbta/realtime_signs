@@ -148,6 +148,10 @@ defmodule PaEss.Utilities do
     end
   end
 
+  @spec generic_number_var(integer()) :: String.t() | nil
+  def generic_number_var(n) when n >= 1 and n <= 100, do: Integer.to_string(5000 + n)
+  def generic_number_var(_), do: nil
+
   @doc "Recording of the time from 12:01 to 12:59, given the minutes"
   @spec time_var(integer()) :: String.t()
   def time_var(n) when n > 0 and n < 60 do
@@ -483,6 +487,13 @@ defmodule PaEss.Utilities do
     end)
   end
 
+  @spec headsign_key(String.t()) :: String.t()
+  def headsign_key(headsign) do
+    Enum.find_value(@headsign_abbreviation_mappings, headsign, fn {prefix, _} ->
+      if String.starts_with?(headsign, prefix), do: prefix
+    end)
+  end
+
   @spec prediction_route_name(Predictions.BusPrediction.t()) :: String.t() | nil
   # Don't display route names for SL1, SL2, SL3, or SLW. This also has the effect of combining
   # inbound predictions along the waterfront, where all routes follow the same path.
@@ -670,7 +681,9 @@ defmodule PaEss.Utilities do
     minutes: "505"
   }
 
-  def audio_take({:minutes, minutes}), do: number_var(minutes, :english)
+  def audio_take({:minutes, minutes}) do
+    number_var(minutes, :english) || generic_number_var(minutes)
+  end
 
   def audio_take({:headsign, headsign}) do
     Enum.find_value(@headsign_take_mappings, fn {prefix, take} ->

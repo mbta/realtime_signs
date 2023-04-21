@@ -149,7 +149,7 @@ defmodule Predictions.Predictions do
   end
 
   @spec sufficient_certainty?(map(), String.t()) :: boolean()
-  defp sufficient_certainty?(stop_time_event, route_id) when route_id in ["Red", "Blue"] do
+  defp sufficient_certainty?(stop_time_event, route_id) when route_id in ["Blue"] do
     is_nil(stop_time_event["uncertainty"]) or stop_time_event["uncertainty"] < 120
   end
 

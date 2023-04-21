@@ -42,6 +42,7 @@ defmodule Signs.Realtime do
               ]
 
   @type line_content :: Content.Message.t()
+  @type line_content :: Content.Message.t()
   @type sign_messages :: {line_content(), line_content()}
 
   @type t :: %__MODULE__{
@@ -85,6 +86,8 @@ defmodule Signs.Realtime do
       source_config: source_config,
       current_content_top: Content.Message.Empty.new(),
       current_content_bottom: Content.Message.Empty.new(),
+      current_content_top: Content.Message.Empty.new(),
+      current_content_bottom: Content.Message.Empty.new(),
       prediction_engine: prediction_engine,
       headway_engine: headway_engine,
       last_departure_engine: last_departure_engine,
@@ -117,6 +120,7 @@ defmodule Signs.Realtime do
     {:ok, current_time} = DateTime.utc_now() |> DateTime.shift_zone(time_zone)
 
     {new_top, new_bottom} =
+      {new_top, new_bottom} =
       Utilities.Messages.get_messages(
         sign,
         sign_config,
@@ -127,6 +131,11 @@ defmodule Signs.Realtime do
     sign =
       sign
       |> announce_passthrough_trains()
+      |> Utilities.Updater.update_sign(new_top, new_bottom)
+      |> Utilities.Reader.do_interrupting_reads(
+        sign.current_content_top,
+        sign.current_content_bottom
+      )
       |> Utilities.Updater.update_sign(new_top, new_bottom)
       |> Utilities.Reader.do_interrupting_reads(
         sign.current_content_top,
