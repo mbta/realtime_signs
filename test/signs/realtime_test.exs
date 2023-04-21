@@ -105,8 +105,7 @@ defmodule Signs.RealtimeTest do
     config_engine: FakeConfigEngine,
     alerts_engine: FakeAlerts,
     sign_updater: FakeUpdater,
-    tick_bottom: 1,
-    tick_top: 1,
+    tick_content: 1,
     tick_read: 1,
     tick_audit: 1,
     expiration_seconds: 100,
@@ -137,16 +136,14 @@ defmodule Signs.RealtimeTest do
       refute_received({:send_audio, _, _, _, _})
       refute_received({:update_single_line, _, _, _, _, _})
       refute_received({:update_sign, _, _, _, _, _})
-      assert sign.tick_top == 0
-      assert sign.tick_bottom == 0
+      assert sign.tick_content == 0
       assert sign.tick_read == 0
     end
 
     test "expires content on both lines when tick is zero" do
       sign = %{
         @sign
-        | tick_top: 0,
-          tick_bottom: 0,
+        | tick_content: 0,
           current_content_top: %HT{destination: :southbound, vehicle_type: :train},
           current_content_bottom: %HB{range: {11, 13}}
       }
@@ -160,49 +157,7 @@ defmodule Signs.RealtimeTest do
 
       refute_received({:send_audio, _, _, _, _})
 
-      assert sign.tick_top == 99
-      assert sign.tick_bottom == 99
-    end
-
-    test "expires content on top when tick is zero" do
-      sign = %{
-        @sign
-        | tick_top: 0,
-          tick_bottom: 60,
-          current_content_top: %HT{destination: :southbound, vehicle_type: :train},
-          current_content_bottom: %HB{range: {11, 13}}
-      }
-
-      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
-
-      assert_received(
-        {:update_single_line, _id, "1", %HT{destination: :southbound, vehicle_type: :train}, _dur,
-         _start}
-      )
-
-      refute_received({:send_audio, _, _, _, _})
-
-      assert sign.tick_top == 99
-      assert sign.tick_bottom == 59
-    end
-
-    test "expires content on bottom when tick is zero" do
-      sign = %{
-        @sign
-        | tick_top: 60,
-          tick_bottom: 0,
-          current_content_top: %HT{destination: :southbound, vehicle_type: :train},
-          current_content_bottom: %HB{range: {11, 13}}
-      }
-
-      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
-
-      assert_received({:update_single_line, _id, "2", %HB{range: {11, 13}}, _dur, _start})
-
-      refute_received({:send_audio, _, _, _, _})
-
-      assert sign.tick_top == 59
-      assert sign.tick_bottom == 99
+      assert sign.tick_content == 99
     end
 
     test "announces train passing through station" do
@@ -221,15 +176,13 @@ defmodule Signs.RealtimeTest do
     test "decrements all the ticks when all of them dont need to be reset" do
       sign = %{
         @sign
-        | tick_top: 100,
-          tick_bottom: 100,
+        | tick_content: 100,
           tick_read: 100
       }
 
       sign = Signs.Realtime.decrement_ticks(sign)
 
-      assert sign.tick_top == 99
-      assert sign.tick_bottom == 99
+      assert sign.tick_content == 99
       assert sign.tick_read == 99
     end
   end

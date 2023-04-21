@@ -46,8 +46,7 @@ defmodule Signs.Utilities.UpdaterTest do
     config_engine: Engine.Config,
     alerts_engine: nil,
     sign_updater: FakeUpdater,
-    tick_bottom: 1,
-    tick_top: 1,
+    tick_content: 1,
     tick_audit: 240,
     tick_read: 60,
     expiration_seconds: 100,
@@ -64,20 +63,7 @@ defmodule Signs.Utilities.UpdaterTest do
       refute_received({:send_audio, _, _, _, _})
       refute_received({:update_single_line, _, _, _, _, _})
       refute_received({:update_sign, _, _, _, _, _})
-      assert sign.tick_top == 1
-      assert sign.tick_bottom == 1
-    end
-
-    test "Resets ticks for top if only top content changes" do
-      diff_top = %P{destination: :alewife, minutes: 3}
-      same_bottom = %P{destination: :ashmont, minutes: 3}
-
-      sign = Updater.update_sign(@sign, diff_top, same_bottom)
-
-      refute_received({:send_audio, _, _, _, _})
-      assert_received({:update_sign, _, %P{destination: :alewife, minutes: 3}, _, _, _})
-      assert sign.tick_top == 100
-      assert sign.tick_bottom == 1
+      assert sign.tick_content == 1
     end
 
     test "does not change top line if it would be a count up from ARR to approaching" do
@@ -128,18 +114,6 @@ defmodule Signs.Utilities.UpdaterTest do
       refute_received({:update_single_line, _id, "2", %P{minutes: :approaching}, _dur, _start})
     end
 
-    test "Resets ticks for bottom if only bottom content changes" do
-      same_top = %P{destination: :alewife, minutes: 4}
-      diff_bottom = %P{destination: :ashmont, minutes: 2}
-
-      sign = Updater.update_sign(@sign, same_top, diff_bottom)
-
-      refute_received({:send_audio, _, _, _, _})
-      assert_received({:update_sign, _, _, %P{destination: :ashmont, minutes: 2}, _, _})
-      assert sign.tick_top == 1
-      assert sign.tick_bottom == 100
-    end
-
     test "changes both lines if necessary" do
       diff_top = %P{destination: :alewife, minutes: 3}
       diff_bottom = %P{destination: :ashmont, minutes: 2}
@@ -148,8 +122,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       refute_received({:update_single_line, _, _, _, _, _})
       assert_received({:update_sign, _id, %P{minutes: 3}, %P{minutes: 2}, _dur, _start})
-      assert sign.tick_top == 100
-      assert sign.tick_bottom == 100
+      assert sign.tick_content == 100
     end
 
     test "doesn't do an interrupting read if new top is same as old bottom and is a boarding message" do
