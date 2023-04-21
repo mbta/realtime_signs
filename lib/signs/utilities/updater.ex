@@ -25,20 +25,20 @@ defmodule Signs.Utilities.Updater do
         sign
 
       _ ->
-        {top_msg, tick_top} =
+        top_msg =
           if Messages.same_content?(sign.current_content_top, top_msg) do
-            {sign.current_content_top, sign.tick_top}
+            sign.current_content_top
           else
             log_line_update(sign, top_msg, "top")
-            {top_msg, sign.expiration_seconds}
+            top_msg
           end
 
-        {bottom_msg, tick_bottom} =
+        bottom_msg =
           if Messages.same_content?(sign.current_content_bottom, bottom_msg) do
-            {sign.current_content_bottom, sign.tick_bottom}
+            sign.current_content_bottom
           else
             log_line_update(sign, bottom_msg, "bottom")
-            {bottom_msg, sign.expiration_seconds}
+            bottom_msg
           end
 
         sign.sign_updater.update_sign(
@@ -53,8 +53,7 @@ defmodule Signs.Utilities.Updater do
           sign
           | current_content_top: top_msg,
             current_content_bottom: bottom_msg,
-            tick_top: tick_top,
-            tick_bottom: tick_bottom
+            tick_content: sign.expiration_seconds
         }
     end
   end
