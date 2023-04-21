@@ -47,8 +47,6 @@ defmodule Signs.Utilities.HeadwaysTest do
     source_config: {%{}, %{}},
     current_content_top: Content.Message.Empty.new(),
     current_content_bottom: Content.Message.Empty.new(),
-    current_content_top: Content.Message.Empty.new(),
-    current_content_bottom: Content.Message.Empty.new(),
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartures,
@@ -89,7 +87,6 @@ defmodule Signs.Utilities.HeadwaysTest do
 
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
                {%Content.Message.Empty{}, %Content.Message.Empty{}}
-               {%Content.Message.Empty{}, %Content.Message.Empty{}}
     end
 
     test "displays the headway at a single-source stop" do
@@ -106,13 +103,9 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
                {
                  %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train},
-               {
-                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train},
                  %Content.Message.Headways.Bottom{
                    range: {8, 11},
                    prev_departure_mins: nil
-                 }
-               }
                  }
                }
     end
@@ -135,13 +128,9 @@ defmodule Signs.Utilities.HeadwaysTest do
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
                {
                  %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train},
-               {
-                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train},
                  %Content.Message.Headways.Bottom{
                    range: {8, 11},
                    prev_departure_mins: nil
-                 }
-               }
                  }
                }
     end
@@ -161,7 +150,6 @@ defmodule Signs.Utilities.HeadwaysTest do
 
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
                {%Content.Message.Empty{}, %Content.Message.Empty{}}
-               {%Content.Message.Empty{}, %Content.Message.Empty{}}
     end
 
     test "generates empty messages if outside of service hours" do
@@ -178,7 +166,6 @@ defmodule Signs.Utilities.HeadwaysTest do
       }
 
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
-               {%Content.Message.Empty{}, %Content.Message.Empty{}}
                {%Content.Message.Empty{}, %Content.Message.Empty{}}
     end
 
