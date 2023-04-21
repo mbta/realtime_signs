@@ -32,8 +32,8 @@ defmodule Signs.Utilities.ReaderTest do
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: %{sources: [@src]},
-    current_content_top: {@src, %Predictions{destination: :alewife, minutes: 4}},
-    current_content_bottom: {@src, %Predictions{destination: :ashmont, minutes: 3}},
+    current_content_top: %Predictions{destination: :alewife, minutes: 4},
+    current_content_bottom: %Predictions{destination: :ashmont, minutes: 3},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartures,
@@ -70,8 +70,8 @@ defmodule Signs.Utilities.ReaderTest do
       sign = %{
         @sign
         | tick_read: 0,
-          current_content_top: {@src, %Custom{line: :top, message: "Custom Top"}},
-          current_content_bottom: {nil, %Empty{}}
+          current_content_top: %Custom{line: :top, message: "Custom Top"},
+          current_content_bottom: %Empty{}
       }
 
       Reader.read_sign(sign)
