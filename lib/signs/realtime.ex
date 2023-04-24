@@ -25,8 +25,7 @@ defmodule Signs.Realtime do
     :config_engine,
     :alerts_engine,
     :sign_updater,
-    :tick_top,
-    :tick_bottom,
+    :tick_content,
     :tick_audit,
     :tick_read,
     :expiration_seconds,
@@ -58,8 +57,7 @@ defmodule Signs.Realtime do
           config_engine: module(),
           alerts_engine: module(),
           sign_updater: module(),
-          tick_bottom: non_neg_integer(),
-          tick_top: non_neg_integer(),
+          tick_content: non_neg_integer(),
           tick_audit: non_neg_integer(),
           tick_read: non_neg_integer(),
           expiration_seconds: non_neg_integer(),
@@ -93,8 +91,7 @@ defmodule Signs.Realtime do
       config_engine: config_engine,
       alerts_engine: alerts_engine,
       sign_updater: sign_updater,
-      tick_bottom: 130,
-      tick_top: 130,
+      tick_content: 130,
       tick_audit: 60,
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       expiration_seconds: 130,
@@ -171,7 +168,7 @@ defmodule Signs.Realtime do
   end
 
   @spec do_expiration(Signs.Realtime.t()) :: Signs.Realtime.t()
-  def do_expiration(%{tick_top: 0, tick_bottom: 0} = sign) do
+  def do_expiration(%{tick_content: 0} = sign) do
     sign.sign_updater.update_sign(
       sign.text_id,
       sign.current_content_top,
@@ -180,31 +177,7 @@ defmodule Signs.Realtime do
       :now
     )
 
-    %{sign | tick_top: sign.expiration_seconds, tick_bottom: sign.expiration_seconds}
-  end
-
-  def do_expiration(%{tick_top: 0} = sign) do
-    sign.sign_updater.update_single_line(
-      sign.text_id,
-      "1",
-      sign.current_content_top,
-      sign.expiration_seconds + 15,
-      :now
-    )
-
-    %{sign | tick_top: sign.expiration_seconds}
-  end
-
-  def do_expiration(%{tick_bottom: 0} = sign) do
-    sign.sign_updater.update_single_line(
-      sign.text_id,
-      "2",
-      sign.current_content_bottom,
-      sign.expiration_seconds + 15,
-      :now
-    )
-
-    %{sign | tick_bottom: sign.expiration_seconds}
+    %{sign | tick_content: sign.expiration_seconds}
   end
 
   def do_expiration(sign), do: sign
@@ -213,8 +186,7 @@ defmodule Signs.Realtime do
   def decrement_ticks(sign) do
     %{
       sign
-      | tick_bottom: sign.tick_bottom - 1,
-        tick_top: sign.tick_top - 1,
+      | tick_content: sign.tick_content - 1,
         tick_audit: sign.tick_audit - 1,
         tick_read: sign.tick_read - 1
     }
