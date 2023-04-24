@@ -76,7 +76,3 @@ if config_env() == :prod and splunk_token != "" do
     metadata: [:request_id],
     max_buffer: 100
 end
-
-if System.get_env("DRY_RUN") == "true" do
-  config :realtime_signs, sign_updater_mod: PaEss.Logger
-end
