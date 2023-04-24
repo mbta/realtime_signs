@@ -19,14 +19,16 @@ defmodule Signs.Utilities.Updater do
         top_msg,
         bottom_msg
       ) do
-    case Messages.same_content?(sign.current_content_top, top_msg) and
-           Messages.same_content?(sign.current_content_bottom, bottom_msg) do
+    top_same_content? = Messages.same_content?(sign.current_content_top, top_msg)
+    bottom_same_content? = Messages.same_content?(sign.current_content_bottom, bottom_msg)
+
+    case top_same_content? and bottom_same_content? do
       true ->
         sign
 
       _ ->
         top_msg =
-          if Messages.same_content?(sign.current_content_top, top_msg) do
+          if top_same_content? do
             sign.current_content_top
           else
             log_line_update(sign, top_msg, "top")
@@ -34,7 +36,7 @@ defmodule Signs.Utilities.Updater do
           end
 
         bottom_msg =
-          if Messages.same_content?(sign.current_content_bottom, bottom_msg) do
+          if bottom_same_content? do
             sign.current_content_bottom
           else
             log_line_update(sign, bottom_msg, "bottom")
