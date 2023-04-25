@@ -11,10 +11,6 @@ defmodule Signs.Utilities.UpdaterTest do
   end
 
   defmodule FakeUpdater do
-    def update_single_line(id, line_no, msg, duration, start) do
-      send(self(), {:update_single_line, id, line_no, msg, duration, start})
-    end
-
     def update_sign(id, top_msg, bottom_msg, duration, start) do
       send(self(), {:update_sign, id, top_msg, bottom_msg, duration, start})
     end
@@ -61,57 +57,8 @@ defmodule Signs.Utilities.UpdaterTest do
       sign = Updater.update_sign(@sign, same_top, same_bottom)
 
       refute_received({:send_audio, _, _, _, _})
-      refute_received({:update_single_line, _, _, _, _, _})
       refute_received({:update_sign, _, _, _, _, _})
       assert sign.tick_content == 1
-    end
-
-    test "does not change top line if it would be a count up from ARR to approaching" do
-      sign = %{@sign | current_content_top: {@src, %P{destination: :alewife, minutes: :arriving}}}
-      diff_top = {@src, %P{destination: :alewife, minutes: :approaching}}
-      same_bottom = {@src, %P{destination: :ashmont, minutes: 3}}
-
-      Updater.update_sign(sign, diff_top, same_bottom)
-
-      refute_received({:update_single_line, _id, "1", %P{minutes: :approaching}, _dur, _start})
-    end
-
-    test "does not change the top line if it would be a count up from approaching to 1 min" do
-      sign = %{
-        @sign
-        | current_content_top: {@src, %P{destination: :alewife, minutes: :approaching}}
-      }
-
-      diff_top = {@src, %P{destination: :alewife, minutes: 1}}
-      same_bottom = {@src, %P{destination: :ashmont, minutes: 3}}
-
-      Updater.update_sign(sign, diff_top, same_bottom)
-
-      refute_received({:update_single_line, _id, "1", %P{minutes: 1}, _dur, _start})
-    end
-
-    test "does not change top line if it would be a count up from 3 min to 4 min" do
-      sign = %{@sign | current_content_top: {@src, %P{destination: :alewife, minutes: 3}}}
-      diff_top = {@src, %P{destination: :alewife, minutes: 4}}
-      same_bottom = {@src, %P{destination: :ashmont, minutes: 3}}
-
-      Updater.update_sign(sign, diff_top, same_bottom)
-
-      refute_received({:update_single_line, _id, "1", %P{minutes: 4}, _dur, _start})
-    end
-
-    test "does not change bottom line if it would be a count up from ARR to approaching" do
-      sign = %{
-        @sign
-        | current_content_bottom: {@src, %P{destination: :ashmont, minutes: :arriving}}
-      }
-
-      same_top = {@src, %P{destination: :alewife, minutes: 4}}
-      diff_bottom = {@src, %P{destination: :ashmont, minutes: :approaching}}
-
-      Updater.update_sign(sign, same_top, diff_bottom)
-
-      refute_received({:update_single_line, _id, "2", %P{minutes: :approaching}, _dur, _start})
     end
 
     test "changes both lines if necessary" do
@@ -120,7 +67,6 @@ defmodule Signs.Utilities.UpdaterTest do
 
       sign = Updater.update_sign(@sign, diff_top, diff_bottom)
 
-      refute_received({:update_single_line, _, _, _, _, _})
       assert_received({:update_sign, _id, %P{minutes: 3}, %P{minutes: 2}, _dur, _start})
       assert sign.tick_content == 100
     end
