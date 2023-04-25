@@ -77,43 +77,6 @@ defmodule PaEss.HttpUpdater do
     end
   end
 
-  @spec process({atom, [any]}, __MODULE__.t()) :: post_result
-  def process({:update_single_line, [{station, zone}, line_no, msg, duration, start_secs]}, state) do
-    cmd = to_command(msg, duration, start_secs, zone, line_no)
-    uid = get_uid(state)
-    encoded = URI.encode_query(MsgType: "SignContent", uid: uid, sta: station, c: cmd)
-
-    {arinc_time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
-
-    case result do
-      {:ok, _} ->
-        {ui_time, _} = :timer.tc(fn -> update_ui(state.http_poster, encoded) end)
-
-        Logger.info([
-          "update_single_line: ",
-          encoded,
-          " pid=",
-          inspect(self()),
-          " arinc_ms=",
-          inspect(div(arinc_time, 1000)),
-          " signs_ui_ms=",
-          inspect(div(ui_time, 1000))
-        ])
-
-      {:error, _} ->
-        Logger.info([
-          "update_single_line: ",
-          encoded,
-          " pid=",
-          inspect(self()),
-          " arinc_ms=",
-          inspect(div(arinc_time, 1000))
-        ])
-    end
-
-    result
-  end
-
   def process(
         {:update_sign, [{station, zone}, top_line, bottom_line, duration, start_secs]},
         state
