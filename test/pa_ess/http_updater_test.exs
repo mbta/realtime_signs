@@ -1,6 +1,6 @@
 defmodule Fake.MessageQueue do
   def get_message do
-    {:update_single_line, [{"SBOX", "c"}, "1", %Content.Message.Empty{}, 60, :now]}
+    {:update_sign, [{"SBOX", "c"}, %Content.Message.Empty{}, %Content.Message.Empty{}, 60, :now]}
   end
 end
 
@@ -16,59 +16,16 @@ defmodule PaEss.HttpUpdaterTest do
   end
 
   describe "process/2" do
-    test "replys with {:ok, :sent} when successful" do
-      state = make_state()
-
-      log =
-        capture_log(fn ->
-          assert PaEss.HttpUpdater.process(
-                   {:update_single_line,
-                    [{"SBOX", "c"}, "1", %Content.Message.Empty{}, 60, :now]},
-                   state
-                 ) == {:ok, :sent}
-        end)
-
-      assert log =~ ~r" arinc_ms=\d+"
-      assert log =~ ~r" signs_ui_ms=\d+"
-    end
-
-    test "Posts a request to display a message now" do
-      state = make_state()
-      msg = %Content.Message.Predictions{destination: :wonderland, minutes: :boarding}
-
-      assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process(
-                 {:update_single_line, [{"ABCD", "n"}, 1, msg, 60, :now]},
-                 state
-               )
-    end
-
     test "Returns an error if HTTP response code is not 2XX" do
       state = make_state()
-      msg = %Content.Message.Predictions{destination: :wonderland, minutes: :arriving}
+      top = %Content.Message.Predictions{destination: :wonderland, minutes: :boarding}
+      bottom = %Content.Message.Predictions{destination: :wonderland, minutes: 2}
 
       assert {:error, :bad_status} ==
                PaEss.HttpUpdater.process(
-                 {:update_single_line, [{"bad_sign", "n"}, 1, msg, 60, 1234]},
+                 {:update_sign, [{"bad_sign", "n"}, top, bottom, 60, 1234]},
                  state
                )
-    end
-
-    test "Returns error if HTTP request fails, doesn't send to Signs UI" do
-      state = make_state()
-      msg = %Content.Message.Predictions{destination: :wonderland, minutes: 2}
-
-      log =
-        capture_log([level: :info], fn ->
-          assert {:error, :post_error} ==
-                   PaEss.HttpUpdater.process(
-                     {:update_single_line, [{"timeout", "n"}, 1, msg, 60, 1234]},
-                     state
-                   )
-        end)
-
-      assert log =~ ~r" arinc_ms=\d+"
-      refute log =~ ~r" signs_ui_ms=\d+"
     end
 
     test "Posts both lines of the sign at the same time" do

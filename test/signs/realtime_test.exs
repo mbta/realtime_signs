@@ -57,10 +57,6 @@ defmodule Signs.RealtimeTest do
   end
 
   defmodule FakeUpdater do
-    def update_single_line(id, line_no, msg, duration, start) do
-      send(self(), {:update_single_line, id, line_no, msg, duration, start})
-    end
-
     def update_sign(id, top_msg, bottom_msg, duration, start) do
       send(self(), {:update_sign, id, top_msg, bottom_msg, duration, start})
     end
@@ -134,7 +130,6 @@ defmodule Signs.RealtimeTest do
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
       refute_received({:send_audio, _, _, _, _})
-      refute_received({:update_single_line, _, _, _, _, _})
       refute_received({:update_sign, _, _, _, _, _})
       assert sign.tick_content == 0
       assert sign.tick_read == 0
