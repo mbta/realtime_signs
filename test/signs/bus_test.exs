@@ -62,6 +62,10 @@ defmodule Signs.BusTest do
         }
       ]
     end
+
+    def predictions_for_stop("stop3") do
+      []
+    end
   end
 
   defmodule FakeConfig do
@@ -77,6 +81,11 @@ defmodule Signs.BusTest do
 
   defmodule FakeChelseaBridgeRaised do
     def bridge_status(), do: %{raised?: true, estimate: Timex.shift(Timex.now(), minutes: 4)}
+  end
+
+  defmodule FakeAlerts do
+    def max_stop_status(["stop3"], ["99"]), do: :station_closure
+    def max_stop_status(_, _), do: :none
   end
 
   @sign_state %Signs.Bus{
@@ -95,6 +104,7 @@ defmodule Signs.BusTest do
     config_engine: FakeConfig,
     prediction_engine: FakeBusPredictions,
     bridge_engine: FakeChelseaBridge,
+    alerts_engine: FakeAlerts,
     sign_updater: PaEss.Updater.Mock,
     prev_predictions: [],
     prev_bridge_status: nil,
@@ -316,6 +326,18 @@ defmodule Signs.BusTest do
           },
           last_update: Timex.shift(Timex.now(), seconds: -40),
           last_read_time: Timex.now()
+        })
+
+      Signs.Bus.handle_info(:run_loop, state)
+    end
+
+    test "no service alert" do
+      expect_messages(["No bus service", ""])
+      expect_audios([{:ad_hoc, {"No bus service", :audio}}])
+
+      state =
+        Map.merge(@sign_state, %{
+          sources: [%{stop_id: "stop3", routes: [%{route_id: "99", direction_id: 0}]}]
         })
 
       Signs.Bus.handle_info(:run_loop, state)
