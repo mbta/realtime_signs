@@ -1,0 +1,23 @@
+# Host/IP and access key for the signs-ui instance that displays sign content. Optional. Leave unset
+# to skip updating signs-ui, or uncomment to use a locally running instance.
+#export SIGN_UI_URL=localhost:5000
+#export SIGN_UI_API_KEY=a6975e41192b888c
+
+# Path to the local sign config file when running locally. Optional. Leave unset to use an empty
+# config, or uncomment to use the output of a locally running signs-ui instance.
+#export SIGN_CONFIG_FILE=../signs_ui/priv/config.json
+
+# URL and access key for the V3 API. Required. Leaving the key unset will work, but access will be
+# subject to strict rate limits, so it is recommended to request a proper key.
+export API_V3_URL=https://api-dev-green.mbtace.com
+#export API_V3_KEY=
+
+# URL and auth key for the Chelsea bridge API. Required. These values can be found in the shared
+# 1Password vault, in the "Chelsea Street Bridge Application" entry, in fields `url` and `auth`.
+#export CHELSEA_BRIDGE_URL=
+#export CHELSEA_BRIDGE_AUTH=
+
+# URLs of the enhanced trip-update and vehicle-position feeds. Default to the real feed URLs if
+# not set here.
+#export TRIP_UPDATE_URL=
+#export VEHICLE_POSITIONS_URL=
