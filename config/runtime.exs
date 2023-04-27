@@ -13,7 +13,7 @@ if config_env() != :test do
     vehicle_positions_url: System.get_env("VEHICLE_POSITIONS_URL", "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/VehiclePositions_enhanced.json"),
     s3_bucket: System.get_env("SIGNS_S3_BUCKET"),
     s3_path: System.get_env("SIGNS_S3_PATH"),
-    api_v3_url: System.get_env("API_V3_URL", "https://api-dev-green.mbtace.com"),
+    api_v3_url: System.get_env("API_V3_URL"),
     api_v3_key: System.get_env("API_V3_KEY"),
     chelsea_bridge_url: System.get_env("CHELSEA_BRIDGE_URL"),
     chelsea_bridge_auth: System.get_env("CHELSEA_BRIDGE_AUTH"),
