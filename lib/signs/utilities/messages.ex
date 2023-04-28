@@ -7,12 +7,13 @@ defmodule Signs.Utilities.Messages do
   alias Content.Message.Alert
 
   @spec get_messages(
+          Signs.Realtime.predictions(),
           Signs.Realtime.t(),
           Engine.Config.sign_config(),
           DateTime.t(),
           Engine.Alerts.Fetcher.stop_status()
         ) :: Signs.Realtime.sign_messages()
-  def get_messages(sign, sign_config, current_time, alert_status) do
+  def get_messages(predictions, sign, sign_config, current_time, alert_status) do
     cond do
       match?({:static_text, {_, _}}, sign_config) ->
         {:static_text, {line1, line2}} = sign_config
@@ -26,7 +27,7 @@ defmodule Signs.Utilities.Messages do
         get_headway_or_alert_messages(sign, current_time, alert_status)
 
       true ->
-        case Signs.Utilities.Predictions.get_messages(sign) do
+        case Signs.Utilities.Predictions.get_messages(predictions, sign) do
           {%Content.Message.Empty{}, %Content.Message.Empty{}} ->
             get_headway_or_alert_messages(sign, current_time, alert_status)
 

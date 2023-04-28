@@ -43,6 +43,9 @@ defmodule Signs.Realtime do
 
   @type line_content :: Content.Message.t()
   @type sign_messages :: {line_content(), line_content()}
+  @type predictions ::
+          {[Predictions.Prediction.t()], [Predictions.Prediction.t()]}
+          | [Predictions.Prediction.t()]
 
   @type t :: %__MODULE__{
           id: String.t(),
@@ -116,8 +119,15 @@ defmodule Signs.Realtime do
     time_zone = Application.get_env(:realtime_signs, :time_zone)
     {:ok, current_time} = DateTime.utc_now() |> DateTime.shift_zone(time_zone)
 
+    predictions =
+      case sign.source_config do
+        {top, bottom} -> {fetch_predictions(top, sign), fetch_predictions(bottom, sign)}
+        config -> fetch_predictions(config, sign)
+      end
+
     {new_top, new_bottom} =
       Utilities.Messages.get_messages(
+        predictions,
         sign,
         sign_config,
         current_time,
@@ -126,7 +136,7 @@ defmodule Signs.Realtime do
 
     sign =
       sign
-      |> announce_passthrough_trains()
+      |> announce_passthrough_trains(predictions)
       |> Utilities.Updater.update_sign(new_top, new_bottom)
       |> Utilities.Reader.do_interrupting_reads(
         sign.current_content_top,
@@ -150,10 +160,16 @@ defmodule Signs.Realtime do
     Process.send_after(pid, :run_loop, 1_000)
   end
 
-  @spec announce_passthrough_trains(Signs.Realtime.t()) :: Signs.Realtime.t()
-  defp announce_passthrough_trains(sign) do
-    sign
-    |> Utilities.Predictions.get_passthrough_train_audio()
+  defp fetch_predictions(%{sources: sources}, state) do
+    Enum.flat_map(sources, fn source ->
+      state.prediction_engine.for_stop(source.stop_id, source.direction_id)
+      |> Enum.filter(&(source.routes == nil or &1.route_id in source.routes))
+    end)
+  end
+
+  @spec announce_passthrough_trains(Signs.Realtime.t(), predictions()) :: Signs.Realtime.t()
+  defp announce_passthrough_trains(sign, predictions) do
+    Utilities.Predictions.get_passthrough_train_audio(predictions)
     |> Enum.reduce(sign, fn audio, sign ->
       if audio.trip_id not in sign.announced_passthroughs do
         sign.sign_updater.send_audio(sign.audio_id, [audio], 5, 60)

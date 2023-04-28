@@ -9,35 +9,34 @@ defmodule Signs.Utilities.Predictions do
   require Content.Utilities
   alias Signs.Utilities.SourceConfig
 
-  @spec get_messages(Signs.Realtime.t()) :: Signs.Realtime.sign_messages()
+  @spec get_messages(Signs.Realtime.predictions(), Signs.Realtime.t()) ::
+          Signs.Realtime.sign_messages()
   def get_messages(
-        %{
-          source_config: {%{sources: top_line_sources}, %{sources: bottom_line_sources}},
-          text_id: {station_code, zone}
-        } = sign
+        {top_predictions, bottom_predictions},
+        %{source_config: {top_config, bottom_config}} = sign
       ) do
-    {top, _} = get_predictions(sign.prediction_engine, top_line_sources, station_code, zone)
-    {bottom, _} = get_predictions(sign.prediction_engine, bottom_line_sources, station_code, zone)
+    {top, _} = prediction_messages(top_predictions, top_config, sign)
+    {bottom, _} = prediction_messages(bottom_predictions, bottom_config, sign)
 
     {top, bottom}
   end
 
-  def get_messages(
-        %{source_config: %{sources: both_lines_sources}, text_id: {station_code, zone}} = sign
-      ) do
-    get_predictions(sign.prediction_engine, both_lines_sources, station_code, zone)
+  def get_messages(predictions, %{source_config: config} = sign) do
+    prediction_messages(predictions, config, sign)
   end
 
-  @spec get_predictions(module(), [SourceConfig.source()], String.t(), String.t()) ::
-          Signs.Realtime.sign_messages()
-  defp get_predictions(prediction_engine, source_list, station_code, zone) do
-    source_list
-    |> get_source_list_predictions(prediction_engine)
+  @spec prediction_messages(
+          [Predictions.Prediction.t()],
+          SourceConfig.config(),
+          Signs.Realtime.t()
+        ) :: Signs.Realtime.sign_messages()
+  defp prediction_messages(predictions, %{sources: sources}, %{text_id: {station_code, zone}}) do
+    predictions
     |> Enum.filter(fn p ->
       p.seconds_until_departure
     end)
     |> Enum.sort_by(fn prediction ->
-      {if terminal_prediction?(prediction, source_list) do
+      {if terminal_prediction?(prediction, sources) do
          0
        else
          case prediction.stops_away do
@@ -51,7 +50,7 @@ defmodule Signs.Utilities.Predictions do
         stopped_train?(prediction) ->
           Content.Message.StoppedTrain.from_prediction(prediction)
 
-        terminal_prediction?(prediction, source_list) ->
+        terminal_prediction?(prediction, sources) ->
           Content.Message.Predictions.terminal(prediction)
 
         true ->
@@ -59,7 +58,7 @@ defmodule Signs.Utilities.Predictions do
             prediction,
             station_code,
             zone,
-            platform(prediction, source_list)
+            platform(prediction, sources)
           )
       end
     end)
@@ -88,7 +87,7 @@ defmodule Signs.Utilities.Predictions do
         %Content.Message.Predictions{minutes: :arriving} = p1,
         %Content.Message.Predictions{minutes: :arriving} = p2
       ] ->
-        if allowed_multi_berth_platform?(source_list, p1, p2) do
+        if allowed_multi_berth_platform?(sources, p1, p2) do
           {p1, p2}
         else
           {p1, %{p2 | minutes: 1}}
@@ -99,36 +98,24 @@ defmodule Signs.Utilities.Predictions do
     end
   end
 
-  @spec get_passthrough_train_audio(Signs.Realtime.t()) :: [Content.Audio.t()]
-  def get_passthrough_train_audio(
-        %Signs.Realtime{source_config: %{sources: single_source}} = sign
-      ) do
-    single_source |> get_source_list_passthrough_audio(sign.prediction_engine) |> List.wrap()
+  @spec get_passthrough_train_audio(Signs.Realtime.predictions()) :: [Content.Audio.t()]
+  def get_passthrough_train_audio({top_predictions, bottom_predictions}) do
+    prediction_passthrough_audios(top_predictions) ++
+      prediction_passthrough_audios(bottom_predictions)
   end
 
-  def get_passthrough_train_audio(
-        %Signs.Realtime{
-          source_config: {%{sources: top_line_sources}, %{sources: bottom_line_sources}}
-        } = sign
-      ) do
-    (top_line_sources
-     |> get_source_list_passthrough_audio(sign.prediction_engine)
-     |> List.wrap()) ++
-      (bottom_line_sources
-       |> get_source_list_passthrough_audio(sign.prediction_engine)
-       |> List.wrap())
+  def get_passthrough_train_audio(predictions) do
+    prediction_passthrough_audios(predictions)
   end
 
-  @spec get_source_list_passthrough_audio([SourceConfig.source()], module()) ::
-          Content.Audio.t() | nil
-  defp get_source_list_passthrough_audio(source_list, prediction_engine) do
-    source_list
-    |> get_source_list_predictions(prediction_engine)
+  @spec prediction_passthrough_audios([Predictions.Prediction.t()]) :: [Content.Audio.t()]
+  defp prediction_passthrough_audios(predictions) do
+    predictions
     |> Enum.filter(fn prediction ->
       prediction.seconds_until_passthrough && prediction.seconds_until_passthrough <= 60
     end)
     |> Enum.sort_by(fn prediction -> prediction.seconds_until_passthrough end)
-    |> Enum.map(fn prediction ->
+    |> Enum.flat_map(fn prediction ->
       route_id = prediction.route_id
 
       case Content.Utilities.destination_for_prediction(
@@ -137,37 +124,29 @@ defmodule Signs.Utilities.Predictions do
              prediction.destination_stop_id
            ) do
         {:ok, :southbound} when route_id == "Red" ->
-          %Content.Audio.Passthrough{
-            destination: :ashmont,
-            trip_id: prediction.trip_id,
-            route_id: prediction.route_id
-          }
+          [
+            %Content.Audio.Passthrough{
+              destination: :ashmont,
+              trip_id: prediction.trip_id,
+              route_id: prediction.route_id
+            }
+          ]
 
         {:ok, destination} ->
-          %Content.Audio.Passthrough{
-            destination: destination,
-            trip_id: prediction.trip_id,
-            route_id: prediction.route_id
-          }
+          [
+            %Content.Audio.Passthrough{
+              destination: destination,
+              trip_id: prediction.trip_id,
+              route_id: prediction.route_id
+            }
+          ]
 
         _ ->
           Logger.info("no_passthrough_audio_for_prediction prediction=#{inspect(prediction)}")
-          nil
+          []
       end
     end)
-    |> Enum.reject(&is_nil(&1))
-    |> Enum.at(0)
-  end
-
-  @spec get_source_list_predictions([SourceConfig.source()], module()) :: [
-          Predictions.Prediction.t()
-        ]
-  defp get_source_list_predictions(source_list, prediction_engine) do
-    Enum.flat_map(source_list, fn source ->
-      source.stop_id
-      |> prediction_engine.for_stop(source.direction_id)
-      |> Enum.filter(&(source.routes == nil or &1.route_id in source.routes))
-    end)
+    |> Enum.take(1)
   end
 
   @spec stopped_train?(Predictions.Prediction.t()) :: boolean()
