@@ -32,7 +32,7 @@ defmodule Engine.Config do
   def sign_config(table_name \\ @table_signs, sign_id) do
     case :ets.lookup(table_name, sign_id) do
       [{^sign_id, config}] -> config
-      _ -> :auto
+      _ -> :off
     end
   end
 
@@ -45,8 +45,8 @@ defmodule Engine.Config do
   @spec chelsea_bridge_config(:ets.tab()) :: :off | :auto
   def chelsea_bridge_config(table_name \\ @table_chelsea_bridge) do
     case :ets.lookup(table_name, :status) do
-      [{_, "off"}] -> :off
-      _ -> :auto
+      [{_, "auto"}] -> :auto
+      _ -> :off
     end
   end
 
@@ -182,7 +182,7 @@ defmodule Engine.Config do
         :headway
 
       true ->
-        :auto
+        :off
     end
   end
 

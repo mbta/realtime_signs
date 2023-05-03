@@ -17,11 +17,11 @@ defmodule Engine.ConfigTest do
       assert Engine.Config.sign_config("chelsea_outbound") == :off
     end
 
-    test "is auto when the sign is unspecified" do
+    test "is off when the sign is unspecified" do
       Engine.Config.update()
 
       Process.sleep(50)
-      assert Engine.Config.sign_config("unspecified_sign") == :auto
+      assert Engine.Config.sign_config("unspecified_sign") == :off
     end
 
     test "returns custom text when it's not expired" do
