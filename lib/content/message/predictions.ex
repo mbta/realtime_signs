@@ -184,8 +184,8 @@ defmodule Content.Message.Predictions do
 
         track_number ->
           [
-            {Content.Utilities.width_padded_string(headsign, duration_string, width), 4},
-            {Content.Utilities.width_padded_string(headsign, "Trk #{track_number}", width), 4}
+            {Content.Utilities.width_padded_string(headsign, duration_string, width), 5},
+            {Content.Utilities.width_padded_string(headsign, "Trk #{track_number}", width), 5}
           ]
 
         true ->

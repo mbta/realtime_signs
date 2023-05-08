@@ -55,9 +55,9 @@ defmodule Content.Message.StoppedTrain do
       stop_word = if n == 1, do: "stop", else: "stops"
 
       [
-        {Content.Utilities.width_padded_string(headsign, "Stopped", 18), 4},
-        {Content.Utilities.width_padded_string(headsign, "#{n} #{stop_word}", 18), 4},
-        {Content.Utilities.width_padded_string(headsign, "away", 18), 4}
+        {Content.Utilities.width_padded_string(headsign, "Stopped", 18), 5},
+        {Content.Utilities.width_padded_string(headsign, "#{n} #{stop_word}", 18), 5},
+        {Content.Utilities.width_padded_string(headsign, "away", 18), 5}
       ]
     end
   end

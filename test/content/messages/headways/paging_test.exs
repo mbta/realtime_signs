@@ -7,8 +7,8 @@ defmodule Content.Message.Headways.PagingTest do
                destination: :heath_street,
                range: {5, 7}
              }) == [
-               {"Heath St    trains every", 4},
-               {"Heath St      5 to 7 min", 4}
+               {"Heath St    trains every", 5},
+               {"Heath St      5 to 7 min", 5}
              ]
     end
 
@@ -17,8 +17,8 @@ defmodule Content.Message.Headways.PagingTest do
                destination: nil,
                range: {5, 7}
              }) == [
-               {"Trains every", 4},
-               {"5 to 7 min", 4}
+               {"Trains every", 5},
+               {"5 to 7 min", 5}
              ]
     end
   end
