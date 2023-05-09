@@ -172,7 +172,7 @@ defmodule Signs.Realtime do
     Utilities.Predictions.get_passthrough_train_audio(predictions)
     |> Enum.reduce(sign, fn audio, sign ->
       if audio.trip_id not in sign.announced_passthroughs do
-        sign.sign_updater.send_audio(sign.audio_id, [audio], 5, 60)
+        sign.sign_updater.send_audio(sign.audio_id, [audio], 5, 60, sign.id)
 
         update_in(sign.announced_passthroughs, fn list ->
           Enum.take([audio.trip_id | list], @announced_history_length)
@@ -190,7 +190,8 @@ defmodule Signs.Realtime do
       sign.current_content_top,
       sign.current_content_bottom,
       sign.expiration_seconds + 15,
-      :now
+      :now,
+      sign.id
     )
 
     %{sign | tick_content: sign.expiration_seconds}

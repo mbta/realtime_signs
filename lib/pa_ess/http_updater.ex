@@ -78,7 +78,7 @@ defmodule PaEss.HttpUpdater do
   end
 
   def process(
-        {:update_sign, [{station, zone}, top_line, bottom_line, duration, start_secs]},
+        {:update_sign, [{station, zone}, top_line, bottom_line, duration, start_secs, sign_id]},
         state
       ) do
     top_cmd = to_command(top_line, duration, start_secs, zone, 1)
@@ -108,7 +108,13 @@ defmodule PaEss.HttpUpdater do
           " arinc_ms=",
           inspect(div(arinc_time, 1000)),
           " signs_ui_ms=",
-          inspect(div(ui_time, 1000))
+          inspect(div(ui_time, 1000)),
+          " top_line=",
+          "#{inspect(Content.Message.to_string(top_line))}",
+          " bottom_line=",
+          "#{inspect(Content.Message.to_string(bottom_line))}",
+          " sign_id=",
+          sign_id
         ])
 
       {:error, _} ->
@@ -125,16 +131,16 @@ defmodule PaEss.HttpUpdater do
     result
   end
 
-  def process({:send_audio, [{station, zones}, audios, priority, timeout]}, state) do
+  def process({:send_audio, [{station, zones}, audios, priority, timeout, sign_id]}, state) do
     for audio <- audios do
-      process_send_audio(station, zones, audio, priority, timeout, state)
+      process_send_audio(station, zones, audio, priority, timeout, sign_id, state)
     end
     |> List.last()
   end
 
-  @spec process_send_audio(String.t(), [String.t()], Content.Audio.t(), integer(), integer(), t()) ::
+  @spec process_send_audio(String.t(), [String.t()], Content.Audio.t(), integer(), integer(), String.t(), t()) ::
           post_result()
-  defp process_send_audio(station, zones, audio, priority, timeout, state) do
+  defp process_send_audio(station, zones, audio, priority, timeout, sign_id, state) do
     case Content.Audio.to_params(audio) do
       {:canned, {message_id, vars, type}} ->
         encoded =
@@ -158,7 +164,9 @@ defmodule PaEss.HttpUpdater do
           " pid=",
           inspect(self()),
           " arinc_ms=",
-          inspect(div(time, 1000))
+          inspect(div(time, 1000)),
+          " sign_id=",
+          sign_id
         ])
 
         result

@@ -105,7 +105,7 @@ defmodule Signs.Utilities.Reader do
         {false, sign}
 
       {audios, sign} ->
-        sign.sign_updater.send_audio(sign.audio_id, audios, 5, 60)
+        sign.sign_updater.send_audio(sign.audio_id, audios, 5, 60, sign.id)
         {true, sign}
     end
   end
