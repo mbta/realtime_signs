@@ -328,7 +328,7 @@ defmodule Headway.HeadwayDisplayTest do
   describe "format_bottom/2" do
     test "shows how long ago the last departure was" do
       assert format_bottom(%Content.Message.Headways.Bottom{prev_departure_mins: 5, range: {1, 5}}) ==
-               [{"Every 1 to 5 min", 5}, {"Departed 5 min ago", 5}]
+               [{"Every 1 to 5 min", 6}, {"Departed 5 min ago", 6}]
     end
 
     test "when last departure is 0 minutes, does not show the last departure" do

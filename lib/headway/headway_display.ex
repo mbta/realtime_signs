@@ -133,7 +133,7 @@ defmodule Headway.HeadwayDisplay do
   end
 
   def format_bottom(%Content.Message.Headways.Bottom{prev_departure_mins: minutes, range: range}) do
-    [{format_headway_range(range), 5}, {"Departed #{minutes} min ago", 5}]
+    [{format_headway_range(range), 6}, {"Departed #{minutes} min ago", 6}]
   end
 
   @spec max_headway(headway_range) :: non_neg_integer | nil

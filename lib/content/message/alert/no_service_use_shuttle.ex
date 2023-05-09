@@ -18,12 +18,12 @@ defmodule Content.Message.Alert.NoServiceUseShuttle do
            PaEss.Utilities.destination_to_sign_string(destination),
            "no service",
            @default_page_width
-         ), 5},
+         ), 6},
         {Content.Utilities.width_padded_string(
            PaEss.Utilities.destination_to_sign_string(destination),
            "use shuttle",
            @default_page_width
-         ), 5}
+         ), 6}
       ]
     end
   end
