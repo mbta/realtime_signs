@@ -401,8 +401,8 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.terminal(prediction)
 
       assert Content.Message.to_string(msg) == [
-               {"Oak Grove    2 min", 5},
-               {"Oak Grove    Trk 2", 5}
+               {"Oak Grove    2 min", 6},
+               {"Oak Grove    Trk 2", 6}
              ]
     end
 
