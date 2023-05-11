@@ -75,7 +75,9 @@ defmodule Signs.Utilities.ReaderTest do
 
       Reader.read_sign(sign)
 
-      assert_received({:send_audio, _id, [%Content.Audio.Custom{}], _priority, _timeout, _sign_id})
+      assert_received(
+        {:send_audio, _id, [%Content.Audio.Custom{}], _priority, _timeout, _sign_id}
+      )
     end
   end
 

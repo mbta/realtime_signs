@@ -138,7 +138,15 @@ defmodule PaEss.HttpUpdater do
     |> List.last()
   end
 
-  @spec process_send_audio(String.t(), [String.t()], Content.Audio.t(), integer(), integer(), String.t(), t()) ::
+  @spec process_send_audio(
+          String.t(),
+          [String.t()],
+          Content.Audio.t(),
+          integer(),
+          integer(),
+          String.t(),
+          t()
+        ) ::
           post_result()
   defp process_send_audio(station, zones, audio, priority, timeout, sign_id, state) do
     case Content.Audio.to_params(audio) do
