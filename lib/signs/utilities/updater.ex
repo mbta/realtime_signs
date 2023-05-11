@@ -48,7 +48,8 @@ defmodule Signs.Utilities.Updater do
           top_msg,
           bottom_msg,
           sign.expiration_seconds + 15,
-          :now
+          :now,
+          sign.id
         )
 
         %{

@@ -57,12 +57,12 @@ defmodule Signs.RealtimeTest do
   end
 
   defmodule FakeUpdater do
-    def update_sign(id, top_msg, bottom_msg, duration, start) do
-      send(self(), {:update_sign, id, top_msg, bottom_msg, duration, start})
+    def update_sign(id, top_msg, bottom_msg, duration, start, sign_id) do
+      send(self(), {:update_sign, id, top_msg, bottom_msg, duration, start, sign_id})
     end
 
-    def send_audio(id, audio, priority, timeout) do
-      send(self(), {:send_audio, id, audio, priority, timeout})
+    def send_audio(id, audio, priority, timeout, sign_id) do
+      send(self(), {:send_audio, id, audio, priority, timeout, sign_id})
     end
   end
 
@@ -147,7 +147,7 @@ defmodule Signs.RealtimeTest do
 
       assert_received(
         {:update_sign, _id, %HT{destination: :southbound, vehicle_type: :train},
-         %HB{range: {11, 13}}, _dur, _start}
+         %HB{range: {11, 13}}, _dur, _start, _sign_id}
       )
 
       refute_received({:send_audio, _, _, _, _})
@@ -163,7 +163,7 @@ defmodule Signs.RealtimeTest do
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
       assert sign.announced_passthroughs == ["123"]
-      assert_received({:send_audio, _, [%Content.Audio.Passthrough{}], _, _})
+      assert_received({:send_audio, _, [%Content.Audio.Passthrough{}], _, _, _})
     end
   end
 

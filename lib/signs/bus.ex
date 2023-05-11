@@ -191,7 +191,7 @@ defmodule Signs.Bus do
     state
     |> then(fn state ->
       if should_update?({top, bottom}, current_time, state) do
-        sign_updater.update_sign({pa_ess_loc, text_zone}, top, bottom, 180, :now)
+        sign_updater.update_sign({pa_ess_loc, text_zone}, top, bottom, 180, :now, state.id)
         %{state | current_messages: {top, bottom}, last_update: current_time}
       else
         state
@@ -660,7 +660,7 @@ defmodule Signs.Bus do
     %{pa_ess_loc: pa_ess_loc, audio_zones: audio_zones, sign_updater: sign_updater} = state
 
     if audios != [] && audio_zones != [] do
-      sign_updater.send_audio({pa_ess_loc, audio_zones}, audios, 5, 180)
+      sign_updater.send_audio({pa_ess_loc, audio_zones}, audios, 5, 180, state.id)
     end
   end
 end
