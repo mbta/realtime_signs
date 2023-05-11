@@ -13,8 +13,8 @@ defmodule Signs.Utilities.ReaderTest do
   end
 
   defmodule FakeUpdater do
-    def send_audio(audio_id, audio, priority, timeout) do
-      send(self(), {:send_audio, audio_id, audio, priority, timeout})
+    def send_audio(audio_id, audio, priority, timeout, sign_id) do
+      send(self(), {:send_audio, audio_id, audio, priority, timeout, sign_id})
     end
   end
 
@@ -62,7 +62,7 @@ defmodule Signs.Utilities.ReaderTest do
 
       Reader.read_sign(sign)
 
-      assert_received({:send_audio, _id, _, _p, _t})
+      assert_received({:send_audio, _id, _, _p, _t, _})
     end
 
     test "when the sign is on a read interval, sends a single-line custom announcement" do
@@ -75,7 +75,7 @@ defmodule Signs.Utilities.ReaderTest do
 
       Reader.read_sign(sign)
 
-      assert_received({:send_audio, _id, [%Content.Audio.Custom{}], _priority, _timeout})
+      assert_received({:send_audio, _id, [%Content.Audio.Custom{}], _priority, _timeout, _sign_id})
     end
   end
 

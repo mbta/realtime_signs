@@ -11,12 +11,12 @@ defmodule Signs.Utilities.UpdaterTest do
   end
 
   defmodule FakeUpdater do
-    def update_sign(id, top_msg, bottom_msg, duration, start) do
-      send(self(), {:update_sign, id, top_msg, bottom_msg, duration, start})
+    def update_sign(id, top_msg, bottom_msg, duration, start, sign_id) do
+      send(self(), {:update_sign, id, top_msg, bottom_msg, duration, start, sign_id})
     end
 
-    def send_audio(audio_id, audio, priority, timeout) do
-      send(self(), {:send_audio, audio_id, audio, priority, timeout})
+    def send_audio(audio_id, audio, priority, timeout, sign_id) do
+      send(self(), {:send_audio, audio_id, audio, priority, timeout, sign_id})
     end
   end
 
@@ -56,8 +56,8 @@ defmodule Signs.Utilities.UpdaterTest do
 
       sign = Updater.update_sign(@sign, same_top, same_bottom)
 
-      refute_received({:send_audio, _, _, _, _})
-      refute_received({:update_sign, _, _, _, _, _})
+      refute_received({:send_audio, _, _, _, _, _})
+      refute_received({:update_sign, _, _, _, _, _, _})
       assert sign.tick_content == 1
     end
 
@@ -67,7 +67,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       sign = Updater.update_sign(@sign, diff_top, diff_bottom)
 
-      assert_received({:update_sign, _id, %P{minutes: 3}, %P{minutes: 2}, _dur, _start})
+      assert_received({:update_sign, _id, %P{minutes: 3}, %P{minutes: 2}, _dur, _start, _sign_id})
       assert sign.tick_content == 100
     end
 
@@ -83,7 +83,7 @@ defmodule Signs.Utilities.UpdaterTest do
       diff_top = {src, %P{destination: :ashmont, minutes: :boarding}}
       diff_bottom = {src, %P{destination: :alewife, minutes: 19}}
       Updater.update_sign(sign, diff_top, diff_bottom)
-      refute_received({:send_audio, _, _, _, _})
+      refute_received({:send_audio, _, _, _, _, _})
     end
 
     test "logs when stopped train message turns on" do

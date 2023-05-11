@@ -345,14 +345,14 @@ defmodule Signs.BusTest do
   end
 
   defp expect_messages(messages) do
-    expect(PaEss.Updater.Mock, :update_sign, fn {"ABCD", "m"}, top, bottom, 180, :now ->
+    expect(PaEss.Updater.Mock, :update_sign, fn {"ABCD", "m"}, top, bottom, 180, :now, _sign_id ->
       assert [Content.Message.to_string(top), Content.Message.to_string(bottom)] == messages
       :ok
     end)
   end
 
   defp expect_audios(audios) do
-    expect(PaEss.Updater.Mock, :send_audio, fn {"ABCD", ["m"]}, list, 5, 180 ->
+    expect(PaEss.Updater.Mock, :send_audio, fn {"ABCD", ["m"]}, list, 5, 180, _sign_id ->
       assert Enum.map(list, &Content.Audio.to_params(&1)) == audios
       :ok
     end)
