@@ -94,39 +94,15 @@ defmodule PaEss.HttpUpdater do
         c: bottom_cmd
       )
 
-    {arinc_time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
+    {arinc_ms, signs_ui_ms, result} = send_payload(encoded, state)
 
-    case result do
-      {:ok, _} ->
-        {ui_time, _} = :timer.tc(fn -> update_ui(state.http_poster, encoded) end)
-
-        Logger.info([
-          "update_sign: ",
-          encoded,
-          " pid=",
-          inspect(self()),
-          " arinc_ms=",
-          inspect(div(arinc_time, 1000)),
-          " signs_ui_ms=",
-          inspect(div(ui_time, 1000)),
-          " top_line=",
-          "#{inspect(Content.Message.to_string(top_line))}",
-          " bottom_line=",
-          "#{inspect(Content.Message.to_string(bottom_line))}",
-          " sign_id=",
-          sign_id
-        ])
-
-      {:error, _} ->
-        Logger.info([
-          "update_sign: ",
-          encoded,
-          " pid=",
-          inspect(self()),
-          " arinc_ms=",
-          inspect(div(arinc_time, 1000))
-        ])
-    end
+    log("update_sign", encoded,
+      arinc_ms: arinc_ms,
+      signs_ui_ms: signs_ui_ms,
+      top_line: inspect(Content.Message.to_string(top_line)),
+      bottom_line: inspect(Content.Message.to_string(bottom_line)),
+      sign_id: sign_id
+    )
 
     result
   end
@@ -164,19 +140,8 @@ defmodule PaEss.HttpUpdater do
           ]
           |> URI.encode_query()
 
-        {time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
-
-        Logger.info([
-          "send_audio: ",
-          encoded,
-          " pid=",
-          inspect(self()),
-          " arinc_ms=",
-          inspect(div(time, 1000)),
-          " sign_id=",
-          sign_id
-        ])
-
+        {arinc_ms, signs_ui_ms, result} = send_payload(encoded, state)
+        log("send_audio", encoded, arinc_ms: arinc_ms, signs_ui_ms: signs_ui_ms, sign_id: sign_id)
         result
 
       {:ad_hoc, {text, type}} ->
@@ -192,22 +157,36 @@ defmodule PaEss.HttpUpdater do
           ]
           |> URI.encode_query()
 
-        {time, result} = :timer.tc(fn -> send_post(state.http_poster, encoded) end)
+        {arinc_ms, signs_ui_ms, result} = send_payload(encoded, state)
 
-        Logger.info([
-          "send_custom_audio: ",
-          encoded,
-          " pid=",
-          inspect(self()),
-          " arinc_ms=",
-          inspect(div(time, 1000))
-        ])
+        log("send_custom_audio", encoded,
+          arinc_ms: arinc_ms,
+          signs_ui_ms: signs_ui_ms,
+          sign_id: sign_id
+        )
 
         result
 
       nil ->
         {:ok, :no_audio}
     end
+  end
+
+  defp send_payload(body, %{http_poster: http_poster}) do
+    {arinc_time, result} = :timer.tc(fn -> send_post(http_poster, body) end)
+
+    {ui_time, _} =
+      case result do
+        {:ok, _} -> :timer.tc(fn -> update_ui(http_poster, body) end)
+        {:error, _} -> {0, nil}
+      end
+
+    {div(arinc_time, 1000), div(ui_time, 1000), result}
+  end
+
+  defp log(log_token, body, extras) do
+    fields = Enum.map(extras, fn {k, v} -> "#{k}=#{v}" end) |> Enum.join(" ")
+    Logger.info("#{log_token}: #{body} pid=#{inspect(self())} #{fields}")
   end
 
   @spec to_command(
