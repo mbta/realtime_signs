@@ -62,7 +62,7 @@ defmodule PaEss.HttpUpdaterTest do
         end)
 
       assert log =~ ~r" arinc_ms=\d+"
-      refute log =~ ~r" signs_ui_ms=\d+"
+      assert log =~ ~r" signs_ui_ms=0"
     end
 
     test "replies with {:ok, :sent} when successful" do
@@ -261,6 +261,7 @@ defmodule PaEss.HttpUpdaterTest do
       )
 
       assert_received {:post, q1}
+      assert_received {:post, _}
       assert_received {:post, q2}
       assert q1 =~ "var=4016"
       assert q2 =~ "var=4021"
