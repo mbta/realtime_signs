@@ -3,7 +3,7 @@ defmodule Signs.Bus do
   require Logger
 
   @line_max 18
-  @var_max 30
+  @var_max 45
   @drawbridge_minutes "135"
   @drawbridge_soon "136"
   @drawbridge_minutes_spanish "152"
