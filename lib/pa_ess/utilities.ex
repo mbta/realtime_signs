@@ -175,7 +175,14 @@ defmodule PaEss.Utilities do
 
   @spec take_message_id([String.t()]) :: String.t()
   def take_message_id(vars) do
-    Integer.to_string(102 + length(vars))
+    # Maps var count to corresponding message id. Since these were added at different times,
+    # the message id ranges are not contiguous.
+    case length(vars) do
+      n when n <= 30 -> 102 + n
+      31 -> 220
+      n when n <= 45 -> 190 + n
+    end
+    |> Integer.to_string()
   end
 
   @doc "Take ID for terminal destinations"
