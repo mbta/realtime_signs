@@ -26,14 +26,14 @@
     {"station": "G Kenmore westbound", "stop_ids": ["70151"]}
   ],
   "Green-E": [
-    {"station": "G Northeastern eastbound", "stop_ids": ["70244"]},
-    {"station": "G Symphony eastbound", "stop_ids": ["70242"]},
-    {"station": "G Prudential eastbound", "stop_ids": ["70240"]},
     {"station": "G Copley eastbound", "stop_ids": ["70154"]},
-    {"station": "G Copley westbound", "stop_ids": ["70155"]},
-    {"station": "G Prudential westbound", "stop_ids": ["70239"]},
+    {"station": "G Prudential eastbound", "stop_ids": ["70240"]},
+    {"station": "G Symphony eastbound", "stop_ids": ["70242"]},
+    {"station": "G Northeastern eastbound", "stop_ids": ["70244"]},
+    {"station": "G Northeastern westbound", "stop_ids": ["70243"]},
     {"station": "G Symphony westbound", "stop_ids": ["70241"]},
-    {"station": "G Northeastern westbound", "stop_ids": ["70243"]}
+    {"station": "G Prudential westbound", "stop_ids": ["70239"]},
+    {"station": "G Copley westbound", "stop_ids": ["70155"]}
   ],
   "Green-E-glx": [
     {"station": "G Lechmere eastbound", "stop_ids": ["70501"]},
