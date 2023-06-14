@@ -25,31 +25,29 @@
     {"station": "G Hynes westbound", "stop_ids": ["70153"]},
     {"station": "G Kenmore westbound", "stop_ids": ["70151"]}
   ],
-  "Green-E-eastbound": [
+  "Green-E": [
+    {"station": "G Northeastern eastbound", "stop_ids": ["70244"]},
     {"station": "G Symphony eastbound", "stop_ids": ["70242"]},
     {"station": "G Prudential eastbound", "stop_ids": ["70240"]},
-    {"station": "G Copley eastbound", "stop_ids": ["70154"]}
+    {"station": "G Copley eastbound", "stop_ids": ["70154"]},
+    {"station": "G Copley westbound", "stop_ids": ["70155"]},
+    {"station": "G Prudential westbound", "stop_ids": ["70239"]},
+    {"station": "G Symphony westbound", "stop_ids": ["70241"]},
+    {"station": "G Northeastern westbound", "stop_ids": ["70243"]}
   ],
-  "Green-E-eastbound-glx": [
+  "Green-E-glx": [
     {"station": "G Lechmere eastbound", "stop_ids": ["70501"]},
     {"station": "G East Somerville eastbound", "stop_ids": ["70513"]},
     {"station": "G Gilman Square eastbound", "stop_ids": ["70505"]},
     {"station": "G Magoun Square eastbound", "stop_ids": ["70507"]},
     {"station": "G Ball Square eastbound", "stop_ids": ["70509"]},
-    {"station": "G College Ave eastbound", "stop_ids": ["70511"]}
-  ],
-  "Green-E-westbound": [
-    {"station": "G Symphony westbound", "stop_ids": ["70241"]},
-    {"station": "G Prudential westbound", "stop_ids": ["70239"]},
-    {"station": "G Copley westbound", "stop_ids": ["70155"]}
-  ],
-  "Green-E-westbound-glx": [
-    {"station": "G Lechmere westbound", "stop_ids": ["70502"]},
-    {"station": "G East Somerville westbound", "stop_ids": ["70514"]},
-    {"station": "G Gilman Square westbound", "stop_ids": ["70506"]},
-    {"station": "G Magoun Square westbound", "stop_ids": ["70508"]},
+    {"station": "G College Ave eastbound", "stop_ids": ["70511"]},
+    {"station": "G College Ave westbound", "stop_ids": ["70512"]},
     {"station": "G Ball Square westbound", "stop_ids": ["70510"]},
-    {"station": "G College Ave westbound", "stop_ids": ["70512"]}
+    {"station": "G Magoun Square westbound", "stop_ids": ["70508"]},
+    {"station": "G Gilman Square westbound", "stop_ids": ["70506"]},
+    {"station": "G East Somerville westbound", "stop_ids": ["70514"]},
+    {"station": "G Lechmere westbound", "stop_ids": ["70502"]}
   ],
   "Green-D": [
     {"station": "G Kenmore outbound", "stop_ids": ["70151"]},
@@ -82,12 +80,18 @@
     {"station": "G Kenmore inbound", "stop_ids": ["70150"]}
   ],
   "Green-B": [
-    {"station": "G Kenmore eastbound", "stop_ids": ["71150"]},
-    {"station": "G Babcock eastbound", "stop_ids": ["170136"]},
+    {"station": "G Kenmore B eastbound", "stop_ids": ["71150"]},
+    {"station": "G Blandford eastbound", "stop_ids": ["70148"]},
+    {"station": "G BU East eastbound", "stop_ids": ["70146"]},
+    {"station": "G BU Central eastbound", "stop_ids": ["70144"]},
     {"station": "G Amory eastbound", "stop_ids": ["170140"]},
-    {"station": "G Amory westbound", "stop_ids": ["170141"]},
+    {"station": "G Babcock eastbound", "stop_ids": ["170136"]},
     {"station": "G Babcock westbound", "stop_ids": ["170137"]},
-    {"station": "G Kenmore westbound", "stop_ids": ["71151"]}
+    {"station": "G Amory westbound", "stop_ids": ["170141"]},
+    {"station": "G BU Central westbound", "stop_ids": ["70145"]},
+    {"station": "G BU East westbound", "stop_ids": ["70147"]},
+    {"station": "G Blandford westbound", "stop_ids": ["70149"]},
+    {"station": "G Kenmore B westbound", "stop_ids": ["71151"]}
   ],
   "Mattapan": [
     {"station": "M Mattapan inbound", "stop_ids": ["70276"]},
