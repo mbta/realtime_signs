@@ -131,7 +131,8 @@ defmodule Signs.Realtime do
         sign,
         sign_config,
         current_time,
-        alert_status
+        alert_status,
+        sign_routes
       )
 
     sign =
