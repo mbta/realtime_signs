@@ -35,7 +35,7 @@ defmodule Content.Audio.Closure do
       line_var =
         PaEss.Utilities.get_line_from_routes_list(routes) |> PaEss.Utilities.line_to_var()
 
-      {:canned, {"90131", [], :audio}}
+      {:canned, {"199", [line_var], :audio}}
     end
 
     def to_params(%Content.Audio.Closure{alert: :suspension_closed_station, routes: routes}) do

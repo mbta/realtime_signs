@@ -321,11 +321,11 @@ defmodule PaEss.Utilities do
   def route_to_ad_hoc_string("Green-E"), do: {:ok, "E"}
   def route_to_ad_hoc_string(_unknown), do: {:error, :unknown}
 
-  def line_to_var("Red Line"), do: ""
-  def line_to_var("Blue Line"), do: ""
-  def line_to_var("Orange Line"), do: ""
-  def line_to_var("Mattapan Line"), do: ""
-  def line_to_var("Green Line"), do: ""
+  def line_to_var("Red Line"), do: "3005"
+  def line_to_var("Orange Line"), do: "3006"
+  def line_to_var("Blue Line"), do: "3007"
+  def line_to_var("Green Line"), do: "3008"
+  def line_to_var("Mattapan Line"), do: "3009"
   def line_to_var(_), do: "17008"
 
   def get_line_from_routes_list([route]) do
@@ -342,14 +342,6 @@ defmodule PaEss.Utilities do
       unique_routes ->
         if Enum.all?(unique_routes, &String.contains?(&1, "Green")) do
           # Default to Green Line if all routes are GL Branches
-          #
-          # At trunk stations where there are multiple GL branches that
-          # serve it, we would only go to an alert state if all branches
-          # were included in the alert because we would still be showing
-          # predictions for the non-affected branches. There may be rare
-          # cases where there is no predictions data for a branch that
-          # is still running, but we don't have a way to know which specific
-          # branch is affected right now.
           "Green Line"
         else
           # Currently, the only case where there would be two fully distinct
