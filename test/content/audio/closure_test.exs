@@ -24,16 +24,58 @@ defmodule Content.Audio.ClosureTest do
   end
 
   describe "to_params/1" do
-    test "Use shuttle audio" do
+    test "Default to train service for shuttle alert" do
       assert Content.Audio.to_params(%Content.Audio.Closure{
                alert: :shuttles_closed_station
-             }) == {:canned, {"90131", [], :audio}}
+             }) == {:canned, {"199", ["864"], :audio}}
     end
 
-    test "Station closed audio" do
+    test "Default to train service for suspension alert" do
       assert Content.Audio.to_params(%Content.Audio.Closure{
                alert: :suspension_closed_station
-             }) == {:canned, {"90130", [], :audio}}
+             }) == {:canned, {"107", ["861", "21000", "864", "21000", "863"], :audio}}
+    end
+
+    test "There is no [single line] service at this station, use shuttle bus" do
+      assert Content.Audio.to_params(%Content.Audio.Closure{
+               alert: :shuttles_closed_station,
+               routes: ["Orange"]
+             }) == {:canned, {"199", ["3006"], :audio}}
+    end
+
+    test "There is no [single line] service at this station" do
+      assert Content.Audio.to_params(%Content.Audio.Closure{
+               alert: :suspension_closed_station,
+               routes: ["Orange"]
+             }) == {:canned, {"107", ["861", "21000", "3006", "21000", "863"], :audio}}
+    end
+
+    test "Default to train service when different lines for shuttle alert" do
+      assert Content.Audio.to_params(%Content.Audio.Closure{
+               alert: :shuttles_closed_station,
+               routes: ["Red", "Mattapan"]
+             }) == {:canned, {"199", ["864"], :audio}}
+    end
+
+    test "Default to train service when different lines for suspension alert" do
+      assert Content.Audio.to_params(%Content.Audio.Closure{
+               alert: :suspension_closed_station,
+               routes: ["Red", "Mattapan"]
+             }) == {:canned, {"107", ["861", "21000", "864", "21000", "863"], :audio}}
+    end
+
+    test "Handle Green Line branches for shuttle alert" do
+      assert Content.Audio.to_params(%Content.Audio.Closure{
+               alert: :shuttles_closed_station,
+               routes: ["Green-B", "Green-C", "Green-D", "Green-E"]
+             }) == {:canned, {"199", ["3008"], :audio}}
+    end
+
+    test "Handle Green Line branches for suspension alert" do
+      assert Content.Audio.to_params(%Content.Audio.Closure{
+               alert: :suspension_closed_station,
+               routes: ["Green-B", "Green-C", "Green-D", "Green-E"]
+             }) == {:canned, {"107", ["861", "21000", "3008", "21000", "863"], :audio}}
     end
   end
 end
