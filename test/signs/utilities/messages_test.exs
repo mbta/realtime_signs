@@ -142,13 +142,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_transfer_station
 
-      assert Messages.get_messages(
-               @nd_predictions,
-               sign,
-               sign_config,
-               Timex.now(),
-               alert_status
-             ) ==
+      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
                {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
@@ -182,13 +176,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_transfer_station
 
-      assert Messages.get_messages(
-               @nd_predictions,
-               sign,
-               sign_config,
-               Timex.now(),
-               alert_status
-             ) ==
+      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
                {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
@@ -235,13 +223,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_closed_station
 
-      assert Messages.get_messages(
-               @nd_predictions,
-               sign,
-               sign_config,
-               Timex.now(),
-               alert_status
-             ) ==
+      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
                {%Content.Message.Alert.NoService{}, %Content.Message.Alert.UseShuttleBus{}}
     end
 
@@ -259,13 +241,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_closed_station
 
-      assert Messages.get_messages(
-               @nd_predictions,
-               sign,
-               sign_config,
-               Timex.now(),
-               alert_status
-             ) ==
+      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
                {%Content.Message.Alert.NoService{}, Content.Message.Empty.new()}
     end
 
@@ -320,13 +296,7 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :suspension_closed_station
       sign_config = :auto
 
-      assert Messages.get_messages(
-               @nd_predictions,
-               sign,
-               sign_config,
-               Timex.now(),
-               alert_status
-             ) ==
+      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
                {%Content.Message.Alert.NoService{}, Content.Message.Empty.new()}
     end
 
@@ -343,13 +313,7 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :station_closure
       sign_config = :auto
 
-      assert Messages.get_messages(
-               @nd_predictions,
-               sign,
-               sign_config,
-               Timex.now(),
-               alert_status
-             ) ==
+      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
                {%Content.Message.Alert.NoService{}, Content.Message.Empty.new()}
     end
 
@@ -492,13 +456,7 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :station_closure
 
       assert {%Content.Message.Alert.NoService{}, %Content.Message.Empty{}} =
-               Messages.get_messages(
-                 @predictions,
-                 sign,
-                 sign_config,
-                 Timex.now(),
-                 alert_status
-               )
+               Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status)
     end
   end
 end
