@@ -5,8 +5,8 @@ defmodule Content.Audio.Closure do
 
   require Logger
 
-  @enforce_keys [:alert, :routes]
-  defstruct @enforce_keys
+  @enforce_keys [:alert]
+  defstruct [routes: []] ++ @enforce_keys
 
   @type t :: %__MODULE__{
           alert: :shuttles_closed_station | :suspension_closed_station,
@@ -31,6 +31,9 @@ defmodule Content.Audio.Closure do
   end
 
   defimpl Content.Audio do
+    @there_is_no "861"
+    @service_at_this_station "863"
+
     def to_params(%Content.Audio.Closure{alert: :shuttles_closed_station, routes: routes}) do
       line_var =
         PaEss.Utilities.get_line_from_routes_list(routes) |> PaEss.Utilities.line_to_var()
@@ -42,7 +45,7 @@ defmodule Content.Audio.Closure do
       line_var =
         PaEss.Utilities.get_line_from_routes_list(routes) |> PaEss.Utilities.line_to_var()
 
-      {:canned, {"90130", [], :audio}}
+      PaEss.Utilities.take_message([@there_is_no, line_var, @service_at_this_station], :audio)
     end
   end
 end

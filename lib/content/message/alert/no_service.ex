@@ -3,8 +3,7 @@ defmodule Content.Message.Alert.NoService do
   A message displayed when a station is closed due to shuttles or a suspension
   """
 
-  @enforce_keys [:routes]
-  defstruct @enforce_keys
+  defstruct routes: []
 
   @type t :: %__MODULE__{}
 

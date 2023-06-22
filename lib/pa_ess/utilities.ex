@@ -326,18 +326,18 @@ defmodule PaEss.Utilities do
   def line_to_var("Blue Line"), do: "3007"
   def line_to_var("Green Line"), do: "3008"
   def line_to_var("Mattapan Line"), do: "3009"
-  def line_to_var(_), do: "17008"
+  def line_to_var(_), do: "864"
 
-  def get_line_from_routes_list([route]) do
-    line_color = route |> String.split("-") |> List.first()
-
-    "#{line_color} Line"
+  def get_line_from_routes_list([]) do
+    "train service"
   end
 
   def get_line_from_routes_list(routes) do
     case Enum.uniq(routes) do
-      [single_route] ->
-        get_line_from_routes_list([single_route])
+      [route] ->
+        route_name = route |> String.split("-") |> List.first()
+
+        "#{route_name} Line"
 
       unique_routes ->
         if Enum.all?(unique_routes, &String.contains?(&1, "Green")) do
