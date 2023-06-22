@@ -115,7 +115,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = {:static_text, {"Test message", "Please ignore"}}
       alert_status = :suspension_closed_station
 
-      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status, []) ==
                {Content.Message.Custom.new("Test message", :top),
                 Content.Message.Custom.new("Please ignore", :bottom)}
     end
@@ -125,7 +125,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :off
       alert_status = :none
 
-      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status, []) ==
                {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
@@ -142,7 +142,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_transfer_station
 
-      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @nd_predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               []
+             ) ==
                {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
@@ -159,7 +166,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :suspension_transfer_station
 
-      assert Messages.get_messages([], sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages([], sign, sign_config, Timex.now(), alert_status, []) ==
                {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
@@ -176,7 +183,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_transfer_station
 
-      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @nd_predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               []
+             ) ==
                {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
@@ -185,7 +199,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_transfer_station
 
-      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status, []) ==
                {
                  %Content.Message.Predictions{
                    destination: :ashmont,
@@ -223,7 +237,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_closed_station
 
-      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @nd_predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               []
+             ) ==
                {%Content.Message.Alert.NoService{}, %Content.Message.Alert.UseShuttleBus{}}
     end
 
@@ -241,7 +262,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_closed_station
 
-      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @nd_predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               []
+             ) ==
                {%Content.Message.Alert.NoService{}, Content.Message.Empty.new()}
     end
 
@@ -258,7 +286,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_closed_station
 
-      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status, []) ==
                {
                  %Content.Message.Predictions{
                    destination: :ashmont,
@@ -296,7 +324,14 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :suspension_closed_station
       sign_config = :auto
 
-      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @nd_predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               []
+             ) ==
                {%Content.Message.Alert.NoService{}, Content.Message.Empty.new()}
     end
 
@@ -313,7 +348,14 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :station_closure
       sign_config = :auto
 
-      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @nd_predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               []
+             ) ==
                {%Content.Message.Alert.NoService{}, Content.Message.Empty.new()}
     end
 
@@ -330,7 +372,7 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :suspension_closed_station
       sign_config = :auto
 
-      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status, []) ==
                {
                  %Content.Message.Predictions{
                    destination: :ashmont,
@@ -360,7 +402,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :none
 
-      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status, []) ==
                {
                  %Content.Message.Predictions{
                    destination: :ashmont,
@@ -401,7 +443,7 @@ defmodule Signs.Utilities.MessagesTest do
 
       current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
-      assert Messages.get_messages([], sign, sign_config, current_time, alert_status) ==
+      assert Messages.get_messages([], sign, sign_config, current_time, alert_status, []) ==
                {
                  %Content.Message.Headways.Top{
                    destination: :mattapan,
@@ -427,7 +469,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :none
 
-      assert Messages.get_messages([], sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages([], sign, sign_config, Timex.now(), alert_status, []) ==
                {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
@@ -447,7 +489,7 @@ defmodule Signs.Utilities.MessagesTest do
                  vehicle_type: :train
                },
                %Content.Message.Headways.Bottom{range: {8, 11}}
-             } = Messages.get_messages([], sign, sign_config, Timex.now(), alert_status)
+             } = Messages.get_messages([], sign, sign_config, Timex.now(), alert_status, [])
     end
 
     test "when sign is forced into headway mode but alerts are present, alert takes precedence" do
@@ -456,7 +498,14 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :station_closure
 
       assert {%Content.Message.Alert.NoService{}, %Content.Message.Empty{}} =
-               Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status)
+               Messages.get_messages(
+                 @predictions,
+                 sign,
+                 sign_config,
+                 Timex.now(),
+                 alert_status,
+                 []
+               )
     end
   end
 end
