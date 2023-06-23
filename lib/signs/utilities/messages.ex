@@ -51,7 +51,7 @@ defmodule Signs.Utilities.Messages do
           Engine.Alerts.Fetcher.stop_status()
         ) :: Signs.Realtime.sign_messages()
   defp get_headway_or_alert_messages(sign, current_time, alert_status) do
-    get_alert_messages(alert_status, sign.uses_shuttles) ||
+    get_alert_messages(alert_status, sign) ||
       Signs.Utilities.Headways.get_messages(sign, current_time)
   end
 
@@ -77,27 +77,29 @@ defmodule Signs.Utilities.Messages do
     Content.Message.Empty.new()
   end
 
-  @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status(), boolean()) ::
+  @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status(), Signs.Realtime.t()) ::
           Signs.Realtime.sign_messages() | nil
-  defp get_alert_messages(alert_status, uses_shuttles) do
-    case {alert_status, uses_shuttles} do
+  defp get_alert_messages(alert_status, sign) do
+    sign_routes = Signs.Utilities.SourceConfig.sign_routes(sign.source_config)
+
+    case {alert_status, sign.uses_shuttles} do
       {:shuttles_transfer_station, _} ->
         {Content.Message.Empty.new(), Content.Message.Empty.new()}
 
       {:shuttles_closed_station, true} ->
-        {%Alert.NoService{}, %Alert.UseShuttleBus{}}
+        {%Alert.NoService{routes: sign_routes}, %Alert.UseShuttleBus{}}
 
       {:shuttles_closed_station, false} ->
-        {%Alert.NoService{}, Content.Message.Empty.new()}
+        {%Alert.NoService{routes: sign_routes}, Content.Message.Empty.new()}
 
       {:suspension_transfer_station, _} ->
         {Content.Message.Empty.new(), Content.Message.Empty.new()}
 
       {:suspension_closed_station, _} ->
-        {%Alert.NoService{}, Content.Message.Empty.new()}
+        {%Alert.NoService{routes: sign_routes}, Content.Message.Empty.new()}
 
       {:station_closure, _} ->
-        {%Alert.NoService{}, Content.Message.Empty.new()}
+        {%Alert.NoService{routes: sign_routes}, Content.Message.Empty.new()}
 
       _ ->
         nil

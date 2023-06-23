@@ -133,7 +133,6 @@ defmodule Signs.Realtime do
         current_time,
         alert_status
       )
-      |> add_route_if_alert(sign_routes)
 
     sign =
       sign
@@ -159,16 +158,6 @@ defmodule Signs.Realtime do
 
   def schedule_run_loop(pid) do
     Process.send_after(pid, :run_loop, 1_000)
-  end
-
-  defp add_route_if_alert(messages, routes) do
-    case messages do
-      {%Content.Message.Alert.NoService{} = top, bot} ->
-        {%{top | routes: routes}, bot}
-
-      _ ->
-        messages
-    end
   end
 
   defp fetch_predictions(%{sources: sources}, state) do

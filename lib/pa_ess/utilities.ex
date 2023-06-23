@@ -328,28 +328,22 @@ defmodule PaEss.Utilities do
   def line_to_var("Mattapan Line"), do: "3009"
   def line_to_var(_), do: "864"
 
-  def get_line_from_routes_list([]) do
-    "train service"
-  end
-
   def get_line_from_routes_list(routes) do
-    case Enum.uniq(routes) do
+    unique_routes =
+      routes
+      |> Enum.map(fn route -> route |> String.split("-") |> List.first() end)
+      |> Enum.uniq()
+
+    case unique_routes do
       [route] ->
-        route_name = route |> String.split("-") |> List.first()
+        "#{route} Line"
 
-        "#{route_name} Line"
-
-      unique_routes ->
-        if Enum.all?(unique_routes, &String.contains?(&1, "Green")) do
-          # Default to Green Line if all routes are GL Branches
-          "Green Line"
-        else
-          # Currently, the only case where there would be two fully distinct
-          # routes (disregarding GL Branches) is the Ashmont Mezzanine.
-          # Even in the Ashmont Mezzanine case though, we would page the Mattapan-specific
-          # shuttle alert on the second line and show Red line predictions on top.
-          "train service"
-        end
+      _ ->
+        # Currently, the only case where there would be two fully distinct
+        # routes (disregarding GL Branches) is the Ashmont Mezzanine.
+        # Even in the Ashmont Mezzanine case though, we would page the Mattapan-specific
+        # shuttle alert on the second line and show Red line predictions on top.
+        "train service"
     end
   end
 
