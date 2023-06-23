@@ -321,6 +321,32 @@ defmodule PaEss.Utilities do
   def route_to_ad_hoc_string("Green-E"), do: {:ok, "E"}
   def route_to_ad_hoc_string(_unknown), do: {:error, :unknown}
 
+  def line_to_var("Red Line"), do: "3005"
+  def line_to_var("Orange Line"), do: "3006"
+  def line_to_var("Blue Line"), do: "3007"
+  def line_to_var("Green Line"), do: "3008"
+  def line_to_var("Mattapan Line"), do: "3009"
+  def line_to_var(_), do: "864"
+
+  def get_line_from_routes_list(routes) do
+    unique_routes =
+      routes
+      |> Enum.map(fn route -> route |> String.split("-") |> List.first() end)
+      |> Enum.uniq()
+
+    case unique_routes do
+      [route] ->
+        "#{route} Line"
+
+      _ ->
+        # Currently, the only case where there would be two fully distinct
+        # routes (disregarding GL Branches) is the Ashmont Mezzanine.
+        # Even in the Ashmont Mezzanine case though, we would page the Mattapan-specific
+        # shuttle alert on the second line and show Red line predictions on top.
+        "train service"
+    end
+  end
+
   @spec ad_hoc_trip_description(PaEss.destination(), String.t() | nil) ::
           {:ok, String.t()} | {:error, :unknown}
   def ad_hoc_trip_description(destination, route_id \\ nil)
