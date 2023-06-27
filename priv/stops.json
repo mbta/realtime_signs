@@ -1,6 +1,6 @@
 {
   "Green-Trunk": [
-    {"station": "G Kenmore eastbound", "stop_ids": ["70150"]},
+    {"station": "G Kenmore eastbound", "stop_ids": ["70150", "71151"]},
     {"station": "G Hynes eastbound", "stop_ids": ["70152"]},
     {"station": "G Copley eastbound", "stop_ids": ["70154"]},
     {"station": "G Arlington eastbound", "stop_ids": ["70156"]},
@@ -23,7 +23,7 @@
     {"station": "G Arlington westbound", "stop_ids": ["70157"]},
     {"station": "G Copley westbound", "stop_ids": ["70155"]},
     {"station": "G Hynes westbound", "stop_ids": ["70153"]},
-    {"station": "G Kenmore westbound", "stop_ids": ["70151"]}
+    {"station": "G Kenmore westbound", "stop_ids": ["70151", "71150"]}
   ],
   "Green-E": [
     {"station": "G Copley eastbound", "stop_ids": ["70154"]},
