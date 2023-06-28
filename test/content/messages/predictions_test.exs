@@ -121,7 +121,7 @@ defmodule Content.Message.PredictionsTest do
         destination_stop_id: "70275"
       }
 
-      msg = Content.Message.Predictions.non_terminal(prediction, "test", "m", 15)
+      msg = Content.Message.Predictions.non_terminal(prediction, "test", "m", nil, 15)
       assert Content.Message.to_string(msg) == "Mattapan  9 min"
     end
 
@@ -401,8 +401,8 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.terminal(prediction)
 
       assert Content.Message.to_string(msg) == [
-               {"Oak Grove    2 min", 4},
-               {"Oak Grove    Trk 2", 4}
+               {"Oak Grove    2 min", 6},
+               {"Oak Grove    Trk 2", 6}
              ]
     end
 

@@ -198,4 +198,24 @@ defmodule Signs.Utilities.SourceConfig do
   def sign_routes(%{sources: sources}) do
     Enum.flat_map(sources, &(&1.routes || []))
   end
+
+  def get_source_by_stop_and_direction(
+        {%{sources: top_source_list}, %{sources: bottom_source_list}},
+        stop_id,
+        direction_id
+      ) do
+    get_source_by_stop_and_direction(top_source_list, stop_id, direction_id) ||
+      get_source_by_stop_and_direction(bottom_source_list, stop_id, direction_id)
+  end
+
+  def get_source_by_stop_and_direction(%{sources: source_list}, stop_id, direction_id) do
+    get_source_by_stop_and_direction(source_list, stop_id, direction_id)
+  end
+
+  def get_source_by_stop_and_direction(source_list, stop_id, direction_id) do
+    Enum.find(
+      source_list,
+      &(&1.stop_id == stop_id and &1.direction_id == direction_id)
+    )
+  end
 end

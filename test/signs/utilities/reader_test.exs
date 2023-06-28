@@ -13,8 +13,8 @@ defmodule Signs.Utilities.ReaderTest do
   end
 
   defmodule FakeUpdater do
-    def send_audio(audio_id, audio, priority, timeout) do
-      send(self(), {:send_audio, audio_id, audio, priority, timeout})
+    def send_audio(audio_id, audio, priority, timeout, sign_id) do
+      send(self(), {:send_audio, audio_id, audio, priority, timeout, sign_id})
     end
   end
 
@@ -32,16 +32,15 @@ defmodule Signs.Utilities.ReaderTest do
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: %{sources: [@src]},
-    current_content_top: {@src, %Predictions{destination: :alewife, minutes: 4}},
-    current_content_bottom: {@src, %Predictions{destination: :ashmont, minutes: 3}},
+    current_content_top: %Predictions{destination: :alewife, minutes: 4},
+    current_content_bottom: %Predictions{destination: :ashmont, minutes: 3},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartures,
     config_engine: Engine.Config,
     alerts_engine: nil,
     sign_updater: FakeUpdater,
-    tick_bottom: 1,
-    tick_top: 1,
+    tick_content: 1,
     tick_audit: 240,
     tick_read: 1,
     expiration_seconds: 100,
@@ -63,20 +62,22 @@ defmodule Signs.Utilities.ReaderTest do
 
       Reader.read_sign(sign)
 
-      assert_received({:send_audio, _id, _, _p, _t})
+      assert_received({:send_audio, _id, _, _p, _t, _})
     end
 
     test "when the sign is on a read interval, sends a single-line custom announcement" do
       sign = %{
         @sign
         | tick_read: 0,
-          current_content_top: {@src, %Custom{line: :top, message: "Custom Top"}},
-          current_content_bottom: {nil, %Empty{}}
+          current_content_top: %Custom{line: :top, message: "Custom Top"},
+          current_content_bottom: %Empty{}
       }
 
       Reader.read_sign(sign)
 
-      assert_received({:send_audio, _id, [%Content.Audio.Custom{}], _priority, _timeout})
+      assert_received(
+        {:send_audio, _id, [%Content.Audio.Custom{}], _priority, _timeout, _sign_id}
+      )
     end
   end
 

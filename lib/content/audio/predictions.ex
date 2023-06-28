@@ -16,12 +16,12 @@ defmodule Content.Audio.Predictions do
   @heavy_rail_routes ["Red", "Orange", "Blue"]
 
   @spec from_sign_content(
-          {Signs.Utilities.SourceConfig.source(), Content.Message.Predictions.t()},
+          Content.Message.Predictions.t(),
           Content.line_location(),
           boolean()
         ) :: [Content.Audio.t()]
   def from_sign_content(
-        {%Signs.Utilities.SourceConfig{} = src, %Content.Message.Predictions{} = predictions},
+        %Content.Message.Predictions{} = predictions,
         line,
         multi_source?
       ) do
@@ -50,7 +50,7 @@ defmodule Content.Audio.Predictions do
           %TrainIsArriving{
             destination: predictions.destination,
             trip_id: predictions.trip_id,
-            platform: src.platform,
+            platform: predictions.platform,
             route_id: predictions.route_id
           }
         ]
@@ -61,7 +61,7 @@ defmodule Content.Audio.Predictions do
           %Approaching{
             destination: predictions.destination,
             trip_id: predictions.trip_id,
-            platform: src.platform,
+            platform: predictions.platform,
             route_id: predictions.route_id,
             new_cars?: predictions.new_cars?
           }
@@ -73,9 +73,9 @@ defmodule Content.Audio.Predictions do
             destination: predictions.destination,
             route_id: predictions.route_id,
             minutes: 1,
-            verb: if(src.terminal?, do: :departs, else: :arrives),
+            verb: if(predictions.terminal?, do: :departs, else: :arrives),
             track_number: Content.Utilities.stop_track_number(predictions.stop_id),
-            platform: src.platform,
+            platform: predictions.platform,
             station_code: predictions.station_code,
             zone: predictions.zone
           }
@@ -87,9 +87,9 @@ defmodule Content.Audio.Predictions do
             destination: predictions.destination,
             route_id: predictions.route_id,
             minutes: div(Content.Utilities.max_time_seconds(), 60),
-            verb: if(src.terminal?, do: :departs, else: :arrives),
+            verb: if(predictions.terminal?, do: :departs, else: :arrives),
             track_number: Content.Utilities.stop_track_number(predictions.stop_id),
-            platform: src.platform,
+            platform: predictions.platform,
             station_code: predictions.station_code,
             zone: predictions.zone
           }
@@ -101,9 +101,9 @@ defmodule Content.Audio.Predictions do
             destination: predictions.destination,
             route_id: predictions.route_id,
             minutes: predictions.minutes,
-            verb: if(src.terminal?, do: :departs, else: :arrives),
+            verb: if(predictions.terminal?, do: :departs, else: :arrives),
             track_number: Content.Utilities.stop_track_number(predictions.stop_id),
-            platform: src.platform,
+            platform: predictions.platform,
             station_code: predictions.station_code,
             zone: predictions.zone
           }

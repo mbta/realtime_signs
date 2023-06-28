@@ -45,16 +45,15 @@ defmodule Signs.Utilities.HeadwaysTest do
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: {%{}, %{}},
-    current_content_top: {nil, Content.Message.Empty.new()},
-    current_content_bottom: {nil, Content.Message.Empty.new()},
+    current_content_top: Content.Message.Empty.new(),
+    current_content_bottom: Content.Message.Empty.new(),
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartures,
     config_engine: Engine.Config,
     alerts_engine: FakeAlerts,
     sign_updater: FakeUpdater,
-    tick_bottom: 130,
-    tick_top: 130,
+    tick_content: 130,
     tick_audit: 240,
     tick_read: 240,
     expiration_seconds: 130,
@@ -87,7 +86,7 @@ defmodule Signs.Utilities.HeadwaysTest do
       }
 
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
-               {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
+               {%Content.Message.Empty{}, %Content.Message.Empty{}}
     end
 
     test "displays the headway at a single-source stop" do
@@ -102,13 +101,13 @@ defmodule Signs.Utilities.HeadwaysTest do
       }
 
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
-               {{nil,
-                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}},
-                {nil,
+               {
+                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train},
                  %Content.Message.Headways.Bottom{
                    range: {8, 11},
                    prev_departure_mins: nil
-                 }}}
+                 }
+               }
     end
 
     test "displays the headway at multi-source stop" do
@@ -127,13 +126,13 @@ defmodule Signs.Utilities.HeadwaysTest do
       }
 
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
-               {{nil,
-                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}},
-                {nil,
+               {
+                 %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train},
                  %Content.Message.Headways.Bottom{
                    range: {8, 11},
                    prev_departure_mins: nil
-                 }}}
+                 }
+               }
     end
 
     test "generates empty messages if no headway is configured for some reason" do
@@ -150,7 +149,7 @@ defmodule Signs.Utilities.HeadwaysTest do
       }
 
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
-               {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
+               {%Content.Message.Empty{}, %Content.Message.Empty{}}
     end
 
     test "generates empty messages if outside of service hours" do
@@ -167,7 +166,7 @@ defmodule Signs.Utilities.HeadwaysTest do
       }
 
       assert Signs.Utilities.Headways.get_messages(sign, @current_time) ==
-               {{nil, %Content.Message.Empty{}}, {nil, %Content.Message.Empty{}}}
+               {%Content.Message.Empty{}, %Content.Message.Empty{}}
     end
 
     test "generates non-directional headway message at center/mezz signs" do
@@ -183,8 +182,8 @@ defmodule Signs.Utilities.HeadwaysTest do
       }
 
       assert {
-               {nil, %Content.Message.Headways.Top{destination: nil}},
-               {nil, %Content.Message.Headways.Bottom{range: {8, 11}}}
+               %Content.Message.Headways.Top{destination: nil},
+               %Content.Message.Headways.Bottom{range: {8, 11}}
              } = Signs.Utilities.Headways.get_messages(sign, @current_time)
     end
   end

@@ -32,7 +32,7 @@ defmodule Engine.Config do
   def sign_config(table_name \\ @table_signs, sign_id) do
     case :ets.lookup(table_name, sign_id) do
       [{^sign_id, config}] -> config
-      _ -> :auto
+      _ -> :off
     end
   end
 
@@ -45,8 +45,8 @@ defmodule Engine.Config do
   @spec chelsea_bridge_config(:ets.tab()) :: :off | :auto
   def chelsea_bridge_config(table_name \\ @table_chelsea_bridge) do
     case :ets.lookup(table_name, :status) do
-      [{_, "off"}] -> :off
-      _ -> :auto
+      [{_, "auto"}] -> :auto
+      _ -> :off
     end
   end
 
@@ -92,13 +92,9 @@ defmodule Engine.Config do
     latest_version =
       case updater.get(state.current_version) do
         {version, config} ->
-          # To handle two formats of signs config:
-          # old: %{ "sign_id" => %{ sign config}, "sign_id2" => ...}
-          # new: %{ "signs" => %{ "sign_id" => %{ sign_config }, ...}}
-          config_signs = Map.get(config, "signs", config)
-
           config_signs =
-            Enum.map(config_signs, fn {sign_id, config_json} ->
+            Map.get(config, "signs", %{})
+            |> Enum.map(fn {sign_id, config_json} ->
               {sign_id, transform_sign_config(state, config_json)}
             end)
 
@@ -186,7 +182,7 @@ defmodule Engine.Config do
         :headway
 
       true ->
-        :auto
+        :off
     end
   end
 

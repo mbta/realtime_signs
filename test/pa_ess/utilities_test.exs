@@ -38,6 +38,8 @@ defmodule Content.Audio.UtilitiesTest do
 
   test "take_message_id/1" do
     assert take_message_id(["1", "2", "3"]) == "105"
+    assert take_message_id(List.duplicate("1", 31)) == "220"
+    assert take_message_id(List.duplicate("1", 40)) == "230"
   end
 
   test "destination_var/1" do

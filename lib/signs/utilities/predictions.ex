@@ -9,35 +9,34 @@ defmodule Signs.Utilities.Predictions do
   require Content.Utilities
   alias Signs.Utilities.SourceConfig
 
-  @spec get_messages(Signs.Realtime.t()) :: Signs.Realtime.sign_messages()
+  @spec get_messages(Signs.Realtime.predictions(), Signs.Realtime.t()) ::
+          Signs.Realtime.sign_messages()
   def get_messages(
-        %{
-          source_config: {%{sources: top_line_sources}, %{sources: bottom_line_sources}},
-          text_id: {station_code, zone}
-        } = sign
+        {top_predictions, bottom_predictions},
+        %{source_config: {top_config, bottom_config}} = sign
       ) do
-    {top, _} = get_predictions(sign.prediction_engine, top_line_sources, station_code, zone)
-    {bottom, _} = get_predictions(sign.prediction_engine, bottom_line_sources, station_code, zone)
+    {top, _} = prediction_messages(top_predictions, top_config, sign)
+    {bottom, _} = prediction_messages(bottom_predictions, bottom_config, sign)
 
     {top, bottom}
   end
 
-  def get_messages(
-        %{source_config: %{sources: both_lines_sources}, text_id: {station_code, zone}} = sign
-      ) do
-    get_predictions(sign.prediction_engine, both_lines_sources, station_code, zone)
+  def get_messages(predictions, %{source_config: config} = sign) do
+    prediction_messages(predictions, config, sign)
   end
 
-  @spec get_predictions(module(), [SourceConfig.source()], String.t(), String.t()) ::
-          Signs.Realtime.sign_messages()
-  defp get_predictions(prediction_engine, source_list, station_code, zone) do
-    source_list
-    |> get_source_list_predictions(prediction_engine)
-    |> Enum.filter(fn {_, p} ->
+  @spec prediction_messages(
+          [Predictions.Prediction.t()],
+          SourceConfig.config(),
+          Signs.Realtime.t()
+        ) :: Signs.Realtime.sign_messages()
+  defp prediction_messages(predictions, %{sources: sources}, %{text_id: {station_code, zone}}) do
+    predictions
+    |> Enum.filter(fn p ->
       p.seconds_until_departure
     end)
-    |> Enum.sort_by(fn {source, prediction} ->
-      {if source.terminal? do
+    |> Enum.sort_by(fn prediction ->
+      {if terminal_prediction?(prediction, sources) do
          0
        else
          case prediction.stops_away do
@@ -46,25 +45,30 @@ defmodule Signs.Utilities.Predictions do
          end
        end, prediction.seconds_until_departure, prediction.seconds_until_arrival}
     end)
-    |> Enum.map(fn {source, prediction} ->
+    |> Enum.map(fn prediction ->
       cond do
         stopped_train?(prediction) ->
-          {source, Content.Message.StoppedTrain.from_prediction(prediction)}
+          Content.Message.StoppedTrain.from_prediction(prediction)
 
-        source.terminal? ->
-          {source, Content.Message.Predictions.terminal(prediction)}
+        terminal_prediction?(prediction, sources) ->
+          Content.Message.Predictions.terminal(prediction)
 
         true ->
-          {source, Content.Message.Predictions.non_terminal(prediction, station_code, zone)}
+          Content.Message.Predictions.non_terminal(
+            prediction,
+            station_code,
+            zone,
+            platform(prediction, sources)
+          )
       end
     end)
-    |> Enum.reject(fn {_source, message} -> is_nil(message) end)
+    |> Enum.reject(&is_nil(&1))
     # Take next two predictions, but if the list has multiple destinations, prefer showing
     # distinct ones. This helps e.g. the red line trunk where people may need to know about
     # a particular branch.
     |> case do
-      [{_, p1} = msg1, msg2 | rest] ->
-        case Enum.find([msg2 | rest], fn {_, p2} -> p2.destination != p1.destination end) do
+      [msg1, msg2 | rest] ->
+        case Enum.find([msg2 | rest], fn x -> x.destination != msg1.destination end) do
           nil -> [msg1, msg2]
           preferred -> [msg1, preferred]
         end
@@ -74,19 +78,19 @@ defmodule Signs.Utilities.Predictions do
     end
     |> case do
       [] ->
-        {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+        {Content.Message.Empty.new(), Content.Message.Empty.new()}
 
       [msg] ->
-        {msg, {nil, Content.Message.Empty.new()}}
+        {msg, Content.Message.Empty.new()}
 
       [
-        {s1, %Content.Message.Predictions{minutes: :arriving}} = msg1,
-        {s2, %Content.Message.Predictions{minutes: :arriving} = p2} = msg2
+        %Content.Message.Predictions{minutes: :arriving} = p1,
+        %Content.Message.Predictions{minutes: :arriving} = p2
       ] ->
-        if allowed_multi_berth_platform?(s1, s2) do
-          {msg1, msg2}
+        if allowed_multi_berth_platform?(sources, p1, p2) do
+          {p1, p2}
         else
-          {msg1, {s2, %{p2 | minutes: 1}}}
+          {p1, %{p2 | minutes: 1}}
         end
 
       [msg1, msg2] ->
@@ -94,36 +98,24 @@ defmodule Signs.Utilities.Predictions do
     end
   end
 
-  @spec get_passthrough_train_audio(Signs.Realtime.t()) :: [Content.Audio.t()]
-  def get_passthrough_train_audio(
-        %Signs.Realtime{source_config: %{sources: single_source}} = sign
-      ) do
-    single_source |> get_source_list_passthrough_audio(sign.prediction_engine) |> List.wrap()
+  @spec get_passthrough_train_audio(Signs.Realtime.predictions()) :: [Content.Audio.t()]
+  def get_passthrough_train_audio({top_predictions, bottom_predictions}) do
+    prediction_passthrough_audios(top_predictions) ++
+      prediction_passthrough_audios(bottom_predictions)
   end
 
-  def get_passthrough_train_audio(
-        %Signs.Realtime{
-          source_config: {%{sources: top_line_sources}, %{sources: bottom_line_sources}}
-        } = sign
-      ) do
-    (top_line_sources
-     |> get_source_list_passthrough_audio(sign.prediction_engine)
-     |> List.wrap()) ++
-      (bottom_line_sources
-       |> get_source_list_passthrough_audio(sign.prediction_engine)
-       |> List.wrap())
+  def get_passthrough_train_audio(predictions) do
+    prediction_passthrough_audios(predictions)
   end
 
-  @spec get_source_list_passthrough_audio([SourceConfig.source()], module()) ::
-          Content.Audio.t() | nil
-  defp get_source_list_passthrough_audio(source_list, prediction_engine) do
-    source_list
-    |> get_source_list_predictions(prediction_engine)
-    |> Enum.filter(fn {_source, prediction} ->
+  @spec prediction_passthrough_audios([Predictions.Prediction.t()]) :: [Content.Audio.t()]
+  defp prediction_passthrough_audios(predictions) do
+    predictions
+    |> Enum.filter(fn prediction ->
       prediction.seconds_until_passthrough && prediction.seconds_until_passthrough <= 60
     end)
-    |> Enum.sort_by(fn {_source, prediction} -> prediction.seconds_until_passthrough end)
-    |> Enum.map(fn {_source, prediction} ->
+    |> Enum.sort_by(fn prediction -> prediction.seconds_until_passthrough end)
+    |> Enum.flat_map(fn prediction ->
       route_id = prediction.route_id
 
       case Content.Utilities.destination_for_prediction(
@@ -132,38 +124,29 @@ defmodule Signs.Utilities.Predictions do
              prediction.destination_stop_id
            ) do
         {:ok, :southbound} when route_id == "Red" ->
-          %Content.Audio.Passthrough{
-            destination: :ashmont,
-            trip_id: prediction.trip_id,
-            route_id: prediction.route_id
-          }
+          [
+            %Content.Audio.Passthrough{
+              destination: :ashmont,
+              trip_id: prediction.trip_id,
+              route_id: prediction.route_id
+            }
+          ]
 
         {:ok, destination} ->
-          %Content.Audio.Passthrough{
-            destination: destination,
-            trip_id: prediction.trip_id,
-            route_id: prediction.route_id
-          }
+          [
+            %Content.Audio.Passthrough{
+              destination: destination,
+              trip_id: prediction.trip_id,
+              route_id: prediction.route_id
+            }
+          ]
 
         _ ->
           Logger.info("no_passthrough_audio_for_prediction prediction=#{inspect(prediction)}")
-          nil
+          []
       end
     end)
-    |> Enum.reject(&is_nil(&1))
-    |> Enum.at(0)
-  end
-
-  @spec get_source_list_predictions([SourceConfig.source()], module()) :: [
-          Predictions.Prediction.t()
-        ]
-  defp get_source_list_predictions(source_list, prediction_engine) do
-    Enum.flat_map(source_list, fn source ->
-      source.stop_id
-      |> prediction_engine.for_stop(source.direction_id)
-      |> Enum.filter(&(source.routes == nil or &1.route_id in source.routes))
-      |> Enum.map(&{source, &1})
-    end)
+    |> Enum.take(1)
   end
 
   @spec stopped_train?(Predictions.Prediction.t()) :: boolean()
@@ -181,6 +164,21 @@ defmodule Signs.Utilities.Predictions do
     status && String.starts_with?(status, "Stopped") && status != "Stopped at station"
   end
 
+  defp allowed_multi_berth_platform?(source_list, p1, p2) do
+    allowed_multi_berth_platform?(
+      SourceConfig.get_source_by_stop_and_direction(
+        source_list,
+        p1.stop_id,
+        p1.direction_id
+      ),
+      SourceConfig.get_source_by_stop_and_direction(
+        source_list,
+        p2.stop_id,
+        p2.direction_id
+      )
+    )
+  end
+
   defp allowed_multi_berth_platform?(
          %SourceConfig{multi_berth?: true} = s1,
          %SourceConfig{multi_berth?: true} = s2
@@ -191,5 +189,29 @@ defmodule Signs.Utilities.Predictions do
 
   defp allowed_multi_berth_platform?(_, _) do
     false
+  end
+
+  defp terminal_prediction?(prediction, source_list) do
+    source_list
+    |> SourceConfig.get_source_by_stop_and_direction(
+      prediction.stop_id,
+      prediction.direction_id
+    )
+    |> case do
+      nil -> false
+      source -> source.terminal?
+    end
+  end
+
+  defp platform(prediction, source_list) do
+    source_list
+    |> SourceConfig.get_source_by_stop_and_direction(
+      prediction.stop_id,
+      prediction.direction_id
+    )
+    |> case do
+      nil -> nil
+      source -> source.platform
+    end
   end
 end

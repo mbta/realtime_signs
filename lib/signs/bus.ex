@@ -3,7 +3,7 @@ defmodule Signs.Bus do
   require Logger
 
   @line_max 18
-  @var_max 30
+  @var_max 45
   @drawbridge_minutes "135"
   @drawbridge_soon "136"
   @drawbridge_minutes_spanish "152"
@@ -25,6 +25,7 @@ defmodule Signs.Bus do
     :config_engine,
     :prediction_engine,
     :bridge_engine,
+    :alerts_engine,
     :sign_updater,
     :prev_predictions,
     :prev_bridge_status,
@@ -51,6 +52,7 @@ defmodule Signs.Bus do
       config_engine: opts[:config_engine] || Engine.Config,
       prediction_engine: opts[:prediction_engine] || Engine.BusPredictions,
       bridge_engine: opts[:bridge_engine] || Engine.ChelseaBridge,
+      alerts_engine: opts[:alerts_engine] || Engine.Alerts,
       sign_updater: opts[:sign_updater] || MessageQueue,
       prev_predictions: [],
       prev_bridge_status: nil,
@@ -98,6 +100,7 @@ defmodule Signs.Bus do
       config_engine: config_engine,
       prediction_engine: prediction_engine,
       bridge_engine: bridge_engine,
+      alerts_engine: alerts_engine,
       sign_updater: sign_updater,
       prev_predictions: prev_predictions
     } = state
@@ -107,6 +110,18 @@ defmodule Signs.Bus do
     bridge_enabled? = config_engine.chelsea_bridge_config() == :auto
     bridge_status = bridge_engine.bridge_status()
     current_time = Timex.now()
+
+    source_lists = [sources, top_sources, bottom_sources, extra_audio_sources]
+
+    alert_status =
+      alerts_engine.max_stop_status(
+        for list <- source_lists, list, source <- list do
+          source.stop_id
+        end,
+        for list <- source_lists, list, source <- list, route <- source.routes do
+          route.route_id
+        end
+      )
 
     prev_predictions_lookup =
       for prediction <- prev_predictions,
@@ -153,6 +168,7 @@ defmodule Signs.Bus do
           platform_mode_content(
             predictions,
             extra_audio_predictions,
+            alert_status,
             current_time,
             bridge_status,
             bridge_enabled?,
@@ -163,6 +179,7 @@ defmodule Signs.Bus do
           mezzanine_mode_content(
             top_predictions,
             bottom_predictions,
+            alert_status,
             current_time,
             bridge_status,
             bridge_enabled?,
@@ -174,7 +191,7 @@ defmodule Signs.Bus do
     state
     |> then(fn state ->
       if should_update?({top, bottom}, current_time, state) do
-        sign_updater.update_sign({pa_ess_loc, text_zone}, top, bottom, 180, :now)
+        sign_updater.update_sign({pa_ess_loc, text_zone}, top, bottom, 180, :now, state.id)
         %{state | current_messages: {top, bottom}, last_update: current_time}
       else
         state
@@ -281,9 +298,15 @@ defmodule Signs.Bus do
 
   # Platform mode. Display one prediction per route, but if all the predictions are for the
   # same route, then show a single page of two.
+  defp platform_mode_content([], [], alert_status, _, _, _, _)
+       when alert_status in [:station_closure, :suspension_closed_station] do
+    no_service_content()
+  end
+
   defp platform_mode_content(
          predictions,
          extra_audio_predictions,
+         _alert_status,
          current_time,
          bridge_status,
          bridge_enabled?,
@@ -330,9 +353,15 @@ defmodule Signs.Bus do
   end
 
   # Mezzanine mode. Display and paginate each line separately.
+  defp mezzanine_mode_content([], [], alert_status, _, _, _, _)
+       when alert_status in [:station_closure, :suspension_closed_station] do
+    no_service_content()
+  end
+
   defp mezzanine_mode_content(
          top_predictions,
          bottom_predictions,
+         _alert_status,
          current_time,
          bridge_status,
          bridge_enabled?,
@@ -369,6 +398,12 @@ defmodule Signs.Bus do
     ]
 
     audios = paginate_audio([:board_routes_71_and_73_on_upper_level])
+    {messages, audios}
+  end
+
+  defp no_service_content do
+    messages = paginate_pairs([["No bus service", ""]])
+    audios = [%Content.Audio.Custom{message: "No bus service"}]
     {messages, audios}
   end
 
@@ -481,7 +516,8 @@ defmodule Signs.Bus do
   end
 
   defp route_key(prediction) do
-    {PaEss.Utilities.prediction_route_name(prediction), prediction.headsign}
+    {PaEss.Utilities.prediction_route_name(prediction),
+     PaEss.Utilities.headsign_key(prediction.headsign)}
   end
 
   defp format_prediction(nil, _, _), do: ""
@@ -624,7 +660,7 @@ defmodule Signs.Bus do
     %{pa_ess_loc: pa_ess_loc, audio_zones: audio_zones, sign_updater: sign_updater} = state
 
     if audios != [] && audio_zones != [] do
-      sign_updater.send_audio({pa_ess_loc, audio_zones}, audios, 5, 180)
+      sign_updater.send_audio({pa_ess_loc, audio_zones}, audios, 5, 180, state.id)
     end
   end
 end

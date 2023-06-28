@@ -148,6 +148,10 @@ defmodule PaEss.Utilities do
     end
   end
 
+  @spec generic_number_var(integer()) :: String.t() | nil
+  def generic_number_var(n) when n >= 1 and n <= 100, do: Integer.to_string(5000 + n)
+  def generic_number_var(_), do: nil
+
   @doc "Recording of the time from 12:01 to 12:59, given the minutes"
   @spec time_var(integer()) :: String.t()
   def time_var(n) when n > 0 and n < 60 do
@@ -171,7 +175,14 @@ defmodule PaEss.Utilities do
 
   @spec take_message_id([String.t()]) :: String.t()
   def take_message_id(vars) do
-    Integer.to_string(102 + length(vars))
+    # Maps var count to corresponding message id. Since these were added at different times,
+    # the message id ranges are not contiguous.
+    case length(vars) do
+      n when n <= 30 -> 102 + n
+      31 -> 220
+      n when n <= 45 -> 190 + n
+    end
+    |> Integer.to_string()
   end
 
   @doc "Take ID for terminal destinations"
@@ -309,6 +320,32 @@ defmodule PaEss.Utilities do
   def route_to_ad_hoc_string("Green-D"), do: {:ok, "D"}
   def route_to_ad_hoc_string("Green-E"), do: {:ok, "E"}
   def route_to_ad_hoc_string(_unknown), do: {:error, :unknown}
+
+  def line_to_var("Red Line"), do: "3005"
+  def line_to_var("Orange Line"), do: "3006"
+  def line_to_var("Blue Line"), do: "3007"
+  def line_to_var("Green Line"), do: "3008"
+  def line_to_var("Mattapan Line"), do: "3009"
+  def line_to_var(_), do: "864"
+
+  def get_line_from_routes_list(routes) do
+    unique_routes =
+      routes
+      |> Enum.map(fn route -> route |> String.split("-") |> List.first() end)
+      |> Enum.uniq()
+
+    case unique_routes do
+      [route] ->
+        "#{route} Line"
+
+      _ ->
+        # Currently, the only case where there would be two fully distinct
+        # routes (disregarding GL Branches) is the Ashmont Mezzanine.
+        # Even in the Ashmont Mezzanine case though, we would page the Mattapan-specific
+        # shuttle alert on the second line and show Red line predictions on top.
+        "train service"
+    end
+  end
 
   @spec ad_hoc_trip_description(PaEss.destination(), String.t() | nil) ::
           {:ok, String.t()} | {:error, :unknown}
@@ -480,6 +517,13 @@ defmodule PaEss.Utilities do
   def headsign_abbreviations(headsign) do
     Enum.find_value(@headsign_abbreviation_mappings, [], fn {prefix, abbreviations} ->
       if String.starts_with?(headsign, prefix), do: abbreviations
+    end)
+  end
+
+  @spec headsign_key(String.t()) :: String.t()
+  def headsign_key(headsign) do
+    Enum.find_value(@headsign_abbreviation_mappings, headsign, fn {prefix, _} ->
+      if String.starts_with?(headsign, prefix), do: prefix
     end)
   end
 
@@ -670,7 +714,9 @@ defmodule PaEss.Utilities do
     minutes: "505"
   }
 
-  def audio_take({:minutes, minutes}), do: number_var(minutes, :english)
+  def audio_take({:minutes, minutes}) do
+    number_var(minutes, :english) || generic_number_var(minutes)
+  end
 
   def audio_take({:headsign, headsign}) do
     Enum.find_value(@headsign_take_mappings, fn {prefix, take} ->

@@ -25,8 +25,7 @@ defmodule Signs.Realtime do
     :config_engine,
     :alerts_engine,
     :sign_updater,
-    :tick_top,
-    :tick_bottom,
+    :tick_content,
     :tick_audit,
     :tick_read,
     :expiration_seconds,
@@ -42,8 +41,11 @@ defmodule Signs.Realtime do
                 uses_shuttles: true
               ]
 
-  @type line_content :: {SourceConfig.source() | nil, Content.Message.t()}
+  @type line_content :: Content.Message.t()
   @type sign_messages :: {line_content(), line_content()}
+  @type predictions ::
+          {[Predictions.Prediction.t()], [Predictions.Prediction.t()]}
+          | [Predictions.Prediction.t()]
 
   @type t :: %__MODULE__{
           id: String.t(),
@@ -58,8 +60,7 @@ defmodule Signs.Realtime do
           config_engine: module(),
           alerts_engine: module(),
           sign_updater: module(),
-          tick_bottom: non_neg_integer(),
-          tick_top: non_neg_integer(),
+          tick_content: non_neg_integer(),
           tick_audit: non_neg_integer(),
           tick_read: non_neg_integer(),
           expiration_seconds: non_neg_integer(),
@@ -85,16 +86,15 @@ defmodule Signs.Realtime do
       text_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
       audio_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "audio_zones")},
       source_config: source_config,
-      current_content_top: {nil, Content.Message.Empty.new()},
-      current_content_bottom: {nil, Content.Message.Empty.new()},
+      current_content_top: Content.Message.Empty.new(),
+      current_content_bottom: Content.Message.Empty.new(),
       prediction_engine: prediction_engine,
       headway_engine: headway_engine,
       last_departure_engine: last_departure_engine,
       config_engine: config_engine,
       alerts_engine: alerts_engine,
       sign_updater: sign_updater,
-      tick_bottom: 130,
-      tick_top: 130,
+      tick_content: 130,
       tick_audit: 60,
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       expiration_seconds: 130,
@@ -119,8 +119,15 @@ defmodule Signs.Realtime do
     time_zone = Application.get_env(:realtime_signs, :time_zone)
     {:ok, current_time} = DateTime.utc_now() |> DateTime.shift_zone(time_zone)
 
-    {top, bottom} =
+    predictions =
+      case sign.source_config do
+        {top, bottom} -> {fetch_predictions(top, sign), fetch_predictions(bottom, sign)}
+        config -> fetch_predictions(config, sign)
+      end
+
+    {new_top, new_bottom} =
       Utilities.Messages.get_messages(
+        predictions,
         sign,
         sign_config,
         current_time,
@@ -129,8 +136,12 @@ defmodule Signs.Realtime do
 
     sign =
       sign
-      |> announce_passthrough_trains()
-      |> Utilities.Updater.update_sign(top, bottom)
+      |> announce_passthrough_trains(predictions)
+      |> Utilities.Updater.update_sign(new_top, new_bottom)
+      |> Utilities.Reader.do_interrupting_reads(
+        sign.current_content_top,
+        sign.current_content_bottom
+      )
       |> Utilities.Reader.read_sign()
       |> log_headway_accuracy()
       |> do_expiration()
@@ -149,13 +160,19 @@ defmodule Signs.Realtime do
     Process.send_after(pid, :run_loop, 1_000)
   end
 
-  @spec announce_passthrough_trains(Signs.Realtime.t()) :: Signs.Realtime.t()
-  defp announce_passthrough_trains(sign) do
-    sign
-    |> Utilities.Predictions.get_passthrough_train_audio()
+  defp fetch_predictions(%{sources: sources}, state) do
+    Enum.flat_map(sources, fn source ->
+      state.prediction_engine.for_stop(source.stop_id, source.direction_id)
+      |> Enum.filter(&(source.routes == nil or &1.route_id in source.routes))
+    end)
+  end
+
+  @spec announce_passthrough_trains(Signs.Realtime.t(), predictions()) :: Signs.Realtime.t()
+  defp announce_passthrough_trains(sign, predictions) do
+    Utilities.Predictions.get_passthrough_train_audio(predictions)
     |> Enum.reduce(sign, fn audio, sign ->
       if audio.trip_id not in sign.announced_passthroughs do
-        sign.sign_updater.send_audio(sign.audio_id, [audio], 5, 60)
+        sign.sign_updater.send_audio(sign.audio_id, [audio], 5, 60, sign.id)
 
         update_in(sign.announced_passthroughs, fn list ->
           Enum.take([audio.trip_id | list], @announced_history_length)
@@ -167,41 +184,17 @@ defmodule Signs.Realtime do
   end
 
   @spec do_expiration(Signs.Realtime.t()) :: Signs.Realtime.t()
-  def do_expiration(%{tick_top: 0, tick_bottom: 0} = sign) do
-    {_src, top} = sign.current_content_top
-    {_src, bottom} = sign.current_content_bottom
-
-    sign.sign_updater.update_sign(sign.text_id, top, bottom, sign.expiration_seconds + 15, :now)
-
-    %{sign | tick_top: sign.expiration_seconds, tick_bottom: sign.expiration_seconds}
-  end
-
-  def do_expiration(%{tick_top: 0} = sign) do
-    {_src, top} = sign.current_content_top
-
-    sign.sign_updater.update_single_line(
+  def do_expiration(%{tick_content: 0} = sign) do
+    sign.sign_updater.update_sign(
       sign.text_id,
-      "1",
-      top,
+      sign.current_content_top,
+      sign.current_content_bottom,
       sign.expiration_seconds + 15,
-      :now
+      :now,
+      sign.id
     )
 
-    %{sign | tick_top: sign.expiration_seconds}
-  end
-
-  def do_expiration(%{tick_bottom: 0} = sign) do
-    {_src, bottom} = sign.current_content_bottom
-
-    sign.sign_updater.update_single_line(
-      sign.text_id,
-      "2",
-      bottom,
-      sign.expiration_seconds + 15,
-      :now
-    )
-
-    %{sign | tick_bottom: sign.expiration_seconds}
+    %{sign | tick_content: sign.expiration_seconds}
   end
 
   def do_expiration(sign), do: sign
@@ -210,8 +203,7 @@ defmodule Signs.Realtime do
   def decrement_ticks(sign) do
     %{
       sign
-      | tick_bottom: sign.tick_bottom - 1,
-        tick_top: sign.tick_top - 1,
+      | tick_content: sign.tick_content - 1,
         tick_audit: sign.tick_audit - 1,
         tick_read: sign.tick_read - 1
     }

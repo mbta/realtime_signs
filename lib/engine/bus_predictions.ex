@@ -3,7 +3,10 @@ defmodule Engine.BusPredictions do
   require Logger
 
   def predictions_for_stop(id) do
-    GenServer.call(__MODULE__, {:predictions_for_stop, id})
+    case :ets.lookup(:bus_predictions, id) do
+      [{^id, predictions}] -> predictions
+      _ -> []
+    end
   end
 
   def start_link(_) do
@@ -11,11 +14,11 @@ defmodule Engine.BusPredictions do
   end
 
   def init(_) do
+    :ets.new(:bus_predictions, [:named_table, read_concurrency: true])
     schedule_update(self())
 
     {:ok,
      %{
-       predictions: %{},
        last_modified: nil,
        all_bus_stop_ids: Signs.Utilities.SignsConfig.all_bus_stop_ids()
      }}
@@ -109,8 +112,13 @@ defmodule Engine.BusPredictions do
           end
           |> Enum.group_by(& &1.stop_id)
 
-        {:noreply,
-         %{state | predictions: new_predictions, last_modified: Map.new(headers)["last-modified"]}}
+        Enum.map(all_bus_stop_ids, &{&1, []})
+        |> Map.new()
+        |> Map.merge(new_predictions)
+        |> Map.to_list()
+        |> then(fn records -> :ets.insert(:bus_predictions, records) end)
+
+        {:noreply, %{state | last_modified: Map.new(headers)["last-modified"]}}
 
       {:ok, %{status_code: 304}} ->
         {:noreply, state}
@@ -124,10 +132,6 @@ defmodule Engine.BusPredictions do
   def handle_info(msg, state) do
     Logger.warn("Engine.BusPredictions unknown_message: #{inspect(msg)}")
     {:noreply, state}
-  end
-
-  def handle_call({:predictions_for_stop, id}, _from, state) do
-    {:reply, Map.get(state.predictions, id, []), state}
   end
 
   defp schedule_update(pid) do

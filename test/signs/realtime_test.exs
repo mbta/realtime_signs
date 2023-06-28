@@ -57,16 +57,12 @@ defmodule Signs.RealtimeTest do
   end
 
   defmodule FakeUpdater do
-    def update_single_line(id, line_no, msg, duration, start) do
-      send(self(), {:update_single_line, id, line_no, msg, duration, start})
+    def update_sign(id, top_msg, bottom_msg, duration, start, sign_id) do
+      send(self(), {:update_sign, id, top_msg, bottom_msg, duration, start, sign_id})
     end
 
-    def update_sign(id, top_msg, bottom_msg, duration, start) do
-      send(self(), {:update_sign, id, top_msg, bottom_msg, duration, start})
-    end
-
-    def send_audio(id, audio, priority, timeout) do
-      send(self(), {:send_audio, id, audio, priority, timeout})
+    def send_audio(id, audio, priority, timeout, sign_id) do
+      send(self(), {:send_audio, id, audio, priority, timeout, sign_id})
     end
   end
 
@@ -97,16 +93,15 @@ defmodule Signs.RealtimeTest do
       headway_group: "headway_group",
       headway_destination: :southbound
     },
-    current_content_top: {@src, %HT{destination: :southbound, vehicle_type: :train}},
-    current_content_bottom: {@src, %HB{range: {1, 5}, prev_departure_mins: nil}},
+    current_content_top: %HT{destination: :southbound, vehicle_type: :train},
+    current_content_bottom: %HB{range: {1, 5}, prev_departure_mins: nil},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartureEngine,
     config_engine: FakeConfigEngine,
     alerts_engine: FakeAlerts,
     sign_updater: FakeUpdater,
-    tick_bottom: 1,
-    tick_top: 1,
+    tick_content: 1,
     tick_read: 1,
     tick_audit: 1,
     expiration_seconds: 100,
@@ -130,79 +125,34 @@ defmodule Signs.RealtimeTest do
     test "decrements ticks and doesn't send audio or text when sign is not expired" do
       sign = %{
         @sign
-        | current_content_bottom: {@src, %HB{range: {11, 13}, prev_departure_mins: nil}}
+        | current_content_bottom: %HB{range: {11, 13}, prev_departure_mins: nil}
       }
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
       refute_received({:send_audio, _, _, _, _})
-      refute_received({:update_single_line, _, _, _, _, _})
       refute_received({:update_sign, _, _, _, _, _})
-      assert sign.tick_top == 0
-      assert sign.tick_bottom == 0
+      assert sign.tick_content == 0
       assert sign.tick_read == 0
     end
 
     test "expires content on both lines when tick is zero" do
       sign = %{
         @sign
-        | tick_top: 0,
-          tick_bottom: 0,
-          current_content_top: {nil, %HT{destination: :southbound, vehicle_type: :train}},
-          current_content_bottom: {nil, %HB{range: {11, 13}}}
+        | tick_content: 0,
+          current_content_top: %HT{destination: :southbound, vehicle_type: :train},
+          current_content_bottom: %HB{range: {11, 13}}
       }
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
 
       assert_received(
         {:update_sign, _id, %HT{destination: :southbound, vehicle_type: :train},
-         %HB{range: {11, 13}}, _dur, _start}
+         %HB{range: {11, 13}}, _dur, _start, _sign_id}
       )
 
       refute_received({:send_audio, _, _, _, _})
 
-      assert sign.tick_top == 99
-      assert sign.tick_bottom == 99
-    end
-
-    test "expires content on top when tick is zero" do
-      sign = %{
-        @sign
-        | tick_top: 0,
-          tick_bottom: 60,
-          current_content_top: {nil, %HT{destination: :southbound, vehicle_type: :train}},
-          current_content_bottom: {nil, %HB{range: {11, 13}}}
-      }
-
-      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
-
-      assert_received(
-        {:update_single_line, _id, "1", %HT{destination: :southbound, vehicle_type: :train}, _dur,
-         _start}
-      )
-
-      refute_received({:send_audio, _, _, _, _})
-
-      assert sign.tick_top == 99
-      assert sign.tick_bottom == 59
-    end
-
-    test "expires content on bottom when tick is zero" do
-      sign = %{
-        @sign
-        | tick_top: 60,
-          tick_bottom: 0,
-          current_content_top: {nil, %HT{destination: :southbound, vehicle_type: :train}},
-          current_content_bottom: {nil, %HB{range: {11, 13}}}
-      }
-
-      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
-
-      assert_received({:update_single_line, _id, "2", %HB{range: {11, 13}}, _dur, _start})
-
-      refute_received({:send_audio, _, _, _, _})
-
-      assert sign.tick_top == 59
-      assert sign.tick_bottom == 99
+      assert sign.tick_content == 99
     end
 
     test "announces train passing through station" do
@@ -213,7 +163,7 @@ defmodule Signs.RealtimeTest do
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
       assert sign.announced_passthroughs == ["123"]
-      assert_received({:send_audio, _, [%Content.Audio.Passthrough{}], _, _})
+      assert_received({:send_audio, _, [%Content.Audio.Passthrough{}], _, _, _})
     end
   end
 
@@ -221,15 +171,13 @@ defmodule Signs.RealtimeTest do
     test "decrements all the ticks when all of them dont need to be reset" do
       sign = %{
         @sign
-        | tick_top: 100,
-          tick_bottom: 100,
+        | tick_content: 100,
           tick_read: 100
       }
 
       sign = Signs.Realtime.decrement_ticks(sign)
 
-      assert sign.tick_top == 99
-      assert sign.tick_bottom == 99
+      assert sign.tick_content == 99
       assert sign.tick_read == 99
     end
   end

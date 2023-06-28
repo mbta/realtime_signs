@@ -18,16 +18,11 @@ defmodule Content.Audio.FollowingTrainTest do
       message = %Content.Message.Predictions{
         destination: :ashmont,
         route_id: "Mattapan",
-        minutes: 5
+        minutes: 5,
+        terminal?: false
       }
 
-      audio =
-        Content.Audio.FollowingTrain.from_predictions_message(
-          {%{
-             terminal?: false,
-             platform: nil
-           }, message}
-        )
+      audio = Content.Audio.FollowingTrain.from_predictions_message(message)
 
       assert audio == [
                %Content.Audio.FollowingTrain{
@@ -43,16 +38,11 @@ defmodule Content.Audio.FollowingTrainTest do
       message = %Content.Message.Predictions{
         destination: :ashmont,
         route_id: "Mattapan",
-        minutes: 5
+        minutes: 5,
+        terminal?: true
       }
 
-      audio =
-        Content.Audio.FollowingTrain.from_predictions_message(
-          {%{
-             terminal?: true,
-             platform: nil
-           }, message}
-        )
+      audio = Content.Audio.FollowingTrain.from_predictions_message(message)
 
       assert audio == [
                %Content.Audio.FollowingTrain{

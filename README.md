@@ -2,19 +2,26 @@
 
 Here's a general overview of the realtime_signs application which should be helpful for getting oriented to how things work. Please keep this up to date -- if you change something major in the code (build process, renaming modules, significant functionality changes, new configuration, etc.) document it here!
 
+## Prerequisites
+
+* [asdf](https://asdf-vm.com/)
+* [direnv](https://direnv.net/)
+
 ## Development
 
 * Run `asdf install` from the repository root.
 * `mix deps.get` to fetch dependencies.
 * At this point you should be able to run `mix test` and get a clean build.
-* To start the server, run `mix run --no-halt`. See "relevant environment variables" below for parameters you might want to pass to the server.
+* Copy `.envrc.template` to `.envrc`, then edit `.envrc` and make sure all required environment variables are set. When finished, run `direnv allow` to activate them.
+* To start the server, run `mix run --no-halt`.
 
 ### Developing locally with [signs_ui](https://github.com/mbta/signs_ui)
 
 First, ensure you have a basic working environment as described above, and in the signs_ui README.
 1. Start signs_ui and tell it what API key to accept: `MESSAGES_API_KEYS=realtime_signs:a6975e41192b888c NODE_ENV=development mix run --no-halt`. The key is arbitrary but it must match what you provide in the next step.
-2. Start realtime_signs, and provide the local URL and API key: `SIGN_UI_URL=localhost:5000 SIGN_UI_API_KEY=a6975e41192b888c mix run --no-halt`
-3. Open up http://localhost:5000 and you should see the signs data being populated by your local app.
+2. Edit `.envrc` and ensure that `SIGN_UI_URL`, `SIGN_UI_API_KEY`, and `SIGN_CONFIG_FILE` are configured to point to the local signs_ui.
+3. Start realtime_signs.
+4. Open up http://localhost:5000 and you should see the signs data being populated by your local app.
 
 ### Running locally in a docker container
 If you need to run realtime signs in a local docker container, there are a few extra steps you'll need to take.
@@ -25,17 +32,8 @@ If you need to run realtime signs in a local docker container, there are a few e
 4. Run the image in a container with `docker run --env-file env.list [IMAG TAG]`
 
 ## Environment variables
-Environment variables are stored in AWS Secrets Manager. If a new env variable needs to be added, Secrets Manager will need to be updated and then the application will need to be re-deployed.
 
-### Relevant Environment Variables
-
-* `SIGN_HEAD_END_HOST`: hostname or IP of the head-end server that drives the actual physical signs, which `realtime_signs` pushes data to. Leave empty to skip the physical sign update.
-* `SIGN_UI_URL`: hostname or IP of the instance of `signs_ui` to which `realtime_signs` pushes data. Leave empty to skip updating the UI.
-* `SIGN_UI_API_KEY`: API key used when making requests to `signs_ui`. Not set by default.
-* `TRIP_UPDATE_URL` and `VEHICLE_POSITIONS_URL`: URLs of the enhanced trip-update and vehicle-position feeds. Default to the real feed URLs.
-* `API_V3_KEY` and `API_V3_URL`: Access key and URL for V3 API. Default respectively to a blank string and the URL of the dev-green API instance.
-* `CHELSEA_BRIDGE_URL` and `CHELSEA_BRIDGE_AUTH`: URL and auth key for the Chelsea bridge API. These values can be found in the shared 1Password vault, in the "Chelsea Street Bridge Application" entry, in fields `url` and `auth`.
-* `NUMBER_OF_HTTP_UPDATERS`: Number of `PaEss.HttpUpdater` processes that should run. These are responsible for posting updates to the PA/ESS head-end server, so this number is also the number of concurrent HTTP requests to that server.
+The application needs several environment variables to access external services. See `.envrc.template` for documentation. When running locally, these variables are provided by `direnv`. In deployed environments, they are provided by AWS Secrets Manager. When adding new environment variables, make sure to add them to both locations, as appropriate.
 
 ## Deploying
 

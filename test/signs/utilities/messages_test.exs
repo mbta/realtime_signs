@@ -13,57 +13,53 @@ defmodule Signs.Utilities.MessagesTest do
   end
 
   defmodule FakePredictions do
-    def for_stop("1", 0) do
-      [
-        %Predictions.Prediction{
-          stop_id: "1",
-          direction_id: 0,
-          route_id: "Red",
-          stopped?: false,
-          stops_away: 1,
-          destination_stop_id: "70093",
-          seconds_until_arrival: 120,
-          seconds_until_departure: 180
-        },
-        %Predictions.Prediction{
-          stop_id: "1",
-          direction_id: 0,
-          route_id: "Red",
-          stopped?: false,
-          stops_away: 1,
-          destination_stop_id: "70093",
-          seconds_until_arrival: 240,
-          seconds_until_departure: 300
-        }
-      ]
-    end
-
-    def for_stop("no_departures", 0) do
-      [
-        %Predictions.Prediction{
-          stop_id: "1",
-          direction_id: 0,
-          route_id: "Red",
-          stopped?: false,
-          stops_away: 1,
-          destination_stop_id: "70093",
-          seconds_until_arrival: 120
-        },
-        %Predictions.Prediction{
-          stop_id: "1",
-          direction_id: 0,
-          route_id: "Red",
-          stopped?: false,
-          stops_away: 1,
-          destination_stop_id: "70093",
-          seconds_until_arrival: 240
-        }
-      ]
-    end
-
     def for_stop(_stop_id, _direction_id), do: []
     def stopped_at?(_stop_id), do: false
   end
+
+  @predictions [
+    %Predictions.Prediction{
+      stop_id: "1",
+      direction_id: 0,
+      route_id: "Red",
+      stopped?: false,
+      stops_away: 1,
+      destination_stop_id: "70093",
+      seconds_until_arrival: 120,
+      seconds_until_departure: 180
+    },
+    %Predictions.Prediction{
+      stop_id: "1",
+      direction_id: 0,
+      route_id: "Red",
+      stopped?: false,
+      stops_away: 1,
+      destination_stop_id: "70093",
+      seconds_until_arrival: 240,
+      seconds_until_departure: 300
+    }
+  ]
+
+  @nd_predictions [
+    %Predictions.Prediction{
+      stop_id: "1",
+      direction_id: 0,
+      route_id: "Red",
+      stopped?: false,
+      stops_away: 1,
+      destination_stop_id: "70093",
+      seconds_until_arrival: 120
+    },
+    %Predictions.Prediction{
+      stop_id: "1",
+      direction_id: 0,
+      route_id: "Red",
+      stopped?: false,
+      stops_away: 1,
+      destination_stop_id: "70093",
+      seconds_until_arrival: 240
+    }
+  ]
 
   defmodule FakeDepartures do
     @test_departure_time Timex.to_datetime(~N[2019-08-29 15:41:31], "America/New_York")
@@ -98,17 +94,15 @@ defmodule Signs.Utilities.MessagesTest do
     text_id: {"TEST", "x"},
     audio_id: {"TEST", ["x"]},
     source_config: %{sources: [@src]},
-    current_content_top: {@src, %Content.Message.Predictions{destination: :alewife, minutes: 4}},
-    current_content_bottom:
-      {@src, %Content.Message.Predictions{destination: :ashmont, minutes: 3}},
+    current_content_top: %Content.Message.Predictions{destination: :alewife, minutes: 4},
+    current_content_bottom: %Content.Message.Predictions{destination: :ashmont, minutes: 3},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     last_departure_engine: FakeDepartures,
     config_engine: Engine.Config,
     alerts_engine: FakeAlerts,
     sign_updater: FakeUpdater,
-    tick_bottom: 1,
-    tick_top: 1,
+    tick_content: 1,
     tick_audit: 240,
     tick_read: 1,
     expiration_seconds: 100,
@@ -121,9 +115,9 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = {:static_text, {"Test message", "Please ignore"}}
       alert_status = :suspension_closed_station
 
-      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{nil, Content.Message.Custom.new("Test message", :top)},
-                {nil, Content.Message.Custom.new("Please ignore", :bottom)}}
+      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+               {Content.Message.Custom.new("Test message", :top),
+                Content.Message.Custom.new("Please ignore", :bottom)}
     end
 
     test "when sign is disabled, it's empty" do
@@ -131,8 +125,8 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :off
       alert_status = :none
 
-      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+               {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
     test "when sign is at a transfer station from a shuttle, and there are no predictions it's empty" do
@@ -141,15 +135,15 @@ defmodule Signs.Utilities.MessagesTest do
       sign = %{
         @sign
         | source_config: %{sources: [src]},
-          current_content_top: {src, Content.Message.Empty.new()},
-          current_content_bottom: {src, Content.Message.Empty.new()}
+          current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new()
       }
 
       sign_config = :auto
       alert_status = :shuttles_transfer_station
 
-      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+               {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
     test "when sign is at a transfer station from a suspension, and there are no predictions it's empty" do
@@ -165,8 +159,8 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :suspension_transfer_station
 
-      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+      assert Messages.get_messages([], sign, sign_config, Timex.now(), alert_status) ==
+               {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
     test "when sign is at a transfer station, and there are no departure predictions it's empty" do
@@ -175,15 +169,15 @@ defmodule Signs.Utilities.MessagesTest do
       sign = %{
         @sign
         | source_config: %{sources: [src]},
-          current_content_top: {src, Content.Message.Empty.new()},
-          current_content_bottom: {src, Content.Message.Empty.new()}
+          current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new()
       }
 
       sign_config = :auto
       alert_status = :shuttles_transfer_station
 
-      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+               {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
     test "when sign is at a transfer station, but there are departure predictions it shows them" do
@@ -191,27 +185,29 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_transfer_station
 
-      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{@src,
+      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+               {
                  %Content.Message.Predictions{
                    destination: :ashmont,
+                   direction_id: 0,
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
                    width: 18,
                    station_code: "TEST",
                    zone: "x"
-                 }},
-                {@src,
+                 },
                  %Content.Message.Predictions{
                    destination: :ashmont,
+                   direction_id: 0,
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
                    width: 18,
                    station_code: "TEST",
                    zone: "x"
-                 }}}
+                 }
+               }
     end
 
     test "when sign is at a station closed by shuttles and there are no departure predictions, it says so" do
@@ -220,16 +216,15 @@ defmodule Signs.Utilities.MessagesTest do
       sign = %{
         @sign
         | source_config: %{sources: [src]},
-          current_content_top: {src, Content.Message.Empty.new()},
-          current_content_bottom: {src, Content.Message.Empty.new()}
+          current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new()
       }
 
       sign_config = :auto
       alert_status = :shuttles_closed_station
 
-      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{nil, %Content.Message.Alert.NoService{}},
-                {nil, %Content.Message.Alert.UseShuttleBus{}}}
+      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+               {%Content.Message.Alert.NoService{}, %Content.Message.Alert.UseShuttleBus{}}
     end
 
     test "when sign is at a station closed and there are no departure predictions, but shuttles do not run at this station" do
@@ -238,16 +233,16 @@ defmodule Signs.Utilities.MessagesTest do
       sign = %{
         @sign
         | source_config: %{sources: [src]},
-          current_content_top: {src, Content.Message.Empty.new()},
-          current_content_bottom: {src, Content.Message.Empty.new()},
+          current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new(),
           uses_shuttles: false
       }
 
       sign_config = :auto
       alert_status = :shuttles_closed_station
 
-      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{nil, %Content.Message.Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
+      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+               {%Content.Message.Alert.NoService{}, Content.Message.Empty.new()}
     end
 
     test "when sign is at a station closed by shuttles and there are departure predictions, it shows them" do
@@ -256,34 +251,36 @@ defmodule Signs.Utilities.MessagesTest do
       sign = %{
         @sign
         | source_config: %{sources: [src]},
-          current_content_top: {src, Content.Message.Empty.new()},
-          current_content_bottom: {src, Content.Message.Empty.new()}
+          current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new()
       }
 
       sign_config = :auto
       alert_status = :shuttles_closed_station
 
-      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{src,
+      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+               {
                  %Content.Message.Predictions{
                    destination: :ashmont,
+                   direction_id: 0,
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
                    width: 18,
                    station_code: "TEST",
                    zone: "x"
-                 }},
-                {src,
+                 },
                  %Content.Message.Predictions{
                    destination: :ashmont,
+                   direction_id: 0,
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
                    width: 18,
                    station_code: "TEST",
                    zone: "x"
-                 }}}
+                 }
+               }
     end
 
     test "when sign is at a station closed due to suspension and there are no departure predictions, it says so" do
@@ -292,15 +289,15 @@ defmodule Signs.Utilities.MessagesTest do
       sign = %{
         @sign
         | source_config: %{sources: [src]},
-          current_content_top: {src, Content.Message.Empty.new()},
-          current_content_bottom: {src, Content.Message.Empty.new()}
+          current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new()
       }
 
       alert_status = :suspension_closed_station
       sign_config = :auto
 
-      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{nil, %Content.Message.Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
+      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+               {%Content.Message.Alert.NoService{}, Content.Message.Empty.new()}
     end
 
     test "when sign is at a closed station and there are no departure predictions, it says so" do
@@ -309,15 +306,15 @@ defmodule Signs.Utilities.MessagesTest do
       sign = %{
         @sign
         | source_config: %{sources: [src]},
-          current_content_top: {src, Content.Message.Empty.new()},
-          current_content_bottom: {src, Content.Message.Empty.new()}
+          current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new()
       }
 
       alert_status = :station_closure
       sign_config = :auto
 
-      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{nil, %Content.Message.Alert.NoService{}}, {nil, Content.Message.Empty.new()}}
+      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+               {%Content.Message.Alert.NoService{}, Content.Message.Empty.new()}
     end
 
     test "when sign is at a station closed due to suspension and there are departure predictions, it shows them" do
@@ -326,34 +323,36 @@ defmodule Signs.Utilities.MessagesTest do
       sign = %{
         @sign
         | source_config: %{sources: [src]},
-          current_content_top: {src, Content.Message.Empty.new()},
-          current_content_bottom: {src, Content.Message.Empty.new()}
+          current_content_top: Content.Message.Empty.new(),
+          current_content_bottom: Content.Message.Empty.new()
       }
 
       alert_status = :suspension_closed_station
       sign_config = :auto
 
-      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{src,
+      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+               {
                  %Content.Message.Predictions{
                    destination: :ashmont,
+                   direction_id: 0,
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
                    width: 18,
                    station_code: "TEST",
                    zone: "x"
-                 }},
-                {src,
+                 },
                  %Content.Message.Predictions{
                    destination: :ashmont,
+                   direction_id: 0,
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
                    width: 18,
                    station_code: "TEST",
                    zone: "x"
-                 }}}
+                 }
+               }
     end
 
     test "when there are predictions, puts predictions on the sign" do
@@ -361,27 +360,29 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :none
 
-      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{@src,
+      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+               {
                  %Content.Message.Predictions{
                    destination: :ashmont,
+                   direction_id: 0,
                    minutes: 2,
                    route_id: "Red",
                    stop_id: "1",
                    width: 18,
                    station_code: "TEST",
                    zone: "x"
-                 }},
-                {@src,
+                 },
                  %Content.Message.Predictions{
                    destination: :ashmont,
+                   direction_id: 0,
                    minutes: 4,
                    route_id: "Red",
                    stop_id: "1",
                    width: 18,
                    station_code: "TEST",
                    zone: "x"
-                 }}}
+                 }
+               }
     end
 
     test "when there are no predictions and only one source config, puts headways on the sign" do
@@ -400,17 +401,17 @@ defmodule Signs.Utilities.MessagesTest do
 
       current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
-      assert Messages.get_messages(sign, sign_config, current_time, alert_status) ==
-               {{nil,
+      assert Messages.get_messages([], sign, sign_config, current_time, alert_status) ==
+               {
                  %Content.Message.Headways.Top{
                    destination: :mattapan,
                    vehicle_type: :train
-                 }},
-                {nil,
+                 },
                  %Content.Message.Headways.Bottom{
                    range: {8, 11},
                    prev_departure_mins: nil
-                 }}}
+                 }
+               }
     end
 
     test "when there are no predictions and more than one source config, puts nothing on the sign" do
@@ -426,8 +427,8 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :none
 
-      assert Messages.get_messages(sign, sign_config, Timex.now(), alert_status) ==
-               {{nil, Content.Message.Empty.new()}, {nil, Content.Message.Empty.new()}}
+      assert Messages.get_messages([], sign, sign_config, Timex.now(), alert_status) ==
+               {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
     test "when sign is forced into headway mode but no alerts are present, displays headways" do
@@ -440,13 +441,13 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :headway
       alert_status = :none
 
-      assert {{_,
+      assert {
                %Content.Message.Headways.Top{
                  destination: :mattapan,
                  vehicle_type: :train
-               }},
-              {_, %Content.Message.Headways.Bottom{range: {8, 11}}}} =
-               Messages.get_messages(sign, sign_config, Timex.now(), alert_status)
+               },
+               %Content.Message.Headways.Bottom{range: {8, 11}}
+             } = Messages.get_messages([], sign, sign_config, Timex.now(), alert_status)
     end
 
     test "when sign is forced into headway mode but alerts are present, alert takes precedence" do
@@ -454,8 +455,8 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :headway
       alert_status = :station_closure
 
-      assert {{_, %Content.Message.Alert.NoService{}}, {_, %Content.Message.Empty{}}} =
-               Messages.get_messages(sign, sign_config, Timex.now(), alert_status)
+      assert {%Content.Message.Alert.NoService{}, %Content.Message.Empty{}} =
+               Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status)
     end
   end
 end

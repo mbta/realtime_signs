@@ -9,7 +9,7 @@ defmodule MessageQueue do
   @behaviour PaEss.Updater
 
   @type message :: {
-          :update_single_line | :update_sign | :send_audio,
+          :update_sign | :send_audio,
           [term()]
         }
 
@@ -35,24 +35,19 @@ defmodule MessageQueue do
   end
 
   @impl PaEss.Updater
-  def update_single_line(pid \\ __MODULE__, text_id, line_no, msg, duration, start) do
+  def update_sign(pid \\ __MODULE__, text_id, top_line, bottom_line, duration, start, sign_id) do
     GenServer.call(
       pid,
-      {:queue_update, {:update_single_line, [text_id, line_no, msg, duration, start]}}
+      {:queue_update, {:update_sign, [text_id, top_line, bottom_line, duration, start, sign_id]}}
     )
   end
 
   @impl PaEss.Updater
-  def update_sign(pid \\ __MODULE__, text_id, top_line, bottom_line, duration, start) do
+  def send_audio(pid \\ __MODULE__, audio_id, audios, priority, timeout, sign_id) do
     GenServer.call(
       pid,
-      {:queue_update, {:update_sign, [text_id, top_line, bottom_line, duration, start]}}
+      {:queue_update, {:send_audio, [audio_id, audios, priority, timeout, sign_id]}}
     )
-  end
-
-  @impl PaEss.Updater
-  def send_audio(pid \\ __MODULE__, audio_id, audios, priority, timeout) do
-    GenServer.call(pid, {:queue_update, {:send_audio, [audio_id, audios, priority, timeout]}})
   end
 
   @spec get_message(GenServer.server()) :: message() | nil
