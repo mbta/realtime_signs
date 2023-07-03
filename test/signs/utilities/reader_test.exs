@@ -40,10 +40,9 @@ defmodule Signs.Utilities.ReaderTest do
     config_engine: Engine.Config,
     alerts_engine: nil,
     sign_updater: FakeUpdater,
-    tick_content: 1,
+    last_update: Timex.now(),
     tick_audit: 240,
     tick_read: 1,
-    expiration_seconds: 100,
     read_period_seconds: 100
   }
 

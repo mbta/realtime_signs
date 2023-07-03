@@ -101,10 +101,9 @@ defmodule Signs.RealtimeTest do
     config_engine: FakeConfigEngine,
     alerts_engine: FakeAlerts,
     sign_updater: FakeUpdater,
-    tick_content: 1,
+    last_update: Timex.now(),
     tick_read: 1,
     tick_audit: 1,
-    expiration_seconds: 100,
     read_period_seconds: 100
   }
 
@@ -131,14 +130,13 @@ defmodule Signs.RealtimeTest do
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
       refute_received({:send_audio, _, _, _, _})
       refute_received({:update_sign, _, _, _, _, _})
-      assert sign.tick_content == 0
       assert sign.tick_read == 0
     end
 
     test "expires content on both lines when tick is zero" do
       sign = %{
         @sign
-        | tick_content: 0,
+        | last_update: Timex.shift(Timex.now(), seconds: -200),
           current_content_top: %HT{destination: :southbound, vehicle_type: :train},
           current_content_bottom: %HB{range: {11, 13}}
       }
@@ -151,8 +149,6 @@ defmodule Signs.RealtimeTest do
       )
 
       refute_received({:send_audio, _, _, _, _})
-
-      assert sign.tick_content == 99
     end
 
     test "announces train passing through station" do
@@ -171,13 +167,11 @@ defmodule Signs.RealtimeTest do
     test "decrements all the ticks when all of them dont need to be reset" do
       sign = %{
         @sign
-        | tick_content: 100,
-          tick_read: 100
+        | tick_read: 100
       }
 
       sign = Signs.Realtime.decrement_ticks(sign)
 
-      assert sign.tick_content == 99
       assert sign.tick_read == 99
     end
   end
