@@ -30,7 +30,8 @@ defmodule Content.Message.Predictions do
     width: 18,
     platform: nil,
     new_cars?: false,
-    terminal?: false
+    terminal?: false,
+    certainty: nil
   ]
 
   @type t :: %__MODULE__{
@@ -45,7 +46,8 @@ defmodule Content.Message.Predictions do
           station_code: String.t() | nil,
           zone: String.t() | nil,
           platform: Content.platform() | nil,
-          terminal?: boolean()
+          terminal?: boolean(),
+          certainty: non_neg_integer() | nil
         }
 
   @spec non_terminal(
@@ -60,6 +62,11 @@ defmodule Content.Message.Predictions do
   def non_terminal(prediction, station_code, zone, platform, width) do
     # e.g., North Station which is non-terminal but has trips that begin there
     predicted_time = prediction.seconds_until_arrival || prediction.seconds_until_departure
+
+    certainty =
+      if prediction.seconds_until_arrival,
+        do: prediction.arrival_certainty,
+        else: prediction.departure_certainty
 
     minutes =
       cond do
@@ -87,7 +94,8 @@ defmodule Content.Message.Predictions do
           new_cars?: prediction.new_cars?,
           station_code: station_code,
           zone: zone,
-          platform: platform
+          platform: platform,
+          certainty: certainty
         }
 
       {:error, _} ->
@@ -125,7 +133,8 @@ defmodule Content.Message.Predictions do
           direction_id: prediction.direction_id,
           width: width,
           new_cars?: prediction.new_cars?,
-          terminal?: true
+          terminal?: true,
+          certainty: prediction.departure_certainty
         }
 
       {:error, _} ->
