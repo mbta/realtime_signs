@@ -11,9 +11,28 @@ defmodule Content.Message.Headways.Top do
 
   defimpl Content.Message do
     def to_string(%Content.Message.Headways.Top{
-          destination: nil,
           vehicle_type: type,
-          line: nil
+          line: line
+        })
+        when not is_nil(line) do
+      cond do
+        line =~ "Mattapan" ->
+          "Mattapan #{signify_vehicle_type(type)}"
+
+        line =~ "train" ->
+          Content.Message.to_string(%Content.Message.Headways.Top{
+            destination: nil,
+            vehicle_type: :train
+          })
+
+        true ->
+          "#{line} #{signify_vehicle_type(type)}"
+      end
+    end
+
+    def to_string(%Content.Message.Headways.Top{
+          destination: nil,
+          vehicle_type: type
         }) do
       type |> signify_vehicle_type |> String.capitalize()
     end
@@ -28,29 +47,9 @@ defmodule Content.Message.Headways.Top do
 
     def to_string(%Content.Message.Headways.Top{
           destination: destination,
-          vehicle_type: type,
-          line: nil
+          vehicle_type: type
         }) do
       "#{PaEss.Utilities.destination_to_sign_string(destination)} #{signify_vehicle_type(type)}"
-    end
-
-    def to_string(%Content.Message.Headways.Top{
-          vehicle_type: type,
-          line: line
-        }) do
-      cond do
-        line =~ "Mattapan" ->
-          "Mattapan #{signify_vehicle_type(type)}"
-
-        line =~ "train" ->
-          Content.Message.to_string(%Content.Message.Headways.Top{
-            destination: nil,
-            vehicle_type: :train
-          })
-
-        true ->
-          "#{line} #{signify_vehicle_type(type)}"
-      end
     end
 
     @spec signify_vehicle_type(Content.Message.Headways.Top.vehicle_type()) :: String.t()
