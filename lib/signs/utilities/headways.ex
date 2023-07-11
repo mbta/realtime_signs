@@ -19,11 +19,23 @@ defmodule Signs.Utilities.Headways do
         {%Content.Message.Empty{}, %Content.Message.Empty{}}
 
       headways ->
-        {%Content.Message.Headways.Top{destination: destination, vehicle_type: :train},
-         %Content.Message.Headways.Bottom{
-           range: {headways.range_low, headways.range_high},
-           prev_departure_mins: nil
-         }}
+        if Signs.Utilities.SourceConfig.multi_source?(sign.source_config) do
+          line =
+            SourceConfig.sign_routes(sign.source_config)
+            |> PaEss.Utilities.get_line_from_routes_list()
+
+          {%Content.Message.Headways.Top{line: line, vehicle_type: :train},
+           %Content.Message.Headways.Bottom{
+             range: {headways.range_low, headways.range_high},
+             prev_departure_mins: nil
+           }}
+        else
+          {%Content.Message.Headways.Top{destination: destination, vehicle_type: :train},
+           %Content.Message.Headways.Bottom{
+             range: {headways.range_low, headways.range_high},
+             prev_departure_mins: nil
+           }}
+        end
     end
   end
 
