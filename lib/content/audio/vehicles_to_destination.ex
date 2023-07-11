@@ -20,7 +20,8 @@ defmodule Content.Audio.VehiclesToDestination do
   def from_headway_message(
         %Content.Message.Headways.Top{destination: nil, line: line},
         %Content.Message.Headways.Bottom{range: range}
-      ) do
+      )
+      when not is_nil(line) do
     [
       %__MODULE__{
         language: :english,
