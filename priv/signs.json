@@ -1562,7 +1562,7 @@
     ],
     "source_config": {
       "headway_group": "orange_trunk",
-      "headway_direction_name": null,
+      "headway_direction_name": "Forest Hills",
       "sources": [
         {
           "stop_id": "70032",
