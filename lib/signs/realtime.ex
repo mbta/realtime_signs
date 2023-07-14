@@ -119,6 +119,22 @@ defmodule Signs.Realtime do
     time_zone = Application.get_env(:realtime_signs, :time_zone)
     {:ok, current_time} = DateTime.utc_now() |> DateTime.shift_zone(time_zone)
 
+    first_scheduled_departures =
+      case sign.source_config do
+        {top, bottom} ->
+          {
+            {sign.headway_engine.get_first_scheduled_departure(SourceConfig.sign_stop_ids(top)),
+             top.headway_destination},
+            {sign.headway_engine.get_first_scheduled_departure(
+               SourceConfig.sign_stop_ids(bottom)
+             ), bottom.headway_destination}
+          }
+
+        source ->
+          {sign.headway_engine.get_first_scheduled_departure(sign_stop_ids),
+           source.headway_destination}
+      end
+
     predictions =
       case sign.source_config do
         {top, bottom} -> {fetch_predictions(top, sign), fetch_predictions(bottom, sign)}
@@ -131,7 +147,8 @@ defmodule Signs.Realtime do
         sign,
         sign_config,
         current_time,
-        alert_status
+        alert_status,
+        first_scheduled_departures
       )
 
     sign =

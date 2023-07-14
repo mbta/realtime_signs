@@ -105,4 +105,10 @@ defmodule Content.Utilities do
   def route_branch_letter("Green-D"), do: :d
   def route_branch_letter("Green-E"), do: :e
   def route_branch_letter(_), do: nil
+
+  def format_minutes(minutes) do
+    if minutes < 10,
+      do: "0#{minutes}",
+      else: "#{minutes}"
+  end
 end
