@@ -4,8 +4,7 @@ defmodule Signs.Utilities.EarlyAmSuppression do
   alias Content.Message.EarlyAm
 
   @doc "Swaps the top and bottom first scheduled departures when the destinations don't match up.
-        This is possible when the top line wants to page headways and the messages get switched.
-  "
+        This is possible when the top line wants to page headways and the messages get switched."
   def align_schedules(scheduled, messages) do
     case scheduled do
       {{top_scheduled, top_dest}, {bottom_scheduled, bottom_dest}} ->
@@ -118,33 +117,6 @@ defmodule Signs.Utilities.EarlyAmSuppression do
     end
   end
 
-  defp map_to_single_line_content(message) do
-    case message do
-      {%EarlyAm.DestinationTrain{} = m1, m2} ->
-        %EarlyAm.DestinationScheduledTime{
-          destination: m1.destination,
-          scheduled_time: m2.scheduled_time
-        }
-
-      {%Headways.Top{} = m1, m2} ->
-        %Headways.Paging{destination: m1.destination, range: m2.range}
-
-      {m1, _} ->
-        m1
-    end
-  end
-
-  defp paginate(top_content, bottom_content) do
-    [top, bottom] = Enum.zip(Tuple.to_list(top_content), Tuple.to_list(bottom_content))
-
-    {%Message.GenericPaging{
-       messages: Tuple.to_list(top)
-     },
-     %Message.GenericPaging{
-       messages: Tuple.to_list(bottom)
-     }}
-  end
-
   defp get_mezzanine_early_am_content(
          messages,
          sign,
@@ -225,7 +197,6 @@ defmodule Signs.Utilities.EarlyAmSuppression do
     end
   end
 
-  @doc "Filters predictions based on certainty during early AM hours with the exception of Symphony and Prudential EB"
   defp filter_early_am_messages(messages, sign_id) do
     Tuple.to_list(messages)
     |> Enum.map(fn
@@ -252,6 +223,35 @@ defmodule Signs.Utilities.EarlyAmSuppression do
     end)
     |> List.to_tuple()
   end
+
+  defp map_to_single_line_content(message) do
+    case message do
+      {%EarlyAm.DestinationTrain{} = m1, m2} ->
+        %EarlyAm.DestinationScheduledTime{
+          destination: m1.destination,
+          scheduled_time: m2.scheduled_time
+        }
+
+      {%Headways.Top{} = m1, m2} ->
+        %Headways.Paging{destination: m1.destination, range: m2.range}
+
+      {m1, _} ->
+        m1
+    end
+  end
+
+  defp paginate(top_content, bottom_content) do
+    [top, bottom] = Enum.zip(Tuple.to_list(top_content), Tuple.to_list(bottom_content))
+
+    {%Message.GenericPaging{
+       messages: Tuple.to_list(top)
+     },
+     %Message.GenericPaging{
+       messages: Tuple.to_list(bottom)
+     }}
+  end
+
+  @doc "Filters predictions based on certainty during early AM hours with the exception of Symphony and Prudential EB"
 
   def get_early_am_state(
         current_time,
