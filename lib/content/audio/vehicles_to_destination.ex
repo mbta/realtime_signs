@@ -7,27 +7,27 @@ defmodule Content.Audio.VehiclesToDestination do
   alias PaEss.Utilities
 
   @enforce_keys [:language, :destination, :headway_range]
-  defstruct @enforce_keys ++ [:previous_departure_mins, :line]
+  defstruct @enforce_keys ++ [:previous_departure_mins, :routes]
 
   @type t :: %__MODULE__{
           language: Content.Audio.language(),
           destination: PaEss.destination() | nil,
           headway_range: Headway.HeadwayDisplay.headway_range(),
           previous_departure_mins: integer() | nil,
-          line: String.t() | nil
+          routes: [String.t()] | nil
         }
 
   def from_headway_message(
-        %Content.Message.Headways.Top{destination: nil, line: line},
+        %Content.Message.Headways.Top{destination: nil, routes: routes},
         %Content.Message.Headways.Bottom{range: range}
       )
-      when not is_nil(line) do
+      when not is_nil(routes) do
     [
       %__MODULE__{
         language: :english,
         destination: nil,
         headway_range: range,
-        line: line
+        routes: routes
       }
     ]
   end
@@ -98,14 +98,19 @@ defmodule Content.Audio.VehiclesToDestination do
     alias PaEss.Utilities
 
     def to_params(%Content.Audio.VehiclesToDestination{
-          line: line,
+          routes: routes,
           headway_range: {range_low, range_high}
         })
-        when not is_nil(line) do
-      if line =~ "train" do
-        {:ad_hoc, {"Trains every #{range_low} to #{range_high} minutes.", :audio}}
-      else
-        {:ad_hoc, {"#{line} trains every #{range_low} to #{range_high} minutes.", :audio}}
+        when not is_nil(routes) do
+      case routes do
+        ["Mattapan"] ->
+          {:ad_hoc, {"Mattapan trains every #{range_low} to #{range_high} minutes.", :audio}}
+
+        [route] ->
+          {:ad_hoc, {"#{route} line trains every #{range_low} to #{range_high} minutes.", :audio}}
+
+        _ ->
+          {:ad_hoc, {"Trains every #{range_low} to #{range_high} minutes.", :audio}}
       end
     end
 

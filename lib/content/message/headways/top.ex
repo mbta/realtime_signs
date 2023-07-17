@@ -1,32 +1,32 @@
 defmodule Content.Message.Headways.Top do
   require Logger
-  defstruct [:destination, :vehicle_type, :line]
+  defstruct [:destination, :vehicle_type, :routes]
 
   @type vehicle_type :: :bus | :trolley | :train
   @type t :: %__MODULE__{
           destination: PaEss.destination() | nil,
           vehicle_type: vehicle_type,
-          line: String.t() | nil
+          routes: [String.t()] | nil
         }
 
   defimpl Content.Message do
     def to_string(%Content.Message.Headways.Top{
           vehicle_type: type,
-          line: line
+          routes: routes
         })
-        when not is_nil(line) do
-      cond do
-        line =~ "Mattapan" ->
+        when not is_nil(routes) do
+      case routes do
+        ["Mattapan"] ->
           "Mattapan #{signify_vehicle_type(type)}"
 
-        line =~ "train" ->
+        [route] ->
+          "#{route} line #{signify_vehicle_type(type)}"
+
+        _ ->
           Content.Message.to_string(%Content.Message.Headways.Top{
             destination: nil,
             vehicle_type: :train
           })
-
-        true ->
-          "#{line} #{signify_vehicle_type(type)}"
       end
     end
 

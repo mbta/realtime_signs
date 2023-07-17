@@ -328,13 +328,14 @@ defmodule PaEss.Utilities do
   def line_to_var("Mattapan Line"), do: "3009"
   def line_to_var(_), do: "864"
 
-  def get_line_from_routes_list(routes) do
-    unique_routes =
-      routes
-      |> Enum.map(fn route -> route |> String.split("-") |> List.first() end)
-      |> Enum.uniq()
+  def get_unique_routes(routes) do
+    routes
+    |> Enum.map(fn route -> route |> String.split("-") |> List.first() end)
+    |> Enum.uniq()
+  end
 
-    case unique_routes do
+  def get_line_from_routes_list(routes) do
+    case get_unique_routes(routes) do
       [route] ->
         "#{route} Line"
 
