@@ -3,7 +3,7 @@ defmodule Content.Message.EarlyAm.ScheduledTime do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          scheduled_time: DateTime.t() | {DateTime.t(), DateTime.t()}
+          scheduled_time: DateTime.t()
         }
 
   defimpl Content.Message do

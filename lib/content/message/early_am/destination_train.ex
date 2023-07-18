@@ -3,7 +3,7 @@ defmodule Content.Message.EarlyAm.DestinationTrain do
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          destination: PaEss.destination() | {PaEss.destination(), PaEss.destination()}
+          destination: PaEss.destination()
         }
 
   defimpl Content.Message do

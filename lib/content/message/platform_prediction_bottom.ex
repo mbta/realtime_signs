@@ -8,15 +8,9 @@ defmodule Content.Message.PlatformPredictionBottom do
 
   defimpl Content.Message do
     def to_string(%Content.Message.PlatformPredictionBottom{stop_id: stop_id, minutes: minutes}) do
-      if minutes == :max_time or (is_integer(minutes) and minutes > 5) do
-        [
-          {"platform TBD", 6}
-        ]
-      else
-        [
-          {"on #{Content.Utilities.stop_platform_name(stop_id)} platform", 6}
-        ]
-      end
+      if minutes == :max_time or (is_integer(minutes) and minutes > 5),
+        do: "platform TBD",
+        else: "on #{Content.Utilities.stop_platform_name(stop_id)} platform"
     end
   end
 end

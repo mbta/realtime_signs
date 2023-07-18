@@ -3,35 +3,6 @@ defmodule Signs.Utilities.EarlyAmSuppression do
   alias Content.Message.Headways
   alias Content.Message.EarlyAm
 
-  @doc "Swaps the top and bottom first scheduled departures when the destinations don't match up.
-        This is possible when the top line wants to page headways and the messages get switched."
-  def align_schedules(scheduled, messages) do
-    case scheduled do
-      {{top_scheduled, top_dest}, {bottom_scheduled, bottom_dest}} ->
-        case messages do
-          {%Message.Empty{}, _} ->
-            scheduled
-
-          {%Message.GenericPaging{messages: [m1 | _]}, _} ->
-            if m1.destination == top_dest do
-              scheduled
-            else
-              {{bottom_scheduled, bottom_dest}, {top_scheduled, top_dest}}
-            end
-
-          {m1, _} ->
-            if m1.destination == top_dest do
-              scheduled
-            else
-              {{bottom_scheduled, bottom_dest}, {top_scheduled, top_dest}}
-            end
-        end
-
-      _ ->
-        scheduled
-    end
-  end
-
   def do_early_am_suppression(
         messages,
         current_time,
@@ -45,7 +16,7 @@ defmodule Signs.Utilities.EarlyAmSuppression do
           get_mezzanine_early_am_content(
             messages,
             sign,
-            schedule,
+            align_schedules(schedule, messages),
             early_am_status,
             current_time
           )
@@ -60,6 +31,7 @@ defmodule Signs.Utilities.EarlyAmSuppression do
                   match?({%Headways.Top{}, _}, top_content) ->
                 {bottom, _} = bottom_content
 
+                # Set zone to nil to prevent usual paging behavior for RJFK Mezzanine
                 paginate(
                   top_content,
                   {%{bottom | zone: nil},
@@ -101,6 +73,9 @@ defmodule Signs.Utilities.EarlyAmSuppression do
             {bottom, _} = bottom_content
             {top, bottom}
 
+          match?({{%Headways.Top{}, _}, {%Headways.Top{}, _}}, {top_content, bottom_content}) ->
+            top_content
+
           true ->
             paginate(top_content, bottom_content)
         end
@@ -110,10 +85,39 @@ defmodule Signs.Utilities.EarlyAmSuppression do
           sign,
           sign.source_config,
           messages,
-          schedule,
+          align_schedules(schedule, messages),
           status,
           current_time
         )
+    end
+  end
+
+  # Swaps the top and bottom first scheduled departures when the destinations don't match up.
+  # This is possible when the top line wants to page headways and the messages get switched.
+  defp align_schedules(scheduled, messages) do
+    case scheduled do
+      {{top_scheduled, top_dest}, {bottom_scheduled, bottom_dest}} ->
+        case messages do
+          {%Message.Empty{}, _} ->
+            scheduled
+
+          {%Message.GenericPaging{messages: [m1 | _]}, _} ->
+            if m1.destination == top_dest do
+              scheduled
+            else
+              {{bottom_scheduled, bottom_dest}, {top_scheduled, top_dest}}
+            end
+
+          {m1, _} ->
+            if m1.destination == top_dest do
+              scheduled
+            else
+              {{bottom_scheduled, bottom_dest}, {top_scheduled, top_dest}}
+            end
+        end
+
+      _ ->
+        scheduled
     end
   end
 

@@ -68,8 +68,6 @@ defmodule Signs.Utilities.Messages do
         messages
 
       alert_status in [:none, :alert_along_route] and sign_config == :auto ->
-        scheduled = Signs.Utilities.EarlyAmSuppression.align_schedules(scheduled, messages)
-
         Signs.Utilities.EarlyAmSuppression.do_early_am_suppression(
           messages,
           current_time,
