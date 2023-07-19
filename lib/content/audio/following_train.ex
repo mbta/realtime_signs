@@ -60,36 +60,51 @@ defmodule Content.Audio.FollowingTrain do
     def to_params(audio) do
       case Utilities.destination_var(audio.destination) do
         {:ok, dest_var} ->
-          green_line_branch = Content.Utilities.route_branch_letter(audio.route_id)
+          if audio.destination in [
+               :southbound,
+               :northbound,
+               :westbound,
+               :eastbound,
+               :inbound,
+               :outbound
+             ] do
+            do_ad_hoc_message(audio)
+          else
+            green_line_branch = Content.Utilities.route_branch_letter(audio.route_id)
 
-          cond do
-            !is_nil(green_line_branch) ->
-              green_line_with_branch_params(audio, green_line_branch, dest_var)
+            cond do
+              !is_nil(green_line_branch) ->
+                green_line_with_branch_params(audio, green_line_branch, dest_var)
 
-            audio.minutes == 1 ->
-              {:canned, {"159", [dest_var, verb_var(audio)], :audio}}
+              audio.minutes == 1 ->
+                {:canned, {"159", [dest_var, verb_var(audio)], :audio}}
 
-            true ->
-              {:canned, {"160", [dest_var, verb_var(audio), minutes_var(audio)], :audio}}
+              true ->
+                {:canned, {"160", [dest_var, verb_var(audio), minutes_var(audio)], :audio}}
+            end
           end
 
         {:error, :unknown} ->
-          case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
-            {:ok, trip_description} ->
-              min_or_mins = if audio.minutes == 1, do: "minute", else: "minutes"
+          do_ad_hoc_message(audio)
+      end
+    end
 
-              text =
-                "The following #{trip_description} #{audio.verb} in #{audio.minutes} #{min_or_mins}"
+    defp do_ad_hoc_message(audio) do
+      case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
+        {:ok, trip_description} ->
+          min_or_mins = if audio.minutes == 1, do: "minute", else: "minutes"
 
-              {:ad_hoc, {text, :audio}}
+          text =
+            "The following #{trip_description} #{audio.verb} in #{audio.minutes} #{min_or_mins}"
 
-            {:error, :unknown} ->
-              Logger.error(
-                "FollowingTrain.to_params unknown destination: #{inspect(audio.destination)}"
-              )
+          {:ad_hoc, {text, :audio}}
 
-              nil
-          end
+        {:error, :unknown} ->
+          Logger.error(
+            "FollowingTrain.to_params unknown destination: #{inspect(audio.destination)}"
+          )
+
+          nil
       end
     end
 

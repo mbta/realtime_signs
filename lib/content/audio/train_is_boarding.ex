@@ -25,24 +25,39 @@ defmodule Content.Audio.TrainIsBoarding do
     def to_params(audio) do
       case PaEss.Utilities.destination_var(audio.destination) do
         {:ok, destination_var} ->
-          do_to_params(audio, destination_var)
+          if audio.destination in [
+               :southbound,
+               :northbound,
+               :eastbound,
+               :westbound,
+               :inbound,
+               :outbound
+             ] do
+            do_ad_hoc_message(audio)
+          else
+            do_to_params(audio, destination_var)
+          end
 
         {:error, :unknown} ->
-          case PaEss.Utilities.ad_hoc_trip_description(audio.destination) do
-            {:ok, trip_description} ->
-              text =
-                if audio.track_number do
-                  "The next #{trip_description} is now boarding, on track #{audio.track_number}"
-                else
-                  "The next #{trip_description} is now boarding"
-                end
+          do_ad_hoc_message(audio)
+      end
+    end
 
-              {:ad_hoc, {text, :audio}}
+    defp do_ad_hoc_message(audio) do
+      case PaEss.Utilities.ad_hoc_trip_description(audio.destination) do
+        {:ok, trip_description} ->
+          text =
+            if audio.track_number do
+              "The next #{trip_description} is now boarding, on track #{audio.track_number}"
+            else
+              "The next #{trip_description} is now boarding"
+            end
 
-            {:error, :unknown} ->
-              Logger.error("TrainIsBoarding.to_params unknown destination: #{audio.destination}")
-              nil
-          end
+          {:ad_hoc, {text, :audio}}
+
+        {:error, :unknown} ->
+          Logger.error("TrainIsBoarding.to_params unknown destination: #{audio.destination}")
+          nil
       end
     end
 

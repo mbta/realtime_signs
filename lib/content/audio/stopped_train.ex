@@ -38,35 +38,50 @@ defmodule Content.Audio.StoppedTrain do
     def to_params(audio) do
       case PaEss.Utilities.destination_var(audio.destination) do
         {:ok, dest_var} ->
-          vars = [
-            @the_next,
-            @train_to,
-            dest_var,
-            @is,
-            @stopped,
-            number_var(audio.stops_away),
-            stops_away_var(audio.stops_away)
-          ]
+          if audio.destination in [
+               :southbound,
+               :northbound,
+               :eastbound,
+               :westbound,
+               :inbound,
+               :outbound
+             ] do
+            do_ad_hoc_message(audio)
+          else
+            vars = [
+              @the_next,
+              @train_to,
+              dest_var,
+              @is,
+              @stopped,
+              number_var(audio.stops_away),
+              stops_away_var(audio.stops_away)
+            ]
 
-          PaEss.Utilities.take_message(vars, :audio)
+            PaEss.Utilities.take_message(vars, :audio)
+          end
 
         {:error, :unknown} ->
-          case Utilities.ad_hoc_trip_description(audio.destination) do
-            {:ok, trip_description} ->
-              stop_or_stops = if audio.stops_away == 1, do: "stop", else: "stops"
+          do_ad_hoc_message(audio)
+      end
+    end
 
-              text =
-                "The next #{trip_description} is stopped #{audio.stops_away} #{stop_or_stops} away"
+    defp do_ad_hoc_message(audio) do
+      case Utilities.ad_hoc_trip_description(audio.destination) do
+        {:ok, trip_description} ->
+          stop_or_stops = if audio.stops_away == 1, do: "stop", else: "stops"
 
-              {:ad_hoc, {text, :audio}}
+          text =
+            "The next #{trip_description} is stopped #{audio.stops_away} #{stop_or_stops} away"
 
-            {:error, :unknown} ->
-              Logger.error(
-                "StoppedTrain.to_params unknown destination: #{inspect(audio.destination)}"
-              )
+          {:ad_hoc, {text, :audio}}
 
-              nil
-          end
+        {:error, :unknown} ->
+          Logger.error(
+            "StoppedTrain.to_params unknown destination: #{inspect(audio.destination)}"
+          )
+
+          nil
       end
     end
 

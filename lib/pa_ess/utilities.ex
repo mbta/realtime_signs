@@ -207,6 +207,12 @@ defmodule PaEss.Utilities do
   def destination_var(:heath_street), do: {:ok, "4204"}
   def destination_var(:union_square), do: {:ok, "695"}
   def destination_var(:medford_tufts), do: {:ok, "852"}
+  def destination_var(:southbound), do: {:ok, "787"}
+  def destination_var(:northbound), do: {:ok, "788"}
+  def destination_var(:eastbound), do: {:ok, "867"}
+  def destination_var(:westbound), do: {:ok, "868"}
+  def destination_var(:inbound), do: {:ok, "33003"}
+  def destination_var(:outbound), do: {:ok, "33004"}
   def destination_var(_), do: {:error, :unknown}
 
   @doc """

@@ -40,6 +40,16 @@ defmodule Content.Audio.NextTrainCountdown do
           green_line_branch = Content.Utilities.route_branch_letter(audio.route_id)
 
           cond do
+            audio.destination in [
+              :southbound,
+              :northbound,
+              :eastbound,
+              :westbound,
+              :inbound,
+              :outbound
+            ] ->
+              do_ad_hoc_message(audio)
+
             !is_nil(audio.track_number) ->
               terminal_track_params(audio, dest_var)
 
@@ -70,29 +80,30 @@ defmodule Content.Audio.NextTrainCountdown do
           end
 
         {:error, :unknown} ->
-          case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
-            {:ok, trip_description} ->
-              min_or_mins = if audio.minutes == 1, do: "minute", else: "minutes"
+          do_ad_hoc_message(audio)
+      end
+    end
 
-              text =
-                "The next #{trip_description} #{audio.verb} in #{audio.minutes} #{min_or_mins}"
+    defp do_ad_hoc_message(audio) do
+      case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
+        {:ok, trip_description} ->
+          min_or_mins = if audio.minutes == 1, do: "minute", else: "minutes"
 
-              text =
-                if audio.track_number do
-                  text <> " from track #{audio.track_number}"
-                else
-                  text
-                end
+          text = "The next #{trip_description} #{audio.verb} in #{audio.minutes} #{min_or_mins}"
 
-              {:ad_hoc, {text, :audio}}
+          text =
+            if audio.track_number do
+              text <> " from track #{audio.track_number}"
+            else
+              text
+            end
 
-            {:error, :unknown} ->
-              Logger.error(
-                "NextTrainCountdown unknown destination: #{inspect(audio.destination)}"
-              )
+          {:ad_hoc, {text, :audio}}
 
-              nil
-          end
+        {:error, :unknown} ->
+          Logger.error("NextTrainCountdown unknown destination: #{inspect(audio.destination)}")
+
+          nil
       end
     end
 
