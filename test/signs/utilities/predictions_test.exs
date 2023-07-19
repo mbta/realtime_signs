@@ -22,10 +22,9 @@ defmodule Signs.Utilities.PredictionsTest do
     config_engine: Engine.Config,
     alerts_engine: nil,
     sign_updater: FakeUpdater,
-    tick_content: 130,
+    last_update: Timex.now(),
     tick_audit: 240,
     tick_read: 240,
-    expiration_seconds: 130,
     read_period_seconds: 240
   }
 

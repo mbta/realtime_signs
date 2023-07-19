@@ -25,10 +25,9 @@ defmodule Signs.Realtime do
     :config_engine,
     :alerts_engine,
     :sign_updater,
-    :tick_content,
+    :last_update,
     :tick_audit,
     :tick_read,
-    :expiration_seconds,
     :read_period_seconds
   ]
 
@@ -60,10 +59,9 @@ defmodule Signs.Realtime do
           config_engine: module(),
           alerts_engine: module(),
           sign_updater: module(),
-          tick_content: non_neg_integer(),
+          last_update: DateTime.t(),
           tick_audit: non_neg_integer(),
           tick_read: non_neg_integer(),
-          expiration_seconds: non_neg_integer(),
           read_period_seconds: non_neg_integer(),
           announced_arrivals: [Predictions.Prediction.trip_id()],
           announced_approachings: [Predictions.Prediction.trip_id()],
@@ -94,10 +92,9 @@ defmodule Signs.Realtime do
       config_engine: config_engine,
       alerts_engine: alerts_engine,
       sign_updater: sign_updater,
-      tick_content: 130,
+      last_update: nil,
       tick_audit: 60,
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
-      expiration_seconds: 130,
       read_period_seconds: 240,
       headway_stop_id: Map.get(config, "headway_stop_id"),
       uses_shuttles: Map.get(config, "uses_shuttles", true)
@@ -154,14 +151,13 @@ defmodule Signs.Realtime do
     sign =
       sign
       |> announce_passthrough_trains(predictions)
-      |> Utilities.Updater.update_sign(new_top, new_bottom)
+      |> Utilities.Updater.update_sign(new_top, new_bottom, current_time)
       |> Utilities.Reader.do_interrupting_reads(
         sign.current_content_top,
         sign.current_content_bottom
       )
       |> Utilities.Reader.read_sign()
       |> log_headway_accuracy()
-      |> do_expiration()
       |> decrement_ticks()
 
     schedule_run_loop(self())
@@ -200,28 +196,11 @@ defmodule Signs.Realtime do
     end)
   end
 
-  @spec do_expiration(Signs.Realtime.t()) :: Signs.Realtime.t()
-  def do_expiration(%{tick_content: 0} = sign) do
-    sign.sign_updater.update_sign(
-      sign.text_id,
-      sign.current_content_top,
-      sign.current_content_bottom,
-      sign.expiration_seconds + 15,
-      :now,
-      sign.id
-    )
-
-    %{sign | tick_content: sign.expiration_seconds}
-  end
-
-  def do_expiration(sign), do: sign
-
   @spec decrement_ticks(Signs.Realtime.t()) :: Signs.Realtime.t()
   def decrement_ticks(sign) do
     %{
       sign
-      | tick_content: sign.tick_content - 1,
-        tick_audit: sign.tick_audit - 1,
+      | tick_audit: sign.tick_audit - 1,
         tick_read: sign.tick_read - 1
     }
   end

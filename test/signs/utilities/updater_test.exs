@@ -42,10 +42,9 @@ defmodule Signs.Utilities.UpdaterTest do
     config_engine: Engine.Config,
     alerts_engine: nil,
     sign_updater: FakeUpdater,
-    tick_content: 1,
+    last_update: Timex.now(),
     tick_audit: 240,
     tick_read: 60,
-    expiration_seconds: 100,
     read_period_seconds: 100
   }
 
@@ -54,21 +53,22 @@ defmodule Signs.Utilities.UpdaterTest do
       same_top = %P{destination: :alewife, minutes: 4}
       same_bottom = %P{destination: :ashmont, minutes: 3}
 
-      sign = Updater.update_sign(@sign, same_top, same_bottom)
+      sign = Updater.update_sign(@sign, same_top, same_bottom, Timex.now())
 
       refute_received({:send_audio, _, _, _, _, _})
       refute_received({:update_sign, _, _, _, _, _, _})
-      assert sign.tick_content == 1
+      assert sign.last_update == @sign.last_update
     end
 
     test "changes both lines if necessary" do
+      now = Timex.now()
       diff_top = %P{destination: :alewife, minutes: 3}
       diff_bottom = %P{destination: :ashmont, minutes: 2}
 
-      sign = Updater.update_sign(@sign, diff_top, diff_bottom)
+      sign = Updater.update_sign(@sign, diff_top, diff_bottom, now)
 
       assert_received({:update_sign, _id, %P{minutes: 3}, %P{minutes: 2}, _dur, _start, _sign_id})
-      assert sign.tick_content == 100
+      assert sign.last_update == now
     end
 
     test "doesn't do an interrupting read if new top is same as old bottom and is a boarding message" do
@@ -82,7 +82,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       diff_top = {src, %P{destination: :ashmont, minutes: :boarding}}
       diff_bottom = {src, %P{destination: :alewife, minutes: 19}}
-      Updater.update_sign(sign, diff_top, diff_bottom)
+      Updater.update_sign(sign, diff_top, diff_bottom, Timex.now())
       refute_received({:send_audio, _, _, _, _, _})
     end
 
@@ -97,7 +97,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       log =
         capture_log([level: :info], fn ->
-          Updater.update_sign(sign, diff_top, same_bottom)
+          Updater.update_sign(sign, diff_top, same_bottom, Timex.now())
         end)
 
       assert log =~ "sign_id=sign_id line=top status=on"
@@ -123,7 +123,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       log =
         capture_log([level: :info], fn ->
-          Updater.update_sign(sign, new_top, new_bottom)
+          Updater.update_sign(sign, new_top, new_bottom, Timex.now())
         end)
 
       assert log =~ "sign_id=sign_id line=top status=off"
@@ -150,7 +150,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       log =
         capture_log([level: :info], fn ->
-          Updater.update_sign(sign, diff_top, same_bottom)
+          Updater.update_sign(sign, diff_top, same_bottom, Timex.now())
         end)
 
       assert log =~ "sign_id=sign_id line=top status=on"
@@ -177,7 +177,7 @@ defmodule Signs.Utilities.UpdaterTest do
 
       log =
         capture_log([level: :info], fn ->
-          Updater.update_sign(sign, diff_top, same_bottom)
+          Updater.update_sign(sign, diff_top, same_bottom, Timex.now())
         end)
 
       assert log =~ "sign_id=sign_id line=top status=off"
