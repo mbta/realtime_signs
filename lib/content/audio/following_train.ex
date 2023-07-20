@@ -60,14 +60,7 @@ defmodule Content.Audio.FollowingTrain do
     def to_params(audio) do
       case Utilities.destination_var(audio.destination) do
         {:ok, dest_var} ->
-          if audio.destination in [
-               :southbound,
-               :northbound,
-               :westbound,
-               :eastbound,
-               :inbound,
-               :outbound
-             ] do
+          if Utilities.directional_destination?(audio.destination) do
             do_ad_hoc_message(audio)
           else
             green_line_branch = Content.Utilities.route_branch_letter(audio.route_id)
