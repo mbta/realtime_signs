@@ -54,6 +54,7 @@ defmodule Content.Utilities do
   def destination_for_prediction("Red", 0, _), do: {:ok, :southbound}
 
   def destination_for_prediction(_, 0, "70151"), do: {:ok, :kenmore}
+  def destination_for_prediction(_, 0, "71151"), do: {:ok, :kenmore}
   def destination_for_prediction(_, 0, "70202"), do: {:ok, :government_center}
   def destination_for_prediction(_, 0, "70201"), do: {:ok, :government_center}
   def destination_for_prediction(_, 0, "70175"), do: {:ok, :reservoir}
@@ -70,6 +71,7 @@ defmodule Content.Utilities do
   def destination_for_prediction(_, 1, "70200"), do: {:ok, :park_street}
   def destination_for_prediction(_, 1, "71199"), do: {:ok, :park_street}
   def destination_for_prediction(_, 1, "70150"), do: {:ok, :kenmore}
+  def destination_for_prediction(_, 1, "71150"), do: {:ok, :kenmore}
   def destination_for_prediction(_, 1, "70174"), do: {:ok, :reservoir}
 
   def destination_for_prediction(_, _, "Government Center-Brattle"), do: {:ok, :government_center}
