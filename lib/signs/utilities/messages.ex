@@ -51,8 +51,8 @@ defmodule Signs.Utilities.Messages do
                  ) do
                 jfk_umass_headway_paging(bottom_message, sign, current_time, alert_status)
               else
-                {bottom_message,
-                 get_paging_headway_or_alert_messages(sign, current_time, alert_status, :top)}
+                {get_paging_headway_or_alert_messages(sign, current_time, alert_status, :top),
+                 bottom_message}
               end
 
             messages ->
@@ -63,11 +63,28 @@ defmodule Signs.Utilities.Messages do
     early_am_status =
       Signs.Utilities.EarlyAmSuppression.get_early_am_state(current_time, scheduled)
 
+    flip? = flip?(messages)
+
+    messages =
+      if flip?,
+        do: do_flip(messages),
+        else: messages
+
     cond do
       early_am_status in [:none, {:none, :none}] ->
         messages
 
       alert_status in [:none, :alert_along_route] and sign_config == :auto ->
+        early_am_status =
+          if flip? and match?({_, _}, early_am_status),
+            do: do_flip(early_am_status),
+            else: early_am_status
+
+        scheduled =
+          if flip? and match?({{_, _}, {_, _}}, scheduled),
+            do: do_flip(scheduled),
+            else: scheduled
+
         Signs.Utilities.EarlyAmSuppression.do_early_am_suppression(
           messages,
           current_time,
@@ -81,6 +98,24 @@ defmodule Signs.Utilities.Messages do
     end
   end
 
+  defp flip?(messages) do
+    case messages do
+      {%Content.Message.Headways.Paging{}, _} ->
+        true
+
+      {%Content.Message.Empty{}, _} ->
+        true
+
+      _ ->
+        false
+    end
+  end
+
+  defp do_flip({top, bottom}) do
+    {bottom, top}
+  end
+
+  # Handles special case when JFK/UMass SB is on headways but NB is on platform prediction
   defp jfk_umass_headway_paging(prediction, sign, current_time, alert_status) do
     case get_paging_headway_or_alert_messages(
            sign,
@@ -91,20 +126,20 @@ defmodule Signs.Utilities.Messages do
       %Content.Message.Headways.Paging{destination: destination, range: range} ->
         {%Content.Message.GenericPaging{
            messages: [
+             %{prediction | zone: nil},
              %Content.Message.Headways.Top{
                destination: destination,
                vehicle_type: :train
-             },
-             %{prediction | zone: nil}
+             }
            ]
          },
          %Content.Message.GenericPaging{
            messages: [
-             %Content.Message.Headways.Bottom{range: range},
              %Content.Message.PlatformPredictionBottom{
                stop_id: prediction.stop_id,
                minutes: prediction.minutes
-             }
+             },
+             %Content.Message.Headways.Bottom{range: range}
            ]
          }}
 

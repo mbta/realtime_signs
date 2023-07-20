@@ -359,7 +359,7 @@ defmodule PaEss.Utilities do
   def ad_hoc_trip_description(destination, route_id \\ nil)
 
   def ad_hoc_trip_description(destination, nil)
-      when destination in [:eastbound, :westbound, :southbound, :northbound] do
+      when destination in [:eastbound, :westbound, :southbound, :northbound, :inbound, :outbound] do
     case destination_to_ad_hoc_string(destination) do
       {:ok, destination_string} ->
         {:ok, "#{destination_string} train"}
@@ -375,7 +375,7 @@ defmodule PaEss.Utilities do
   end
 
   def ad_hoc_trip_description(destination, route_id)
-      when destination in [:eastbound, :westbound, :southbound, :northbound] do
+      when destination in [:eastbound, :westbound, :southbound, :northbound, :inbound, :outbound] do
     case {destination_to_ad_hoc_string(destination), route_to_ad_hoc_string(route_id)} do
       {{:ok, destination_string}, {:ok, route_string}} ->
         {:ok, "#{destination_string} #{route_string} train"}
@@ -431,7 +431,19 @@ defmodule PaEss.Utilities do
   def green_line_branch_var(:d), do: "538"
   def green_line_branch_var(:e), do: "539"
 
-  @spec replace_abbreviations(String.t()) :: String.t()
+  def time_hour_var(hour) when hour >= 0 and hour < 24 do
+    adjusted_hour = rem(hour, 12)
+
+    if adjusted_hour == 0,
+      do: "8011",
+      else: Integer.to_string(7999 + adjusted_hour)
+  end
+
+  def time_minutes_var(min)
+      when min >= 0 and min < 60 do
+    Integer.to_string(9000 + min)
+  end
+
   def replace_abbreviations(text) when is_binary(text) do
     Enum.reduce(
       @abbreviation_replacements,

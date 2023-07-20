@@ -1,7 +1,28 @@
 defmodule Signs.Utilities.EarlyAmSuppression do
+  @moduledoc """
+  This module is responsible for handling early AM content.
+
+  When a sign is in full early AM suppression (more than 40 minutes before the first scheduled departure),
+  the sign will display a two-line message telling riders when to expect the first scheduled train.
+  Mezzanine signs will page between two two-line messages for either direction.
+  Alerts, headway mode, custom text mode, and off modes will override early AM suppression.
+
+  When a sign is in partial early AM suppression (less than 40 minutes before the first scheduled departure),
+  the sign will show predictions if they are valid, meaning that the certainty is <= 120. This prevents
+  reverse predictions from being shown during early AM hours with the exceptions of Symhony and Prudential EB
+  because while Heath St is technically a terminal, trains only use it as a turnaround.
+
+  If there are no valid predictions but the amount of time until the first scheduled departure is
+  less than the upper headway range for that stop, the sign will default to headways. Otherwise, it will fall
+  back to the timestamp message. Similar logic is applied to either line of a mezzanine sign but the full sign
+  may either do two-line paging or use single-line timestamp messages/paging headways depending on the contents.
+  """
   alias Content.Message
   alias Content.Message.Headways
   alias Content.Message.EarlyAm
+
+  @early_am_start ~T[03:29:00]
+  @early_am_buffer -40
 
   def do_early_am_suppression(
         messages,
@@ -16,7 +37,7 @@ defmodule Signs.Utilities.EarlyAmSuppression do
           get_mezzanine_early_am_content(
             messages,
             sign,
-            align_schedules(schedule, messages),
+            schedule,
             early_am_status,
             current_time
           )
@@ -74,50 +95,25 @@ defmodule Signs.Utilities.EarlyAmSuppression do
             {top, bottom}
 
           match?({{%Headways.Top{}, _}, {%Headways.Top{}, _}}, {top_content, bottom_content}) ->
-            top_content
+            routes =
+              Signs.Utilities.SourceConfig.sign_routes(sign.source_config)
+              |> PaEss.Utilities.get_unique_routes()
+
+            {t1, t2} = top_content
+            {%{t1 | routes: routes}, t2}
 
           true ->
             paginate(top_content, bottom_content)
         end
 
       status ->
-        get_source_early_am_content(
+        get_early_am_content(
           sign,
-          sign.source_config,
           messages,
-          align_schedules(schedule, messages),
+          schedule,
           status,
           current_time
         )
-    end
-  end
-
-  # Swaps the top and bottom first scheduled departures when the destinations don't match up.
-  # This is possible when the top line wants to page headways and the messages get switched.
-  defp align_schedules(scheduled, messages) do
-    case scheduled do
-      {{top_scheduled, top_dest}, {bottom_scheduled, bottom_dest}} ->
-        case messages do
-          {%Message.Empty{}, _} ->
-            scheduled
-
-          {%Message.GenericPaging{messages: [m1 | _]}, _} ->
-            if m1.destination == top_dest do
-              scheduled
-            else
-              {{bottom_scheduled, bottom_dest}, {top_scheduled, top_dest}}
-            end
-
-          {m1, _} ->
-            if m1.destination == top_dest do
-              scheduled
-            else
-              {{bottom_scheduled, bottom_dest}, {top_scheduled, top_dest}}
-            end
-        end
-
-      _ ->
-        scheduled
     end
   end
 
@@ -130,16 +126,14 @@ defmodule Signs.Utilities.EarlyAmSuppression do
        ) do
     {top_scheduled, bottom_scheduled} = schedule
     {top_message, bottom_message} = messages
-    {top_source, bottom_source} = sign.source_config
     {top_status, bottom_status} = statuses
 
     top_content =
       if top_status == :none,
         do: {top_message, %Message.Empty{}},
         else:
-          get_source_early_am_content(
+          get_early_am_content(
             sign,
-            top_source,
             {top_message, %Message.Empty{}},
             top_scheduled,
             top_status,
@@ -147,24 +141,31 @@ defmodule Signs.Utilities.EarlyAmSuppression do
           )
 
     bottom_content =
-      if bottom_status == :none,
+      if(bottom_status == :none,
         do: {bottom_message, %Message.Empty{}},
         else:
-          get_source_early_am_content(
+          get_early_am_content(
             sign,
-            bottom_source,
             {bottom_message, %Message.Empty{}},
             bottom_scheduled,
             bottom_status,
             current_time
           )
+      )
+      |> case do
+        {%Headways.Paging{destination: destination, range: range}, _} ->
+          {%Headways.Top{destination: destination, vehicle_type: :train},
+           %Headways.Bottom{range: range}}
+
+        bottom_content ->
+          bottom_content
+      end
 
     {top_content, bottom_content}
   end
 
-  defp get_source_early_am_content(
+  defp get_early_am_content(
          sign,
-         source,
          messages,
          {scheduled, destination},
          status,
@@ -172,7 +173,7 @@ defmodule Signs.Utilities.EarlyAmSuppression do
        ) do
     cond do
       status == :fully_suppressed ->
-        {%EarlyAm.DestinationTrain{destination: source.headway_destination},
+        {%EarlyAm.DestinationTrain{destination: destination},
          %EarlyAm.ScheduledTime{
            scheduled_time: scheduled
          }}
@@ -192,7 +193,7 @@ defmodule Signs.Utilities.EarlyAmSuppression do
                  }}
 
               {headway_top, headway_bottom} ->
-                {%{headway_top | destination: destination}, headway_bottom}
+                {%{headway_top | destination: destination, routes: nil}, headway_bottom}
             end
 
           messages ->
@@ -210,8 +211,12 @@ defmodule Signs.Utilities.EarlyAmSuppression do
               sign_id not in ["symphony_eastbound", "prudential_eastbound"] ->
             Message.Empty.new()
 
+          # Filter out headways messages so can re-fetch and overwrite destination at caller
           match?(%Headways.Top{}, message) or
               match?(%Headways.Bottom{}, message) ->
+            Message.Empty.new()
+
+          match?(%Headways.Paging{}, message) ->
             Message.Empty.new()
 
           true ->
@@ -291,14 +296,14 @@ defmodule Signs.Utilities.EarlyAmSuppression do
   end
 
   defp after_am_suppression_start?(current_time) do
-    Time.compare(DateTime.to_time(current_time), ~T[03:29:00]) == :gt
+    Time.compare(DateTime.to_time(current_time), @early_am_start) == :gt
   end
 
   defp before_am_suppression_end?(current_time, first_scheduled_departure)
        when not is_nil(first_scheduled_departure) do
     DateTime.compare(
       current_time,
-      first_scheduled_departure |> Timex.shift(minutes: -40)
+      first_scheduled_departure |> Timex.shift(minutes: @early_am_buffer)
     ) == :lt
   end
 
