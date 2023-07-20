@@ -359,7 +359,7 @@ defmodule PaEss.Utilities do
   def ad_hoc_trip_description(destination, route_id \\ nil)
 
   def ad_hoc_trip_description(destination, nil)
-      when destination in [:eastbound, :westbound, :southbound, :northbound] do
+      when destination in [:eastbound, :westbound, :southbound, :northbound, :inbound, :outbound] do
     case destination_to_ad_hoc_string(destination) do
       {:ok, destination_string} ->
         {:ok, "#{destination_string} train"}
@@ -375,7 +375,7 @@ defmodule PaEss.Utilities do
   end
 
   def ad_hoc_trip_description(destination, route_id)
-      when destination in [:eastbound, :westbound, :southbound, :northbound] do
+      when destination in [:eastbound, :westbound, :southbound, :northbound, :inbound, :outbound] do
     case {destination_to_ad_hoc_string(destination), route_to_ad_hoc_string(route_id)} do
       {{:ok, destination_string}, {:ok, route_string}} ->
         {:ok, "#{destination_string} #{route_string} train"}
