@@ -281,6 +281,40 @@ defmodule Signs.Utilities.Audio do
     Audio.Predictions.from_sign_content(top_content, :top, multi_source?)
   end
 
+  defp get_audio(
+         %Message.GenericPaging{messages: top_messages},
+         %Message.GenericPaging{messages: bottom_messages},
+         _multi_source?
+       ) do
+    if length(top_messages) != length(bottom_messages) do
+      Logger.warn(
+        "message_to_audio_warning Utilities.Audio generic_paging_mismatch some audios will be dropped: #{inspect(top_messages)} #{inspect(bottom_messages)}"
+      )
+    end
+
+    Enum.zip(top_messages, bottom_messages)
+    |> Enum.map(fn {top, bottom} ->
+      get_audio(top, bottom, false)
+    end)
+    |> List.flatten()
+  end
+
+  defp get_audio(
+         %Message.EarlyAm.DestinationTrain{} = top,
+         %Message.EarlyAm.ScheduledTime{} = bottom,
+         _multi_source?
+       ) do
+    Audio.FirstTrainScheduled.from_messages(top, bottom)
+  end
+
+  defp get_audio(
+         %Message.Predictions{station_code: "RJFK"} = top_content,
+         %Message.PlatformPredictionBottom{},
+         multi_source?
+       ) do
+    Audio.Predictions.from_sign_content(%{top_content | zone: "m"}, :bottom, multi_source?)
+  end
+
   defp get_audio(top, bottom, multi_source?) do
     get_audio_for_line(top, :top, multi_source?) ++
       get_audio_for_line(bottom, :bottom, multi_source?)
@@ -314,6 +348,14 @@ defmodule Signs.Utilities.Audio do
          _multi_source?
        ) do
     Audio.NoServiceToDestination.from_message(message)
+  end
+
+  defp get_audio_for_line(
+         %Message.EarlyAm.DestinationScheduledTime{} = message,
+         _line,
+         _multi_source?
+       ) do
+    Audio.FirstTrainScheduled.from_messages(message)
   end
 
   defp get_audio_for_line(%Message.Empty{}, _line, _multi_source?) do

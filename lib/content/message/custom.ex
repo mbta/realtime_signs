@@ -37,7 +37,7 @@ defmodule Content.Message.Custom do
 
     cond do
       String.length(message) > max_length -> false
-      Regex.match?(~r/^[a-zA-Z0-9,\/!@' ]*$/, message) -> true
+      Regex.match?(~r/^[a-zA-Z0-9,\/!@': ]*$/, message) -> true
       true -> false
     end
   end
