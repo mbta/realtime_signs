@@ -733,5 +733,96 @@ defmodule Signs.Utilities.AudioTest do
                ^sign
              } = from_sign(sign)
     end
+
+    test "Gets audios from full page paging" do
+      sign = %{
+        @sign
+        | current_content_top: %Message.GenericPaging{
+            messages: [
+              %Message.Headways.Top{destination: :ashmont, vehicle_type: :train},
+              %Message.Predictions{
+                destination: :alewife,
+                minutes: 5,
+                route_id: "Red",
+                platform: :ashmont,
+                station_code: "RJFK"
+              }
+            ]
+          },
+          current_content_bottom: %Message.GenericPaging{
+            messages: [
+              %Message.Headways.Bottom{range: {1, 3}},
+              %Message.PlatformPredictionBottom{stop_id: "70086", minutes: 5}
+            ]
+          }
+      }
+
+      assert {
+               [
+                 %Audio.VehiclesToDestination{
+                   language: :english,
+                   destination: :ashmont,
+                   headway_range: {1, 3}
+                 },
+                 %Content.Audio.NextTrainCountdown{
+                   destination: :alewife,
+                   minutes: 5,
+                   platform: :ashmont
+                 }
+               ],
+               ^sign
+             } = from_sign(sign)
+    end
+
+    test "Drops audios from full page paging" do
+      sign = %{
+        @sign
+        | current_content_top: %Message.GenericPaging{
+            messages: [
+              %Message.Headways.Top{destination: :ashmont, vehicle_type: :train},
+              %Message.Predictions{
+                destination: :alewife,
+                minutes: 5,
+                route_id: "Red",
+                platform: :ashmont,
+                station_code: "RJFK"
+              },
+              %Message.Predictions{
+                destination: :braintree,
+                minutes: 5,
+                route_id: "Red",
+                platform: :ashmont
+              }
+            ]
+          },
+          current_content_bottom: %Message.GenericPaging{
+            messages: [
+              %Message.Headways.Bottom{range: {1, 3}},
+              %Message.PlatformPredictionBottom{stop_id: "70086", minutes: 5}
+            ]
+          }
+      }
+
+      log =
+        capture_log([level: :warn], fn ->
+          assert {
+                   [
+                     %Audio.VehiclesToDestination{
+                       language: :english,
+                       destination: :ashmont,
+                       headway_range: {1, 3}
+                     },
+                     %Content.Audio.NextTrainCountdown{
+                       destination: :alewife,
+                       minutes: 5,
+                       platform: :ashmont
+                     }
+                   ],
+                   ^sign
+                 } = from_sign(sign)
+        end)
+
+      assert log =~ "message_to_audio_warning Utilities.Audio generic_paging_mismatch"
+    end
   end
 end
