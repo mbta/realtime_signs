@@ -260,8 +260,6 @@ defmodule Signs.Utilities.EarlyAmSuppression do
      }}
   end
 
-  @doc "Filters predictions based on certainty during early AM hours with the exception of Symphony and Prudential EB"
-
   def get_early_am_state(
         current_time,
         {{_, _} = top_first_scheduled, {_, _} = bottom_first_scheduled}
