@@ -72,6 +72,7 @@ defmodule Signs.Utilities.MessagesTest do
   defmodule FakeHeadways do
     def get_headways(_stop_id), do: {1, 4}
     def display_headways?(_stop_ids, _time, _buffer), do: true
+    def get_first_scheduled_departure(_stop_ids), do: nil
   end
 
   defmodule FakeConfigEngine do
@@ -108,13 +109,22 @@ defmodule Signs.Utilities.MessagesTest do
     read_period_seconds: 100
   }
 
+  @scheduled_departure {~U[2000-01-01 00:00:00Z], :somewhere}
+
   describe "get_messages" do
     test "when custom text is present, display it, overriding alerts or disabled status" do
       sign = @sign
       sign_config = {:static_text, {"Test message", "Please ignore"}}
       alert_status = :suspension_closed_station
 
-      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               @scheduled_departure
+             ) ==
                {Content.Message.Custom.new("Test message", :top),
                 Content.Message.Custom.new("Please ignore", :bottom)}
     end
@@ -124,7 +134,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :off
       alert_status = :none
 
-      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               @scheduled_departure
+             ) ==
                {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
@@ -133,7 +150,7 @@ defmodule Signs.Utilities.MessagesTest do
 
       sign = %{
         @sign
-        | source_config: %{sources: [src]},
+        | source_config: %{sources: [src], headway_destination: :mattapan},
           current_content_top: Content.Message.Empty.new(),
           current_content_bottom: Content.Message.Empty.new()
       }
@@ -141,7 +158,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_transfer_station
 
-      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @nd_predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               @scheduled_departure
+             ) ==
                {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
@@ -158,7 +182,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :suspension_transfer_station
 
-      assert Messages.get_messages([], sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               [],
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               @scheduled_departure
+             ) ==
                {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
@@ -175,7 +206,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_transfer_station
 
-      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @nd_predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               @scheduled_departure
+             ) ==
                {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
@@ -184,7 +222,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_transfer_station
 
-      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               @scheduled_departure
+             ) ==
                {
                  %Content.Message.Predictions{
                    destination: :ashmont,
@@ -222,7 +267,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_closed_station
 
-      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @nd_predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               @scheduled_departure
+             ) ==
                {%Content.Message.Alert.NoService{}, %Content.Message.Alert.UseShuttleBus{}}
     end
 
@@ -240,7 +292,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_closed_station
 
-      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @nd_predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               @scheduled_departure
+             ) ==
                {%Content.Message.Alert.NoService{}, Content.Message.Empty.new()}
     end
 
@@ -257,7 +316,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :shuttles_closed_station
 
-      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               @scheduled_departure
+             ) ==
                {
                  %Content.Message.Predictions{
                    destination: :ashmont,
@@ -295,7 +361,14 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :suspension_closed_station
       sign_config = :auto
 
-      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @nd_predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               @scheduled_departure
+             ) ==
                {%Content.Message.Alert.NoService{}, Content.Message.Empty.new()}
     end
 
@@ -312,7 +385,14 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :station_closure
       sign_config = :auto
 
-      assert Messages.get_messages(@nd_predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @nd_predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               @scheduled_departure
+             ) ==
                {%Content.Message.Alert.NoService{}, Content.Message.Empty.new()}
     end
 
@@ -329,7 +409,14 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :suspension_closed_station
       sign_config = :auto
 
-      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               @scheduled_departure
+             ) ==
                {
                  %Content.Message.Predictions{
                    destination: :ashmont,
@@ -359,7 +446,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :none
 
-      assert Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               @predictions,
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               @scheduled_departure
+             ) ==
                {
                  %Content.Message.Predictions{
                    destination: :ashmont,
@@ -400,7 +494,14 @@ defmodule Signs.Utilities.MessagesTest do
 
       current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
 
-      assert Messages.get_messages([], sign, sign_config, current_time, alert_status) ==
+      assert Messages.get_messages(
+               [],
+               sign,
+               sign_config,
+               current_time,
+               alert_status,
+               @scheduled_departure
+             ) ==
                {
                  %Content.Message.Headways.Top{
                    destination: :mattapan,
@@ -426,7 +527,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :none
 
-      assert Messages.get_messages([], sign, sign_config, Timex.now(), alert_status) ==
+      assert Messages.get_messages(
+               [],
+               sign,
+               sign_config,
+               Timex.now(),
+               alert_status,
+               @scheduled_departure
+             ) ==
                {Content.Message.Empty.new(), Content.Message.Empty.new()}
     end
 
@@ -446,7 +554,15 @@ defmodule Signs.Utilities.MessagesTest do
                  vehicle_type: :train
                },
                %Content.Message.Headways.Bottom{range: {8, 11}}
-             } = Messages.get_messages([], sign, sign_config, Timex.now(), alert_status)
+             } =
+               Messages.get_messages(
+                 [],
+                 sign,
+                 sign_config,
+                 Timex.now(),
+                 alert_status,
+                 @scheduled_departure
+               )
     end
 
     test "when sign is forced into headway mode but alerts are present, alert takes precedence" do
@@ -455,7 +571,14 @@ defmodule Signs.Utilities.MessagesTest do
       alert_status = :station_closure
 
       assert {%Content.Message.Alert.NoService{}, %Content.Message.Empty{}} =
-               Messages.get_messages(@predictions, sign, sign_config, Timex.now(), alert_status)
+               Messages.get_messages(
+                 @predictions,
+                 sign,
+                 sign_config,
+                 Timex.now(),
+                 alert_status,
+                 @scheduled_departure
+               )
     end
   end
 end

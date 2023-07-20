@@ -46,6 +46,7 @@ defmodule Signs.RealtimeTest do
   defmodule FakeHeadways do
     def get_headways(_stop_id), do: {1, 5}
     def display_headways?(_stop_ids, _time, _buffer), do: true
+    def get_first_scheduled_departure(_stop_ids), do: nil
   end
 
   defmodule FakeConfigEngine do
