@@ -432,6 +432,19 @@ defmodule PaEss.Utilities do
   def green_line_branch_var(:d), do: "538"
   def green_line_branch_var(:e), do: "539"
 
+  def time_hour_var(hour) when hour >= 0 and hour < 24 do
+    adjusted_hour = rem(hour, 12)
+
+    if adjusted_hour == 0,
+      do: "8011",
+      else: Integer.to_string(7999 + adjusted_hour)
+  end
+
+  def time_minutes_var(min)
+      when min >= 0 and min < 60 do
+    Integer.to_string(9000 + min)
+  end
+
   @spec replace_abbreviations(String.t()) :: String.t()
   def replace_abbreviations(text) when is_binary(text) do
     Enum.reduce(

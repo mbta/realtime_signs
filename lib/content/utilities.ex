@@ -107,4 +107,7 @@ defmodule Content.Utilities do
   def route_branch_letter("Green-D"), do: :d
   def route_branch_letter("Green-E"), do: :e
   def route_branch_letter(_), do: nil
+
+  def render_datetime_as_time(time),
+    do: Calendar.strftime(time, "%I:%M") |> String.replace_leading("0", "")
 end
