@@ -207,6 +207,12 @@ defmodule PaEss.Utilities do
   def destination_var(:heath_street), do: {:ok, "4204"}
   def destination_var(:union_square), do: {:ok, "695"}
   def destination_var(:medford_tufts), do: {:ok, "852"}
+  def destination_var(:southbound), do: {:ok, "787"}
+  def destination_var(:northbound), do: {:ok, "788"}
+  def destination_var(:eastbound), do: {:ok, "867"}
+  def destination_var(:westbound), do: {:ok, "868"}
+  def destination_var(:inbound), do: {:ok, "33003"}
+  def destination_var(:outbound), do: {:ok, "33004"}
   def destination_var(_), do: {:error, :unknown}
 
   @doc """
@@ -348,48 +354,16 @@ defmodule PaEss.Utilities do
     end
   end
 
+  def directional_destination?(destination),
+    do: destination in [:eastbound, :westbound, :southbound, :northbound, :inbound, :outbound]
+
   @spec ad_hoc_trip_description(PaEss.destination(), String.t() | nil) ::
           {:ok, String.t()} | {:error, :unknown}
   def ad_hoc_trip_description(destination, route_id \\ nil)
 
-  def ad_hoc_trip_description(destination, nil)
-      when destination in [:eastbound, :westbound, :southbound, :northbound] do
-    case destination_to_ad_hoc_string(destination) do
-      {:ok, destination_string} ->
-        {:ok, "#{destination_string} train"}
-
-      _ ->
-        {:error, :unknown}
-    end
-  end
-
   def ad_hoc_trip_description(destination, route_id)
       when destination == :eastbound and route_id in ["Green-B", "Green-C", "Green-D", "Green-E"] do
     ad_hoc_trip_description(destination)
-  end
-
-  def ad_hoc_trip_description(destination, route_id)
-      when destination in [:eastbound, :westbound, :southbound, :northbound] do
-    case {destination_to_ad_hoc_string(destination), route_to_ad_hoc_string(route_id)} do
-      {{:ok, destination_string}, {:ok, route_string}} ->
-        {:ok, "#{destination_string} #{route_string} train"}
-
-      {{:ok, _destination_string}, {:error, :unknown}} ->
-        ad_hoc_trip_description(destination)
-
-      _ ->
-        {:error, :unknown}
-    end
-  end
-
-  def ad_hoc_trip_description(destination, nil) do
-    case destination_to_ad_hoc_string(destination) do
-      {:ok, destination_string} ->
-        {:ok, "train to #{destination_string}"}
-
-      _ ->
-        {:error, :unknown}
-    end
   end
 
   def ad_hoc_trip_description(destination, route_id)
@@ -407,15 +381,48 @@ defmodule PaEss.Utilities do
   end
 
   def ad_hoc_trip_description(destination, route_id) do
-    case {destination_to_ad_hoc_string(destination), route_to_ad_hoc_string(route_id)} do
-      {{:ok, destination_string}, {:ok, route_string}} ->
-        {:ok, "#{route_string} train to #{destination_string}"}
+    case {directional_destination?(destination), route_id} do
+      {true, nil} ->
+        case destination_to_ad_hoc_string(destination) do
+          {:ok, destination_string} ->
+            {:ok, "#{destination_string} train"}
 
-      {{:ok, _destination_string}, {:error, :unknown}} ->
-        ad_hoc_trip_description(destination)
+          _ ->
+            {:error, :unknown}
+        end
 
-      _ ->
-        {:error, :unknown}
+      {true, route_id} ->
+        case {destination_to_ad_hoc_string(destination), route_to_ad_hoc_string(route_id)} do
+          {{:ok, destination_string}, {:ok, route_string}} ->
+            {:ok, "#{destination_string} #{route_string} train"}
+
+          {{:ok, _destination_string}, {:error, :unknown}} ->
+            ad_hoc_trip_description(destination)
+
+          _ ->
+            {:error, :unknown}
+        end
+
+      {false, nil} ->
+        case destination_to_ad_hoc_string(destination) do
+          {:ok, destination_string} ->
+            {:ok, "train to #{destination_string}"}
+
+          _ ->
+            {:error, :unknown}
+        end
+
+      {false, route_id} ->
+        case {destination_to_ad_hoc_string(destination), route_to_ad_hoc_string(route_id)} do
+          {{:ok, destination_string}, {:ok, route_string}} ->
+            {:ok, "#{route_string} train to #{destination_string}"}
+
+          {{:ok, _destination_string}, {:error, :unknown}} ->
+            ad_hoc_trip_description(destination)
+
+          _ ->
+            {:error, :unknown}
+        end
     end
   end
 

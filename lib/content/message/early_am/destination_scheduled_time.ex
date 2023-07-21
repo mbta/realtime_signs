@@ -12,7 +12,7 @@ defmodule Content.Message.EarlyAm.DestinationScheduledTime do
           destination: destination,
           scheduled_time: scheduled_time
         }) do
-      "#{String.capitalize(PaEss.Utilities.destination_to_sign_string(destination))} due #{scheduled_time.hour}:#{Content.Utilities.format_minutes(scheduled_time.minute)}"
+      "#{String.capitalize(PaEss.Utilities.destination_to_sign_string(destination))} due #{Content.Utilities.render_datetime_as_time(scheduled_time)}"
     end
   end
 end
