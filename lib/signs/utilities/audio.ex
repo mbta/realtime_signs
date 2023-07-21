@@ -287,16 +287,15 @@ defmodule Signs.Utilities.Audio do
          _multi_source?
        ) do
     if length(top_messages) != length(bottom_messages) do
-      Logger.warn(
+      Logger.error(
         "message_to_audio_warning Utilities.Audio generic_paging_mismatch some audios will be dropped: #{inspect(top_messages)} #{inspect(bottom_messages)}"
       )
     end
 
     Enum.zip(top_messages, bottom_messages)
-    |> Enum.map(fn {top, bottom} ->
+    |> Enum.flat_map(fn {top, bottom} ->
       get_audio(top, bottom, false)
     end)
-    |> List.flatten()
   end
 
   defp get_audio(
