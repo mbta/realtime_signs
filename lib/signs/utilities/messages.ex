@@ -87,6 +87,7 @@ defmodule Signs.Utilities.Messages do
       %Content.Message.Headways.Paging{destination: destination, range: range} ->
         {%Content.Message.GenericPaging{
            messages: [
+             # Make zone nil in order to prevent the usual paging platform message
              %{prediction | zone: nil},
              %Content.Message.Headways.Top{
                destination: destination,
