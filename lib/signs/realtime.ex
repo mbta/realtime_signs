@@ -159,17 +159,6 @@ defmodule Signs.Realtime do
   defp fetch_predictions(%{sources: sources}, state) do
     Enum.flat_map(sources, fn source ->
       state.prediction_engine.for_stop(source.stop_id, source.direction_id)
-      |> Enum.filter(fn prediction ->
-        if source.routes == nil or prediction.route_id in source.routes do
-          true
-        else
-          Logger.info(
-            "filter_prediction_by_route sign_id=#{state.id} stop_id=#{source.stop_id} direction_id=#{source.direction_id} route_id=#{prediction.route_id}"
-          )
-
-          false
-        end
-      end)
     end)
   end
 
