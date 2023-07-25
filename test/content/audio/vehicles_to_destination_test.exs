@@ -60,60 +60,6 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       assert log =~ "no_audio_for_headway_range"
     end
 
-    test "returns a robo-voice message for headways with a last departure" do
-      audio = %Content.Audio.VehiclesToDestination{
-        destination: :lechmere,
-        language: :english,
-        headway_range: {5, 7},
-        previous_departure_mins: 5
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc,
-                {"Trains to Lechmere every 5 to 7 minutes.  Previous departure 5 minutes ago.",
-                 :audio}}
-    end
-
-    test "singularizes the minutes when the last departure was one minute ago" do
-      audio = %Content.Audio.VehiclesToDestination{
-        destination: :lechmere,
-        language: :english,
-        headway_range: {5, 7},
-        previous_departure_mins: 1
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc,
-                {"Trains to Lechmere every 5 to 7 minutes.  Previous departure 1 minute ago.",
-                 :audio}}
-    end
-
-    test "doesn't announce departure zero minute ago" do
-      audio = %Content.Audio.VehiclesToDestination{
-        destination: :lechmere,
-        language: :english,
-        headway_range: {5, 7},
-        previous_departure_mins: 0
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"Trains to Lechmere every 5 to 7 minutes.", :audio}}
-    end
-
-    test "returns a robo-voice message for a headway range that is too big" do
-      audio = %Content.Audio.VehiclesToDestination{
-        destination: :lechmere,
-        language: :english,
-        headway_range: {:up_to, 20},
-        previous_departure_mins: 5
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc,
-                {"Trains to Lechmere up to every 20 minutes.  Previous departure 5 minutes ago.",
-                 :audio}}
-    end
-
     test "returns a robo-voice message for a headway that is too big with no last departure" do
       audio = %Content.Audio.VehiclesToDestination{
         destination: :lechmere,
@@ -129,14 +75,11 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       audio = %Content.Audio.VehiclesToDestination{
         destination: :southbound,
         language: :english,
-        headway_range: {5, 7},
-        previous_departure_mins: 3
+        headway_range: {5, 7}
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:ad_hoc,
-                {"Southbound trains every 5 to 7 minutes.  Previous departure 3 minutes ago.",
-                 :audio}}
+               {:canned, {"184", ["5505", "5507"], :audio}}
     end
 
     test "returns nil when range is unexpected" do
@@ -153,8 +96,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       audio = %Content.Audio.VehiclesToDestination{
         destination: nil,
         language: :english,
-        headway_range: {8, 10},
-        previous_departure_mins: nil
+        headway_range: {8, 10}
       }
 
       assert Content.Audio.to_params(audio) ==
@@ -329,13 +271,12 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                %Content.Audio.VehiclesToDestination{
                  language: :english,
                  destination: nil,
-                 headway_range: {8, 10},
-                 previous_departure_mins: nil
+                 headway_range: {8, 10}
                }
              ] =
                from_headway_message(
                  %Content.Message.Headways.Top{destination: nil, vehicle_type: :train},
-                 %Content.Message.Headways.Bottom{range: {8, 10}, prev_departure_mins: nil}
+                 %Content.Message.Headways.Bottom{range: {8, 10}}
                )
     end
 

@@ -36,12 +36,10 @@ defmodule Signs.Utilities.ReaderTest do
     current_content_bottom: %Predictions{destination: :ashmont, minutes: 3},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
-    last_departure_engine: FakeDepartures,
     config_engine: Engine.Config,
     alerts_engine: nil,
     sign_updater: FakeUpdater,
     last_update: Timex.now(),
-    tick_audit: 240,
     tick_read: 1,
     read_period_seconds: 100
   }

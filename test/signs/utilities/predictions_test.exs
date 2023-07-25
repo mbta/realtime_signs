@@ -18,12 +18,10 @@ defmodule Signs.Utilities.PredictionsTest do
     current_content_bottom: Content.Message.Empty.new(),
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
-    last_departure_engine: FakeDepartures,
     config_engine: Engine.Config,
     alerts_engine: nil,
     sign_updater: FakeUpdater,
     last_update: Timex.now(),
-    tick_audit: 240,
     tick_read: 240,
     read_period_seconds: 240
   }

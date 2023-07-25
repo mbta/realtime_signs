@@ -61,14 +61,6 @@ defmodule Signs.Utilities.MessagesTest do
     }
   ]
 
-  defmodule FakeDepartures do
-    @test_departure_time Timex.to_datetime(~N[2019-08-29 15:41:31], "America/New_York")
-
-    def get_last_departure(_stop_id), do: @test_departure_time
-
-    def test_departure_time(), do: @test_departure_time
-  end
-
   defmodule FakeHeadways do
     def get_headways(_stop_id), do: {1, 4}
     def display_headways?(_stop_ids, _time, _buffer), do: true
@@ -98,12 +90,10 @@ defmodule Signs.Utilities.MessagesTest do
     current_content_bottom: %Content.Message.Predictions{destination: :ashmont, minutes: 3},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
-    last_departure_engine: FakeDepartures,
     config_engine: Engine.Config,
     alerts_engine: FakeAlerts,
     sign_updater: FakeUpdater,
     last_update: Timex.now(),
-    tick_audit: 240,
     tick_read: 1,
     read_period_seconds: 100
   }
@@ -398,17 +388,14 @@ defmodule Signs.Utilities.MessagesTest do
       sign_config = :auto
       alert_status = :none
 
-      current_time = Timex.shift(FakeDepartures.test_departure_time(), minutes: 5)
-
-      assert Messages.get_messages([], sign, sign_config, current_time, alert_status) ==
+      assert Messages.get_messages([], sign, sign_config, DateTime.utc_now(), alert_status) ==
                {
                  %Content.Message.Headways.Top{
                    destination: :mattapan,
                    vehicle_type: :train
                  },
                  %Content.Message.Headways.Bottom{
-                   range: {8, 11},
-                   prev_departure_mins: nil
+                   range: {8, 11}
                  }
                }
     end

@@ -5,18 +5,6 @@ defmodule Signs.Utilities.HeadwaysTest do
     def max_stop_status(_stops, _routes), do: :none
   end
 
-  defmodule FakeDepartures do
-    @test_departure_time Timex.to_datetime(~N[2019-08-29 15:41:31], "America/New_York")
-
-    def get_last_departure(_) do
-      @test_departure_time
-    end
-
-    def test_departure_time() do
-      @test_departure_time
-    end
-  end
-
   defmodule FakeHeadways do
     def display_headways?(["no_service"], _time, _buffer), do: false
     def display_headways?(_, _time, _buffer), do: true
@@ -49,12 +37,10 @@ defmodule Signs.Utilities.HeadwaysTest do
     current_content_bottom: Content.Message.Empty.new(),
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
-    last_departure_engine: FakeDepartures,
     config_engine: Engine.Config,
     alerts_engine: FakeAlerts,
     sign_updater: FakeUpdater,
     last_update: Timex.now(),
-    tick_audit: 240,
     tick_read: 240,
     read_period_seconds: 240
   }
@@ -103,8 +89,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                {
                  %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train},
                  %Content.Message.Headways.Bottom{
-                   range: {8, 11},
-                   prev_departure_mins: nil
+                   range: {8, 11}
                  }
                }
     end
@@ -128,8 +113,7 @@ defmodule Signs.Utilities.HeadwaysTest do
                {
                  %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train},
                  %Content.Message.Headways.Bottom{
-                   range: {8, 11},
-                   prev_departure_mins: nil
+                   range: {8, 11}
                  }
                }
     end

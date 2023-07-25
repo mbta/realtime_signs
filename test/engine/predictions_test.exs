@@ -114,8 +114,6 @@ defmodule Engine.PredictionsTest do
         trip_updates_table: :test_trip_out_of_service_updates
       }
 
-      send(Engine.Departures, :daily_reset)
-
       Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_out_of_service_1")
 
       Application.put_env(
@@ -135,9 +133,6 @@ defmodule Engine.PredictionsTest do
       )
 
       {:noreply, _} = handle_info(:update, state)
-
-      state = :sys.get_state(Engine.Departures)
-      assert state.departures == %{}
     end
 
     test "logs a warning on any message but :update" do

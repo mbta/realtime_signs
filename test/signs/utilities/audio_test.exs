@@ -29,12 +29,10 @@ defmodule Signs.Utilities.AudioTest do
     current_content_bottom: %Content.Message.Empty{},
     prediction_engine: nil,
     headway_engine: nil,
-    last_departure_engine: nil,
     config_engine: Engine.Config,
     alerts_engine: nil,
     sign_updater: nil,
     last_update: Timex.now(),
-    tick_audit: 1,
     tick_read: 1,
     read_period_seconds: 100
   }
@@ -245,7 +243,7 @@ defmodule Signs.Utilities.AudioTest do
     end
 
     test "returns false for bottom headway message" do
-      message = %Message.Headways.Bottom{range: {1, 5}, prev_departure_mins: nil}
+      message = %Message.Headways.Bottom{range: {1, 5}}
 
       refute should_interrupting_read?(
                message,
