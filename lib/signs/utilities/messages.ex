@@ -201,6 +201,28 @@ defmodule Signs.Utilities.Messages do
     sign_msg == new_msg or countup?(sign_msg, new_msg)
   end
 
+  # If a GenericPaging message contains a prediction, it would only be for JFK/UMass Mezzanine and be the first element
+  defp countup?(
+         %Content.Message.GenericPaging{messages: [%Content.Message.Predictions{} = p1 | _]},
+         %Content.Message.GenericPaging{messages: [%Content.Message.Predictions{} = p2 | _]}
+       ) do
+    countup?(p1, p2)
+  end
+
+  defp countup?(
+         %Content.Message.Predictions{} = p1,
+         %Content.Message.GenericPaging{messages: [%Content.Message.Predictions{} = p2 | _]}
+       ) do
+    countup?(p1, p2)
+  end
+
+  defp countup?(
+         %Content.Message.GenericPaging{messages: [%Content.Message.Predictions{} = p1 | _]},
+         %Content.Message.Predictions{} = p2
+       ) do
+    countup?(p1, p2)
+  end
+
   defp countup?(
          %Content.Message.Predictions{destination: same, minutes: :arriving},
          %Content.Message.Predictions{destination: same, minutes: :approaching}
