@@ -67,12 +67,6 @@ defmodule Engine.Predictions do
       )
 
     if vehicles_running_revenue_trips != nil && stops_with_trains do
-      Engine.Departures.update_train_state(
-        stops_with_trains,
-        vehicles_running_revenue_trips,
-        current_time
-      )
-
       {:noreply,
        %{
          state

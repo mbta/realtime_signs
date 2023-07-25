@@ -18,7 +18,6 @@ defmodule RealtimeSigns do
         Engine.Config,
         Engine.Predictions,
         Engine.ScheduledHeadways,
-        Engine.Departures,
         Engine.Static,
         Engine.Alerts,
         Engine.BusPredictions,
