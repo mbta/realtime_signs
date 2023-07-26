@@ -28,13 +28,22 @@ defmodule Signs.Utilities.Messages do
           {:static_text, {line1, line2}} = sign_config
 
           {Content.Message.Custom.new(line1, :top), Content.Message.Custom.new(line2, :bottom)}
+          {Content.Message.Custom.new(line1, :top), Content.Message.Custom.new(line2, :bottom)}
 
+        sign_config == :off ->
+          {Content.Message.Empty.new(), Content.Message.Empty.new()}
         sign_config == :off ->
           {Content.Message.Empty.new(), Content.Message.Empty.new()}
 
         sign_config == :headway ->
           get_headway_or_alert_messages(sign, current_time, alert_status)
+        sign_config == :headway ->
+          get_headway_or_alert_messages(sign, current_time, alert_status)
 
+        true ->
+          case Signs.Utilities.Predictions.get_messages(predictions, sign) do
+            {%Content.Message.Empty{}, %Content.Message.Empty{}} ->
+              get_headway_or_alert_messages(sign, current_time, alert_status)
         true ->
           case Signs.Utilities.Predictions.get_messages(predictions, sign) do
             {%Content.Message.Empty{}, %Content.Message.Empty{}} ->
@@ -43,7 +52,20 @@ defmodule Signs.Utilities.Messages do
             {top_message, %Content.Message.Empty{}} ->
               {top_message,
                get_paging_headway_or_alert_messages(sign, current_time, alert_status, :bottom)}
+            {top_message, %Content.Message.Empty{}} ->
+              {top_message,
+               get_paging_headway_or_alert_messages(sign, current_time, alert_status, :bottom)}
 
+            {%Content.Message.Empty{}, bottom_message} ->
+              if match?(
+                   %Content.Message.Predictions{station_code: "RJFK", zone: "m"},
+                   bottom_message
+                 ) do
+                jfk_umass_headway_paging(bottom_message, sign, current_time, alert_status)
+              else
+                {get_paging_headway_or_alert_messages(sign, current_time, alert_status, :top),
+                 bottom_message}
+              end
             {%Content.Message.Empty{}, bottom_message} ->
               if match?(
                    %Content.Message.Predictions{station_code: "RJFK", zone: "m"},
@@ -126,6 +148,7 @@ defmodule Signs.Utilities.Messages do
       %Content.Message.Headways.Paging{destination: destination, range: range} ->
         {%Content.Message.GenericPaging{
            messages: [
+             # Make zone nil in order to prevent the usual paging platform message
              %{prediction | zone: nil},
              %Content.Message.Headways.Top{
                destination: destination,
@@ -237,6 +260,37 @@ defmodule Signs.Utilities.Messages do
   @spec same_content?(Content.Message.t(), Content.Message.t()) :: boolean()
   def same_content?(sign_msg, new_msg) do
     sign_msg == new_msg or countup?(sign_msg, new_msg)
+  end
+
+  # Specific to JFK/UMass Mezzanine:
+  # Sign is remaining in full-page paging state
+  defp countup?(
+         %Content.Message.GenericPaging{messages: [%Content.Message.Predictions{} = p1 | _]},
+         %Content.Message.GenericPaging{messages: [%Content.Message.Predictions{} = p2 | _]}
+       ) do
+    countup?(p1, p2)
+  end
+
+  # Specific to JFK/UMass Mezzanine:
+  # Sign is transitioning from normal state to a full-page paging state
+  defp countup?(
+         %Content.Message.Predictions{} = p1,
+         %Content.Message.GenericPaging{
+           messages: [%Content.Message.PlatformPredictionBottom{} = p2 | _]
+         }
+       ) do
+    countup?(p1, %Content.Message.Predictions{destination: p2.destination, minutes: p2.minutes})
+  end
+
+  # Specific to JFK/UMass Mezzanine:
+  # Sign is transitioning from full-page paging state to normal state
+  defp countup?(
+         %Content.Message.GenericPaging{
+           messages: [%Content.Message.PlatformPredictionBottom{} = p1 | _]
+         },
+         %Content.Message.Predictions{} = p2
+       ) do
+    countup?(%Content.Message.Predictions{destination: p1.destination, minutes: p1.minutes}, p2)
   end
 
   defp countup?(

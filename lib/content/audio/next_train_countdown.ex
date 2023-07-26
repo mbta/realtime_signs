@@ -40,14 +40,7 @@ defmodule Content.Audio.NextTrainCountdown do
           green_line_branch = Content.Utilities.route_branch_letter(audio.route_id)
 
           cond do
-            audio.destination in [
-              :southbound,
-              :northbound,
-              :eastbound,
-              :westbound,
-              :inbound,
-              :outbound
-            ] ->
+            Utilities.directional_destination?(audio.destination) ->
               do_ad_hoc_message(audio)
 
             !is_nil(audio.track_number) ->

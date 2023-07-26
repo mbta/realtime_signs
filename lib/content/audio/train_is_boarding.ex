@@ -25,14 +25,7 @@ defmodule Content.Audio.TrainIsBoarding do
     def to_params(audio) do
       case PaEss.Utilities.destination_var(audio.destination) do
         {:ok, destination_var} ->
-          if audio.destination in [
-               :southbound,
-               :northbound,
-               :eastbound,
-               :westbound,
-               :inbound,
-               :outbound
-             ] do
+          if PaEss.Utilities.directional_destination?(audio.destination) do
             do_ad_hoc_message(audio)
           else
             do_to_params(audio, destination_var)

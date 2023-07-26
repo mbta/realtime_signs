@@ -8,7 +8,7 @@ defmodule Content.Message.EarlyAm.ScheduledTime do
 
   defimpl Content.Message do
     def to_string(%Content.Message.EarlyAm.ScheduledTime{scheduled_time: scheduled_time}) do
-      "due #{scheduled_time.hour}:#{Content.Utilities.format_minutes(scheduled_time.minute)}"
+      "due #{Content.Utilities.render_datetime_as_time(scheduled_time)}"
     end
   end
 end

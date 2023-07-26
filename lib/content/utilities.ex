@@ -54,6 +54,7 @@ defmodule Content.Utilities do
   def destination_for_prediction("Red", 0, _), do: {:ok, :southbound}
 
   def destination_for_prediction(_, 0, "70151"), do: {:ok, :kenmore}
+  def destination_for_prediction(_, 0, "71151"), do: {:ok, :kenmore}
   def destination_for_prediction(_, 0, "70202"), do: {:ok, :government_center}
   def destination_for_prediction(_, 0, "70201"), do: {:ok, :government_center}
   def destination_for_prediction(_, 0, "70175"), do: {:ok, :reservoir}
@@ -70,6 +71,7 @@ defmodule Content.Utilities do
   def destination_for_prediction(_, 1, "70200"), do: {:ok, :park_street}
   def destination_for_prediction(_, 1, "71199"), do: {:ok, :park_street}
   def destination_for_prediction(_, 1, "70150"), do: {:ok, :kenmore}
+  def destination_for_prediction(_, 1, "71150"), do: {:ok, :kenmore}
   def destination_for_prediction(_, 1, "70174"), do: {:ok, :reservoir}
 
   def destination_for_prediction(_, _, "Government Center-Brattle"), do: {:ok, :government_center}
@@ -106,9 +108,6 @@ defmodule Content.Utilities do
   def route_branch_letter("Green-E"), do: :e
   def route_branch_letter(_), do: nil
 
-  def format_minutes(minutes) do
-    if minutes < 10,
-      do: "0#{minutes}",
-      else: "#{minutes}"
-  end
+  def render_datetime_as_time(time),
+    do: Calendar.strftime(time, "%I:%M") |> String.replace_leading("0", "")
 end
