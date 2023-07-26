@@ -43,18 +43,20 @@ defmodule Signs.Utilities.EarlyAmSuppression do
           )
 
         cond do
+          # Special case logic for JFK/UMass Mezzanine
           match?(
             {%Message.Predictions{station_code: "RJFK", zone: "m"}, _},
             bottom_content
           ) ->
             cond do
+              # When JFK/UMass top line (SB) wants to show either timestamp or headways, do full-page paging
               match?({%EarlyAm.DestinationTrain{}, _}, top_content) or
                   match?({%Headways.Top{}, _}, top_content) ->
                 {bottom, _} = bottom_content
 
-                # Set zone to nil to prevent usual paging behavior for RJFK Mezzanine
                 paginate(
                   top_content,
+                  # Make zone nil in order to prevent the usual paging platform message
                   {%{bottom | zone: nil},
                    %Message.PlatformPredictionBottom{
                      stop_id: bottom.stop_id,
@@ -134,7 +136,7 @@ defmodule Signs.Utilities.EarlyAmSuppression do
         else:
           get_early_am_content(
             sign,
-            {top_message, %Message.Empty{}},
+            {top_message},
             top_scheduled,
             top_status,
             current_time
@@ -146,13 +148,14 @@ defmodule Signs.Utilities.EarlyAmSuppression do
         else:
           get_early_am_content(
             sign,
-            {bottom_message, %Message.Empty{}},
+            {bottom_message},
             bottom_scheduled,
             bottom_status,
             current_time
           )
       )
       |> case do
+        # If bottom line has status :none, then it could be a paging headway message
         {%Headways.Paging{destination: destination, range: range}, _} ->
           {%Headways.Top{destination: destination, vehicle_type: :train},
            %Headways.Bottom{range: range}}
@@ -180,7 +183,7 @@ defmodule Signs.Utilities.EarlyAmSuppression do
 
       status == :partially_suppressed ->
         case filter_early_am_messages(messages, sign.id) do
-          {%Message.Empty{}, %Message.Empty{}} ->
+          [] ->
             # If no valid predictions, try fetching headways
             case Signs.Utilities.Headways.get_messages(sign, current_time) do
               # If no headways are returned, default to timestamp message
@@ -193,44 +196,27 @@ defmodule Signs.Utilities.EarlyAmSuppression do
                  }}
 
               {headway_top, headway_bottom} ->
+                # Make sure routes is nil so that destination is used as headsign
                 {%{headway_top | destination: destination, routes: nil}, headway_bottom}
             end
 
+          [message] ->
+            {message, %Content.Message.Empty{}}
+
           messages ->
-            messages
+            List.to_tuple(messages)
         end
     end
   end
 
   defp filter_early_am_messages(messages, sign_id) do
     Tuple.to_list(messages)
-    |> Enum.map(fn
+    |> Enum.reject(fn
       message ->
-        cond do
-          match?(%Message.Predictions{}, message) and message.certainty > 120 and
-              sign_id not in ["symphony_eastbound", "prudential_eastbound"] ->
-            Message.Empty.new()
-
-          # Filter out headways messages so can re-fetch and overwrite destination at caller
-          match?(%Headways.Top{}, message) or
-              match?(%Headways.Bottom{}, message) ->
-            Message.Empty.new()
-
-          match?(%Headways.Paging{}, message) ->
-            Message.Empty.new()
-
-          true ->
-            message
-        end
+        match?(%Headways.Top{}, message) or match?(%Headways.Bottom{}, message) or
+          (sign_id not in ["symphony_eastbound", "prudential_eastbound"] and
+             match?(%Message.Predictions{}, message) and message.certainty > 120)
     end)
-    |> then(fn
-      [%Message.Empty{}, _] = messages ->
-        Enum.reverse(messages)
-
-      messages ->
-        messages
-    end)
-    |> List.to_tuple()
   end
 
   defp map_to_single_line_content(message) do
