@@ -103,9 +103,6 @@ defmodule Signs.Utilities.Messages do
       {%Content.Message.Headways.Paging{}, _} ->
         true
 
-      {%Content.Message.Empty{}, _} ->
-        true
-
       _ ->
         false
     end
