@@ -1,9 +1,10 @@
 defmodule Content.Message.PlatformPredictionBottom do
-  defstruct [:stop_id, :minutes]
+  defstruct [:stop_id, :minutes, :destination]
 
   @type t :: %__MODULE__{
           stop_id: String.t(),
-          minutes: integer() | :boarding | :arriving | :approaching | :max_time
+          minutes: integer() | :boarding | :arriving | :approaching | :max_time,
+          destination: PaEss.destination()
         }
 
   defimpl Content.Message do
