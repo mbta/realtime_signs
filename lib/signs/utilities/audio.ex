@@ -365,14 +365,6 @@ defmodule Signs.Utilities.Audio do
     Audio.FirstTrainScheduled.from_messages(message)
   end
 
-  defp get_audio_for_line(
-         %Message.EarlyAm.DestinationScheduledTime{} = message,
-         _line,
-         _multi_source?
-       ) do
-    Audio.FirstTrainScheduled.from_messages(message)
-  end
-
   defp get_audio_for_line(%Message.Empty{}, _line, _multi_source?) do
     []
   end

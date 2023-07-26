@@ -28,22 +28,13 @@ defmodule Signs.Utilities.Messages do
           {:static_text, {line1, line2}} = sign_config
 
           {Content.Message.Custom.new(line1, :top), Content.Message.Custom.new(line2, :bottom)}
-          {Content.Message.Custom.new(line1, :top), Content.Message.Custom.new(line2, :bottom)}
 
-        sign_config == :off ->
-          {Content.Message.Empty.new(), Content.Message.Empty.new()}
         sign_config == :off ->
           {Content.Message.Empty.new(), Content.Message.Empty.new()}
 
         sign_config == :headway ->
           get_headway_or_alert_messages(sign, current_time, alert_status)
-        sign_config == :headway ->
-          get_headway_or_alert_messages(sign, current_time, alert_status)
 
-        true ->
-          case Signs.Utilities.Predictions.get_messages(predictions, sign) do
-            {%Content.Message.Empty{}, %Content.Message.Empty{}} ->
-              get_headway_or_alert_messages(sign, current_time, alert_status)
         true ->
           case Signs.Utilities.Predictions.get_messages(predictions, sign) do
             {%Content.Message.Empty{}, %Content.Message.Empty{}} ->
@@ -52,20 +43,7 @@ defmodule Signs.Utilities.Messages do
             {top_message, %Content.Message.Empty{}} ->
               {top_message,
                get_paging_headway_or_alert_messages(sign, current_time, alert_status, :bottom)}
-            {top_message, %Content.Message.Empty{}} ->
-              {top_message,
-               get_paging_headway_or_alert_messages(sign, current_time, alert_status, :bottom)}
 
-            {%Content.Message.Empty{}, bottom_message} ->
-              if match?(
-                   %Content.Message.Predictions{station_code: "RJFK", zone: "m"},
-                   bottom_message
-                 ) do
-                jfk_umass_headway_paging(bottom_message, sign, current_time, alert_status)
-              else
-                {get_paging_headway_or_alert_messages(sign, current_time, alert_status, :top),
-                 bottom_message}
-              end
             {%Content.Message.Empty{}, bottom_message} ->
               if match?(
                    %Content.Message.Predictions{station_code: "RJFK", zone: "m"},
@@ -160,7 +138,8 @@ defmodule Signs.Utilities.Messages do
            messages: [
              %Content.Message.PlatformPredictionBottom{
                stop_id: prediction.stop_id,
-               minutes: prediction.minutes
+               minutes: prediction.minutes,
+               destination: destination
              },
              %Content.Message.Headways.Bottom{range: range}
            ]

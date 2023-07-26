@@ -445,6 +445,7 @@ defmodule PaEss.Utilities do
     Integer.to_string(9000 + min)
   end
 
+  @spec replace_abbreviations(String.t()) :: String.t()
   def replace_abbreviations(text) when is_binary(text) do
     Enum.reduce(
       @abbreviation_replacements,
