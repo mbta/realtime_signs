@@ -75,15 +75,12 @@ defmodule Signs.Utilities.Messages do
         messages
 
       alert_status in [:none, :alert_along_route] and sign_config == :auto ->
-        early_am_status =
-          if flip? and match?({_, _}, early_am_status),
-            do: do_flip(early_am_status),
-            else: early_am_status
-
-        scheduled =
-          if flip? and match?({{_, _}, {_, _}}, scheduled),
-            do: do_flip(scheduled),
-            else: scheduled
+        {early_am_status, scheduled} =
+          if Signs.Utilities.SourceConfig.multi_source?(sign.source_config) and flip? do
+            {do_flip(early_am_status), do_flip(scheduled)}
+          else
+            {early_am_status, scheduled}
+          end
 
         Signs.Utilities.EarlyAmSuppression.do_early_am_suppression(
           messages,

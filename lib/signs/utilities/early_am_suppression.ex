@@ -127,7 +127,22 @@ defmodule Signs.Utilities.EarlyAmSuppression do
          current_time
        ) do
     {top_scheduled, bottom_scheduled} = schedule
-    {top_message, bottom_message} = messages
+
+    {top_message, bottom_message} =
+      case messages do
+        # JFK/UMass case
+        {%Message.GenericPaging{messages: [prediction, headway_top]}, _} ->
+          # Unpack the generic paging message from the normal content generation
+          # - The headway top message will get filtered out and headways will be re-fetched
+          # - The prediction can now be filtered out or trigger the special case logic in
+          #   do_early_am_suppression since we reset the zone to "m" and the generic paging
+          #   will be reconstructed
+          {headway_top, %{prediction | zone: "m"}}
+
+        _ ->
+          messages
+      end
+
     {top_status, bottom_status} = statuses
 
     top_content =
