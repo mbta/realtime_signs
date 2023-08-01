@@ -7497,7 +7497,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "green_trunk",
       "headway_direction_name": "Outbound",
       "sources": [
         {
@@ -7527,7 +7527,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "green_trunk",
       "headway_direction_name": "Inbound",
       "sources": [
         {
@@ -7558,7 +7558,7 @@
     "type": "realtime",
     "source_config": [
       {
-        "headway_group": "green_e",
+        "headway_group": "green_trunk",
         "headway_direction_name": "Outbound",
         "sources": [
           {
@@ -7578,7 +7578,7 @@
         ]
       },
       {
-        "headway_group": "green_e",
+        "headway_group": "green_trunk",
         "headway_direction_name": "Inbound",
         "sources": [
           {
@@ -7609,7 +7609,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "green_trunk",
       "headway_direction_name": "Outbound",
       "sources": [
         {
@@ -7639,7 +7639,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "green_trunk",
       "headway_direction_name": "Inbound",
       "sources": [
         {
@@ -7670,7 +7670,7 @@
     "type": "realtime",
     "source_config": [
       {
-        "headway_group": "green_e",
+        "headway_group": "green_trunk",
         "headway_direction_name": "Outbound",
         "sources": [
           {
@@ -7690,7 +7690,7 @@
         ]
       },
       {
-        "headway_group": "green_e",
+        "headway_group": "green_trunk",
         "headway_direction_name": "Inbound",
         "sources": [
           {
@@ -7719,7 +7719,7 @@
     "audio_zones": [],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "glx_union",
       "headway_direction_name": "Riverside",
       "sources": [
         {
@@ -7744,7 +7744,7 @@
     "audio_zones": [],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "glx_union",
       "headway_direction_name": "Riverside",
       "sources": [
         {
@@ -7773,7 +7773,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "glx_union",
       "headway_direction_name": "Riverside",
       "sources": [
         {
@@ -7800,7 +7800,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "glx_medford",
       "headway_direction_name": "Medford/Tufts",
       "sources": [
         {
@@ -7830,7 +7830,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "glx_medford",
       "headway_direction_name": "Heath Street",
       "sources": [
         {
@@ -7859,7 +7859,7 @@
     "type": "realtime",
     "source_config": [
       {
-        "headway_group": "green_e",
+        "headway_group": "glx_medford",
         "headway_direction_name": "Medford/Tufts",
         "sources": [
           {
@@ -7879,7 +7879,7 @@
         ]
       },
       {
-        "headway_group": "green_e",
+        "headway_group": "glx_medford",
         "headway_direction_name": "Heath Street",
         "sources": [
           {
@@ -7910,7 +7910,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "glx_medford",
       "headway_direction_name": "Medford/Tufts",
       "sources": [
         {
@@ -7940,7 +7940,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "glx_medford",
       "headway_direction_name": "Heath Street",
       "sources": [
         {
@@ -7971,7 +7971,7 @@
     "type": "realtime",
     "source_config": [
       {
-        "headway_group": "green_e",
+        "headway_group": "glx_medford",
         "headway_direction_name": "Medford/Tufts",
         "sources": [
           {
@@ -7991,7 +7991,7 @@
         ]
       },
       {
-        "headway_group": "green_e",
+        "headway_group": "glx_medford",
         "headway_direction_name": "Heath Street",
         "sources": [
           {
@@ -8022,7 +8022,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "glx_medford",
       "headway_direction_name": "Medford/Tufts",
       "sources": [
         {
@@ -8052,7 +8052,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "glx_medford",
       "headway_direction_name": "Heath Street",
       "sources": [
         {
@@ -8083,7 +8083,7 @@
     "type": "realtime",
     "source_config": [
       {
-        "headway_group": "green_e",
+        "headway_group": "glx_medford",
         "headway_direction_name": "Medford/Tufts",
         "sources": [
           {
@@ -8103,7 +8103,7 @@
         ]
       },
       {
-        "headway_group": "green_e",
+        "headway_group": "glx_medford",
         "headway_direction_name": "Heath Street",
         "sources": [
           {
@@ -8134,7 +8134,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "glx_medford",
       "headway_direction_name": "Medford/Tufts",
       "sources": [
         {
@@ -8164,7 +8164,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "glx_medford",
       "headway_direction_name": "Heath Street",
       "sources": [
         {
@@ -8195,7 +8195,7 @@
     "type": "realtime",
     "source_config": [
       {
-        "headway_group": "green_e",
+        "headway_group": "glx_medford",
         "headway_direction_name": "Medford/Tufts",
         "sources": [
           {
@@ -8215,7 +8215,7 @@
         ]
       },
       {
-        "headway_group": "green_e",
+        "headway_group": "glx_medford",
         "headway_direction_name": "Heath Street",
         "sources": [
           {
@@ -8244,7 +8244,7 @@
     "audio_zones": [],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "glx_medford",
       "headway_direction_name": "Heath Street",
       "sources": [
         {
@@ -8272,7 +8272,7 @@
     "audio_zones": [],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "glx_medford",
       "headway_direction_name": "Heath Street",
       "sources": [
         {
@@ -8304,7 +8304,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_e",
+      "headway_group": "glx_medford",
       "headway_direction_name": "Heath Street",
       "sources": [
         {
