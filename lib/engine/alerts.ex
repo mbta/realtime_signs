@@ -1,4 +1,5 @@
 defmodule Engine.Alerts do
+  @behaviour Engine.AlertsAPI
   use GenServer
   require Logger
   alias Engine.Alerts.Fetcher
@@ -22,8 +23,7 @@ defmodule Engine.Alerts do
     GenServer.start_link(__MODULE__, opts, name: name)
   end
 
-  @spec max_stop_status(ets_tables(), [Fetcher.stop_id()], [Fetcher.route_id()]) ::
-          Fetcher.stop_status()
+  @impl true
   def max_stop_status(
         tables \\ %{stops_table: @stops_table, routes_table: @routes_table},
         stop_ids,
@@ -65,7 +65,7 @@ defmodule Engine.Alerts do
     end
   end
 
-  @spec init(Keyword.t()) :: {:ok, state()}
+  @impl true
   def init(opts) do
     fetch_ms = opts[:fetch_ms] || 30_000
     fetcher = opts[:fetcher] || Engine.Alerts.ApiFetcher
@@ -93,6 +93,7 @@ defmodule Engine.Alerts do
     {:ok, state}
   end
 
+  @impl true
   def handle_info(:fetch, state) do
     schedule_fetch(self(), state.fetch_ms)
 

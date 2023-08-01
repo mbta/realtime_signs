@@ -2,6 +2,7 @@ defmodule Engine.Config do
   @moduledoc """
   Manages the dynamic configurable pieces of the signs such as if they are on
   """
+  @behaviour Engine.ConfigAPI
 
   use GenServer
   require Logger
@@ -28,7 +29,7 @@ defmodule Engine.Config do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  @spec sign_config(:ets.tab(), String.t()) :: sign_config()
+  @impl true
   def sign_config(table_name \\ @table_signs, sign_id) do
     case :ets.lookup(table_name, sign_id) do
       [{^sign_id, config}] -> config
@@ -36,7 +37,7 @@ defmodule Engine.Config do
     end
   end
 
-  @spec headway_config(:ets.tab(), String.t(), DateTime.t()) :: Headway.t() | nil
+  @impl true
   def headway_config(table_name \\ @table_headways, headway_group, current_time) do
     time_period = Headway.current_time_period(current_time)
     Headways.get_headway(table_name, {headway_group, time_period})
@@ -54,7 +55,7 @@ defmodule Engine.Config do
     schedule_update(pid, 0)
   end
 
-  @spec init(map()) :: {:ok, state}
+  @impl true
   def init(opts) do
     state = %{
       table_name_signs: @table_signs,
@@ -84,7 +85,7 @@ defmodule Engine.Config do
     ])
   end
 
-  @spec handle_info(:update, state) :: {:noreply, state}
+  @impl true
   def handle_info(:update, state) do
     schedule_update(self())
     updater = Application.get_env(:realtime_signs, :external_config_getter)

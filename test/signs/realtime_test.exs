@@ -1,79 +1,17 @@
 defmodule Signs.RealtimeTest do
   use ExUnit.Case, async: false
   import ExUnit.CaptureLog
+  import Mox
 
   alias Content.Message.Headways.Top, as: HT
   alias Content.Message.Headways.Bottom, as: HB
-
-  defmodule FakePredictions do
-    def for_stop(_stop_id, _direction_id), do: []
-    def stopped_at?(_stop_id), do: false
-  end
-
-  defmodule FakePassthroughPredictions do
-    def for_stop("1", 0) do
-      [
-        %Predictions.Prediction{
-          stop_id: "1",
-          direction_id: 0,
-          route_id: "Red",
-          stopped?: false,
-          stops_away: 4,
-          destination_stop_id: "70105",
-          seconds_until_arrival: nil,
-          seconds_until_departure: nil,
-          seconds_until_passthrough: 30,
-          trip_id: "123"
-        }
-      ]
-    end
-
-    def for_stop(_stop_id, _direction_id), do: []
-  end
-
-  defmodule FakeDepartureEngine do
-    @test_departure_time nil
-
-    def get_last_departure(_) do
-      @test_departure_time
-    end
-
-    def test_departure_time() do
-      @test_departure_time
-    end
-  end
 
   defmodule FakeHeadways do
     def get_headways(_stop_id), do: {1, 5}
     def display_headways?(_stop_ids, _time, _buffer), do: true
   end
 
-  defmodule FakeConfigEngine do
-    def sign_config(_sign_id), do: :auto
-
-    def headway_config(_group, _time) do
-      %Engine.Config.Headway{headway_id: "id", range_low: 11, range_high: 13}
-    end
-  end
-
-  defmodule FakeUpdater do
-    def update_sign(id, top_msg, bottom_msg, duration, start, sign_id) do
-      send(self(), {:update_sign, id, top_msg, bottom_msg, duration, start, sign_id})
-    end
-
-    def send_audio(id, audio, priority, timeout, sign_id) do
-      send(self(), {:send_audio, id, audio, priority, timeout, sign_id})
-    end
-  end
-
-  defmodule FakeAlerts do
-    def max_stop_status(["suspended"], _routes), do: :suspension_closed_station
-    def max_stop_status(["suspended_transfer"], _routes), do: :suspension_transfer_station
-    def max_stop_status(["shuttles"], _routes), do: :shuttles_closed_station
-    def max_stop_status(["closure"], _routes), do: :station_closure
-    def max_stop_status(_stops, ["Green-B"]), do: :alert_along_route
-    def max_stop_status(_stops, _routes), do: :none
-  end
+  @headway_config %Engine.Config.Headway{headway_id: "id", range_low: 11, range_high: 13}
 
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
@@ -94,20 +32,76 @@ defmodule Signs.RealtimeTest do
       headway_destination: :southbound
     },
     current_content_top: %HT{destination: :southbound, vehicle_type: :train},
-    current_content_bottom: %HB{range: {1, 5}, prev_departure_mins: nil},
-    prediction_engine: FakePredictions,
+    current_content_bottom: %HB{range: {11, 13}},
+    prediction_engine: Engine.Predictions.Mock,
     headway_engine: FakeHeadways,
-    last_departure_engine: FakeDepartureEngine,
-    config_engine: FakeConfigEngine,
-    alerts_engine: FakeAlerts,
-    sign_updater: FakeUpdater,
+    last_departure_engine: nil,
+    config_engine: Engine.Config.Mock,
+    alerts_engine: Engine.Alerts.Mock,
+    sign_updater: PaEss.Updater.Mock,
     last_update: Timex.now(),
     tick_read: 1,
     tick_audit: 1,
     read_period_seconds: 100
   }
 
+  @predictions [
+    %Predictions.Prediction{
+      stop_id: "1",
+      direction_id: 0,
+      route_id: "Red",
+      stopped?: false,
+      stops_away: 1,
+      destination_stop_id: "70093",
+      seconds_until_arrival: 120,
+      seconds_until_departure: 180
+    },
+    %Predictions.Prediction{
+      stop_id: "1",
+      direction_id: 0,
+      route_id: "Red",
+      stopped?: false,
+      stops_away: 1,
+      destination_stop_id: "70093",
+      seconds_until_arrival: 240,
+      seconds_until_departure: 300
+    }
+  ]
+
+  @no_departures_predictions [
+    %Predictions.Prediction{
+      stop_id: "1",
+      direction_id: 0,
+      route_id: "Red",
+      stopped?: false,
+      stops_away: 1,
+      destination_stop_id: "70093",
+      seconds_until_arrival: 120
+    },
+    %Predictions.Prediction{
+      stop_id: "1",
+      direction_id: 0,
+      route_id: "Red",
+      stopped?: false,
+      stops_away: 1,
+      destination_stop_id: "70093",
+      seconds_until_arrival: 240
+    }
+  ]
+
+  @no_service_audio {:canned, {"107", ["861", "21000", "864", "21000", "863"], :audio}}
+
+  setup :verify_on_exit!
+
   describe "run loop" do
+    setup do
+      stub(Engine.Config.Mock, :sign_config, fn _ -> :auto end)
+      stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
+      stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+      stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      :ok
+    end
+
     test "starts up and logs unknown messages" do
       assert {:ok, pid} = GenServer.start_link(Signs.Realtime, @sign)
 
@@ -122,44 +116,159 @@ defmodule Signs.RealtimeTest do
     end
 
     test "decrements ticks and doesn't send audio or text when sign is not expired" do
-      sign = %{
-        @sign
-        | current_content_bottom: %HB{range: {11, 13}, prev_departure_mins: nil}
-      }
-
-      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
-      refute_received({:send_audio, _, _, _, _})
-      refute_received({:update_sign, _, _, _, _, _})
+      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, @sign)
       assert sign.tick_read == 0
     end
 
-    test "expires content on both lines when tick is zero" do
-      sign = %{
-        @sign
-        | last_update: Timex.shift(Timex.now(), seconds: -200),
-          current_content_top: %HT{destination: :southbound, vehicle_type: :train},
-          current_content_bottom: %HB{range: {11, 13}}
-      }
-
-      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
-
-      assert_received(
-        {:update_sign, _id, %HT{destination: :southbound, vehicle_type: :train},
-         %HB{range: {11, 13}}, _dur, _start, _sign_id}
-      )
-
-      refute_received({:send_audio, _, _, _, _})
+    test "refreshes content when expired" do
+      expect_messages({"Southbound trains", "Every 11 to 13 min"})
+      sign = %{@sign | last_update: Timex.shift(Timex.now(), seconds: -200)}
+      Signs.Realtime.handle_info(:run_loop, sign)
     end
 
     test "announces train passing through station" do
-      sign = %{
-        @sign
-        | prediction_engine: FakePassthroughPredictions
-      }
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          %Predictions.Prediction{
+            stop_id: "passthrough_audio",
+            direction_id: 0,
+            route_id: "Red",
+            stopped?: false,
+            stops_away: 4,
+            destination_stop_id: "70105",
+            seconds_until_arrival: nil,
+            seconds_until_departure: nil,
+            seconds_until_passthrough: 30,
+            trip_id: "123"
+          }
+        ]
+      end)
 
-      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, sign)
+      expect_audios([{:canned, {"103", ["32118"], :audio_visual}}])
+      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, @sign)
       assert sign.announced_passthroughs == ["123"]
-      assert_received({:send_audio, _, [%Content.Audio.Passthrough{}], _, _, _})
+    end
+
+    test "when custom text is present, display it, overriding alerts" do
+      expect(Engine.Config.Mock, :sign_config, fn _ -> {:static_text, {"custom", "message"}} end)
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
+      expect_messages({"custom", "message"})
+      expect_audios([{:ad_hoc, {"custom message", :audio}}])
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when sign is disabled, it's empty" do
+      expect(Engine.Config.Mock, :sign_config, fn _ -> :off end)
+      expect_messages({"", ""})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when sign is at a transfer station from a shuttle, and there are no predictions it's empty" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_transfer_station end)
+      expect_messages({"", ""})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when sign is at a transfer station from a suspension, and there are no predictions it's empty" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_transfer_station end)
+      expect_messages({"", ""})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when sign is at a transfer station, and there are no departure predictions it's empty" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_transfer_station end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> @no_departures_predictions end)
+      expect_messages({"", ""})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when sign is at a transfer station, but there are departure predictions it shows them" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_transfer_station end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> @predictions end)
+      expect_messages({"Ashmont      2 min", "Ashmont      4 min"})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when sign is at a station closed by shuttles and there are no departure predictions, it says so" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> @no_departures_predictions end)
+      expect_messages({"No train service", "Use shuttle bus"})
+      expect_audios([{:canned, {"199", ["864"], :audio}}])
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when sign is at a station closed and there are no departure predictions, but shuttles do not run at this station" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> @no_departures_predictions end)
+      expect_messages({"No train service", ""})
+      expect_audios([@no_service_audio])
+      Signs.Realtime.handle_info(:run_loop, %{@sign | uses_shuttles: false})
+    end
+
+    test "when sign is at a station closed by shuttles and there are departure predictions, it shows them" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> @predictions end)
+      expect_messages({"Ashmont      2 min", "Ashmont      4 min"})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when sign is at a station closed due to suspension and there are no departure predictions, it says so" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> @no_departures_predictions end)
+      expect_messages({"No train service", ""})
+      expect_audios([@no_service_audio])
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when sign is at a closed station and there are no departure predictions, it says so" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> @no_departures_predictions end)
+      expect_messages({"No train service", ""})
+      expect_audios([@no_service_audio])
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when sign is at a station closed due to suspension and there are departure predictions, it shows them" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> @predictions end)
+      expect_messages({"Ashmont      2 min", "Ashmont      4 min"})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when there are predictions, puts predictions on the sign" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> @predictions end)
+      expect_messages({"Ashmont      2 min", "Ashmont      4 min"})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when there are no predictions and only one source config, puts headways on the sign" do
+      expect(Engine.Config.Mock, :headway_config, fn _, _ ->
+        %{@headway_config | range_high: 14}
+      end)
+
+      expect_messages({"Southbound trains", "Every 11 to 14 min"})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when sign is forced into headway mode but no alerts are present, displays headways" do
+      expect(Engine.Config.Mock, :sign_config, fn _ -> :headway end)
+
+      expect(Engine.Config.Mock, :headway_config, fn _, _ ->
+        %{@headway_config | range_high: 14}
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> @predictions end)
+      expect_messages({"Southbound trains", "Every 11 to 14 min"})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when sign is forced into headway mode but alerts are present, alert takes precedence" do
+      expect(Engine.Config.Mock, :sign_config, fn _ -> :headway end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> @predictions end)
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
+      expect_messages({"No train service", ""})
+      expect_audios([@no_service_audio])
+      Signs.Realtime.handle_info(:run_loop, @sign)
     end
   end
 
@@ -322,5 +431,19 @@ defmodule Signs.RealtimeTest do
 
       assert log =~ "in_range=false"
     end
+  end
+
+  defp expect_messages(messages) do
+    expect(PaEss.Updater.Mock, :update_sign, fn {"TEST", "x"}, top, bottom, 145, :now, _sign_id ->
+      assert {Content.Message.to_string(top), Content.Message.to_string(bottom)} == messages
+      :ok
+    end)
+  end
+
+  defp expect_audios(audios) do
+    expect(PaEss.Updater.Mock, :send_audio, fn {"TEST", ["x"]}, list, 5, 60, _sign_id ->
+      assert Enum.map(list, &Content.Audio.to_params(&1)) == audios
+      :ok
+    end)
   end
 end
