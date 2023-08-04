@@ -224,7 +224,8 @@ defmodule Signs.Utilities.Predictions do
   # since this is a reasonable indicator of this problem.
   defp filter_large_red_line_gaps([first | _] = predictions)
        when first.stop_id in ~w(70105 Braintree-01 Braintree-02 70104 70102 70100 70094 70092 70090 70088) do
-    Enum.chunk_every([%{seconds_until_departure: 0}] ++ predictions, 2, 1, :discard)
+    [%{seconds_until_departure: 0} | predictions]
+    |> Enum.chunk_every(2, 1, :discard)
     |> Enum.take_while(fn [prev, current] ->
       current.seconds_until_departure - prev.seconds_until_departure < 18 * 60
     end)
