@@ -24,6 +24,7 @@ defmodule Signs.Realtime do
     :last_departure_engine,
     :config_engine,
     :alerts_engine,
+    :current_time_fn,
     :sign_updater,
     :last_update,
     :tick_audit,
@@ -58,6 +59,7 @@ defmodule Signs.Realtime do
           last_departure_engine: module(),
           config_engine: module(),
           alerts_engine: module(),
+          current_time_fn: fun(),
           sign_updater: module(),
           last_update: DateTime.t(),
           tick_audit: non_neg_integer(),
@@ -91,6 +93,12 @@ defmodule Signs.Realtime do
       last_departure_engine: last_departure_engine,
       config_engine: config_engine,
       alerts_engine: alerts_engine,
+      current_time_fn:
+        opts[:current_time_fn] ||
+          fn ->
+            time_zone = Application.get_env(:realtime_signs, :time_zone)
+            DateTime.utc_now() |> DateTime.shift_zone!(time_zone)
+          end,
       sign_updater: sign_updater,
       last_update: nil,
       tick_audit: 60,
@@ -113,8 +121,7 @@ defmodule Signs.Realtime do
     sign_routes = SourceConfig.sign_routes(sign.source_config)
     alert_status = sign.alerts_engine.max_stop_status(sign_stop_ids, sign_routes)
     sign_config = sign.config_engine.sign_config(sign.id)
-    time_zone = Application.get_env(:realtime_signs, :time_zone)
-    {:ok, current_time} = DateTime.utc_now() |> DateTime.shift_zone(time_zone)
+    current_time = sign.current_time_fn.()
 
     predictions =
       case sign.source_config do

@@ -22,6 +22,9 @@ defmodule Signs.RealtimeTest do
     announce_boarding?: false
   }
 
+  @fake_time DateTime.new!(~D[2023-01-01], ~T[12:00:00], "America/New_York")
+  def fake_time_fn, do: @fake_time
+
   @sign %Signs.Realtime{
     id: "sign_id",
     text_id: {"TEST", "x"},
@@ -38,8 +41,9 @@ defmodule Signs.RealtimeTest do
     last_departure_engine: nil,
     config_engine: Engine.Config.Mock,
     alerts_engine: Engine.Alerts.Mock,
+    current_time_fn: &Signs.RealtimeTest.fake_time_fn/0,
     sign_updater: PaEss.Updater.Mock,
-    last_update: Timex.now(),
+    last_update: @fake_time,
     tick_read: 1,
     tick_audit: 1,
     read_period_seconds: 100
@@ -122,7 +126,7 @@ defmodule Signs.RealtimeTest do
 
     test "refreshes content when expired" do
       expect_messages({"Southbound trains", "Every 11 to 13 min"})
-      sign = %{@sign | last_update: Timex.shift(Timex.now(), seconds: -200)}
+      sign = %{@sign | last_update: Timex.shift(@fake_time, seconds: -200)}
       Signs.Realtime.handle_info(:run_loop, sign)
     end
 
