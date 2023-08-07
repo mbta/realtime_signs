@@ -7,6 +7,7 @@ defmodule Engine.Predictions do
   Offers a `for_stop/1` public interface to get a list of Predictions.Prediction's
   for a given GTFS stop.
   """
+  @behaviour Engine.PredictionsAPI
 
   use GenServer
   require Logger
@@ -25,7 +26,7 @@ defmodule Engine.Predictions do
   end
 
   @doc "The upcoming predicted times a vehicle will be at this stop"
-  @spec for_stop(String.t(), 0 | 1) :: [Predictions.Prediction.t()]
+  @impl true
   def for_stop(predictions_table_id \\ @trip_updates_table, gtfs_stop_id, direction_id) do
     case :ets.lookup(predictions_table_id, {gtfs_stop_id, direction_id}) do
       [{_, :none}] -> []
@@ -34,6 +35,7 @@ defmodule Engine.Predictions do
     end
   end
 
+  @impl true
   def init(_) do
     schedule_update(self())
 
@@ -48,6 +50,7 @@ defmodule Engine.Predictions do
      }}
   end
 
+  @impl true
   def handle_info(:update, state) do
     schedule_update(self())
     current_time = Timex.now()

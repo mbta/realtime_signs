@@ -78,7 +78,6 @@ defmodule Signs.Utilities.SourceConfig do
 
   * stop_id: The GTFS stop_id that it uses for prediction data.
   * routes: A list of routes that are relevant to this sign regarding alerts.
-    Predictions are also filtered based on this field.
   * direction_id: 0 or 1, used in tandem with the stop ID for predictions
   * platform: mostly null, but :ashmont | :braintree for JFK/UMass, where it's used for the "next
     train to X is approaching, on the Y platform" audio.
