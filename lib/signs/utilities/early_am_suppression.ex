@@ -131,13 +131,17 @@ defmodule Signs.Utilities.EarlyAmSuppression do
     {top_message, bottom_message} =
       case messages do
         # JFK/UMass case
-        {%Message.GenericPaging{messages: [prediction, headway_top]}, _} ->
+        {%Message.GenericPaging{messages: [prediction, headway_top]},
+         %Message.GenericPaging{messages: [_, headway_bottom]}} ->
           # Unpack the generic paging message from the normal content generation
           # - The headway top message will get filtered out and headways will be re-fetched
           # - The prediction can now be filtered out or trigger the special case logic in
           #   do_early_am_suppression since we reset the zone to "m" and the generic paging
           #   will be reconstructed
-          {headway_top, %{prediction | zone: "m"}}
+          {%Message.Headways.Paging{
+             destination: headway_top.destination,
+             range: headway_bottom.range
+           }, %{prediction | zone: "m"}}
 
         _ ->
           messages
@@ -145,41 +149,28 @@ defmodule Signs.Utilities.EarlyAmSuppression do
 
     {top_status, bottom_status} = statuses
 
-    top_content =
-      if top_status == :none,
-        do: {top_message, %Message.Empty{}},
-        else:
-          get_early_am_content(
-            sign,
-            {top_message},
-            top_scheduled,
-            top_status,
-            current_time
-          )
+    Enum.map(
+      [
+        {top_message, top_scheduled, top_status},
+        {bottom_message, bottom_scheduled, bottom_status}
+      ],
+      fn {message, scheduled, status} ->
+        if(status == :none,
+          do: {message, %Message.Empty{}},
+          else: get_early_am_content(sign, {message}, scheduled, status, current_time)
+        )
+        |> case do
+          # If line has status :none, then it could be a paging headway message
+          {%Headways.Paging{destination: destination, range: range}, _} ->
+            {%Headways.Top{destination: destination, vehicle_type: :train},
+             %Headways.Bottom{range: range}}
 
-    bottom_content =
-      if(bottom_status == :none,
-        do: {bottom_message, %Message.Empty{}},
-        else:
-          get_early_am_content(
-            sign,
-            {bottom_message},
-            bottom_scheduled,
-            bottom_status,
-            current_time
-          )
-      )
-      |> case do
-        # If bottom line has status :none, then it could be a paging headway message
-        {%Headways.Paging{destination: destination, range: range}, _} ->
-          {%Headways.Top{destination: destination, vehicle_type: :train},
-           %Headways.Bottom{range: range}}
-
-        bottom_content ->
-          bottom_content
+          content ->
+            content
+        end
       end
-
-    {top_content, bottom_content}
+    )
+    |> List.to_tuple()
   end
 
   defp get_early_am_content(
