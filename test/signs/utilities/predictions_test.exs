@@ -21,6 +21,7 @@ defmodule Signs.Utilities.PredictionsTest do
     last_departure_engine: FakeDepartures,
     config_engine: Engine.Config,
     alerts_engine: nil,
+    current_time_fn: nil,
     sign_updater: FakeUpdater,
     last_update: Timex.now(),
     tick_audit: 240,

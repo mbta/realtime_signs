@@ -32,6 +32,7 @@ defmodule Signs.Utilities.AudioTest do
     last_departure_engine: nil,
     config_engine: Engine.Config,
     alerts_engine: nil,
+    current_time_fn: nil,
     sign_updater: nil,
     last_update: Timex.now(),
     tick_audit: 1,

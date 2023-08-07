@@ -3,3 +3,6 @@ ExUnit.start()
 
 Mox.defmock(Engine.NetworkCheck.Mock, for: Engine.NetworkCheck)
 Mox.defmock(PaEss.Updater.Mock, for: PaEss.Updater)
+Mox.defmock(Engine.Config.Mock, for: Engine.ConfigAPI)
+Mox.defmock(Engine.Alerts.Mock, for: Engine.AlertsAPI)
+Mox.defmock(Engine.Predictions.Mock, for: Engine.PredictionsAPI)
