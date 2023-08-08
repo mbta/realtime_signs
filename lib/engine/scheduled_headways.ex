@@ -4,6 +4,7 @@ defmodule Engine.ScheduledHeadways do
   Initially we will quickly update any newly registered stop so that we have something to show,
   then over time we will update every stop once every hour to make sure we stay up to date.
   """
+  @behaviour Engine.ScheduledHeadwaysAPI
   use GenServer
   require Logger
   require Signs.Utilities.SignsConfig
@@ -34,7 +35,7 @@ defmodule Engine.ScheduledHeadways do
     )
   end
 
-  @spec init(Keyword.t()) :: {:ok, state()}
+  @impl true
   def init(opts) do
     headways_ets_table = opts[:headways_ets_table] || :scheduled_headways
 
@@ -98,7 +99,7 @@ defmodule Engine.ScheduledHeadways do
   @doc "Checks if the given time is after the first scheduled stop and before the last.
   A buffer of minutes (positive) is subtracted from the first time. so that headways are
   shown for a short time before the first train."
-  @spec display_headways?(:ets.tab(), [String.t()], DateTime.t(), non_neg_integer()) :: boolean()
+  @impl true
   def display_headways?(
         table \\ :scheduled_headways_first_last_departures,
         stop_ids,
@@ -139,7 +140,7 @@ defmodule Engine.ScheduledHeadways do
     |> Enum.min_by(&DateTime.to_unix/1, fn -> nil end)
   end
 
-  @spec handle_info(:data_update, state) :: {:noreply, state}
+  @impl true
   def handle_info(:data_update, state) do
     schedule_data_update(self(), state.fetch_ms)
 

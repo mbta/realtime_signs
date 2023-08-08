@@ -6,11 +6,6 @@ defmodule Signs.RealtimeTest do
   alias Content.Message.Headways.Top, as: HT
   alias Content.Message.Headways.Bottom, as: HB
 
-  defmodule FakeHeadways do
-    def get_headways(_stop_id), do: {1, 5}
-    def display_headways?(_stop_ids, _time, _buffer), do: true
-  end
-
   @headway_config %Engine.Config.Headway{headway_id: "id", range_low: 11, range_high: 13}
 
   @src %Signs.Utilities.SourceConfig{
@@ -37,7 +32,7 @@ defmodule Signs.RealtimeTest do
     current_content_top: %HT{destination: :southbound, vehicle_type: :train},
     current_content_bottom: %HB{range: {11, 13}},
     prediction_engine: Engine.Predictions.Mock,
-    headway_engine: FakeHeadways,
+    headway_engine: Engine.ScheduledHeadways.Mock,
     last_departure_engine: nil,
     config_engine: Engine.Config.Mock,
     alerts_engine: Engine.Alerts.Mock,
@@ -47,6 +42,16 @@ defmodule Signs.RealtimeTest do
     tick_read: 1,
     tick_audit: 1,
     read_period_seconds: 100
+  }
+
+  @mezzanine_sign %{
+    @sign
+    | source_config: {
+        %{sources: [@src], headway_group: "group", headway_destination: :northbound},
+        %{sources: [@src], headway_group: "group", headway_destination: :southbound}
+      },
+      current_content_top: %HT{vehicle_type: :train, routes: []},
+      current_content_bottom: %HB{range: {11, 13}}
   }
 
   @predictions [
@@ -68,6 +73,87 @@ defmodule Signs.RealtimeTest do
       stops_away: 1,
       destination_stop_id: "70093",
       seconds_until_arrival: 240,
+      seconds_until_departure: 300
+    },
+    %Predictions.Prediction{
+      stop_id: "1",
+      direction_id: 0,
+      route_id: "Red",
+      stopped?: false,
+      stops_away: 1,
+      destination_stop_id: "70093",
+      seconds_until_arrival: 360,
+      seconds_until_departure: 420
+    }
+  ]
+
+  @multiple_arriving_prediction1 %Predictions.Prediction{
+    stop_id: "1",
+    direction_id: 0,
+    route_id: "Green-C",
+    stopped?: false,
+    stops_away: 1,
+    destination_stop_id: "123",
+    seconds_until_arrival: 15,
+    seconds_until_departure: 50
+  }
+
+  @multiple_arriving_prediction2 %Predictions.Prediction{
+    stop_id: "2",
+    direction_id: 0,
+    route_id: "Green-D",
+    stopped?: false,
+    stops_away: 1,
+    destination_stop_id: "123",
+    seconds_until_arrival: 16,
+    seconds_until_departure: 50
+  }
+
+  @passthrough_prediction1 %Predictions.Prediction{
+    stop_id: "1",
+    direction_id: 0,
+    route_id: "Red",
+    stopped?: false,
+    stops_away: 4,
+    destination_stop_id: "70105",
+    seconds_until_arrival: nil,
+    seconds_until_departure: nil,
+    seconds_until_passthrough: 30,
+    trip_id: "123"
+  }
+
+  @passthrough_prediction2 %Predictions.Prediction{
+    stop_id: "1",
+    direction_id: 1,
+    route_id: "Red",
+    stopped?: false,
+    stops_away: 4,
+    destination_stop_id: "70105",
+    seconds_until_arrival: nil,
+    seconds_until_departure: nil,
+    seconds_until_passthrough: 30,
+    trip_id: "124"
+  }
+
+  @later_boarding_predictions [
+    %Predictions.Prediction{
+      stop_id: "1",
+      direction_id: 0,
+      route_id: "Green-B",
+      stopped?: false,
+      stops_away: 1,
+      destination_stop_id: "123",
+      seconds_until_arrival: 200,
+      seconds_until_departure: 250
+    },
+    %Predictions.Prediction{
+      stop_id: "1",
+      direction_id: 0,
+      route_id: "Green-C",
+      stopped?: false,
+      stops_away: 0,
+      destination_stop_id: "123",
+      seconds_until_arrival: 250,
       seconds_until_departure: 300
     }
   ]
@@ -103,6 +189,7 @@ defmodule Signs.RealtimeTest do
       stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
       stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
       :ok
     end
 
@@ -132,25 +219,30 @@ defmodule Signs.RealtimeTest do
 
     test "announces train passing through station" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [
-          %Predictions.Prediction{
-            stop_id: "passthrough_audio",
-            direction_id: 0,
-            route_id: "Red",
-            stopped?: false,
-            stops_away: 4,
-            destination_stop_id: "70105",
-            seconds_until_arrival: nil,
-            seconds_until_departure: nil,
-            seconds_until_passthrough: 30,
-            trip_id: "123"
-          }
-        ]
+        [@passthrough_prediction1, @passthrough_prediction2]
       end)
 
       expect_audios([{:canned, {"103", ["32118"], :audio_visual}}])
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, @sign)
       assert sign.announced_passthroughs == ["123"]
+    end
+
+    test "announces passthrough trains for mezzanine signs" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [@passthrough_prediction1] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [@passthrough_prediction2] end)
+      expect_audios([{:canned, {"103", ["32118"], :audio_visual}}])
+      expect_audios([{:canned, {"103", ["32114"], :audio_visual}}])
+
+      Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
+    end
+
+    test "announces passthrough audio for 'Southbound' headsign" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [%{@passthrough_prediction1 | destination_stop_id: "70083"}]
+      end)
+
+      expect_audios([{:canned, {"103", ["32117"], :audio_visual}}])
+      Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "when custom text is present, display it, overriding alerts" do
@@ -273,6 +365,409 @@ defmodule Signs.RealtimeTest do
       expect_messages({"No train service", ""})
       expect_audios([@no_service_audio])
       Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "generates empty messages if no headway is configured for some reason" do
+      expect(Engine.Config.Mock, :headway_config, fn _, _ -> nil end)
+      expect_messages({"", ""})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "generates empty messages if outside of service hours" do
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
+      expect_messages({"", ""})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "generates non-directional headway message at center/mezz signs" do
+      expect(Engine.Config.Mock, :headway_config, fn _, _ ->
+        %{@headway_config | range_high: 14}
+      end)
+
+      expect_messages({"Trains", "Every 11 to 14 min"})
+      Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
+    end
+
+    test "when given two source lists, returns earliest result from each" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> @predictions end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          %Predictions.Prediction{
+            stop_id: "2",
+            direction_id: 1,
+            route_id: "Red",
+            stopped?: false,
+            stops_away: 1,
+            destination_stop_id: "123",
+            seconds_until_arrival: 10,
+            seconds_until_departure: 20
+          },
+          %Predictions.Prediction{
+            stop_id: "2",
+            direction_id: 1,
+            route_id: "Red",
+            stopped?: false,
+            stops_away: 1,
+            destination_stop_id: "123",
+            seconds_until_arrival: 70,
+            seconds_until_departure: 80
+          }
+        ]
+      end)
+
+      expect_messages({"Ashmont      2 min", "Alewife        ARR"})
+      Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
+    end
+
+    test "sorts by arrival or departure depending on which is present" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          %Predictions.Prediction{
+            stop_id: "1",
+            direction_id: 1,
+            route_id: "Red",
+            stopped?: false,
+            stops_away: 1,
+            destination_stop_id: "123",
+            seconds_until_arrival: 240,
+            seconds_until_departure: 300
+          },
+          %Predictions.Prediction{
+            stop_id: "1",
+            direction_id: 1,
+            route_id: "Red",
+            stopped?: false,
+            stops_away: 1,
+            destination_stop_id: "123",
+            seconds_until_arrival: nil,
+            seconds_until_departure: 480
+          }
+        ]
+      end)
+
+      expect_messages({"Alewife      4 min", "Alewife      8 min"})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "When the train is stopped a long time away, but not quite max time, shows stopped" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          %Predictions.Prediction{
+            stop_id: "1",
+            direction_id: 0,
+            route_id: "Mattapan",
+            stopped?: false,
+            stops_away: 8,
+            boarding_status: "Stopped 8 stop away",
+            destination_stop_id: "123",
+            seconds_until_arrival: 1100,
+            seconds_until_departure: 10
+          }
+        ]
+      end)
+
+      expect_messages(
+        {[{"Mattapan   Stopped", 6}, {"Mattapan   8 stops", 6}, {"Mattapan      away", 6}], ""}
+      )
+
+      expect_audios([
+        {:canned,
+         {"115",
+          [
+            "501",
+            "21000",
+            "507",
+            "21000",
+            "4100",
+            "21000",
+            "533",
+            "21000",
+            "641",
+            "21000",
+            "5008",
+            "21000",
+            "534"
+          ], :audio}}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "When the train is stopped a long time away from a terminal, shows max time instead of stopped" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          %Predictions.Prediction{
+            stop_id: "1",
+            direction_id: 0,
+            route_id: "Mattapan",
+            stopped?: false,
+            stops_away: 8,
+            boarding_status: "Stopped 8 stop away",
+            destination_stop_id: "123",
+            seconds_until_arrival: 10,
+            seconds_until_departure: 2020
+          }
+        ]
+      end)
+
+      expect_messages({"Mattapan   20+ min", ""})
+      expect_audios([{:canned, {"90", ["4100", "502", "5020"], :audio}}])
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | source_config: %{@sign.source_config | sources: [%{@src | terminal?: true}]}
+      })
+    end
+
+    test "When the train is stopped a long time away, shows max time instead of stopped" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          %Predictions.Prediction{
+            stop_id: "1",
+            direction_id: 0,
+            route_id: "Mattapan",
+            stopped?: false,
+            stops_away: 8,
+            boarding_status: "Stopped 8 stop away",
+            destination_stop_id: "123",
+            seconds_until_arrival: 1200,
+            seconds_until_departure: 10
+          }
+        ]
+      end)
+
+      expect_messages({"Mattapan   20+ min", ""})
+      expect_audios([{:canned, {"90", ["4100", "503", "5020"], :audio}}])
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "only the first prediction in a source list can be BRD" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          %Predictions.Prediction{
+            stop_id: "1",
+            direction_id: 0,
+            route_id: "Mattapan",
+            stopped?: false,
+            stops_away: 0,
+            destination_stop_id: "123",
+            seconds_until_arrival: 0,
+            seconds_until_departure: 90,
+            boarding_status: nil
+          },
+          %Predictions.Prediction{
+            stop_id: "1",
+            direction_id: 0,
+            route_id: "Mattapan",
+            stopped?: false,
+            stops_away: 1,
+            destination_stop_id: "123",
+            seconds_until_arrival: 100,
+            seconds_until_departure: 120
+          }
+        ]
+      end)
+
+      expect_messages({"Mattapan       BRD", "Mattapan     2 min"})
+
+      expect_audios([
+        {:canned, {"109", ["501", "21000", "507", "21000", "4100", "21000", "544"], :audio}},
+        {:canned, {"160", ["4100", "503", "5002"], :audio}}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "Sorts boarding status to the top" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> @later_boarding_predictions end)
+
+      expect_messages({"Clvlnd Cir     BRD", "Boston Col   3 min"})
+
+      expect_audios([
+        {:canned,
+         {"111", ["501", "21000", "537", "21000", "507", "21000", "4203", "21000", "544"], :audio}},
+        {:canned,
+         {"117",
+          [
+            "501",
+            "21000",
+            "536",
+            "21000",
+            "507",
+            "21000",
+            "4202",
+            "21000",
+            "503",
+            "21000",
+            "504",
+            "21000",
+            "5003",
+            "21000",
+            "505"
+          ], :audio}}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "does not allow ARR on second line if platform does not have multiple berths" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [@multiple_arriving_prediction1, @multiple_arriving_prediction2]
+      end)
+
+      expect_messages({"Clvlnd Cir     ARR", "Riverside    1 min"})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "allows ARR on second line if platform does have multiple berths" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [@multiple_arriving_prediction1] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [@multiple_arriving_prediction2] end)
+
+      expect_messages({"Clvlnd Cir     ARR", "Riverside      ARR"})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | source_config: %{
+            @sign.source_config
+            | sources: [
+                %{@src | stop_id: "1", multi_berth?: true},
+                %{@src | stop_id: "2", multi_berth?: true}
+              ]
+          }
+      })
+    end
+
+    test "doesn't sort 0 stops away to first for terminals when another departure is sooner" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> @later_boarding_predictions end)
+
+      expect_messages({"Boston Col   3 min", "Clvlnd Cir   4 min"})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | source_config: %{@sign.source_config | sources: [%{@src | terminal?: true}]}
+      })
+    end
+
+    test "properly handles case where destination can't be determined" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          %Predictions.Prediction{
+            stop_id: "1",
+            direction_id: 0,
+            route_id: "Not a Valid Route",
+            stopped?: false,
+            stops_away: 0,
+            destination_stop_id: "Not a Valid Stop ID",
+            seconds_until_arrival: nil,
+            seconds_until_departure: 240,
+            trip_id: "123"
+          }
+        ]
+      end)
+
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "Correctly orders BRD predictions between trains mid-trip and those starting their trip" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          %Predictions.Prediction{
+            stop_id: "1",
+            direction_id: 0,
+            route_id: "Green-D",
+            stopped?: false,
+            stops_away: 0,
+            destination_stop_id: "123",
+            seconds_until_arrival: -30,
+            seconds_until_departure: 60
+          },
+          %Predictions.Prediction{
+            stop_id: "1",
+            direction_id: 0,
+            route_id: "Green-D",
+            stopped?: false,
+            stops_away: 0,
+            destination_stop_id: "123",
+            seconds_until_arrival: -15,
+            seconds_until_departure: 75
+          },
+          %Predictions.Prediction{
+            stop_id: "1",
+            direction_id: 0,
+            route_id: "Green-B",
+            stopped?: false,
+            stops_away: 0,
+            destination_stop_id: "123",
+            seconds_until_arrival: nil,
+            seconds_until_departure: 60
+          }
+        ]
+      end)
+
+      expect_messages({"Riverside      BRD", "Boston Col     BRD"})
+
+      expect_audios([
+        {:canned,
+         {"111", ["501", "21000", "538", "21000", "507", "21000", "4084", "21000", "544"], :audio}},
+        {:canned,
+         {"111", ["501", "21000", "536", "21000", "507", "21000", "4202", "21000", "544"], :audio}}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "prefers showing distinct destinations when present" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          %Predictions.Prediction{
+            stop_id: "1",
+            direction_id: 0,
+            route_id: "Red",
+            stopped?: false,
+            stops_away: 1,
+            destination_stop_id: "70085",
+            seconds_until_arrival: 120,
+            seconds_until_departure: 180
+          },
+          %Predictions.Prediction{
+            stop_id: "1",
+            direction_id: 0,
+            route_id: "Red",
+            stopped?: false,
+            stops_away: 1,
+            destination_stop_id: "70085",
+            seconds_until_arrival: 500,
+            seconds_until_departure: 600
+          },
+          %Predictions.Prediction{
+            stop_id: "1",
+            direction_id: 0,
+            route_id: "Red",
+            stopped?: false,
+            stops_away: 1,
+            destination_stop_id: "70099",
+            seconds_until_arrival: 700,
+            seconds_until_departure: 800
+          }
+        ]
+      end)
+
+      expect_messages({"Ashmont      2 min", "Braintree   12 min"})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "handles passthrough audio where headsign can't be determined" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [%{@passthrough_prediction1 | route_id: "Foo", destination_stop_id: "Bar"}]
+      end)
+
+      log =
+        capture_log([level: :info], fn ->
+          Signs.Realtime.handle_info(:run_loop, @sign)
+        end)
+
+      assert log =~ "no_passthrough_audio_for_prediction"
     end
   end
 
