@@ -34,7 +34,7 @@ defmodule Content.Message.StoppedTrain do
         %__MODULE__{
           destination: destination,
           stops_away: stops_away,
-          certainty: prediction.certainty
+          certainty: prediction.arrival_certainty || prediction.departure_certainty
         }
 
       {:error, _} ->
