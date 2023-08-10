@@ -164,6 +164,22 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
                {%Content.Message.EarlyAm.DestinationTrain{destination: :southbound},
                 %Content.Message.EarlyAm.ScheduledTime{scheduled_time: ~U[2023-07-14 09:00:00Z]}}
     end
+
+    test "Stopped train messages get filtered based on certainty" do
+      current_content =
+        {%Content.Message.StoppedTrain{destination: :braintree, stops_away: 3, certainty: 360},
+         %Content.Message.Empty{}}
+
+      assert Signs.Utilities.EarlyAmSuppression.do_early_am_suppression(
+               current_content,
+               @current_time,
+               :partially_suppressed,
+               @schedule,
+               %{@platform_sign | headway_engine: FakeNoHeadway}
+             ) ==
+               {%Content.Message.EarlyAm.DestinationTrain{destination: :southbound},
+                %Content.Message.EarlyAm.ScheduledTime{scheduled_time: ~U[2023-07-14 09:00:00Z]}}
+    end
   end
 
   describe "do_early_am_suppression/5 mezzanine cases" do
