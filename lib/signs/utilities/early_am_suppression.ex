@@ -23,6 +23,7 @@ defmodule Signs.Utilities.EarlyAmSuppression do
 
   @early_am_start ~T[03:29:00]
   @early_am_buffer -40
+  @reverse_prediction_certainty 360
 
   def do_early_am_suppression(
         messages,
@@ -216,13 +217,28 @@ defmodule Signs.Utilities.EarlyAmSuppression do
   end
 
   defp filter_early_am_messages(messages, sign_id) do
-    Tuple.to_list(messages)
-    |> Enum.reject(fn
-      message ->
-        match?(%Headways.Top{}, message) or match?(%Headways.Bottom{}, message) or
-          match?(%Message.Empty{}, message) or
-          (sign_id not in ["symphony_eastbound", "prudential_eastbound"] and
-             match?(%Message.Predictions{}, message) and message.certainty > 120)
+    Enum.reject(Tuple.to_list(messages), fn message ->
+      case message do
+        %Headways.Top{} ->
+          true
+
+        %Headways.Bottom{} ->
+          true
+
+        %Message.Empty{} ->
+          true
+
+        _ ->
+          is_prediction_or_stopped? =
+            case message do
+              %Message.Predictions{} -> true
+              %Message.StoppedTrain{} -> true
+              _ -> false
+            end
+
+          is_prediction_or_stopped? and message.certainty == @reverse_prediction_certainty and
+            sign_id not in ["symphony_eastbound", "prudential_eastbound"]
+      end
     end)
   end
 
