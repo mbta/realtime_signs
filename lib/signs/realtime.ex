@@ -24,7 +24,6 @@ defmodule Signs.Realtime do
     :last_departure_engine,
     :config_engine,
     :alerts_engine,
-    :current_time_fn,
     :sign_updater,
     :last_update,
     :tick_audit,
@@ -35,6 +34,7 @@ defmodule Signs.Realtime do
   defstruct @enforce_keys ++
               [
                 :headway_stop_id,
+                :current_time_fn,
                 announced_arrivals: [],
                 announced_approachings: [],
                 announced_passthroughs: [],

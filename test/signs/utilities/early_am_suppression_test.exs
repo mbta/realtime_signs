@@ -136,9 +136,11 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
         {%Content.Message.Predictions{destination: :braintree, minutes: 3, certainty: 360},
          %Content.Message.Empty{}}
 
+      current_time = ~U[2023-07-14 08:51:00Z]
+
       assert Signs.Utilities.EarlyAmSuppression.do_early_am_suppression(
                current_content,
-               @current_time,
+               current_time,
                :partially_suppressed,
                @schedule,
                @platform_sign
@@ -400,6 +402,100 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
                    messages: [
                      %Content.Message.Headways.Bottom{prev_departure_mins: nil, range: {8, 10}},
                      %Content.Message.PlatformPredictionBottom{minutes: 4, stop_id: nil}
+                   ]
+                 }
+               }
+    end
+
+    test "Filtered platform prediction and headways returns full page headways" do
+      current_content =
+        {%Content.Message.GenericPaging{
+           messages: [
+             %Content.Message.Predictions{
+               destination: :alewife,
+               minutes: 3,
+               certainty: 360,
+               station_code: "RJFK",
+               zone: "m"
+             },
+             %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}
+           ]
+         },
+         %Content.Message.GenericPaging{
+           messages: [
+             %Content.Message.PlatformPredictionBottom{minutes: 3, stop_id: nil},
+             %Content.Message.Headways.Bottom{range: {8, 10}}
+           ]
+         }}
+
+      assert Signs.Utilities.EarlyAmSuppression.do_early_am_suppression(
+               current_content,
+               @current_time,
+               {:partially_suppressed, :partially_suppressed},
+               @schedule,
+               @mezzanine_sign
+             ) ==
+               {%Content.Message.Headways.Top{
+                  destination: :southbound,
+                  routes: ["Red"],
+                  vehicle_type: :train
+                }, %Content.Message.Headways.Bottom{prev_departure_mins: nil, range: {8, 10}}}
+    end
+
+    test "Valid platform prediction and non suppressed headway gets passed through" do
+      current_content =
+        {%Content.Message.GenericPaging{
+           messages: [
+             %Content.Message.Predictions{
+               destination: :alewife,
+               minutes: 3,
+               certainty: 60,
+               station_code: "RJFK",
+               zone: "m"
+             },
+             %Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train}
+           ]
+         },
+         %Content.Message.GenericPaging{
+           messages: [
+             %Content.Message.PlatformPredictionBottom{minutes: 3, stop_id: nil},
+             %Content.Message.Headways.Bottom{range: {8, 10}}
+           ]
+         }}
+
+      assert Signs.Utilities.EarlyAmSuppression.do_early_am_suppression(
+               current_content,
+               @current_time,
+               {:none, :partially_suppressed},
+               @schedule,
+               @mezzanine_sign
+             ) ==
+               {
+                 %Content.Message.GenericPaging{
+                   messages: [
+                     %Content.Message.Headways.Top{
+                       destination: :southbound,
+                       routes: nil,
+                       vehicle_type: :train
+                     },
+                     %Content.Message.Predictions{
+                       certainty: 60,
+                       destination: :alewife,
+                       minutes: 3,
+                       station_code: "RJFK",
+                       width: 18,
+                       zone: nil
+                     }
+                   ]
+                 },
+                 %Content.Message.GenericPaging{
+                   messages: [
+                     %Content.Message.Headways.Bottom{prev_departure_mins: nil, range: {8, 10}},
+                     %Content.Message.PlatformPredictionBottom{
+                       destination: nil,
+                       minutes: 3,
+                       stop_id: nil
+                     }
                    ]
                  }
                }

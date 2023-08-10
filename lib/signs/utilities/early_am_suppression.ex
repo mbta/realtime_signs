@@ -220,6 +220,7 @@ defmodule Signs.Utilities.EarlyAmSuppression do
     |> Enum.reject(fn
       message ->
         match?(%Headways.Top{}, message) or match?(%Headways.Bottom{}, message) or
+          match?(%Message.Empty{}, message) or
           (sign_id not in ["symphony_eastbound", "prudential_eastbound"] and
              match?(%Message.Predictions{}, message) and message.certainty > 120)
     end)
