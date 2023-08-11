@@ -24,7 +24,6 @@ defmodule Signs.Realtime do
     :last_departure_engine,
     :config_engine,
     :alerts_engine,
-    :current_time_fn,
     :sign_updater,
     :last_update,
     :tick_audit,
@@ -35,6 +34,7 @@ defmodule Signs.Realtime do
   defstruct @enforce_keys ++
               [
                 :headway_stop_id,
+                :current_time_fn,
                 announced_arrivals: [],
                 announced_approachings: [],
                 announced_passthroughs: [],
@@ -123,6 +123,22 @@ defmodule Signs.Realtime do
     sign_config = sign.config_engine.sign_config(sign.id)
     current_time = sign.current_time_fn.()
 
+    first_scheduled_departures =
+      case sign.source_config do
+        {top, bottom} ->
+          {
+            {sign.headway_engine.get_first_scheduled_departure(SourceConfig.sign_stop_ids(top)),
+             top.headway_destination},
+            {sign.headway_engine.get_first_scheduled_departure(
+               SourceConfig.sign_stop_ids(bottom)
+             ), bottom.headway_destination}
+          }
+
+        source ->
+          {sign.headway_engine.get_first_scheduled_departure(sign_stop_ids),
+           source.headway_destination}
+      end
+
     predictions =
       case sign.source_config do
         {top, bottom} -> {fetch_predictions(top, sign), fetch_predictions(bottom, sign)}
@@ -135,7 +151,8 @@ defmodule Signs.Realtime do
         sign,
         sign_config,
         current_time,
-        alert_status
+        alert_status,
+        first_scheduled_departures
       )
 
     sign =
