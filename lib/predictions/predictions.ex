@@ -96,7 +96,9 @@ defmodule Predictions.Predictions do
       stop_id: stop_time_update["stop_id"],
       direction_id: direction_id,
       seconds_until_arrival: max(0, seconds_until_arrival),
+      arrival_certainty: stop_time_update["arrival"]["uncertainty"],
       seconds_until_departure: max(0, seconds_until_departure),
+      departure_certainty: stop_time_update["departure"]["uncertainty"],
       seconds_until_passthrough: max(0, seconds_until_passthrough),
       schedule_relationship:
         translate_schedule_relationship(stop_time_update["schedule_relationship"]),

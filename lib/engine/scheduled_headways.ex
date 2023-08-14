@@ -96,6 +96,13 @@ defmodule Engine.ScheduledHeadways do
     :ets.select(table_name, pattern)
   end
 
+  @impl true
+  def get_first_scheduled_departure(stop_ids) do
+    get_first_last_departures(stop_ids)
+    |> Enum.map(&elem(&1, 0))
+    |> min_time()
+  end
+
   @doc "Checks if the given time is after the first scheduled stop and before the last.
   A buffer of minutes (positive) is subtracted from the first time. so that headways are
   shown for a short time before the first train."

@@ -11,9 +11,17 @@ defmodule Signs.Utilities.Messages do
           Signs.Realtime.t(),
           Engine.Config.sign_config(),
           DateTime.t(),
-          Engine.Alerts.Fetcher.stop_status()
+          Engine.Alerts.Fetcher.stop_status(),
+          DateTime.t() | {DateTime.t(), DateTime.t()}
         ) :: Signs.Realtime.sign_messages()
-  def get_messages(predictions, sign, sign_config, current_time, alert_status) do
+  def get_messages(
+        predictions,
+        sign,
+        sign_config,
+        current_time,
+        alert_status,
+        scheduled
+      ) do
     messages =
       cond do
         match?({:static_text, {_, _}}, sign_config) ->
@@ -52,19 +60,44 @@ defmodule Signs.Utilities.Messages do
           end
       end
 
+    early_am_status =
+      Signs.Utilities.EarlyAmSuppression.get_early_am_state(current_time, scheduled)
+
     flip? = flip?(messages)
 
-    if flip?,
-      do: do_flip(messages),
-      else: messages
+    messages =
+      if flip?,
+        do: do_flip(messages),
+        else: messages
+
+    cond do
+      early_am_status in [:none, {:none, :none}] ->
+        messages
+
+      alert_status in [:none, :alert_along_route] and sign_config == :auto ->
+        {early_am_status, scheduled} =
+          if Signs.Utilities.SourceConfig.multi_source?(sign.source_config) and flip? do
+            {do_flip(early_am_status), do_flip(scheduled)}
+          else
+            {early_am_status, scheduled}
+          end
+
+        Signs.Utilities.EarlyAmSuppression.do_early_am_suppression(
+          messages,
+          current_time,
+          early_am_status,
+          scheduled,
+          sign
+        )
+
+      true ->
+        messages
+    end
   end
 
   defp flip?(messages) do
     case messages do
       {%Content.Message.Headways.Paging{}, _} ->
-        true
-
-      {%Content.Message.Empty{}, _} ->
         true
 
       _ ->

@@ -190,6 +190,7 @@ defmodule Signs.RealtimeTest do
       stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
+      stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ -> nil end)
       :ok
     end
 
