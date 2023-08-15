@@ -60,4 +60,29 @@ defmodule Engine.LocationsTest do
       assert :ets.tab2list(locations_table) == [{"vehicle_2", :none}, {"vehicle_1", :none}]
     end
   end
+
+  describe "for_vehicle/1" do
+    test "return correct location for vehicle" do
+      location = %Locations.Location{
+        vehicle_id: "vehicle_1",
+        status: :incoming_at,
+        stop_id: "stop_1"
+      }
+
+      location_map = %{"vehicle_1" => location, "vehicle_no_longer_in_feed" => :none}
+
+      locations_table =
+        :ets.new(:test_vehicle_locations, [
+          :set,
+          :protected,
+          :named_table,
+          read_concurrency: true
+        ])
+
+      :ets.insert(locations_table, Enum.into(location_map, []))
+      assert for_vehicle(locations_table, "vehicle_1") == location
+      assert for_vehicle(locations_table, "vehicle_no_longer_in_feed") == nil
+      assert for_vehicle(locations_table, "vehicle_does_not_exist") == nil
+    end
+  end
 end

@@ -20,8 +20,8 @@ defmodule Engine.Locations do
   end
 
   @impl true
-  def for_vehicle(vehicle_id) do
-    case :ets.lookup(@vehicle_locations_table, vehicle_id) do
+  def for_vehicle(locations_table_id \\ @vehicle_locations_table, vehicle_id) do
+    case :ets.lookup(locations_table_id, vehicle_id) do
       [{_, :none}] -> nil
       [{^vehicle_id, location}] -> location
       _ -> nil
