@@ -99,7 +99,6 @@ defmodule Engine.Locations do
         end
 
       {:ok, %HTTPoison.Response{}} ->
-        IO.puts("HERE")
         :error
 
       {:error, %HTTPoison.Error{reason: reason}} ->
