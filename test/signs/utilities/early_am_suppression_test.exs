@@ -221,11 +221,14 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
         {%Content.Message.Predictions{destination: :alewife, minutes: 3},
          %Content.Message.Predictions{destination: :braintree, minutes: 4, certainty: 360}}
 
+      northbound_headways_inactive = {~U[2023-07-14 09:00:00Z], :alewife}
+      southbound_headways_active = {~U[2023-07-14 08:05:00Z], :southbound}
+
       assert Signs.Utilities.EarlyAmSuppression.do_early_am_suppression(
                current_content,
                @current_time,
                {:fully_suppressed, :partially_suppressed},
-               @schedule,
+               {northbound_headways_inactive, southbound_headways_active},
                @mezzanine_sign
              ) ==
                {
@@ -241,7 +244,7 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
                  %Content.Message.GenericPaging{
                    messages: [
                      %Content.Message.EarlyAm.ScheduledTime{
-                       scheduled_time: ~U[2023-07-14 08:00:00Z]
+                       scheduled_time: ~U[2023-07-14 09:00:00Z]
                      },
                      %Content.Message.Headways.Bottom{prev_departure_mins: nil, range: {8, 10}}
                    ]
@@ -254,11 +257,14 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
         {%Content.Message.Predictions{destination: :alewife, minutes: 3, certainty: 360},
          %Content.Message.Predictions{destination: :braintree, minutes: 4, certainty: 360}}
 
+      southbound_headways_active = {~U[2023-07-14 08:05:00Z], :southbound}
+      northbound_headways_active = {~U[2023-07-14 08:05:00Z], :alewife}
+
       assert Signs.Utilities.EarlyAmSuppression.do_early_am_suppression(
                current_content,
                @current_time,
                {:partially_suppressed, :partially_suppressed},
-               @schedule,
+               {northbound_headways_active, southbound_headways_active},
                @mezzanine_sign
              ) ==
                {%Content.Message.Headways.Top{
@@ -391,11 +397,14 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
            zone: "m"
          }}
 
+      southbound_headways_active = {~U[2023-07-14 08:05:00Z], :southbound}
+      northbound_headways_active = {~U[2023-07-14 08:05:00Z], :alewife}
+
       assert Signs.Utilities.EarlyAmSuppression.do_early_am_suppression(
                current_content,
                @current_time,
                {:partially_suppressed, :partially_suppressed},
-               @schedule,
+               {southbound_headways_active, northbound_headways_active},
                @mezzanine_sign
              ) ==
                {
@@ -444,11 +453,14 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
            ]
          }}
 
+      southbound_headways_active = {~U[2023-07-14 08:05:00Z], :southbound}
+      northbound_headways_active = {~U[2023-07-14 08:05:00Z], :alewife}
+
       assert Signs.Utilities.EarlyAmSuppression.do_early_am_suppression(
                current_content,
                @current_time,
                {:partially_suppressed, :partially_suppressed},
-               @schedule,
+               {southbound_headways_active, northbound_headways_active},
                @mezzanine_sign
              ) ==
                {%Content.Message.Headways.Top{

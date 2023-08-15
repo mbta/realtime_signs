@@ -202,9 +202,19 @@ defmodule Signs.Utilities.EarlyAmSuppression do
                    scheduled_time: scheduled
                  }}
 
-              {headway_top, headway_bottom} ->
-                # Make sure routes is nil so that destination is used as headsign
-                {%{headway_top | destination: destination, routes: nil}, headway_bottom}
+              {headway_top, %Headways.Bottom{range: {_, high}} = headway_bottom} ->
+                # Check against schedule to account for mezzanine sources having different first scheduled arrivals
+                if DateTime.add(current_time, high, :minute) |> DateTime.compare(scheduled) == :gt do
+                  # Make sure routes is nil so that destination is used as headsign
+                  {%{headway_top | destination: destination, routes: nil}, headway_bottom}
+                else
+                  {%EarlyAm.DestinationTrain{
+                     destination: destination
+                   },
+                   %EarlyAm.ScheduledTime{
+                     scheduled_time: scheduled
+                   }}
+                end
             end
 
           [message] ->
