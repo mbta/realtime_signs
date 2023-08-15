@@ -26,5 +26,38 @@ defmodule Engine.LocationsTest do
       assert log =~ "Could not fetch file "
       assert log =~ "timeout"
     end
+
+    test "overwrites old locations data with :none" do
+      position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
+      Application.put_env(:realtime_signs, :vehicle_positions_url, "fake_vehicle_position.json")
+
+      on_exit(fn ->
+        Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
+      end)
+
+      locations_table =
+        :ets.new(:test_vehicle_locations, [
+          :set,
+          :protected,
+          :named_table,
+          read_concurrency: true
+        ])
+
+      :ets.insert(locations_table, [
+        {"vehicle_1", %{vehicle: "1"}},
+        {"vehicle_2", %{vehicle: "2"}}
+      ])
+
+      existing_state = %{
+        last_modified_vehicle_positions: nil,
+        vehicle_locations_table: locations_table
+      }
+
+      {:noreply, updated_state} = handle_info(:update, existing_state)
+
+      assert updated_state == existing_state
+
+      assert :ets.tab2list(locations_table) == [{"vehicle_2", :none}, {"vehicle_1", :none}]
+    end
   end
 end
