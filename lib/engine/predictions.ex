@@ -14,7 +14,6 @@ defmodule Engine.Predictions do
 
   @type state :: %{
           last_modified_trip_updates: String.t() | nil,
-          last_modified_vehicle_positions: String.t() | nil,
           trip_updates_table: :ets.tab()
         }
 
@@ -45,7 +44,6 @@ defmodule Engine.Predictions do
     {:ok,
      %{
        last_modified_trip_updates: nil,
-       last_modified_vehicle_positions: nil,
        trip_updates_table: @trip_updates_table
      }}
   end
@@ -63,25 +61,8 @@ defmodule Engine.Predictions do
         state[:trip_updates_table]
       )
 
-    {last_modified_vehicle_positions, stops_with_trains} =
-      download_and_process_vehicle_positions(
-        state[:last_modified_vehicle_positions],
-        :vehicle_positions_url
-      )
-
-    if vehicles_running_revenue_trips != nil && stops_with_trains do
-      Engine.Departures.update_train_state(
-        stops_with_trains,
-        vehicles_running_revenue_trips,
-        current_time
-      )
-
-      {:noreply,
-       %{
-         state
-         | last_modified_trip_updates: last_modified_trip_updates,
-           last_modified_vehicle_positions: last_modified_vehicle_positions
-       }}
+    if vehicles_running_revenue_trips != nil do
+      {:noreply, %{state | last_modified_trip_updates: last_modified_trip_updates}}
     else
       {:noreply, state}
     end
@@ -126,20 +107,6 @@ defmodule Engine.Predictions do
     end
   end
 
-  @spec download_and_process_vehicle_positions(String.t() | nil, atom()) ::
-          {String.t() | nil, %{String.t() => String.t()} | nil}
-  defp download_and_process_vehicle_positions(last_modified, url) do
-    full_url = Application.get_env(:realtime_signs, url)
-
-    case download_data(full_url, last_modified) do
-      {:ok, body, new_last_modified} ->
-        {new_last_modified, vehicle_positions_response_to_stops_with_trains(body)}
-
-      :error ->
-        {last_modified, nil}
-    end
-  end
-
   @spec download_data(String.t(), String.t() | nil) ::
           {:ok, String.t(), String.t() | nil} | :error
   defp download_data(full_url, last_modified) do
@@ -173,23 +140,5 @@ defmodule Engine.Predictions do
 
   defp schedule_update(pid) do
     Process.send_after(pid, :update, 1_000)
-  end
-
-  @spec vehicle_positions_response_to_stops_with_trains(String.t()) :: %{String.t() => String.t()}
-  defp vehicle_positions_response_to_stops_with_trains(response) do
-    try do
-      response
-      |> Jason.decode!()
-      |> Map.get("entity")
-      |> Enum.filter(fn vehicle_position ->
-        get_in(vehicle_position, ["vehicle", "current_status"]) == "STOPPED_AT"
-      end)
-      |> Map.new(fn vehicle_position ->
-        {get_in(vehicle_position, ["vehicle", "stop_id"]),
-         get_in(vehicle_position, ["vehicle", "vehicle", "id"])}
-      end)
-    rescue
-      Jason.DecodeError -> %{}
-    end
   end
 end

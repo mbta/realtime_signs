@@ -6,18 +6,14 @@ defmodule Engine.PredictionsTest do
   describe "handle_info/2" do
     test "keeps existing states when trip_update url has not been modified" do
       trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
-      position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
       Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_304")
-      Application.put_env(:realtime_signs, :vehicle_positions_url, "vehicle_positions_304")
 
       on_exit(fn ->
         Application.put_env(:realtime_signs, :trip_update_url, trip_update_url)
-        Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
       existing_state = %{
         last_modified_trip_updates: nil,
-        last_modified_vehicle_positions: nil,
         trip_updates_table: :test_trip_updates
       }
 
@@ -27,18 +23,14 @@ defmodule Engine.PredictionsTest do
 
     test "logs error when invalid HTTP response returned" do
       trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
-      position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
       Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_error")
-      Application.put_env(:realtime_signs, :vehicle_positions_url, "vehicle_positions_304")
 
       on_exit(fn ->
         Application.put_env(:realtime_signs, :trip_update_url, trip_update_url)
-        Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
       existing_state = %{
         last_modified_trip_updates: nil,
-        last_modified_vehicle_positions: nil,
         trip_updates_table: :test_trip_updates
       }
 
@@ -54,13 +46,10 @@ defmodule Engine.PredictionsTest do
 
     test "instead of deleting old predictions, overwrites them with :none" do
       trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
-      position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
       Application.put_env(:realtime_signs, :trip_update_url, "fake_trip_update2.json")
-      Application.put_env(:realtime_signs, :vehicle_positions_url, "vehicle_positions_304")
 
       on_exit(fn ->
         Application.put_env(:realtime_signs, :trip_update_url, trip_update_url)
-        Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
       predictions_table =
@@ -78,7 +67,6 @@ defmodule Engine.PredictionsTest do
 
       existing_state = %{
         last_modified_trip_updates: nil,
-        last_modified_vehicle_positions: nil,
         trip_updates_table: predictions_table
       }
 
@@ -91,59 +79,9 @@ defmodule Engine.PredictionsTest do
         :ets.lookup(predictions_table, {"stop_to_update", 0})
     end
 
-    test "does not record a train location when the train is no longer in revenue service" do
-      trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
-      position_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
-
-      on_exit(fn ->
-        Application.put_env(:realtime_signs, :trip_update_url, trip_update_url)
-        Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
-      end)
-
-      :test_trip_out_of_service_updates =
-        :ets.new(:test_trip_out_of_service_updates, [
-          :set,
-          :protected,
-          :named_table,
-          read_concurrency: true
-        ])
-
-      state = %{
-        last_modified_trip_updates: nil,
-        last_modified_vehicle_positions: nil,
-        trip_updates_table: :test_trip_out_of_service_updates
-      }
-
-      send(Engine.Departures, :daily_reset)
-
-      Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_out_of_service_1")
-
-      Application.put_env(
-        :realtime_signs,
-        :vehicle_positions_url,
-        "vehicle_positions_out_of_service_1"
-      )
-
-      {:noreply, state} = handle_info(:update, state)
-
-      Application.put_env(:realtime_signs, :trip_update_url, "trip_updates_out_of_service_2")
-
-      Application.put_env(
-        :realtime_signs,
-        :vehicle_positions_url,
-        "vehicle_positions_out_of_service_2"
-      )
-
-      {:noreply, _} = handle_info(:update, state)
-
-      state = :sys.get_state(Engine.Departures)
-      assert state.departures == %{}
-    end
-
     test "logs a warning on any message but :update" do
       existing_state = %{
         last_modified_trip_updates: nil,
-        last_modified_vehicle_positions: nil,
         trip_updates_table: :test_trip_updates
       }
 
