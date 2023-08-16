@@ -126,16 +126,42 @@ defmodule Engine.Locations do
   defp location_from_update(location) do
     %Locations.Location{
       vehicle_id: get_in(location, ["vehicle", "vehicle", "id"]),
-      status: status_to_atom(location["vehicle"]["current_status"]),
+      status: vehicle_status_to_atom(location["vehicle"]["current_status"]),
       stop_id: location["vehicle"]["stop_id"],
       timestamp: location["vehicle"]["timestamp"],
       route_id: location["vehicle"]["trip"]["route_id"],
       trip_id: location["vehicle"]["trip"]["trip_id"],
-      consist: location["vehicle"]["vehicle"]["consist"]
+      consist: location["vehicle"]["vehicle"]["consist"],
+      multi_carriage_details:
+        location["vehicle"]["vehicle"]["multi_carriage_details"] &&
+          Enum.map(
+            location["vehicle"]["vehicle"]["multi_carriage_details"],
+            &map_multi_carriage_details/1
+          )
     }
   end
 
-  defp status_to_atom(status) do
+  defp map_multi_carriage_details(multi_carriage_details) do
+    %Locations.CarriageDetails{
+      label: multi_carriage_details["label"],
+      occupancy_status: occupancy_status_to_atom(multi_carriage_details["occupancy_status"]),
+      occupancy_percentage: multi_carriage_details["occupancy_percentage"],
+      carriage_sequence: multi_carriage_details["carriage_sequence"]
+    }
+  end
+
+  defp occupancy_status_to_atom(status) do
+    case status do
+      "MANY_SEATS_AVAILABLE" -> :many_seats_available
+      "FEW_SEATS_AVAILABLE" -> :few_seats_available
+      "STANDING_ROOM_ONLY" -> :standing_room_only
+      "CRUSHED_STANDING_ROOM_ONLY" -> :crushed_standing_room_only
+      "FULL" -> :full
+      _ -> :unknown
+    end
+  end
+
+  defp vehicle_status_to_atom(status) do
     case status do
       "INCOMING_AT" -> :incoming_at
       "STOPPED_AT" -> :stopped_at
