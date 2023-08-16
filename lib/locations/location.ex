@@ -14,6 +14,6 @@ defmodule Locations.Location do
           timestamp: DateTime.t() | nil,
           route_id: String.t() | nil,
           trip_id: String.t() | nil,
-          consist: List.t()
+          consist: list()
         }
 end
