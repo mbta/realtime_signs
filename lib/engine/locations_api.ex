@@ -1,3 +1,3 @@
 defmodule Engine.LocationsAPI do
-  @callback for_vehicle(String.t()) :: [Predictions.Prediction.t()]
+  @callback for_vehicle(String.t()) :: Locations.Location.t()
 end
