@@ -154,19 +154,16 @@ defmodule Content.Message.Predictions do
     end
   end
 
-  defp calculate_crowding_data_confidence(prediction, location) do
-    cond do
-      location == nil ->
-        nil
+  defp calculate_crowding_data_confidence(_prediction, nil), do: nil
 
-      prediction.route_id == "Orange" and location.stop_id == prediction.stop_id and
-          location.status in [:incoming_at, :in_transit_to] ->
-        :high
-
-      true ->
-        :low
-    end
+  defp calculate_crowding_data_confidence(prediction, location)
+       when prediction.route_id in ["Orange"] and location.stop_id == prediction.stop_id do
+    if location.status in [:incoming_at, :in_transit_to],
+      do: :high,
+      else: :low
   end
+
+  defp calculate_crowding_data_confidence(_prediction, _location), do: nil
 
   defimpl Content.Message do
     require Logger
