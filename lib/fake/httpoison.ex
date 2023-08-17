@@ -423,6 +423,10 @@ defmodule Fake.HTTPoison do
     {:error, %HTTPoison.Error{reason: :timeout}}
   end
 
+  def mock_response("vehicle_position_error") do
+    {:error, %HTTPoison.Error{reason: :timeout}}
+  end
+
   def mock_response(
         "https://api-dev-green.mbtace.com/schedules?filter[stop]=500_error&filter[direction_id]=0,1"
       ) do

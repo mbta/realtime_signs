@@ -25,7 +25,8 @@ defmodule RealtimeSigns do
         Engine.ChelseaBridge,
         MessageQueue,
         RealtimeSigns.Scheduler,
-        RealtimeSignsWeb.Endpoint
+        RealtimeSignsWeb.Endpoint,
+        Engine.Locations
       ] ++
         http_updater_children() ++
         [
