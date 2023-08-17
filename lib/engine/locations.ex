@@ -48,18 +48,17 @@ defmodule Engine.Locations do
 
     last_modified_vehicle_locations =
       download_and_process_vehicle_locations(
-        state[:last_modified_vehicle_positions],
-        :vehicle_positions_url,
-        state[:vehicle_locations_table]
+        state.last_modified_vehicle_positions,
+        state.vehicle_locations_table
       )
 
     {:noreply, %{state | last_modified_vehicle_positions: last_modified_vehicle_locations}}
   end
 
-  @spec download_and_process_vehicle_locations(String.t() | nil, atom(), :ets.tab()) ::
+  @spec download_and_process_vehicle_locations(String.t() | nil, :ets.tab()) ::
           String.t()
-  defp download_and_process_vehicle_locations(last_modified, url, ets_table) do
-    full_url = Application.get_env(:realtime_signs, url)
+  defp download_and_process_vehicle_locations(last_modified, ets_table) do
+    full_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
 
     case download_data(full_url, last_modified) do
       {:ok, body, new_last_modified} ->
@@ -119,7 +118,12 @@ defmodule Engine.Locations do
         {location.vehicle_id, location}
       end)
     rescue
-      Jason.DecodeError -> %{}
+      e in Jason.DecodeError ->
+        Logger.error(
+          "Engine.Locations json_decode_error: #{inspect(Jason.DecodeError.message(e))}"
+        )
+
+        %{}
     end
   end
 
