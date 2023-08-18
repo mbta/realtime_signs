@@ -166,6 +166,15 @@ defmodule Signs.Utilities.EarlyAmSuppression do
             {%Headways.Top{destination: destination, vehicle_type: :train},
              %Headways.Bottom{range: range}}
 
+          # If we get one half of a headway message, it means the mz sign was showing headways in the original content generation
+          # but that one or the other mz lines has an early am status of :none.
+          # We can piece the original headway message back together in this case and let the proceeding logic handle what to do with it
+          {%Headways.Top{} = unprocessed_message, %Message.Empty{}} ->
+            {unprocessed_message, bottom_message}
+
+          {%Headways.Bottom{} = unprocessed_message, %Message.Empty{}} ->
+            {top_message, unprocessed_message}
+
           content ->
             content
         end
@@ -189,7 +198,7 @@ defmodule Signs.Utilities.EarlyAmSuppression do
          }}
 
       status == :partially_suppressed ->
-        case filter_early_am_messages(messages, sign.id) do
+        case filter_early_am_messages(messages) do
           [] ->
             # If no valid predictions, try fetching headways
             case Signs.Utilities.Headways.get_messages(sign, current_time) do
@@ -226,7 +235,7 @@ defmodule Signs.Utilities.EarlyAmSuppression do
     end
   end
 
-  defp filter_early_am_messages(messages, sign_id) do
+  defp filter_early_am_messages(messages) do
     Enum.reject(Tuple.to_list(messages), fn message ->
       case message do
         %Headways.Top{} ->
@@ -246,8 +255,9 @@ defmodule Signs.Utilities.EarlyAmSuppression do
               _ -> false
             end
 
+          # Reject reverse predictions/stopped trains unless the message is for Prudential or Symphony EB
           is_prediction_or_stopped? and message.certainty == @reverse_prediction_certainty and
-            sign_id not in ["symphony_eastbound", "prudential_eastbound"]
+            message.stop_id not in ["70240", "70242"]
       end
     end)
   end

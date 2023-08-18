@@ -13,12 +13,13 @@ defmodule Content.Message.StoppedTrain do
   require Logger
 
   @enforce_keys [:destination, :stops_away]
-  defstruct @enforce_keys ++ [:certainty]
+  defstruct @enforce_keys ++ [:certainty, :stop_id]
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
           stops_away: non_neg_integer(),
-          certainty: non_neg_integer() | nil
+          certainty: non_neg_integer() | nil,
+          stop_id: String.t()
         }
 
   @spec from_prediction(Predictions.Prediction.t()) :: t() | nil
@@ -34,7 +35,8 @@ defmodule Content.Message.StoppedTrain do
         %__MODULE__{
           destination: destination,
           stops_away: stops_away,
-          certainty: prediction.arrival_certainty || prediction.departure_certainty
+          certainty: prediction.arrival_certainty || prediction.departure_certainty,
+          stop_id: prediction.stop_id
         }
 
       {:error, _} ->
