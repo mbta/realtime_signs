@@ -67,7 +67,8 @@ defmodule Engine.PredictionsTest do
 
       existing_state = %{
         last_modified_trip_updates: nil,
-        trip_updates_table: predictions_table
+        trip_updates_table: predictions_table,
+        revenue_vehicles: MapSet.new()
       }
 
       handle_info(:update, existing_state)

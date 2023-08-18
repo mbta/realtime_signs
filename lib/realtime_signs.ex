@@ -18,7 +18,6 @@ defmodule RealtimeSigns do
         Engine.Config,
         Engine.Predictions,
         Engine.ScheduledHeadways,
-        Engine.Departures,
         Engine.Static,
         Engine.Alerts,
         Engine.BusPredictions,
@@ -26,7 +25,8 @@ defmodule RealtimeSigns do
         MessageQueue,
         RealtimeSigns.Scheduler,
         RealtimeSignsWeb.Endpoint,
-        Engine.Locations
+        Engine.Locations,
+        HeadwayAnalysis.Supervisor
       ] ++
         http_updater_children() ++
         [
