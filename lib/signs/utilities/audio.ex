@@ -146,16 +146,24 @@ defmodule Signs.Utilities.Audio do
         {[], sign.announced_approachings, sign.announced_arrivals},
         fn audio, {new_audios, new_approaching_trips, new_arriving_trips} ->
           case audio do
-            # TODO: Add a check for whether high-confidence crowding info is present and whether it has already been announced with an approaching message
-            %Audio.TrainIsArriving{trip_id: trip_id} when not is_nil(trip_id) ->
-              if audio.trip_id in sign.announced_arrivals do
-                {new_audios, new_approaching_trips, new_arriving_trips}
-              else
-                {new_audios ++ [audio], new_approaching_trips,
-                 [audio.trip_id | new_arriving_trips]}
+            %Audio.TrainIsArriving{trip_id: trip_id, crowding_description: crowding_description}
+            when not is_nil(trip_id) ->
+              cond do
+                # If we've already announced the arrival, don't announce it
+                audio.trip_id in sign.announced_arrivals ->
+                  {new_audios, new_approaching_trips, new_arriving_trips}
+
+                # If the arrival has high-confidence crowding info but we've already announced crowding with the approaching message, announce it without crowding
+                crowding_description && audio.trip_id in sign.announced_approachings_with_crowding ->
+                  {new_audios ++ [%{audio | crowding_description: nil}], new_approaching_trips,
+                   [audio.trip_id | new_arriving_trips]}
+
+                # else, announce normally
+                true ->
+                  {new_audios ++ [audio], new_approaching_trips,
+                   [audio.trip_id | new_arriving_trips]}
               end
 
-            # TODO: Start tracking trip_ids where we announce high-confidence crowding info with Approaching
             %Audio.Approaching{trip_id: trip_id} when not is_nil(trip_id) ->
               if audio.trip_id in sign.announced_approachings do
                 {new_audios, new_approaching_trips, new_arriving_trips}
@@ -170,9 +178,24 @@ defmodule Signs.Utilities.Audio do
         end
       )
 
+    new_announced_approaching_with_crowding =
+      Enum.filter(new_audios, fn
+        %Audio.Approaching{trip_id: trip_id, crowding_description: crowding_description} ->
+          not is_nil(trip_id) and not is_nil(crowding_description)
+
+        _ ->
+          false
+      end)
+      |> Enum.map(& &1.trip_id)
+
     sign = %{
       sign
       | announced_approachings: Enum.take(new_approaching_trips, @announced_history_length),
+        announced_approachings_with_crowding:
+          Enum.take(
+            new_announced_approaching_with_crowding ++ sign.announced_approachings_with_crowding,
+            @announced_history_length
+          ),
         announced_arrivals: Enum.take(new_arriving_trips, @announced_history_length)
     }
 
