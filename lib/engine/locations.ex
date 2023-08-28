@@ -140,12 +140,12 @@ defmodule Engine.Locations do
         location["vehicle"]["multi_carriage_details"] &&
           Enum.map(
             location["vehicle"]["multi_carriage_details"],
-            &map_multi_carriage_details/1
+            &parse_carriage_details/1
           )
     }
   end
 
-  defp map_multi_carriage_details(multi_carriage_details) do
+  defp parse_carriage_details(multi_carriage_details) do
     %Locations.CarriageDetails{
       label: multi_carriage_details["label"],
       occupancy_status: occupancy_status_to_atom(multi_carriage_details["occupancy_status"]),
