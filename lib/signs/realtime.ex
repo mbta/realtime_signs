@@ -21,12 +21,10 @@ defmodule Signs.Realtime do
     :current_content_bottom,
     :prediction_engine,
     :headway_engine,
-    :last_departure_engine,
     :config_engine,
     :alerts_engine,
     :sign_updater,
     :last_update,
-    :tick_audit,
     :tick_read,
     :read_period_seconds
   ]
@@ -56,13 +54,11 @@ defmodule Signs.Realtime do
           current_content_bottom: line_content(),
           prediction_engine: module(),
           headway_engine: module(),
-          last_departure_engine: module(),
           config_engine: module(),
           alerts_engine: module(),
           current_time_fn: fun(),
           sign_updater: module(),
           last_update: DateTime.t(),
-          tick_audit: non_neg_integer(),
           tick_read: non_neg_integer(),
           read_period_seconds: non_neg_integer(),
           announced_arrivals: [Predictions.Prediction.trip_id()],
@@ -77,7 +73,6 @@ defmodule Signs.Realtime do
     prediction_engine = opts[:prediction_engine] || Engine.Predictions
     headway_engine = opts[:headway_engine] || Engine.ScheduledHeadways
     config_engine = opts[:config_engine] || Engine.Config
-    last_departure_engine = opts[:last_departure_engine] || Engine.Departures
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
 
@@ -90,7 +85,6 @@ defmodule Signs.Realtime do
       current_content_bottom: Content.Message.Empty.new(),
       prediction_engine: prediction_engine,
       headway_engine: headway_engine,
-      last_departure_engine: last_departure_engine,
       config_engine: config_engine,
       alerts_engine: alerts_engine,
       current_time_fn:
@@ -101,7 +95,6 @@ defmodule Signs.Realtime do
           end,
       sign_updater: sign_updater,
       last_update: nil,
-      tick_audit: 60,
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       read_period_seconds: 240,
       headway_stop_id: Map.get(config, "headway_stop_id"),
@@ -164,7 +157,6 @@ defmodule Signs.Realtime do
         sign.current_content_bottom
       )
       |> Utilities.Reader.read_sign()
-      |> log_headway_accuracy()
       |> decrement_ticks()
 
     schedule_run_loop(self())
@@ -204,41 +196,6 @@ defmodule Signs.Realtime do
 
   @spec decrement_ticks(Signs.Realtime.t()) :: Signs.Realtime.t()
   def decrement_ticks(sign) do
-    %{
-      sign
-      | tick_audit: sign.tick_audit - 1,
-        tick_read: sign.tick_read - 1
-    }
-  end
-
-  @spec log_headway_accuracy(Signs.Realtime.t()) :: Signs.Realtime.t()
-  def log_headway_accuracy(
-        %{
-          tick_audit: 0,
-          source_config: source_config,
-          current_content_bottom:
-            {_source_config,
-             %Content.Message.Headways.Bottom{
-               range: range,
-               prev_departure_mins: last_departure
-             }}
-        } = sign
-      )
-      when not is_nil(last_departure) do
-    max_headway = Headway.HeadwayDisplay.max_headway(range)
-
-    Logger.info(
-      "headway_accuracy_check stop_id=#{List.first(SourceConfig.sign_stop_ids(source_config))} headway_max=#{max_headway} last_departure=#{last_departure} in_range=#{max_headway > last_departure}"
-    )
-
-    %{sign | tick_audit: 60}
-  end
-
-  def log_headway_accuracy(%{tick_audit: 0} = sign) do
-    %{sign | tick_audit: 60}
-  end
-
-  def log_headway_accuracy(sign) do
-    sign
+    %{sign | tick_read: sign.tick_read - 1}
   end
 end

@@ -1,7 +1,12 @@
 defmodule Engine.LocationsTest do
   use ExUnit.Case
   import ExUnit.CaptureLog
-  import Engine.Locations
+
+  @state %{
+    last_modified_vehicle_positions: nil,
+    vehicle_locations_table: :test_vehicle_locations,
+    stop_locations_table: :test_stop_locations
+  }
 
   describe "handle_info/2" do
     test "logs error when invalid HTTP response returned" do
@@ -12,15 +17,10 @@ defmodule Engine.LocationsTest do
         Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
-      existing_state = %{
-        last_modified_vehicle_positions: nil,
-        vehicle_locations_table: :test_vehicle_locations
-      }
-
       log =
         capture_log([level: :warn], fn ->
-          {:noreply, updated_state} = handle_info(:update, existing_state)
-          assert existing_state == updated_state
+          {:noreply, updated_state} = Engine.Locations.handle_info(:update, @state)
+          assert @state == updated_state
         end)
 
       assert log =~ "Could not fetch file "
@@ -35,29 +35,21 @@ defmodule Engine.LocationsTest do
         Application.put_env(:realtime_signs, :vehicle_positions_url, position_url)
       end)
 
-      locations_table =
-        :ets.new(:test_vehicle_locations, [
-          :set,
-          :protected,
-          :named_table,
-          read_concurrency: true
-        ])
+      Engine.Locations.create_tables(@state)
 
-      :ets.insert(locations_table, [
+      :ets.insert(:test_vehicle_locations, [
         {"vehicle_1", %{vehicle: "1"}},
         {"vehicle_2", %{vehicle: "2"}}
       ])
 
-      existing_state = %{
-        last_modified_vehicle_positions: nil,
-        vehicle_locations_table: locations_table
-      }
+      {:noreply, updated_state} = Engine.Locations.handle_info(:update, @state)
 
-      {:noreply, updated_state} = handle_info(:update, existing_state)
+      assert updated_state == @state
 
-      assert updated_state == existing_state
-
-      assert :ets.tab2list(locations_table) == [{"vehicle_2", :none}, {"vehicle_1", :none}]
+      assert :ets.tab2list(:test_vehicle_locations) == [
+               {"vehicle_2", :none},
+               {"vehicle_1", :none}
+             ]
     end
   end
 
@@ -71,18 +63,16 @@ defmodule Engine.LocationsTest do
 
       location_map = %{"vehicle_1" => location, "vehicle_no_longer_in_feed" => :none}
 
-      locations_table =
-        :ets.new(:test_vehicle_locations, [
-          :set,
-          :protected,
-          :named_table,
-          read_concurrency: true
-        ])
+      Engine.Locations.create_tables(@state)
 
-      :ets.insert(locations_table, Enum.into(location_map, []))
-      assert for_vehicle(locations_table, "vehicle_1") == location
-      assert for_vehicle(locations_table, "vehicle_no_longer_in_feed") == nil
-      assert for_vehicle(locations_table, "vehicle_does_not_exist") == nil
+      :ets.insert(:test_vehicle_locations, Enum.into(location_map, []))
+      assert Engine.Locations.for_vehicle(:test_vehicle_locations, "vehicle_1") == location
+
+      assert Engine.Locations.for_vehicle(:test_vehicle_locations, "vehicle_no_longer_in_feed") ==
+               nil
+
+      assert Engine.Locations.for_vehicle(:test_vehicle_locations, "vehicle_does_not_exist") ==
+               nil
     end
   end
 end

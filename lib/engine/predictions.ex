@@ -14,7 +14,8 @@ defmodule Engine.Predictions do
 
   @type state :: %{
           last_modified_trip_updates: String.t() | nil,
-          trip_updates_table: :ets.tab()
+          trip_updates_table: :ets.tab(),
+          revenue_vehicles: MapSet.t()
         }
 
   @trip_updates_table :trip_updates
@@ -35,6 +36,11 @@ defmodule Engine.Predictions do
   end
 
   @impl true
+  def revenue_vehicles() do
+    GenServer.call(__MODULE__, :revenue_vehicles)
+  end
+
+  @impl true
   def init(_) do
     schedule_update(self())
 
@@ -44,8 +50,14 @@ defmodule Engine.Predictions do
     {:ok,
      %{
        last_modified_trip_updates: nil,
-       trip_updates_table: @trip_updates_table
+       trip_updates_table: @trip_updates_table,
+       revenue_vehicles: MapSet.new()
      }}
+  end
+
+  @impl true
+  def handle_call(:revenue_vehicles, _from, state) do
+    {:reply, state.revenue_vehicles, state}
   end
 
   @impl true
@@ -62,7 +74,12 @@ defmodule Engine.Predictions do
       )
 
     if vehicles_running_revenue_trips != nil do
-      {:noreply, %{state | last_modified_trip_updates: last_modified_trip_updates}}
+      {:noreply,
+       %{
+         state
+         | last_modified_trip_updates: last_modified_trip_updates,
+           revenue_vehicles: vehicles_running_revenue_trips
+       }}
     else
       {:noreply, state}
     end
