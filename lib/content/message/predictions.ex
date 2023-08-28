@@ -31,7 +31,8 @@ defmodule Content.Message.Predictions do
     platform: nil,
     new_cars?: false,
     terminal?: false,
-    certainty: nil
+    certainty: nil,
+    crowding_data_confidence: nil
   ]
 
   @type t :: %__MODULE__{
@@ -47,7 +48,8 @@ defmodule Content.Message.Predictions do
           zone: String.t() | nil,
           platform: Content.platform() | nil,
           terminal?: boolean(),
-          certainty: non_neg_integer() | nil
+          certainty: non_neg_integer() | nil,
+          crowding_data_confidence: :high | :low | nil
         }
 
   @spec non_terminal(
@@ -77,6 +79,14 @@ defmodule Content.Message.Predictions do
         true -> predicted_time |> Kernel./(60) |> round()
       end
 
+    crowding_data_confidence =
+      calculate_crowding_data_confidence(
+        prediction,
+        Engine.Locations.for_vehicle(prediction.vehicle_id)
+      )
+
+    # TODO: Calculate crowding data classification and pass that along as well
+
     case Content.Utilities.destination_for_prediction(
            prediction.route_id,
            prediction.direction_id,
@@ -95,7 +105,8 @@ defmodule Content.Message.Predictions do
           station_code: station_code,
           zone: zone,
           platform: platform,
-          certainty: certainty
+          certainty: certainty,
+          crowding_data_confidence: crowding_data_confidence
         }
 
       {:error, _} ->
@@ -142,6 +153,17 @@ defmodule Content.Message.Predictions do
         nil
     end
   end
+
+  defp calculate_crowding_data_confidence(_prediction, nil), do: nil
+
+  defp calculate_crowding_data_confidence(prediction, location)
+       when prediction.route_id in ["Orange"] and location.stop_id == prediction.stop_id do
+    if location.status in [:incoming_at, :in_transit_to],
+      do: :high,
+      else: :low
+  end
+
+  defp calculate_crowding_data_confidence(_prediction, _location), do: nil
 
   defimpl Content.Message do
     require Logger

@@ -146,6 +146,7 @@ defmodule Signs.Utilities.Audio do
         {[], sign.announced_approachings, sign.announced_arrivals},
         fn audio, {new_audios, new_approaching_trips, new_arriving_trips} ->
           case audio do
+            # TODO: Add a check for whether high-confidence crowding info is present and whether it has already been announced with an approaching message
             %Audio.TrainIsArriving{trip_id: trip_id} when not is_nil(trip_id) ->
               if audio.trip_id in sign.announced_arrivals do
                 {new_audios, new_approaching_trips, new_arriving_trips}
@@ -154,6 +155,7 @@ defmodule Signs.Utilities.Audio do
                  [audio.trip_id | new_arriving_trips]}
               end
 
+            # TODO: Start tracking trip_ids where we announce high-confidence crowding info with Approaching
             %Audio.Approaching{trip_id: trip_id} when not is_nil(trip_id) ->
               if audio.trip_id in sign.announced_approachings do
                 {new_audios, new_approaching_trips, new_arriving_trips}
