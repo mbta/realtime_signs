@@ -16,6 +16,6 @@ defmodule Locations.Location do
           route_id: String.t() | nil,
           trip_id: String.t() | nil,
           consist: list(),
-          multi_carriage_details: list(CarriageDetails.t())
+          multi_carriage_details: list(Locations.CarriageDetails.t())
         }
 end
