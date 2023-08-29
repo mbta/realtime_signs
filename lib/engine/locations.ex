@@ -10,10 +10,12 @@ defmodule Engine.Locations do
 
   @type state :: %{
           last_modified_vehicle_positions: String.t() | nil,
-          vehicle_locations_table: :ets.tab()
+          vehicle_locations_table: :ets.tab(),
+          stop_locations_table: :ets.tab()
         }
 
   @vehicle_locations_table :vehicle_locations
+  @stop_locations_table :stop_locations
 
   def start_link([]) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -29,50 +31,51 @@ defmodule Engine.Locations do
   end
 
   @impl true
+  def for_stop(stop_id) do
+    case :ets.lookup(@stop_locations_table, stop_id) do
+      [{^stop_id, locations}] -> locations
+      _ -> []
+    end
+  end
+
+  @impl true
   def init(_) do
     schedule_update(self())
 
-    @vehicle_locations_table =
-      :ets.new(
-        @vehicle_locations_table,
-        [:set, :protected, :named_table, read_concurrency: true]
-      )
+    state = %{
+      last_modified_vehicle_positions: nil,
+      vehicle_locations_table: @vehicle_locations_table,
+      stop_locations_table: @stop_locations_table
+    }
 
-    {:ok,
-     %{last_modified_vehicle_positions: nil, vehicle_locations_table: @vehicle_locations_table}}
+    create_tables(state)
+    {:ok, state}
+  end
+
+  def create_tables(state) do
+    :ets.new(state.vehicle_locations_table, [:named_table, read_concurrency: true])
+    :ets.new(state.stop_locations_table, [:named_table, read_concurrency: true])
   end
 
   @impl true
   def handle_info(:update, state) do
     schedule_update(self())
 
-    last_modified_vehicle_locations =
-      download_and_process_vehicle_locations(
-        state.last_modified_vehicle_positions,
-        state.vehicle_locations_table
-      )
-
-    {:noreply, %{state | last_modified_vehicle_positions: last_modified_vehicle_locations}}
-  end
-
-  @spec download_and_process_vehicle_locations(String.t() | nil, :ets.tab()) ::
-          String.t()
-  defp download_and_process_vehicle_locations(last_modified, ets_table) do
     full_url = Application.get_env(:realtime_signs, :vehicle_positions_url)
 
-    case download_data(full_url, last_modified) do
-      {:ok, body, new_last_modified} ->
-        existing_vehicles =
-          :ets.tab2list(ets_table) |> Enum.map(&{elem(&1, 0), :none}) |> Map.new()
+    last_modified_vehicle_locations =
+      case download_data(full_url, state.last_modified_vehicle_positions) do
+        {:ok, body, new_last_modified} ->
+          {locations_by_vehicle, locations_by_stop} = map_locations_data(body)
+          write_ets(state.vehicle_locations_table, locations_by_vehicle, :none)
+          write_ets(state.stop_locations_table, locations_by_stop, [])
+          new_last_modified
 
-        all_vehicles = Map.merge(existing_vehicles, map_locations_data(body))
-        :ets.insert(ets_table, Enum.into(all_vehicles, []))
+        :error ->
+          state.last_modified_vehicle_positions
+      end
 
-        new_last_modified
-
-      :error ->
-        last_modified
-    end
+    {:noreply, %{state | last_modified_vehicle_positions: last_modified_vehicle_locations}}
   end
 
   @spec download_data(String.t(), String.t() | nil) ::
@@ -106,30 +109,33 @@ defmodule Engine.Locations do
     end
   end
 
-  @spec map_locations_data(String.t()) :: %{String.t() => String.t()}
+  @spec map_locations_data(String.t()) ::
+          {%{String.t() => Locations.Location.t()}, %{String.t() => Locations.Location.t()}}
   defp map_locations_data(response) do
     try do
-      response
-      |> Jason.decode!()
-      |> Map.get("entity")
-      |> Enum.reject(&(&1["vehicle"]["trip"]["schedule_relationship"] == "CANCELED"))
-      |> Enum.map(&location_from_update/1)
-      |> Map.new(fn location ->
-        {location.vehicle_id, location}
-      end)
+      locations =
+        response
+        |> Jason.decode!()
+        |> Map.get("entity")
+        |> Enum.reject(&(&1["vehicle"]["trip"]["schedule_relationship"] == "CANCELED"))
+        |> Enum.map(&location_from_update/1)
+
+      {Map.new(locations, fn location -> {location.vehicle_id, location} end),
+       Enum.group_by(locations, & &1.stop_id)}
     rescue
       e in Jason.DecodeError ->
         Logger.error(
           "Engine.Locations json_decode_error: #{inspect(Jason.DecodeError.message(e))}"
         )
 
-        %{}
+        {%{}, %{}}
     end
   end
 
   defp location_from_update(location) do
     %Locations.Location{
       vehicle_id: get_in(location, ["vehicle", "vehicle", "id"]),
+      status: vehicle_status_to_atom(location["vehicle"]["current_status"]),
       status: vehicle_status_to_atom(location["vehicle"]["current_status"]),
       stop_id: location["vehicle"]["stop_id"],
       timestamp: location["vehicle"]["timestamp"],
@@ -140,12 +146,12 @@ defmodule Engine.Locations do
         location["vehicle"]["multi_carriage_details"] &&
           Enum.map(
             location["vehicle"]["multi_carriage_details"],
-            &map_multi_carriage_details/1
+            &parse_carriage_details/1
           )
     }
   end
 
-  defp map_multi_carriage_details(multi_carriage_details) do
+  defp parse_carriage_details(multi_carriage_details) do
     %Locations.CarriageDetails{
       label: multi_carriage_details["label"],
       occupancy_status: occupancy_status_to_atom(multi_carriage_details["occupancy_status"]),
@@ -154,6 +160,18 @@ defmodule Engine.Locations do
     }
   end
 
+  defp occupancy_status_to_atom(status) do
+    case status do
+      "MANY_SEATS_AVAILABLE" -> :many_seats_available
+      "FEW_SEATS_AVAILABLE" -> :few_seats_available
+      "STANDING_ROOM_ONLY" -> :standing_room_only
+      "CRUSHED_STANDING_ROOM_ONLY" -> :crushed_standing_room_only
+      "FULL" -> :full
+      _ -> :unknown
+    end
+  end
+
+  defp vehicle_status_to_atom(status) do
   defp occupancy_status_to_atom(status) do
     case status do
       "MANY_SEATS_AVAILABLE" -> :many_seats_available
@@ -176,5 +194,14 @@ defmodule Engine.Locations do
 
   defp schedule_update(pid) do
     Process.send_after(pid, :update, 1_000)
+  end
+
+  defp write_ets(table, values, empty_value) do
+    :ets.tab2list(table)
+    |> Enum.map(&{elem(&1, 0), empty_value})
+    |> Map.new()
+    |> Map.merge(values)
+    |> Map.to_list()
+    |> then(&:ets.insert(table, &1))
   end
 end

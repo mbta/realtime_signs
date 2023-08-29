@@ -47,11 +47,9 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
     current_content_bottom: %Content.Message.Predictions{destination: :ashmont, minutes: 4},
     prediction_engine: nil,
     headway_engine: FakeHeadways,
-    last_departure_engine: nil,
     config_engine: FakeConfigEngine,
     alerts_engine: nil,
     sign_updater: nil,
-    tick_audit: 240,
     tick_read: 1,
     read_period_seconds: 100,
     last_update: nil
@@ -68,11 +66,9 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
     current_content_bottom: nil,
     prediction_engine: nil,
     headway_engine: FakeHeadways,
-    last_departure_engine: nil,
     config_engine: FakeConfigEngine,
     alerts_engine: nil,
     sign_updater: nil,
-    tick_audit: 240,
     tick_read: 1,
     read_period_seconds: 100,
     last_update: nil
