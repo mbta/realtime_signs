@@ -136,7 +136,6 @@ defmodule Engine.Locations do
     %Locations.Location{
       vehicle_id: get_in(location, ["vehicle", "vehicle", "id"]),
       status: vehicle_status_to_atom(location["vehicle"]["current_status"]),
-      status: vehicle_status_to_atom(location["vehicle"]["current_status"]),
       stop_id: location["vehicle"]["stop_id"],
       timestamp: location["vehicle"]["timestamp"],
       route_id: location["vehicle"]["trip"]["route_id"],
@@ -160,18 +159,6 @@ defmodule Engine.Locations do
     }
   end
 
-  defp occupancy_status_to_atom(status) do
-    case status do
-      "MANY_SEATS_AVAILABLE" -> :many_seats_available
-      "FEW_SEATS_AVAILABLE" -> :few_seats_available
-      "STANDING_ROOM_ONLY" -> :standing_room_only
-      "CRUSHED_STANDING_ROOM_ONLY" -> :crushed_standing_room_only
-      "FULL" -> :full
-      _ -> :unknown
-    end
-  end
-
-  defp vehicle_status_to_atom(status) do
   defp occupancy_status_to_atom(status) do
     case status do
       "MANY_SEATS_AVAILABLE" -> :many_seats_available
