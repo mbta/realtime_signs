@@ -206,7 +206,36 @@ defmodule Signs.Utilities.Audio do
         new_audios
       end
 
+    log_crowding(new_audios, sign.id)
+
     {new_audios, sign}
+  end
+
+  defp log_crowding(new_audios, sign_id) do
+    Enum.each(new_audios, fn
+      %Audio.Approaching{
+        trip_id: trip_id,
+        crowding_description: crowding_description,
+        route_id: route_id
+      }
+      when route_id == "Orange" ->
+        Logger.info(
+          "crowding_log: announcement_type=approaching trip_id=#{inspect(trip_id)} sign_id=#{sign_id} crowding_included=#{not is_nil(crowding_description)} crowding_desciption=#{inspect(crowding_description)}"
+        )
+
+      %Audio.TrainIsArriving{
+        trip_id: trip_id,
+        crowding_description: crowding_description,
+        route_id: route_id
+      }
+      when route_id == "Orange" ->
+        Logger.info(
+          "crowding_log: announcement_type=arrival trip_id=#{inspect(trip_id)} sign_id=#{sign_id} crowding_included=#{not is_nil(crowding_description)} crowding_desciption=#{inspect(crowding_description)}"
+        )
+
+      _ ->
+        nil
+    end)
   end
 
   @spec sort_audio([Content.Audio.t()]) :: [Content.Audio.t()]
