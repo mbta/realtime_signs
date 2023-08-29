@@ -54,51 +54,6 @@ defmodule Content.Message.Predictions do
           crowding_description: {atom(), atom()} | nil
         }
 
-  # Zone definitions based on number of emptier cars
-  # - Tuple represents a range of car numbers (inclusive)
-  # - List represents a specific set of car numbers that define the zone
-  # - If zone is nil, it's not relevant for that number of cars
-  @crowding_zone_definitions %{
-    1 => [
-      front: {1, 2},
-      back: {5, 6},
-      middle: {3, 4},
-      train_level: nil
-    ],
-    2 => [
-      front: {1, 3},
-      back: {4, 6},
-      middle: [[3, 4], [2, 4], [3, 5]],
-      train_level: nil
-    ],
-    3 => [
-      middle: {2, 5},
-      front: {1, 4},
-      back: {3, 6},
-      train_level: [[1, 3, 5], [2, 4, 6]]
-    ],
-    4 => [
-      middle: {2, 5},
-      front: {1, 5},
-      back: {2, 6},
-      train_level: [[1, 3, 4, 6], [1, 2, 4, 6], [1, 3, 5, 6]]
-    ],
-    5 => [
-      front: {1, 5},
-      back: {2, 6},
-      middle: nil,
-      train_level: [[1, 3, 4, 5, 6], [1, 2, 4, 5, 6], [1, 2, 3, 5, 6], [1, 2, 3, 4, 6]]
-    ],
-    6 => [
-      train_level: {1, 6}
-    ]
-  }
-
-  @not_crowded 1
-  @some_crowding 2
-  @crowded 3
-  @unknown_crowding 4
-
   @spec non_terminal(
           Predictions.Prediction.t(),
           String.t(),
@@ -221,74 +176,73 @@ defmodule Content.Message.Predictions do
   defp get_crowding_description([]), do: nil
 
   defp get_crowding_description(carriage_details) do
-    crowding_level_by_car =
-      Enum.map(carriage_details, fn carriage ->
-        {carriage.carriage_sequence,
-         occupancy_status_to_crowding_level(carriage.occupancy_status)}
-      end)
+    crowding_levels =
+      Enum.map(carriage_details, &occupancy_status_to_crowding_level(&1.occupancy_status))
 
-    min_crowding_level = Enum.min_by(crowding_level_by_car, &elem(&1, 1)) |> elem(1)
+    min_crowding_level = Enum.min(crowding_levels)
 
-    emptier_car_nums =
-      Stream.map(crowding_level_by_car, fn {car_num, crowding_level} ->
-        if crowding_level > min_crowding_level,
-          do: {car_num, :fuller},
-          else: {car_num, :emptier}
-      end)
-      |> Stream.filter(&match?({_, :emptier}, &1))
-      |> Enum.map(&elem(&1, 0))
+    relative_crowding_levels =
+      for crowding_level <- crowding_levels do
+        if crowding_level == min_crowding_level,
+          do: :e,
+          else: :f
+      end
 
-    emptier_location =
-      Enum.reduce_while(
-        @crowding_zone_definitions[Enum.count(emptier_car_nums)],
-        :front_and_back,
-        fn {zone, definition}, acc ->
-          if in_zone?(emptier_car_nums, zone, definition),
-            do: {:halt, zone},
-            else: {:cont, acc}
-        end
-      )
-
-    {emptier_location, crowding_level_to_atom(min_crowding_level)}
+    {get_emptier_location(
+       {Enum.count(relative_crowding_levels, &Kernel.==(&1, :e)), relative_crowding_levels}
+     ), crowding_level_to_atom(min_crowding_level)}
   end
 
   defp occupancy_status_to_crowding_level(occupancy_status) do
     case occupancy_status do
-      :many_seats_available -> @not_crowded
-      :few_seats_available -> @not_crowded
-      :standing_room_only -> @some_crowding
-      :crushed_standing_room_only -> @crowded
-      :full -> @crowded
-      _ -> @unknown_crowding
+      :many_seats_available -> 1
+      :few_seats_available -> 1
+      :standing_room_only -> 2
+      :crushed_standing_room_only -> 3
+      :full -> 3
+      _ -> 4
     end
   end
 
   defp crowding_level_to_atom(crowding_level) do
     case crowding_level do
-      @not_crowded -> :not_crowded
-      @some_crowding -> :some_crowding
-      @crowded -> :crowded
-      @unknown_crowding -> :unknown_croding
+      1 -> :not_crowded
+      2 -> :some_crowding
+      3 -> :crowded
+      4 -> :unknown_croding
     end
   end
 
-  defp in_zone?(_, _, nil), do: false
-
-  defp in_zone?(car_nums, zone, {front_end, back_end}) do
-    special_case? =
-      (Enum.count(car_nums) == 2 and zone == :front and car_nums == [1, 4]) or
-        (Enum.count(car_nums) == 2 and zone == :back and car_nums == [3, 6]) or
-        (Enum.count(car_nums) == 4 and zone == :front and car_nums == [1, 2, 3, 6]) or
-        (Enum.count(car_nums) == 4 and zone == :back and car_nums == [1, 4, 5, 6])
-
-    special_case? or
-      Enum.all?(car_nums, fn car_num -> car_num in Enum.to_list(front_end..back_end) end)
-  end
-
-  defp in_zone?(car_nums, _zone, zone_patterns) when is_list(zone_patterns) do
-    Enum.any?(zone_patterns, fn pattern ->
-      car_nums == pattern
-    end)
+  defp get_emptier_location(car_crowding_levels) do
+    case car_crowding_levels do
+      {1, [_, _, :f, :f, :f, :f]} -> :front
+      {1, [:f, :f, :f, :f, _, _]} -> :back
+      {1, [:f, :f, _, _, :f, :f]} -> :middle
+      {2, [_, _, _, :f, :f, :f]} -> :front
+      {2, [_, :f, :f, _, :f, :f]} -> :front
+      {2, [:f, :f, :f, _, _, _]} -> :back
+      {2, [:f, :f, _, :f, :f, _]} -> :back
+      {2, [:f, :f, _, _, :f, :f]} -> :middle
+      {2, [:f, _, :f, _, :f, :f]} -> :middle
+      {2, [:f, :f, _, :f, _, :f]} -> :middle
+      {3, [:f, _, _, _, _, :f]} -> :middle
+      {3, [_, _, _, _, :f, :f]} -> :front
+      {3, [:f, :f, _, _, _, _]} -> :back
+      {3, [:f, _, :f, _, :f, _]} -> :train_level
+      {3, [_, :f, _, :f, _, :f]} -> :train_level
+      {3, _} -> :front_and_back
+      {4, [:f, _, _, _, _, :f]} -> :middle
+      {4, [_, _, _, _, _, :f]} -> :front
+      {4, [_, _, _, :f, :f, _]} -> :front
+      {4, [:f, _, _, _, _, _]} -> :back
+      {4, [_, :f, :f, _, _, _]} -> :back
+      {4, [_, _, :f, :f, _, _]} -> :front_and_back
+      {4, _} -> :train_level
+      {5, [_, _, _, _, _, :f]} -> :front
+      {5, [:f, _, _, _, _, _]} -> :back
+      {5, _} -> :train_level
+      {6, _} -> :train_level
+    end
   end
 
   defimpl Content.Message do
