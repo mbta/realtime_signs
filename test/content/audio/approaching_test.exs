@@ -65,5 +65,16 @@ defmodule Content.Audio.ApproachingTest do
                 {"Attention passengers: The next Southbound Red Line train is now approaching.",
                  :audio_visual}}
     end
+
+    test "Returns crowding info" do
+      audio = %Approaching{
+        destination: :forest_hills,
+        route_id: "Orange",
+        crowding_description: {:train_level, :crowded}
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned, {"104", ["32123", "876"], :audio_visual}}
+    end
   end
 end

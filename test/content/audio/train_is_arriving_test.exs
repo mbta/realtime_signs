@@ -79,5 +79,15 @@ defmodule Content.Audio.TrainIsArrivingTest do
 
       assert log =~ "unknown params"
     end
+
+    test "Returns crowding info" do
+      audio = %Content.Audio.TrainIsArriving{
+        destination: :forest_hills,
+        route_id: "Orange",
+        crowding_description: {:front, :crowded}
+      }
+
+      assert Content.Audio.to_params(audio) == {:canned, {"104", ["32103", "870"], :audio_visual}}
+    end
   end
 end
