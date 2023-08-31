@@ -142,21 +142,19 @@ defmodule Engine.Locations do
       trip_id: location["vehicle"]["trip"]["trip_id"],
       consist: location["vehicle"]["vehicle"]["consist"],
       multi_carriage_details:
-        (location["vehicle"]["multi_carriage_details"] &&
-           Enum.map(
-             location["vehicle"]["multi_carriage_details"],
-             &parse_carriage_details/1
-           )) || []
+        parse_carriage_details(location["vehicle"]["multi_carriage_details"] || [])
     }
   end
 
   defp parse_carriage_details(multi_carriage_details) do
-    %Locations.CarriageDetails{
-      label: multi_carriage_details["label"],
-      occupancy_status: occupancy_status_to_atom(multi_carriage_details["occupancy_status"]),
-      occupancy_percentage: multi_carriage_details["occupancy_percentage"],
-      carriage_sequence: multi_carriage_details["carriage_sequence"]
-    }
+    Enum.map(multi_carriage_details, fn carriage_details ->
+      %Locations.CarriageDetails{
+        label: carriage_details["label"],
+        occupancy_status: occupancy_status_to_atom(carriage_details["occupancy_status"]),
+        occupancy_percentage: carriage_details["occupancy_percentage"],
+        carriage_sequence: carriage_details["carriage_sequence"]
+      }
+    end)
   end
 
   defp occupancy_status_to_atom(status) do
