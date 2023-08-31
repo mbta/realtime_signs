@@ -7,14 +7,13 @@ defmodule Content.Audio.TrainIsArriving do
   alias PaEss.Utilities
 
   @enforce_keys [:destination]
-  defstruct @enforce_keys ++ [:trip_id, :platform, :route_id, crowding_description: nil]
+  defstruct @enforce_keys ++ [:trip_id, :platform, :route_id]
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
           trip_id: Predictions.Prediction.trip_id() | nil,
           platform: Content.platform() | nil,
-          route_id: String.t() | nil,
-          crowding_description: {atom(), atom()} | nil
+          route_id: String.t() | nil
         }
 
   defimpl Content.Audio do
