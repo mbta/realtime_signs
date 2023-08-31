@@ -222,9 +222,8 @@ defmodule Content.Message.Predictions do
       {2, [_, :f, :f, _, :f, :f]} -> :front
       {2, [:f, :f, :f, _, _, _]} -> :back
       {2, [:f, :f, _, :f, :f, _]} -> :back
-      {2, [:f, :f, _, _, :f, :f]} -> :middle
-      {2, [:f, _, :f, _, :f, :f]} -> :middle
-      {2, [:f, :f, _, :f, _, :f]} -> :middle
+      {2, [_, _, :f, :f, _, _]} -> :front_and_back
+      {2, _} -> :middle
       {3, [:f, _, _, _, _, :f]} -> :middle
       {3, [_, _, _, _, :f, :f]} -> :front
       {3, [:f, :f, _, _, _, _]} -> :back
