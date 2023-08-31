@@ -46,51 +46,34 @@ defmodule Content.Audio.Predictions do
         ]
 
       predictions.minutes == :arriving ->
-        if predictions.crowding_data_confidence == :high do
-          # TODO: Pass along crowding data classification once available
-          [
-            %TrainIsArriving{
-              destination: predictions.destination,
-              trip_id: predictions.trip_id,
-              platform: predictions.platform,
-              route_id: predictions.route_id
-            }
-          ]
-        else
-          [
-            %TrainIsArriving{
-              destination: predictions.destination,
-              trip_id: predictions.trip_id,
-              platform: predictions.platform,
-              route_id: predictions.route_id
-            }
-          ]
-        end
+        [
+          %TrainIsArriving{
+            destination: predictions.destination,
+            trip_id: predictions.trip_id,
+            platform: predictions.platform,
+            route_id: predictions.route_id,
+            crowding_description:
+              if(predictions.crowding_data_confidence == :high,
+                do: predictions.crowding_description
+              )
+          }
+        ]
 
       predictions.minutes == :approaching and (line == :top or multi_source?) and
           predictions.route_id in @heavy_rail_routes ->
-        if predictions.crowding_data_confidence == :high do
-          # TODO: Pass along crowding data classification once available
-          [
-            %Approaching{
-              destination: predictions.destination,
-              trip_id: predictions.trip_id,
-              platform: predictions.platform,
-              route_id: predictions.route_id,
-              new_cars?: predictions.new_cars?
-            }
-          ]
-        else
-          [
-            %Approaching{
-              destination: predictions.destination,
-              trip_id: predictions.trip_id,
-              platform: predictions.platform,
-              route_id: predictions.route_id,
-              new_cars?: predictions.new_cars?
-            }
-          ]
-        end
+        [
+          %Approaching{
+            destination: predictions.destination,
+            trip_id: predictions.trip_id,
+            platform: predictions.platform,
+            route_id: predictions.route_id,
+            new_cars?: predictions.new_cars?,
+            crowding_description:
+              if(predictions.crowding_data_confidence == :high,
+                do: predictions.crowding_description
+              )
+          }
+        ]
 
       predictions.minutes == :approaching ->
         [
