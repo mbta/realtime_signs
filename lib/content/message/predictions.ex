@@ -32,7 +32,8 @@ defmodule Content.Message.Predictions do
     new_cars?: false,
     terminal?: false,
     certainty: nil,
-    crowding_data_confidence: nil
+    crowding_data_confidence: nil,
+    crowding_description: nil
   ]
 
   @type t :: %__MODULE__{
@@ -49,7 +50,8 @@ defmodule Content.Message.Predictions do
           platform: Content.platform() | nil,
           terminal?: boolean(),
           certainty: non_neg_integer() | nil,
-          crowding_data_confidence: :high | :low | nil
+          crowding_data_confidence: :high | :low | nil,
+          crowding_description: {atom(), atom()} | nil
         }
 
   @spec non_terminal(
@@ -79,13 +81,7 @@ defmodule Content.Message.Predictions do
         true -> predicted_time |> Kernel./(60) |> round()
       end
 
-    crowding_data_confidence =
-      calculate_crowding_data_confidence(
-        prediction,
-        Engine.Locations.for_vehicle(prediction.vehicle_id)
-      )
-
-    # TODO: Calculate crowding data classification and pass that along as well
+    {crowding_data_confidence, crowding_description} = do_crowding(prediction)
 
     case Content.Utilities.destination_for_prediction(
            prediction.route_id,
@@ -106,7 +102,8 @@ defmodule Content.Message.Predictions do
           zone: zone,
           platform: platform,
           certainty: certainty,
-          crowding_data_confidence: crowding_data_confidence
+          crowding_data_confidence: crowding_data_confidence,
+          crowding_description: crowding_description
         }
 
       {:error, _} ->
@@ -154,16 +151,98 @@ defmodule Content.Message.Predictions do
     end
   end
 
-  defp calculate_crowding_data_confidence(_prediction, nil), do: nil
+  defp do_crowding(prediction) when prediction.route_id in ["Orange"] do
+    case Engine.Locations.for_vehicle(prediction.vehicle_id) do
+      %Locations.Location{} = location ->
+        {calculate_crowding_data_confidence(prediction, location),
+         get_crowding_description(location.multi_carriage_details)}
+
+      _ ->
+        {nil, nil}
+    end
+  end
+
+  defp do_crowding(_), do: {nil, nil}
 
   defp calculate_crowding_data_confidence(prediction, location)
-       when prediction.route_id in ["Orange"] and location.stop_id == prediction.stop_id do
+       when location.stop_id == prediction.stop_id do
     if location.status in [:incoming_at, :in_transit_to],
       do: :high,
       else: :low
   end
 
   defp calculate_crowding_data_confidence(_prediction, _location), do: nil
+
+  defp get_crowding_description([]), do: nil
+
+  defp get_crowding_description(carriage_details) do
+    crowding_levels =
+      Enum.map(carriage_details, &occupancy_status_to_crowding_level(&1.occupancy_status))
+
+    min_crowding_level = Enum.min(crowding_levels)
+
+    relative_crowding_levels =
+      for crowding_level <- crowding_levels do
+        if crowding_level == min_crowding_level,
+          do: :e,
+          else: :f
+      end
+
+    {get_emptier_location(
+       {Enum.count(relative_crowding_levels, &Kernel.==(&1, :e)), relative_crowding_levels}
+     ), crowding_level_to_atom(min_crowding_level)}
+  end
+
+  defp occupancy_status_to_crowding_level(occupancy_status) do
+    case occupancy_status do
+      :many_seats_available -> 1
+      :few_seats_available -> 1
+      :standing_room_only -> 2
+      :crushed_standing_room_only -> 3
+      :full -> 3
+      _ -> 4
+    end
+  end
+
+  defp crowding_level_to_atom(crowding_level) do
+    case crowding_level do
+      1 -> :not_crowded
+      2 -> :some_crowding
+      3 -> :crowded
+      4 -> :unknown_croding
+    end
+  end
+
+  defp get_emptier_location(car_crowding_levels) do
+    case car_crowding_levels do
+      {1, [_, _, :f, :f, :f, :f]} -> :front
+      {1, [:f, :f, :f, :f, _, _]} -> :back
+      {1, [:f, :f, _, _, :f, :f]} -> :middle
+      {2, [_, _, _, :f, :f, :f]} -> :front
+      {2, [_, :f, :f, _, :f, :f]} -> :front
+      {2, [:f, :f, :f, _, _, _]} -> :back
+      {2, [:f, :f, _, :f, :f, _]} -> :back
+      {2, [_, _, :f, :f, _, _]} -> :front_and_back
+      {2, _} -> :middle
+      {3, [:f, _, _, _, _, :f]} -> :middle
+      {3, [_, _, _, _, :f, :f]} -> :front
+      {3, [:f, :f, _, _, _, _]} -> :back
+      {3, [:f, _, :f, _, :f, _]} -> :train_level
+      {3, [_, :f, _, :f, _, :f]} -> :train_level
+      {3, _} -> :front_and_back
+      {4, [:f, _, _, _, _, :f]} -> :middle
+      {4, [_, _, _, _, _, :f]} -> :front
+      {4, [_, _, _, :f, :f, _]} -> :front
+      {4, [:f, _, _, _, _, _]} -> :back
+      {4, [_, :f, :f, _, _, _]} -> :back
+      {4, [_, _, :f, :f, _, _]} -> :front_and_back
+      {4, _} -> :train_level
+      {5, [_, _, _, _, _, :f]} -> :front
+      {5, [:f, _, _, _, _, _]} -> :back
+      {5, _} -> :train_level
+      {6, _} -> :train_level
+    end
+  end
 
   defimpl Content.Message do
     require Logger
