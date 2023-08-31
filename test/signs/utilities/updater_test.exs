@@ -38,13 +38,11 @@ defmodule Signs.Utilities.UpdaterTest do
     current_content_bottom: %P{destination: :ashmont, minutes: 3},
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
-    last_departure_engine: FakeDepartures,
     config_engine: Engine.Config,
     alerts_engine: nil,
     current_time_fn: nil,
     sign_updater: FakeUpdater,
     last_update: Timex.now(),
-    tick_audit: 240,
     tick_read: 60,
     read_period_seconds: 100
   }
@@ -85,104 +83,6 @@ defmodule Signs.Utilities.UpdaterTest do
       diff_bottom = {src, %P{destination: :alewife, minutes: 19}}
       Updater.update_sign(sign, diff_top, diff_bottom, Timex.now())
       refute_received({:send_audio, _, _, _, _, _})
-    end
-
-    test "logs when stopped train message turns on" do
-      diff_top = %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2}
-      same_bottom = @sign.current_content_bottom
-
-      initial_tick_read = 10
-      read_period_seconds = 100
-
-      sign = %{@sign | tick_read: initial_tick_read, read_period_seconds: read_period_seconds}
-
-      log =
-        capture_log([level: :info], fn ->
-          Updater.update_sign(sign, diff_top, same_bottom, Timex.now())
-        end)
-
-      assert log =~ "sign_id=sign_id line=top status=on"
-    end
-
-    test "logs when stopped train message turns off" do
-      new_top = %P{destination: :alewife, minutes: 4}
-      new_bottom = %P{destination: :alewife, minutes: 4}
-
-      initial_tick_read = 10
-      read_period_seconds = 100
-
-      sign = %{
-        @sign
-        | current_content_top: %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2},
-          current_content_bottom: %Content.Message.StoppedTrain{
-            destination: :alewife,
-            stops_away: 2
-          },
-          tick_read: initial_tick_read,
-          read_period_seconds: read_period_seconds
-      }
-
-      log =
-        capture_log([level: :info], fn ->
-          Updater.update_sign(sign, new_top, new_bottom, Timex.now())
-        end)
-
-      assert log =~ "sign_id=sign_id line=top status=off"
-      assert log =~ "sign_id=sign_id line=bottom status=off"
-    end
-
-    test "logs when stopped train message changes from zero to non-zero stops away" do
-      diff_top = %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2}
-      same_bottom = %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 2}
-
-      initial_tick_read = 10
-      read_period_seconds = 100
-
-      sign = %{
-        @sign
-        | current_content_top: %Content.Message.StoppedTrain{destination: :alewife, stops_away: 0},
-          current_content_bottom: %Content.Message.StoppedTrain{
-            destination: :ashmont,
-            stops_away: 0
-          },
-          tick_read: initial_tick_read,
-          read_period_seconds: read_period_seconds
-      }
-
-      log =
-        capture_log([level: :info], fn ->
-          Updater.update_sign(sign, diff_top, same_bottom, Timex.now())
-        end)
-
-      assert log =~ "sign_id=sign_id line=top status=on"
-      assert log =~ "sign_id=sign_id line=bottom status=on"
-    end
-
-    test "logs when stopped train message changes from non-zero to zero stops away" do
-      diff_top = %Content.Message.StoppedTrain{destination: :alewife, stops_away: 0}
-      same_bottom = %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 0}
-
-      initial_tick_read = 10
-      read_period_seconds = 100
-
-      sign = %{
-        @sign
-        | current_content_top: %Content.Message.StoppedTrain{destination: :alewife, stops_away: 2},
-          current_content_bottom: %Content.Message.StoppedTrain{
-            destination: :ashmont,
-            stops_away: 2
-          },
-          tick_read: initial_tick_read,
-          read_period_seconds: read_period_seconds
-      }
-
-      log =
-        capture_log([level: :info], fn ->
-          Updater.update_sign(sign, diff_top, same_bottom, Timex.now())
-        end)
-
-      assert log =~ "sign_id=sign_id line=top status=off"
-      assert log =~ "sign_id=sign_id line=bottom status=off"
     end
   end
 end

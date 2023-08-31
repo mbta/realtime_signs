@@ -179,14 +179,11 @@ defmodule Signs.Utilities.Audio do
       )
 
     new_announced_approaching_with_crowding =
-      Enum.filter(new_audios, fn
-        %Audio.Approaching{trip_id: trip_id, crowding_description: crowding_description} ->
-          not is_nil(trip_id) and not is_nil(crowding_description)
-
-        _ ->
-          false
-      end)
-      |> Enum.map(& &1.trip_id)
+      for %Audio.Approaching{trip_id: trip_id, crowding_description: crowding_description} <-
+            new_audios,
+          not is_nil(trip_id) and not is_nil(crowding_description) do
+        trip_id
+      end
 
     sign = %{
       sign
@@ -205,8 +202,33 @@ defmodule Signs.Utilities.Audio do
       else
         new_audios
       end
+      |> tap(&log_crowding(&1, sign.id))
 
     {new_audios, sign}
+  end
+
+  defp log_crowding(new_audios, sign_id) do
+    Enum.each(new_audios, fn
+      %{
+        trip_id: trip_id,
+        crowding_description: crowding_description,
+        route_id: "Orange",
+        __struct__: audio_type
+      }
+      when audio_type in [Audio.Approaching, Audio.TrainIsArriving] ->
+        announcement_type =
+          case audio_type do
+            Audio.Approaching -> "approaching"
+            Audio.TrainIsArriving -> "arrival"
+          end
+
+        Logger.info(
+          "crowding_log: announcement_type=#{announcement_type} trip_id=#{trip_id} sign_id=#{sign_id} crowding_description=#{inspect(crowding_description)}"
+        )
+
+      _ ->
+        nil
+    end)
   end
 
   @spec sort_audio([Content.Audio.t()]) :: [Content.Audio.t()]
