@@ -6365,7 +6365,7 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_trunk",
+      "headway_group": "green_b",
       "headway_direction_name": "Eastbound",
       "sources": [
         {
@@ -6394,8 +6394,8 @@
     ],
     "type": "realtime",
     "source_config": {
-      "headway_group": "green_trunk",
-      "headway_direction_name": "Westbound",
+      "headway_group": "green_b",
+      "headway_direction_name": "Boston College",
       "sources": [
         {
           "stop_id": "71151",
