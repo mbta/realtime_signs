@@ -54,51 +54,6 @@ defmodule Content.Message.Predictions do
           crowding_description: {atom(), atom()} | nil
         }
 
-  # Zone definitions based on number of emptier cars
-  # - Tuple represents a range of car numbers (inclusive)
-  # - List represents a specific set of car numbers that define the zone
-  # - If zone is nil, it's not relevant for that number of cars
-  @crowding_zone_definitions %{
-    1 => [
-      front: {1, 2},
-      back: {5, 6},
-      middle: {3, 4},
-      train_level: nil
-    ],
-    2 => [
-      front: {1, 3},
-      back: {4, 6},
-      middle: [[3, 4], [2, 4], [3, 5]],
-      train_level: nil
-    ],
-    3 => [
-      middle: {2, 5},
-      front: {1, 4},
-      back: {3, 6},
-      train_level: [[1, 3, 5], [2, 4, 6]]
-    ],
-    4 => [
-      middle: {2, 5},
-      front: {1, 5},
-      back: {2, 6},
-      train_level: [[1, 3, 4, 6], [1, 2, 4, 6], [1, 3, 5, 6]]
-    ],
-    5 => [
-      front: {1, 5},
-      back: {2, 6},
-      middle: nil,
-      train_level: [[1, 3, 4, 5, 6], [1, 2, 4, 5, 6], [1, 2, 3, 5, 6], [1, 2, 3, 4, 6]]
-    ],
-    6 => [
-      train_level: {1, 6}
-    ]
-  }
-
-  @not_crowded 1
-  @some_crowding 2
-  @crowded 3
-  @unknown_crowding 4
-
   @spec non_terminal(
           Predictions.Prediction.t(),
           String.t(),
