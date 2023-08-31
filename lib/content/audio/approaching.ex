@@ -50,7 +50,8 @@ defmodule Content.Audio.Approaching do
 
         {var, crowding_description} ->
           {:canned,
-           {"104", [var, Content.Utilities.crowding_description_var(crowding_description)],
+           {"104",
+            [var, @space, Content.Utilities.crowding_description_var(crowding_description)],
             :audio_visual}}
       end
     end

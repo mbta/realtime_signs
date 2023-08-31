@@ -120,7 +120,7 @@ defmodule Content.Utilities do
       {:train_level, :not_crowded} -> "874"
       {:train_level, :some_crowding} -> "875"
       {:train_level, :crowded} -> "876"
-      _ -> nil
+      _ -> "21000"
     end
   end
 end
