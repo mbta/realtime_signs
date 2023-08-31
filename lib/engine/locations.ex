@@ -142,11 +142,11 @@ defmodule Engine.Locations do
       trip_id: location["vehicle"]["trip"]["trip_id"],
       consist: location["vehicle"]["vehicle"]["consist"],
       multi_carriage_details:
-        location["vehicle"]["multi_carriage_details"] &&
-          Enum.map(
-            location["vehicle"]["multi_carriage_details"],
-            &parse_carriage_details/1
-          )
+        (location["vehicle"]["multi_carriage_details"] &&
+           Enum.map(
+             location["vehicle"]["multi_carriage_details"],
+             &parse_carriage_details/1
+           )) || []
     }
   end
 
