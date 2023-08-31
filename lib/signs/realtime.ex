@@ -35,6 +35,7 @@ defmodule Signs.Realtime do
                 :current_time_fn,
                 announced_arrivals: [],
                 announced_approachings: [],
+                announced_approachings_with_crowding: [],
                 announced_passthroughs: [],
                 uses_shuttles: true
               ]
@@ -63,6 +64,7 @@ defmodule Signs.Realtime do
           read_period_seconds: non_neg_integer(),
           announced_arrivals: [Predictions.Prediction.trip_id()],
           announced_approachings: [Predictions.Prediction.trip_id()],
+          announced_approachings_with_crowding: [Predictions.Prediction.trip_id()],
           announced_passthroughs: [Predictions.Prediction.trip_id()],
           uses_shuttles: boolean()
         }

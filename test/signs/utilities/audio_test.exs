@@ -823,5 +823,178 @@ defmodule Signs.Utilities.AudioTest do
 
       assert log =~ "message_to_audio_warning Utilities.Audio generic_paging_mismatch"
     end
+
+    test "Announce approaching with crowding when condfidence high" do
+      sign = %{
+        @sign
+        | current_content_top: %Message.Predictions{
+            destination: :oak_grove,
+            minutes: :approaching,
+            route_id: "Orange",
+            crowding_data_confidence: :high,
+            crowding_description: {:front, :some_crowding}
+          },
+          current_content_bottom: %Content.Message.Empty{}
+      }
+
+      {audios, _} = from_sign(sign)
+
+      assert [
+               %Content.Audio.Approaching{
+                 destination: :oak_grove,
+                 crowding_description: {:front, :some_crowding}
+               }
+             ] = audios
+    end
+
+    test "Announce approaching without crowding when condfidence low" do
+      sign = %{
+        @sign
+        | current_content_top: %Message.Predictions{
+            destination: :oak_grove,
+            minutes: :approaching,
+            route_id: "Orange",
+            crowding_data_confidence: :low,
+            crowding_description: {:front, :some_crowding}
+          },
+          current_content_bottom: %Content.Message.Empty{}
+      }
+
+      {audios, _} = from_sign(sign)
+
+      assert [
+               %Content.Audio.Approaching{
+                 destination: :oak_grove,
+                 crowding_description: nil
+               }
+             ] = audios
+    end
+
+    test "Track announced approachings with crowding" do
+      sign = %{
+        @sign
+        | current_content_top: %Message.Predictions{
+            destination: :oak_grove,
+            minutes: :approaching,
+            route_id: "Orange",
+            crowding_data_confidence: :high,
+            crowding_description: {:front, :some_crowding},
+            trip_id: "trip1"
+          },
+          current_content_bottom: %Content.Message.Empty{}
+      }
+
+      {audios, sign} = from_sign(sign)
+
+      assert [
+               %Content.Audio.Approaching{
+                 destination: :oak_grove,
+                 crowding_description: {:front, :some_crowding}
+               }
+             ] = audios
+
+      assert(["trip1"] = sign.announced_approachings_with_crowding)
+    end
+
+    test "Don't track announced approachings without crowding" do
+      sign = %{
+        @sign
+        | current_content_top: %Message.Predictions{
+            destination: :oak_grove,
+            minutes: :approaching,
+            route_id: "Orange",
+            crowding_data_confidence: :low,
+            crowding_description: {:front, :some_crowding},
+            trip_id: "trip1"
+          },
+          current_content_bottom: %Content.Message.Empty{}
+      }
+
+      {audios, sign} = from_sign(sign)
+
+      assert [
+               %Content.Audio.Approaching{
+                 destination: :oak_grove,
+                 crowding_description: nil
+               }
+             ] = audios
+
+      assert([] = sign.announced_approachings_with_crowding)
+    end
+
+    test "Announce arrival with crowding if not already announced" do
+      sign = %{
+        @sign
+        | current_content_top: %Message.Predictions{
+            destination: :oak_grove,
+            minutes: :arriving,
+            route_id: "Orange",
+            crowding_data_confidence: :high,
+            crowding_description: {:front, :some_crowding},
+            trip_id: "trip2"
+          },
+          current_content_bottom: %Content.Message.Empty{},
+          announced_approachings_with_crowding: ["trip1"]
+      }
+
+      {audios, _} = from_sign(sign)
+
+      assert [
+               %Content.Audio.TrainIsArriving{
+                 destination: :oak_grove,
+                 crowding_description: {:front, :some_crowding}
+               }
+             ] = audios
+    end
+
+    test "Don't announce arrival with crowding if confidence low" do
+      sign = %{
+        @sign
+        | current_content_top: %Message.Predictions{
+            destination: :oak_grove,
+            minutes: :arriving,
+            route_id: "Orange",
+            crowding_data_confidence: :low,
+            crowding_description: {:front, :some_crowding},
+            trip_id: "trip2"
+          },
+          current_content_bottom: %Content.Message.Empty{},
+          announced_approachings_with_crowding: ["trip1"]
+      }
+
+      {audios, _} = from_sign(sign)
+
+      assert [
+               %Content.Audio.TrainIsArriving{
+                 destination: :oak_grove,
+                 crowding_description: nil
+               }
+             ] = audios
+    end
+
+    test "Don't announce arrival with crowding if already announced with approaching" do
+      sign = %{
+        @sign
+        | current_content_top: %Message.Predictions{
+            destination: :oak_grove,
+            minutes: :arriving,
+            route_id: "Orange",
+            crowding_data_confidence: :high,
+            crowding_description: {:front, :some_crowding},
+            trip_id: "trip1"
+          },
+          current_content_bottom: %Content.Message.Empty{},
+          announced_approachings_with_crowding: ["trip1"]
+      }
+
+      {audios, _} = from_sign(sign)
+
+      assert [
+               %Content.Audio.TrainIsArriving{
+                 destination: :oak_grove,
+                 crowding_description: nil
+               }
+             ] = audios
+    end
   end
 end
