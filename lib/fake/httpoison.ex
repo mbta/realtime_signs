@@ -44,10 +44,10 @@ defmodule Fake.HTTPoison do
         {:ok, %HTTPoison.Response{status_code: 200}}
 
       body =~
-          ~r/MsgType=Canned&uid=[0-9]+&mid=90128&var=&typ=0&sta=MCED000100&pri=5&tim=60/ ->
+          ~r/MsgType=Canned&uid=[0-9]+&mid=103&var=90128&typ=0&sta=MCED000100&pri=5&tim=60/ ->
         {:ok, %HTTPoison.Response{status_code: 200}}
 
-      body =~ ~r/MsgType=Canned&uid=[0-9]+&mid=90129&var=&typ=0&sta=MCAP001000&pri=5&tim=60/ ->
+      body =~ ~r/MsgType=Canned&uid=[0-9]+&mid=103&var=90129&typ=0&sta=MCAP001000&pri=5&tim=60/ ->
         {:ok, %HTTPoison.Response{status_code: 200}}
 
       body =~ ~r/MsgType=AdHoc&uid=[0-9]+&msg=Custom\+Message&typ=1&sta=MCAP001000&pri=5&tim=60/ ->

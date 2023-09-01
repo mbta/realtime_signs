@@ -29,9 +29,13 @@ defmodule Content.Audio.Approaching do
       handle_unknown_destination(audio)
     end
 
-    def to_params(%Content.Audio.Approaching{new_cars?: false} = audio) do
-      case destination_var(audio.destination, audio.platform, audio.route_id) do
-        nil ->
+    def to_params(
+          %Content.Audio.Approaching{new_cars?: false, crowding_description: crowding_description} =
+            audio
+        ) do
+      case {destination_var(audio.destination, audio.platform, audio.route_id),
+            crowding_description} do
+        {nil, _} ->
           case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
             {:ok, trip_description} ->
               text = "Attention passengers: The next #{trip_description} is now approaching."
@@ -41,8 +45,14 @@ defmodule Content.Audio.Approaching do
               handle_unknown_destination(audio)
           end
 
-        var ->
+        {var, nil} ->
           {:canned, {"103", [var], :audio_visual}}
+
+        {var, crowding_description} ->
+          {:canned,
+           {"104",
+            [var, @space, Content.Utilities.crowding_description_var(crowding_description)],
+            :audio_visual}}
       end
     end
 
