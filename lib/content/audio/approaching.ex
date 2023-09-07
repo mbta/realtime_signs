@@ -45,14 +45,8 @@ defmodule Content.Audio.Approaching do
               handle_unknown_destination(audio)
           end
 
-        {var, nil} ->
+        {var, _} ->
           Utilities.take_message([var], :audio_visual)
-
-        {var, crowding_description} ->
-          Utilities.take_message(
-            [var, Content.Utilities.crowding_description_var(crowding_description)],
-            :audio_visual
-          )
       end
     end
 
