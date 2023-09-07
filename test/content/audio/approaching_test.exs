@@ -74,7 +74,7 @@ defmodule Content.Audio.ApproachingTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:canned, {"104", ["32123", "21000", "876"], :audio_visual}}
+               {:canned, {"105", ["32123", "21000", "876"], :audio_visual}}
     end
   end
 end

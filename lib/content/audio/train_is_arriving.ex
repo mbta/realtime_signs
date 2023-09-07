@@ -34,13 +34,13 @@ defmodule Content.Audio.TrainIsArriving do
           end
 
         {var, nil} ->
-          {:canned, {"103", [var], :audio_visual}}
+          Utilities.take_message([var], :audio_visual)
 
         {var, crowding_description} ->
-          {:canned,
-           {"104",
-            [var, "21000", Content.Utilities.crowding_description_var(crowding_description)],
-            :audio_visual}}
+          Utilities.take_message(
+            [var, Content.Utilities.crowding_description_var(crowding_description)],
+            :audio_visual
+          )
       end
     end
 
