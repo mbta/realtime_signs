@@ -41,7 +41,9 @@ defmodule HeadwayAnalysis.Server do
   @impl true
   def handle_info(:update, state) do
     schedule_update(self())
-    current_time = Timex.now()
+
+    current_time =
+      DateTime.utc_now() |> DateTime.shift_zone!(Application.get_env(:realtime_signs, :time_zone))
 
     {headway_low, headway_high} =
       case state.config_engine.headway_config(state.headway_group, current_time) do
