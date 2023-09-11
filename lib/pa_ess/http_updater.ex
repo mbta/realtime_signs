@@ -124,7 +124,15 @@ defmodule PaEss.HttpUpdater do
           t()
         ) ::
           post_result()
-  defp process_send_audio(station, zones, audio, priority, timeout, sign_id, state) do
+  defp process_send_audio(
+         station,
+         zones,
+         %{__struct__: struct} = audio,
+         priority,
+         timeout,
+         sign_id,
+         state
+       ) do
     case Content.Audio.to_params(audio) do
       {:canned, {message_id, vars, type}} ->
         encoded =
@@ -141,7 +149,15 @@ defmodule PaEss.HttpUpdater do
           |> URI.encode_query()
 
         {arinc_ms, signs_ui_ms, result} = send_payload(encoded, state)
-        log("send_audio", encoded, arinc_ms: arinc_ms, signs_ui_ms: signs_ui_ms, sign_id: sign_id)
+
+        log("send_audio", encoded,
+          arinc_ms: arinc_ms,
+          signs_ui_ms: signs_ui_ms,
+          sign_id: sign_id,
+          message_type: to_string(struct) |> String.split(".") |> List.last(),
+          message_details: Map.from_struct(audio) |> inspect()
+        )
+
         result
 
       {:ad_hoc, {text, type}} ->
@@ -162,7 +178,9 @@ defmodule PaEss.HttpUpdater do
         log("send_custom_audio", encoded,
           arinc_ms: arinc_ms,
           signs_ui_ms: signs_ui_ms,
-          sign_id: sign_id
+          sign_id: sign_id,
+          message_type: to_string(struct) |> String.split(".") |> List.last(),
+          message_details: Map.from_struct(audio) |> inspect()
         )
 
         result
