@@ -9,6 +9,8 @@ defmodule Signs.Utilities.Predictions do
   require Content.Utilities
   alias Signs.Utilities.SourceConfig
 
+  @reverse_prediction_certainty 360
+
   @spec get_messages(Signs.Realtime.predictions(), Signs.Realtime.t()) ::
           Signs.Realtime.sign_messages()
   def get_messages(
@@ -150,19 +152,26 @@ defmodule Signs.Utilities.Predictions do
     |> Enum.take(1)
   end
 
-  @spec stopped_train?(Predictions.Prediction.t()) :: boolean()
-  defp stopped_train?(%{
-         seconds_until_arrival: arrival_seconds,
-         seconds_until_departure: departure_seconds
-       })
-       when arrival_seconds >= Content.Utilities.max_time_seconds() or
-              departure_seconds >= Content.Utilities.max_time_seconds() do
-    false
+  defp approximate_time?(sec, certainty) do
+    sec && (sec > 60 * 60 || (sec > 20 * 60 && certainty == @reverse_prediction_certainty))
   end
 
-  defp stopped_train?(prediction) do
-    status = prediction.boarding_status
-    status && String.starts_with?(status, "Stopped") && status != "Stopped at station"
+  @spec stopped_train?(Predictions.Prediction.t()) :: boolean()
+  defp stopped_train?(%{
+         boarding_status: boarding_status,
+         seconds_until_arrival: seconds_until_arrival,
+         seconds_until_departure: seconds_until_departure,
+         arrival_certainty: arrival_certainty,
+         departure_certainty: departure_certainty
+       }) do
+    # Note: This performs a similar (but not identical) calculation to the one in the Message
+    # code for determining whether a prediction will show an approximate time. Ideally they
+    # should both call the same logic.
+    approximate_arrival? = approximate_time?(seconds_until_arrival, arrival_certainty)
+    approximate_departure? = approximate_time?(seconds_until_departure, departure_certainty)
+
+    boarding_status && String.starts_with?(boarding_status, "Stopped") &&
+      boarding_status != "Stopped at station" && !approximate_arrival? && !approximate_departure?
   end
 
   defp allowed_multi_berth_platform?(source_list, p1, p2) do

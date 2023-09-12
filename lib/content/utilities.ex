@@ -2,10 +2,6 @@ defmodule Content.Utilities do
   @type track_number :: non_neg_integer()
   @type green_line_branch :: :b | :c | :d | :e
 
-  defmacro max_time_seconds do
-    quote do: 20 * 60
-  end
-
   def width_padded_string(left, right, width) do
     max_left_length = width - (String.length(right) + 1)
     new_left = left |> String.slice(0, max_left_length) |> String.pad_trailing(max_left_length)

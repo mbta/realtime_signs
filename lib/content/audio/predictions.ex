@@ -89,20 +89,6 @@ defmodule Content.Audio.Predictions do
           }
         ]
 
-      predictions.minutes == :max_time ->
-        [
-          %NextTrainCountdown{
-            destination: predictions.destination,
-            route_id: predictions.route_id,
-            minutes: div(Content.Utilities.max_time_seconds(), 60),
-            verb: if(predictions.terminal?, do: :departs, else: :arrives),
-            track_number: Content.Utilities.stop_track_number(predictions.stop_id),
-            platform: predictions.platform,
-            station_code: predictions.station_code,
-            zone: predictions.zone
-          }
-        ]
-
       is_integer(predictions.minutes) ->
         [
           %NextTrainCountdown{
