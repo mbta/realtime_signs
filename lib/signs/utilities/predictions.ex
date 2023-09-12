@@ -10,6 +10,8 @@ defmodule Signs.Utilities.Predictions do
   alias Signs.Utilities.SourceConfig
 
   @reverse_prediction_certainty 360
+  @max_prediction_sec 60 * 60
+  @reverse_prediction_cutoff_sec 20 * 60
 
   @spec get_messages(Signs.Realtime.predictions(), Signs.Realtime.t()) ::
           Signs.Realtime.sign_messages()
@@ -153,7 +155,9 @@ defmodule Signs.Utilities.Predictions do
   end
 
   defp approximate_time?(sec, certainty) do
-    sec && (sec > 60 * 60 || (sec > 20 * 60 && certainty == @reverse_prediction_certainty))
+    sec &&
+      (sec > @max_prediction_sec ||
+         (sec > @reverse_prediction_cutoff_sec && certainty == @reverse_prediction_certainty))
   end
 
   @spec stopped_train?(Predictions.Prediction.t()) :: boolean()
