@@ -124,10 +124,6 @@ defmodule Engine.Config do
     updater = Application.get_env(:realtime_signs, :external_config_getter)
 
     case updater.get_active_headend_ip() do
-      {:ok, ""} ->
-        Application.put_env(:realtime_signs, :sign_head_end_host, nil)
-        Logger.info("active_headend_ip: current: nil")
-
       {:ok, active_headend_ip} ->
         Application.put_env(:realtime_signs, :sign_head_end_host, active_headend_ip)
         Logger.info("active_headend_ip: current: #{active_headend_ip}")
