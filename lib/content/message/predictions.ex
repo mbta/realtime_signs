@@ -13,14 +13,15 @@ defmodule Content.Message.Predictions do
   require Logger
   require Content.Utilities
 
-  @max_time Content.Utilities.max_time_seconds()
   @terminal_brd_seconds 30
   @terminal_prediction_offset_seconds -60
+  @reverse_prediction_certainty 360
 
   @enforce_keys [:destination, :minutes]
   defstruct [
     :destination,
     :minutes,
+    :approximate?,
     :route_id,
     :station_code,
     :stop_id,
@@ -38,7 +39,8 @@ defmodule Content.Message.Predictions do
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
-          minutes: integer() | :boarding | :arriving | :approaching | :max_time,
+          minutes: integer() | :boarding | :arriving | :approaching,
+          approximate?: boolean(),
           route_id: String.t(),
           stop_id: String.t(),
           trip_id: Predictions.Prediction.trip_id() | nil,
@@ -72,13 +74,12 @@ defmodule Content.Message.Predictions do
         do: prediction.arrival_certainty,
         else: prediction.departure_certainty
 
-    minutes =
+    {minutes, approximate?} =
       cond do
-        prediction.stops_away == 0 -> :boarding
-        predicted_time <= 30 -> :arriving
-        predicted_time <= 60 -> :approaching
-        predicted_time >= @max_time -> :max_time
-        true -> predicted_time |> Kernel./(60) |> round()
+        prediction.stops_away == 0 -> {:boarding, false}
+        predicted_time <= 30 -> {:arriving, false}
+        predicted_time <= 60 -> {:approaching, false}
+        true -> compute_minutes(predicted_time, certainty)
       end
 
     {crowding_data_confidence, crowding_description} = do_crowding(prediction)
@@ -92,6 +93,7 @@ defmodule Content.Message.Predictions do
         %__MODULE__{
           destination: destination,
           minutes: minutes,
+          approximate?: approximate?,
           route_id: prediction.route_id,
           stop_id: prediction.stop_id,
           trip_id: prediction.trip_id,
@@ -118,12 +120,11 @@ defmodule Content.Message.Predictions do
   def terminal(prediction, width) do
     stopped_at? = prediction.stops_away == 0
 
-    minutes =
+    {minutes, approximate?} =
       case prediction.seconds_until_departure + @terminal_prediction_offset_seconds do
-        x when x <= @terminal_brd_seconds and stopped_at? -> :boarding
-        x when x <= @terminal_brd_seconds -> 1
-        x when x >= @max_time -> :max_time
-        x -> x |> Kernel./(60) |> round()
+        x when x <= @terminal_brd_seconds and stopped_at? -> {:boarding, false}
+        x when x <= @terminal_brd_seconds -> {1, false}
+        x -> compute_minutes(x, prediction.departure_certainty)
       end
 
     case Content.Utilities.destination_for_prediction(
@@ -135,6 +136,7 @@ defmodule Content.Message.Predictions do
         %__MODULE__{
           destination: destination,
           minutes: minutes,
+          approximate?: approximate?,
           route_id: prediction.route_id,
           stop_id: prediction.stop_id,
           trip_id: prediction.trip_id,
@@ -148,6 +150,16 @@ defmodule Content.Message.Predictions do
       {:error, _} ->
         Logger.warn("no_destination_for_prediction #{inspect(prediction)}")
         nil
+    end
+  end
+
+  defp compute_minutes(sec, certainty) do
+    min = round(sec / 60)
+
+    cond do
+      min > 60 -> {60, true}
+      certainty == @reverse_prediction_certainty && min > 20 -> {div(min, 10) * 10, true}
+      true -> {min, false}
     end
   end
 
@@ -249,11 +261,11 @@ defmodule Content.Message.Predictions do
 
     @boarding "BRD"
     @arriving "ARR"
-    @max_time "20+ min"
 
     def to_string(%{
           destination: destination,
           minutes: minutes,
+          approximate?: approximate?,
           width: width,
           stop_id: stop_id,
           station_code: station_code,
@@ -266,8 +278,7 @@ defmodule Content.Message.Predictions do
           :boarding -> @boarding
           :arriving -> @arriving
           :approaching -> "1 min"
-          :max_time -> @max_time
-          n -> "#{n} min"
+          n -> "#{n}#{if approximate?, do: "+", else: ""} min"
         end
 
       track_number = Content.Utilities.stop_track_number(stop_id)
@@ -277,7 +288,7 @@ defmodule Content.Message.Predictions do
           platform_name = Content.Utilities.stop_platform_name(stop_id)
 
           {headsign_message, platform_message} =
-            if minutes == :max_time or (is_integer(minutes) and minutes > 5) do
+            if is_integer(minutes) and minutes > 5 do
               {headsign, " (Platform TBD)"}
             else
               {headsign <> " (#{String.slice(platform_name, 0..0)})", " (#{platform_name} plat)"}

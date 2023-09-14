@@ -158,12 +158,8 @@ defmodule PaEss.Utilities do
     Integer.to_string(9100 + n)
   end
 
-  def countdown_minutes_var(n) when n >= 0 and n < 30 do
+  def countdown_minutes_var(n) when n >= 0 and n <= 100 do
     Integer.to_string(5000 + n)
-  end
-
-  def countdown_minutes_var(n) when n >= 30 do
-    Integer.to_string(5030)
   end
 
   @doc "Constructs message from TAKE variables"

@@ -216,10 +216,11 @@ defmodule Content.Audio.PredictionsTest do
              ] = from_sign_content(predictions, :top, false)
     end
 
-    test "returns a NextTrainCountdown with 30 mins if predictions is :max_time" do
+    test "returns a NextTrainCountdown with approximate minutes" do
       predictions = %Message.Predictions{
         destination: :ashmont,
-        minutes: :max_time,
+        minutes: 20,
+        approximate?: true,
         route_id: "Red",
         stop_id: "70065"
       }

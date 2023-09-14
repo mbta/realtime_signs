@@ -229,7 +229,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
       assert Content.Audio.to_params(audio) == {:canned, {"90", ["4021", "503", "5005"], :audio}}
     end
 
-    test "Uses audio for 30 minutes when train is more than 30 minutes away" do
+    test "can read larger numbers" do
       audio = %Content.Audio.NextTrainCountdown{
         destination: :wonderland,
         route_id: "Blue",
@@ -239,7 +239,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         platform: nil
       }
 
-      assert Content.Audio.to_params(audio) == {:canned, {"90", ["4044", "503", "5030"], :audio}}
+      assert Content.Audio.to_params(audio) == {:canned, {"90", ["4044", "503", "5050"], :audio}}
     end
 
     test "Next D train in 5 minutes" do

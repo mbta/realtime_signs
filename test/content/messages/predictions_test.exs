@@ -96,9 +96,10 @@ defmodule Content.Message.PredictionsTest do
       assert Content.Message.to_string(msg) == "Mattapan     1 min"
     end
 
-    test "Says 20+ min when train is 20 or more minutes away" do
+    test "shows approximate minutes for longer turnaround predictions" do
       prediction = %Predictions.Prediction{
-        seconds_until_arrival: 45 * 60,
+        seconds_until_arrival: 25 * 60,
+        arrival_certainty: 360,
         direction_id: 0,
         route_id: "Mattapan",
         stopped?: false,

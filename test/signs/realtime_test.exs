@@ -334,11 +334,17 @@ defmodule Signs.RealtimeTest do
 
     test "When the train is stopped a long time away from a terminal, shows max time instead of stopped" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :mattapan, seconds_until_departure: 2020, stopped: 8)]
+        [
+          prediction(
+            destination: :mattapan,
+            seconds_until_departure: 2020,
+            stopped: 8,
+            departure_certainty: 360
+          )
+        ]
       end)
 
-      expect_messages({"Mattapan   20+ min", ""})
-      expect_audios([{:canned, {"90", ["4100", "502", "5020"], :audio}}])
+      expect_messages({"Mattapan   30+ min", ""})
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
@@ -348,11 +354,10 @@ defmodule Signs.RealtimeTest do
 
     test "When the train is stopped a long time away, shows max time instead of stopped" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :mattapan, arrival: 1200, stopped: 8)]
+        [prediction(destination: :mattapan, arrival: 3700, stopped: 8)]
       end)
 
-      expect_messages({"Mattapan   20+ min", ""})
-      expect_audios([{:canned, {"90", ["4100", "503", "5020"], :audio}}])
+      expect_messages({"Mattapan   60+ min", ""})
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
@@ -594,7 +599,7 @@ defmodule Signs.RealtimeTest do
       seconds_until_arrival: Keyword.get(opts, :seconds_until_arrival),
       arrival_certainty: nil,
       seconds_until_departure: Keyword.get(opts, :seconds_until_departure),
-      departure_certainty: nil,
+      departure_certainty: Keyword.get(opts, :departure_certainty),
       seconds_until_passthrough: Keyword.get(opts, :seconds_until_passthrough),
       direction_id: Keyword.get(opts, :direction_id, 0),
       schedule_relationship: nil,
