@@ -3,8 +3,6 @@ defmodule ExternalConfig.S3 do
 
   @behaviour ExternalConfig.Interface
 
-  @active_headend_path "/headend.json"
-
   @impl ExternalConfig.Interface
   def get(current_version) do
     s3_client = Application.get_env(:realtime_signs, :s3_client)
@@ -37,8 +35,9 @@ defmodule ExternalConfig.S3 do
     s3_client = Application.get_env(:realtime_signs, :s3_client)
     aws_client = Application.get_env(:realtime_signs, :aws_client)
     bucket = Application.get_env(:realtime_signs, :s3_bucket)
+    active_headend_path = Application.get_env(:realtime_signs, :active_headend_path)
 
-    case s3_client.get_object(bucket, @active_headend_path)
+    case s3_client.get_object(bucket, active_headend_path)
          |> aws_client.request() do
       {:ok, response} ->
         body = Jason.decode!(response.body)
@@ -53,10 +52,11 @@ defmodule ExternalConfig.S3 do
     s3_client = Application.get_env(:realtime_signs, :s3_client)
     aws_client = Application.get_env(:realtime_signs, :aws_client)
     bucket = Application.get_env(:realtime_signs, :s3_bucket)
+    active_headend_path = Application.get_env(:realtime_signs, :active_headend_path)
 
     case s3_client.put_object(
            bucket,
-           @active_headend_path,
+           active_headend_path,
            Jason.encode!(%{active_headend_ip: ip})
          )
          |> aws_client.request() do
