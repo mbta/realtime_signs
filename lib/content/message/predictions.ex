@@ -114,10 +114,10 @@ defmodule Content.Message.Predictions do
     end
   end
 
-  @spec terminal(Predictions.Prediction.t(), integer()) :: t() | nil
-  def terminal(prediction, width \\ 18)
+  @spec terminal(Predictions.Prediction.t(), String.t(), String.t(), integer()) :: t() | nil
+  def terminal(prediction, station_code, zone, width \\ 18)
 
-  def terminal(prediction, width) do
+  def terminal(prediction, station_code, zone, width) do
     stopped_at? = prediction.stops_away == 0
 
     {minutes, approximate?} =
@@ -143,6 +143,8 @@ defmodule Content.Message.Predictions do
           direction_id: prediction.direction_id,
           width: width,
           new_cars?: prediction.new_cars?,
+          station_code: station_code,
+          zone: zone,
           terminal?: true,
           certainty: prediction.departure_certainty
         }

@@ -7,6 +7,7 @@ defmodule Content.Audio.Predictions do
 
   require Logger
   require Content.Utilities
+  alias Content.Audio.BoardingButton
   alias Content.Audio.TrackChange
   alias Content.Audio.TrainIsBoarding
   alias Content.Audio.TrainIsArriving
@@ -43,7 +44,12 @@ defmodule Content.Audio.Predictions do
             route_id: predictions.route_id,
             track_number: Content.Utilities.stop_track_number(predictions.stop_id)
           }
-        ]
+        ] ++
+          if predictions.station_code == "BBOW" && predictions.zone == "e" do
+            [%BoardingButton{}]
+          else
+            []
+          end
 
       predictions.minutes == :arriving ->
         [

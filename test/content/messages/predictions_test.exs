@@ -302,7 +302,7 @@ defmodule Content.Message.PredictionsTest do
 
       log =
         capture_log([level: :warn], fn ->
-          assert is_nil(Content.Message.Predictions.terminal(prediction))
+          assert is_nil(Content.Message.Predictions.terminal(prediction, "test", "m"))
         end)
 
       assert log =~ "no_destination_for_prediction"
@@ -320,7 +320,7 @@ defmodule Content.Message.PredictionsTest do
 
       log =
         capture_log([level: :warn], fn ->
-          assert is_nil(Content.Message.Predictions.terminal(prediction))
+          assert is_nil(Content.Message.Predictions.terminal(prediction, "test", "m"))
         end)
 
       assert log =~ "no_destination_for_prediction"
@@ -337,7 +337,7 @@ defmodule Content.Message.PredictionsTest do
         boarding_status: "Stopped at station"
       }
 
-      msg = Content.Message.Predictions.terminal(prediction)
+      msg = Content.Message.Predictions.terminal(prediction, "test", "m")
 
       assert Content.Message.to_string(msg) == "Ashmont        BRD"
     end
@@ -353,7 +353,7 @@ defmodule Content.Message.PredictionsTest do
         boarding_status: "Stopped at station"
       }
 
-      msg = Content.Message.Predictions.terminal(prediction)
+      msg = Content.Message.Predictions.terminal(prediction, "test", "m")
 
       assert Content.Message.to_string(msg) == "Ashmont      1 min"
     end
@@ -369,7 +369,7 @@ defmodule Content.Message.PredictionsTest do
         boarding_status: "Stopped at station"
       }
 
-      msg = Content.Message.Predictions.terminal(prediction)
+      msg = Content.Message.Predictions.terminal(prediction, "test", "m")
 
       assert Content.Message.to_string(msg) == "Ashmont      2 min"
     end
@@ -384,7 +384,7 @@ defmodule Content.Message.PredictionsTest do
         destination_stop_id: "70261"
       }
 
-      msg = Content.Message.Predictions.terminal(prediction)
+      msg = Content.Message.Predictions.terminal(prediction, "test", "m")
 
       assert Content.Message.to_string(msg) == "Ashmont      1 min"
     end
@@ -399,7 +399,7 @@ defmodule Content.Message.PredictionsTest do
         stops_away: 0
       }
 
-      msg = Content.Message.Predictions.terminal(prediction)
+      msg = Content.Message.Predictions.terminal(prediction, "test", "m")
 
       assert Content.Message.to_string(msg) == [
                {"Oak Grove    2 min", 6},
@@ -418,7 +418,7 @@ defmodule Content.Message.PredictionsTest do
         trip_id: "trip1"
       }
 
-      msg = Content.Message.Predictions.terminal(prediction)
+      msg = Content.Message.Predictions.terminal(prediction, "test", "m")
 
       assert msg.trip_id == "trip1"
     end

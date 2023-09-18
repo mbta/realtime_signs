@@ -536,6 +536,20 @@ defmodule Signs.RealtimeTest do
 
       assert log =~ "no_passthrough_audio_for_prediction"
     end
+
+    test "reads special boarding button announcement at Bowdoin" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 0, destination: :wonderland, stops_away: 0)]
+      end)
+
+      expect_audios([
+        {:canned, {"109", ["501", "21000", "507", "21000", "4044", "21000", "544"], :audio}},
+        {:canned, {"103", ["869"], :audio_visual}}
+      ])
+
+      expect_messages({"Wonderland     BRD", ""})
+      Signs.Realtime.handle_info(:run_loop, %{@sign | text_id: {"BBOW", "e"}})
+    end
   end
 
   describe "decrement_ticks/1" do
@@ -552,14 +566,14 @@ defmodule Signs.RealtimeTest do
   end
 
   defp expect_messages(messages) do
-    expect(PaEss.Updater.Mock, :update_sign, fn {"TEST", "x"}, top, bottom, 145, :now, _sign_id ->
+    expect(PaEss.Updater.Mock, :update_sign, fn {_, _}, top, bottom, 145, :now, _sign_id ->
       assert {Content.Message.to_string(top), Content.Message.to_string(bottom)} == messages
       :ok
     end)
   end
 
   defp expect_audios(audios) do
-    expect(PaEss.Updater.Mock, :send_audio, fn {"TEST", ["x"]}, list, 5, 60, _sign_id ->
+    expect(PaEss.Updater.Mock, :send_audio, fn {_, _}, list, 5, 60, _sign_id ->
       assert Enum.map(list, &Content.Audio.to_params(&1)) == audios
       :ok
     end)
@@ -577,6 +591,7 @@ defmodule Signs.RealtimeTest do
           :boston_college -> [route_id: "Green-B", direction_id: 0]
           :cleveland_circle -> [route_id: "Green-C", direction_id: 0]
           :riverside -> [route_id: "Green-D", direction_id: 0]
+          :wonderland -> [route_id: "Blue", direction_id: 1]
           nil -> []
         end
 
