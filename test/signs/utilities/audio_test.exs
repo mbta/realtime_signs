@@ -834,7 +834,8 @@ defmodule Signs.Utilities.AudioTest do
             crowding_data_confidence: :high,
             crowding_description: {:front, :some_crowding}
           },
-          current_content_bottom: %Content.Message.Empty{}
+          current_content_bottom: %Content.Message.Empty{},
+          id: "back_bay_southbound"
       }
 
       {audios, _} = from_sign(sign)
@@ -881,7 +882,8 @@ defmodule Signs.Utilities.AudioTest do
             crowding_description: {:front, :some_crowding},
             trip_id: "trip1"
           },
-          current_content_bottom: %Content.Message.Empty{}
+          current_content_bottom: %Content.Message.Empty{},
+          id: "back_bay_southbound"
       }
 
       {audios, sign} = from_sign(sign)
@@ -934,7 +936,8 @@ defmodule Signs.Utilities.AudioTest do
             trip_id: "trip2"
           },
           current_content_bottom: %Content.Message.Empty{},
-          announced_approachings_with_crowding: ["trip1"]
+          announced_approachings_with_crowding: ["trip1"],
+          id: "back_bay_southbound"
       }
 
       {audios, _} = from_sign(sign)
