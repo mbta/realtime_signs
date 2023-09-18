@@ -34,7 +34,11 @@ defmodule Signs.Utilities.Predictions do
           SourceConfig.config(),
           Signs.Realtime.t()
         ) :: Signs.Realtime.sign_messages()
-  defp prediction_messages(predictions, %{sources: sources}, %{text_id: {station_code, zone}}) do
+  defp prediction_messages(
+         predictions,
+         %{sources: sources},
+         %{text_id: {station_code, zone}} = sign
+       ) do
     predictions
     |> Enum.filter(fn p ->
       p.seconds_until_departure
@@ -71,16 +75,10 @@ defmodule Signs.Utilities.Predictions do
     # Take next two predictions, but if the list has multiple destinations, prefer showing
     # distinct ones. This helps e.g. the red line trunk where people may need to know about
     # a particular branch.
-    |> case do
-      [msg1, msg2 | rest] ->
-        case Enum.find([msg2 | rest], fn x -> x.destination != msg1.destination end) do
-          nil -> [msg1, msg2]
-          preferred -> [msg1, preferred]
-        end
-
-      messages ->
-        messages
-    end
+    |> get_unique_destination_predictions(
+      SourceConfig.sign_routes(sign.source_config)
+      |> PaEss.Utilities.get_unique_routes()
+    )
     |> case do
       [] ->
         {Content.Message.Empty.new(), Content.Message.Empty.new()}
@@ -100,6 +98,24 @@ defmodule Signs.Utilities.Predictions do
 
       [msg1, msg2] ->
         {msg1, msg2}
+    end
+  end
+
+  defp get_unique_destination_predictions(predictions, sign_routes)
+       when sign_routes == ["Green"] do
+    Enum.take(predictions, 2)
+  end
+
+  defp get_unique_destination_predictions(predictions, _) do
+    case predictions do
+      [msg1, msg2 | rest] ->
+        case Enum.find([msg2 | rest], fn x -> x.destination != msg1.destination end) do
+          nil -> [msg1, msg2]
+          preferred -> [msg1, preferred]
+        end
+
+      messages ->
+        messages
     end
   end
 
