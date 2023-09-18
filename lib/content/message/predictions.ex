@@ -82,7 +82,8 @@ defmodule Content.Message.Predictions do
         true -> compute_minutes(predicted_time, certainty)
       end
 
-    {crowding_data_confidence, crowding_description} = do_crowding(prediction)
+    {crowding_data_confidence, crowding_description} =
+      if zone == "m", do: {nil, nil}, else: do_crowding(prediction)
 
     case Content.Utilities.destination_for_prediction(
            prediction.route_id,
