@@ -204,14 +204,7 @@ defmodule Signs.Utilities.Audio do
       end
       |> tap(&log_crowding(&1, sign.id))
       |> Enum.map(fn %{__struct__: audio_type} = audio ->
-        if audio_type in [Audio.Approaching, Audio.TrainIsArriving] and
-             sign.id not in [
-               "ruggles_northbound",
-               "tufts_northbound",
-               "back_bay_northbound",
-               "back_bay_southbound",
-               "back_bay_mezzanine"
-             ] do
+        if audio_type in [Audio.Approaching, Audio.TrainIsArriving] and sign.id not in [] do
           %{audio | crowding_description: nil}
         else
           audio

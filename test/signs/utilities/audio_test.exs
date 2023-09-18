@@ -843,7 +843,7 @@ defmodule Signs.Utilities.AudioTest do
       assert [
                %Content.Audio.Approaching{
                  destination: :oak_grove,
-                 crowding_description: {:front, :some_crowding}
+                 crowding_description: nil
                }
              ] = audios
     end
@@ -891,7 +891,7 @@ defmodule Signs.Utilities.AudioTest do
       assert [
                %Content.Audio.Approaching{
                  destination: :oak_grove,
-                 crowding_description: {:front, :some_crowding}
+                 crowding_description: nil
                }
              ] = audios
 
@@ -945,7 +945,7 @@ defmodule Signs.Utilities.AudioTest do
       assert [
                %Content.Audio.TrainIsArriving{
                  destination: :oak_grove,
-                 crowding_description: {:front, :some_crowding}
+                 crowding_description: nil
                }
              ] = audios
     end
