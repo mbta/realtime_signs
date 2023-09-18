@@ -87,9 +87,8 @@ defmodule Content.Audio.TrainIsArrivingTest do
         crowding_description: {:front, :crowded}
       }
 
-      # Crowding disabled
       assert Content.Audio.to_params(audio) ==
-               {:canned, {"103", ["32103"], :audio_visual}}
+               {:canned, {"105", ["32103", "21000", "870"], :audio_visual}}
     end
   end
 end

@@ -73,9 +73,8 @@ defmodule Content.Audio.ApproachingTest do
         crowding_description: {:train_level, :crowded}
       }
 
-      # Crowding disabled
       assert Content.Audio.to_params(audio) ==
-               {:canned, {"103", ["32123"], :audio_visual}}
+               {:canned, {"105", ["32123", "21000", "876"], :audio_visual}}
     end
   end
 end
