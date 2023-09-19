@@ -67,6 +67,7 @@ defmodule Signs.Utilities.Predictions do
             prediction,
             station_code,
             zone,
+            sign,
             platform(prediction, sources)
           )
       end

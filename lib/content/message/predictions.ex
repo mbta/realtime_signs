@@ -60,12 +60,13 @@ defmodule Content.Message.Predictions do
           Predictions.Prediction.t(),
           String.t(),
           String.t(),
+          Signs.Realtime.t(),
           Content.platform() | nil,
           integer()
         ) :: t() | nil
-  def non_terminal(prediction, station_code, zone, platform \\ nil, width \\ 18)
+  def non_terminal(prediction, station_code, zone, sign, platform \\ nil, width \\ 18)
 
-  def non_terminal(prediction, station_code, zone, platform, width) do
+  def non_terminal(prediction, station_code, zone, sign, platform, width) do
     # e.g., North Station which is non-terminal but has trips that begin there
     predicted_time = prediction.seconds_until_arrival || prediction.seconds_until_departure
 
@@ -83,7 +84,9 @@ defmodule Content.Message.Predictions do
       end
 
     {crowding_data_confidence, crowding_description} =
-      if zone == "m", do: {nil, nil}, else: do_crowding(prediction)
+      if Signs.Utilities.SourceConfig.multi_source?(sign.source_config),
+        do: {nil, nil},
+        else: do_crowding(prediction)
 
     case Content.Utilities.destination_for_prediction(
            prediction.route_id,
