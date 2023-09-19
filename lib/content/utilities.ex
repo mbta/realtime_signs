@@ -92,6 +92,8 @@ defmodule Content.Utilities do
   def stop_track_number("Forest Hills-02"), do: 2
   def stop_track_number("Oak Grove-01"), do: 1
   def stop_track_number("Oak Grove-02"), do: 2
+  def stop_track_number("Union Square-01"), do: 1
+  def stop_track_number("Union Square-02"), do: 2
   def stop_track_number(_), do: nil
 
   def stop_platform_name("70086"), do: "Ashmont"
