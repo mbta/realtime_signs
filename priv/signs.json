@@ -5592,7 +5592,7 @@
           "platform": null,
           "terminal": false,
           "announce_arriving": false,
-          "announce_boarding": false
+          "announce_boarding": true
         }
       ]
     }
@@ -7731,7 +7731,29 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": false
+          "announce_boarding": true
+        },
+        {
+          "stop_id": "Union Square-01",
+          "direction_id": 0,
+          "routes": [
+            "Green-D"
+          ],
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": true
+        },
+        {
+          "stop_id": "Union Square-02",
+          "direction_id": 0,
+          "routes": [
+            "Green-D"
+          ],
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": true
         }
       ]
     }
@@ -7756,7 +7778,29 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": false
+          "announce_boarding": true
+        },
+        {
+          "stop_id": "Union Square-01",
+          "direction_id": 0,
+          "routes": [
+            "Green-D"
+          ],
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": true 
+        },
+        {
+          "stop_id": "Union Square-02",
+          "direction_id": 0,
+          "routes": [
+            "Green-D"
+          ],
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": true 
         }
       ]
     }
@@ -7785,7 +7829,29 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": false
+          "announce_boarding": true
+        },
+        {
+          "stop_id": "Union Square-01",
+          "direction_id": 0,
+          "routes": [
+            "Green-D"
+          ],
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": true 
+        },
+        {
+          "stop_id": "Union Square-02",
+          "direction_id": 0,
+          "routes": [
+            "Green-D"
+          ],
+          "platform": null,
+          "terminal": true,
+          "announce_arriving": false,
+          "announce_boarding": true 
         }
       ]
     }
@@ -8319,7 +8385,7 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": false
+          "announce_boarding": true
         }
       ]
     }
