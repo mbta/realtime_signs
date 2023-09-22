@@ -13,7 +13,7 @@ defmodule Signs.RealtimeTest do
     direction_id: 0,
     platform: nil,
     terminal?: false,
-    announce_arriving?: false,
+    announce_arriving?: true,
     announce_boarding?: false
   }
 
@@ -32,6 +32,7 @@ defmodule Signs.RealtimeTest do
     current_content_top: %HT{destination: :southbound, vehicle_type: :train},
     current_content_bottom: %HB{range: {11, 13}},
     prediction_engine: Engine.Predictions.Mock,
+    location_engine: Engine.Locations.Mock,
     headway_engine: Engine.ScheduledHeadways.Mock,
     config_engine: Engine.Config.Mock,
     alerts_engine: Engine.Alerts.Mock,
@@ -425,6 +426,30 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Clvlnd Cir     ARR", "Riverside    1 min"})
+
+      expect_audios([
+        {:canned, {"103", ["90007"], :audio_visual}},
+        {:canned,
+         {"117",
+          [
+            "501",
+            "21000",
+            "538",
+            "21000",
+            "507",
+            "21000",
+            "4084",
+            "21000",
+            "503",
+            "21000",
+            "504",
+            "21000",
+            "5001",
+            "21000",
+            "532"
+          ], :audio}}
+      ])
+
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
@@ -438,6 +463,11 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Clvlnd Cir     ARR", "Riverside      ARR"})
+
+      expect_audios([
+        {:canned, {"103", ["90007"], :audio_visual}},
+        {:canned, {"103", ["90008"], :audio_visual}}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
@@ -550,6 +580,81 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Wonderland     BRD", ""})
       Signs.Realtime.handle_info(:run_loop, %{@sign | text_id: {"BBOW", "e"}})
     end
+
+    test "Announce approaching with crowding when condfidence high" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 45, destination: :forest_hills, trip_id: "1")]
+      end)
+
+      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
+        location(crowding_description: :front, crowding_confidence: :high)
+      end)
+
+      expect_messages({"Frst Hills   1 min", ""})
+      expect_audios([{:canned, {"103", ["32123"], :audio_visual}}])
+
+      assert {_, %{announced_approachings_with_crowding: ["1"]}} =
+               Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "Announce approaching without crowding when condfidence low" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 45, destination: :forest_hills)]
+      end)
+
+      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
+        location(crowding_description: :front, crowding_confidence: :low)
+      end)
+
+      expect_messages({"Frst Hills   1 min", ""})
+      expect_audios([{:canned, {"103", ["32123"], :audio_visual}}])
+
+      assert {_, %{announced_approachings_with_crowding: []}} =
+               Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "Announce arrival with crowding if not already announced" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 15, destination: :forest_hills)]
+      end)
+
+      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
+        location(crowding_description: :front, crowding_confidence: :high)
+      end)
+
+      expect_messages({"Frst Hills     ARR", ""})
+      expect_audios([{:canned, {"103", ["32103"], :audio_visual}}])
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "Don't announce arrival with crowding if confidence low" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 15, destination: :forest_hills)]
+      end)
+
+      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
+        location(crowding_description: :front, crowding_confidence: :low)
+      end)
+
+      expect_messages({"Frst Hills     ARR", ""})
+      expect_audios([{:canned, {"103", ["32103"], :audio_visual}}])
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "Don't announce arrival with crowding if already announced with approaching" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 15, destination: :forest_hills, trip_id: "1")]
+      end)
+
+      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
+        location(crowding_description: :front, crowding_confidence: :high)
+      end)
+
+      expect_messages({"Frst Hills     ARR", ""})
+      expect_audios([{:canned, {"103", ["32103"], :audio_visual}}])
+
+      Signs.Realtime.handle_info(:run_loop, %{@sign | announced_approachings_with_crowding: ["1"]})
+    end
   end
 
   describe "decrement_ticks/1" do
@@ -592,6 +697,7 @@ defmodule Signs.RealtimeTest do
           :cleveland_circle -> [route_id: "Green-C", direction_id: 0]
           :riverside -> [route_id: "Green-D", direction_id: 0]
           :wonderland -> [route_id: "Blue", direction_id: 1]
+          :forest_hills -> [route_id: "Orange", direction_id: 0]
           nil -> []
         end
 
@@ -627,6 +733,30 @@ defmodule Signs.RealtimeTest do
       new_cars?: false,
       revenue_trip?: true,
       vehicle_id: nil
+    }
+  end
+
+  defp location(opts) do
+    %Locations.Location{
+      status:
+        case Keyword.get(opts, :crowding_confidence) do
+          :low -> :stopped_at
+          :high -> :incoming_at
+        end,
+      stop_id: Keyword.get(opts, :stop_id, "1"),
+      multi_carriage_details:
+        case Keyword.get(opts, :crowding_description) do
+          :front ->
+            [
+              :many_seats_available,
+              :many_seats_available,
+              :standing_room_only,
+              :standing_room_only,
+              :standing_room_only,
+              :standing_room_only
+            ]
+        end
+        |> Enum.map(&%Locations.CarriageDetails{occupancy_status: &1})
     }
   end
 end

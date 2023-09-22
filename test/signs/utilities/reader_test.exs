@@ -34,6 +34,7 @@ defmodule Signs.Utilities.ReaderTest do
     source_config: %{sources: [@src]},
     current_content_top: %Predictions{destination: :alewife, minutes: 4},
     current_content_bottom: %Predictions{destination: :ashmont, minutes: 3},
+    location_engine: Engine.Locations.Mock,
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     config_engine: Engine.Config,

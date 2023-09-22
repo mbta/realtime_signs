@@ -36,6 +36,7 @@ defmodule Signs.Utilities.UpdaterTest do
     source_config: %{sources: []},
     current_content_top: %P{destination: :alewife, minutes: 4},
     current_content_bottom: %P{destination: :ashmont, minutes: 3},
+    location_engine: Engine.Locations.Mock,
     prediction_engine: FakePredictions,
     headway_engine: FakeHeadways,
     config_engine: Engine.Config,
