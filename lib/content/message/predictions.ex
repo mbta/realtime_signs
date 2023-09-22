@@ -86,7 +86,7 @@ defmodule Content.Message.Predictions do
     {crowding_data_confidence, crowding_description} =
       if Signs.Utilities.SourceConfig.multi_source?(sign.source_config),
         do: {nil, nil},
-        else: do_crowding(prediction)
+        else: do_crowding(prediction, sign)
 
     case Content.Utilities.destination_for_prediction(
            prediction.route_id,
@@ -169,8 +169,8 @@ defmodule Content.Message.Predictions do
     end
   end
 
-  defp do_crowding(prediction) when prediction.route_id in ["Orange"] do
-    case Engine.Locations.for_vehicle(prediction.vehicle_id) do
+  defp do_crowding(prediction, sign) when prediction.route_id in ["Orange"] do
+    case sign.location_engine.for_vehicle(prediction.vehicle_id) do
       %Locations.Location{} = location ->
         {calculate_crowding_data_confidence(prediction, location),
          get_crowding_description(location.multi_carriage_details)}
@@ -180,7 +180,7 @@ defmodule Content.Message.Predictions do
     end
   end
 
-  defp do_crowding(_), do: {nil, nil}
+  defp do_crowding(_, _), do: {nil, nil}
 
   defp calculate_crowding_data_confidence(prediction, location)
        when location.stop_id == prediction.stop_id do

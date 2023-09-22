@@ -223,7 +223,7 @@ defmodule Content.Message.PredictionsTest do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 125,
         direction_id: 0,
-        route_id: "Orange",
+        route_id: "Red",
         stopped?: false,
         stops_away: 2,
         destination_stop_id: "70001",
@@ -429,7 +429,7 @@ defmodule Content.Message.PredictionsTest do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 125,
         direction_id: 0,
-        route_id: "Orange",
+        route_id: "Red",
         stopped?: false,
         stops_away: 2,
         destination_stop_id: "70001",
