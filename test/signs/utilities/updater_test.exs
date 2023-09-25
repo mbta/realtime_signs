@@ -1,6 +1,5 @@
 defmodule Signs.Utilities.UpdaterTest do
   use ExUnit.Case, async: true
-  import ExUnit.CaptureLog
 
   alias Content.Message.Predictions, as: P
   alias Signs.Utilities.Updater
@@ -19,15 +18,6 @@ defmodule Signs.Utilities.UpdaterTest do
       send(self(), {:send_audio, audio_id, audio, priority, timeout, sign_id})
     end
   end
-
-  @src %Signs.Utilities.SourceConfig{
-    stop_id: "1",
-    direction_id: 0,
-    platform: nil,
-    terminal?: false,
-    announce_arriving?: false,
-    announce_boarding?: false
-  }
 
   @sign %Signs.Realtime{
     id: "sign_id",
@@ -69,21 +59,6 @@ defmodule Signs.Utilities.UpdaterTest do
 
       assert_received({:update_sign, _id, %P{minutes: 3}, %P{minutes: 2}, _dur, _start, _sign_id})
       assert sign.last_update == now
-    end
-
-    test "doesn't do an interrupting read if new top is same as old bottom and is a boarding message" do
-      src = %{@src | announce_boarding?: true}
-
-      sign = %{
-        @sign
-        | current_content_top: {src, %P{destination: :alewife, minutes: :boarding}},
-          current_content_bottom: {src, %P{destination: :ashmont, minutes: :boarding}}
-      }
-
-      diff_top = {src, %P{destination: :ashmont, minutes: :boarding}}
-      diff_bottom = {src, %P{destination: :alewife, minutes: 19}}
-      Updater.update_sign(sign, diff_top, diff_bottom, Timex.now())
-      refute_received({:send_audio, _, _, _, _, _})
     end
   end
 end

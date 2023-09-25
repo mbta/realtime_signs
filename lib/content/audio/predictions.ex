@@ -7,12 +7,7 @@ defmodule Content.Audio.Predictions do
 
   require Logger
   require Content.Utilities
-  alias Content.Audio.BoardingButton
-  alias Content.Audio.TrackChange
-  alias Content.Audio.TrainIsBoarding
-  alias Content.Audio.TrainIsArriving
-  alias Content.Audio.Approaching
-  alias Content.Audio.NextTrainCountdown
+  alias Content.Audio
 
   @heavy_rail_routes ["Red", "Orange", "Blue"]
 
@@ -27,90 +22,18 @@ defmodule Content.Audio.Predictions do
         multi_source?
       ) do
     cond do
-      TrackChange.park_track_change?(predictions) and predictions.minutes == :boarding ->
-        [
-          %TrackChange{
-            destination: predictions.destination,
-            route_id: predictions.route_id,
-            berth: predictions.stop_id
-          }
-        ]
-
       predictions.minutes == :boarding ->
-        [
-          %TrainIsBoarding{
-            destination: predictions.destination,
-            trip_id: predictions.trip_id,
-            route_id: predictions.route_id,
-            track_number: Content.Utilities.stop_track_number(predictions.stop_id)
-          }
-        ] ++
-          if predictions.station_code == "BBOW" && predictions.zone == "e" do
-            [%BoardingButton{}]
-          else
-            []
-          end
+        Audio.TrainIsBoarding.from_message(predictions)
 
       predictions.minutes == :arriving ->
-        [
-          %TrainIsArriving{
-            destination: predictions.destination,
-            trip_id: predictions.trip_id,
-            platform: predictions.platform,
-            route_id: predictions.route_id,
-            crowding_description:
-              if(predictions.crowding_data_confidence == :high,
-                do: predictions.crowding_description
-              )
-          }
-        ]
+        Audio.TrainIsArriving.from_message(predictions, false)
 
       predictions.minutes == :approaching and (line == :top or multi_source?) and
           predictions.route_id in @heavy_rail_routes ->
-        [
-          %Approaching{
-            destination: predictions.destination,
-            trip_id: predictions.trip_id,
-            platform: predictions.platform,
-            route_id: predictions.route_id,
-            new_cars?: predictions.new_cars?,
-            crowding_description:
-              if(predictions.crowding_data_confidence == :high,
-                do: predictions.crowding_description
-              )
-          }
-        ]
-
-      predictions.minutes == :approaching ->
-        [
-          %NextTrainCountdown{
-            destination: predictions.destination,
-            route_id: predictions.route_id,
-            minutes: 1,
-            verb: if(predictions.terminal?, do: :departs, else: :arrives),
-            track_number: Content.Utilities.stop_track_number(predictions.stop_id),
-            platform: predictions.platform,
-            station_code: predictions.station_code,
-            zone: predictions.zone
-          }
-        ]
-
-      is_integer(predictions.minutes) ->
-        [
-          %NextTrainCountdown{
-            destination: predictions.destination,
-            route_id: predictions.route_id,
-            minutes: predictions.minutes,
-            verb: if(predictions.terminal?, do: :departs, else: :arrives),
-            track_number: Content.Utilities.stop_track_number(predictions.stop_id),
-            platform: predictions.platform,
-            station_code: predictions.station_code,
-            zone: predictions.zone
-          }
-        ]
+        Audio.Approaching.from_message(predictions, false)
 
       true ->
-        []
+        Audio.NextTrainCountdown.from_message(predictions)
     end
   end
 end

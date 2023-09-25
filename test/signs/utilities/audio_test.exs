@@ -39,232 +39,6 @@ defmodule Signs.Utilities.AudioTest do
     read_period_seconds: 100
   }
 
-  describe "should_interrupting_read?/3" do
-    test "returns false if it's a numeric prediction" do
-      message = %Message.Predictions{destination: :alewife, minutes: 5}
-      refute should_interrupting_read?(message, {[@src]}, :top)
-      refute should_interrupting_read?(message, {[@src]}, :bottom)
-    end
-
-    test "If it's ARR respects config's announce_arriving?, except on the bottom line of a single-source sign" do
-      message = %Message.Predictions{
-        destination: :alewife,
-        minutes: :arriving,
-        stop_id: "1",
-        direction_id: 0
-      }
-
-      src = %{@src | announce_arriving?: false}
-
-      refute should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [src]}},
-               :top
-             )
-
-      refute should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [src]}},
-               :bottom
-             )
-
-      src = %{@src | announce_arriving?: true}
-
-      assert should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [src]}},
-               :top
-             )
-
-      assert should_interrupting_read?(
-               message,
-               %{@sign | source_config: {%{sources: [src]}, %{sources: [src]}}},
-               :bottom
-             )
-
-      refute should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [src]}},
-               :bottom
-             )
-    end
-
-    test "If it's Approaching, respects config's announce_arriving? for heavy rail, except on the bottom line of a single-source sign" do
-      message = %Message.Predictions{
-        destination: :alewife,
-        minutes: :approaching,
-        route_id: "Red",
-        direction_id: 0,
-        stop_id: "1"
-      }
-
-      src = %{@src | announce_arriving?: false}
-
-      refute should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [src]}},
-               :top
-             )
-
-      refute should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [src]}},
-               :bottom
-             )
-
-      src = %{@src | announce_arriving?: true}
-
-      assert should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [src]}},
-               :top
-             )
-
-      assert should_interrupting_read?(
-               message,
-               %{@sign | source_config: {%{sources: [src]}, %{sources: [src]}}},
-               :bottom
-             )
-
-      refute should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [src]}},
-               :bottom
-             )
-    end
-
-    test "If it's Approaching, does not interrupt for light rail" do
-      message = %Message.Predictions{
-        destination: :riverside,
-        minutes: :approaching,
-        route_id: "Green-D"
-      }
-
-      src = %{@src | announce_arriving?: true}
-
-      refute should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [src]}},
-               :top
-             )
-    end
-
-    test "If it's Approaching, does not interrupt when announce_boarding?: true" do
-      message = %Message.Predictions{destination: :alewife, minutes: :approaching}
-      src = %{@src | announce_arriving?: false, announce_boarding?: true}
-
-      refute should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [src]}},
-               :top
-             )
-    end
-
-    test "If it's BRD respects config's announce_boarding? when arrival was already announced" do
-      message = %Message.Predictions{
-        destination: :alewife,
-        minutes: :boarding,
-        trip_id: "trip1",
-        stop_id: "1",
-        direction_id: 0
-      }
-
-      src = %{@src | announce_boarding?: false}
-
-      refute should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [src]}, announced_arrivals: ["trip1"]},
-               :top
-             )
-
-      refute should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [src]}, announced_arrivals: ["trip1"]},
-               :bottom
-             )
-
-      src = %{@src | announce_boarding?: true}
-
-      assert should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [src]}, announced_arrivals: ["trip1"]},
-               :top
-             )
-
-      assert should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [src]}, announced_arrivals: ["trip1"]},
-               :bottom
-             )
-    end
-
-    test "If it's BRD and announce_boarding? is false, but arrival for trip was not announced, still read" do
-      message = %Message.Predictions{destination: :alewife, minutes: :boarding, trip_id: "trip1"}
-      src = %{@src | announce_boarding?: false}
-
-      log =
-        capture_log([level: :info], fn ->
-          assert should_interrupting_read?(
-                   message,
-                   %{@sign | source_config: %{sources: [src]}, announced_arrivals: []},
-                   :top
-                 )
-        end)
-
-      assert log =~ "announced_brd_when_arr_skipped trip_id=\"trip1\" sign_id=\"sign_id\""
-    end
-
-    test "returns false if it's empty" do
-      refute should_interrupting_read?(
-               %Message.Empty{},
-               %{@sign | source_config: %{sources: [@src]}},
-               :top
-             )
-
-      refute should_interrupting_read?(
-               %Message.Empty{},
-               %{@sign | source_config: %{sources: [@src]}},
-               :bottom
-             )
-    end
-
-    test "returns false if it's the bottom line and a stopped train message" do
-      message = %Message.StoppedTrain{destination: :alewife, stops_away: 2}
-
-      assert should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [@src]}},
-               :top
-             )
-
-      refute should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [@src]}},
-               :bottom
-             )
-    end
-
-    test "returns false for bottom headway message" do
-      message = %Message.Headways.Bottom{range: {1, 5}, prev_departure_mins: nil}
-
-      refute should_interrupting_read?(
-               message,
-               %{@sign | source_config: %{sources: [@src]}},
-               :top
-             )
-    end
-
-    test "returns true if it's a different kind of message" do
-      message = %Message.Headways.Top{destination: :alewife, vehicle_type: :train}
-
-      assert should_interrupting_read?(
-               {@src, message},
-               %{@sign | source_config: %{sources: [@src]}},
-               :top
-             )
-    end
-  end
-
   describe "from_sign/1" do
     test "Station closure" do
       sign = %{
@@ -516,8 +290,8 @@ defmodule Signs.Utilities.AudioTest do
       }
 
       assert {[
-                %Audio.TrainIsArriving{destination: :riverside},
-                %Audio.NextTrainCountdown{destination: :lechmere, minutes: 3}
+                %Audio.NextTrainCountdown{destination: :lechmere, minutes: 3},
+                %Audio.TrainIsArriving{destination: :riverside}
               ], ^sign} = from_sign(sign)
     end
 
@@ -670,45 +444,6 @@ defmodule Signs.Utilities.AudioTest do
       assert log =~ "message_to_audio_error"
     end
 
-    test "announces arriving, then skips arriving for the same trip" do
-      sign = %{
-        @sign
-        | current_content_top: %Message.Predictions{
-            minutes: :arriving,
-            trip_id: "trip1",
-            destination: :alewife
-          },
-          current_content_bottom: %Message.Empty{}
-      }
-
-      {audio, new_sign} = from_sign(sign)
-
-      assert [%Content.Audio.TrainIsArriving{}] = audio
-      assert new_sign.announced_arrivals == ["trip1"]
-
-      assert {[], ^new_sign} = from_sign(new_sign)
-    end
-
-    test "announces approaching, then skips approaching for the same trip" do
-      sign = %{
-        @sign
-        | current_content_top: %Message.Predictions{
-            minutes: :approaching,
-            trip_id: "trip1",
-            destination: :alewife,
-            route_id: "Red"
-          },
-          current_content_bottom: %Message.Empty{}
-      }
-
-      {audio, new_sign} = from_sign(sign)
-
-      assert [%Content.Audio.Approaching{}] = audio
-      assert new_sign.announced_approachings == ["trip1"]
-
-      assert {[], ^new_sign} = from_sign(new_sign)
-    end
-
     test "Announces higher priority message first even on bottom of multi-source sign" do
       sign = %{
         @sign
@@ -727,8 +462,8 @@ defmodule Signs.Utilities.AudioTest do
 
       assert {
                [
-                 %Content.Audio.Approaching{destination: :ashmont},
-                 %Content.Audio.NextTrainCountdown{minutes: 5, destination: :alewife}
+                 %Content.Audio.NextTrainCountdown{minutes: 5, destination: :alewife},
+                 %Content.Audio.Approaching{destination: :ashmont}
                ],
                ^sign
              } = from_sign(sign)

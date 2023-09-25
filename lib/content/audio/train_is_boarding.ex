@@ -4,6 +4,8 @@ defmodule Content.Audio.TrainIsBoarding do
   """
 
   require Logger
+  alias Content.Audio
+  alias Content.Message
 
   @enforce_keys [:destination, :route_id, :track_number]
   defstruct @enforce_keys ++ [:trip_id]
@@ -14,6 +16,32 @@ defmodule Content.Audio.TrainIsBoarding do
           route_id: String.t(),
           track_number: Content.Utilities.track_number()
         }
+
+  def from_message(%Message.Predictions{} = message) do
+    if Audio.TrackChange.park_track_change?(message) do
+      [
+        %Audio.TrackChange{
+          destination: message.destination,
+          route_id: message.route_id,
+          berth: message.stop_id
+        }
+      ]
+    else
+      [
+        %__MODULE__{
+          destination: message.destination,
+          trip_id: message.trip_id,
+          route_id: message.route_id,
+          track_number: Content.Utilities.stop_track_number(message.stop_id)
+        }
+      ] ++
+        if message.station_code == "BBOW" && message.zone == "e" do
+          [%Audio.BoardingButton{}]
+        else
+          []
+        end
+    end
+  end
 
   defimpl Content.Audio do
     @the_next "501"

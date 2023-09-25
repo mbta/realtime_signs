@@ -53,6 +53,16 @@ defmodule Signs.RealtimeTest do
       current_content_bottom: %HB{range: {11, 13}}
   }
 
+  @terminal_sign %{
+    @sign
+    | source_config: %{
+        @sign.source_config
+        | sources: [
+            %{@src | terminal?: true, announce_arriving?: false, announce_boarding?: true}
+          ]
+      }
+  }
+
   @no_service_audio {:canned, {"107", ["861", "21000", "864", "21000", "863"], :audio}}
 
   setup :verify_on_exit!
@@ -134,7 +144,9 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
       expect_messages({"custom", "message"})
       expect_audios([{:ad_hoc, {"custom message", :audio}}])
-      Signs.Realtime.handle_info(:run_loop, @sign)
+
+      assert {_, %{announced_custom_text: "custom message"}} =
+               Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "when sign is disabled, it's empty" do
@@ -180,7 +192,7 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
       expect_messages({"No train service", ""})
       expect_audios([@no_service_audio])
-      Signs.Realtime.handle_info(:run_loop, @sign)
+      assert {_, %{announced_alert: true}} = Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "predictions take precedence over alerts" do
@@ -303,7 +315,7 @@ defmodule Signs.RealtimeTest do
 
     test "When the train is stopped a long time away, but not quite max time, shows stopped" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :mattapan, arrival: 1100, stopped: 8)]
+        [prediction(destination: :mattapan, arrival: 1100, stopped: 8, trip_id: "1")]
       end)
 
       expect_messages(
@@ -330,7 +342,7 @@ defmodule Signs.RealtimeTest do
           ], :audio}}
       ])
 
-      Signs.Realtime.handle_info(:run_loop, @sign)
+      assert {_, %{announced_stalls: [{"1", 8}]}} = Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "When the train is stopped a long time away from a terminal, shows max time instead of stopped" do
@@ -346,11 +358,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Mattapan   30+ min", ""})
-
-      Signs.Realtime.handle_info(:run_loop, %{
-        @sign
-        | source_config: %{@sign.source_config | sources: [%{@src | terminal?: true}]}
-      })
+      Signs.Realtime.handle_info(:run_loop, @terminal_sign)
     end
 
     test "When the train is stopped a long time away, shows max time instead of stopped" do
@@ -365,7 +373,7 @@ defmodule Signs.RealtimeTest do
     test "only the first prediction in a source list can be BRD" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
-          prediction(destination: :mattapan, arrival: 0, stops_away: 0),
+          prediction(destination: :mattapan, arrival: 0, stops_away: 0, trip_id: "1"),
           prediction(destination: :mattapan, arrival: 100, stops_away: 1)
         ]
       end)
@@ -373,11 +381,10 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Mattapan       BRD", "Mattapan     2 min"})
 
       expect_audios([
-        {:canned, {"109", ["501", "21000", "507", "21000", "4100", "21000", "544"], :audio}},
-        {:canned, {"160", ["4100", "503", "5002"], :audio}}
+        {:canned, {"109", ["501", "21000", "507", "21000", "4100", "21000", "544"], :audio}}
       ])
 
-      Signs.Realtime.handle_info(:run_loop, @sign)
+      assert {_, %{announced_boardings: ["1"]}} = Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "Sorts boarding status to the top" do
@@ -392,26 +399,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([
         {:canned,
-         {"111", ["501", "21000", "537", "21000", "507", "21000", "4203", "21000", "544"], :audio}},
-        {:canned,
-         {"117",
-          [
-            "501",
-            "21000",
-            "536",
-            "21000",
-            "507",
-            "21000",
-            "4202",
-            "21000",
-            "503",
-            "21000",
-            "504",
-            "21000",
-            "5003",
-            "21000",
-            "505"
-          ], :audio}}
+         {"111", ["501", "21000", "537", "21000", "507", "21000", "4203", "21000", "544"], :audio}}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
@@ -426,40 +414,17 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Clvlnd Cir     ARR", "Riverside    1 min"})
-
-      expect_audios([
-        {:canned, {"103", ["90007"], :audio_visual}},
-        {:canned,
-         {"117",
-          [
-            "501",
-            "21000",
-            "538",
-            "21000",
-            "507",
-            "21000",
-            "4084",
-            "21000",
-            "503",
-            "21000",
-            "504",
-            "21000",
-            "5001",
-            "21000",
-            "532"
-          ], :audio}}
-      ])
-
+      expect_audios([{:canned, {"103", ["90007"], :audio_visual}}])
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "allows ARR on second line if platform does have multiple berths" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :cleveland_circle, arrival: 15, stop_id: "1")]
+        [prediction(destination: :cleveland_circle, arrival: 15, stop_id: "1", trip_id: "1")]
       end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :riverside, arrival: 16, stop_id: "2")]
+        [prediction(destination: :riverside, arrival: 16, stop_id: "2", trip_id: "2")]
       end)
 
       expect_messages({"Clvlnd Cir     ARR", "Riverside      ARR"})
@@ -490,11 +455,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Boston Col   3 min", "Clvlnd Cir   4 min"})
-
-      Signs.Realtime.handle_info(:run_loop, %{
-        @sign
-        | source_config: %{@sign.source_config | sources: [%{@src | terminal?: true}]}
-      })
+      Signs.Realtime.handle_info(:run_loop, @terminal_sign)
     end
 
     test "properly handles case where destination can't be determined" do
@@ -512,19 +473,22 @@ defmodule Signs.RealtimeTest do
             destination: :riverside,
             stops_away: 0,
             seconds_until_arrival: -30,
-            seconds_until_departure: 60
+            seconds_until_departure: 60,
+            trip_id: "1"
           ),
           prediction(
             destination: :riverside,
             stops_away: 0,
             seconds_until_arrival: -15,
-            seconds_until_departure: 75
+            seconds_until_departure: 75,
+            trip_id: "2"
           ),
           prediction(
             destination: :boston_college,
             stops_away: 0,
             seconds_until_arrival: nil,
-            seconds_until_departure: 60
+            seconds_until_departure: 60,
+            trip_id: "3"
           )
         ]
       end)
@@ -578,7 +542,96 @@ defmodule Signs.RealtimeTest do
       ])
 
       expect_messages({"Wonderland     BRD", ""})
-      Signs.Realtime.handle_info(:run_loop, %{@sign | text_id: {"BBOW", "e"}})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | text_id: {"BBOW", "e"},
+          source_config: %{@sign.source_config | sources: [%{@src | direction_id: 1}]}
+      })
+    end
+
+    test "doesn't announce arrivals if disabled in the config" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :alewife, arrival: 10)]
+      end)
+
+      expect_messages({"Alewife        ARR", ""})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | source_config: %{@sign.source_config | sources: [%{@src | announce_arriving?: false}]}
+      })
+    end
+
+    test "doesn't announce arrivals if already announced previously" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :alewife, arrival: 10, trip_id: "1")]
+      end)
+
+      expect_messages({"Alewife        ARR", ""})
+      Signs.Realtime.handle_info(:run_loop, %{@sign | announced_arrivals: ["1"]})
+    end
+
+    test "announces approaching" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :ashmont, arrival: 45, trip_id: "1")]
+      end)
+
+      expect_messages({"Ashmont      1 min", ""})
+      expect_audios([{:canned, {"103", ["32127"], :audio_visual}}])
+      assert {_, %{announced_approachings: ["1"]}} = Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "doesn't announce approaching if already announced previously" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :alewife, arrival: 45, trip_id: "1")]
+      end)
+
+      expect_messages({"Alewife      1 min", ""})
+      Signs.Realtime.handle_info(:run_loop, %{@sign | announced_approachings: ["1"]})
+    end
+
+    test "doesn't announce approaching for light rail" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :cleveland_circle, arrival: 45)]
+      end)
+
+      expect_messages({"Clvlnd Cir   1 min", ""})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "announces next prediction if we weren't showing any before" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :ashmont, arrival: 120),
+          prediction(destination: :ashmont, arrival: 240)
+        ]
+      end)
+
+      expect_messages({"Ashmont      2 min", "Ashmont      4 min"})
+      expect_audios([{:canned, {"90", ["4016", "503", "5002"], :audio}}])
+      Signs.Realtime.handle_info(:run_loop, %{@sign | prev_prediction_keys: []})
+    end
+
+    test "doesn't announce ordinary predictions if we had some last time" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :ashmont, arrival: 120)]
+      end)
+
+      expect_messages({"Ashmont      2 min", ""})
+      Signs.Realtime.handle_info(:run_loop, %{@sign | prev_prediction_keys: [{"Red", 0}]})
+    end
+
+    test "announcements delay upcoming readouts" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :ashmont, arrival: 45, trip_id: "1")]
+      end)
+
+      expect_messages({"Ashmont      1 min", ""})
+      expect_audios([{:canned, {"103", ["32127"], :audio_visual}}])
+
+      assert {_, %{tick_read: 119}} =
+               Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 20})
     end
 
     test "Announce approaching with crowding when condfidence high" do

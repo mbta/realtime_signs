@@ -4,6 +4,7 @@ defmodule Content.Audio.Approaching do
   """
 
   require Logger
+  alias Content.Message
   alias PaEss.Utilities
 
   @enforce_keys [:destination]
@@ -18,6 +19,19 @@ defmodule Content.Audio.Approaching do
           new_cars?: boolean,
           crowding_description: {atom(), atom()} | nil
         }
+
+  def from_message(%Message.Predictions{} = message, include_crowding?) do
+    [
+      %__MODULE__{
+        destination: message.destination,
+        trip_id: message.trip_id,
+        platform: message.platform,
+        route_id: message.route_id,
+        new_cars?: message.new_cars?,
+        crowding_description: if(include_crowding?, do: message.crowding_description)
+      }
+    ]
+  end
 
   defimpl Content.Audio do
     @attention_passengers "783"

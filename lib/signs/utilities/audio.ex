@@ -11,199 +11,133 @@ defmodule Signs.Utilities.Audio do
   @announced_history_length 5
   @heavy_rail_routes ["Red", "Orange", "Blue"]
 
-  @doc "Takes a changed line, and returns if it should read immediately"
-  @spec should_interrupting_read?(
-          Signs.Realtime.line_content(),
-          Signs.Realtime.t(),
-          Content.line_location()
-        ) :: boolean()
-  # If minutes is an integer, we don't interrupt
-  def should_interrupting_read?(%Content.Message.Predictions{minutes: x}, _sign, _line)
-      when is_integer(x) do
-    false
+  @spec get_announcements(Signs.Realtime.t()) :: {[Content.Audio.t()], Signs.Realtime.t()}
+  def get_announcements(sign) do
+    items = decode_sign(sign)
+
+    {[], sign}
+    |> get_custom_announcements(items)
+    |> get_alert_announcements(items)
+    |> get_prediction_announcements(items)
   end
 
-  # If train is approaching and it's not a heavy rail route, we don't interrupt
-  def should_interrupting_read?(
-        %Content.Message.Predictions{minutes: :approaching, route_id: route_id},
-        _sign,
-        _line
-      )
-      when route_id not in @heavy_rail_routes do
-    false
-  end
+  defp get_custom_announcements({audios, sign}, items) do
+    case Enum.find(items, &match?({:custom, _, _}, &1)) do
+      {:custom, top, bottom} ->
+        [audio] = Audio.Custom.from_messages(top, bottom)
 
-  # If train is arriving or approaching and it's being shown on the bottom line, check if it is multi-source and if we announce arriving
-  def should_interrupting_read?(
-        %Content.Message.Predictions{minutes: arriving_or_approaching} = prediction,
-        %Signs.Realtime{source_config: config},
-        :bottom
-      )
-      when arriving_or_approaching in [:arriving, :approaching] do
-    SourceConfig.multi_source?(config) and
-      announce_arriving?(config, prediction)
-  end
-
-  # If train is arriving or approaching, check if we announce arriving for this stop
-  def should_interrupting_read?(
-        %Content.Message.Predictions{minutes: arriving_or_approaching} = prediction,
-        %Signs.Realtime{source_config: config},
-        _line
-      )
-      when arriving_or_approaching in [:arriving, :approaching] do
-    announce_arriving?(config, prediction)
-  end
-
-  # If train is boarding, check if we announce boarding for this stop
-  # Special case: if arriving announcement was skipped, then interrupt and announce boarding even if we don't normally announce boarding
-  def should_interrupting_read?(
-        %Content.Message.Predictions{minutes: :boarding, trip_id: trip_id} = prediction,
-        %Signs.Realtime{
-          id: sign_id,
-          announced_arrivals: announced_arrivals,
-          source_config: config
-        },
-        _line
-      ) do
-    case announce_boarding?(config, prediction) do
-      true ->
-        true
-
-      false ->
-        if trip_id not in announced_arrivals do
-          Logger.info(
-            "announced_brd_when_arr_skipped trip_id=#{inspect(trip_id)} sign_id=#{inspect(sign_id)}"
-          )
-
-          true
+        if sign.announced_custom_text != audio.message do
+          {audios ++ [audio], %{sign | announced_custom_text: audio.message}}
         else
-          false
+          {audios, sign}
         end
-    end
-  end
 
-  def should_interrupting_read?(%Content.Message.Empty{}, _sign, _line) do
-    false
-  end
-
-  def should_interrupting_read?(%Content.Message.StoppedTrain{}, _sign, :bottom) do
-    false
-  end
-
-  def should_interrupting_read?(%Content.Message.Headways.Bottom{}, _sign, _line) do
-    false
-  end
-
-  def should_interrupting_read?(%Content.Message.Headways.Paging{}, _sign, _line) do
-    false
-  end
-
-  def should_interrupting_read?(%Content.Message.Alert.NoServiceUseShuttle{}, _sign, _line) do
-    false
-  end
-
-  def should_interrupting_read?(%Content.Message.Alert.DestinationNoService{}, _sign, _line) do
-    false
-  end
-
-  def should_interrupting_read?(_content, _sign, _line) do
-    true
-  end
-
-  defp announce_arriving?(source_config, prediction) do
-    source_config
-    |> SourceConfig.get_source_by_stop_and_direction(prediction.stop_id, prediction.direction_id)
-    |> case do
       nil ->
-        false
-
-      source ->
-        source.announce_arriving?
+        {audios, %{sign | announced_custom_text: nil}}
     end
   end
 
-  defp announce_boarding?(source_config, prediction) do
-    source_config
-    |> SourceConfig.get_source_by_stop_and_direction(prediction.stop_id, prediction.direction_id)
-    |> case do
-      nil ->
-        false
+  defp get_alert_announcements({audios, sign}, items) do
+    case Enum.find(items, &match?({:alert, _, _}, &1)) do
+      {:alert, top, bottom} ->
+        new_audios =
+          case top do
+            %Message.Alert.NoService{} ->
+              Audio.Closure.from_messages(top, bottom)
 
-      source ->
-        source.announce_boarding?
-    end
-  end
+            %Message.Alert.DestinationNoService{} ->
+              Audio.NoServiceToDestination.from_message(top)
 
-  @spec from_sign(Signs.Realtime.t()) :: {[Content.Audio.t()], Signs.Realtime.t()}
-  def from_sign(sign) do
-    multi_source? = SourceConfig.multi_source?(sign.source_config)
-
-    audios = get_audio(sign.current_content_top, sign.current_content_bottom, multi_source?)
-
-    {new_audios, new_approaching_trips, new_arriving_trips} =
-      Enum.reduce(
-        audios,
-        {[], sign.announced_approachings, sign.announced_arrivals},
-        fn audio, {new_audios, new_approaching_trips, new_arriving_trips} ->
-          case audio do
-            %Audio.TrainIsArriving{trip_id: trip_id, crowding_description: crowding_description}
-            when not is_nil(trip_id) ->
-              cond do
-                # If we've already announced the arrival, don't announce it
-                audio.trip_id in sign.announced_arrivals ->
-                  {new_audios, new_approaching_trips, new_arriving_trips}
-
-                # If the arrival has high-confidence crowding info but we've already announced crowding with the approaching message, announce it without crowding
-                crowding_description && audio.trip_id in sign.announced_approachings_with_crowding ->
-                  {new_audios ++ [%{audio | crowding_description: nil}], new_approaching_trips,
-                   [audio.trip_id | new_arriving_trips]}
-
-                # else, announce normally
-                true ->
-                  {new_audios ++ [audio], new_approaching_trips,
-                   [audio.trip_id | new_arriving_trips]}
-              end
-
-            %Audio.Approaching{trip_id: trip_id} when not is_nil(trip_id) ->
-              if audio.trip_id in sign.announced_approachings do
-                {new_audios, new_approaching_trips, new_arriving_trips}
-              else
-                {new_audios ++ [audio], [audio.trip_id | new_approaching_trips],
-                 new_arriving_trips}
-              end
-
-            _ ->
-              {new_audios ++ [audio], new_approaching_trips, new_arriving_trips}
+            %Message.Alert.NoServiceUseShuttle{} ->
+              Audio.NoServiceToDestination.from_message(top)
           end
-        end
-      )
 
-    new_announced_approaching_with_crowding =
-      for %Audio.Approaching{trip_id: trip_id, crowding_description: crowding_description} <-
-            new_audios,
-          not is_nil(trip_id) and not is_nil(crowding_description) do
-        trip_id
-      end
+        if !sign.announced_alert do
+          {audios ++ new_audios, %{sign | announced_alert: true}}
+        else
+          {audios, sign}
+        end
+
+      nil ->
+        {audios, %{sign | announced_alert: false}}
+    end
+  end
+
+  defp get_prediction_announcements({audios, sign}, items) do
+    {new_audios, sign} =
+      Enum.filter(items, &match?({:predictions, _}, &1))
+      |> Enum.flat_map_reduce(sign, fn {:predictions, messages}, sign ->
+        Enum.with_index(messages)
+        |> Enum.flat_map_reduce(sign, fn {message, index}, sign ->
+          cond do
+            # If we normally announce arrivals, but the prediction went straight to boarding,
+            # announce boarding instead.
+            match?(%Message.Predictions{minutes: :boarding}, message) &&
+              message.trip_id not in sign.announced_boardings &&
+                (announce_boarding?(sign, message) ||
+                   (announce_arriving?(sign, message) &&
+                      message.trip_id not in sign.announced_arrivals)) ->
+              {Audio.TrainIsBoarding.from_message(message),
+               update_in(sign.announced_boardings, &cache_value(&1, message.trip_id))}
+
+            match?(%Message.Predictions{minutes: :arriving}, message) &&
+              message.trip_id not in sign.announced_arrivals &&
+                announce_arriving?(sign, message) ->
+              include_crowding? =
+                message.crowding_data_confidence == :high &&
+                  message.trip_id not in sign.announced_approachings_with_crowding
+
+              {Audio.TrainIsArriving.from_message(message, include_crowding?),
+               update_in(sign.announced_arrivals, &cache_value(&1, message.trip_id))}
+
+            match?(%Message.Predictions{minutes: :approaching}, message) &&
+              message.trip_id not in sign.announced_approachings &&
+                message.route_id in @heavy_rail_routes ->
+              include_crowding? = message.crowding_data_confidence == :high
+
+              {Audio.Approaching.from_message(message, include_crowding?),
+               sign
+               |> update_in(
+                 [Access.key!(:announced_approachings)],
+                 &cache_value(&1, message.trip_id)
+               )
+               |> update_in(
+                 [Access.key!(:announced_approachings_with_crowding)],
+                 &if(include_crowding?, do: cache_value(&1, message.trip_id), else: &1)
+               )}
+
+            match?(%Message.StoppedTrain{}, message) && index == 0 &&
+                {message.trip_id, message.stops_away} not in sign.announced_stalls ->
+              {Audio.StoppedTrain.from_message(message),
+               update_in(
+                 sign.announced_stalls,
+                 &cache_value(&1, {message.trip_id, message.stops_away})
+               )}
+
+            match?(%Message.Predictions{}, message) && is_integer(message.minutes) && index == 0 &&
+              sign.prev_prediction_keys &&
+                {message.route_id, message.direction_id} not in sign.prev_prediction_keys ->
+              {Audio.NextTrainCountdown.from_message(message), sign}
+
+            true ->
+              {[], sign}
+          end
+        end)
+      end)
+
+    log_crowding(new_audios, sign.id)
 
     sign = %{
       sign
-      | announced_approachings: Enum.take(new_approaching_trips, @announced_history_length),
-        announced_approachings_with_crowding:
-          Enum.take(
-            new_announced_approaching_with_crowding ++ sign.announced_approachings_with_crowding,
-            @announced_history_length
-          ),
-        announced_arrivals: Enum.take(new_arriving_trips, @announced_history_length)
+      | prev_prediction_keys:
+          for {:predictions, list} <- items, message <- list, uniq: true do
+            {message.route_id, message.direction_id}
+          end
     }
 
+    # Disable crowding messages for now
     new_audios =
-      if SourceConfig.multi_source?(sign.source_config) do
-        sort_audio(new_audios)
-      else
-        new_audios
-      end
-      |> tap(&log_crowding(&1, sign.id))
-      |> Enum.map(fn %{__struct__: audio_type} = audio ->
+      Enum.map(new_audios, fn %{__struct__: audio_type} = audio ->
         if audio_type in [Audio.Approaching, Audio.TrainIsArriving] and sign.id not in [] do
           %{audio | crowding_description: nil}
         else
@@ -211,7 +145,86 @@ defmodule Signs.Utilities.Audio do
         end
       end)
 
-    {new_audios, sign}
+    {audios ++ new_audios, sign}
+  end
+
+  defp cache_value(list, value), do: [value | list] |> Enum.take(@announced_history_length)
+
+  defp decode_sign(sign) do
+    case sign do
+      %Signs.Realtime{current_content_top: top, current_content_bottom: bottom}
+      when top.__struct__ == Message.Custom or bottom.__struct__ == Message.Custom ->
+        [{:custom, top, bottom}]
+
+      %Signs.Realtime{
+        current_content_top: %Message.Alert.NoService{} = top,
+        current_content_bottom: bottom
+      } ->
+        [{:alert, top, bottom}]
+
+      %Signs.Realtime{
+        current_content_top: %Message.GenericPaging{} = top,
+        current_content_bottom: %Message.GenericPaging{} = bottom
+      } ->
+        Enum.zip(top.messages, bottom.messages) |> Enum.map(&decode_lines/1)
+
+      %Signs.Realtime{source_config: {_, _}} ->
+        decode_line(sign.current_content_top) ++ decode_line(sign.current_content_bottom)
+
+      _ ->
+        decode_lines({sign.current_content_top, sign.current_content_bottom})
+    end
+  end
+
+  defp decode_lines({top, bottom}) do
+    case {top, bottom} do
+      {top, bottom}
+      when top.__struct__ in [Message.Predictions, Message.StoppedTrain] and
+             bottom.__struct__ in [Message.Predictions, Message.StoppedTrain] ->
+        [{:predictions, [top, bottom]}]
+
+      {top, _} when top.__struct__ in [Message.Predictions, Message.StoppedTrain] ->
+        [{:predictions, [top]}]
+
+      _ ->
+        []
+    end
+  end
+
+  defp decode_line(line) do
+    case line do
+      %Message.Predictions{} -> [{:predictions, [line]}]
+      %Message.StoppedTrain{} -> [{:predictions, [line]}]
+      %Message.Alert.NoServiceUseShuttle{} -> [{:alert, line, nil}]
+      %Message.Alert.DestinationNoService{} -> [{:alert, line, nil}]
+      _ -> []
+    end
+  end
+
+  defp announce_arriving?(
+         %Signs.Realtime{source_config: source_config},
+         %Message.Predictions{stop_id: stop_id, direction_id: direction_id}
+       ) do
+    case SourceConfig.get_source_by_stop_and_direction(source_config, stop_id, direction_id) do
+      nil -> false
+      source -> source.announce_arriving?
+    end
+  end
+
+  defp announce_boarding?(
+         %Signs.Realtime{source_config: source_config},
+         %Message.Predictions{stop_id: stop_id, direction_id: direction_id}
+       ) do
+    case SourceConfig.get_source_by_stop_and_direction(source_config, stop_id, direction_id) do
+      nil -> false
+      source -> source.announce_boarding?
+    end
+  end
+
+  @spec from_sign(Signs.Realtime.t()) :: {[Content.Audio.t()], Signs.Realtime.t()}
+  def from_sign(sign) do
+    multi_source? = SourceConfig.multi_source?(sign.source_config)
+    {get_audio(sign.current_content_top, sign.current_content_bottom, multi_source?), sign}
   end
 
   defp log_crowding(new_audios, sign_id) do
@@ -235,18 +248,6 @@ defmodule Signs.Utilities.Audio do
 
       _ ->
         nil
-    end)
-  end
-
-  @spec sort_audio([Content.Audio.t()]) :: [Content.Audio.t()]
-  defp sort_audio(audios) do
-    Enum.sort_by(audios, fn audio ->
-      case audio do
-        %Content.Audio.TrainIsBoarding{} -> 1
-        %Content.Audio.TrainIsArriving{} -> 2
-        %Content.Audio.Approaching{} -> 3
-        _ -> 4
-      end
     end)
   end
 
