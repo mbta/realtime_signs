@@ -882,7 +882,7 @@ defmodule Predictions.PredictionsTest do
               "timestamp" => nil,
               "trip" => %{
                 "direction_id" => 0,
-                "route_id" => "Red",
+                "route_id" => "Blue",
                 "schedule_relationship" => "SCHEDULED",
                 "start_date" => "20170329",
                 "start_time" => nil,
@@ -907,6 +907,72 @@ defmodule Predictions.PredictionsTest do
       {predictions_map, _} = get_all(feed_message, @current_time)
 
       assert predictions_map == %{}
+    end
+
+    test "doesn't filter predictions with high uncertainty when feature is off" do
+      reassign_env(:filter_uncertain_predictions?, false)
+
+      feed_message = %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783458_32568935",
+            "is_deleted" => false,
+            "trip_update" => %{
+              "delay" => nil,
+              "stop_time_update" => [
+                %{
+                  "arrival" => %{
+                    "delay" => nil,
+                    "time" => 1_491_570_110,
+                    "uncertainty" => 360
+                  },
+                  "departure" => %{
+                    "delay" => nil,
+                    "time" => 1_491_570_120,
+                    "uncertainty" => 360
+                  },
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70063",
+                  "stop_sequence" => 1,
+                  "stops_away" => 1,
+                  "stopped?" => true,
+                  "boarding_status" => "Stopped 1 stop away"
+                }
+              ],
+              "timestamp" => nil,
+              "trip" => %{
+                "direction_id" => 0,
+                "route_id" => "Red",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
+              },
+              "vehicle" => %{
+                "id" => "R-54639F6C",
+                "label" => "1631",
+                "license_plate" => nil
+              }
+            },
+            "vehicle" => nil
+          }
+        ],
+        "header" => %{
+          "gtfs_realtime_version" => "1.0",
+          "incrementality" => "FULL_DATASET",
+          "timestamp" => 1_490_783_458
+        }
+      }
+
+      assert {%{
+                {"70063", 0} => [
+                  %Predictions.Prediction{
+                    seconds_until_arrival: 110,
+                    seconds_until_departure: 120
+                  }
+                ]
+              }, _} = get_all(feed_message, @current_time)
     end
 
     test "doesn't filter out uncertain light rail predictions" do
