@@ -70,8 +70,8 @@ defmodule Signs.Utilities.Audio do
         Enum.with_index(messages)
         |> Enum.flat_map_reduce(sign, fn {message, index}, sign ->
           cond do
-            # If we normally announce arrivals, but the prediction went straight to boarding,
-            # announce boarding instead.
+            # Announce boarding if configured to. Also, if we normally announce arrivals, but the
+            # prediction went straight to boarding, announce boarding instead.
             match?(%Message.Predictions{minutes: :boarding}, message) &&
               message.trip_id not in sign.announced_boardings &&
                 (announce_boarding?(sign, message) ||
@@ -80,6 +80,7 @@ defmodule Signs.Utilities.Audio do
               {Audio.TrainIsBoarding.from_message(message),
                update_in(sign.announced_boardings, &cache_value(&1, message.trip_id))}
 
+            # Announce arriving if configured to
             match?(%Message.Predictions{minutes: :arriving}, message) &&
               message.trip_id not in sign.announced_arrivals &&
                 announce_arriving?(sign, message) ->
@@ -90,8 +91,10 @@ defmodule Signs.Utilities.Audio do
               {Audio.TrainIsArriving.from_message(message, include_crowding?),
                update_in(sign.announced_arrivals, &cache_value(&1, message.trip_id))}
 
+            # Announce approaching if configured to
             match?(%Message.Predictions{minutes: :approaching}, message) &&
               message.trip_id not in sign.announced_approachings &&
+              announce_arriving?(sign, message) &&
                 message.route_id in @heavy_rail_routes ->
               include_crowding? = message.crowding_data_confidence == :high
 
@@ -106,6 +109,7 @@ defmodule Signs.Utilities.Audio do
                  &if(include_crowding?, do: cache_value(&1, message.trip_id), else: &1)
                )}
 
+            # Announce stopped trains
             match?(%Message.StoppedTrain{}, message) && index == 0 &&
                 {message.trip_id, message.stops_away} not in sign.announced_stalls ->
               {Audio.StoppedTrain.from_message(message),
@@ -114,6 +118,8 @@ defmodule Signs.Utilities.Audio do
                  &cache_value(&1, {message.trip_id, message.stops_away})
                )}
 
+            # If we didn't have any predictions for a particular route/direction last update, but
+            # now we do, announce the next prediction.
             match?(%Message.Predictions{}, message) && is_integer(message.minutes) && index == 0 &&
               sign.prev_prediction_keys &&
                 {message.route_id, message.direction_id} not in sign.prev_prediction_keys ->
@@ -150,6 +156,14 @@ defmodule Signs.Utilities.Audio do
 
   defp cache_value(list, value), do: [value | list] |> Enum.take(@announced_history_length)
 
+  # Reconstructs higher level information about what's being shown on the sign, in a form that's
+  # suitable for computing audio messages. Eventually the goal is to produce this information
+  # earlier in the pipeline, rather than deriving it here.
+  @spec decode_sign(Signs.Realtime.t()) :: [
+          {:custom, Content.Message.t(), Content.Message.t()}
+          | {:alert, Content.Message.t(), Content.Message.t() | nil}
+          | {:predictions, [Content.Message.t()]}
+        ]
   defp decode_sign(sign) do
     case sign do
       %Signs.Realtime{current_content_top: top, current_content_bottom: bottom}
@@ -168,6 +182,8 @@ defmodule Signs.Utilities.Audio do
       } ->
         Enum.zip(top.messages, bottom.messages) |> Enum.map(&decode_lines/1)
 
+      # Mezzanine signs get separate treatment for each half, e.g. they will return two
+      # separate prediction lists with one prediction each.
       %Signs.Realtime{source_config: {_, _}} ->
         decode_line(sign.current_content_top) ++ decode_line(sign.current_content_bottom)
 
