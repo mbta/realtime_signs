@@ -65,9 +65,9 @@ defmodule Signs.Utilities.Audio do
 
   defp get_prediction_announcements({audios, sign}, items) do
     {new_audios, sign} =
-      Enum.filter(items, &match?({:predictions, _}, &1))
+      Stream.filter(items, &match?({:predictions, _}, &1))
       |> Enum.flat_map_reduce(sign, fn {:predictions, messages}, sign ->
-        Enum.with_index(messages)
+        Stream.with_index(messages)
         |> Enum.flat_map_reduce(sign, fn {message, index}, sign ->
           cond do
             # Announce boarding if configured to. Also, if we normally announce arrivals, but the
