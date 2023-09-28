@@ -3,7 +3,7 @@ defmodule Engine.Alerts.ApiFetcherTest do
 
   describe "get_statuses/1" do
     test "downloads and parses the alerts" do
-      assert Engine.Alerts.ApiFetcher.get_statuses() == {
+      assert Engine.Alerts.ApiFetcher.get_statuses([]) == {
                :ok,
                %{
                  :stop_statuses => %{
@@ -30,7 +30,7 @@ defmodule Engine.Alerts.ApiFetcherTest do
       Application.put_env(:realtime_signs, :api_v3_url, "https://notreal")
       on_exit(fn -> Application.put_env(:realtime_signs, :api_v3_url, old_env) end)
 
-      assert {:error, _} = Engine.Alerts.ApiFetcher.get_statuses()
+      assert {:error, _} = Engine.Alerts.ApiFetcher.get_statuses([])
     end
   end
 end

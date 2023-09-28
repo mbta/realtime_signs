@@ -30,7 +30,7 @@ defmodule Engine.AlertsTest do
       @behaviour Engine.Alerts.Fetcher
 
       @impl true
-      def get_statuses do
+      def get_statuses(_) do
         {:ok,
          %{
            :stop_statuses => %{
@@ -49,7 +49,7 @@ defmodule Engine.AlertsTest do
       @behaviour Engine.Alerts.Fetcher
 
       @impl true
-      def get_statuses do
+      def get_statuses(_) do
         {:error, :didnt_work}
       end
     end
@@ -72,7 +72,8 @@ defmodule Engine.AlertsTest do
       state = %{
         tables: tables,
         fetcher: FakeAlertsFetcherHappy,
-        fetch_ms: 30_000
+        fetch_ms: 30_000,
+        all_route_ids: []
       }
 
       {:noreply, _state} = Engine.Alerts.handle_info(:fetch, state)
@@ -132,7 +133,8 @@ defmodule Engine.AlertsTest do
       state = %{
         tables: tables,
         fetcher: FakeAlertsFetcherSad,
-        fetch_ms: 30_000
+        fetch_ms: 30_000,
+        all_route_ids: []
       }
 
       log =

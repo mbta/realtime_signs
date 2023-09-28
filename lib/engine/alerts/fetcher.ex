@@ -8,7 +8,7 @@ defmodule Engine.Alerts.Fetcher do
           | :station_closure
           | :none
 
-  @callback get_statuses() ::
+  @callback get_statuses([String.t()]) ::
               {:ok,
                %{
                  :stop_statuses => %{stop_id() => stop_status()},

@@ -5,7 +5,7 @@ defmodule Engine.Alerts.ApiFetcher do
 
   @impl Engine.Alerts.Fetcher
 
-  @spec get_statuses() ::
+  @spec get_statuses([String.t()]) ::
           {:ok,
            %{
              :stop_statuses => %{
@@ -16,8 +16,8 @@ defmodule Engine.Alerts.ApiFetcher do
              }
            }}
           | {:error, any()}
-  def get_statuses do
-    case get_alerts() do
+  def get_statuses(route_ids) do
+    case get_alerts(route_ids) do
       {:ok, data} ->
         {stop_statuses, route_statuses} = determine_stop_statuses(data)
         route_statuses = Map.merge(route_statuses, determine_route_statuses(data))
@@ -33,8 +33,8 @@ defmodule Engine.Alerts.ApiFetcher do
     end
   end
 
-  @spec get_alerts() :: {:ok, [%{}]} | {:error, atom()}
-  defp get_alerts do
+  @spec get_alerts([String.t()]) :: {:ok, [%{}]} | {:error, atom()}
+  defp get_alerts(route_ids) do
     alerts_url = Application.get_env(:realtime_signs, :api_v3_url) <> "/alerts"
 
     headers = api_key_headers(Application.get_env(:realtime_signs, :api_v3_key))
@@ -47,8 +47,7 @@ defmodule Engine.Alerts.ApiFetcher do
              timeout: 2000,
              recv_timeout: 2000,
              params: %{
-               "filter[route]" =>
-                 "Green-B,Green-C,Green-D,Green-E,Red,Orange,Blue,Mattapan,741,742,743,746",
+               "filter[route]" => Enum.join(route_ids, ","),
                "filter[datetime]" => "NOW"
              }
            ),
