@@ -35,6 +35,29 @@ defmodule Signs.Utilities.SignsConfig do
     end
   end
 
+  def all_route_ids do
+    config = children_config()
+
+    train_routes =
+      for %{"type" => "realtime"} = sign <- config,
+          %{"sources" => sources} <- List.wrap(sign["source_config"]),
+          %{"routes" => routes} <- sources,
+          route <- routes do
+        route
+      end
+
+    bus_routes =
+      for %{"type" => "bus"} = sign <- config,
+          source_list <- [sign["sources"], sign["top_sources"], sign["bottom_sources"]],
+          source_list,
+          %{"routes" => routes} <- source_list,
+          %{"route_id" => route_id} <- routes do
+        route_id
+      end
+
+    Enum.uniq(train_routes ++ bus_routes)
+  end
+
   @spec get_stop_ids_for_sign(map()) :: [String.t()]
   def get_stop_ids_for_sign(sign) do
     sign["source_config"]

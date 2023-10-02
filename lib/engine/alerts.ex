@@ -12,7 +12,8 @@ defmodule Engine.Alerts do
   @type state :: %{
           tables: ets_tables(),
           fetcher: module(),
-          fetch_ms: integer()
+          fetch_ms: integer(),
+          all_route_ids: [String.t()]
         }
 
   @stops_table :alerts_by_stop
@@ -87,7 +88,8 @@ defmodule Engine.Alerts do
         routes_table: routes_ets_table_name
       },
       fetcher: fetcher,
-      fetch_ms: fetch_ms
+      fetch_ms: fetch_ms,
+      all_route_ids: Signs.Utilities.SignsConfig.all_route_ids()
     }
 
     {:ok, state}
@@ -97,7 +99,7 @@ defmodule Engine.Alerts do
   def handle_info(:fetch, state) do
     schedule_fetch(self(), state.fetch_ms)
 
-    case state.fetcher.get_statuses() do
+    case state.fetcher.get_statuses(state.all_route_ids) do
       {:ok, %{:stop_statuses => stop_statuses, :route_statuses => route_statuses}} ->
         :ets.delete_all_objects(state.tables.stops_table)
         :ets.insert(state.tables.stops_table, Enum.into(stop_statuses, []))
