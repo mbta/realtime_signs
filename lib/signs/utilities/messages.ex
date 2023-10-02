@@ -100,6 +100,12 @@ defmodule Signs.Utilities.Messages do
       {%Content.Message.Headways.Paging{}, _} ->
         true
 
+      {%Content.Message.Alert.NoServiceUseShuttle{}, _} ->
+        true
+
+      {%Content.Message.Alert.DestinationNoService{}, _} ->
+        true
+
       _ ->
         false
     end
