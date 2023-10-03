@@ -15,10 +15,10 @@ defmodule Signs.Bus do
     :text_zone,
     :audio_zones,
     :max_minutes,
-    :sources,
-    :top_sources,
-    :bottom_sources,
-    :extra_audio_sources,
+    :configs,
+    :top_configs,
+    :bottom_configs,
+    :extra_audio_configs,
     :chelsea_bridge,
     :read_loop_interval,
     :read_loop_offset,
@@ -42,10 +42,10 @@ defmodule Signs.Bus do
       text_zone: Map.fetch!(sign, "text_zone"),
       audio_zones: Map.fetch!(sign, "audio_zones"),
       max_minutes: Map.fetch!(sign, "max_minutes"),
-      sources: parse_sources(sign["sources"]),
-      top_sources: parse_sources(sign["top_sources"]),
-      bottom_sources: parse_sources(sign["bottom_sources"]),
-      extra_audio_sources: parse_sources(sign["extra_audio_sources"]),
+      configs: parse_configs(sign["configs"]),
+      top_configs: parse_configs(sign["top_configs"]),
+      bottom_configs: parse_configs(sign["bottom_configs"]),
+      extra_audio_configs: parse_configs(sign["extra_audio_configs"]),
       chelsea_bridge: sign["chelsea_bridge"],
       read_loop_interval: Map.fetch!(sign, "read_loop_interval"),
       read_loop_offset: Map.fetch!(sign, "read_loop_offset"),
@@ -64,17 +64,17 @@ defmodule Signs.Bus do
     GenServer.start_link(__MODULE__, state)
   end
 
-  defp parse_sources(nil), do: nil
+  defp parse_configs(nil), do: nil
 
-  defp parse_sources(sources) do
-    for source <- sources do
+  defp parse_configs(configs) do
+    for config <- configs do
       %{
-        stop_id: Map.fetch!(source, "stop_id"),
-        routes:
-          for route <- Map.fetch!(source, "routes") do
+        sources:
+          for source <- Map.fetch!(config, "sources") do
             %{
-              route_id: Map.fetch!(route, "route_id"),
-              direction_id: Map.fetch!(route, "direction_id")
+              stop_id: Map.fetch!(source, "stop_id"),
+              route_id: Map.fetch!(source, "route_id"),
+              direction_id: Map.fetch!(source, "direction_id")
             }
           end
       }
@@ -93,10 +93,10 @@ defmodule Signs.Bus do
       id: id,
       pa_ess_loc: pa_ess_loc,
       text_zone: text_zone,
-      sources: sources,
-      top_sources: top_sources,
-      bottom_sources: bottom_sources,
-      extra_audio_sources: extra_audio_sources,
+      configs: configs,
+      top_configs: top_configs,
+      bottom_configs: bottom_configs,
+      extra_audio_configs: extra_audio_configs,
       config_engine: config_engine,
       prediction_engine: prediction_engine,
       bridge_engine: bridge_engine,
@@ -111,16 +111,18 @@ defmodule Signs.Bus do
     bridge_status = bridge_engine.bridge_status()
     current_time = Timex.now()
 
-    source_lists = [sources, top_sources, bottom_sources, extra_audio_sources]
+    all_sources =
+      for config_list <- [configs, top_configs, bottom_configs, extra_audio_configs],
+          config_list,
+          config <- config_list,
+          source <- config.sources do
+        source
+      end
 
     alert_status =
       alerts_engine.max_stop_status(
-        for list <- source_lists, list, source <- list do
-          source.stop_id
-        end,
-        for list <- source_lists, list, source <- list, route <- source.routes do
-          route.route_id
-        end
+        Stream.map(all_sources, & &1.stop_id) |> Enum.uniq(),
+        Stream.map(all_sources, & &1.route_id) |> Enum.uniq()
       )
 
     prev_predictions_lookup =
@@ -129,15 +131,12 @@ defmodule Signs.Bus do
         {prediction_key(prediction), prediction}
       end
 
-    {[predictions, top_predictions, bottom_predictions, extra_audio_predictions], all_predictions} =
-      for source_list <- [sources, top_sources, bottom_sources, extra_audio_sources] do
-        if source_list,
-          do: fetch_predictions(source_list, prev_predictions_lookup, current_time, state),
-          else: []
-      end
-      |> then(fn lists ->
-        {Enum.map(lists, &filter_predictions(&1, current_time, state)), Enum.concat(lists)}
-      end)
+    all_predictions = fetch_predictions(prev_predictions_lookup, current_time, state)
+
+    predictions_lookup =
+      all_predictions
+      |> filter_predictions(current_time, state)
+      |> Enum.group_by(&{&1.stop_id, &1.route_id, &1.direction_id})
 
     # Compute new sign text and audio
     {[top, bottom], audios} =
@@ -151,7 +150,7 @@ defmodule Signs.Bus do
             bridge_status,
             bridge_enabled?,
             current_time,
-            predictions,
+            predictions_lookup,
             state
           )
 
@@ -164,10 +163,9 @@ defmodule Signs.Bus do
             ) ->
           special_harvard_content()
 
-        sources ->
+        configs ->
           platform_mode_content(
-            predictions,
-            extra_audio_predictions,
+            predictions_lookup,
             alert_status,
             current_time,
             bridge_status,
@@ -177,8 +175,7 @@ defmodule Signs.Bus do
 
         true ->
           mezzanine_mode_content(
-            top_predictions,
-            bottom_predictions,
+            predictions_lookup,
             alert_status,
             current_time,
             bridge_status,
@@ -224,12 +221,26 @@ defmodule Signs.Bus do
     Process.send_after(pid, :run_loop, 1_000)
   end
 
-  defp fetch_predictions(source_list, prev_predictions_lookup, current_time, state) do
-    %{prediction_engine: prediction_engine} = state
+  defp fetch_predictions(prev_predictions_lookup, current_time, state) do
+    %{
+      prediction_engine: prediction_engine,
+      configs: configs,
+      top_configs: top_configs,
+      bottom_configs: bottom_configs,
+      extra_audio_configs: extra_audio_configs
+    } = state
 
-    for %{stop_id: stop_id, routes: routes} <- source_list,
+    stop_ids =
+      for config_list <- [configs, top_configs, bottom_configs, extra_audio_configs],
+          config_list,
+          config <- config_list,
+          source <- config.sources,
+          uniq: true do
+        source.stop_id
+      end
+
+    for stop_id <- stop_ids,
         prediction <- prediction_engine.predictions_for_stop(stop_id),
-        Map.take(prediction, [:route_id, :direction_id]) in routes,
         prediction.departure_time do
       prev = prev_predictions_lookup[prediction_key(prediction)]
 
@@ -248,7 +259,6 @@ defmodule Signs.Bus do
 
       %{prediction | departure_time: departure_time}
     end
-    |> Enum.sort_by(& &1.departure_time, DateTime)
   end
 
   defp filter_predictions(predictions, current_time, state) do
@@ -277,7 +287,7 @@ defmodule Signs.Bus do
          bridge_status,
          bridge_enabled?,
          current_time,
-         predictions,
+         predictions_lookup,
          state
        ) do
     {_, {line1, line2}} = config
@@ -285,7 +295,7 @@ defmodule Signs.Bus do
     messages =
       [[line1, line2]]
       |> Enum.concat(
-        bridge_message(bridge_status, bridge_enabled?, current_time, predictions, state)
+        bridge_message(bridge_status, bridge_enabled?, current_time, predictions_lookup, state)
       )
       |> paginate_pairs()
 
@@ -298,97 +308,95 @@ defmodule Signs.Bus do
 
   # Platform mode. Display one prediction per route, but if all the predictions are for the
   # same route, then show a single page of two.
-  defp platform_mode_content([], [], alert_status, _, _, _, _)
-       when alert_status in [:station_closure, :suspension_closed_station] do
-    no_service_content()
-  end
-
   defp platform_mode_content(
-         predictions,
-         extra_audio_predictions,
-         _alert_status,
+         predictions_lookup,
+         alert_status,
          current_time,
          bridge_status,
          bridge_enabled?,
          state
        ) do
-    messages =
-      case Enum.uniq_by(predictions, &route_key(&1)) do
-        [_] -> Enum.take(predictions, 2)
-        list -> list
-      end
-      |> Stream.chunk_every(2, 2, [nil])
-      |> Stream.map(fn [first, second] ->
-        [
-          format_prediction(first, second, current_time),
-          format_prediction(second, first, current_time)
-        ]
-      end)
-      |> Enum.concat(
-        bridge_message(bridge_status, bridge_enabled?, current_time, predictions, state)
-      )
-      |> paginate_pairs()
-
+    %{configs: configs, extra_audio_configs: extra_audio_configs} = state
+    content = configs_content(configs, predictions_lookup)
     # Special case: Nubian platform E has two separate text zones, but only one audio zone due
     # to close proximity. One sign process is configured to read out the other sign's prediction
     # list in addition to its own, while the other one stays silent.
-    audio_predictions = predictions ++ extra_audio_predictions
+    audio_content = content ++ configs_content(extra_audio_configs, predictions_lookup)
 
-    audios =
-      case Enum.uniq_by(audio_predictions, &route_key(&1)) do
-        [_] ->
-          Enum.take(audio_predictions, 2)
-          |> Enum.zip_with([:next, :following], &long_prediction_audio(&1, current_time, &2))
+    if {content, audio_content} == {[], []} &&
+         alert_status in [:station_closure, :suspension_closed_station] do
+      no_service_content()
+    else
+      messages =
+        case content do
+          [single] ->
+            format_long_message(single, current_time)
 
-        list ->
-          Enum.map(list, &prediction_audio(&1, current_time))
-          |> add_preamble()
-      end
-      |> Stream.intersperse([:_])
-      |> Stream.concat()
-      |> paginate_audio()
-      |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
+          list ->
+            Stream.chunk_every(list, 2, 2, [nil])
+            |> Stream.map(fn [first, second] ->
+              [
+                format_message(first, second, current_time),
+                format_message(second, first, current_time)
+              ]
+            end)
+        end
+        |> Enum.concat(
+          bridge_message(bridge_status, bridge_enabled?, current_time, predictions_lookup, state)
+        )
+        |> paginate_pairs()
 
-    {messages, audios}
+      audios =
+        case audio_content do
+          [single] ->
+            long_message_audio(single, current_time)
+
+          list ->
+            Enum.map(list, &message_audio(&1, current_time))
+            |> add_preamble()
+        end
+        |> Stream.intersperse([:_])
+        |> Stream.concat()
+        |> paginate_audio()
+        |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
+
+      {messages, audios}
+    end
   end
 
   # Mezzanine mode. Display and paginate each line separately.
-  defp mezzanine_mode_content([], [], alert_status, _, _, _, _)
-       when alert_status in [:station_closure, :suspension_closed_station] do
-    no_service_content()
-  end
-
   defp mezzanine_mode_content(
-         top_predictions,
-         bottom_predictions,
-         _alert_status,
+         predictions_lookup,
+         alert_status,
          current_time,
          bridge_status,
          bridge_enabled?,
          state
        ) do
-    [selected_top_predictions, selected_bottom_predictions] =
-      for predictions_list <- [top_predictions, bottom_predictions] do
-        Enum.uniq_by(predictions_list, &route_key(&1))
-      end
+    %{top_configs: top_configs, bottom_configs: bottom_configs} = state
+    top_content = configs_content(top_configs, predictions_lookup)
+    bottom_content = configs_content(bottom_configs, predictions_lookup)
 
-    messages =
-      for prediction_list <- [selected_top_predictions, selected_bottom_predictions] do
-        prediction_list
-        |> Enum.map(&format_prediction(&1, nil, current_time))
-        |> paginate_message()
-      end
+    if {top_content, bottom_content} == {[], []} &&
+         alert_status in [:station_closure, :suspension_closed_station] do
+      no_service_content()
+    else
+      messages =
+        for content <- [top_content, bottom_content] do
+          Enum.map(content, &format_message(&1, nil, current_time))
+          |> paginate_message()
+        end
 
-    audios =
-      (selected_top_predictions ++ selected_bottom_predictions)
-      |> Enum.map(&prediction_audio(&1, current_time))
-      |> add_preamble()
-      |> Stream.intersperse([:_])
-      |> Stream.concat()
-      |> paginate_audio()
-      |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
+      audios =
+        Enum.map(top_content ++ bottom_content, &message_audio(&1, current_time))
+        |> add_preamble()
+        |> Stream.intersperse([:_])
+        |> Stream.concat()
+        |> paginate_audio()
+        |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
 
-    {messages, audios}
+      {messages, audios}
+    end
   end
 
   defp special_harvard_content() do
@@ -405,6 +413,21 @@ defmodule Signs.Bus do
     messages = paginate_pairs([["No bus service", ""]])
     audios = [%Content.Audio.Custom{message: "No bus service"}]
     {messages, audios}
+  end
+
+  defp configs_content(nil, _), do: []
+
+  defp configs_content(configs, predictions_lookup) do
+    Enum.flat_map(configs, fn config ->
+      Stream.flat_map(config.sources, fn source ->
+        Map.get(predictions_lookup, {source.stop_id, source.route_id, source.direction_id}, [])
+      end)
+      |> Enum.group_by(&PaEss.Utilities.headsign_key(&1.headsign))
+      |> Enum.map(fn {_, list} ->
+        {:predictions, Enum.sort_by(list, & &1.departure_time, DateTime)}
+      end)
+    end)
+    |> Enum.sort_by(fn {:predictions, [first | _]} -> first.departure_time end, DateTime)
   end
 
   # Update the sign if:
@@ -470,15 +493,15 @@ defmodule Signs.Bus do
     bridge_status.raised? && bridge_status_minutes(bridge_status, current_time) > -30
   end
 
-  defp bridge_message(bridge_status, bridge_enabled?, current_time, predictions, state) do
-    %{chelsea_bridge: chelsea_bridge} = state
+  defp bridge_message(bridge_status, bridge_enabled?, current_time, predictions_lookup, state) do
+    %{chelsea_bridge: chelsea_bridge, configs: configs} = state
 
     if bridge_enabled? && chelsea_bridge == "audio_visual" &&
          bridge_status_raised?(bridge_status, current_time) do
       mins = bridge_status_minutes(bridge_status, current_time)
 
       line2 =
-        case {mins > 0, predictions != []} do
+        case {mins > 0, configs_content(configs, predictions_lookup) != []} do
           {true, true} -> "SL3 delays #{mins} more min"
           {true, false} -> "for #{mins} more minutes"
           {false, true} -> "Expect SL3 delays"
@@ -515,12 +538,30 @@ defmodule Signs.Bus do
     end
   end
 
-  defp route_key(prediction) do
-    {PaEss.Utilities.prediction_route_name(prediction),
-     PaEss.Utilities.headsign_key(prediction.headsign)}
+  defp format_message(nil, _, _), do: ""
+
+  defp format_message({:predictions, [first | _]}, other, current_time) do
+    other_prediction =
+      case other do
+        {:predictions, [other_first | _]} -> other_first
+        _ -> nil
+      end
+
+    format_prediction(first, other_prediction, current_time)
   end
 
-  defp format_prediction(nil, _, _), do: ""
+  defp format_long_message({:predictions, [single]}, current_time) do
+    [[format_prediction(single, nil, current_time), ""]]
+  end
+
+  defp format_long_message({:predictions, [first, second | _]}, current_time) do
+    [
+      [
+        format_prediction(first, second, current_time),
+        format_prediction(second, first, current_time)
+      ]
+    ]
+  end
 
   # Returns a string representation of a prediction, suitable for displaying on a sign.
   defp format_prediction(prediction, other, current_time) do
@@ -595,8 +636,8 @@ defmodule Signs.Bus do
   defp add_preamble([]), do: []
   defp add_preamble(items), do: [[:upcoming_departures] | items]
 
-  # Returns a list of audio tokens describing the given prediction.
-  defp prediction_audio(prediction, current_time) do
+  # Returns a list of audio tokens describing the given message.
+  defp message_audio({:predictions, [prediction | _]}, current_time) do
     route =
       case PaEss.Utilities.prediction_route_name(prediction) do
         nil -> []
@@ -617,25 +658,28 @@ defmodule Signs.Bus do
 
   # Returns a list of audio tokens representing the special "long form" description of
   # the given prediction.
-  defp long_prediction_audio(prediction, current_time, next_or_following) do
-    preamble =
-      case {PaEss.Utilities.prediction_route_name(prediction), next_or_following} do
-        {nil, :next} -> [:the_next_bus_to]
-        {nil, :following} -> [:the_following_bus_to]
-        {str, :next} -> [:the_next, {:route, str}, :bus_to]
-        {str, :following} -> [:the_following, {:route, str}, :bus_to]
-      end
+  defp long_message_audio({:predictions, predictions}, current_time) do
+    Stream.take(predictions, 2)
+    |> Enum.zip_with([:next, :following], fn prediction, next_or_following ->
+      preamble =
+        case {PaEss.Utilities.prediction_route_name(prediction), next_or_following} do
+          {nil, :next} -> [:the_next_bus_to]
+          {nil, :following} -> [:the_following_bus_to]
+          {str, :next} -> [:the_next, {:route, str}, :bus_to]
+          {str, :following} -> [:the_following, {:route, str}, :bus_to]
+        end
 
-    dest = [{:headsign, prediction.headsign}]
+      dest = [{:headsign, prediction.headsign}]
 
-    time =
-      case prediction_minutes(prediction, current_time) do
-        0 -> [:is_now_arriving]
-        1 -> [:arrives, :in, {:minutes, 1}, :minute]
-        m -> [:arrives, :in, {:minutes, m}, :minutes]
-      end
+      time =
+        case prediction_minutes(prediction, current_time) do
+          0 -> [:is_now_arriving]
+          1 -> [:arrives, :in, {:minutes, 1}, :minute]
+          m -> [:arrives, :in, {:minutes, m}, :minutes]
+        end
 
-    Enum.concat([preamble, dest, time])
+      Enum.concat([preamble, dest, time])
+    end)
   end
 
   # Turns a list of audio tokens into a list of audio messages, chunking as needed to stay under

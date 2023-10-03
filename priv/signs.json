@@ -7789,7 +7789,7 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true 
+          "announce_boarding": true
         },
         {
           "stop_id": "Union Square-02",
@@ -7800,7 +7800,7 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true 
+          "announce_boarding": true
         }
       ]
     }
@@ -7840,7 +7840,7 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true 
+          "announce_boarding": true
         },
         {
           "stop_id": "Union Square-02",
@@ -7851,7 +7851,7 @@
           "platform": null,
           "terminal": true,
           "announce_arriving": false,
-          "announce_boarding": true 
+          "announce_boarding": true
         }
       ]
     }
@@ -8401,23 +8401,38 @@
       "w"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "74611",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74611",
             "route_id": "741",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "74611",
             "route_id": "742",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "74611",
             "route_id": "743",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "74611",
             "route_id": "746",
             "direction_id": 0
           }
@@ -8437,23 +8452,26 @@
       "w"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "74616",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74616",
             "route_id": "741",
             "direction_id": 1
           },
           {
+            "stop_id": "74616",
             "route_id": "742",
             "direction_id": 1
           },
           {
+            "stop_id": "74616",
             "route_id": "743",
             "direction_id": 1
           },
           {
+            "stop_id": "74616",
             "route_id": "746",
             "direction_id": 1
           }
@@ -8473,23 +8491,38 @@
       "e"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "74612",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74612",
             "route_id": "741",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "74612",
             "route_id": "742",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "74612",
             "route_id": "743",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "74612",
             "route_id": "746",
             "direction_id": 0
           }
@@ -8509,23 +8542,26 @@
       "m"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "74616",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74616",
             "route_id": "741",
             "direction_id": 1
           },
           {
+            "stop_id": "74616",
             "route_id": "742",
             "direction_id": 1
           },
           {
+            "stop_id": "74616",
             "route_id": "743",
             "direction_id": 1
           },
           {
+            "stop_id": "74616",
             "route_id": "746",
             "direction_id": 1
           }
@@ -8545,23 +8581,26 @@
       "w"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "74615",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74615",
             "route_id": "741",
             "direction_id": 1
           },
           {
+            "stop_id": "74615",
             "route_id": "742",
             "direction_id": 1
           },
           {
+            "stop_id": "74615",
             "route_id": "743",
             "direction_id": 1
           },
           {
+            "stop_id": "74615",
             "route_id": "746",
             "direction_id": 1
           }
@@ -8581,23 +8620,38 @@
       "e"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "74613",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74613",
             "route_id": "741",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "74613",
             "route_id": "742",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "74613",
             "route_id": "743",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "74613",
             "route_id": "746",
             "direction_id": 0
           }
@@ -8617,46 +8671,64 @@
       "m"
     ],
     "type": "bus",
-    "top_sources": [
+    "top_configs": [
       {
-        "stop_id": "74615",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74615",
             "route_id": "741",
             "direction_id": 1
           },
           {
+            "stop_id": "74615",
             "route_id": "742",
             "direction_id": 1
           },
           {
+            "stop_id": "74615",
             "route_id": "743",
             "direction_id": 1
           },
           {
+            "stop_id": "74615",
             "route_id": "746",
             "direction_id": 1
           }
         ]
       }
     ],
-    "bottom_sources": [
+    "bottom_configs": [
       {
-        "stop_id": "74613",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74613",
             "route_id": "741",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "74613",
             "route_id": "742",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "74613",
             "route_id": "743",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "74613",
             "route_id": "746",
             "direction_id": 0
           }
@@ -8676,11 +8748,11 @@
       "e"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "74637",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74637",
             "route_id": "743",
             "direction_id": 0
           }
@@ -8700,11 +8772,11 @@
       "w"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "74636",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74636",
             "route_id": "743",
             "direction_id": 1
           }
@@ -8724,11 +8796,11 @@
       "e"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "74635",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74635",
             "route_id": "743",
             "direction_id": 0
           }
@@ -8748,11 +8820,11 @@
       "w"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "74634",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74634",
             "route_id": "743",
             "direction_id": 1
           }
@@ -8772,11 +8844,11 @@
       "e"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "74633",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74633",
             "route_id": "743",
             "direction_id": 0
           }
@@ -8796,11 +8868,11 @@
       "w"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "74632",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74632",
             "route_id": "743",
             "direction_id": 1
           }
@@ -8820,11 +8892,11 @@
       "w"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "74630",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "74630",
             "route_id": "743",
             "direction_id": 1
           }
@@ -8844,27 +8916,31 @@
       "c"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "64000",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "15",
             "direction_id": 1
           },
           {
+            "stop_id": "64000",
             "route_id": "23",
             "direction_id": 1
           },
           {
+            "stop_id": "64000",
             "route_id": "28",
             "direction_id": 1
           },
           {
+            "stop_id": "64000",
             "route_id": "44",
             "direction_id": 1
           },
           {
+            "stop_id": "64000",
             "route_id": "45",
             "direction_id": 1
           }
@@ -8883,23 +8959,38 @@
       "c"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "64000",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "14",
             "direction_id": 1
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "41",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "42",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "66",
             "direction_id": 0
           }
@@ -8918,19 +9009,29 @@
       "n"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "64000",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "15",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "41",
             "direction_id": 1
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "45",
             "direction_id": 0
           }
@@ -8949,50 +9050,85 @@
       "w"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "64",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "64",
             "route_id": "170",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64",
             "route_id": "171",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64",
             "route_id": "749",
             "direction_id": 1
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64",
             "route_id": "751",
             "direction_id": 1
           }
         ]
       }
     ],
-    "extra_audio_sources": [
+    "extra_audio_configs": [
       {
-        "stop_id": "64000",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "14",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "19",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "23",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "28",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "44",
             "direction_id": 0
           }
@@ -9009,27 +9145,47 @@
     "text_zone": "m",
     "audio_zones": [],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "64000",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "14",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "19",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "23",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "28",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64000",
             "route_id": "44",
             "direction_id": 0
           }
@@ -9048,32 +9204,57 @@
       "e"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "64",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "64",
             "route_id": "1",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
-            "route_id": "8",
-            "direction_id": 0
-          },
-          {
-            "route_id": "8",
-            "direction_id": 1
-          },
-          {
+            "stop_id": "64",
             "route_id": "19",
             "direction_id": 1
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64",
             "route_id": "47",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "64",
             "route_id": "47",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "64",
+            "route_id": "8",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "64",
+            "route_id": "8",
             "direction_id": 1
           }
         ]
@@ -9091,23 +9272,38 @@
       "m"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "70500",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "70500",
             "route_id": "69",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "70500",
             "route_id": "80",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "70500",
             "route_id": "87",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "70500",
             "route_id": "88",
             "direction_id": 0
           }
@@ -9126,43 +9322,83 @@
       "n"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "20761",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "20761",
             "route_id": "71",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "20761",
             "route_id": "72",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "20761",
             "route_id": "73",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "20761",
             "route_id": "74",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "20761",
             "route_id": "75",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "20761",
             "route_id": "77",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "20761",
             "route_id": "78",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "20761",
             "route_id": "86",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "20761",
             "route_id": "96",
             "direction_id": 0
           }
@@ -9181,15 +9417,20 @@
       "m"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "2076",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "2076",
             "route_id": "71",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "2076",
             "route_id": "73",
             "direction_id": 0
           }
@@ -9208,41 +9449,76 @@
       "s"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "185",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "185",
             "route_id": "24",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "185",
             "route_id": "24",
             "direction_id": 1
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
-            "route_id": "27",
-            "direction_id": 1
-          },
-          {
-            "route_id": "30",
-            "direction_id": 1
-          },
-          {
-            "route_id": "33",
+            "stop_id": "185",
+            "route_id": "2427",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "185",
+            "route_id": "2427",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "185",
             "route_id": "245",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
-            "route_id": "2427",
-            "direction_id": 0
-          },
-          {
-            "route_id": "2427",
+            "stop_id": "185",
+            "route_id": "27",
             "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "185",
+            "route_id": "30",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "185",
+            "route_id": "33",
+            "direction_id": 0
           }
         ]
       }
@@ -9259,19 +9535,29 @@
       "n"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "18511",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "18511",
             "route_id": "28",
             "direction_id": 1
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "18511",
             "route_id": "29",
             "direction_id": 1
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "18511",
             "route_id": "31",
             "direction_id": 1
           }
@@ -9290,35 +9576,65 @@
       "m"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "5104",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "5104",
             "route_id": "87",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "5104",
             "route_id": "88",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "5104",
             "route_id": "89",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "5104",
             "route_id": "89",
             "direction_id": 1
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "5104",
             "route_id": "90",
             "direction_id": 1
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "5104",
             "route_id": "94",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "5104",
             "route_id": "96",
             "direction_id": 0
           }
@@ -9337,27 +9653,47 @@
       "s"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "10642",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "10642",
             "route_id": "30",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "10642",
             "route_id": "35",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "10642",
             "route_id": "36",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "10642",
             "route_id": "37",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "10642",
             "route_id": "51",
             "direction_id": 0
           }
@@ -9376,31 +9712,56 @@
       "n"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "10642",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "10642",
             "route_id": "34",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "10642",
             "route_id": "34E",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "10642",
             "route_id": "38",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "10642",
             "route_id": "39",
             "direction_id": 1
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "10642",
             "route_id": "40",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "10642",
             "route_id": "50",
             "direction_id": 0
           }
@@ -9419,27 +9780,47 @@
       "n"
     ],
     "type": "bus",
-    "sources": [
+    "configs": [
       {
-        "stop_id": "38671",
-        "routes": [
+        "sources": [
           {
+            "stop_id": "38671",
             "route_id": "226",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "38671",
             "route_id": "230",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "38671",
             "route_id": "230",
             "direction_id": 1
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "38671",
             "route_id": "236",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
+            "stop_id": "38671",
             "route_id": "236",
             "direction_id": 1
           }

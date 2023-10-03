@@ -94,10 +94,10 @@ defmodule Signs.BusTest do
     text_zone: "m",
     audio_zones: ["m"],
     max_minutes: 60,
-    sources: nil,
-    top_sources: nil,
-    bottom_sources: nil,
-    extra_audio_sources: nil,
+    configs: nil,
+    top_configs: nil,
+    bottom_configs: nil,
+    extra_audio_configs: nil,
     chelsea_bridge: nil,
     read_loop_interval: 360,
     read_loop_offset: 30,
@@ -145,12 +145,7 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          sources: [
-            %{
-              stop_id: "stop1",
-              routes: [%{route_id: "14", direction_id: 0}]
-            }
-          ]
+          configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}]
         })
 
       Signs.Bus.handle_info(:run_loop, state)
@@ -186,15 +181,10 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          sources: [
-            %{
-              stop_id: "stop1",
-              routes: [
-                %{route_id: "14", direction_id: 0},
-                %{route_id: "34", direction_id: 1},
-                %{route_id: "741", direction_id: 1}
-              ]
-            }
+          configs: [
+            %{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]},
+            %{sources: [%{stop_id: "stop1", route_id: "34", direction_id: 1}]},
+            %{sources: [%{stop_id: "stop1", route_id: "741", direction_id: 1}]}
           ]
         })
 
@@ -213,18 +203,8 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          top_sources: [
-            %{
-              stop_id: "stop2",
-              routes: [%{route_id: "749", direction_id: 0}]
-            }
-          ],
-          bottom_sources: [
-            %{
-              stop_id: "stop1",
-              routes: [%{route_id: "14", direction_id: 0}]
-            }
-          ]
+          top_configs: [%{sources: [%{stop_id: "stop2", route_id: "749", direction_id: 0}]}],
+          bottom_configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}]
         })
 
       Signs.Bus.handle_info(:run_loop, state)
@@ -245,12 +225,7 @@ defmodule Signs.BusTest do
       state =
         Map.merge(@sign_state, %{
           id: "off_sign",
-          sources: [
-            %{
-              stop_id: "stop1",
-              routes: [%{route_id: "14", direction_id: 0}]
-            }
-          ]
+          configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}]
         })
 
       Signs.Bus.handle_info(:run_loop, state)
@@ -290,12 +265,7 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          sources: [
-            %{
-              stop_id: "stop1",
-              routes: [%{route_id: "14", direction_id: 0}]
-            }
-          ],
+          configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}],
           chelsea_bridge: "audio_visual",
           bridge_engine: FakeChelseaBridgeRaised
         })
@@ -311,12 +281,7 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          sources: [
-            %{
-              stop_id: "stop1",
-              routes: [%{route_id: "14", direction_id: 0}]
-            }
-          ],
+          configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}],
           chelsea_bridge: "audio",
           bridge_engine: FakeChelseaBridgeRaised,
           prev_bridge_status: %{raised?: false, estimate: nil},
@@ -337,7 +302,7 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          sources: [%{stop_id: "stop3", routes: [%{route_id: "99", direction_id: 0}]}]
+          configs: [%{sources: [%{stop_id: "stop3", route_id: "99", direction_id: 0}]}]
         })
 
       Signs.Bus.handle_info(:run_loop, state)
