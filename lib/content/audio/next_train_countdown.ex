@@ -20,6 +20,22 @@ defmodule Content.Audio.NextTrainCountdown do
         }
 
   require Logger
+  alias Content.Message
+
+  def from_message(%Message.Predictions{} = message) do
+    [
+      %__MODULE__{
+        destination: message.destination,
+        route_id: message.route_id,
+        minutes: if(message.minutes == :approaching, do: 1, else: message.minutes),
+        verb: if(message.terminal?, do: :departs, else: :arrives),
+        track_number: Content.Utilities.stop_track_number(message.stop_id),
+        platform: message.platform,
+        station_code: message.station_code,
+        zone: message.zone
+      }
+    ]
+  end
 
   defimpl Content.Audio do
     alias PaEss.Utilities

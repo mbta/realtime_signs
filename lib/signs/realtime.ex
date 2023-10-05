@@ -38,6 +38,11 @@ defmodule Signs.Realtime do
                 announced_approachings: [],
                 announced_approachings_with_crowding: [],
                 announced_passthroughs: [],
+                announced_boardings: [],
+                announced_stalls: [],
+                announced_custom_text: nil,
+                announced_alert: false,
+                prev_prediction_keys: nil,
                 uses_shuttles: true
               ]
 
@@ -68,6 +73,11 @@ defmodule Signs.Realtime do
           announced_approachings: [Predictions.Prediction.trip_id()],
           announced_approachings_with_crowding: [Predictions.Prediction.trip_id()],
           announced_passthroughs: [Predictions.Prediction.trip_id()],
+          announced_boardings: [Predictions.Prediction.trip_id()],
+          announced_stalls: [{Predictions.Prediction.trip_id(), non_neg_integer()}],
+          announced_custom_text: String.t() | nil,
+          prev_prediction_keys: [{String.t(), 0 | 1}] | nil,
+          announced_alert: boolean(),
           uses_shuttles: boolean()
         }
 
@@ -157,10 +167,7 @@ defmodule Signs.Realtime do
       sign
       |> announce_passthrough_trains(predictions)
       |> Utilities.Updater.update_sign(new_top, new_bottom, current_time)
-      |> Utilities.Reader.do_interrupting_reads(
-        sign.current_content_top,
-        sign.current_content_bottom
-      )
+      |> Utilities.Reader.do_announcements()
       |> Utilities.Reader.read_sign()
       |> decrement_ticks()
 

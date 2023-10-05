@@ -35,31 +35,22 @@ defmodule Content.Message.StoppedTrainTest do
     test "parses 'Stopped n stations away' message" do
       prediction = %{@prediction | boarding_status: "Stopped 5 stops away"}
 
-      assert Content.Message.StoppedTrain.from_prediction(prediction) ==
-               %Content.Message.StoppedTrain{
-                 destination: :alewife,
-                 stops_away: 5
-               }
+      assert %Content.Message.StoppedTrain{destination: :alewife, stops_away: 5} =
+               Content.Message.StoppedTrain.from_prediction(prediction)
     end
 
     test "parses singular stop" do
       prediction = %{@prediction | boarding_status: "Stopped 1 stop away"}
 
-      assert Content.Message.StoppedTrain.from_prediction(prediction) ==
-               %Content.Message.StoppedTrain{
-                 destination: :alewife,
-                 stops_away: 1
-               }
+      assert %Content.Message.StoppedTrain{destination: :alewife, stops_away: 1} =
+               Content.Message.StoppedTrain.from_prediction(prediction)
     end
 
     test "parses 2-digit stops" do
       prediction = %{@prediction | boarding_status: "Stopped 10 stops away"}
 
-      assert Content.Message.StoppedTrain.from_prediction(prediction) ==
-               %Content.Message.StoppedTrain{
-                 destination: :alewife,
-                 stops_away: 10
-               }
+      assert %Content.Message.StoppedTrain{destination: :alewife, stops_away: 10} =
+               Content.Message.StoppedTrain.from_prediction(prediction)
     end
 
     test "handles unknown final stop_id" do

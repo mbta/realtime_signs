@@ -4,6 +4,7 @@ defmodule Content.Audio.TrainIsArriving do
   """
 
   require Logger
+  alias Content.Message
   alias PaEss.Utilities
 
   @enforce_keys [:destination]
@@ -16,6 +17,18 @@ defmodule Content.Audio.TrainIsArriving do
           route_id: String.t() | nil,
           crowding_description: {atom(), atom()} | nil
         }
+
+  def from_message(%Message.Predictions{} = message, include_crowding?) do
+    [
+      %__MODULE__{
+        destination: message.destination,
+        trip_id: message.trip_id,
+        platform: message.platform,
+        route_id: message.route_id,
+        crowding_description: if(include_crowding?, do: message.crowding_description)
+      }
+    ]
+  end
 
   defimpl Content.Audio do
     def to_params(
