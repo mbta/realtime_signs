@@ -17,8 +17,11 @@ defmodule RealtimeSignsWeb.MonitoringController do
   Param "date" can be in either YYYY-MM-DD or YYYYMMDD formats
   """
   def run_message_log_job(conn, %{"date" => date} = _params) do
-    Logger.info("Starting job to request and store message logs...")
-    RealtimeSigns.MessageLogJob.get_and_store_logs(date)
+    Task.start(fn ->
+      Logger.info("Starting job to request and store message logs...")
+      RealtimeSigns.MessageLogJob.get_and_store_logs(date)
+    end)
+
     send_resp(conn, 200, "")
   end
 
@@ -29,14 +32,16 @@ defmodule RealtimeSignsWeb.MonitoringController do
   Param "days" is an integer used to tell the job how many days back it should analyze
   """
   def run_message_latency_report(conn, %{"start_date" => start_date, "days" => days} = _params) do
-    Logger.info(
-      "Beginning manual run of message latency report starting from #{start_date} going back #{days} days"
-    )
+    Task.start(fn ->
+      Logger.info(
+        "Beginning manual run of message latency report starting from #{start_date} going back #{days} days"
+      )
 
-    Jobs.MessageLatencyReport.generate_message_latency_reports(
-      Date.from_iso8601!(start_date),
-      String.to_integer(days)
-    )
+      Jobs.MessageLatencyReport.generate_message_latency_reports(
+        Date.from_iso8601!(start_date),
+        String.to_integer(days)
+      )
+    end)
 
     send_resp(conn, 200, "")
   end
