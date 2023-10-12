@@ -111,13 +111,13 @@ defmodule Content.Utilities do
 
   def crowding_description_var(crowding_description) do
     case crowding_description do
-      {:front, _} -> "870"
-      {:back, _} -> "871"
-      {:middle, _} -> "872"
-      {:front_and_back, _} -> "873"
-      {:train_level, :not_crowded} -> "874"
-      {:train_level, :some_crowding} -> "875"
-      {:train_level, :crowded} -> "876"
+      {:front, _, _} -> "870"
+      {:back, _, _} -> "871"
+      {:middle, _, _} -> "872"
+      {:front_and_back, _, _} -> "873"
+      {:train_level, :not_crowded, num_cars} when num_cars != 6 -> "874"
+      {:train_level, :some_crowding, num_cars} when num_cars != 6 -> "875"
+      {:train_level, :crowded, _} -> "876"
       _ -> "21000"
     end
   end
