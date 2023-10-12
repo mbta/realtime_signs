@@ -49,7 +49,7 @@ defmodule Signs.Utilities.SignsConfig do
 
     bus_routes =
       for %{"type" => "bus"} = sign <- config,
-          config_list <- [sign["sources"], sign["top_sources"], sign["bottom_sources"]],
+          config_list <- [sign["configs"], sign["top_configs"], sign["bottom_configs"]],
           config_list,
           %{"sources" => sources} <- config_list,
           %{"route_id" => route_id} <- sources do

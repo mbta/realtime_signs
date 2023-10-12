@@ -84,8 +84,10 @@ defmodule Signs.BusTest do
   end
 
   defmodule FakeAlerts do
-    def max_stop_status(["stop3"], ["99"]), do: :station_closure
-    def max_stop_status(_, _), do: :none
+    def stop_status("stop3"), do: :station_closure
+    def stop_status(_), do: :none
+    def route_status("51"), do: :suspension_closed_station
+    def route_status(_), do: :none
   end
 
   @sign_state %Signs.Bus{
@@ -298,12 +300,45 @@ defmodule Signs.BusTest do
 
     test "no service alert" do
       expect_messages(["No bus service", ""])
-      expect_audios([{:ad_hoc, {"No bus service", :audio}}])
+      expect_audios([{:canned, {"103", ["878"], :audio}}])
 
       state =
         Map.merge(@sign_state, %{
           configs: [%{sources: [%{stop_id: "stop3", route_id: "99", direction_id: 0}]}]
         })
+
+      Signs.Bus.handle_info(:run_loop, state)
+    end
+
+    test "route alert on multi-route sign" do
+      expect_messages(["14 WakefldAv 2 min", "51 Resrvoir no svc"])
+
+      expect_audios([
+        {:canned,
+         {"112", ["548", "21012", "575", "621", "5502", "505", "21012", "687", "4076", "879"],
+          :audio}}
+      ])
+
+      state = %{
+        @sign_state
+        | configs: [
+            %{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]},
+            %{sources: [%{stop_id: "stop1", route_id: "51", direction_id: 0}]}
+          ]
+      }
+
+      Signs.Bus.handle_info(:run_loop, state)
+    end
+
+    test "route alert on single-route sign" do
+      expect_messages(["51 Resrvoir no svc", ""])
+
+      expect_audios([{:canned, {"106", ["880", "687", "877", "4076"], :audio}}])
+
+      state = %{
+        @sign_state
+        | configs: [%{sources: [%{stop_id: "stop1", route_id: "51", direction_id: 0}]}]
+      }
 
       Signs.Bus.handle_info(:run_loop, state)
     end
