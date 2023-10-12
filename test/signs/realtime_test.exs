@@ -708,6 +708,295 @@ defmodule Signs.RealtimeTest do
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | announced_approachings_with_crowding: ["1"]})
     end
+
+    test "reads predictions" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :ashmont, arrival: 120),
+          prediction(destination: :ashmont, arrival: 240)
+        ]
+      end)
+
+      expect_messages({"Ashmont      2 min", "Ashmont      4 min"})
+
+      expect_audios([
+        {:canned, {"90", ["4016", "503", "5002"], :audio}},
+        {:canned, {"160", ["4016", "503", "5004"], :audio}}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
+    end
+
+    test "reads headways" do
+      expect_audios([{:canned, {"184", ["5511", "5513"], :audio}}])
+      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
+    end
+
+    test "reads headways in spanish, if available" do
+      expect_messages({"Chelsea trains", "Every 11 to 13 min"})
+
+      expect_audios([
+        {:canned, {"133", ["5511", "5513"], :audio}},
+        {:canned, {"150", ["37011", "37013"], :audio}}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | tick_read: 0,
+          source_config: %{@sign.source_config | headway_destination: :chelsea}
+      })
+    end
+
+    test "reads mixed predictions and headways" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :ashmont, arrival: 130)]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+
+      expect_messages(
+        {"Ashmont      2 min", [{"Southbound  trains every", 6}, {"Southbound  11 to 13 min", 6}]}
+      )
+
+      expect_audios([
+        {:canned, {"90", ["4016", "503", "5002"], :audio}},
+        {:canned, {"184", ["5511", "5513"], :audio}}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, %{@mezzanine_sign | tick_read: 0})
+    end
+
+    test "reads custom messages" do
+      expect(Engine.Config.Mock, :sign_config, fn _ -> {:static_text, {"custom", "message"}} end)
+      expect_messages({"custom", "message"})
+      expect_audios([{:ad_hoc, {"custom message", :audio}}])
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | tick_read: 0,
+          announced_custom_text: "custom message"
+      })
+    end
+
+    test "reads alerts" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
+      expect_messages({"No train service", "Use shuttle bus"})
+      expect_audios([{:canned, {"199", ["864"], :audio}}])
+      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_alert: true})
+    end
+
+    test "reads approaching" do
+      # Note: This case doesn't come up during normal operation, because non-terminal signs
+      # announce approaching trains, and that announcement delays readouts until after the train
+      # has passed. However, for consistency, we should read approaching trains as "1 minute"
+      # in all cases.
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :ashmont, arrival: 45, trip_id: "1"),
+          prediction(destination: :ashmont, arrival: 130)
+        ]
+      end)
+
+      expect_messages({"Ashmont      1 min", "Ashmont      2 min"})
+
+      expect_audios([
+        {:canned, {"103", ["32127"], :audio_visual}},
+        {:canned, {"160", ["4016", "503", "5002"], :audio}}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_approachings: ["1"]})
+    end
+
+    test "does not read approaching for following trains" do
+      # Note: This behavior exists because we didn't have recorded audio to cover this case at the
+      # time, but we should fix this so it works the same as other readouts.
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :ashmont, arrival: 15, trip_id: "1"),
+          prediction(destination: :ashmont, arrival: 45, trip_id: "2")
+        ]
+      end)
+
+      expect_messages({"Ashmont        ARR", "Ashmont      1 min"})
+      expect_audios([{:canned, {"103", ["32107"], :audio_visual}}])
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | tick_read: 0,
+          announced_arrivals: ["1"],
+          announced_approachings: ["2"]
+      })
+    end
+
+    test "reads approaching as 1 minute when on the bottom line and a different headsign" do
+      # Note: This should be the default behavior for reading approaching trains, rather than a
+      # special case.
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :ashmont, arrival: 0, stops_away: 0, trip_id: "1"),
+          prediction(destination: :braintree, arrival: 45, trip_id: "2")
+        ]
+      end)
+
+      expect_messages({"Ashmont        BRD", "Braintree    1 min"})
+
+      expect_audios([
+        {:canned, {"109", ["501", "21000", "507", "21000", "4016", "21000", "544"], :audio}},
+        {:canned, {"141", ["4021", "503"], :audio}}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | tick_read: 0,
+          announced_arrivals: ["1"],
+          announced_approachings: ["2"]
+      })
+    end
+
+    test "only reads the top line when the top line is arriving and heavy rail" do
+      # Note: This case doesn't come up during normal operation, because non-terminal signs
+      # announce arriving trains, and that announcement delays readouts until after the train
+      # has passed. However, for consistency, we should read the full sign.
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :ashmont, arrival: 15, trip_id: "1"),
+          prediction(destination: :ashmont, arrival: 120)
+        ]
+      end)
+
+      expect_messages({"Ashmont        ARR", "Ashmont      2 min"})
+      expect_audios([{:canned, {"103", ["32107"], :audio_visual}}])
+      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_arrivals: ["1"]})
+    end
+
+    test "only reads the bottom line when the bottom line is arriving on a multi_source sign for heavy rail" do
+      # Note: This case doesn't come up during normal operation, because non-terminal signs
+      # announce arriving trains, and that announcement delays readouts until after the train
+      # has passed. However, for consistency, we should read the full sign.
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :ashmont, arrival: 120)]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :alewife, arrival: 15, trip_id: "1")]
+      end)
+
+      expect_messages({"Ashmont      2 min", "Alewife        ARR"})
+      expect_audios([{:canned, {"103", ["32104"], :audio_visual}}])
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @mezzanine_sign
+        | tick_read: 0,
+          announced_arrivals: ["1"]
+      })
+    end
+
+    test "doesn't read stopped message for following trains" do
+      # Note: This behavior exists because we didn't have recorded audio to cover this case at the
+      # time, but we should fix this so it works the same as other readouts.
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :ashmont, arrival: 120, stopped: 3, trip_id: "1"),
+          prediction(destination: :ashmont, arrival: 130, stopped: 4, trip_id: "2")
+        ]
+      end)
+
+      expect_messages(
+        {[{"Ashmont    Stopped", 6}, {"Ashmont    3 stops", 6}, {"Ashmont       away", 6}],
+         [{"Ashmont    Stopped", 6}, {"Ashmont    4 stops", 6}, {"Ashmont       away", 6}]}
+      )
+
+      expect_audios([
+        {:canned,
+         {"115",
+          [
+            "501",
+            "21000",
+            "507",
+            "21000",
+            "4016",
+            "21000",
+            "533",
+            "21000",
+            "641",
+            "21000",
+            "5003",
+            "21000",
+            "534"
+          ], :audio}}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_stalls: ["1", "2"]})
+    end
+
+    test "doesn't read predictions after stopped message" do
+      # Note: This should be changed to read both messages, so it's consistent with other cases.
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :ashmont, arrival: 120, stopped: 3, trip_id: "1"),
+          prediction(destination: :ashmont, arrival: 130)
+        ]
+      end)
+
+      expect_messages(
+        {[{"Ashmont    Stopped", 6}, {"Ashmont    3 stops", 6}, {"Ashmont       away", 6}],
+         "Ashmont      2 min"}
+      )
+
+      expect_audios([
+        {:canned,
+         {"115",
+          [
+            "501",
+            "21000",
+            "507",
+            "21000",
+            "4016",
+            "21000",
+            "533",
+            "21000",
+            "641",
+            "21000",
+            "5003",
+            "21000",
+            "534"
+          ], :audio}}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_stalls: ["1"]})
+    end
+
+    test "JFK mezzanine special case" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
+      end)
+
+      expect_messages(
+        {[{"Alewife      4 min", 6}, {"Northbound trains", 6}],
+         [{"on Ashmont platform", 6}, {"Every 11 to 13 min", 6}]}
+      )
+
+      expect_audios([
+        {:canned, {"98", ["4000", "503", "5004", "4016"], :audio}},
+        {:canned, {"183", ["5511", "5513"], :audio}}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | text_id: {"RJFK", "m"},
+          source_config: {
+            %{sources: [@src], headway_group: "group", headway_destination: :northbound},
+            %{
+              sources: [%{@src | stop_id: "70086", direction_id: 1, platform: :ashmont}],
+              headway_group: "group",
+              headway_destination: :southbound
+            }
+          },
+          tick_read: 0
+      })
+    end
   end
 
   describe "decrement_ticks/1" do
