@@ -115,7 +115,7 @@ defmodule Content.Utilities do
       {:back, _} -> "871"
       {:middle, _} -> "872"
       {:front_and_back, _} -> "873"
-      {:train_level, :crowded, _} -> "876"
+      {:train_level, :crowded} -> "876"
       _ -> "21000"
     end
   end
