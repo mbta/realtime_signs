@@ -206,10 +206,9 @@ defmodule Content.Message.Predictions do
           else: :f
       end
 
-    num_cars_min_crowding = Enum.count(relative_crowding_levels, &Kernel.==(&1, :e))
-
-    {get_emptier_location({num_cars_min_crowding, relative_crowding_levels}),
-     crowding_level_to_atom(min_crowding_level), num_cars_min_crowding}
+    {get_emptier_location(
+       {Enum.count(relative_crowding_levels, &Kernel.==(&1, :e)), relative_crowding_levels}
+     ), crowding_level_to_atom(min_crowding_level)}
   end
 
   defp occupancy_status_to_crowding_level(occupancy_status) do
