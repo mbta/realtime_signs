@@ -227,7 +227,6 @@ defmodule Content.Message.Predictions do
       3 -> :crowded
       4 -> :unknown_crowding
     end
-    |> IO.inspect()
   end
 
   defp get_emptier_location(car_crowding_levels) do
