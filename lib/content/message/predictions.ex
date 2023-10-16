@@ -195,7 +195,7 @@ defmodule Content.Message.Predictions do
 
   defp get_crowding_description(carriage_details) do
     crowding_levels =
-      Enum.map(carriage_details, &occupancy_status_to_crowding_level(&1.occupancy_status))
+      Enum.map(carriage_details, &occupancy_percentage_to_crowding_level(&1.occupancy_percentage))
 
     min_crowding_level = Enum.min(crowding_levels)
 
@@ -211,14 +211,12 @@ defmodule Content.Message.Predictions do
      ), crowding_level_to_atom(min_crowding_level)}
   end
 
-  defp occupancy_status_to_crowding_level(occupancy_status) do
-    case occupancy_status do
-      :many_seats_available -> 1
-      :few_seats_available -> 1
-      :standing_room_only -> 2
-      :crushed_standing_room_only -> 3
-      :full -> 3
-      _ -> 4
+  defp occupancy_percentage_to_crowding_level(occupancy_percentage) do
+    cond do
+      occupancy_percentage <= 12 -> 1
+      occupancy_percentage <= 40 -> 2
+      occupancy_percentage > 40 -> 3
+      occupancy_percentage == nil -> 4
     end
   end
 
@@ -227,7 +225,7 @@ defmodule Content.Message.Predictions do
       1 -> :not_crowded
       2 -> :some_crowding
       3 -> :crowded
-      4 -> :unknown_croding
+      4 -> :unknown_crowding
     end
   end
 
