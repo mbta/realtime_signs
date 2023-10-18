@@ -10,9 +10,8 @@ defmodule Engine.ScheduledHeadways do
   require Signs.Utilities.SignsConfig
 
   @type state :: %{
-          headways_ets_table: term(),
           first_last_departures_ets_table: term(),
-          schedule_data: %{String.t() => [Headway.HeadwayDisplay.schedule_map()]},
+          schedule_data: %{String.t() => [map]},
           fetcher: module(),
           fetch_ms: integer(),
           fetch_chunk_size: integer(),
@@ -37,8 +36,6 @@ defmodule Engine.ScheduledHeadways do
 
   @impl true
   def init(opts) do
-    headways_ets_table = opts[:headways_ets_table] || :scheduled_headways
-
     first_last_departures_ets_table =
       opts[:first_last_departures_ets_table] || :scheduled_headways_first_last_departures
 
@@ -51,9 +48,6 @@ defmodule Engine.ScheduledHeadways do
       opts[:time_fetcher] ||
         fn -> Timex.shift(Timex.now(), milliseconds: div(headway_calc_ms, 2)) end
 
-    ^headways_ets_table =
-      :ets.new(headways_ets_table, [:set, :protected, :named_table, read_concurrency: true])
-
     ^first_last_departures_ets_table =
       :ets.new(first_last_departures_ets_table, [
         :set,
@@ -63,7 +57,6 @@ defmodule Engine.ScheduledHeadways do
       ])
 
     state = %{
-      headways_ets_table: headways_ets_table,
       first_last_departures_ets_table: first_last_departures_ets_table,
       schedule_data: %{},
       fetcher: fetcher,
@@ -74,19 +67,9 @@ defmodule Engine.ScheduledHeadways do
       time_fetcher: time_fetcher
     }
 
-    :ets.insert(headways_ets_table, Enum.map(state.stop_ids, fn x -> {x, :none} end))
-
     send(self(), :data_update)
-    send(self(), :calculation_update)
 
     {:ok, state}
-  end
-
-  @spec get_headways(:ets.tab(), String.t()) :: Headway.HeadwayDisplay.headway_range()
-  def get_headways(table_name \\ :scheduled_headways, stop_id) do
-    [{_stop_id, headways}] = :ets.lookup(table_name, stop_id)
-
-    headways
   end
 
   @spec get_first_last_departures(:ets.tab(), [String.t()]) ::
@@ -155,12 +138,6 @@ defmodule Engine.ScheduledHeadways do
     {:noreply, update_schedule_data(state)}
   end
 
-  def handle_info(:calculation_update, state) do
-    schedule_calculation_update(self(), state.headway_calc_ms)
-
-    {:noreply, update_headway_data(state)}
-  end
-
   def handle_info(msg, state) do
     Logger.warn("#{__MODULE__} unknown message: #{inspect(msg)}")
     {:noreply, state}
@@ -169,11 +146,6 @@ defmodule Engine.ScheduledHeadways do
   @spec schedule_data_update(pid(), integer()) :: reference()
   defp schedule_data_update(pid, fetch_ms) do
     Process.send_after(pid, :data_update, fetch_ms)
-  end
-
-  @spec schedule_calculation_update(pid(), integer()) :: reference()
-  defp schedule_calculation_update(pid, headway_calc_ms) do
-    Process.send_after(pid, :calculation_update, headway_calc_ms)
   end
 
   @spec update_schedule_data(state()) :: state()
@@ -206,29 +178,7 @@ defmodule Engine.ScheduledHeadways do
     Map.put(state, :schedule_data, new_schedule_data)
   end
 
-  @spec update_headway_data(state()) :: state()
-  defp update_headway_data(state) do
-    headway_calculator = Application.get_env(:realtime_signs, :headway_calculator)
-
-    headways =
-      headway_calculator.group_headways_for_stations(
-        state.schedule_data,
-        state.stop_ids,
-        state.time_fetcher.()
-      )
-
-    headways =
-      state.stop_ids
-      |> Enum.map(fn x -> {x, :none} end)
-      |> Map.new()
-      |> Map.merge(headways)
-
-    :ets.insert(state.headways_ets_table, headways |> Enum.into([]))
-
-    state
-  end
-
-  @spec build_first_last_departures_map(%{String.t() => [Headway.HeadwayDisplay.schedule_map()]}) ::
+  @spec build_first_last_departures_map(%{String.t() => [map]}) ::
           %{String.t() => %{first_departure: DateTime.t(), last_departure: DateTime.t()}}
   defp build_first_last_departures_map(schedule_data) do
     stop_time_map = build_stop_time_map(schedule_data)
@@ -256,7 +206,7 @@ defmodule Engine.ScheduledHeadways do
     end)
   end
 
-  @spec build_stop_time_map(%{String.t() => [Headway.HeadwayDisplay.schedule_map()]}) :: %{
+  @spec build_stop_time_map(%{String.t() => [map]}) :: %{
           String.t() => {DateTime.t() | nil, DateTime.t() | nil}
         }
   defp build_stop_time_map(schedule_data) do

@@ -76,40 +76,6 @@ defmodule Engine.ScheduledHeadwaysTest do
     end
   end
 
-  describe "get_headways/2" do
-    test "returns a tuple of the min and max headway" do
-      headways_ets_table = :engine_headways_test_get_headways
-      first_last_departures_ets_table = :engine_first_last_departures_test_get_headways
-
-      ^headways_ets_table = :ets.new(headways_ets_table, @ets_table_params)
-
-      ^first_last_departures_ets_table =
-        :ets.new(first_last_departures_ets_table, [
-          :set,
-          :protected,
-          :named_table,
-          read_concurrency: true
-        ])
-
-      state = %{
-        headways_ets_table: headways_ets_table,
-        first_last_departures_ets_table: first_last_departures_ets_table,
-        schedule_data: %{},
-        fetcher: FakeScheduleFetcher,
-        fetch_ms: 30_000,
-        fetch_chunk_size: 20,
-        headway_calc_ms: 30_000,
-        stop_ids: ["123"],
-        time_fetcher: fn -> Timex.to_datetime(~N[2017-07-04 09:00:00], "America/New_York") end
-      }
-
-      {:noreply, state} = Engine.ScheduledHeadways.handle_info(:data_update, state)
-      {:noreply, state} = Engine.ScheduledHeadways.handle_info(:calculation_update, state)
-
-      assert Engine.ScheduledHeadways.get_headways(state.headways_ets_table, "123") == {10, 17}
-    end
-  end
-
   describe "get_first_last_departures/2" do
     test "returns a tuple of the first and last departure" do
       headways_ets_table = :engine_headways_test_get_headways

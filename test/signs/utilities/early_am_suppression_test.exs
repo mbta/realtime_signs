@@ -144,7 +144,7 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
                @platform_sign
              ) ==
                {%Content.Message.Headways.Top{destination: :southbound, vehicle_type: :train},
-                %Content.Message.Headways.Bottom{prev_departure_mins: nil, range: {8, 10}}}
+                %Content.Message.Headways.Bottom{range: {8, 10}}}
     end
 
     test "When sign in partial am suppression, no valid predictions, but not within range of upper headway, show timestamp" do
@@ -244,7 +244,7 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
                      %Content.Message.EarlyAm.ScheduledTime{
                        scheduled_time: ~U[2023-07-14 09:00:00Z]
                      },
-                     %Content.Message.Headways.Bottom{prev_departure_mins: nil, range: {8, 10}}
+                     %Content.Message.Headways.Bottom{range: {8, 10}}
                    ]
                  }
                }
@@ -269,7 +269,7 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
                   destination: :alewife,
                   vehicle_type: :train,
                   routes: ["Red"]
-                }, %Content.Message.Headways.Bottom{prev_departure_mins: nil, range: {8, 10}}}
+                }, %Content.Message.Headways.Bottom{range: {8, 10}}}
     end
 
     test "One line showing prediction, one line default to paging headway" do
@@ -423,7 +423,7 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
                  },
                  %Content.Message.GenericPaging{
                    messages: [
-                     %Content.Message.Headways.Bottom{prev_departure_mins: nil, range: {8, 10}},
+                     %Content.Message.Headways.Bottom{range: {8, 10}},
                      %Content.Message.PlatformPredictionBottom{minutes: 4, stop_id: nil}
                    ]
                  }
@@ -465,7 +465,7 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
                   destination: :southbound,
                   routes: ["Red"],
                   vehicle_type: :train
-                }, %Content.Message.Headways.Bottom{prev_departure_mins: nil, range: {8, 10}}}
+                }, %Content.Message.Headways.Bottom{range: {8, 10}}}
     end
 
     test "Valid platform prediction and non suppressed headway gets passed through" do
@@ -516,7 +516,7 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
                  },
                  %Content.Message.GenericPaging{
                    messages: [
-                     %Content.Message.Headways.Bottom{prev_departure_mins: nil, range: {8, 10}},
+                     %Content.Message.Headways.Bottom{range: {8, 10}},
                      %Content.Message.PlatformPredictionBottom{
                        destination: nil,
                        minutes: 3,

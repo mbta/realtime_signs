@@ -27,14 +27,12 @@ defmodule Signs.Utilities.Headways do
              vehicle_type: :train
            },
            %Content.Message.Headways.Bottom{
-             range: {headways.range_low, headways.range_high},
-             prev_departure_mins: nil
+             range: {headways.range_low, headways.range_high}
            }}
         else
           {%Content.Message.Headways.Top{destination: destination, vehicle_type: :train},
            %Content.Message.Headways.Bottom{
-             range: {headways.range_low, headways.range_high},
-             prev_departure_mins: nil
+             range: {headways.range_low, headways.range_high}
            }}
         end
     end
