@@ -61,7 +61,7 @@ defmodule Signs.Utilities.Headways do
     with headways when not is_nil(headways) <-
            sign.config_engine.headway_config(headway_group, current_time),
          true <-
-           sign.headway_engine.display_headways?(stop_ids, current_time, headways.range_high) do
+           sign.headway_engine.display_headways?(stop_ids, current_time, headways) do
       headways
     else
       _ -> nil

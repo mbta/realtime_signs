@@ -8,6 +8,7 @@ defmodule Engine.ScheduledHeadways do
   use GenServer
   require Logger
   require Signs.Utilities.SignsConfig
+  alias Engine.Config.Headway
 
   @type state :: %{
           headways_ets_table: term(),
@@ -111,7 +112,7 @@ defmodule Engine.ScheduledHeadways do
         table \\ :scheduled_headways_first_last_departures,
         stop_ids,
         current_time,
-        buffer_mins
+        %Headway{range_high: range_high, range_low: range_low}
       ) do
     first_last_departures = get_first_last_departures(table, stop_ids)
 
@@ -127,7 +128,8 @@ defmodule Engine.ScheduledHeadways do
 
     case {earliest_first, earliest_last} do
       {%DateTime{} = first, %DateTime{} = last} ->
-        first = DateTime.add(first, -1 * buffer_mins * 60)
+        first = DateTime.add(first, -1 * range_high * 60)
+        last = DateTime.add(last, -1 * range_low * 60)
 
         DateTime.compare(current_time, first) == :gt and
           DateTime.compare(current_time, last) == :lt
