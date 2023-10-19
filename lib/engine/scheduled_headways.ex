@@ -128,8 +128,8 @@ defmodule Engine.ScheduledHeadways do
 
     case {earliest_first, earliest_last} do
       {%DateTime{} = first, %DateTime{} = last} ->
-        first = DateTime.add(first, -1 * range_high * 60)
-        last = DateTime.add(last, -1 * range_low * 60)
+        first = DateTime.add(first, -1 * (range_high + 1) * 60)
+        last = DateTime.add(last, -1 * (range_low - 1) * 60)
 
         DateTime.compare(current_time, first) == :gt and
           DateTime.compare(current_time, last) == :lt
