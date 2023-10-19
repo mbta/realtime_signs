@@ -43,6 +43,7 @@ defmodule Signs.Realtime do
                 announced_custom_text: nil,
                 announced_alert: false,
                 prev_prediction_keys: nil,
+                prev_predictions: [],
                 uses_shuttles: true
               ]
 
@@ -78,6 +79,7 @@ defmodule Signs.Realtime do
           announced_custom_text: String.t() | nil,
           prev_prediction_keys: [{String.t(), 0 | 1}] | nil,
           announced_alert: boolean(),
+          prev_predictions: [Predictions.Prediction.t()],
           uses_shuttles: boolean()
         }
 
@@ -147,10 +149,21 @@ defmodule Signs.Realtime do
            source.headway_destination}
       end
 
-    predictions =
+    prev_predictions_lookup =
+      for prediction <- sign.prev_predictions, into: %{} do
+        {prediction_key(prediction), prediction}
+      end
+
+    {predictions, all_predictions} =
       case sign.source_config do
-        {top, bottom} -> {fetch_predictions(top, sign), fetch_predictions(bottom, sign)}
-        config -> fetch_predictions(config, sign)
+        {top, bottom} ->
+          top_predictions = fetch_predictions(top, prev_predictions_lookup, sign)
+          bottom_predictions = fetch_predictions(bottom, prev_predictions_lookup, sign)
+          {{top_predictions, bottom_predictions}, top_predictions ++ bottom_predictions}
+
+        config ->
+          predictions = fetch_predictions(config, prev_predictions_lookup, sign)
+          {predictions, predictions}
       end
 
     {new_top, new_bottom} =
@@ -170,6 +183,7 @@ defmodule Signs.Realtime do
       |> Utilities.Reader.do_announcements()
       |> Utilities.Reader.read_sign()
       |> decrement_ticks()
+      |> Map.put(:prev_predictions, all_predictions)
 
     schedule_run_loop(self())
     {:noreply, sign}
@@ -184,10 +198,32 @@ defmodule Signs.Realtime do
     Process.send_after(pid, :run_loop, 1_000)
   end
 
-  defp fetch_predictions(%{sources: sources}, state) do
-    Enum.flat_map(sources, fn source ->
-      state.prediction_engine.for_stop(source.stop_id, source.direction_id)
-    end)
+  defp prediction_key(prediction) do
+    Map.take(prediction, [:stop_id, :route_id, :vehicle_id, :direction_id, :trip_id])
+  end
+
+  defp fetch_predictions(%{sources: sources}, prev_predictions_lookup, state) do
+    for source <- sources,
+        prediction <- state.prediction_engine.for_stop(source.stop_id, source.direction_id) do
+      prev = prev_predictions_lookup[prediction_key(prediction)]
+
+      prediction
+      |> prevent_countup(prev, :seconds_until_arrival)
+      |> prevent_countup(prev, :seconds_until_departure)
+    end
+  end
+
+  defp prevent_countup(prediction, nil, _), do: prediction
+
+  defp prevent_countup(prediction, prev, key) do
+    seconds = Map.get(prediction, key)
+    prev_seconds = Map.get(prev, key)
+
+    if seconds && prev_seconds && round(seconds / 60) == round(prev_seconds / 60) + 1 do
+      Map.put(prediction, key, Map.get(prev, key))
+    else
+      prediction
+    end
   end
 
   @spec announce_passthrough_trains(Signs.Realtime.t(), predictions()) :: Signs.Realtime.t()

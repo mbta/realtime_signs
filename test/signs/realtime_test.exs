@@ -997,6 +997,19 @@ defmodule Signs.RealtimeTest do
           tick_read: 0
       })
     end
+
+    test "prevents showing predictions that count up by 1" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 180, destination: :ashmont)]
+      end)
+
+      expect_messages({"Ashmont      2 min", ""})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | prev_predictions: [prediction(arrival: 120, destination: :ashmont)]
+      })
+    end
   end
 
   describe "decrement_ticks/1" do
@@ -1074,7 +1087,7 @@ defmodule Signs.RealtimeTest do
       boarding_status: Keyword.get(opts, :boarding_status),
       new_cars?: false,
       revenue_trip?: true,
-      vehicle_id: nil
+      vehicle_id: "v1"
     }
   end
 
