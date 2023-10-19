@@ -8,7 +8,6 @@ defmodule Engine.ScheduledHeadways do
   use GenServer
   require Logger
   require Signs.Utilities.SignsConfig
-  alias Engine.Config.Headway
 
   @type state :: %{
           headways_ets_table: term(),
@@ -112,7 +111,7 @@ defmodule Engine.ScheduledHeadways do
         table \\ :scheduled_headways_first_last_departures,
         stop_ids,
         current_time,
-        %Headway{range_high: range_high, range_low: range_low}
+        %Engine.Config.Headway{range_high: range_high, range_low: range_low}
       ) do
     first_last_departures = get_first_last_departures(table, stop_ids)
 
