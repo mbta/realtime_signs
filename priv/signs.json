@@ -6483,7 +6483,6 @@
             "stop_id": "70150",
             "direction_id": 1,
             "routes": [
-              "Green-B",
               "Green-C",
               "Green-D"
             ],
@@ -6496,9 +6495,7 @@
             "stop_id": "71150",
             "direction_id": 1,
             "routes": [
-              "Green-B",
-              "Green-C",
-              "Green-D"
+              "Green-B"
             ],
             "platform": null,
             "terminal": false,
@@ -6515,7 +6512,6 @@
             "stop_id": "70151",
             "direction_id": 0,
             "routes": [
-              "Green-B",
               "Green-C",
               "Green-D"
             ],
@@ -6528,9 +6524,7 @@
             "stop_id": "71151",
             "direction_id": 0,
             "routes": [
-              "Green-B",
-              "Green-C",
-              "Green-D"
+              "Green-B"
             ],
             "platform": null,
             "terminal": false,
