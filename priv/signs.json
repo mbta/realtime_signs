@@ -7135,10 +7135,7 @@
           "direction_id": 0,
           "platform": null,
           "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
+            "Green-D"
           ],
           "terminal": false,
           "announce_arriving": false,
@@ -7150,9 +7147,6 @@
           "direction_id": 0,
           "platform": null,
           "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
             "Green-E"
           ],
           "terminal": false,
@@ -7180,10 +7174,7 @@
           "stop_id": "70196",
           "direction_id": 0,
           "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
+            "Green-B"
           ],
           "platform": null,
           "terminal": false,
@@ -7195,10 +7186,7 @@
           "stop_id": "70197",
           "direction_id": 0,
           "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
+            "Green-C"
           ],
           "platform": null,
           "terminal": false,
