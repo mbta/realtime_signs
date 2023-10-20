@@ -3,7 +3,7 @@ defmodule Content.Message.Headways.Paging do
 
   @type t :: %__MODULE__{
           destination: PaEss.destination() | nil,
-          range: Headway.HeadwayDisplay.headway_range() | nil
+          range: {non_neg_integer(), non_neg_integer()}
         }
 
   defimpl Content.Message do
