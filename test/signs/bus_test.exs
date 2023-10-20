@@ -90,6 +90,10 @@ defmodule Signs.BusTest do
     def route_status(_), do: :none
   end
 
+  defmodule FakeRoutes do
+    def route_destination("51", 0), do: "Reservoir Station"
+  end
+
   @sign_state %Signs.Bus{
     id: "auto_sign",
     pa_ess_loc: "ABCD",
@@ -107,6 +111,7 @@ defmodule Signs.BusTest do
     prediction_engine: FakeBusPredictions,
     bridge_engine: FakeChelseaBridge,
     alerts_engine: FakeAlerts,
+    routes_engine: FakeRoutes,
     sign_updater: PaEss.Updater.Mock,
     prev_predictions: [],
     prev_bridge_status: nil,

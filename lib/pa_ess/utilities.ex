@@ -452,116 +452,6 @@ defmodule PaEss.Utilities do
     )
   end
 
-  @spec bus_route_destination(String.t(), 0 | 1) :: String.t()
-  def bus_route_destination("1", 0), do: "Harvard Square"
-  def bus_route_destination("1", 1), do: "Nubian Station"
-  def bus_route_destination("8", 0), do: "Harbor Point"
-  def bus_route_destination("8", 1), do: "Kenmore Station"
-  def bus_route_destination("14", 0), do: "Roslindale Square"
-  def bus_route_destination("14", 1), do: "Heath Street"
-  def bus_route_destination("15", 0), do: "Fields Corner Station or Kane Square"
-  def bus_route_destination("15", 1), do: "Ruggles Station"
-  def bus_route_destination("19", 0), do: "Fields Corner Station"
-  def bus_route_destination("19", 1), do: "Kenmore or Ruggles Station"
-  def bus_route_destination("23", 0), do: "Ashmont Station"
-  def bus_route_destination("23", 1), do: "Ruggles Station"
-  def bus_route_destination("24", 0), do: "Wakefield Avenue & Truman Parkway"
-  def bus_route_destination("24", 1), do: "Ashmont Station"
-  def bus_route_destination("28", 0), do: "Mattapan Station"
-  def bus_route_destination("28", 1), do: "Ruggles Station"
-  def bus_route_destination("29", 0), do: "Mattapan Station"
-  def bus_route_destination("29", 1), do: "Jackson Square Station"
-  def bus_route_destination("30", 0), do: "Mattapan Station"
-  def bus_route_destination("30", 1), do: "Forest Hills Station"
-  def bus_route_destination("31", 0), do: "Mattapan Station"
-  def bus_route_destination("31", 1), do: "Forest Hills Station"
-  def bus_route_destination("33", 0), do: "River Street & Milton Street"
-  def bus_route_destination("33", 1), do: "Mattapan Station"
-  def bus_route_destination("34", 0), do: "Dedham Square"
-  def bus_route_destination("34", 1), do: "Forest Hills Station"
-  def bus_route_destination("34E", 0), do: "Walpole Center"
-  def bus_route_destination("34E", 1), do: "Forest Hills Station"
-  def bus_route_destination("35", 0), do: "Dedham Mall or Stimson Street"
-  def bus_route_destination("35", 1), do: "Forest Hills Station"
-  def bus_route_destination("36", 0), do: "Millennium Park or VA Hospital"
-  def bus_route_destination("36", 1), do: "Forest Hills Station"
-  def bus_route_destination("37", 0), do: "Baker Street & Vermont Street"
-  def bus_route_destination("37", 1), do: "Forest Hills Station"
-  def bus_route_destination("38", 0), do: "Wren Street"
-  def bus_route_destination("38", 1), do: "Forest Hills Station"
-  def bus_route_destination("39", 0), do: "Forest Hills Station"
-  def bus_route_destination("39", 1), do: "Back Bay Station"
-  def bus_route_destination("40", 0), do: "Georgetowne"
-  def bus_route_destination("40", 1), do: "Forest Hills Station"
-  def bus_route_destination("41", 0), do: "Centre Street & Eliot Street"
-  def bus_route_destination("41", 1), do: "JFK/UMass Station"
-  def bus_route_destination("42", 0), do: "Forest Hills Station"
-  def bus_route_destination("42", 1), do: "Nubian Station"
-  def bus_route_destination("44", 0), do: "Jackson Square Station"
-  def bus_route_destination("44", 1), do: "Ruggles Station"
-  def bus_route_destination("45", 0), do: "Franklin Park"
-  def bus_route_destination("45", 1), do: "Ruggles Station"
-  def bus_route_destination("47", 0), do: "Central Square, Cambridge"
-  def bus_route_destination("47", 1), do: "Broadway Station"
-  def bus_route_destination("50", 0), do: "Cleary Square"
-  def bus_route_destination("50", 1), do: "Forest Hills Station"
-  def bus_route_destination("51", 0), do: "Reservoir Station"
-  def bus_route_destination("51", 1), do: "Forest Hills Station"
-  def bus_route_destination("66", 0), do: "Harvard Square"
-  def bus_route_destination("66", 1), do: "Nubian Station"
-  def bus_route_destination("69", 0), do: "Harvard Square"
-  def bus_route_destination("69", 1), do: "Lechmere Station"
-  def bus_route_destination("71", 0), do: "Watertown Square"
-  def bus_route_destination("71", 1), do: "Harvard Station"
-  def bus_route_destination("73", 0), do: "Waverley Square"
-  def bus_route_destination("73", 1), do: "Harvard Station"
-  def bus_route_destination("74", 0), do: "Belmont Center"
-  def bus_route_destination("74", 1), do: "Harvard"
-  def bus_route_destination("75", 0), do: "Belmont Center"
-  def bus_route_destination("75", 1), do: "Harvard"
-  def bus_route_destination("77", 0), do: "Arlington Heights"
-  def bus_route_destination("77", 1), do: "Harvard Station"
-  def bus_route_destination("78", 0), do: "Arlmont Village"
-  def bus_route_destination("78", 1), do: "Harvard Station"
-  def bus_route_destination("80", 0), do: "Arlington Center"
-  def bus_route_destination("80", 1), do: "Lechmere Station"
-  def bus_route_destination("86", 0), do: "Sullivan Square Station"
-  def bus_route_destination("86", 1), do: "Reservoir Station"
-  def bus_route_destination("87", 0), do: "Clarendon Hill or Arlington Center"
-  def bus_route_destination("87", 1), do: "Lechmere Station"
-  def bus_route_destination("88", 0), do: "Clarendon Hill"
-  def bus_route_destination("88", 1), do: "Lechmere Station"
-  def bus_route_destination("89", 0), do: "Clarendon Hill or Davis Station"
-  def bus_route_destination("89", 1), do: "Sullivan Square Station"
-  def bus_route_destination("90", 0), do: "Davis Station"
-  def bus_route_destination("90", 1), do: "Assembly Row"
-  def bus_route_destination("94", 0), do: "Medford Square"
-  def bus_route_destination("94", 1), do: "Davis Station"
-  def bus_route_destination("96", 0), do: "Medford Square"
-  def bus_route_destination("96", 1), do: "Harvard Station"
-  def bus_route_destination("171", 0), do: "Logan Airport Terminals"
-  def bus_route_destination("171", 1), do: "Nubian Station"
-  def bus_route_destination("226", 0), do: "Columbian Square"
-  def bus_route_destination("226", 1), do: "Braintree Station"
-  def bus_route_destination("230", 0), do: "Montello Station"
-  def bus_route_destination("230", 1), do: "Quincy Center Station"
-  def bus_route_destination("236", 0), do: "South Shore Plaza"
-  def bus_route_destination("236", 1), do: "Quincy Center Station"
-  def bus_route_destination("245", 0), do: "Quincy Center Station"
-  def bus_route_destination("245", 1), do: "Mattapan Station"
-  def bus_route_destination("741", 0), do: "Logan Airport Terminals"
-  def bus_route_destination("741", 1), do: "South Station"
-  def bus_route_destination("742", 0), do: "Drydock Avenue"
-  def bus_route_destination("742", 1), do: "South Station"
-  def bus_route_destination("743", 0), do: "Chelsea Station"
-  def bus_route_destination("743", 1), do: "South Station"
-  def bus_route_destination("746", 0), do: "Silver Line Way"
-  def bus_route_destination("746", 1), do: "South Station"
-  def bus_route_destination("749", 0), do: "Nubian Station"
-  def bus_route_destination("749", 1), do: "Temple Place"
-  def bus_route_destination("751", 0), do: "Nubian Station"
-  def bus_route_destination("751", 1), do: "South Station"
-
   @headsign_abbreviation_mappings [
     {"Ruggles", ["Ruggles"]},
     {"Downtown", ["Downtwn", "Downtown"]},
@@ -640,7 +530,9 @@ defmodule PaEss.Utilities do
     {"Silver Line Way", ["Slvr Ln Way"]}
   ]
 
-  @spec headsign_abbreviations(String.t()) :: [String.t()]
+  @spec headsign_abbreviations(String.t() | nil) :: [String.t()]
+  def headsign_abbreviations(nil), do: []
+
   def headsign_abbreviations(headsign) do
     Enum.find_value(@headsign_abbreviation_mappings, [], fn {prefix, abbreviations} ->
       if String.starts_with?(headsign, prefix), do: abbreviations
@@ -848,6 +740,8 @@ defmodule PaEss.Utilities do
   def audio_take({:minutes, minutes}) do
     number_var(minutes, :english) || generic_number_var(minutes)
   end
+
+  def audio_take({:headsign, nil}), do: nil
 
   def audio_take({:headsign, headsign}) do
     Enum.find_value(@headsign_take_mappings, fn {prefix, take} ->

@@ -594,5 +594,9 @@ defmodule Fake.HTTPoison do
     {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(%{data: [], included: []})}}
   end
 
+  def mock_response("https://api-dev-green.mbtace.com/routes" <> _) do
+    {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(%{data: []})}}
+  end
+
   def mock_response(_), do: {:ok, %HTTPoison.Response{status_code: 200, body: ""}}
 end

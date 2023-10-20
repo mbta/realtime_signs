@@ -27,6 +27,7 @@ defmodule Signs.Bus do
     :prediction_engine,
     :bridge_engine,
     :alerts_engine,
+    :routes_engine,
     :sign_updater,
     :prev_predictions,
     :prev_bridge_status,
@@ -54,6 +55,7 @@ defmodule Signs.Bus do
       prediction_engine: opts[:prediction_engine] || Engine.BusPredictions,
       bridge_engine: opts[:bridge_engine] || Engine.ChelseaBridge,
       alerts_engine: opts[:alerts_engine] || Engine.Alerts,
+      routes_engine: Engine.Routes,
       sign_updater: opts[:sign_updater] || MessageQueue,
       prev_predictions: [],
       prev_bridge_status: nil,
@@ -325,14 +327,14 @@ defmodule Signs.Bus do
       messages =
         case content do
           [single] ->
-            format_long_message(single, current_time)
+            format_long_message(single, current_time, state)
 
           list ->
             Stream.chunk_every(list, 2, 2, [nil])
             |> Stream.map(fn [first, second] ->
               [
-                format_message(first, second, current_time),
-                format_message(second, first, current_time)
+                format_message(first, second, current_time, state),
+                format_message(second, first, current_time, state)
               ]
             end)
         end
@@ -351,10 +353,10 @@ defmodule Signs.Bus do
       audios =
         case audio_content do
           [single] ->
-            long_message_audio(single, current_time)
+            long_message_audio(single, current_time, state)
 
           list ->
-            Enum.map(list, &message_audio(&1, current_time))
+            Enum.map(list, &message_audio(&1, current_time, state))
             |> add_preamble()
         end
         |> Stream.intersperse([:_])
@@ -389,12 +391,12 @@ defmodule Signs.Bus do
     else
       messages =
         for content <- [top_content, bottom_content] do
-          Enum.map(content, &format_message(&1, nil, current_time))
+          Enum.map(content, &format_message(&1, nil, current_time, state))
           |> paginate_message()
         end
 
       audios =
-        Enum.map(top_content ++ bottom_content, &message_audio(&1, current_time))
+        Enum.map(top_content ++ bottom_content, &message_audio(&1, current_time, state))
         |> add_preamble()
         |> Stream.intersperse([:_])
         |> Stream.concat()
@@ -588,9 +590,9 @@ defmodule Signs.Bus do
     end
   end
 
-  defp format_message(nil, _, _), do: ""
+  defp format_message(nil, _, _, _state), do: ""
 
-  defp format_message({:predictions, [first | _]}, other, current_time) do
+  defp format_message({:predictions, [first | _]}, other, current_time, _state) do
     other_prediction =
       case other do
         {:predictions, [other_first | _]} -> other_first
@@ -600,7 +602,7 @@ defmodule Signs.Bus do
     format_prediction(first, other_prediction, current_time)
   end
 
-  defp format_message({:alert, config}, _, _) do
+  defp format_message({:alert, config}, _, _, state) do
     %{route_id: route_id, direction_id: direction_id} = config.sources |> List.first()
 
     route =
@@ -612,18 +614,18 @@ defmodule Signs.Bus do
 
     dest =
       headsign_abbreviation(
-        PaEss.Utilities.bus_route_destination(route_id, direction_id),
+        state.routes_engine.route_destination(route_id, direction_id),
         @line_max - String.length(route) - String.length(no_svc) - 1
       )
 
     Content.Utilities.width_padded_string("#{route}#{dest}", no_svc, @line_max)
   end
 
-  defp format_long_message({:predictions, [single]}, current_time) do
+  defp format_long_message({:predictions, [single]}, current_time, _state) do
     [[format_prediction(single, nil, current_time), ""]]
   end
 
-  defp format_long_message({:predictions, [first, second | _]}, current_time) do
+  defp format_long_message({:predictions, [first, second | _]}, current_time, _state) do
     [
       [
         format_prediction(first, second, current_time),
@@ -632,8 +634,8 @@ defmodule Signs.Bus do
     ]
   end
 
-  defp format_long_message({:alert, _} = message, current_time) do
-    [[format_message(message, nil, current_time), ""]]
+  defp format_long_message({:alert, _} = message, current_time, state) do
+    [[format_message(message, nil, current_time, state), ""]]
   end
 
   # Returns a string representation of a prediction, suitable for displaying on a sign.
@@ -673,8 +675,8 @@ defmodule Signs.Bus do
       else: first.route_id
   end
 
-  defp config_headsign(%{sources: [first | _]}) do
-    PaEss.Utilities.bus_route_destination(first.route_id, first.direction_id)
+  defp config_headsign(%{sources: [first | _]}, state) do
+    state.routes_engine.route_destination(first.route_id, first.direction_id)
   end
 
   defp headsign_abbreviation(headsign, max_size) do
@@ -722,7 +724,7 @@ defmodule Signs.Bus do
   defp add_preamble(items), do: [[:upcoming_departures] | items]
 
   # Returns a list of audio tokens describing the given message.
-  defp message_audio({:predictions, [prediction | _]}, current_time) do
+  defp message_audio({:predictions, [prediction | _]}, current_time, _state) do
     route =
       case PaEss.Utilities.prediction_route_name(prediction) do
         nil -> []
@@ -741,21 +743,21 @@ defmodule Signs.Bus do
     Enum.concat([route, dest, time])
   end
 
-  defp message_audio({:alert, config}, _) do
+  defp message_audio({:alert, config}, _, state) do
     route =
       case config_route_name(config) do
         nil -> []
         str -> [{:route, str}]
       end
 
-    headsign = config_headsign(config)
+    headsign = config_headsign(config, state)
 
     route ++ [{:headsign, headsign}, :no_service]
   end
 
   # Returns a list of audio tokens representing the special "long form" description of
   # the given prediction.
-  defp long_message_audio({:predictions, predictions}, current_time) do
+  defp long_message_audio({:predictions, predictions}, current_time, _state) do
     Stream.take(predictions, 2)
     |> Enum.zip_with([:next, :following], fn prediction, next_or_following ->
       preamble =
@@ -779,14 +781,14 @@ defmodule Signs.Bus do
     end)
   end
 
-  defp long_message_audio({:alert, config}, _) do
+  defp long_message_audio({:alert, config}, _, state) do
     route =
       case config_route_name(config) do
         nil -> []
         str -> [{:route, str}]
       end
 
-    headsign = config_headsign(config)
+    headsign = config_headsign(config, state)
 
     [Enum.concat([[:there_is_no], route, [:bus_service_to, {:headsign, headsign}]])]
   end
