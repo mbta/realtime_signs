@@ -99,17 +99,20 @@ defmodule PaEss.HttpUpdater do
     log("update_sign", encoded,
       arinc_ms: arinc_ms,
       signs_ui_ms: signs_ui_ms,
-      top_line: inspect(Content.Message.to_string(top_line)),
-      bottom_line: inspect(Content.Message.to_string(bottom_line)),
+      top_line: inspect(top_line),
+      bottom_line: inspect(bottom_line),
       sign_id: sign_id
     )
 
     result
   end
 
-  def process({:send_audio, [{station, zones}, audios, priority, timeout, sign_id]}, state) do
-    for audio <- audios do
-      process_send_audio(station, zones, audio, priority, timeout, sign_id, state)
+  def process(
+        {:send_audio, [{station, zones}, audios, priority, timeout, sign_id, extra_logs]},
+        state
+      ) do
+    for {audio, extra_logs} <- Enum.zip(audios, extra_logs) do
+      process_send_audio(station, zones, audio, priority, timeout, sign_id, extra_logs, state)
     end
     |> List.last()
   end
@@ -117,23 +120,16 @@ defmodule PaEss.HttpUpdater do
   @spec process_send_audio(
           String.t(),
           [String.t()],
-          Content.Audio.t(),
+          Content.Audio.value(),
           integer(),
           integer(),
           String.t(),
+          list,
           t()
         ) ::
           post_result()
-  defp process_send_audio(
-         station,
-         zones,
-         %{__struct__: struct} = audio,
-         priority,
-         timeout,
-         sign_id,
-         state
-       ) do
-    case Content.Audio.to_params(audio) do
+  defp process_send_audio(station, zones, audio, priority, timeout, sign_id, extra_logs, state) do
+    case audio do
       {:canned, {message_id, vars, type}} ->
         encoded =
           [
@@ -150,12 +146,10 @@ defmodule PaEss.HttpUpdater do
 
         {arinc_ms, signs_ui_ms, result} = send_payload(encoded, state)
 
-        log("send_audio", encoded,
-          arinc_ms: arinc_ms,
-          signs_ui_ms: signs_ui_ms,
-          sign_id: sign_id,
-          message_type: to_string(struct) |> String.split(".") |> List.last(),
-          message_details: Map.from_struct(audio) |> inspect()
+        log(
+          "send_audio",
+          encoded,
+          [arinc_ms: arinc_ms, signs_ui_ms: signs_ui_ms, sign_id: sign_id] ++ extra_logs
         )
 
         result
@@ -175,12 +169,10 @@ defmodule PaEss.HttpUpdater do
 
         {arinc_ms, signs_ui_ms, result} = send_payload(encoded, state)
 
-        log("send_custom_audio", encoded,
-          arinc_ms: arinc_ms,
-          signs_ui_ms: signs_ui_ms,
-          sign_id: sign_id,
-          message_type: to_string(struct) |> String.split(".") |> List.last(),
-          message_details: Map.from_struct(audio) |> inspect()
+        log(
+          "send_custom_audio",
+          encoded,
+          [arinc_ms: arinc_ms, signs_ui_ms: signs_ui_ms, sign_id: sign_id] ++ extra_logs
         )
 
         result
@@ -208,7 +200,7 @@ defmodule PaEss.HttpUpdater do
   end
 
   @spec to_command(
-          Content.Message.t(),
+          Content.Message.value(),
           non_neg_integer(),
           non_neg_integer() | :now,
           String.t(),
@@ -226,9 +218,9 @@ defmodule PaEss.HttpUpdater do
   defp start_display(:now), do: ""
   defp start_display(seconds_from_midnight), do: "t#{seconds_from_midnight}"
 
-  @spec message_display(Content.Message.t()) :: String.t()
-  defp message_display(msg) when is_map(msg) do
-    case Content.Message.to_string(msg) do
+  @spec message_display(Content.Message.value()) :: String.t()
+  defp message_display(msg) do
+    case msg do
       str when is_binary(str) ->
         ~s(-"#{str}")
 

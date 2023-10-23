@@ -292,10 +292,7 @@ defmodule Signs.BusTest do
           chelsea_bridge: "audio",
           bridge_engine: FakeChelseaBridgeRaised,
           prev_bridge_status: %{raised?: false, estimate: nil},
-          current_messages: {
-            %Content.Message.BusPredictions{message: "14 WakfldAv  2 min"},
-            %Content.Message.BusPredictions{message: "14 WakfldAv 11 min"}
-          },
+          current_messages: {"14 WakfldAv  2 min", "14 WakfldAv 11 min"},
           last_update: Timex.shift(Timex.now(), seconds: -40),
           last_read_time: Timex.now()
         })
@@ -351,14 +348,14 @@ defmodule Signs.BusTest do
 
   defp expect_messages(messages) do
     expect(PaEss.Updater.Mock, :update_sign, fn {"ABCD", "m"}, top, bottom, 180, :now, _sign_id ->
-      assert [Content.Message.to_string(top), Content.Message.to_string(bottom)] == messages
+      assert [top, bottom] == messages
       :ok
     end)
   end
 
   defp expect_audios(audios) do
-    expect(PaEss.Updater.Mock, :send_audio, fn {"ABCD", ["m"]}, list, 5, 180, _sign_id ->
-      assert Enum.map(list, &Content.Audio.to_params(&1)) == audios
+    expect(PaEss.Updater.Mock, :send_audio, fn {"ABCD", ["m"]}, list, 5, 180, _sign_id, _ ->
+      assert list == audios
       :ok
     end)
   end

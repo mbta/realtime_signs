@@ -7,10 +7,11 @@ defmodule PaEss.Updater do
                  start: integer() | :now,
                  sign_id: String.t()
 
-  @callback send_audio(PaEss.audio_id(), audios, priority, timeout, sign_id) ::
+  @callback send_audio(PaEss.audio_id(), audios, priority, timeout, sign_id, extra_logs) ::
               {:ok, :sent} | {:error, any()}
             when priority: integer(),
                  timeout: integer(),
                  audios: [Content.Audio.t()],
-                 sign_id: String.t()
+                 sign_id: String.t(),
+                 extra_logs: list
 end

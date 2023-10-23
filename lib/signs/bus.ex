@@ -138,7 +138,7 @@ defmodule Signs.Bus do
     {[top, bottom], audios} =
       cond do
         config == :off ->
-          {[Content.Message.Empty.new(), Content.Message.Empty.new()], []}
+          {["", ""], []}
 
         match?({:static_text, _}, config) ->
           static_text_content(
@@ -292,7 +292,7 @@ defmodule Signs.Bus do
       |> paginate_pairs()
 
     audios =
-      [%Content.Audio.Custom{message: "#{line1} #{line2}"}]
+      [{:ad_hoc, {"#{line1} #{line2}", :audio}}]
       |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
 
     {messages, audios}
@@ -408,11 +408,7 @@ defmodule Signs.Bus do
   end
 
   defp special_harvard_content() do
-    messages = [
-      Content.Message.Custom.new("Board routes 71", :top),
-      Content.Message.Custom.new("and 73 on upper level", :bottom)
-    ]
-
+    messages = ["Board routes 71", "and 73 on upper level"]
     audios = paginate_audio([:board_routes_71_and_73_on_upper_level])
     {messages, audios}
   end
@@ -583,7 +579,7 @@ defmodule Signs.Bus do
           ]
       end
       |> Enum.map(fn {msg, vars} ->
-        %Content.Audio.BusPredictions{message: {:canned, {msg, vars, :audio_visual}}}
+        {:canned, {msg, vars, :audio_visual}}
       end)
     else
       []
@@ -703,14 +699,11 @@ defmodule Signs.Bus do
   end
 
   defp paginate_message(pages) do
-    message =
-      case pages do
-        [] -> ""
-        [s] -> s
-        _ -> for s <- pages, do: {s, 6}
-      end
-
-    %Content.Message.BusPredictions{message: message}
+    case pages do
+      [] -> ""
+      [s] -> s
+      _ -> for s <- pages, do: {s, 6}
+    end
   end
 
   defp paginate_pairs(pairs) do
@@ -805,9 +798,7 @@ defmodule Signs.Bus do
     end
     |> Stream.chunk_every(@var_max)
     |> Enum.map(fn vars ->
-      %Content.Audio.BusPredictions{
-        message: {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
-      }
+      {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
     end)
   end
 
@@ -815,7 +806,14 @@ defmodule Signs.Bus do
     %{pa_ess_loc: pa_ess_loc, audio_zones: audio_zones, sign_updater: sign_updater} = state
 
     if audios != [] && audio_zones != [] do
-      sign_updater.send_audio({pa_ess_loc, audio_zones}, audios, 5, 180, state.id)
+      sign_updater.send_audio(
+        {pa_ess_loc, audio_zones},
+        audios,
+        5,
+        180,
+        state.id,
+        Enum.map(audios, fn _ -> [message_type: "Bus"] end)
+      )
     end
   end
 end

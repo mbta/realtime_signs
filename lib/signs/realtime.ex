@@ -58,8 +58,8 @@ defmodule Signs.Realtime do
           text_id: PaEss.text_id(),
           audio_id: PaEss.audio_id(),
           source_config: SourceConfig.config() | {SourceConfig.config(), SourceConfig.config()},
-          current_content_top: line_content(),
-          current_content_bottom: line_content(),
+          current_content_top: Content.Message.value(),
+          current_content_bottom: Content.Message.value(),
           prediction_engine: module(),
           location_engine: module(),
           headway_engine: module(),
@@ -97,8 +97,8 @@ defmodule Signs.Realtime do
       text_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
       audio_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "audio_zones")},
       source_config: source_config,
-      current_content_top: Content.Message.Empty.new(),
-      current_content_bottom: Content.Message.Empty.new(),
+      current_content_top: "",
+      current_content_bottom: "",
       prediction_engine: prediction_engine,
       location_engine: opts[:location_engine] || Engine.Locations,
       headway_engine: headway_engine,
@@ -180,8 +180,8 @@ defmodule Signs.Realtime do
       sign
       |> announce_passthrough_trains(predictions)
       |> Utilities.Updater.update_sign(new_top, new_bottom, current_time)
-      |> Utilities.Reader.do_announcements()
-      |> Utilities.Reader.read_sign()
+      |> Utilities.Reader.do_announcements(new_top, new_bottom)
+      |> Utilities.Reader.read_sign(new_top, new_bottom)
       |> decrement_ticks()
       |> Map.put(:prev_predictions, all_predictions)
 
@@ -231,7 +231,14 @@ defmodule Signs.Realtime do
     Utilities.Predictions.get_passthrough_train_audio(predictions)
     |> Enum.reduce(sign, fn audio, sign ->
       if audio.trip_id not in sign.announced_passthroughs do
-        sign.sign_updater.send_audio(sign.audio_id, [audio], 5, 60, sign.id)
+        sign.sign_updater.send_audio(
+          sign.audio_id,
+          [Content.Audio.to_params(audio)],
+          5,
+          60,
+          sign.id,
+          [Utilities.Audio.audio_log_details(audio)]
+        )
 
         update_in(sign.announced_passthroughs, fn list ->
           Enum.take([audio.trip_id | list], @announced_history_length)

@@ -1,7 +1,6 @@
 defmodule Fake.MessageQueue do
   def get_message do
-    {:update_sign,
-     [{"SBOX", "c"}, %Content.Message.Empty{}, %Content.Message.Empty{}, 60, :now, "sign_id"]}
+    {:update_sign, [{"SBOX", "c"}, "", "", 60, :now, "sign_id"]}
   end
 end
 
@@ -19,26 +18,22 @@ defmodule PaEss.HttpUpdaterTest do
   describe "process/2" do
     test "Returns an error if HTTP response code is not 2XX" do
       state = make_state()
-      top = %Content.Message.Predictions{destination: :wonderland, minutes: :boarding}
-      bottom = %Content.Message.Predictions{destination: :wonderland, minutes: 2}
 
       assert {:error, :bad_status} ==
                PaEss.HttpUpdater.process(
-                 {:update_sign, [{"bad_sign", "n"}, top, bottom, 60, 1234, "sign_id"]},
+                 {:update_sign, [{"bad_sign", "n"}, "top", "bottom", 60, 1234, "sign_id"]},
                  state
                )
     end
 
     test "Posts both lines of the sign at the same time" do
       state = make_state()
-      top = %Content.Message.Predictions{destination: :wonderland, minutes: :boarding}
-      bottom = %Content.Message.Predictions{destination: :wonderland, minutes: 2}
 
       log =
         capture_log(fn ->
           assert {:ok, :sent} ==
                    PaEss.HttpUpdater.process(
-                     {:update_sign, [{"ABCD", "n"}, top, bottom, 60, :now, "sign_id"]},
+                     {:update_sign, [{"ABCD", "n"}, "top", "bottom", 60, :now, "sign_id"]},
                      state
                    )
         end)
@@ -49,14 +44,12 @@ defmodule PaEss.HttpUpdaterTest do
 
     test "Returns error if HTTP request fails when updating both lines, doesn't send to Signs UI" do
       state = make_state()
-      top = %Content.Message.Predictions{destination: :wonderland, minutes: :boarding}
-      bottom = %Content.Message.Predictions{destination: :wonderland, minutes: 2}
 
       log =
         capture_log([level: :info], fn ->
           assert {:error, :post_error} ==
                    PaEss.HttpUpdater.process(
-                     {:update_sign, [{"timeout", "n"}, top, bottom, 60, :now, "sign_id"]},
+                     {:update_sign, [{"timeout", "n"}, "top", "bottom", 60, :now, "sign_id"]},
                      state
                    )
         end)
@@ -69,15 +62,7 @@ defmodule PaEss.HttpUpdaterTest do
       state = make_state()
 
       assert PaEss.HttpUpdater.process(
-               {:update_sign,
-                [
-                  {"SBOX", "c"},
-                  %Content.Message.Empty{},
-                  %Content.Message.Empty{},
-                  60,
-                  :now,
-                  "sign_id"
-                ]},
+               {:update_sign, [{"SBOX", "c"}, "", "", 60, :now, "sign_id"]},
                state
              ) == {:ok, :sent}
     end
@@ -85,11 +70,9 @@ defmodule PaEss.HttpUpdaterTest do
     test "replies with {:ok, :no_audio} when to_params returns nil" do
       state = make_state()
 
-      audio = %Fake.UnknownAudio{}
-
       assert {:ok, :no_audio} ==
                PaEss.HttpUpdater.process(
-                 {:send_audio, [{"GKEN", ["m"]}, [audio], 5, 60, "sign_id"]},
+                 {:send_audio, [{"GKEN", ["m"]}, [nil], 5, 60, "sign_id", [[]]]},
                  state
                )
     end
@@ -99,17 +82,13 @@ defmodule PaEss.HttpUpdaterTest do
     test "Buses to Chelsea" do
       state = make_state()
 
-      audio = %Content.Audio.VehiclesToDestination{
-        language: :english,
-        destination: :chelsea,
-        headway_range: {8, 12}
-      }
+      audio = {:canned, {"133", ["5508", "5512"], :audio}}
 
       log =
         capture_log(fn ->
           assert {:ok, :sent} ==
                    PaEss.HttpUpdater.process(
-                     {:send_audio, [{"SBOX", ["c"]}, [audio], 5, 60, "sign_id"]},
+                     {:send_audio, [{"SBOX", ["c"]}, [audio], 5, 60, "sign_id", [[]]]},
                      state
                    )
         end)
@@ -117,97 +96,16 @@ defmodule PaEss.HttpUpdaterTest do
       assert log =~ ~r"arinc_ms=\d+"
     end
 
-    test "Buses to South Station" do
-      state = make_state()
-
-      audio = %Content.Audio.VehiclesToDestination{
-        language: :english,
-        destination: :south_station,
-        headway_range: {8, 12}
-      }
-
-      assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process(
-                 {:send_audio, [{"SBSQ", ["m"]}, [audio], 5, 60, "sign_id"]},
-                 state
-               )
-    end
-
-    test "Buses to Chelsea, in Spanish" do
-      state = make_state()
-
-      audio = %Content.Audio.VehiclesToDestination{
-        language: :spanish,
-        destination: :chelsea,
-        headway_range: {8, 14}
-      }
-
-      assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process(
-                 {:send_audio, [{"SBOX", ["e"]}, [audio], 5, 60, "sign_id"]},
-                 state
-               )
-    end
-
-    test "Next train to Ashmont arrives in 4 minutes" do
-      state = make_state()
-
-      audio = %Content.Audio.NextTrainCountdown{
-        destination: :ashmont,
-        route_id: "Mattapan",
-        verb: :arrives,
-        track_number: nil,
-        minutes: 4
-      }
-
-      assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process(
-                 {:send_audio, [{"MCED", ["n"]}, [audio], 5, 60, "sign_id"]},
-                 state
-               )
-    end
-
-    test "Train to Mattapan arriving" do
-      state = make_state()
-
-      audio = %Content.Audio.TrainIsArriving{
-        destination: :mattapan
-      }
-
-      assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process(
-                 {:send_audio, [{"MCED", ["s"]}, [audio], 5, 60, "sign_id"]},
-                 state
-               )
-    end
-
-    test "Train to Ashmont arriving" do
-      state = make_state()
-
-      audio = %Content.Audio.TrainIsArriving{
-        destination: :ashmont,
-        route_id: "Mattapan"
-      }
-
-      assert {:ok, :sent} ==
-               PaEss.HttpUpdater.process(
-                 {:send_audio, [{"MCAP", ["n"]}, [audio], 5, 60, "sign_id"]},
-                 state
-               )
-    end
-
     test "sends custom audio messages" do
       state = make_state()
 
-      audio = %Content.Audio.Custom{
-        message: "Custom Message"
-      }
+      audio = {:ad_hoc, {"Custom Message", :audio}}
 
       log =
         capture_log(fn ->
           assert {:ok, :sent} ==
                    PaEss.HttpUpdater.process(
-                     {:send_audio, [{"MCAP", ["n"]}, [audio], 5, 60, "sign_id"]},
+                     {:send_audio, [{"MCAP", ["n"]}, [audio], 5, 60, "sign_id", [[]]]},
                      state
                    )
         end)
@@ -219,15 +117,13 @@ defmodule PaEss.HttpUpdaterTest do
     test "sends custom audio messages with replacements" do
       state = make_state()
 
-      audio = %Content.Audio.Custom{
-        message: "Custom OL Message"
-      }
+      audio = {:ad_hoc, {"Custom OL Message", :audio}}
 
       log =
         capture_log(fn ->
           assert {:ok, :sent} =
                    PaEss.HttpUpdater.process(
-                     {:send_audio, [{"MCAP", ["n"]}, [audio], 5, 60, "sign_id"]},
+                     {:send_audio, [{"MCAP", ["n"]}, [audio], 5, 60, "sign_id", [[]]]},
                      state
                    )
         end)
@@ -239,24 +135,11 @@ defmodule PaEss.HttpUpdaterTest do
     test "can send two audio messages" do
       state = make_state(%{http_poster: FakePoster})
 
-      audio1 = %Content.Audio.NextTrainCountdown{
-        destination: :ashmont,
-        route_id: "Red",
-        verb: :arrives,
-        track_number: nil,
-        minutes: 2
-      }
-
-      audio2 = %Content.Audio.NextTrainCountdown{
-        destination: :braintree,
-        route_id: "Red",
-        verb: :arrives,
-        track_number: nil,
-        minutes: 7
-      }
+      audio1 = {:canned, {"msg1", ["4016"], :audio}}
+      audio2 = {:canned, {"msg2", ["4021"], :audio}}
 
       PaEss.HttpUpdater.process(
-        {:send_audio, [{"RPRK", ["s"]}, [audio1, audio2], 5, 60, "sign_id"]},
+        {:send_audio, [{"RPRK", ["s"]}, [audio1, audio2], 5, 60, "sign_id", [[], []]]},
         state
       )
 
@@ -271,16 +154,10 @@ defmodule PaEss.HttpUpdaterTest do
   test "can send to multiple zones at once" do
     state = make_state(%{http_poster: FakePoster})
 
-    audio = %Content.Audio.NextTrainCountdown{
-      destination: :ashmont,
-      route_id: "Red",
-      verb: :arrives,
-      track_number: nil,
-      minutes: 2
-    }
+    audio = {:canned, {"msg", [], :audio}}
 
     PaEss.HttpUpdater.process(
-      {:send_audio, [{"RPRK", ["m", "s", "c"]}, [audio], 5, 60, "sign_id"]},
+      {:send_audio, [{"RPRK", ["m", "s", "c"]}, [audio], 5, 60, "sign_id", [[]]]},
       state
     )
 
@@ -297,14 +174,12 @@ defmodule PaEss.HttpUpdaterTest do
 
   describe "to_command/5" do
     test "handles messages that are single string" do
-      msg = %Content.Message.Predictions{destination: :wonderland, minutes: 2}
-
-      assert PaEss.HttpUpdater.to_command(msg, 55, :now, "n", 1) ==
+      assert PaEss.HttpUpdater.to_command("Wonderland   2 min", 55, :now, "n", 1) ==
                "e55~n1-\"Wonderland   2 min\""
     end
 
     test "handles messages that paginate" do
-      msg = %Content.Message.StoppedTrain{destination: :ashmont, stops_away: 3}
+      msg = [{"Ashmont    Stopped", 6}, {"Ashmont    3 stops", 6}, {"Ashmont       away", 6}]
 
       assert PaEss.HttpUpdater.to_command(msg, 55, :now, "n", 1) ==
                "e55~n1-\"Ashmont       away\".5-\"Ashmont    Stopped\".5-\"Ashmont    3 stops\".5"

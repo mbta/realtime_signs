@@ -15,16 +15,19 @@ defmodule Signs.Utilities.Updater do
           DateTime.t()
         ) :: Signs.Realtime.t()
   def update_sign(sign, top_msg, bottom_msg, current_time) do
+    new_top = Content.Message.to_string(top_msg)
+    new_bottom = Content.Message.to_string(bottom_msg)
+
     if !sign.last_update ||
          Timex.after?(current_time, Timex.shift(sign.last_update, seconds: 130)) ||
-         sign.current_content_top != top_msg ||
-         sign.current_content_bottom != bottom_msg do
-      sign.sign_updater.update_sign(sign.text_id, top_msg, bottom_msg, 145, :now, sign.id)
+         sign.current_content_top != new_top ||
+         sign.current_content_bottom != new_bottom do
+      sign.sign_updater.update_sign(sign.text_id, new_top, new_bottom, 145, :now, sign.id)
 
       %{
         sign
-        | current_content_top: top_msg,
-          current_content_bottom: bottom_msg,
+        | current_content_top: new_top,
+          current_content_bottom: new_bottom,
           last_update: current_time
       }
     else

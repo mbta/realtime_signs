@@ -43,8 +43,8 @@ defmodule Signs.Utilities.EarlyAmSuppresionTest do
       headway_destination: :southbound,
       headway_group: "red_trunk"
     },
-    current_content_top: %Content.Message.Predictions{destination: :braintree, minutes: 3},
-    current_content_bottom: %Content.Message.Predictions{destination: :ashmont, minutes: 4},
+    current_content_top: "",
+    current_content_bottom: "",
     prediction_engine: nil,
     location_engine: Engine.Locations.Mock,
     headway_engine: FakeHeadways,
