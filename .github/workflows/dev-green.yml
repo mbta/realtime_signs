@@ -20,7 +20,7 @@ jobs:
   deploy:
     name: Deploy
     needs: build
-    uses: mbta/workflows/.github/workflows/deploy-on-prem.yml@main
+    uses: mbta/workflows/.github/workflows/deploy-on-prem.yml@v2
     with:
       app-name: realtime-signs
       environment: dev-green
@@ -30,7 +30,6 @@ jobs:
       task-memory: 2048M
       task-port: 8080
     secrets:
-      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
       docker-repo: ${{ secrets.DOCKER_REPO }}
       slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
