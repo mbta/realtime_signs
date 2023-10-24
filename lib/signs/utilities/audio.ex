@@ -148,8 +148,8 @@ defmodule Signs.Utilities.Audio do
              sign.id not in [
                "back_bay_northbound",
                "back_bay_southbound",
-               "tufts_northbound",
-               "tufts_southbound"
+               "chinatown_northbound",
+               "chinatown_northbound_lobby"
              ] do
           %{audio | crowding_description: nil}
         else
