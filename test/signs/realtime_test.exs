@@ -853,10 +853,7 @@ defmodule Signs.RealtimeTest do
       })
     end
 
-    test "only reads the top line when the top line is arriving and heavy rail" do
-      # Note: This case doesn't come up during normal operation, because non-terminal signs
-      # announce arriving trains, and that announcement delays readouts until after the train
-      # has passed. However, for consistency, we should read the full sign.
+    test "reads both lines when the top line is arriving and heavy rail" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
           prediction(destination: :ashmont, arrival: 15, trip_id: "1"),
@@ -865,14 +862,16 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Ashmont        ARR", "Ashmont      2 min"})
-      expect_audios([{:canned, {"103", ["32107"], :audio_visual}}])
+
+      expect_audios([
+        {:canned, {"103", ["32107"], :audio_visual}},
+        {:canned, {"160", ["4016", "503", "5002"], :audio}}
+      ])
+
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_arrivals: ["1"]})
     end
 
-    test "only reads the bottom line when the bottom line is arriving on a multi_source sign for heavy rail" do
-      # Note: This case doesn't come up during normal operation, because non-terminal signs
-      # announce arriving trains, and that announcement delays readouts until after the train
-      # has passed. However, for consistency, we should read the full sign.
+    test "reads both lines when the bottom line is arriving on a multi_source sign for heavy rail" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :ashmont, arrival: 120)]
       end)
@@ -882,7 +881,11 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Ashmont      2 min", "Alewife        ARR"})
-      expect_audios([{:canned, {"103", ["32104"], :audio_visual}}])
+
+      expect_audios([
+        {:canned, {"90", ["4016", "503", "5002"], :audio}},
+        {:canned, {"103", ["32104"], :audio_visual}}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{
         @mezzanine_sign
