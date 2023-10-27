@@ -109,7 +109,7 @@ defmodule Signs.Utilities.Audio do
     end
   end
 
-  defp get_prediction_readout({%Message.StoppedTrain{} = prediction, _}) do
+  defp get_prediction_readout(%Message.StoppedTrain{} = prediction) do
     Audio.StoppedTrain.from_message(prediction)
   end
 
