@@ -58,8 +58,7 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_passive_readout({:predictions, predictions}) do
-    Stream.chunk_every(predictions, 2)
-    |> Enum.flat_map(fn
+    case predictions do
       [
         %Message.StoppedTrain{destination: same} = top,
         %Message.StoppedTrain{destination: same}
@@ -77,39 +76,30 @@ defmodule Signs.Utilities.Audio do
         %Message.Predictions{destination: same} = top,
         %Message.StoppedTrain{destination: same}
       ] ->
-        get_prediction_readout({top, 0})
+        get_prediction_readout(top)
 
       [
         %Message.Predictions{destination: same} = top,
         %Message.Predictions{destination: same} = bottom
       ] ->
-        get_prediction_readout({top, 0}) ++
+        get_prediction_readout(top) ++
           Audio.FollowingTrain.from_predictions_message(bottom)
 
-      predictions ->
-        Stream.with_index(predictions) |> Enum.flat_map(&get_prediction_readout/1)
-    end)
+      _ ->
+        Enum.flat_map(predictions, &get_prediction_readout/1)
+    end
   end
 
-  defp get_prediction_readout(
-         {%Message.Predictions{minutes: minutes, route_id: route_id} = prediction, index}
-       ) do
+  defp get_prediction_readout(%Message.Predictions{minutes: minutes} = prediction) do
     case minutes do
       :boarding ->
         Audio.TrainIsBoarding.from_message(prediction)
 
-      :arriving when route_id in @heavy_rail_routes ->
-        Audio.TrainIsArriving.from_message(
-          prediction,
-          prediction.crowding_data_confidence == :high
-        )
+      :arriving ->
+        Audio.TrainIsArriving.from_message(prediction)
 
       :approaching ->
-        if index == 0 do
-          Audio.Approaching.from_message(prediction, prediction.crowding_data_confidence == :high)
-        else
-          Audio.NextTrainCountdown.from_message(%{prediction | minutes: 1})
-        end
+        Audio.NextTrainCountdown.from_message(%{prediction | minutes: 1})
 
       minutes when is_integer(minutes) ->
         Audio.NextTrainCountdown.from_message(prediction)

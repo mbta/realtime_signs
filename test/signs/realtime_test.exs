@@ -785,11 +785,7 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_alert: true})
     end
 
-    test "reads approaching" do
-      # Note: This case doesn't come up during normal operation, because non-terminal signs
-      # announce approaching trains, and that announcement delays readouts until after the train
-      # has passed. However, for consistency, we should read approaching trains as "1 minute"
-      # in all cases.
+    test "reads approaching as 1 min" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
           prediction(destination: :ashmont, arrival: 45, trip_id: "1"),
@@ -800,7 +796,7 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Ashmont      1 min", "Ashmont      2 min"})
 
       expect_audios([
-        {:canned, {"103", ["32127"], :audio_visual}},
+        {:canned, {"141", ["4016", "503"], :audio}},
         {:canned, {"160", ["4016", "503", "5002"], :audio}}
       ])
 
