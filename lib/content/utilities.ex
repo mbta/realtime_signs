@@ -11,7 +11,7 @@ defmodule Content.Utilities do
   @spec content_duration({Content.Message.t(), Content.Message.t()}) :: integer()
   def content_duration({top, bottom}) do
     for message <- [top, bottom] do
-      case Content.Message.to_string(message) do
+      case message do
         pages when is_list(pages) -> Enum.map(pages, fn {_, n} -> n end) |> Enum.sum()
         str when is_binary(str) -> 6
       end

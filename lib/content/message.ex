@@ -14,7 +14,9 @@ defprotocol Content.Message do
   in seconds of how long each page should be displayed.
   """
 
+  @type value :: String.t() | [{String.t(), non_neg_integer()}]
+
   @doc "converts a content message to a string for display on a sign"
-  @spec to_string(Content.Message.t()) :: String.t() | [{String.t(), non_neg_integer()}]
+  @spec to_string(Content.Message.t()) :: value()
   def to_string(message)
 end

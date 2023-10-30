@@ -3,9 +3,6 @@ defmodule Signs.RealtimeTest do
   import ExUnit.CaptureLog
   import Mox
 
-  alias Content.Message.Headways.Top, as: HT
-  alias Content.Message.Headways.Bottom, as: HB
-
   @headway_config %Engine.Config.Headway{headway_id: "id", range_low: 11, range_high: 13}
 
   @src %Signs.Utilities.SourceConfig{
@@ -29,8 +26,8 @@ defmodule Signs.RealtimeTest do
       headway_group: "headway_group",
       headway_destination: :southbound
     },
-    current_content_top: %HT{destination: :southbound, vehicle_type: :train},
-    current_content_bottom: %HB{range: {11, 13}},
+    current_content_top: "Southbound trains",
+    current_content_bottom: "Every 11 to 13 min",
     prediction_engine: Engine.Predictions.Mock,
     location_engine: Engine.Locations.Mock,
     headway_engine: Engine.ScheduledHeadways.Mock,
@@ -49,8 +46,8 @@ defmodule Signs.RealtimeTest do
         %{sources: [@src], headway_group: "group", headway_destination: :northbound},
         %{sources: [@src], headway_group: "group", headway_destination: :southbound}
       },
-      current_content_top: %HT{vehicle_type: :train, routes: []},
-      current_content_bottom: %HB{range: {11, 13}}
+      current_content_top: "Trains",
+      current_content_bottom: "Every 11 to 13 min"
   }
 
   @terminal_sign %{
@@ -1026,14 +1023,14 @@ defmodule Signs.RealtimeTest do
 
   defp expect_messages(messages) do
     expect(PaEss.Updater.Mock, :update_sign, fn {_, _}, top, bottom, 145, :now, _sign_id ->
-      assert {Content.Message.to_string(top), Content.Message.to_string(bottom)} == messages
+      assert {top, bottom} == messages
       :ok
     end)
   end
 
   defp expect_audios(audios) do
-    expect(PaEss.Updater.Mock, :send_audio, fn {_, _}, list, 5, 60, _sign_id ->
-      assert Enum.map(list, &Content.Audio.to_params(&1)) == audios
+    expect(PaEss.Updater.Mock, :send_audio, fn {_, _}, list, 5, 60, _sign_id, _ ->
+      assert list == audios
       :ok
     end)
   end

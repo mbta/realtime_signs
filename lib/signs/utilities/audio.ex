@@ -11,9 +11,10 @@ defmodule Signs.Utilities.Audio do
   @announced_history_length 5
   @heavy_rail_routes ["Red", "Orange", "Blue"]
 
-  @spec from_sign(Signs.Realtime.t()) :: {[Content.Audio.t()], Signs.Realtime.t()}
-  def from_sign(sign) do
-    {Enum.flat_map(decode_sign(sign), &get_passive_readout/1), sign}
+  @spec from_sign(Signs.Realtime.t(), Content.Message.t(), Content.Message.t()) ::
+          {[Content.Audio.t()], Signs.Realtime.t()}
+  def from_sign(sign, top_content, bottom_content) do
+    {Enum.flat_map(decode_sign(sign, top_content, bottom_content), &get_passive_readout/1), sign}
   end
 
   @spec get_passive_readout(
@@ -113,9 +114,10 @@ defmodule Signs.Utilities.Audio do
     Audio.StoppedTrain.from_message(prediction)
   end
 
-  @spec get_announcements(Signs.Realtime.t()) :: {[Content.Audio.t()], Signs.Realtime.t()}
-  def get_announcements(sign) do
-    items = decode_sign(sign)
+  @spec get_announcements(Signs.Realtime.t(), Content.Message.t(), Content.Message.t()) ::
+          {[Content.Audio.t()], Signs.Realtime.t()}
+  def get_announcements(sign, top_content, bottom_content) do
+    items = decode_sign(sign, top_content, bottom_content)
 
     {[], sign}
     |> get_custom_announcements(items)
@@ -261,44 +263,35 @@ defmodule Signs.Utilities.Audio do
   # Reconstructs higher level information about what's being shown on the sign, in a form that's
   # suitable for computing audio messages. Eventually the goal is to produce this information
   # earlier in the pipeline, rather than deriving it here.
-  @spec decode_sign(Signs.Realtime.t()) :: [
+  @spec decode_sign(Signs.Realtime.t(), Content.Message.t(), Content.Message.t()) :: [
           {:custom, Content.Message.t(), Content.Message.t()}
           | {:alert, Content.Message.t(), Content.Message.t() | nil}
           | {:predictions, [Content.Message.t()]}
           | {:headway, Content.Message.t(), Content.Message.t() | nil}
           | {:scheduled_train, Content.Message.t(), Content.Message.t() | nil}
         ]
-  defp decode_sign(sign) do
-    case sign do
-      %Signs.Realtime{current_content_top: top, current_content_bottom: bottom}
+  defp decode_sign(sign, top_content, bottom_content) do
+    case {sign, top_content, bottom_content} do
+      {_, top, bottom}
       when top.__struct__ == Message.Custom or bottom.__struct__ == Message.Custom ->
         [{:custom, top, bottom}]
 
-      %Signs.Realtime{
-        current_content_top: %Message.Headways.Top{} = top,
-        current_content_bottom: %Message.Headways.Bottom{} = bottom
-      } ->
+      {_, %Message.Headways.Top{} = top, %Message.Headways.Bottom{} = bottom} ->
         [{:headway, top, bottom}]
 
-      %Signs.Realtime{
-        current_content_top: %Message.Alert.NoService{} = top,
-        current_content_bottom: bottom
-      } ->
+      {_, %Message.Alert.NoService{} = top, bottom} ->
         [{:alert, top, bottom}]
 
-      %Signs.Realtime{
-        current_content_top: %Message.GenericPaging{} = top,
-        current_content_bottom: %Message.GenericPaging{} = bottom
-      } ->
+      {_, %Message.GenericPaging{} = top, %Message.GenericPaging{} = bottom} ->
         Enum.zip(top.messages, bottom.messages) |> Enum.flat_map(&decode_lines/1)
 
       # Mezzanine signs get separate treatment for each half, e.g. they will return two
       # separate prediction lists with one prediction each.
-      %Signs.Realtime{source_config: {_, _}} ->
-        decode_line(sign.current_content_top) ++ decode_line(sign.current_content_bottom)
+      {%Signs.Realtime{source_config: {_, _}}, top, bottom} ->
+        decode_line(top) ++ decode_line(bottom)
 
-      _ ->
-        decode_lines({sign.current_content_top, sign.current_content_bottom})
+      {_, top, bottom} ->
+        decode_lines({top, bottom})
     end
   end
 
@@ -381,5 +374,12 @@ defmodule Signs.Utilities.Audio do
       _ ->
         nil
     end)
+  end
+
+  def audio_log_details(audio) do
+    [
+      message_type: to_string(audio.__struct__) |> String.split(".") |> List.last(),
+      message_details: Map.from_struct(audio) |> inspect()
+    ]
   end
 end

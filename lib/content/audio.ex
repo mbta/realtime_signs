@@ -14,8 +14,9 @@ defprotocol Content.Audio do
   @type ad_hoc_message :: {:ad_hoc, {String.t(), av_type()}}
 
   @type language :: :english | :spanish
+  @type value :: canned_message() | ad_hoc_message() | nil
 
   @doc "Converts an audio struct to the mid/vars params for the PA system"
-  @spec to_params(Content.Audio.t()) :: canned_message() | ad_hoc_message() | nil
+  @spec to_params(Content.Audio.t()) :: value()
   def to_params(audio)
 end
