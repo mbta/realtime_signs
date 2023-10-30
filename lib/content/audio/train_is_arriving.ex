@@ -18,7 +18,7 @@ defmodule Content.Audio.TrainIsArriving do
           crowding_description: {atom(), atom()} | nil
         }
 
-  def from_message(%Message.Predictions{} = message, include_crowding?) do
+  def from_message(%Message.Predictions{} = message, include_crowding? \\ false) do
     [
       %__MODULE__{
         destination: message.destination,
