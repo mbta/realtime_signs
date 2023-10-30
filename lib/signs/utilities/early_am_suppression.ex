@@ -238,6 +238,9 @@ defmodule Signs.Utilities.EarlyAmSuppression do
   defp filter_early_am_messages(messages) do
     Enum.reject(Tuple.to_list(messages), fn message ->
       case message do
+        %Headways.Paging{} ->
+          true
+
         %Headways.Top{} ->
           true
 
