@@ -50,6 +50,19 @@ defmodule Signs.RealtimeTest do
       current_content_bottom: "Every 11 to 13 min"
   }
 
+  @jfk_mezzanine_sign %{
+    @sign
+    | text_id: {"RJFK", "m"},
+      source_config: {
+        %{sources: [@src], headway_group: "group", headway_destination: :southbound},
+        %{
+          sources: [%{@src | stop_id: "70086", direction_id: 1, platform: :ashmont}],
+          headway_group: "group",
+          headway_destination: :alewife
+        }
+      }
+  }
+
   @terminal_sign %{
     @sign
     | source_config: %{
@@ -71,7 +84,11 @@ defmodule Signs.RealtimeTest do
       stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
-      stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ -> nil end)
+
+      stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
+        datetime(~T[05:00:00])
+      end)
+
       :ok
     end
 
@@ -970,28 +987,16 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages(
-        {[{"Alewife      4 min", 6}, {"Northbound trains", 6}],
+        {[{"Alewife      4 min", 6}, {"Southbound trains", 6}],
          [{"on Ashmont platform", 6}, {"Every 11 to 13 min", 6}]}
       )
 
       expect_audios([
         {:canned, {"98", ["4000", "503", "5004", "4016"], :audio}},
-        {:canned, {"183", ["5511", "5513"], :audio}}
+        {:canned, {"184", ["5511", "5513"], :audio}}
       ])
 
-      Signs.Realtime.handle_info(:run_loop, %{
-        @sign
-        | text_id: {"RJFK", "m"},
-          source_config: {
-            %{sources: [@src], headway_group: "group", headway_destination: :northbound},
-            %{
-              sources: [%{@src | stop_id: "70086", direction_id: 1, platform: :ashmont}],
-              headway_group: "group",
-              headway_destination: :southbound
-            }
-          },
-          tick_read: 0
-      })
+      Signs.Realtime.handle_info(:run_loop, %{@jfk_mezzanine_sign | tick_read: 0})
     end
 
     test "prevents showing predictions that count up by 1" do
@@ -1004,6 +1009,260 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
         | prev_predictions: [prediction(arrival: 120, destination: :ashmont)]
+      })
+    end
+
+    test "When sign in full am suppression, show timestamp" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 180, destination: :ashmont)]
+      end)
+
+      expect_messages({"Southbound train", "due 5:00"})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | current_time_fn: fn -> datetime(~T[04:00:00]) end
+      })
+    end
+
+    test "When sign in partial am suppression shows mid-trip and terminal predictions but filters out reverse predictions" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :ashmont, arrival: 120, arrival_certainty: 360),
+          prediction(destination: :ashmont, arrival: 240, arrival_certainty: 120)
+        ]
+      end)
+
+      expect_messages({"Ashmont      4 min", ""})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | current_time_fn: fn -> datetime(~T[04:30:00]) end
+      })
+    end
+
+    test "When sign in partial am suppression, no valid predictions, and within range of upper headway, show headways" do
+      expect(Engine.Config.Mock, :headway_config, 2, fn _, _ ->
+        %{@headway_config | range_low: 9}
+      end)
+
+      expect_messages({"Southbound trains", "Every 9 to 13 min"})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | current_time_fn: fn -> datetime(~T[04:50:00]) end
+      })
+    end
+
+    test "When sign in partial am suppression, no valid predictions, but not within range of upper headway, show timestamp" do
+      expect_messages({"Southbound train", "due 5:00"})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | current_time_fn: fn -> datetime(~T[04:45:00]) end
+      })
+    end
+
+    test "When sign in partial am suppression, filters stopped predictions based on certainty" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :ashmont, arrival: 120, stopped: 2, arrival_certainty: 360),
+          prediction(
+            destination: :ashmont,
+            arrival: 240,
+            stopped: 3,
+            arrival_certainty: 120,
+            trip_id: "1"
+          )
+        ]
+      end)
+
+      expect_messages(
+        {[{"Ashmont    Stopped", 6}, {"Ashmont    3 stops", 6}, {"Ashmont       away", 6}], ""}
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | current_time_fn: fn -> datetime(~T[04:30:00]) end,
+          announced_stalls: [{"1", 3}]
+      })
+    end
+
+    test "mezzanine sign, full am suppression" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 180, destination: :ashmont)]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+
+      expect_messages(
+        {[{"Northbound train", 6}, {"Southbound train", 6}], [{"due 5:00", 6}, {"due 5:00", 6}]}
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @mezzanine_sign
+        | current_time_fn: fn -> datetime(~T[04:00:00]) end
+      })
+    end
+
+    test "mezzanine sign, one line in full am suppression, one line in partial am suppression defaulting to headways" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 180, destination: :ashmont, arrival_certainty: 360)]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+
+      expect(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
+        datetime(~T[05:30:00])
+      end)
+
+      expect(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
+        datetime(~T[05:00:00])
+      end)
+
+      expect_messages(
+        {[{"Northbound train", 6}, {"Southbound trains", 6}],
+         [{"due 5:30", 6}, {"Every 11 to 13 min", 6}]}
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @mezzanine_sign
+        | current_time_fn: fn -> datetime(~T[04:50:00]) end
+      })
+    end
+
+    test "mezzanine sign, early am, both lines in partial am suppression defaulting to headways" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 180, destination: :ashmont, arrival_certainty: 360)]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+
+      expect(Engine.Config.Mock, :headway_config, 3, fn _, _ ->
+        %{@headway_config | range_low: 9}
+      end)
+
+      expect_messages({"Trains", "Every 9 to 13 min"})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @mezzanine_sign
+        | current_time_fn: fn -> datetime(~T[04:50:00]) end
+      })
+    end
+
+    test "mezzanine sign, early am, one line showing prediction, one line default to paging headway" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 180, destination: :ashmont)]
+      end)
+
+      expect_messages(
+        {"Ashmont      3 min", [{"Northbound  trains every", 6}, {"Northbound  11 to 13 min", 6}]}
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @mezzanine_sign
+        | current_time_fn: fn -> datetime(~T[04:50:00]) end
+      })
+    end
+
+    test "mezzanine sign, early am, one line showing prediction, one line showing timestamp" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 180, destination: :ashmont)]
+      end)
+
+      expect_messages({"Ashmont      3 min", "Northbound due 5:00"})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @mezzanine_sign
+        | current_time_fn: fn -> datetime(~T[04:30:00]) end
+      })
+    end
+
+    test "JFK mezzanine, early am, southbound on timestamp and Alewife on platform prediction" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
+      end)
+
+      expect_messages(
+        {[{"Southbound train", 6}, {"Alewife      4 min", 6}],
+         [{"due 5:00", 6}, {"on Ashmont platform", 6}]}
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @jfk_mezzanine_sign
+        | current_time_fn: fn -> datetime(~T[04:30:00]) end
+      })
+    end
+
+    test "JFK mezzanine, early am, southbound on headways and Alewife on platform prediction" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
+      end)
+
+      expect_messages(
+        {[{"Southbound trains", 6}, {"Alewife      4 min", 6}],
+         [{"Every 11 to 13 min", 6}, {"on Ashmont platform", 6}]}
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @jfk_mezzanine_sign
+        | current_time_fn: fn -> datetime(~T[04:50:00]) end
+      })
+    end
+
+    test "JFK mezzanine, early am, filtered platform prediction and headways returns full page headways" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(
+            destination: :alewife,
+            arrival: 240,
+            stop_id: "70086",
+            arrival_certainty: 360
+          )
+        ]
+      end)
+
+      expect_messages({"Trains", "Every 11 to 13 min"})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @jfk_mezzanine_sign
+        | current_time_fn: fn -> datetime(~T[04:50:00]) end
+      })
+    end
+
+    test "JFK mezzanine, early am, valid platform prediction and non suppressed headway gets passed through" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
+      end)
+
+      expect(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
+        datetime(~T[04:30:00])
+      end)
+
+      expect(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
+        datetime(~T[05:00:00])
+      end)
+
+      expect_messages(
+        {[{"Southbound trains", 6}, {"Alewife      4 min", 6}],
+         [{"Every 11 to 13 min", 6}, {"on Ashmont platform", 6}]}
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @jfk_mezzanine_sign
+        | current_time_fn: fn -> datetime(~T[04:50:00]) end
       })
     end
   end
@@ -1069,7 +1328,7 @@ defmodule Signs.RealtimeTest do
     %Predictions.Prediction{
       stop_id: Keyword.get(opts, :stop_id, "1"),
       seconds_until_arrival: Keyword.get(opts, :seconds_until_arrival),
-      arrival_certainty: nil,
+      arrival_certainty: Keyword.get(opts, :arrival_certainty),
       seconds_until_departure: Keyword.get(opts, :seconds_until_departure),
       departure_certainty: Keyword.get(opts, :departure_certainty),
       seconds_until_passthrough: Keyword.get(opts, :seconds_until_passthrough),
@@ -1110,4 +1369,6 @@ defmodule Signs.RealtimeTest do
         |> Enum.map(&%Locations.CarriageDetails{occupancy_status: &1})
     }
   end
+
+  defp datetime(time), do: DateTime.new!(~D[2023-01-01], time, "America/New_York")
 end
