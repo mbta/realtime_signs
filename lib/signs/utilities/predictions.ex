@@ -253,7 +253,7 @@ defmodule Signs.Utilities.Predictions do
   # predictions following a gap of more than 21 minutes from the previous one,
   # since this is a reasonable indicator of this problem.
   defp filter_large_red_line_gaps([first | _] = predictions)
-       when first.stop_id in ~w(70105 Braintree-01 Braintree-02 70104 70102 70100 70094 70092 70090 70088) do
+       when first.stop_id in ~w(70105 Braintree-01 Braintree-02 70104 70102 70100 70094 70092 70090 70088 70098 70086 70096) do
     [%{seconds_until_departure: 0} | predictions]
     |> Enum.chunk_every(2, 1, :discard)
     |> Enum.take_while(fn [prev, current] ->
