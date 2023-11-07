@@ -9152,7 +9152,7 @@
     "max_minutes": 60
   },
   {
-    "id": "bus.Lechmere_bus_mezzanine",
+    "id": "bus.Lechmere_inner",
     "pa_ess_loc": "SLEC",
     "read_loop_interval": 360,
     "read_loop_offset": 180,
@@ -9179,7 +9179,21 @@
             "direction_id": 0
           }
         ]
-      },
+      }
+    ],
+    "max_minutes": 60
+  },
+  {
+    "id": "bus.Lechmere_outer",
+    "pa_ess_loc": "SLEC",
+    "read_loop_interval": 360,
+    "read_loop_offset": 0,
+    "text_zone": "c",
+    "audio_zones": [
+      "m"
+    ],
+    "type": "bus",
+    "configs": [
       {
         "sources": [
           {
