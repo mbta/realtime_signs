@@ -33,12 +33,24 @@ defmodule Signs.Utilities.Messages do
           {Content.Message.Empty.new(), Content.Message.Empty.new()}
 
         sign_config == :headway ->
-          get_headway_or_alert_messages(sign, current_time, alert_status)
+          get_alert_messages(alert_status, sign) ||
+            Signs.Utilities.Headways.get_messages(sign, current_time)
+
+        sign_config == :temporary_terminal and
+            alert_status in [:shuttles_transfer_station, :suspension_transfer_station] ->
+          case Signs.Utilities.Predictions.get_messages(predictions, sign) do
+            {%Content.Message.Empty{}, %Content.Message.Empty{}} ->
+              Signs.Utilities.Headways.get_messages(sign, current_time)
+
+            messages ->
+              messages
+          end
 
         true ->
           case Signs.Utilities.Predictions.get_messages(predictions, sign) do
             {%Content.Message.Empty{}, %Content.Message.Empty{}} ->
-              get_headway_or_alert_messages(sign, current_time, alert_status)
+              get_alert_messages(alert_status, sign) ||
+                Signs.Utilities.Headways.get_messages(sign, current_time)
 
             {top_message, %Content.Message.Empty{}} ->
               {top_message,
@@ -148,16 +160,6 @@ defmodule Signs.Utilities.Messages do
       message ->
         {message, prediction}
     end
-  end
-
-  @spec get_headway_or_alert_messages(
-          Signs.Realtime.t(),
-          DateTime.t(),
-          Engine.Alerts.Fetcher.stop_status()
-        ) :: Signs.Realtime.sign_messages()
-  defp get_headway_or_alert_messages(sign, current_time, alert_status) do
-    get_alert_messages(alert_status, sign) ||
-      Signs.Utilities.Headways.get_messages(sign, current_time)
   end
 
   @spec get_paging_headway_or_alert_messages(
