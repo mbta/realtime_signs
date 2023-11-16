@@ -36,21 +36,16 @@ defmodule Signs.Utilities.Messages do
           get_alert_messages(alert_status, sign) ||
             Signs.Utilities.Headways.get_messages(sign, current_time)
 
-        sign_config == :temporary_terminal and
-            alert_status in [:shuttles_transfer_station, :suspension_transfer_station] ->
-          case Signs.Utilities.Predictions.get_messages(predictions, sign) do
-            {%Content.Message.Empty{}, %Content.Message.Empty{}} ->
-              Signs.Utilities.Headways.get_messages(sign, current_time)
-
-            messages ->
-              messages
-          end
-
         true ->
           case Signs.Utilities.Predictions.get_messages(predictions, sign) do
             {%Content.Message.Empty{}, %Content.Message.Empty{}} ->
-              get_alert_messages(alert_status, sign) ||
+              if sign_config == :temporary_terminal and
+                   alert_status in [:shuttles_transfer_station, :suspension_transfer_station] do
                 Signs.Utilities.Headways.get_messages(sign, current_time)
+              else
+                get_alert_messages(alert_status, sign) ||
+                  Signs.Utilities.Headways.get_messages(sign, current_time)
+              end
 
             {top_message, %Content.Message.Empty{}} ->
               {top_message,
