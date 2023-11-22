@@ -12,7 +12,7 @@ defmodule Predictions.Predictions do
       |> Enum.map(& &1["trip_update"])
       |> Enum.reject(&(&1["trip"]["schedule_relationship"] == "CANCELED"))
       |> Enum.flat_map(&transform_stop_time_updates/1)
-      |> Enum.filter(fn {update, _, _, _, _, _, _, _} ->
+      |> Enum.filter(fn {update, _, _, _, _, _, _} ->
         ((update["arrival"] || update["departure"]) &&
            not is_nil(update["stops_away"])) || update["passthrough_time"]
       end)
@@ -34,8 +34,7 @@ defmodule Predictions.Predictions do
   end
 
   @spec transform_stop_time_updates(map()) :: [
-          {map(), String.t(), String.t(), integer(), String.t(), [String.t()] | nil, boolean(),
-           String.t() | nil}
+          {map(), String.t(), String.t(), integer(), String.t(), boolean(), String.t() | nil}
         ]
   defp transform_stop_time_updates(trip_update) do
     last_stop_id =
@@ -43,13 +42,6 @@ defmodule Predictions.Predictions do
         if update["arrival"], do: update["arrival"]["time"], else: 0
       end)
       |> Map.get("stop_id")
-
-    consist =
-      if trip_update["vehicle"] && trip_update["vehicle"]["consist"] do
-        Enum.map(trip_update["vehicle"]["consist"], & &1["label"])
-      else
-        nil
-      end
 
     revenue_trip? =
       Enum.any?(trip_update["stop_time_update"], &(&1["schedule_relationship"] != "SKIPPED"))
@@ -59,17 +51,17 @@ defmodule Predictions.Predictions do
     Enum.map(
       trip_update["stop_time_update"],
       &{&1, last_stop_id, trip_update["trip"]["route_id"], trip_update["trip"]["direction_id"],
-       trip_update["trip"]["trip_id"], consist, revenue_trip?, vehicle_id}
+       trip_update["trip"]["trip_id"], revenue_trip?, vehicle_id}
     )
   end
 
   @spec prediction_from_update(
-          {map(), String.t(), String.t(), integer(), Predictions.Prediction.trip_id(),
-           [String.t()] | nil, boolean(), String.t() | nil},
+          {map(), String.t(), String.t(), integer(), Predictions.Prediction.trip_id(), boolean(),
+           String.t() | nil},
           DateTime.t()
         ) :: Prediction.t()
   defp prediction_from_update(
-         {stop_time_update, last_stop_id, route_id, direction_id, trip_id, consist, revenue_trip?,
+         {stop_time_update, last_stop_id, route_id, direction_id, trip_id, revenue_trip?,
           vehicle_id},
          current_time
        ) do
@@ -108,7 +100,6 @@ defmodule Predictions.Predictions do
       stopped?: stop_time_update["stopped?"],
       stops_away: stop_time_update["stops_away"],
       boarding_status: stop_time_update["boarding_status"],
-      new_cars?: consist_is_new?(consist, route_id),
       revenue_trip?: revenue_trip?,
       vehicle_id: vehicle_id
     }
@@ -120,25 +111,6 @@ defmodule Predictions.Predictions do
 
   def parse_json_response(body) do
     Jason.decode!(body)
-  end
-
-  @spec consist_is_new?([String.t()] | nil, String.t()) :: boolean()
-  defp consist_is_new?(nil, _route_id) do
-    false
-  end
-
-  defp consist_is_new?(consist, route_id) do
-    Enum.any?(consist, fn car ->
-      # See http://roster.transithistory.org/ for numbers of new cars
-      case Integer.parse(car) do
-        :error ->
-          false
-
-        {n, _remaining} ->
-          (route_id == "Orange" and 1400 <= n and n <= 1551) or
-            (route_id == "Red" and 1900 <= n and n <= 2151)
-      end
-    end)
   end
 
   @spec translate_schedule_relationship(String.t()) :: :skipped | :scheduled

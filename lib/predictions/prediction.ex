@@ -13,7 +13,6 @@ defmodule Predictions.Prediction do
             stopped?: false,
             stops_away: 0,
             boarding_status: nil,
-            new_cars?: false,
             revenue_trip?: true,
             vehicle_id: nil
 
@@ -34,7 +33,6 @@ defmodule Predictions.Prediction do
           stopped?: boolean(),
           stops_away: integer(),
           boarding_status: String.t() | nil,
-          new_cars?: boolean(),
           revenue_trip?: boolean(),
           vehicle_id: String.t() | nil
         }
