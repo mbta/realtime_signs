@@ -84,6 +84,7 @@ defmodule Signs.RealtimeTest do
       stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
+      stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
 
       stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
         datetime(~T[05:00:00])
@@ -653,8 +654,8 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 45, destination: :forest_hills, trip_id: "1")]
       end)
 
-      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
-        location(crowding_description: :front, crowding_confidence: :high)
+      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
+        location(crowding_confidence: :high)
       end)
 
       expect_messages({"Frst Hills   1 min", ""})
@@ -669,8 +670,8 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 45, destination: :forest_hills)]
       end)
 
-      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
-        location(crowding_description: :front, crowding_confidence: :low)
+      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
+        location(crowding_confidence: :low)
       end)
 
       expect_messages({"Frst Hills   1 min", ""})
@@ -685,8 +686,8 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 15, destination: :forest_hills)]
       end)
 
-      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
-        location(crowding_description: :front, crowding_confidence: :high)
+      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
+        location(crowding_confidence: :high)
       end)
 
       expect_messages({"Frst Hills     ARR", ""})
@@ -699,8 +700,8 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 15, destination: :forest_hills)]
       end)
 
-      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
-        location(crowding_description: :front, crowding_confidence: :low)
+      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
+        location(crowding_confidence: :low)
       end)
 
       expect_messages({"Frst Hills     ARR", ""})
@@ -713,8 +714,8 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 15, destination: :forest_hills, trip_id: "1")]
       end)
 
-      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
-        location(crowding_description: :front, crowding_confidence: :high)
+      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
+        location(crowding_confidence: :high)
       end)
 
       expect_messages({"Frst Hills     ARR", ""})
@@ -1265,6 +1266,56 @@ defmodule Signs.RealtimeTest do
         | current_time_fn: fn -> datetime(~T[04:50:00]) end
       })
     end
+
+    test "Identifies new Red Line Cars" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :ashmont, arrival: 60, trip_id: "1")]
+      end)
+
+      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
+        location(
+          crowding_confidence: :low,
+          carriage_details: [
+            {"1900", "1"},
+            {"1901", "1"},
+            {"1902", "1"},
+            {"1903", "1"},
+            {"1905", "1"},
+            {"1904", "1"}
+          ]
+        )
+      end)
+
+      expect_messages({"Ashmont      1 min", ""})
+      expect_audios([{:canned, {"106", ["783", "4016", "21000", "786"], :audio_visual}}])
+
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "Identifies old Red Line Cars" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :ashmont, arrival: 60, trip_id: "1")]
+      end)
+
+      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
+        location(
+          crowding_confidence: :low,
+          carriage_details: [
+            {"1706", "1"},
+            {"1707", "1"},
+            {"1502", "1"},
+            {"1503", "1"},
+            {"1750", "1"},
+            {"1751", "1"}
+          ]
+        )
+      end)
+
+      expect_messages({"Ashmont      1 min", ""})
+      expect_audios([{:canned, {"103", ["32127"], :audio_visual}}])
+
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
   end
 
   describe "decrement_ticks/1" do
@@ -1340,7 +1391,6 @@ defmodule Signs.RealtimeTest do
       stopped?: false,
       stops_away: Keyword.get(opts, :stops_away, 1),
       boarding_status: Keyword.get(opts, :boarding_status),
-      new_cars?: false,
       revenue_trip?: true,
       vehicle_id: "v1"
     }
@@ -1348,6 +1398,7 @@ defmodule Signs.RealtimeTest do
 
   defp location(opts) do
     %Locations.Location{
+      route_id: Keyword.get(opts, :route_id, "Red"),
       status:
         case Keyword.get(opts, :crowding_confidence) do
           :low -> :stopped_at
@@ -1355,18 +1406,20 @@ defmodule Signs.RealtimeTest do
         end,
       stop_id: Keyword.get(opts, :stop_id, "1"),
       multi_carriage_details:
-        case Keyword.get(opts, :crowding_description) do
-          :front ->
-            [
-              :many_seats_available,
-              :many_seats_available,
-              :standing_room_only,
-              :standing_room_only,
-              :standing_room_only,
-              :standing_room_only
-            ]
-        end
-        |> Enum.map(&%Locations.CarriageDetails{occupancy_status: &1})
+        Keyword.get(opts, :carriage_details, [
+          {"1", "1"},
+          {"2", "1"},
+          {"3", "99"},
+          {"4", "99"},
+          {"5", "99"},
+          {"6", "99"}
+        ])
+        |> Enum.map(fn {vehicle_id, occupancy_percentage} ->
+          %Locations.CarriageDetails{
+            label: vehicle_id,
+            occupancy_percentage: occupancy_percentage
+          }
+        end)
     }
   end
 

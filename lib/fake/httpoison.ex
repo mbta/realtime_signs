@@ -277,11 +277,6 @@ defmodule Fake.HTTPoison do
                 "trip_id" => "32568935"
               },
               "vehicle" => %{
-                "consist" => [
-                  %{
-                    "label" => "3260"
-                  }
-                ],
                 "id" => "G-10040",
                 "label" => "3260",
                 "license_plate" => nil
@@ -388,11 +383,6 @@ defmodule Fake.HTTPoison do
                 "trip_id" => "32568935"
               },
               "vehicle" => %{
-                "consist" => [
-                  %{
-                    "label" => "3260"
-                  }
-                ],
                 "id" => "G-10040",
                 "label" => "3260",
                 "license_plate" => nil
