@@ -5,7 +5,6 @@ defmodule Locations.Location do
             timestamp: nil,
             route_id: nil,
             trip_id: nil,
-            consist: [],
             multi_carriage_details: []
 
   @type t :: %__MODULE__{
@@ -15,7 +14,6 @@ defmodule Locations.Location do
           timestamp: DateTime.t() | nil,
           route_id: String.t() | nil,
           trip_id: String.t() | nil,
-          consist: list(),
           multi_carriage_details: list(Locations.CarriageDetails.t())
         }
 end

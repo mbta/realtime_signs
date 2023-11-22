@@ -140,7 +140,6 @@ defmodule Engine.Locations do
       timestamp: location["vehicle"]["timestamp"],
       route_id: location["vehicle"]["trip"]["route_id"],
       trip_id: location["vehicle"]["trip"]["trip_id"],
-      consist: location["vehicle"]["vehicle"]["consist"],
       multi_carriage_details:
         parse_carriage_details(location["vehicle"]["multi_carriage_details"] || [])
     }
