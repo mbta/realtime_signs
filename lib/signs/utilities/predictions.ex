@@ -60,7 +60,7 @@ defmodule Signs.Utilities.Predictions do
           Content.Message.StoppedTrain.from_prediction(prediction)
 
         terminal_prediction?(prediction, sources) ->
-          Content.Message.Predictions.terminal(prediction, station_code, zone)
+          Content.Message.Predictions.terminal(prediction, station_code, zone, sign)
 
         true ->
           Content.Message.Predictions.non_terminal(

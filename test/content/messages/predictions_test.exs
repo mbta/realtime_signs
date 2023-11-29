@@ -1,9 +1,16 @@
 defmodule Content.Message.PredictionsTest do
   use ExUnit.Case, async: true
   import ExUnit.CaptureLog
+  import Mox
+
+  @sign %{source_config: nil, location_engine: Engine.Locations.Mock}
 
   describe "non_terminal/3" do
-    @sign %{source_config: nil}
+    setup do
+      stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
+
+      :ok
+    end
 
     test "logs a warning when we cant find a headsign" do
       prediction = %Predictions.Prediction{
@@ -219,22 +226,6 @@ defmodule Content.Message.PredictionsTest do
       assert msg.trip_id == "trip1"
     end
 
-    test "Includes new_cars? flag" do
-      prediction = %Predictions.Prediction{
-        seconds_until_arrival: 125,
-        direction_id: 0,
-        route_id: "Red",
-        stopped?: false,
-        stops_away: 2,
-        destination_stop_id: "70001",
-        new_cars?: true
-      }
-
-      msg = Content.Message.Predictions.non_terminal(prediction, "test", "m", @sign)
-
-      assert msg.new_cars?
-    end
-
     test "Includes Ashmont platform when northbound to JFK/UMass Mezzanine" do
       prediction = %Predictions.Prediction{
         stop_id: "70086",
@@ -291,6 +282,12 @@ defmodule Content.Message.PredictionsTest do
   end
 
   describe "terminal/3" do
+    setup do
+      stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
+
+      :ok
+    end
+
     test "logs a warning when we cant find a headsign, even if it should be boarding" do
       prediction = %Predictions.Prediction{
         seconds_until_departure: 0,
@@ -304,7 +301,7 @@ defmodule Content.Message.PredictionsTest do
 
       log =
         capture_log([level: :warn], fn ->
-          assert is_nil(Content.Message.Predictions.terminal(prediction, "test", "m"))
+          assert is_nil(Content.Message.Predictions.terminal(prediction, "test", "m", @sign))
         end)
 
       assert log =~ "no_destination_for_prediction"
@@ -322,7 +319,7 @@ defmodule Content.Message.PredictionsTest do
 
       log =
         capture_log([level: :warn], fn ->
-          assert is_nil(Content.Message.Predictions.terminal(prediction, "test", "m"))
+          assert is_nil(Content.Message.Predictions.terminal(prediction, "test", "m", @sign))
         end)
 
       assert log =~ "no_destination_for_prediction"
@@ -339,7 +336,7 @@ defmodule Content.Message.PredictionsTest do
         boarding_status: "Stopped at station"
       }
 
-      msg = Content.Message.Predictions.terminal(prediction, "test", "m")
+      msg = Content.Message.Predictions.terminal(prediction, "test", "m", @sign)
 
       assert Content.Message.to_string(msg) == "Ashmont        BRD"
     end
@@ -355,7 +352,7 @@ defmodule Content.Message.PredictionsTest do
         boarding_status: "Stopped at station"
       }
 
-      msg = Content.Message.Predictions.terminal(prediction, "test", "m")
+      msg = Content.Message.Predictions.terminal(prediction, "test", "m", @sign)
 
       assert Content.Message.to_string(msg) == "Ashmont      1 min"
     end
@@ -371,7 +368,7 @@ defmodule Content.Message.PredictionsTest do
         boarding_status: "Stopped at station"
       }
 
-      msg = Content.Message.Predictions.terminal(prediction, "test", "m")
+      msg = Content.Message.Predictions.terminal(prediction, "test", "m", @sign)
 
       assert Content.Message.to_string(msg) == "Ashmont      2 min"
     end
@@ -386,7 +383,7 @@ defmodule Content.Message.PredictionsTest do
         destination_stop_id: "70261"
       }
 
-      msg = Content.Message.Predictions.terminal(prediction, "test", "m")
+      msg = Content.Message.Predictions.terminal(prediction, "test", "m", @sign)
 
       assert Content.Message.to_string(msg) == "Ashmont      1 min"
     end
@@ -401,7 +398,7 @@ defmodule Content.Message.PredictionsTest do
         stops_away: 0
       }
 
-      msg = Content.Message.Predictions.terminal(prediction, "test", "m")
+      msg = Content.Message.Predictions.terminal(prediction, "test", "m", @sign)
 
       assert Content.Message.to_string(msg) == [
                {"Oak Grove    2 min", 6},
@@ -420,25 +417,9 @@ defmodule Content.Message.PredictionsTest do
         trip_id: "trip1"
       }
 
-      msg = Content.Message.Predictions.terminal(prediction, "test", "m")
+      msg = Content.Message.Predictions.terminal(prediction, "test", "m", @sign)
 
       assert msg.trip_id == "trip1"
-    end
-
-    test "Includes new_cars? flag" do
-      prediction = %Predictions.Prediction{
-        seconds_until_arrival: 125,
-        direction_id: 0,
-        route_id: "Red",
-        stopped?: false,
-        stops_away: 2,
-        destination_stop_id: "70001",
-        new_cars?: true
-      }
-
-      msg = Content.Message.Predictions.non_terminal(prediction, "test", "m", @sign)
-
-      assert msg.new_cars?
     end
   end
 end

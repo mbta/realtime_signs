@@ -103,7 +103,7 @@ defmodule Content.Message.Predictions do
           trip_id: prediction.trip_id,
           direction_id: prediction.direction_id,
           width: width,
-          new_cars?: prediction.new_cars?,
+          new_cars?: sign.location_engine.for_vehicle(prediction.vehicle_id) |> new_cars?(),
           station_code: station_code,
           zone: zone,
           platform: platform,
@@ -118,10 +118,16 @@ defmodule Content.Message.Predictions do
     end
   end
 
-  @spec terminal(Predictions.Prediction.t(), String.t(), String.t(), integer()) :: t() | nil
-  def terminal(prediction, station_code, zone, width \\ 18)
+  @spec terminal(
+          Predictions.Prediction.t(),
+          String.t(),
+          String.t(),
+          Signs.Realtime.t(),
+          integer()
+        ) :: t() | nil
+  def terminal(prediction, station_code, zone, sign, width \\ 18)
 
-  def terminal(prediction, station_code, zone, width) do
+  def terminal(prediction, station_code, zone, sign, width) do
     stopped_at? = prediction.stops_away == 0
 
     {minutes, approximate?} =
@@ -146,7 +152,7 @@ defmodule Content.Message.Predictions do
           trip_id: prediction.trip_id,
           direction_id: prediction.direction_id,
           width: width,
-          new_cars?: prediction.new_cars?,
+          new_cars?: sign.location_engine.for_vehicle(prediction.vehicle_id) |> new_cars?(),
           station_code: station_code,
           zone: zone,
           terminal?: true,
@@ -258,6 +264,27 @@ defmodule Content.Message.Predictions do
       {5, _} -> :train_level
       {6, _} -> :train_level
     end
+  end
+
+  @spec new_cars?(Locations.Location.t() | nil) :: boolean()
+  defp new_cars?(nil) do
+    false
+  end
+
+  defp new_cars?(%Locations.Location{
+         multi_carriage_details: multi_carriage_details,
+         route_id: route_id
+       }) do
+    Enum.any?(multi_carriage_details, fn carriage ->
+      # See http://roster.transithistory.org/ for numbers of new cars
+      case Integer.parse(carriage.label) do
+        :error ->
+          false
+
+        {n, _remaining} ->
+          route_id == "Red" and 1900 <= n and n <= 2151
+      end
+    end)
   end
 
   defimpl Content.Message do
