@@ -111,7 +111,7 @@ defmodule Engine.ScheduledHeadwaysTest do
           ["first_last_departures"]
         )
 
-      assert DateTime.to_naive(first_departure) == ~N[2017-07-04 08:45:00]
+      assert DateTime.to_naive(first_departure) == ~N[2017-07-04 08:35:00]
       assert DateTime.to_naive(last_departure) == ~N[2017-07-04 09:20:00]
     end
 
