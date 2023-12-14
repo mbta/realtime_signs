@@ -248,8 +248,7 @@ defmodule Signs.Utilities.Audio do
     # Disable crowding messages for now
     new_audios =
       Enum.map(new_audios, fn %{__struct__: audio_type} = audio ->
-        if audio_type in [Audio.Approaching, Audio.TrainIsArriving] and
-             sign.id not in ["back_bay_northbound", "back_bay_southbound"] do
+        if audio_type in [Audio.Approaching, Audio.TrainIsArriving] and sign.id not in [] do
           %{audio | crowding_description: nil}
         else
           audio
