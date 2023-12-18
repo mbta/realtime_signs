@@ -213,7 +213,9 @@ defmodule Engine.ScheduledHeadways do
     Map.new(schedule_data, fn {stop_id, schedules} ->
       {stop_id,
        Enum.reduce(schedules, [], fn sched, acc ->
-         departure_time = get_in(sched, ["attributes", "departure_time"])
+         departure_time =
+           get_in(sched, ["attributes", "departure_time"]) ||
+             get_in(sched, ["attributes", "arrival_time"])
 
          with false <- is_nil(departure_time),
               {:ok, parsed_time} <- Timex.parse(departure_time, "{ISO:Extended}") do
