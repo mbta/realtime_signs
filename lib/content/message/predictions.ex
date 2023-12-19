@@ -197,7 +197,7 @@ defmodule Content.Message.Predictions do
 
   defp calculate_crowding_data_confidence(_prediction, _location), do: nil
 
-  defp get_crowding_description(carriage_details) when length(carriage_details) == 6 do
+  defp get_crowding_description([_, _, _, _, _, _] = carriage_details) do
     crowding_levels =
       Enum.map(carriage_details, &occupancy_percentage_to_crowding_level(&1.occupancy_percentage))
 
