@@ -263,6 +263,7 @@ defmodule Content.Message.Predictions do
       {5, [:f, _, _, _, _, _]} -> :back
       {5, _} -> :train_level
       {6, _} -> :train_level
+      _ -> :train_level
     end
   end
 
