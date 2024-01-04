@@ -179,9 +179,16 @@ defmodule Signs.Utilities.Messages do
     Content.Message.Empty.new()
   end
 
+  defp get_alert_messages(alert_status, %{text_id: {"GUNS", _}}) do
+    if alert_status in [:none, :alert_along_route],
+      do: nil,
+      else: {%Alert.NoService{}, %Alert.UseRoutes{}}
+  end
+
   @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status(), Signs.Realtime.t()) ::
           Signs.Realtime.sign_messages() | nil
   defp get_alert_messages(alert_status, sign) do
+    IO.inspect(sign)
     sign_routes = Signs.Utilities.SourceConfig.sign_routes(sign.source_config)
 
     case {alert_status, sign.uses_shuttles} do

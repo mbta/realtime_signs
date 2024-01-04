@@ -1331,6 +1331,31 @@ defmodule Signs.RealtimeTest do
     end
   end
 
+  describe "Union Sq alert messaging" do
+    setup do
+      stub(Engine.Config.Mock, :sign_config, fn _ -> :auto end)
+      stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_transfer_station end)
+      stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+
+      stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
+        datetime(~T[05:00:00])
+      end)
+
+      :ok
+    end
+
+    test "Defaults to use routes message" do
+      sign = %{
+        @sign
+        | text_id: {"GUNS", "x"}
+      }
+
+      expect_messages({"No train service", "Use Routes 86, 87, or 91"})
+      expect_audios([{:ad_hoc, {"No Train Service. Use routes 86, 87, or 91", :audio}}])
+      Signs.Realtime.handle_info(:run_loop, sign)
+    end
+  end
+
   defp expect_messages(messages) do
     expect(PaEss.Updater.Mock, :update_sign, fn {_, _}, top, bottom, 145, :now, _sign_id ->
       assert {top, bottom} == messages
