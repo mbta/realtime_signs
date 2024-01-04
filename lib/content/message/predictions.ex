@@ -197,9 +197,7 @@ defmodule Content.Message.Predictions do
 
   defp calculate_crowding_data_confidence(_prediction, _location), do: nil
 
-  defp get_crowding_description([]), do: nil
-
-  defp get_crowding_description(carriage_details) do
+  defp get_crowding_description([_, _, _, _, _, _] = carriage_details) do
     crowding_levels =
       Enum.map(carriage_details, &occupancy_percentage_to_crowding_level(&1.occupancy_percentage))
 
@@ -216,6 +214,8 @@ defmodule Content.Message.Predictions do
        {Enum.count(relative_crowding_levels, &Kernel.==(&1, :e)), relative_crowding_levels}
      ), crowding_level_to_atom(min_crowding_level)}
   end
+
+  defp get_crowding_description(_), do: nil
 
   defp occupancy_percentage_to_crowding_level(occupancy_percentage) do
     cond do
@@ -263,6 +263,7 @@ defmodule Content.Message.Predictions do
       {5, [:f, _, _, _, _, _]} -> :back
       {5, _} -> :train_level
       {6, _} -> :train_level
+      _ -> :train_level
     end
   end
 
