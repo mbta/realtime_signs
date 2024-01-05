@@ -188,7 +188,6 @@ defmodule Signs.Utilities.Messages do
   @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status(), Signs.Realtime.t()) ::
           Signs.Realtime.sign_messages() | nil
   defp get_alert_messages(alert_status, sign) do
-    IO.inspect(sign)
     sign_routes = Signs.Utilities.SourceConfig.sign_routes(sign.source_config)
 
     case {alert_status, sign.uses_shuttles} do
