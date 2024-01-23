@@ -7430,24 +7430,44 @@
       "m"
     ],
     "type": "realtime",
-    "source_config": {
-      "headway_group": "green_trunk",
-      "headway_direction_name": "Inbound",
-      "sources": [
-        {
-          "stop_id": "70206",
-          "direction_id": 0,
-          "routes": [
-            "Green-D",
-            "Green-E"
-          ],
-          "platform": null,
-          "terminal": false,
-          "announce_arriving": false,
-          "announce_boarding": true
-        }
-      ]
-    }
+    "source_config": [
+      {
+        "headway_group": "green_trunk",
+        "headway_direction_name": "Outbound",
+        "sources": [
+          {
+            "stop_id": "70205",
+            "direction_id": 1,
+            "routes": [
+              "Green-D",
+              "Green-E"
+            ],
+            "platform": null,
+            "terminal": false,
+            "announce_arriving": false,
+            "announce_boarding": true
+          }
+        ]
+      },
+      {
+        "headway_group": "green_trunk",
+        "headway_direction_name": "Inbound",
+        "sources": [
+          {
+            "stop_id": "70206",
+            "direction_id": 0,
+            "routes": [
+              "Green-D",
+              "Green-E"
+            ],
+            "platform": null,
+            "terminal": false,
+            "announce_arriving": false,
+            "announce_boarding": true
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "science_park_eastbound",
