@@ -9,6 +9,9 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read    
     environment: dev-green-linux
     concurrency: dev-green-linux
     env:
