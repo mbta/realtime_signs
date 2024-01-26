@@ -16,7 +16,7 @@ jobs:
     concurrency: dev-green-linux
     env:
       ECS_CLUSTER: linux-staging
-      ECS_SERVICE: realtime-signs-dev-green
+      ECS_SERVICE: realtime_signs-dev-green
     steps:
       - uses: actions/checkout@v3
       - uses: mbta/actions/build-push-ecr@v2
