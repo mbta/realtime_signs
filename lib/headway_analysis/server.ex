@@ -18,8 +18,8 @@ defmodule HeadwayAnalysis.Server do
   ]
   defstruct @enforce_keys
 
-  def start_link(arg) do
-    GenServer.start_link(__MODULE__, arg)
+  def start_link(config) do
+    GenServer.start_link(__MODULE__, config, name: :"HeadwayAnalysis/#{config["id"]}")
   end
 
   @impl true
