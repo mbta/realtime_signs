@@ -12,13 +12,9 @@ defmodule Engine.Predictions do
   use GenServer
   require Logger
 
-  @type state :: %{
-          last_modified_trip_updates: String.t() | nil,
-          trip_updates_table: :ets.tab(),
-          revenue_vehicles: MapSet.t()
-        }
-
-  @trip_updates_table :trip_updates
+  defstruct last_modified: nil,
+            trip_updates_table: :trip_updates,
+            revenue_vehicles_table: :revenue_vehicles
 
   @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link([]) do
@@ -27,9 +23,8 @@ defmodule Engine.Predictions do
 
   @doc "The upcoming predicted times a vehicle will be at this stop"
   @impl true
-  def for_stop(predictions_table_id \\ @trip_updates_table, gtfs_stop_id, direction_id) do
+  def for_stop(predictions_table_id \\ :trip_updates, gtfs_stop_id, direction_id) do
     case :ets.lookup(predictions_table_id, {gtfs_stop_id, direction_id}) do
-      [{_, :none}] -> []
       [{{^gtfs_stop_id, ^direction_id}, predictions}] -> predictions
       _ -> []
     end
@@ -37,122 +32,63 @@ defmodule Engine.Predictions do
 
   @impl true
   def revenue_vehicles() do
-    GenServer.call(__MODULE__, :revenue_vehicles)
+    case :ets.lookup(:revenue_vehicles, :all) do
+      [{:all, data}] -> data
+      _ -> MapSet.new()
+    end
   end
 
   @impl true
   def init(_) do
     schedule_update(self())
-
-    @trip_updates_table =
-      :ets.new(@trip_updates_table, [:set, :protected, :named_table, read_concurrency: true])
-
-    {:ok,
-     %{
-       last_modified_trip_updates: nil,
-       trip_updates_table: @trip_updates_table,
-       revenue_vehicles: MapSet.new()
-     }}
+    :ets.new(:trip_updates, [:named_table, read_concurrency: true])
+    :ets.new(:revenue_vehicles, [:named_table, read_concurrency: true])
+    {:ok, %__MODULE__{}}
   end
 
   @impl true
-  def handle_call(:revenue_vehicles, _from, state) do
-    {:reply, state.revenue_vehicles, state}
-  end
-
-  @impl true
-  def handle_info(:update, state) do
+  def handle_info(:update, %__MODULE__{last_modified: last_modified} = state) do
     schedule_update(self())
     current_time = Timex.now()
+    http_client = Application.get_env(:realtime_signs, :http_client)
 
-    {last_modified_trip_updates, vehicles_running_revenue_trips} =
-      download_and_process_trip_updates(
-        state[:last_modified_trip_updates],
-        current_time,
-        :trip_update_url,
-        state[:trip_updates_table]
-      )
+    new_last_modified =
+      case http_client.get(
+             Application.get_env(:realtime_signs, :trip_update_url),
+             if(last_modified, do: [{"If-Modified-Since", last_modified}], else: []),
+             timeout: 2000,
+             recv_timeout: 2000
+           ) do
+        {:ok, %HTTPoison.Response{body: body, status_code: 200, headers: headers}} ->
+          {new_predictions, vehicles_running_revenue_trips} =
+            Predictions.Predictions.parse_json_response(body)
+            |> Predictions.Predictions.get_all(current_time)
 
-    if vehicles_running_revenue_trips != nil do
-      {:noreply,
-       %{
-         state
-         | last_modified_trip_updates: last_modified_trip_updates,
-           revenue_vehicles: vehicles_running_revenue_trips
-       }}
-    else
-      {:noreply, state}
-    end
+          :ets.tab2list(state.trip_updates_table)
+          |> Enum.map(&{elem(&1, 0), []})
+          |> Map.new()
+          |> Map.merge(new_predictions)
+          |> Map.to_list()
+          |> then(&:ets.insert(state.trip_updates_table, &1))
+
+          :ets.insert(state.revenue_vehicles_table, {:all, vehicles_running_revenue_trips})
+
+          Enum.find_value(headers, fn {key, value} -> if(key == "Last-Modified", do: value) end)
+
+        {:ok, %HTTPoison.Response{status_code: 304}} ->
+          last_modified
+
+        {_, response} ->
+          Logger.warn("Could not fetch predictions: #{inspect(response)}")
+          last_modified
+      end
+
+    {:noreply, %{state | last_modified: new_last_modified}}
   end
 
   def handle_info(msg, state) do
     Logger.info("#{__MODULE__} unknown message: #{inspect(msg)}")
     {:noreply, state}
-  end
-
-  @spec download_and_process_trip_updates(
-          String.t() | nil,
-          DateTime.t(),
-          atom,
-          :ets.tab()
-        ) :: {String.t() | nil, any()}
-  defp download_and_process_trip_updates(
-         last_modified,
-         current_time,
-         url,
-         ets_table
-       ) do
-    full_url = Application.get_env(:realtime_signs, url)
-
-    case download_data(full_url, last_modified) do
-      {:ok, body, new_last_modified} ->
-        {new_predictions, vehicles_running_revenue_trips} =
-          body
-          |> Predictions.Predictions.parse_json_response()
-          |> Predictions.Predictions.get_all(current_time)
-
-        existing_predictions =
-          :ets.tab2list(ets_table) |> Enum.map(&{elem(&1, 0), :none}) |> Map.new()
-
-        all_predictions = Map.merge(existing_predictions, new_predictions)
-        :ets.insert(ets_table, Enum.into(all_predictions, []))
-
-        {new_last_modified, vehicles_running_revenue_trips}
-
-      :error ->
-        {last_modified, nil}
-    end
-  end
-
-  @spec download_data(String.t(), String.t() | nil) ::
-          {:ok, String.t(), String.t() | nil} | :error
-  defp download_data(full_url, last_modified) do
-    http_client = Application.get_env(:realtime_signs, :http_client)
-
-    case http_client.get(
-           full_url,
-           if last_modified do
-             [{"If-Modified-Since", last_modified}]
-           else
-             []
-           end,
-           timeout: 2000,
-           recv_timeout: 2000
-         ) do
-      {:ok, %HTTPoison.Response{body: body, status_code: status, headers: headers}}
-      when status >= 200 and status < 300 ->
-        case Enum.find(headers, fn {header, _value} -> header == "Last-Modified" end) do
-          {"Last-Modified", last_modified} -> {:ok, body, last_modified}
-          _ -> {:ok, body, nil}
-        end
-
-      {:ok, %HTTPoison.Response{}} ->
-        :error
-
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("Could not fetch file from #{inspect(full_url)}: #{inspect(reason)}")
-        :error
-    end
   end
 
   defp schedule_update(pid) do

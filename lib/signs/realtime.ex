@@ -118,11 +118,13 @@ defmodule Signs.Realtime do
       uses_shuttles: Map.get(config, "uses_shuttles", true)
     }
 
-    GenServer.start_link(__MODULE__, sign)
+    GenServer.start_link(__MODULE__, sign, name: :"Signs/#{sign.id}")
   end
 
   def init(sign) do
-    schedule_run_loop(self())
+    # This delay was chosen to be long enough to prevent individual sign crashes from restarting
+    # the whole app, allowing some resilience against temporary external failures.
+    Process.send_after(self(), :run_loop, 5000)
     {:ok, sign}
   end
 
@@ -185,17 +187,13 @@ defmodule Signs.Realtime do
       |> decrement_ticks()
       |> Map.put(:prev_predictions, all_predictions)
 
-    schedule_run_loop(self())
+    Process.send_after(self(), :run_loop, 1000)
     {:noreply, sign}
   end
 
   def handle_info(msg, state) do
     Logger.warn("Signs.Realtime unknown_message: #{inspect(msg)}")
     {:noreply, state}
-  end
-
-  def schedule_run_loop(pid) do
-    Process.send_after(pid, :run_loop, 1_000)
   end
 
   defp prediction_key(prediction) do

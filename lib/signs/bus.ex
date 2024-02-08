@@ -64,7 +64,7 @@ defmodule Signs.Bus do
       last_read_time: Timex.now()
     }
 
-    GenServer.start_link(__MODULE__, state)
+    GenServer.start_link(__MODULE__, state, name: :"Signs/#{state.id}")
   end
 
   defp parse_configs(nil), do: nil
@@ -84,13 +84,17 @@ defmodule Signs.Bus do
     end
   end
 
+  @impl true
   def init(state) do
-    schedule_run_loop(self())
+    # This delay was chosen to be long enough to prevent individual sign crashes from restarting
+    # the whole app, allowing some resilience against temporary external failures.
+    Process.send_after(self(), :run_loop, 5000)
     {:ok, state}
   end
 
+  @impl true
   def handle_info(:run_loop, state) do
-    schedule_run_loop(self())
+    Process.send_after(self(), :run_loop, 1000)
 
     %__MODULE__{
       id: id,
@@ -214,10 +218,6 @@ defmodule Signs.Bus do
   def handle_info(msg, state) do
     Logger.warn("Signs.Bus unknown_message: #{inspect(msg)}")
     {:noreply, state}
-  end
-
-  def schedule_run_loop(pid) do
-    Process.send_after(pid, :run_loop, 1_000)
   end
 
   defp fetch_predictions(prev_predictions_lookup, current_time, state) do

@@ -17,44 +17,26 @@ defmodule PaEss.HttpUpdater do
   use GenServer
   require Logger
 
-  def child_spec(nth) do
-    %{
-      id: :"http_updater#{nth}",
-      start: {__MODULE__, :start_link, [[updater_index: nth]]}
-    }
+  def start_link(index) do
+    GenServer.start_link(__MODULE__, index, name: :"HttpUpdater/#{index}")
   end
 
-  def start_link(opts \\ []) do
-    http_poster = opts[:http_poster] || Application.get_env(:realtime_signs, :http_poster_mod)
-    queue_mod = opts[:queue_mod] || MessageQueue
+  def init(index) do
+    schedule_check_queue(self(), 30)
 
     max_send_rate_per_sec =
       (32 / Application.get_env(:realtime_signs, :number_of_http_updaters))
       |> Float.ceil()
       |> Kernel.trunc()
 
-    avg_ms_between_sends = round(1000 / max_send_rate_per_sec)
-
-    GenServer.start_link(
-      __MODULE__,
-      http_poster: http_poster,
-      queue_mod: queue_mod,
-      updater_index: opts[:updater_index],
-      avg_ms_between_sends: avg_ms_between_sends
-    )
-  end
-
-  def init(opts) do
-    schedule_check_queue(self(), 30)
-
     {:ok,
      %{
-       http_poster: opts[:http_poster],
-       queue_mod: opts[:queue_mod],
-       updater_index: opts[:updater_index],
+       http_poster: Application.get_env(:realtime_signs, :http_poster_mod),
+       queue_mod: MessageQueue,
+       updater_index: index,
        internal_counter: 0,
        timestamp: div(System.system_time(:millisecond), 500),
-       avg_ms_between_sends: opts[:avg_ms_between_sends]
+       avg_ms_between_sends: round(1000 / max_send_rate_per_sec)
      }}
   end
 
