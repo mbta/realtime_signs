@@ -527,7 +527,8 @@ defmodule PaEss.Utilities do
     {"Adams & Gallivan", ["Gallivn", "Gallivan"]},
     {"Waltham", ["Waltham"]},
     {"Haymarket", ["Haymrkt", "Haymarkt", "Haymarket"]},
-    {"Silver Line Way", ["Slvr Ln Way"]}
+    {"Silver Line Way", ["Slvr Ln Way"]},
+    {"Gallivan Blvd", ["Gallivn", "Gallivan"]}
   ]
 
   @spec headsign_abbreviations(String.t() | nil) :: [String.t()]
@@ -650,7 +651,8 @@ defmodule PaEss.Utilities do
     {"Haymarket", "4028"},
     {"Silver Line Way", "570"},
     {"Drydock", "571"},
-    {"Chelsea", "860"}
+    {"Chelsea", "860"},
+    {"Gallivan Blvd", "881"}
   ]
 
   @route_take_lookup %{
