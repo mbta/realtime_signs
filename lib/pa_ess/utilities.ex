@@ -126,11 +126,6 @@ defmodule PaEss.Utilities do
     n > 0 and n < 21
   end
 
-  @spec valid_destination?(PaEss.destination(), Content.Audio.language()) :: boolean()
-  def valid_destination?(destination, language) when not is_nil(destination) do
-    language == :english or destination in [:chelsea, :south_station]
-  end
-
   @spec number_var(integer(), Content.Audio.language()) :: String.t() | nil
   def number_var(n, :english) do
     if valid_range?(n, :english) do

@@ -747,21 +747,6 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
     end
 
-    test "reads headways in spanish, if available" do
-      expect_messages({"Chelsea trains", "Every 11 to 13 min"})
-
-      expect_audios([
-        {:canned, {"133", ["5511", "5513"], :audio}},
-        {:canned, {"150", ["37011", "37013"], :audio}}
-      ])
-
-      Signs.Realtime.handle_info(:run_loop, %{
-        @sign
-        | tick_read: 0,
-          source_config: %{@sign.source_config | headway_destination: :chelsea}
-      })
-    end
-
     test "reads mixed predictions and headways" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :ashmont, arrival: 130)]
