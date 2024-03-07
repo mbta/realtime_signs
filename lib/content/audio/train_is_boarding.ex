@@ -64,22 +64,14 @@ defmodule Content.Audio.TrainIsBoarding do
       end
     end
 
+    def to_tts(audio) do
+      train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
+      track = if(audio.track_number, do: " on track #{audio.track_number}", else: ".")
+      "The next #{train} is now boarding#{track}"
+    end
+
     defp do_ad_hoc_message(audio) do
-      case PaEss.Utilities.ad_hoc_trip_description(audio.destination) do
-        {:ok, trip_description} ->
-          text =
-            if audio.track_number do
-              "The next #{trip_description} is now boarding, on track #{audio.track_number}"
-            else
-              "The next #{trip_description} is now boarding"
-            end
-
-          {:ad_hoc, {text, :audio}}
-
-        {:error, :unknown} ->
-          Logger.error("TrainIsBoarding.to_params unknown destination: #{audio.destination}")
-          nil
-      end
+      {:ad_hoc, {Content.Audio.to_tts(audio), :audio}}
     end
 
     defp do_to_params(%{destination: destination, route_id: "Green-" <> _branch}, destination_var)

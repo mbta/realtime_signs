@@ -1,10 +1,9 @@
 defmodule Content.Audio.StoppedTrainTest do
   use ExUnit.Case, async: true
-  import ExUnit.CaptureLog
 
   describe "to_params/1" do
     test "Serializes correctly" do
-      audio = %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 2}
+      audio = %Content.Audio.StoppedTrain{destination: :alewife, route_id: "Red", stops_away: 2}
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
@@ -27,7 +26,7 @@ defmodule Content.Audio.StoppedTrainTest do
     end
 
     test "Uses singular 'stop' if 1 stop away" do
-      audio = %Content.Audio.StoppedTrain{destination: :alewife, stops_away: 1}
+      audio = %Content.Audio.StoppedTrain{destination: :alewife, route_id: "Red", stops_away: 1}
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
@@ -48,42 +47,24 @@ defmodule Content.Audio.StoppedTrainTest do
                    "535"
                  ], :audio}}
     end
-
-    test "Returns :ad_hoc params for southbound destination" do
-      audio = %Content.Audio.StoppedTrain{destination: :southbound, stops_away: 2}
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"The next Southbound train is stopped 2 stops away", :audio}}
-    end
-
-    test "Returns ad_hoc audio for valid destinations" do
-      audio = %Content.Audio.StoppedTrain{
-        destination: :westbound,
-        stops_away: 2
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"The next Westbound train is stopped 2 stops away", :audio}}
-    end
-
-    test "Handles unknown destinations gracefully" do
-      audio = %Content.Audio.StoppedTrain{destination: :unknown, stops_away: 2}
-
-      log =
-        capture_log([level: :error], fn ->
-          assert Content.Audio.to_params(audio) == nil
-        end)
-
-      assert log =~ "unknown destination"
-    end
   end
 
   describe "from_message/1" do
     test "Converts a stopped train message with known headsign" do
-      msg = %Content.Message.StoppedTrain{destination: :forest_hills, stops_away: 1}
+      msg = %Content.Message.StoppedTrain{
+        destination: :forest_hills,
+        route_id: "Orange",
+        stops_away: 1
+      }
 
       assert Content.Audio.StoppedTrain.from_message(msg) ==
-               [%Content.Audio.StoppedTrain{destination: :forest_hills, stops_away: 1}]
+               [
+                 %Content.Audio.StoppedTrain{
+                   destination: :forest_hills,
+                   route_id: "Orange",
+                   stops_away: 1
+                 }
+               ]
     end
 
     test "Returns nil for irrelevant message" do

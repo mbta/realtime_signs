@@ -23,20 +23,16 @@ defmodule Content.Audio.Passthrough do
     def to_params(audio) do
       case destination_var(audio.destination, audio.route_id) do
         nil ->
-          case PaEss.Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
-            {:ok, trip_description} ->
-              text =
-                "The next #{trip_description} does not take customers. Please stand back from the yellow line."
-
-              {:ad_hoc, {text, :audio}}
-
-            {:error, :unknown} ->
-              handle_unknown_destination(audio)
-          end
+          {:ad_hoc, {Content.Audio.to_tts(audio), :audio_visual}}
 
         var ->
           {:canned, {"103", [var], :audio_visual}}
       end
+    end
+
+    def to_tts(%Content.Audio.Passthrough{} = audio) do
+      train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
+      "The next #{train} does not take customers. Please stand back from the yellow line."
     end
 
     @spec handle_unknown_destination(Content.Audio.Passthrough.t()) :: nil
