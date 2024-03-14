@@ -1,51 +1,52 @@
 ARG ELIXIR_VERSION=1.14.0
 ARG ERLANG_VERSION=25.0.4
-ARG WINDOWS_VERSION=1809
+ARG ALPINE_VERSION=3.18.0
 # See also: ERTS_VERSION in the from image below
 
-ARG BUILD_IMAGE=mbtatools/windows-elixir:$ELIXIR_VERSION-erlang-$ERLANG_VERSION-windows-$WINDOWS_VERSION
-ARG FROM_IMAGE=mcr.microsoft.com/windows/servercore:$WINDOWS_VERSION
-
-FROM $BUILD_IMAGE as build
+FROM hexpm/elixir:${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION} as build
 
 ENV MIX_ENV=prod
 
-# log which version of Windows we're using
-RUN ver
+RUN mkdir /realtime_signs
 
-RUN mkdir C:\realtime_signs
+WORKDIR /realtime_signs
 
-WORKDIR C:\\realtime_signs
+RUN apk add --no-cache git
+RUN mix local.hex --force && mix local.rebar --force
 
 COPY mix.exs mix.lock ./
 RUN mix deps.get
 
-COPY config/config.exs config\\config.exs
-COPY config/prod.exs config\\prod.exs
+COPY config/config.exs config/config.exs
+COPY config/prod.exs config/prod.exs
 
 RUN mix deps.compile
 
 COPY lib lib
 COPY priv priv
 
-COPY config/runtime.exs config\\runtime.exs
-RUN mix release
+COPY config/runtime.exs config/runtime.exs
+RUN mix release linux
 
-FROM $FROM_IMAGE
-ARG ERTS_VERSION=13.0.4
+# The one the elixir image was built with
+FROM alpine:${ALPINE_VERSION}
 
-USER ContainerAdministrator
-COPY --from=build C:\\Erlang\\vcredist_x64.exe vcredist_x64.exe
-RUN .\vcredist_x64.exe /install /quiet /norestart \
-    && del vcredist_x64.exe
+RUN apk add --no-cache libssl1.1 dumb-init libstdc++ libgcc ncurses-libs && \
+    mkdir /work /realtime_signs && \
+    adduser -D realtime_signs && chown realtime_signs /work
 
-COPY --from=build C:\\realtime_signs\\_build\\prod\\rel\\realtime_signs C:\\realtime_signs
+COPY --from=build /realtime_signs/_build/prod/rel/linux /realtime_signs
 
-WORKDIR C:\\realtime_signs
+RUN chown realtime_signs /realtime_signs/lib/tzdata-*/priv /realtime_signs/lib/tzdata*/priv/*
 
-# Ensure Erlang can run
-RUN dir && \
-    erts-%ERTS_VERSION%\bin\erl -noshell -noinput +V
+# Set exposed ports
+ENV MIX_ENV=prod TERM=xterm LANG=C.UTF-8 \
+    ERL_CRASH_DUMP_SECONDS=0 RELEASE_TMP=/work
 
-EXPOSE 80
-CMD ["C:\\realtime_signs\\bin\\realtime_signs.bat", "start"]
+USER realtime_signs
+WORKDIR /work
+
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+HEALTHCHECK CMD ["/realtime_signs/bin/linux", "rpc", "1 + 1"]
+CMD ["/realtime_signs/bin/linux", "start"]
