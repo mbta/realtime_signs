@@ -18,8 +18,9 @@ defmodule RealtimeSigns.Mixfile do
         ignore_warnings: ".dialyzer.ignore-warnings"
       ],
       releases: [
-        linux: [
-          include_executables_for: [:unix]
+        realtime_signs: [
+          include_executables_for: [:windows],
+          applications: [runtime_tools: :permanent]
         ]
       ]
     ]

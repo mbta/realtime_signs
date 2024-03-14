@@ -6,32 +6,16 @@ on:
 jobs:
   deploy:
     name: Deploy
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read  
-    environment: prod-linux
-    concurrency: prod-linux
-    env:
-      ECS_CLUSTER: linux-prod
-      ECS_SERVICE: realtime-signs-prod
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: mbta/actions/build-push-ecr@v2
-        id: build-push
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          docker-repo: ${{ secrets.DOCKER_REPO }}
-      - uses: mbta/actions/deploy-ecs@v2
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          ecs-cluster: ${{ env.ECS_CLUSTER }}
-          ecs-service: ${{ env.ECS_SERVICE }}
-          docker-tag: ${{ steps.build-push.outputs.docker-tag }}
-          launch-type: EXTERNAL
-      - uses: mbta/actions/notify-slack-deploy@v1
-        if: ${{ !cancelled() }}
-        with:
-          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
-          job-status: ${{ job.status }}
+    uses: mbta/workflows/.github/workflows/deploy-on-prem.yml@v2
+    with:
+      app-name: realtime-signs
+      environment: prod
+      on-prem-cluster: hsctd-prod-managers
+      splunk-index: realtime-signs-prod
+      task-cpu: .5
+      task-memory: 2048M
+      task-port: 80
+    secrets:
+      aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
+      docker-repo: ${{ secrets.DOCKER_REPO }}
+      slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
