@@ -1,38 +1,35 @@
-name: Deploy to Dev Green
+name: Deploy to Dev-green
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
 
 jobs:
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
+  Build:
+    runs-on: windows-2019
     permissions:
       id-token: write
-      contents: read    
-    environment: dev-green-linux
-    concurrency: dev-green-linux
-    env:
-      ECS_CLUSTER: linux-staging
-      ECS_SERVICE: realtime-signs-dev-green
+      contents: read
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
       - uses: mbta/actions/build-push-ecr@v2
         id: build-push
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           docker-repo: ${{ secrets.DOCKER_REPO }}
-      - uses: mbta/actions/deploy-ecs@v2
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          ecs-cluster: ${{ env.ECS_CLUSTER }}
-          ecs-service: ${{ env.ECS_SERVICE }}
-          docker-tag: ${{ steps.build-push.outputs.docker-tag }}
-          launch-type: EXTERNAL
-      - uses: mbta/actions/notify-slack-deploy@v1
-        if: ${{ !cancelled() }}
-        with:
-          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
-          job-status: ${{ job.status }}
+  deploy:
+    name: Deploy
+    needs: build
+    uses: mbta/workflows/.github/workflows/deploy-on-prem.yml@v2
+    with:
+      app-name: realtime-signs
+      environment: dev-green
+      on-prem-cluster: hsctd-dev-managers
+      splunk-index: realtime-signs-dev-green
+      task-cpu: .5
+      task-memory: 2048M
+      task-port: 8080
+    secrets:
+      aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
+      docker-repo: ${{ secrets.DOCKER_REPO }}
+      slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
