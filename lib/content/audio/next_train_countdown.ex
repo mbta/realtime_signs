@@ -112,7 +112,7 @@ defmodule Content.Audio.NextTrainCountdown do
                 ". We will announce the platform for boarding soon."
 
               true ->
-                ". We will announce the platform for boarding when the tran is closer."
+                ". We will announce the platform for boarding when the train is closer."
             end
 
           true ->
