@@ -82,23 +82,15 @@ defmodule Content.Audio.FollowingTrain do
       end
     end
 
+    def to_tts(%Content.Audio.FollowingTrain{} = audio) do
+      train = Utilities.train_description(audio.destination, audio.route_id)
+      arrives_or_departs = if audio.verb == :arrives, do: "arrives", else: "departs"
+      min_or_mins = if audio.minutes == 1, do: "minute", else: "minutes"
+      "The following #{train} #{arrives_or_departs} in #{audio.minutes} #{min_or_mins}"
+    end
+
     defp do_ad_hoc_message(audio) do
-      case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
-        {:ok, trip_description} ->
-          min_or_mins = if audio.minutes == 1, do: "minute", else: "minutes"
-
-          text =
-            "The following #{trip_description} #{audio.verb} in #{audio.minutes} #{min_or_mins}"
-
-          {:ad_hoc, {text, :audio}}
-
-        {:error, :unknown} ->
-          Logger.error(
-            "FollowingTrain.to_params unknown destination: #{inspect(audio.destination)}"
-          )
-
-          nil
-      end
+      {:ad_hoc, {Content.Audio.to_tts(audio), :audio}}
     end
 
     @spec green_line_with_branch_params(

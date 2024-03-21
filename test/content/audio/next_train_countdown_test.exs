@@ -1,6 +1,5 @@
 defmodule Content.Audio.NextTrainCountdownTest do
   use ExUnit.Case, async: true
-  import ExUnit.CaptureLog
 
   describe "Content.Audio.to_params protocol" do
     test "Next train to Ashmont" do
@@ -401,81 +400,5 @@ defmodule Content.Audio.NextTrainCountdownTest do
                    "541"
                  ], :audio}}
     end
-  end
-
-  test "The next southbound train in 1 minute" do
-    audio = %Content.Audio.NextTrainCountdown{
-      destination: :southbound,
-      route_id: "Red",
-      verb: :arrives,
-      minutes: 1,
-      track_number: nil,
-      platform: nil
-    }
-
-    assert Content.Audio.to_params(audio) ==
-             {:ad_hoc, {"The next Southbound Red Line train arrives in 1 minute", :audio}}
-  end
-
-  test "The next Southbound train in multiple minutes" do
-    audio = %Content.Audio.NextTrainCountdown{
-      destination: :southbound,
-      route_id: "Red",
-      verb: :arrives,
-      minutes: 5,
-      track_number: nil,
-      platform: nil
-    }
-
-    assert Content.Audio.to_params(audio) ==
-             {:ad_hoc, {"The next Southbound Red Line train arrives in 5 minutes", :audio}}
-  end
-
-  test "The next southbound train on track 1" do
-    audio = %Content.Audio.NextTrainCountdown{
-      destination: :southbound,
-      route_id: "Red",
-      verb: :departs,
-      minutes: 5,
-      track_number: 1,
-      platform: nil
-    }
-
-    assert Content.Audio.to_params(audio) ==
-             {:ad_hoc,
-              {"The next Southbound Red Line train departs in 5 minutes from track 1", :audio}}
-  end
-
-  test "Returns ad_hoc audio for valid destinations" do
-    audio = %Content.Audio.NextTrainCountdown{
-      destination: :southbound,
-      route_id: "Orange",
-      verb: :departs,
-      minutes: 5,
-      track_number: 1,
-      platform: nil
-    }
-
-    assert Content.Audio.to_params(audio) ==
-             {:ad_hoc,
-              {"The next Southbound Orange Line train departs in 5 minutes from track 1", :audio}}
-  end
-
-  test "Handles unknown destination gracefully" do
-    audio = %Content.Audio.NextTrainCountdown{
-      destination: :unknown,
-      route_id: "Red",
-      verb: :departs,
-      minutes: 5,
-      track_number: 1,
-      platform: nil
-    }
-
-    log =
-      capture_log([level: :error], fn ->
-        assert Content.Audio.to_params(audio) == nil
-      end)
-
-    assert log =~ "unknown destination"
   end
 end

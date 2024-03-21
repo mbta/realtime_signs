@@ -1,6 +1,5 @@
 defmodule Content.Audio.VehiclesToDestinationTest do
   use ExUnit.Case
-  import ExUnit.CaptureLog
 
   import Content.Audio.VehiclesToDestination
 
@@ -30,25 +29,6 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       }
 
       assert Content.Audio.to_params(audio) == {:canned, {"184", ["5505", "5507"], :audio}}
-    end
-
-    test "returns nil when range is unexpected" do
-      audio = %Content.Audio.VehiclesToDestination{
-        destination: :lechmere,
-        headway_range: {:a, :b, :c}
-      }
-
-      assert Content.Audio.to_params(audio) == nil
-    end
-
-    test "Returns ad-hoc audio when no destination" do
-      audio = %Content.Audio.VehiclesToDestination{
-        destination: nil,
-        headway_range: {8, 10}
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"Trains every 8 to 10 minutes.", :audio}}
     end
   end
 

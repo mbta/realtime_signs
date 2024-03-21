@@ -93,27 +93,37 @@ defmodule Content.Audio.NextTrainCountdown do
       end
     end
 
-    defp do_ad_hoc_message(audio) do
-      case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
-        {:ok, trip_description} ->
-          min_or_mins = if audio.minutes == 1, do: "minute", else: "minutes"
+    def to_tts(%Content.Audio.NextTrainCountdown{} = audio) do
+      train = Utilities.train_description(audio.destination, audio.route_id)
+      arrives_or_departs = if audio.verb == :arrives, do: "arrives", else: "departs"
+      min_or_mins = if audio.minutes == 1, do: "minute", else: "minutes"
 
-          text = "The next #{trip_description} #{audio.verb} in #{audio.minutes} #{min_or_mins}"
+      suffix =
+        cond do
+          audio.track_number ->
+            " on track #{audio.track_number}."
 
-          text =
-            if audio.track_number do
-              text <> " from track #{audio.track_number}"
-            else
-              text
+          audio.platform ->
+            cond do
+              audio.minutes <= 5 ->
+                " on the #{if(audio.platform == :ashmont, do: "ashmont", else: "braintree")} platform"
+
+              audio.minutes <= 11 ->
+                ". We will announce the platform for boarding soon."
+
+              true ->
+                ". We will announce the platform for boarding when the train is closer."
             end
 
-          {:ad_hoc, {text, :audio}}
+          true ->
+            "."
+        end
 
-        {:error, :unknown} ->
-          Logger.error("NextTrainCountdown unknown destination: #{inspect(audio.destination)}")
+      "The next #{train} #{arrives_or_departs} in #{audio.minutes} #{min_or_mins}#{suffix}"
+    end
 
-          nil
-      end
+    defp do_ad_hoc_message(audio) do
+      {:ad_hoc, {Content.Audio.to_tts(audio), :audio}}
     end
 
     @spec green_line_with_branch_params(
