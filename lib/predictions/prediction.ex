@@ -11,7 +11,7 @@ defmodule Predictions.Prediction do
             trip_id: nil,
             destination_stop_id: nil,
             stopped?: false,
-            stops_away: 0,
+            vehicle_at_predicted_stop?: false,
             boarding_status: nil,
             revenue_trip?: true,
             vehicle_id: nil
@@ -31,7 +31,7 @@ defmodule Predictions.Prediction do
           trip_id: trip_id() | nil,
           destination_stop_id: String.t(),
           stopped?: boolean(),
-          stops_away: integer(),
+          vehicle_at_predicted_stop?: boolean(),
           boarding_status: String.t() | nil,
           revenue_trip?: boolean(),
           vehicle_id: String.t() | nil

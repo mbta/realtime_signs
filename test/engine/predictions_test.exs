@@ -65,6 +65,8 @@ defmodule Engine.PredictionsTest do
       assert :ets.info(predictions_table)[:size] == 2
       [{{"stop_to_remove", 0}, []}] = :ets.lookup(predictions_table, {"stop_to_remove", 0})
 
+      :ets.lookup(predictions_table, {"stop_to_update", 0})
+
       [{{"stop_to_update", 0}, [%Predictions.Prediction{}]}] =
         :ets.lookup(predictions_table, {"stop_to_update", 0})
     end

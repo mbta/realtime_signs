@@ -77,10 +77,17 @@ defmodule Content.Message.Predictions do
 
     {minutes, approximate?} =
       cond do
-        prediction.stops_away == 0 -> {:boarding, false}
-        predicted_time <= 30 -> {:arriving, false}
-        predicted_time <= 60 -> {:approaching, false}
-        true -> compute_minutes(predicted_time, certainty)
+        prediction.stopped? and prediction.vehicle_at_predicted_stop? ->
+          {:boarding, false}
+
+        predicted_time <= 30 ->
+          {:arriving, false}
+
+        predicted_time <= 60 ->
+          {:approaching, false}
+
+        true ->
+          compute_minutes(predicted_time, certainty)
       end
 
     {crowding_data_confidence, crowding_description} =
@@ -128,7 +135,7 @@ defmodule Content.Message.Predictions do
   def terminal(prediction, station_code, zone, sign, width \\ 18)
 
   def terminal(prediction, station_code, zone, sign, width) do
-    stopped_at? = prediction.stops_away == 0
+    stopped_at? = prediction.vehicle_at_predicted_stop? and prediction.stopped?
 
     {minutes, approximate?} =
       case prediction.seconds_until_departure + @terminal_prediction_offset_seconds do
