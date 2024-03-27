@@ -9,8 +9,8 @@ defmodule Predictions.Predictions do
   def get_all(feed_message, current_time) do
     predictions =
       feed_message["entity"]
-      |> Enum.map(& &1["trip_update"])
-      |> Enum.filter(
+      |> Stream.map(& &1["trip_update"])
+      |> Stream.filter(
         &(&1["trip"]["route_id"] in [
             "Red",
             "Blue",
@@ -20,15 +20,14 @@ defmodule Predictions.Predictions do
             "Green-D",
             "Green-E",
             "Mattapan"
-          ])
+          ] and &1["trip"]["schedule_relationship"] != "CANCELED")
       )
-      |> Enum.reject(&(&1["trip"]["schedule_relationship"] == "CANCELED"))
-      |> Enum.flat_map(&transform_stop_time_updates/1)
-      |> Enum.filter(fn {update, _, _, _, _, _, _} ->
+      |> Stream.flat_map(&transform_stop_time_updates/1)
+      |> Stream.filter(fn {update, _, _, _, _, _, _} ->
         (update["arrival"] && update["arrival"]["uncertainty"]) ||
           (update["departure"] && update["departure"]["uncertainty"])
       end)
-      |> Enum.map(&prediction_from_update(&1, current_time))
+      |> Stream.map(&prediction_from_update(&1, current_time))
       |> Enum.reject(
         &(is_nil(&1.seconds_until_arrival) and is_nil(&1.seconds_until_departure) and
             is_nil(&1.seconds_until_passthrough))
@@ -36,8 +35,8 @@ defmodule Predictions.Predictions do
 
     vehicles_running_revenue_trips =
       predictions
-      |> Enum.filter(& &1.revenue_trip?)
-      |> Enum.map(& &1.vehicle_id)
+      |> Stream.filter(& &1.revenue_trip?)
+      |> Stream.map(& &1.vehicle_id)
       |> MapSet.new()
 
     {Enum.group_by(predictions, fn prediction ->
@@ -108,9 +107,9 @@ defmodule Predictions.Predictions do
       route_id: route_id,
       trip_id: trip_id,
       destination_stop_id: last_stop_id,
-      stopped?: not is_nil(vehicle_location) and vehicle_location.status == :stopped_at,
-      vehicle_at_predicted_stop?:
-        not is_nil(vehicle_location) and stop_time_update["stop_id"] == vehicle_location.stop_id,
+      stopped_at_predicted_stop?:
+        not is_nil(vehicle_location) and vehicle_location.status == :stopped_at and
+          stop_time_update["stop_id"] == vehicle_location.stop_id,
       boarding_status: stop_time_update["boarding_status"],
       revenue_trip?: revenue_trip?,
       vehicle_id: vehicle_id

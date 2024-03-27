@@ -19,5 +19,5 @@ export API_V3_URL=https://api-dev-green.mbtace.com
 
 # URLs of the enhanced trip-update and vehicle-position feeds. Default to the real feed URLs if
 # not set here.
-#export TRIP_UPDATE_URL=
-#export VEHICLE_POSITIONS_URL=
+#export TRIP_UPDATE_URL="https://cdn.mbta.com/realtime/TripUpdates_enhanced.json"
+#export VEHICLE_POSITIONS_URL="https://cdn.mbta.com/realtime/VehiclePositions_enhanced.json"

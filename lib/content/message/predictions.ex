@@ -77,7 +77,7 @@ defmodule Content.Message.Predictions do
 
     {minutes, approximate?} =
       cond do
-        prediction.stopped? and prediction.vehicle_at_predicted_stop? ->
+        prediction.stopped_at_predicted_stop? ->
           {:boarding, false}
 
         predicted_time <= 30 ->
@@ -135,13 +135,16 @@ defmodule Content.Message.Predictions do
   def terminal(prediction, station_code, zone, sign, width \\ 18)
 
   def terminal(prediction, station_code, zone, sign, width) do
-    stopped_at? = prediction.vehicle_at_predicted_stop? and prediction.stopped?
-
     {minutes, approximate?} =
       case prediction.seconds_until_departure + @terminal_prediction_offset_seconds do
-        x when x <= @terminal_brd_seconds and stopped_at? -> {:boarding, false}
-        x when x <= @terminal_brd_seconds -> {1, false}
-        x -> compute_minutes(x, prediction.departure_certainty)
+        x when x <= @terminal_brd_seconds and prediction.stopped_at_predicted_stop? ->
+          {:boarding, false}
+
+        x when x <= @terminal_brd_seconds ->
+          {1, false}
+
+        x ->
+          compute_minutes(x, prediction.departure_certainty)
       end
 
     case Content.Utilities.destination_for_prediction(

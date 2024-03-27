@@ -47,7 +47,7 @@ defmodule Signs.Utilities.Predictions do
       {if terminal_prediction?(prediction, sources) do
          0
        else
-         if prediction.stopped? and prediction.vehicle_at_predicted_stop?,
+         if prediction.stopped_at_predicted_stop?,
            do: 0,
            else: 1
        end, prediction.seconds_until_departure, prediction.seconds_until_arrival}
