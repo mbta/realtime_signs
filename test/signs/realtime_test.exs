@@ -1400,11 +1400,11 @@ defmodule Signs.RealtimeTest do
           nil ->
             []
 
-          stops when stops > 0 ->
-            [stopped_at_predicted_stop: false, boarding_status: "Stopped #{stops} stop away"]
-
           0 ->
             [stopped_at_predicted_stop: true]
+
+          stops ->
+            [stopped_at_predicted_stop: false, boarding_status: "Stopped #{stops} stop away"]
         end
 
     %Predictions.Prediction{
