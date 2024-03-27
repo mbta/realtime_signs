@@ -5,6 +5,7 @@ defmodule Engine.LastTrip do
 
   @recent_departures_table :recent_departures
   @last_trips_table :last_trips
+  @hour_in_seconds 3600
 
   @type state :: %{
           last_modified: nil,
@@ -17,13 +18,21 @@ defmodule Engine.LastTrip do
   end
 
   @impl true
-  def get_recent_departures(stop_id) do
-    # Look up stop_id in recent departures table for recently departed trips
-    # Then see if any of those trips have a last trip record
+  def get_recent_departures(recent_departures_table \\ @recent_departures_table, stop_id) do
+    case :ets.lookup(recent_departures_table, stop_id) do
+      [{_, :none}] -> nil
+      [{^stop_id, departures}] -> departures
+      _ -> nil
+    end
   end
 
   @impl true
-  def get_last_trips(stop_id) do
+  def get_last_trips(last_trips_table \\ @last_trips_table, stop_id) do
+    case :ets.lookup(last_trips_table, stop_id) do
+      [{_, :none}] -> nil
+      [{^stop_id, last_trips}] -> last_trips
+      _ -> nil
+    end
   end
 
   @impl true
@@ -50,7 +59,6 @@ defmodule Engine.LastTrip do
   def handle_info(:update, %{last_modified: last_modified} = state) do
     schedule_update(self())
 
-    # Update recent departures and last trips tables
     current_time = Timex.now()
     http_client = Application.get_env(:realtime_signs, :http_client)
 
@@ -73,9 +81,6 @@ defmodule Engine.LastTrip do
             |> Enum.each(fn {trip_id, timestamp} ->
               :ets.insert(state.last_trips, {trip_id, timestamp})
             end)
-
-            :ets.insert(state.last_trips, {"123", Timex.now() |> Timex.shift(minutes: -30)})
-            :ets.insert(state.last_trips, {"456", Timex.now() |> Timex.shift(minutes: -70)})
           end)
           |> Enum.map(&{&1["trip"]["trip_id"], &1["stop_time_update"]})
           |> tap(fn predictions_by_trip ->
@@ -85,7 +90,7 @@ defmodule Engine.LastTrip do
               seconds_until_departure =
                 prediction["departure"]["time"] - DateTime.to_unix(current_time)
 
-              if seconds_until_departure <= 0 and abs(seconds_until_departure) <= 3600 do
+              if seconds_until_departure <= 0 and abs(seconds_until_departure) <= @hour_in_seconds do
                 :ets.tab2list(state.recent_departures)
                 |> Enum.map(&{elem(&1, 0), elem(&1, 1)})
                 |> Map.new()
@@ -100,11 +105,6 @@ defmodule Engine.LastTrip do
                 |> elem(1)
                 |> Map.to_list()
                 |> then(&:ets.insert(state.recent_departures, &1))
-
-                # :ets.insert(
-                #   state.recent_departures,
-                #   {prediction["stop_id"], %{trip_id: trip_id, timestamp: current_time}}
-                # )
               end
             end
           end)
@@ -125,16 +125,36 @@ defmodule Engine.LastTrip do
   @impl true
   def handle_info(:clean_old_data, state) do
     schedule_clean(self())
-
-    :ets.tab2list(state.last_trips)
-    |> Enum.filter(fn {_, timestamp} ->
-      Timex.diff(Timex.now(), timestamp, :seconds) > 3600
-    end)
-    |> Enum.each(fn {trip_id, _} ->
-      :ets.delete(state.last_trips, trip_id)
-    end)
+    clean_last_trips(state)
+    clean_recent_departures(state)
 
     {:noreply, state}
+  end
+
+  defp clean_last_trips(state) do
+    :ets.tab2list(state.last_trips)
+    |> Enum.each(fn {trip_id, timestamp} ->
+      if Timex.diff(Timex.now(), timestamp, :seconds) > @hour_in_seconds do
+        :ets.delete(state.last_trips, trip_id)
+      else
+        :ok
+      end
+    end)
+  end
+
+  defp clean_recent_departures(state) do
+    current_time = Timex.now()
+
+    :ets.tab2list(state.recent_departures)
+    |> Enum.each(fn {stop_id, departures} ->
+      departures_within_last_hour =
+        Enum.filter(departures, fn {_, departed_time} ->
+          DateTime.to_unix(current_time) - departed_time <= @hour_in_seconds
+        end)
+        |> Map.new()
+
+      :ets.insert(state.recent_departures, {stop_id, departures_within_last_hour})
+    end)
   end
 
   defp schedule_update(pid) do
