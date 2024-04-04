@@ -16,6 +16,42 @@ defmodule Monitoring.Uptime do
   end
 
   defp log_node_status(
+         %{
+           "IPAddress" => ip_address,
+           "Uptime" => uptime,
+           "TotalMemory" => total_memory,
+           "Total_C_Space" => total_c_space,
+           "Total_D_Space" => total_d_space,
+           "AvailableMemory" => available_memory,
+           "Available_C_Space" => available_c_space,
+           "Available_D_Space" => available_d_space
+         },
+         date_time
+       ) do
+    Logger.info([
+      "headend_server_stats: ",
+      "date_time=",
+      DateTime.to_string(date_time),
+      " ip_address=",
+      ip_address,
+      " uptime=",
+      uptime,
+      " total_memory=",
+      total_memory,
+      " total_c_space=",
+      total_c_space,
+      " total_d_space=",
+      total_d_space,
+      " available_memory=",
+      available_memory,
+      " available_c_space=",
+      available_c_space,
+      " available_d_space=",
+      available_d_space
+    ])
+  end
+
+  defp log_node_status(
          %{"sw_component" => _, "is_online" => is_online, "status" => status} = node,
          date_time
        ) do
