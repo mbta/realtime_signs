@@ -28,14 +28,22 @@ defmodule Monitoring.Uptime do
          },
          date_time
        ) do
+    [days, hours, minutes] =
+      String.split(uptime, ",")
+      |> Enum.map(&(String.trim_leading(&1) |> String.split() |> List.first()))
+
     Logger.info([
       "headend_server_stats: ",
       "date_time=",
       DateTime.to_string(date_time),
       " ip_address=",
       ip_address,
-      " uptime=",
-      uptime,
+      " uptime_days=",
+      days,
+      " uptime_hours=",
+      hours,
+      " uptime_minutes=",
+      minutes,
       " total_memory=",
       total_memory,
       " total_c_space=",
