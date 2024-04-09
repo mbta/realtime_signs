@@ -27,11 +27,11 @@ defmodule Engine.LastTrip do
   end
 
   @impl true
-  def get_last_trips(last_trips_table \\ @last_trips_table, stop_id) do
-    case :ets.lookup(last_trips_table, stop_id) do
-      [{_, :none}] -> nil
-      [{^stop_id, last_trips}] -> last_trips
-      _ -> nil
+  def is_last_trip?(last_trips_table \\ @last_trips_table, trip_id) do
+    case :ets.lookup(last_trips_table, trip_id) do
+      [{_, :none}] -> false
+      [{^trip_id, _timestamp}] -> true
+      _ -> false
     end
   end
 
@@ -59,7 +59,6 @@ defmodule Engine.LastTrip do
   def handle_info(:update, %{last_modified: last_modified} = state) do
     schedule_update(self())
 
-    current_time = Timex.now()
     http_client = Application.get_env(:realtime_signs, :http_client)
 
     new_last_modified =
@@ -73,40 +72,14 @@ defmodule Engine.LastTrip do
           predictions_feed = Predictions.Predictions.parse_json_response(body)
 
           predictions_feed["entity"]
-          |> Enum.map(& &1["trip_update"])
-          |> Enum.reject(&(&1["trip"]["schedule_relationship"] == "CANCELED"))
+          |> Stream.map(& &1["trip_update"])
+          |> Stream.reject(&(&1["trip"]["schedule_relationship"] == "CANCELED"))
           |> tap(fn trips ->
-            Enum.filter(trips, &(&1["trip"]["last_trip"] == true))
-            |> Enum.map(&{&1["trip"]["trip_id"], current_time})
-            |> Enum.each(fn {trip_id, timestamp} ->
-              :ets.insert(state.last_trips, {trip_id, timestamp})
-            end)
+            insert_last_trips(trips, state)
           end)
-          |> Enum.map(&{&1["trip"]["trip_id"], &1["stop_time_update"]})
+          |> Stream.map(&{&1["trip"]["trip_id"], &1["stop_time_update"]})
           |> tap(fn predictions_by_trip ->
-            for {trip_id, predictions} <- predictions_by_trip,
-                prediction <- predictions,
-                prediction["departure"] do
-              seconds_until_departure =
-                prediction["departure"]["time"] - DateTime.to_unix(current_time)
-
-              if seconds_until_departure <= 0 and abs(seconds_until_departure) <= @hour_in_seconds do
-                :ets.tab2list(state.recent_departures)
-                |> Enum.map(&{elem(&1, 0), elem(&1, 1)})
-                |> Map.new()
-                |> Map.get_and_update(prediction["stop_id"], fn recent_departures ->
-                  if recent_departures do
-                    {recent_departures,
-                     Map.put(recent_departures, trip_id, prediction["departure"]["time"])}
-                  else
-                    {recent_departures, Map.new([{trip_id, prediction["departure"]["time"]}])}
-                  end
-                end)
-                |> elem(1)
-                |> Map.to_list()
-                |> then(&:ets.insert(state.recent_departures, &1))
-              end
-            end
+            insert_recent_departures(predictions_by_trip, state)
           end)
 
           Enum.find_value(headers, fn {key, value} -> if(key == "Last-Modified", do: value) end)
@@ -129,6 +102,43 @@ defmodule Engine.LastTrip do
     clean_recent_departures(state)
 
     {:noreply, state}
+  end
+
+  defp insert_last_trips(trips, state) do
+    current_time = Timex.now()
+
+    Stream.filter(trips, &(&1["trip"]["last_trip"] == true))
+    |> Stream.map(&{&1["trip"]["trip_id"], current_time})
+    |> Enum.each(fn {trip_id, timestamp} ->
+      :ets.insert(state.last_trips, {trip_id, timestamp})
+    end)
+  end
+
+  defp insert_recent_departures(predictions_by_trip, state) do
+    current_time = Timex.now()
+
+    for {trip_id, predictions} <- predictions_by_trip,
+        prediction <- predictions,
+        prediction["departure"] do
+      seconds_until_departure = prediction["departure"]["time"] - DateTime.to_unix(current_time)
+
+      if seconds_until_departure <= 0 and abs(seconds_until_departure) <= @hour_in_seconds do
+        :ets.tab2list(state.recent_departures)
+        |> Stream.map(&{elem(&1, 0), elem(&1, 1)})
+        |> Map.new()
+        |> Map.get_and_update(prediction["stop_id"], fn recent_departures ->
+          if recent_departures do
+            {recent_departures,
+             Map.put(recent_departures, trip_id, prediction["departure"]["time"])}
+          else
+            {recent_departures, Map.new([{trip_id, prediction["departure"]["time"]}])}
+          end
+        end)
+        |> elem(1)
+        |> Map.to_list()
+        |> then(&:ets.insert(state.recent_departures, &1))
+      end
+    end
   end
 
   defp clean_last_trips(state) do
