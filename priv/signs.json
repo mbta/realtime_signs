@@ -3,6 +3,7 @@
     "id": "cedar_grove_outbound",
     "type": "realtime",
     "pa_ess_loc": "MCED",
+    "scu_id": "MCEDSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -30,6 +31,7 @@
     "id": "cedar_grove_inbound",
     "type": "realtime",
     "pa_ess_loc": "MCED",
+    "scu_id": "MCEDSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -57,6 +59,7 @@
     "id": "butler_center",
     "type": "realtime",
     "pa_ess_loc": "MBUT",
+    "scu_id": "MBUTSCU001",
     "read_loop_offset": 150,
     "text_zone": "c",
     "audio_zones": [
@@ -103,6 +106,7 @@
     "id": "milton_outbound",
     "type": "realtime",
     "pa_ess_loc": "MMIL",
+    "scu_id": "MMILSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -130,6 +134,7 @@
     "id": "milton_inbound",
     "type": "realtime",
     "pa_ess_loc": "MMIL",
+    "scu_id": "MMILSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -157,6 +162,7 @@
     "id": "central_avenue_outbound",
     "type": "realtime",
     "pa_ess_loc": "MCEN",
+    "scu_id": "MCENSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -184,6 +190,7 @@
     "id": "central_avenue_inbound",
     "type": "realtime",
     "pa_ess_loc": "MCEN",
+    "scu_id": "MCENSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -211,6 +218,7 @@
     "id": "valley_road_outbound",
     "type": "realtime",
     "pa_ess_loc": "MVAL",
+    "scu_id": "MVALSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -238,6 +246,7 @@
     "id": "valley_road_inbound",
     "type": "realtime",
     "pa_ess_loc": "MVAL",
+    "scu_id": "MVALSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -265,6 +274,7 @@
     "id": "capen_street_inbound",
     "type": "realtime",
     "pa_ess_loc": "MCAP",
+    "scu_id": "MCAPSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -292,6 +302,7 @@
     "id": "wonderland_westbound",
     "type": "realtime",
     "pa_ess_loc": "BWON",
+    "scu_id": "BWONSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -319,6 +330,7 @@
     "id": "wonderland_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BWON",
+    "scu_id": "BWONSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -346,6 +358,7 @@
     "id": "revere_beach_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BREV",
+    "scu_id": "BREVSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -373,6 +386,7 @@
     "id": "revere_beach_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BREV",
+    "scu_id": "BREVSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -419,6 +433,7 @@
     "id": "revere_beach_westbound",
     "type": "realtime",
     "pa_ess_loc": "BREV",
+    "scu_id": "BREVSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -446,6 +461,7 @@
     "id": "beachmont_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BBEA",
+    "scu_id": "BBEASCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -473,6 +489,7 @@
     "id": "beachmont_westbound",
     "type": "realtime",
     "pa_ess_loc": "BBEA",
+    "scu_id": "BBEASCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -500,6 +517,7 @@
     "id": "suffolk_downs_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BSUF",
+    "scu_id": "BSUFSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -527,6 +545,7 @@
     "id": "suffolk_downs_westbound",
     "type": "realtime",
     "pa_ess_loc": "BSUF",
+    "scu_id": "BSUFSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -554,6 +573,7 @@
     "id": "orient_heights_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BORH",
+    "scu_id": "BORHSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -581,6 +601,7 @@
     "id": "orient_heights_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BORH",
+    "scu_id": "BORHSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -627,6 +648,7 @@
     "id": "orient_heights_westbound",
     "type": "realtime",
     "pa_ess_loc": "BORH",
+    "scu_id": "BORHSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -654,6 +676,7 @@
     "id": "wood_island_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BWOO",
+    "scu_id": "BWOOSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -681,6 +704,7 @@
     "id": "wood_island_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BWOO",
+    "scu_id": "BWOOSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -727,6 +751,7 @@
     "id": "wood_island_westbound",
     "type": "realtime",
     "pa_ess_loc": "BWOO",
+    "scu_id": "BWOOSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -754,6 +779,7 @@
     "id": "airport_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BAIR",
+    "scu_id": "BAIRSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -781,6 +807,7 @@
     "id": "airport_westbound",
     "type": "realtime",
     "pa_ess_loc": "BAIR",
+    "scu_id": "BAIRSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -808,6 +835,7 @@
     "id": "maverick_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BMAV",
+    "scu_id": "BMAVSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -835,6 +863,7 @@
     "id": "maverick_westbound",
     "type": "realtime",
     "pa_ess_loc": "BMAV",
+    "scu_id": "BMAVSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -862,6 +891,7 @@
     "id": "aquarium_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BAQU",
+    "scu_id": "BAQUSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -889,6 +919,7 @@
     "id": "aquarium_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BAQU",
+    "scu_id": "BAQUSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -935,6 +966,7 @@
     "id": "aquarium_westbound",
     "type": "realtime",
     "pa_ess_loc": "BAQU",
+    "scu_id": "BAQUSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -962,6 +994,7 @@
     "id": "state_blue_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BSTA",
+    "scu_id": "OSTASCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -989,6 +1022,7 @@
     "id": "state_blue_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BSTA",
+    "scu_id": "OSTASCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -1035,6 +1069,7 @@
     "id": "state_blue_westbound",
     "type": "realtime",
     "pa_ess_loc": "BSTA",
+    "scu_id": "OSTASCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -1062,6 +1097,7 @@
     "id": "government_center_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BGOV",
+    "scu_id": "GOVCSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -1089,6 +1125,7 @@
     "id": "government_center_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BGOV",
+    "scu_id": "GOVCSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -1135,6 +1172,7 @@
     "id": "government_center_westbound",
     "type": "realtime",
     "pa_ess_loc": "BGOV",
+    "scu_id": "GOVCSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -1162,6 +1200,7 @@
     "id": "bowdoin_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BBOW",
+    "scu_id": "BBOWSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -1189,6 +1228,7 @@
     "id": "bowdoin_drop_off",
     "type": "realtime",
     "pa_ess_loc": "BBOW",
+    "scu_id": "BBOWSCU001",
     "read_loop_offset": 60,
     "text_zone": "w",
     "audio_zones": [
@@ -1216,6 +1256,7 @@
     "id": "bowdoin_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BBOW",
+    "scu_id": "BBOWSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -1243,6 +1284,7 @@
     "id": "oak_grove_mezzanine_southbound",
     "type": "realtime",
     "pa_ess_loc": "OOAK",
+    "scu_id": "OOAKSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -1292,6 +1334,7 @@
     "id": "oak_grove_east_busway",
     "type": "realtime",
     "pa_ess_loc": "OOAK",
+    "scu_id": "OOAKSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -1341,6 +1384,7 @@
     "id": "oak_grove_platform",
     "type": "realtime",
     "pa_ess_loc": "OOAK",
+    "scu_id": "OOAKSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -1390,6 +1434,7 @@
     "id": "malden_lobby",
     "type": "realtime",
     "pa_ess_loc": "OMAL",
+    "scu_id": "OMALSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -1436,6 +1481,7 @@
     "id": "malden_center_platform",
     "type": "realtime",
     "pa_ess_loc": "OMAL",
+    "scu_id": "OMALSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -1482,6 +1528,7 @@
     "id": "wellington_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OWEL",
+    "scu_id": "OWELSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -1528,6 +1575,7 @@
     "id": "wellington_northbound",
     "type": "realtime",
     "pa_ess_loc": "OWEL",
+    "scu_id": "OWELSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -1555,6 +1603,7 @@
     "id": "wellington_southbound",
     "type": "realtime",
     "pa_ess_loc": "OWEL",
+    "scu_id": "OWELSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -1593,6 +1642,7 @@
     "id": "assembly_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OASQ",
+    "scu_id": "OASQSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -1639,6 +1689,7 @@
     "id": "assembly_northbound",
     "type": "realtime",
     "pa_ess_loc": "OASQ",
+    "scu_id": "OASQSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -1666,6 +1717,7 @@
     "id": "assembly_southbound",
     "type": "realtime",
     "pa_ess_loc": "OASQ",
+    "scu_id": "OASQSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -1693,6 +1745,7 @@
     "id": "sullivan_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OSUL",
+    "scu_id": "OSULSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -1739,6 +1792,7 @@
     "id": "sullivan_northbound",
     "type": "realtime",
     "pa_ess_loc": "OSUL",
+    "scu_id": "OSULSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -1766,6 +1820,7 @@
     "id": "sullivan_southbound",
     "type": "realtime",
     "pa_ess_loc": "OSUL",
+    "scu_id": "OSULSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -1793,6 +1848,7 @@
     "id": "community_college_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OCOM",
+    "scu_id": "OCOMSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -1839,6 +1895,7 @@
     "id": "community_college_northbound",
     "type": "realtime",
     "pa_ess_loc": "OCOM",
+    "scu_id": "OCOMSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -1866,6 +1923,7 @@
     "id": "community_college_southbound",
     "type": "realtime",
     "pa_ess_loc": "OCOM",
+    "scu_id": "OCOMSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -1893,6 +1951,7 @@
     "id": "orange_north_station_northbound",
     "type": "realtime",
     "pa_ess_loc": "ONST",
+    "scu_id": "NSTASCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -1920,6 +1979,7 @@
     "id": "orange_north_station_southbound",
     "type": "realtime",
     "pa_ess_loc": "ONST",
+    "scu_id": "NSTASCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -1947,6 +2007,7 @@
     "id": "orange_north_station_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "ONST",
+    "scu_id": "NSTASCU001",
     "read_loop_offset": 150,
     "text_zone": "c",
     "audio_zones": [
@@ -1993,6 +2054,7 @@
     "id": "orange_north_station_commuter_rail_exit",
     "type": "realtime",
     "pa_ess_loc": "ONST",
+    "scu_id": "NSTASCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -2039,6 +2101,7 @@
     "id": "orange_haymarket_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OHAY",
+    "scu_id": "HAYMSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -2085,6 +2148,7 @@
     "id": "orange_haymarket_northbound",
     "type": "realtime",
     "pa_ess_loc": "OHAY",
+    "scu_id": "HAYMSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -2112,6 +2176,7 @@
     "id": "orange_haymarket_southbound",
     "type": "realtime",
     "pa_ess_loc": "OHAY",
+    "scu_id": "HAYMSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -2139,6 +2204,7 @@
     "id": "orange_state_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OSTN",
+    "scu_id": "OSTASCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -2185,6 +2251,7 @@
     "id": "orange_state_northbound",
     "type": "realtime",
     "pa_ess_loc": "OSTN",
+    "scu_id": "OSTASCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -2212,6 +2279,7 @@
     "id": "orange_state_southbound",
     "type": "realtime",
     "pa_ess_loc": "OSTS",
+    "scu_id": "OSTASCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -2239,6 +2307,7 @@
     "id": "orange_downtown_crossing_northbound",
     "type": "realtime",
     "pa_ess_loc": "ODTN",
+    "scu_id": "ODTCSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -2266,6 +2335,7 @@
     "id": "orange_downtown_crossing_southbound",
     "type": "realtime",
     "pa_ess_loc": "ODTS",
+    "scu_id": "ODTCSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -2293,6 +2363,7 @@
     "id": "chinatown_northbound_lobby",
     "type": "realtime",
     "pa_ess_loc": "OCHN",
+    "scu_id": "OCHNSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -2320,6 +2391,7 @@
     "id": "chinatown_southbound_lobby",
     "type": "realtime",
     "pa_ess_loc": "OCHS",
+    "scu_id": "OCHSSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -2347,6 +2419,7 @@
     "id": "chinatown_northbound",
     "type": "realtime",
     "pa_ess_loc": "OCHN",
+    "scu_id": "OCHNSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -2374,6 +2447,7 @@
     "id": "chinatown_southbound",
     "type": "realtime",
     "pa_ess_loc": "OCHS",
+    "scu_id": "OCHSSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -2401,6 +2475,7 @@
     "id": "tufts_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "ONEM",
+    "scu_id": "ONEMSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -2447,6 +2522,7 @@
     "id": "tufts_northbound",
     "type": "realtime",
     "pa_ess_loc": "ONEM",
+    "scu_id": "ONEMSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -2474,6 +2550,7 @@
     "id": "tufts_southbound",
     "type": "realtime",
     "pa_ess_loc": "ONEM",
+    "scu_id": "ONEMSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -2501,6 +2578,7 @@
     "id": "back_bay_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OBAC",
+    "scu_id": "OBACSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -2547,6 +2625,7 @@
     "id": "back_bay_northbound",
     "type": "realtime",
     "pa_ess_loc": "OBAC",
+    "scu_id": "OBACSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -2574,6 +2653,7 @@
     "id": "back_bay_southbound",
     "type": "realtime",
     "pa_ess_loc": "OBAC",
+    "scu_id": "OBACSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -2601,6 +2681,7 @@
     "id": "mass_ave_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OMAS",
+    "scu_id": "OMASSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -2647,6 +2728,7 @@
     "id": "mass_ave_northbound",
     "type": "realtime",
     "pa_ess_loc": "OMAS",
+    "scu_id": "OMASSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -2674,6 +2756,7 @@
     "id": "mass_ave_southbound",
     "type": "realtime",
     "pa_ess_loc": "OMAS",
+    "scu_id": "OMASSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -2701,6 +2784,7 @@
     "id": "ruggles_northbound",
     "type": "realtime",
     "pa_ess_loc": "ORUG",
+    "scu_id": "ORUGSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -2728,6 +2812,7 @@
     "id": "ruggles_southbound",
     "type": "realtime",
     "pa_ess_loc": "ORUG",
+    "scu_id": "ORUGSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -2755,6 +2840,7 @@
     "id": "ruggles_center",
     "type": "realtime",
     "pa_ess_loc": "ORUG",
+    "scu_id": "ORUGSCU001",
     "read_loop_offset": 150,
     "text_zone": "c",
     "audio_zones": [
@@ -2801,6 +2887,7 @@
     "id": "ruggles_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "ORUG",
+    "scu_id": "ORUGSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -2847,6 +2934,7 @@
     "id": "roxbury_crossing_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OROX",
+    "scu_id": "OROXSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -2893,6 +2981,7 @@
     "id": "roxbury_crossing_northbound",
     "type": "realtime",
     "pa_ess_loc": "OROX",
+    "scu_id": "OROXSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -2920,6 +3009,7 @@
     "id": "roxbury_crossing_southbound",
     "type": "realtime",
     "pa_ess_loc": "OROX",
+    "scu_id": "OROXSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -2947,6 +3037,7 @@
     "id": "jackson_square_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OJAC",
+    "scu_id": "OJACSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -2993,6 +3084,7 @@
     "id": "jackson_square_northbound",
     "type": "realtime",
     "pa_ess_loc": "OJAC",
+    "scu_id": "OJACSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -3020,6 +3112,7 @@
     "id": "jackson_square_southbound",
     "type": "realtime",
     "pa_ess_loc": "OJAC",
+    "scu_id": "OJACSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -3047,6 +3140,7 @@
     "id": "stony_brook_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OSTO",
+    "scu_id": "OSTOSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -3093,6 +3187,7 @@
     "id": "stony_brook_northbound",
     "type": "realtime",
     "pa_ess_loc": "OSTO",
+    "scu_id": "OSTOSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -3120,6 +3215,7 @@
     "id": "stony_brook_southbound",
     "type": "realtime",
     "pa_ess_loc": "OSTO",
+    "scu_id": "OSTOSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -3147,6 +3243,7 @@
     "id": "green_street_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "OGRE",
+    "scu_id": "OGRESCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -3193,6 +3290,7 @@
     "id": "green_street_northbound",
     "type": "realtime",
     "pa_ess_loc": "OGRE",
+    "scu_id": "OGRESCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -3220,6 +3318,7 @@
     "id": "green_street_southbound",
     "type": "realtime",
     "pa_ess_loc": "OGRE",
+    "scu_id": "OGRESCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -3247,6 +3346,7 @@
     "id": "forest_hills_main_lobby",
     "type": "realtime",
     "pa_ess_loc": "OFOR",
+    "scu_id": "OFORSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -3296,6 +3396,7 @@
     "id": "forest_hills_platform",
     "type": "realtime",
     "pa_ess_loc": "OFOR",
+    "scu_id": "OFORSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -3345,6 +3446,7 @@
     "id": "forest_hills_entrances_from_busways",
     "type": "realtime",
     "pa_ess_loc": "SFOR",
+    "scu_id": "OFORSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -3394,6 +3496,7 @@
     "id": "ruggles_upper_busway",
     "type": "realtime",
     "pa_ess_loc": "SRUG",
+    "scu_id": "ORUGSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -3440,6 +3543,7 @@
     "id": "alewife_center_southbound",
     "type": "realtime",
     "pa_ess_loc": "RALE",
+    "scu_id": "RALESCU001",
     "read_loop_offset": 150,
     "text_zone": "c",
     "audio_zones": [
@@ -3489,6 +3593,7 @@
     "id": "alewife_mezzanine_southbound",
     "type": "realtime",
     "pa_ess_loc": "RALE",
+    "scu_id": "RALESCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -3538,6 +3643,7 @@
     "id": "davis_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RDAV",
+    "scu_id": "RDAVSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -3584,6 +3690,7 @@
     "id": "davis_northbound",
     "type": "realtime",
     "pa_ess_loc": "RDAV",
+    "scu_id": "RDAVSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -3611,6 +3718,7 @@
     "id": "davis_southbound",
     "type": "realtime",
     "pa_ess_loc": "RDAV",
+    "scu_id": "RDAVSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -3638,6 +3746,7 @@
     "id": "porter_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RPOR",
+    "scu_id": "RPORSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -3684,6 +3793,7 @@
     "id": "porter_northbound",
     "type": "realtime",
     "pa_ess_loc": "RPOR",
+    "scu_id": "RPORSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -3711,6 +3821,7 @@
     "id": "porter_southbound",
     "type": "realtime",
     "pa_ess_loc": "RPOR",
+    "scu_id": "RPORSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -3738,6 +3849,7 @@
     "id": "harvard_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RHAR",
+    "scu_id": "RHARSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -3784,6 +3896,7 @@
     "id": "harvard_northbound",
     "type": "realtime",
     "pa_ess_loc": "RHAR",
+    "scu_id": "RHARSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -3811,6 +3924,7 @@
     "id": "harvard_southbound",
     "type": "realtime",
     "pa_ess_loc": "RHAR",
+    "scu_id": "RHARSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -3838,6 +3952,7 @@
     "id": "central_northbound",
     "type": "realtime",
     "pa_ess_loc": "RCEN",
+    "scu_id": "RCENSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -3865,6 +3980,7 @@
     "id": "central_southbound",
     "type": "realtime",
     "pa_ess_loc": "RCEN",
+    "scu_id": "RCENSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -3892,6 +4008,7 @@
     "id": "kendall_mit_northbound",
     "type": "realtime",
     "pa_ess_loc": "RKEN",
+    "scu_id": "RKENSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -3919,6 +4036,7 @@
     "id": "kendall_mit_southbound",
     "type": "realtime",
     "pa_ess_loc": "RKEN",
+    "scu_id": "RKENSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -3946,6 +4064,7 @@
     "id": "charles_mgh_northbound",
     "type": "realtime",
     "pa_ess_loc": "RMGH",
+    "scu_id": "RMGHSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -3973,6 +4092,7 @@
     "id": "charles_mgh_southbound",
     "type": "realtime",
     "pa_ess_loc": "RMGH",
+    "scu_id": "RMGHSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -4000,6 +4120,7 @@
     "id": "red_park_st_northbound",
     "type": "realtime",
     "pa_ess_loc": "RPRK",
+    "scu_id": "RPRKSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -4028,6 +4149,7 @@
     "id": "red_park_st_southbound",
     "type": "realtime",
     "pa_ess_loc": "RPRK",
+    "scu_id": "RPRKSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -4056,6 +4178,7 @@
     "id": "red_park_st_center",
     "type": "realtime",
     "pa_ess_loc": "RPRK",
+    "scu_id": "RPRKSCU001",
     "read_loop_offset": 150,
     "text_zone": "c",
     "audio_zones": [],
@@ -4100,6 +4223,7 @@
     "id": "red_downtown_crossing_northbound",
     "type": "realtime",
     "pa_ess_loc": "RDTC",
+    "scu_id": "RDTCSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -4127,6 +4251,7 @@
     "id": "red_downtown_crossing_southbound",
     "type": "realtime",
     "pa_ess_loc": "RDTC",
+    "scu_id": "RDTCSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -4154,6 +4279,7 @@
     "id": "red_south_station_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RSOU",
+    "scu_id": "RSOUSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -4200,6 +4326,7 @@
     "id": "red_south_station_northbound",
     "type": "realtime",
     "pa_ess_loc": "RSOU",
+    "scu_id": "RSOUSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -4227,6 +4354,7 @@
     "id": "red_south_station_southbound",
     "type": "realtime",
     "pa_ess_loc": "RSOU",
+    "scu_id": "RSOUSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -4254,6 +4382,7 @@
     "id": "south_station_silver_line_arrival_platform",
     "type": "realtime",
     "pa_ess_loc": "SSOU",
+    "scu_id": "RSOUSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -4300,6 +4429,7 @@
     "id": "broadway_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RBRO",
+    "scu_id": "RBROSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -4346,6 +4476,7 @@
     "id": "broadway_northbound",
     "type": "realtime",
     "pa_ess_loc": "RBRO",
+    "scu_id": "RBROSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -4373,6 +4504,7 @@
     "id": "broadway_southbound",
     "type": "realtime",
     "pa_ess_loc": "RBRO",
+    "scu_id": "RBROSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -4400,6 +4532,7 @@
     "id": "andrew_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RAND",
+    "scu_id": "RANDSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -4446,6 +4579,7 @@
     "id": "andrew_northbound",
     "type": "realtime",
     "pa_ess_loc": "RAND",
+    "scu_id": "RANDSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -4473,6 +4607,7 @@
     "id": "andrew_southbound",
     "type": "realtime",
     "pa_ess_loc": "RAND",
+    "scu_id": "RANDSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -4500,6 +4635,7 @@
     "id": "savin_hill_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RSAV",
+    "scu_id": "RSAVSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -4546,6 +4682,7 @@
     "id": "savin_hill_northbound",
     "type": "realtime",
     "pa_ess_loc": "RSAV",
+    "scu_id": "RSAVSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -4573,6 +4710,7 @@
     "id": "savin_hill_southbound",
     "type": "realtime",
     "pa_ess_loc": "RSAV",
+    "scu_id": "RSAVSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -4600,6 +4738,7 @@
     "id": "fields_corner_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RFIE",
+    "scu_id": "RFIESCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -4646,6 +4785,7 @@
     "id": "fields_corner_northbound",
     "type": "realtime",
     "pa_ess_loc": "RFIE",
+    "scu_id": "RFIESCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -4673,6 +4813,7 @@
     "id": "fields_corner_southbound",
     "type": "realtime",
     "pa_ess_loc": "RFIE",
+    "scu_id": "RFIESCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -4700,6 +4841,7 @@
     "id": "shawmut_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RSHA",
+    "scu_id": "RSHASCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -4746,6 +4888,7 @@
     "id": "shawmut_northbound",
     "type": "realtime",
     "pa_ess_loc": "RSHA",
+    "scu_id": "RSHASCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -4773,6 +4916,7 @@
     "id": "shawmut_southbound",
     "type": "realtime",
     "pa_ess_loc": "RSHA",
+    "scu_id": "RSHASCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -4800,6 +4944,7 @@
     "id": "ashmont_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RASH",
+    "scu_id": "RASHSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -4846,6 +4991,7 @@
     "id": "red_ashmont_northbound",
     "type": "realtime",
     "pa_ess_loc": "RASH",
+    "scu_id": "RASHSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -4873,6 +5019,7 @@
     "id": "red_ashmont_southbound",
     "type": "realtime",
     "pa_ess_loc": "RASH",
+    "scu_id": "RASHSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -4900,6 +5047,7 @@
     "id": "north_quincy_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RNQU",
+    "scu_id": "RNQUSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -4946,6 +5094,7 @@
     "id": "north_quincy_northbound",
     "type": "realtime",
     "pa_ess_loc": "RNQU",
+    "scu_id": "RNQUSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -4973,6 +5122,7 @@
     "id": "north_quincy_southbound",
     "type": "realtime",
     "pa_ess_loc": "RNQU",
+    "scu_id": "RNQUSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -5000,6 +5150,7 @@
     "id": "wollaston_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RWOL",
+    "scu_id": "RWOLSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -5046,6 +5197,7 @@
     "id": "wollaston_northbound",
     "type": "realtime",
     "pa_ess_loc": "RWOL",
+    "scu_id": "RWOLSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -5073,6 +5225,7 @@
     "id": "wollaston_southbound",
     "type": "realtime",
     "pa_ess_loc": "RWOL",
+    "scu_id": "RWOLSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -5100,6 +5253,7 @@
     "id": "quincy_center_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RQUC",
+    "scu_id": "RQUCSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -5146,6 +5300,7 @@
     "id": "quincy_center_northbound",
     "type": "realtime",
     "pa_ess_loc": "RQUC",
+    "scu_id": "RQUCSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -5173,6 +5328,7 @@
     "id": "quincy_center_southbound",
     "type": "realtime",
     "pa_ess_loc": "RQUC",
+    "scu_id": "RQUCSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -5200,6 +5356,7 @@
     "id": "quincy_adams_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RQUA",
+    "scu_id": "RQUASCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -5246,6 +5403,7 @@
     "id": "quincy_adams_northbound",
     "type": "realtime",
     "pa_ess_loc": "RQUA",
+    "scu_id": "RQUASCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -5273,6 +5431,7 @@
     "id": "quincy_adams_southbound",
     "type": "realtime",
     "pa_ess_loc": "RQUA",
+    "scu_id": "RQUASCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -5300,6 +5459,7 @@
     "id": "braintree_center_northbound",
     "type": "realtime",
     "pa_ess_loc": "RBRA",
+    "scu_id": "RBRASCU001",
     "read_loop_offset": 150,
     "text_zone": "c",
     "audio_zones": [
@@ -5349,6 +5509,7 @@
     "id": "braintree_mezzanine_northbound",
     "type": "realtime",
     "pa_ess_loc": "RBRA",
+    "scu_id": "RBRASCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -5398,6 +5559,7 @@
     "id": "jfk_umass_ashmont_platform_southbound",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
+    "scu_id": "RJFKSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -5425,6 +5587,7 @@
     "id": "jfk_umass_braintree_platform_southbound",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
+    "scu_id": "RJFKSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -5452,6 +5615,7 @@
     "id": "jfk_umass_ashmont_platform_northbound",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
+    "scu_id": "RJFKSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -5479,6 +5643,7 @@
     "id": "jfk_umass_braintree_platform_northbound",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
+    "scu_id": "RJFKSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -5506,6 +5671,7 @@
     "id": "jfk_umass_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "RJFK",
+    "scu_id": "RJFKSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -5573,6 +5739,7 @@
   {
     "id": "riverside_entire_station",
     "pa_ess_loc": "GRIV",
+    "scu_id": "GRIVSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -5600,6 +5767,7 @@
   {
     "id": "woodland_eastbound",
     "pa_ess_loc": "GWOO",
+    "scu_id": "GWOOSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -5627,6 +5795,7 @@
   {
     "id": "woodland_westbound",
     "pa_ess_loc": "GWOO",
+    "scu_id": "GWOOSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -5654,6 +5823,7 @@
   {
     "id": "waban_eastbound",
     "pa_ess_loc": "GWAB",
+    "scu_id": "GWABSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -5681,6 +5851,7 @@
   {
     "id": "waban_westbound",
     "pa_ess_loc": "GWAB",
+    "scu_id": "GWABSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -5708,6 +5879,7 @@
   {
     "id": "eliot_eastbound",
     "pa_ess_loc": "GELI",
+    "scu_id": "GELISCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -5735,6 +5907,7 @@
   {
     "id": "eliot_westbound",
     "pa_ess_loc": "GELI",
+    "scu_id": "GELISCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -5762,6 +5935,7 @@
   {
     "id": "newton_highlands_eastbound",
     "pa_ess_loc": "GNEH",
+    "scu_id": "GNEHSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -5789,6 +5963,7 @@
   {
     "id": "newton_highlands_westbound",
     "pa_ess_loc": "GNEH",
+    "scu_id": "GNEHSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -5816,6 +5991,7 @@
   {
     "id": "newton_centre_eastbound",
     "pa_ess_loc": "GNEC",
+    "scu_id": "GNECSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -5843,6 +6019,7 @@
   {
     "id": "newton_centre_westbound",
     "pa_ess_loc": "GNEC",
+    "scu_id": "GNECSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -5870,6 +6047,7 @@
   {
     "id": "chestnut_hill_eastbound",
     "pa_ess_loc": "GCHE",
+    "scu_id": "GCHESCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -5897,6 +6075,7 @@
   {
     "id": "chestnut_hill_westbound",
     "pa_ess_loc": "GCHE",
+    "scu_id": "GCHESCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -5924,6 +6103,7 @@
   {
     "id": "reservoir_eastbound",
     "pa_ess_loc": "GRES",
+    "scu_id": "GRESSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -5951,6 +6131,7 @@
   {
     "id": "reservoir_westbound",
     "pa_ess_loc": "GRES",
+    "scu_id": "GRESSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -5978,6 +6159,7 @@
   {
     "id": "beaconsfield_eastbound",
     "pa_ess_loc": "GBEA",
+    "scu_id": "GBEASCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -6006,6 +6188,7 @@
   {
     "id": "beaconsfield_westbound",
     "pa_ess_loc": "GBEA",
+    "scu_id": "GBEASCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -6034,6 +6217,7 @@
   {
     "id": "brookline_hills_eastbound",
     "pa_ess_loc": "GBRH",
+    "scu_id": "GBRHSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -6061,6 +6245,7 @@
   {
     "id": "brookline_hills_westbound",
     "pa_ess_loc": "GBRH",
+    "scu_id": "GBRHSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -6088,6 +6273,7 @@
   {
     "id": "brookline_village_eastbound",
     "pa_ess_loc": "GBRV",
+    "scu_id": "GBRVSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -6115,6 +6301,7 @@
   {
     "id": "brookline_village_westbound",
     "pa_ess_loc": "GBRV",
+    "scu_id": "GBRVSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -6142,6 +6329,7 @@
   {
     "id": "longwood_eastbound",
     "pa_ess_loc": "GLON",
+    "scu_id": "GLONSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -6169,6 +6357,7 @@
   {
     "id": "longwood_westbound",
     "pa_ess_loc": "GLON",
+    "scu_id": "GLONSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -6196,6 +6385,7 @@
   {
     "id": "fenway_eastbound",
     "pa_ess_loc": "GFEN",
+    "scu_id": "GFENSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -6223,6 +6413,7 @@
   {
     "id": "fenway_westbound",
     "pa_ess_loc": "GFEN",
+    "scu_id": "GFENSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -6250,6 +6441,7 @@
   {
     "id": "babcock_st_eastbound",
     "pa_ess_loc": "GBAB",
+    "scu_id": "GBABSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -6277,6 +6469,7 @@
   {
     "id": "babcock_st_westbound",
     "pa_ess_loc": "GBAB",
+    "scu_id": "GBABSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -6304,6 +6497,7 @@
   {
     "id": "amory_st_eastbound",
     "pa_ess_loc": "GAMO",
+    "scu_id": "GAMOSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -6331,6 +6525,7 @@
   {
     "id": "amory_st_westbound",
     "pa_ess_loc": "GAMO",
+    "scu_id": "GAMOSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -6358,6 +6553,7 @@
   {
     "id": "kenmore_b_eastbound",
     "pa_ess_loc": "GKEN",
+    "scu_id": "GKENSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -6385,6 +6581,7 @@
   {
     "id": "kenmore_b_westbound",
     "pa_ess_loc": "GKEN",
+    "scu_id": "GKENSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -6412,6 +6609,7 @@
   {
     "id": "kenmore_c_d_eastbound",
     "pa_ess_loc": "GKEN",
+    "scu_id": "GKENSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -6440,6 +6638,7 @@
   {
     "id": "kenmore_c_d_westbound",
     "pa_ess_loc": "GKEN",
+    "scu_id": "GKENSCU001",
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -6468,6 +6667,7 @@
   {
     "id": "kenmore_mezzanine",
     "pa_ess_loc": "GKEN",
+    "scu_id": "GKENSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -6538,6 +6738,7 @@
   {
     "id": "hynes_eastbound",
     "pa_ess_loc": "GAUD",
+    "scu_id": "GAUDSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -6567,6 +6768,7 @@
   {
     "id": "hynes_westbound",
     "pa_ess_loc": "GAUD",
+    "scu_id": "GAUDSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -6596,6 +6798,7 @@
   {
     "id": "hynes_mezzanine",
     "pa_ess_loc": "GAUD",
+    "scu_id": "GAUDSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -6646,6 +6849,7 @@
   {
     "id": "copley_eastbound",
     "pa_ess_loc": "GCOP",
+    "scu_id": "GCOPSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -6676,6 +6880,7 @@
   {
     "id": "copley_westbound",
     "pa_ess_loc": "GCOP",
+    "scu_id": "GCOPSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -6706,6 +6911,7 @@
   {
     "id": "arlington_eastbound",
     "pa_ess_loc": "GARL",
+    "scu_id": "GARLSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -6736,6 +6942,7 @@
   {
     "id": "arlington_westbound",
     "pa_ess_loc": "GARL",
+    "scu_id": "GARLSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -6766,6 +6973,7 @@
   {
     "id": "arlington_mezzanine",
     "pa_ess_loc": "GARL",
+    "scu_id": "GARLSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -6818,6 +7026,7 @@
   {
     "id": "boylston_eastbound",
     "pa_ess_loc": "GBOY",
+    "scu_id": "GBOYSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -6848,6 +7057,7 @@
   {
     "id": "boylston_westbound",
     "pa_ess_loc": "GBOY",
+    "scu_id": "GBOYSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -6878,6 +7088,7 @@
   {
     "id": "symphony_eastbound",
     "pa_ess_loc": "GSYM",
+    "scu_id": "GSYMSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -6905,6 +7116,7 @@
   {
     "id": "symphony_westbound",
     "pa_ess_loc": "GSYM",
+    "scu_id": "GSYMSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -6932,6 +7144,7 @@
   {
     "id": "prudential_eastbound",
     "pa_ess_loc": "GPRU",
+    "scu_id": "GPRUSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -6959,6 +7172,7 @@
   {
     "id": "prudential_westbound",
     "pa_ess_loc": "GPRU",
+    "scu_id": "GPRUSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -6986,6 +7200,7 @@
   {
     "id": "prudential_mezzanine",
     "pa_ess_loc": "GPRU",
+    "scu_id": "GPRUSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -7032,6 +7247,7 @@
   {
     "id": "park_st_eastbound",
     "pa_ess_loc": "GPRKE",
+    "scu_id": "GPRKSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -7076,6 +7292,7 @@
   {
     "id": "park_st_winter_st_concourse",
     "pa_ess_loc": "GPRKE",
+    "scu_id": "GPRKSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -7120,6 +7337,7 @@
   {
     "id": "park_st_westbound_wall_track",
     "pa_ess_loc": "GPRKW",
+    "scu_id": "GPRKSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -7160,6 +7378,7 @@
   {
     "id": "park_st_westbound_fence_track",
     "pa_ess_loc": "GPRKW",
+    "scu_id": "GPRKSCU001",
     "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
@@ -7200,6 +7419,7 @@
   {
     "id": "green_government_center_eastbound",
     "pa_ess_loc": "GGOV",
+    "scu_id": "GOVCSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -7230,6 +7450,7 @@
   {
     "id": "green_government_center_westbound",
     "pa_ess_loc": "GGOV",
+    "scu_id": "GOVCSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -7260,6 +7481,7 @@
   {
     "id": "green_government_center_mezzanine",
     "pa_ess_loc": "GGOV",
+    "scu_id": "GOVCSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -7312,6 +7534,7 @@
   {
     "id": "green_haymarket_eastbound",
     "pa_ess_loc": "GHAY",
+    "scu_id": "HAYMSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -7340,6 +7563,7 @@
   {
     "id": "green_haymarket_westbound",
     "pa_ess_loc": "GHAY",
+    "scu_id": "HAYMSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -7368,6 +7592,7 @@
   {
     "id": "green_north_station_eastbound",
     "pa_ess_loc": "GNST",
+    "scu_id": "NSTASCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -7396,6 +7621,7 @@
   {
     "id": "green_north_station_westbound",
     "pa_ess_loc": "GNST",
+    "scu_id": "NSTASCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -7424,6 +7650,7 @@
   {
     "id": "green_north_station_commuter_rail_exit",
     "pa_ess_loc": "GNST",
+    "scu_id": "NSTASCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -7472,6 +7699,7 @@
   {
     "id": "science_park_eastbound",
     "pa_ess_loc": "GSCI",
+    "scu_id": "GSCISCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -7500,6 +7728,7 @@
   {
     "id": "science_park_westbound",
     "pa_ess_loc": "GSCI",
+    "scu_id": "GSCISCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -7528,6 +7757,7 @@
   {
     "id": "science_park_mezzanine",
     "pa_ess_loc": "GSCI",
+    "scu_id": "GSCISCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -7576,6 +7806,7 @@
   {
     "id": "lechmere_green_line_eastbound",
     "pa_ess_loc": "GLEC",
+    "scu_id": "GLECSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -7604,6 +7835,7 @@
   {
     "id": "lechmere_green_line_westbound",
     "pa_ess_loc": "GLEC",
+    "scu_id": "GLECSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -7632,6 +7864,7 @@
   {
     "id": "lechmere_green_line_mezzanine",
     "pa_ess_loc": "GLEC",
+    "scu_id": "GLECSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -7680,6 +7913,7 @@
   {
     "id": "union_sq_track_one",
     "pa_ess_loc": "GUNS",
+    "scu_id": "GUNSSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [],
@@ -7727,6 +7961,7 @@
   {
     "id": "union_sq_track_two",
     "pa_ess_loc": "GUNS",
+    "scu_id": "GUNSSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [],
@@ -7774,6 +8009,7 @@
   {
     "id": "union_sq_mezzanine",
     "pa_ess_loc": "GUNS",
+    "scu_id": "GUNSSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -7825,6 +8061,7 @@
   {
     "id": "east_somerville_eastbound",
     "pa_ess_loc": "GESS",
+    "scu_id": "GESSSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -7852,6 +8089,7 @@
   {
     "id": "east_somerville_westbound",
     "pa_ess_loc": "GESS",
+    "scu_id": "GESSSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -7879,6 +8117,7 @@
   {
     "id": "east_somerville_mezzanine",
     "pa_ess_loc": "GESS",
+    "scu_id": "GESSSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [],
@@ -7923,6 +8162,7 @@
   {
     "id": "gilman_square_eastbound",
     "pa_ess_loc": "GGSS",
+    "scu_id": "GGSSSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -7950,6 +8190,7 @@
   {
     "id": "gilman_square_westbound",
     "pa_ess_loc": "GGSS",
+    "scu_id": "GGSSSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -7977,6 +8218,7 @@
   {
     "id": "gilman_square_mezzanine",
     "pa_ess_loc": "GGSS",
+    "scu_id": "GGSSSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -8023,6 +8265,7 @@
   {
     "id": "magoun_square_eastbound",
     "pa_ess_loc": "GMSS",
+    "scu_id": "GMSSSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -8050,6 +8293,7 @@
   {
     "id": "magoun_square_westbound",
     "pa_ess_loc": "GMSS",
+    "scu_id": "GMSSSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -8077,6 +8321,7 @@
   {
     "id": "magoun_square_mezzanine",
     "pa_ess_loc": "GMSS",
+    "scu_id": "GMSSSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -8123,6 +8368,7 @@
   {
     "id": "ball_square_eastbound",
     "pa_ess_loc": "GBSS",
+    "scu_id": "GBSSSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -8150,6 +8396,7 @@
   {
     "id": "ball_square_westbound",
     "pa_ess_loc": "GBSS",
+    "scu_id": "GBSSSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
@@ -8177,6 +8424,7 @@
   {
     "id": "ball_square_mezzanine",
     "pa_ess_loc": "GBSS",
+    "scu_id": "GBSSSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -8223,6 +8471,7 @@
   {
     "id": "college_ave_eastbound",
     "pa_ess_loc": "GCOS",
+    "scu_id": "GCOSSCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [],
@@ -8248,6 +8497,7 @@
   {
     "id": "college_ave_westbound",
     "pa_ess_loc": "GCOS",
+    "scu_id": "GCOSSCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [],
@@ -8273,6 +8523,7 @@
   {
     "id": "college_ave_mezzanine",
     "pa_ess_loc": "GCOS",
+    "scu_id": "GCOSSCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -8302,6 +8553,7 @@
   {
     "id": "Silver_Line.South_Station_EB",
     "pa_ess_loc": "SSOU",
+    "scu_id": "RSOUSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 0,
     "text_zone": "e",
@@ -8354,6 +8606,7 @@
   {
     "id": "Silver_Line.Courthouse_WB",
     "pa_ess_loc": "SCOU",
+    "scu_id": "SCOUSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 60,
     "text_zone": "w",
@@ -8393,6 +8646,7 @@
   {
     "id": "Silver_Line.Courthouse_EB",
     "pa_ess_loc": "SCOU",
+    "scu_id": "SCOUSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 60,
     "text_zone": "e",
@@ -8444,6 +8698,7 @@
   {
     "id": "Silver_Line.Courthouse_mezz",
     "pa_ess_loc": "SCOU",
+    "scu_id": "SCOUSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 60,
     "text_zone": "m",
@@ -8483,6 +8738,7 @@
   {
     "id": "Silver_Line.World_Trade_Ctr_WB",
     "pa_ess_loc": "SWTC",
+    "scu_id": "SWTCSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 120,
     "text_zone": "w",
@@ -8522,6 +8778,7 @@
   {
     "id": "Silver_Line.World_Trade_Ctr_EB",
     "pa_ess_loc": "SWTC",
+    "scu_id": "SWTCSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 120,
     "text_zone": "e",
@@ -8573,6 +8830,7 @@
   {
     "id": "Silver_Line.World_Trade_Ctr_mezz",
     "pa_ess_loc": "SWTC",
+    "scu_id": "SWTCSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 120,
     "text_zone": "m",
@@ -8650,6 +8908,7 @@
   {
     "id": "Silver_Line.Eastern_Ave_OB",
     "pa_ess_loc": "SEAV",
+    "scu_id": "SEAVSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 60,
     "text_zone": "e",
@@ -8674,6 +8933,7 @@
   {
     "id": "Silver_Line.Eastern_Ave_IB",
     "pa_ess_loc": "SEAV",
+    "scu_id": "SEAVSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 60,
     "text_zone": "w",
@@ -8698,6 +8958,7 @@
   {
     "id": "Silver_Line.Box_District_OB",
     "pa_ess_loc": "SBOX",
+    "scu_id": "SBOXSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 120,
     "text_zone": "e",
@@ -8722,6 +8983,7 @@
   {
     "id": "Silver_Line.Box_District_IB",
     "pa_ess_loc": "SBOX",
+    "scu_id": "SBOXSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 120,
     "text_zone": "w",
@@ -8746,6 +9008,7 @@
   {
     "id": "Silver_Line.Bellingham_Square_OB",
     "pa_ess_loc": "SBSQ",
+    "scu_id": "SBSQSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 180,
     "text_zone": "e",
@@ -8770,6 +9033,7 @@
   {
     "id": "Silver_Line.Bellingham_Square_IB",
     "pa_ess_loc": "SBSQ",
+    "scu_id": "SBSQSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 180,
     "text_zone": "w",
@@ -8794,6 +9058,7 @@
   {
     "id": "Silver_Line.Chelsea_IB",
     "pa_ess_loc": "SCHS",
+    "scu_id": "SCHSSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 240,
     "text_zone": "w",
@@ -8818,6 +9083,7 @@
   {
     "id": "bus.Nubian_Platform_A",
     "pa_ess_loc": "SDUD",
+    "scu_id": "SDUDSCU001",
     "read_loop_interval": 420,
     "read_loop_offset": 180,
     "text_zone": "w",
@@ -8861,6 +9127,7 @@
   {
     "id": "bus.Nubian_Platform_C",
     "pa_ess_loc": "SDUD",
+    "scu_id": "SDUDSCU001",
     "read_loop_interval": 420,
     "read_loop_offset": 240,
     "text_zone": "s",
@@ -8911,6 +9178,7 @@
   {
     "id": "bus.Nubian_Platform_D",
     "pa_ess_loc": "SDUD",
+    "scu_id": "SDUDSCU001",
     "read_loop_interval": 420,
     "read_loop_offset": 0,
     "text_zone": "e",
@@ -8952,6 +9220,7 @@
   {
     "id": "bus.Nubian_Platform_E_east",
     "pa_ess_loc": "SDUD",
+    "scu_id": "SDUDSCU001",
     "read_loop_interval": 420,
     "read_loop_offset": 60,
     "text_zone": "c",
@@ -9049,6 +9318,7 @@
   {
     "id": "bus.Nubian_Platform_E_west",
     "pa_ess_loc": "SDUD",
+    "scu_id": "SDUDSCU001",
     "read_loop_interval": 420,
     "read_loop_offset": 60,
     "text_zone": "m",
@@ -9106,6 +9376,7 @@
   {
     "id": "bus.Nubian_Platform_F",
     "pa_ess_loc": "SDUD",
+    "scu_id": "SDUDSCU001",
     "read_loop_interval": 420,
     "read_loop_offset": 120,
     "text_zone": "n",
@@ -9174,6 +9445,7 @@
   {
     "id": "bus.Lechmere_inner",
     "pa_ess_loc": "SLEC",
+    "scu_id": "GLECSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 180,
     "text_zone": "m",
@@ -9202,7 +9474,7 @@
       }
     ],
     "extra_audio_configs": [
-      { 
+      {
         "sources": [
           {
             "stop_id": "70500",
@@ -9222,11 +9494,11 @@
       }
     ],
     "max_minutes": 60
-
   },
   {
     "id": "bus.Lechmere_outer",
     "pa_ess_loc": "SLEC",
+    "scu_id": "GLECSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 0,
     "text_zone": "c",
@@ -9257,6 +9529,7 @@
   {
     "id": "bus.Harvard_upper",
     "pa_ess_loc": "SHAR",
+    "scu_id": "RHARSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 240,
     "text_zone": "n",
@@ -9352,6 +9625,7 @@
   {
     "id": "bus.Harvard_lower",
     "pa_ess_loc": "SHAR",
+    "scu_id": "RHARSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 60,
     "text_zone": "m",
@@ -9384,6 +9658,7 @@
   {
     "id": "bus.Mattapan_north",
     "pa_ess_loc": "MMAT",
+    "scu_id": "MMATSCU001",
     "read_loop_interval": 420,
     "read_loop_offset": 60,
     "text_zone": "s",
@@ -9470,6 +9745,7 @@
   {
     "id": "bus.Mattapan_south",
     "pa_ess_loc": "MMAT",
+    "scu_id": "MMATSCU001",
     "read_loop_interval": 420,
     "read_loop_offset": 0,
     "text_zone": "n",
@@ -9511,6 +9787,7 @@
   {
     "id": "bus.Davis",
     "pa_ess_loc": "SDAV",
+    "scu_id": "RDAVSCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 120,
     "text_zone": "m",
@@ -9588,6 +9865,7 @@
   {
     "id": "bus.Forest_Hills_upper_island",
     "pa_ess_loc": "SFOR",
+    "scu_id": "OFORSCU001",
     "read_loop_interval": 420,
     "read_loop_offset": 180,
     "text_zone": "s",
@@ -9647,6 +9925,7 @@
   {
     "id": "bus.Forest_Hills_upper_fence",
     "pa_ess_loc": "SFOR",
+    "scu_id": "OFORSCU001",
     "read_loop_interval": 420,
     "read_loop_offset": 0,
     "text_zone": "n",
@@ -9715,6 +9994,7 @@
   {
     "id": "bus.Braintree",
     "pa_ess_loc": "RBRA",
+    "scu_id": "RBRASCU001",
     "read_loop_interval": 360,
     "read_loop_offset": 240,
     "text_zone": "n",
