@@ -12,7 +12,8 @@ defmodule Signs.Utilities.Messages do
           Engine.Config.sign_config(),
           DateTime.t(),
           Engine.Alerts.Fetcher.stop_status(),
-          DateTime.t() | {DateTime.t(), DateTime.t()}
+          DateTime.t() | {DateTime.t(), DateTime.t()},
+          boolean() | {boolean(), boolean()}
         ) :: Signs.Realtime.sign_messages()
   def get_messages(
         predictions,
@@ -20,7 +21,8 @@ defmodule Signs.Utilities.Messages do
         sign_config,
         current_time,
         alert_status,
-        scheduled
+        scheduled,
+        service_statuses_per_source
       ) do
     messages =
       cond do
@@ -66,6 +68,11 @@ defmodule Signs.Utilities.Messages do
               messages
           end
       end
+
+    messages =
+      if sign_config in [:off, :static_text],
+        do: messages,
+        else: get_last_trip_messages(messages, service_statuses_per_source, sign.source_config)
 
     early_am_status =
       Signs.Utilities.EarlyAmSuppression.get_early_am_state(current_time, scheduled)
@@ -120,6 +127,67 @@ defmodule Signs.Utilities.Messages do
 
   defp do_flip({top, bottom}) do
     {bottom, top}
+  end
+
+  defp get_last_trip_messages(
+         {top_message, bottom_message} = messages,
+         {has_top_service_ended?, has_bottom_service_ended?},
+         {top_source, bottom_source}
+       ) do
+    cond do
+      has_top_service_ended? and has_bottom_service_ended? ->
+        {%Content.Message.LastTrip.StationClosed{}, %Content.Message.LastTrip.ServiceEnded{}}
+
+      has_top_service_ended? ->
+        if get_message_length(bottom_message) <= 18 do
+          {bottom_message,
+           %Content.Message.LastTrip.NoService{
+             destination: top_source.headway_destination,
+             page?: true
+           }}
+        else
+          {%Content.Message.LastTrip.NoService{
+             destination: top_source.headway_destination,
+             page?: false
+           }, bottom_message}
+        end
+
+      has_bottom_service_ended? ->
+        if get_message_length(top_message) <= 18 do
+          {top_message,
+           %Content.Message.LastTrip.NoService{
+             destination: bottom_source.headway_destination,
+             page?: true
+           }}
+        else
+          {%Content.Message.LastTrip.NoService{
+             destination: bottom_source.headway_destination,
+             page?: false
+           }, top_message}
+        end
+
+      true ->
+        messages
+    end
+  end
+
+  defp get_last_trip_messages(messages, has_service_ended?, source) do
+    if has_service_ended? do
+      {%Content.Message.LastTrip.PlatformClosed{destination: source.headway_destination},
+       %Content.Message.LastTrip.ServiceEnded{}}
+    else
+      messages
+    end
+  end
+
+  defp get_message_length(message) do
+    message_string = Content.Message.to_string(message)
+
+    if is_list(message_string) do
+      List.first(message_string) |> elem(0) |> String.length()
+    else
+      String.length(message_string)
+    end
   end
 
   # Handles special case when JFK/UMass SB is on headways but NB is on platform prediction
