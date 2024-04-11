@@ -49,5 +49,44 @@ defmodule Content.Audio.ServiceEnded do
           nil
       end
     end
+
+    def to_tts(%Content.Audio.ServiceEnded{location: :station}) do
+      "This station is closed. Service has ended for the night."
+    end
+
+    def to_tts(%Content.Audio.ServiceEnded{location: :platform, destination: destination}) do
+      destination_string =
+        case(Utilities.destination_to_ad_hoc_string(destination)) do
+          {:ok, destination_string} ->
+            destination_string
+
+          {:error, :unknown} ->
+            ""
+        end
+
+      platform_closed = "This platform is closed."
+
+      service_ended =
+        "#{destination_string} service has ended for the night."
+        |> String.trim_leading()
+        |> String.capitalize()
+
+      "#{platform_closed} #{service_ended}"
+    end
+
+    def to_tts(%Content.Audio.ServiceEnded{location: :direction, destination: destination}) do
+      destination_string =
+        case(Utilities.destination_to_ad_hoc_string(destination)) do
+          {:ok, destination_string} ->
+            destination_string
+
+          {:error, :unknown} ->
+            ""
+        end
+
+      "#{destination_string} service has ended for the night."
+      |> String.trim_leading()
+      |> String.capitalize()
+    end
   end
 end
