@@ -43,47 +43,42 @@ defmodule Content.Audio.VehiclesToDestination do
   defimpl Content.Audio do
     alias PaEss.Utilities
 
-    def to_params(%Content.Audio.VehiclesToDestination{
-          routes: routes,
-          headway_range: {range_low, range_high}
-        })
-        when not is_nil(routes) do
-      case routes do
-        ["Mattapan"] ->
-          {:ad_hoc, {"Mattapan trains every #{range_low} to #{range_high} minutes.", :audio}}
-
-        [route] ->
-          {:ad_hoc, {"#{route} line trains every #{range_low} to #{range_high} minutes.", :audio}}
-
-        _ ->
-          {:ad_hoc, {"Trains every #{range_low} to #{range_high} minutes.", :audio}}
-      end
-    end
-
-    def to_params(%Content.Audio.VehiclesToDestination{
-          destination: nil,
-          headway_range: {range_low, range_high}
-        }) do
-      {:ad_hoc, {"Trains every #{range_low} to #{range_high} minutes.", :audio}}
-    end
-
     def to_params(
           %Content.Audio.VehiclesToDestination{
-            headway_range: {lower_mins, higher_mins}
+            headway_range: {range_low, range_high},
+            destination: destination
           } = audio
-        )
-        when is_integer(lower_mins) and is_integer(higher_mins) do
-      case vars(audio) do
-        nil ->
-          Logger.warn("no_audio_for_headway_range #{inspect(audio)}")
-          nil
+        ) do
+      low_var = Utilities.number_var(range_low, :english)
+      high_var = Utilities.number_var(range_high, :english)
 
-        vars ->
-          {:canned, {message_id(audio), vars, :audio}}
+      if low_var && high_var && destination do
+        {:canned, {message_id(audio), [low_var, high_var], :audio}}
+      else
+        {:ad_hoc, {Content.Audio.to_tts(audio), :audio}}
       end
     end
 
-    def to_params(_audio), do: nil
+    def to_tts(%Content.Audio.VehiclesToDestination{
+          headway_range: {range_low, range_high},
+          destination: destination,
+          routes: routes
+        }) do
+      trains =
+        case {destination, routes} do
+          {destination, nil} ->
+            {:ok, destination_text} = PaEss.Utilities.destination_to_ad_hoc_string(destination)
+            "#{destination_text} trains"
+
+          {nil, [route]} ->
+            "#{route} line trains"
+
+          {nil, _} ->
+            "Trains"
+        end
+
+      "#{trains} every #{range_low} to #{range_high} minutes."
+    end
 
     @spec message_id(Content.Audio.VehiclesToDestination.t()) :: String.t()
     defp message_id(%{destination: :alewife}), do: "175"
@@ -114,24 +109,5 @@ defmodule Content.Audio.VehiclesToDestination do
     defp message_id(%{destination: :outbound}), do: "198"
     defp message_id(%{destination: :chelsea}), do: "133"
     defp message_id(%{destination: :south_station}), do: "134"
-
-    @spec vars(Content.Audio.VehiclesToDestination.t()) :: [String.t()] | nil
-    defp vars(%{headway_range: headway_range}) do
-      case headway_range do
-        {lower_mins, higher_mins} when is_integer(lower_mins) and is_integer(higher_mins) ->
-          if Utilities.valid_range?(lower_mins, :english) and
-               Utilities.valid_range?(higher_mins, :english) do
-            [
-              Utilities.number_var(lower_mins, :english),
-              Utilities.number_var(higher_mins, :english)
-            ]
-          else
-            nil
-          end
-
-        _ ->
-          nil
-      end
-    end
   end
 end

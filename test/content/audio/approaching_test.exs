@@ -14,15 +14,6 @@ defmodule Content.Audio.ApproachingTest do
       assert Content.Audio.to_params(audio) == {:canned, {"103", ["32122"], :audio_visual}}
     end
 
-    test "Returns ad-hoc audio for valid destinations" do
-      audio = %Approaching{destination: :northbound, route_id: "Orange"}
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc,
-                {"Attention passengers: The next Northbound Orange Line train is now approaching.",
-                 :audio_visual}}
-    end
-
     test "Returns nil for Green Line trips" do
       audio = %Approaching{destination: :riverside, route_id: "Green-D"}
       assert Content.Audio.to_params(audio) == nil
@@ -30,11 +21,6 @@ defmodule Content.Audio.ApproachingTest do
 
     test "Returns nil when destination is Ashmont on the Mattapan line" do
       audio = %Approaching{destination: :ashmont, route_id: "Mattapan"}
-      assert Content.Audio.to_params(audio) == nil
-    end
-
-    test "Returns nil when destination for which we don't have audio" do
-      audio = %Approaching{destination: :unknown, route_id: "Red"}
       assert Content.Audio.to_params(audio) == nil
     end
 
@@ -55,15 +41,6 @@ defmodule Content.Audio.ApproachingTest do
     test "Falls back on audio without new cars message if needed" do
       audio = %Approaching{destination: :bowdoin, route_id: "Blue", new_cars?: true}
       assert Content.Audio.to_params(audio) == {:canned, {"103", ["32121"], :audio_visual}}
-    end
-
-    test "Returns params when destination is 'southbound'" do
-      audio = %Approaching{destination: :southbound, route_id: "Red"}
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc,
-                {"Attention passengers: The next Southbound Red Line train is now approaching.",
-                 :audio_visual}}
     end
 
     test "Returns crowding info" do

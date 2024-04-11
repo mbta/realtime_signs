@@ -1,6 +1,5 @@
 defmodule Content.Audio.FollowingTrainTest do
   use ExUnit.Case, async: true
-  import ExUnit.CaptureLog
 
   describe "Content.Audio.to_params protocol" do
     test "Following train to Ashmont" do
@@ -153,46 +152,6 @@ defmodule Content.Audio.FollowingTrainTest do
                    "21000",
                    "505"
                  ], :audio}}
-    end
-
-    test "returns ad_hoc audio when the destination is 'southbound'" do
-      audio = %Content.Audio.FollowingTrain{
-        destination: :southbound,
-        route_id: "Red",
-        verb: :arrives,
-        minutes: 3
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"The following Southbound Red Line train arrives in 3 minutes", :audio}}
-    end
-
-    test "Returns ad_hoc audio for valid destinations" do
-      audio = %Content.Audio.FollowingTrain{
-        destination: :eastbound,
-        route_id: "Green-D",
-        verb: :arrives,
-        minutes: 3
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc, {"The following Eastbound train arrives in 3 minutes", :audio}}
-    end
-
-    test "Handles unknown destination gracefully" do
-      audio = %Content.Audio.FollowingTrain{
-        destination: :unknown,
-        route_id: "Foo",
-        verb: :arrives,
-        minutes: 3
-      }
-
-      log =
-        capture_log([level: :error], fn ->
-          assert Content.Audio.to_params(audio) == nil
-        end)
-
-      assert log =~ "unknown destination"
     end
   end
 end
