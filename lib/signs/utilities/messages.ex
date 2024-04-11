@@ -70,9 +70,10 @@ defmodule Signs.Utilities.Messages do
       end
 
     messages =
-      if sign_config in [:off, :static_text],
-        do: messages,
-        else: get_last_trip_messages(messages, service_statuses_per_source, sign.source_config)
+      if sign_config in [:off, :static_text] or service_statuses_per_source == false or
+           service_statuses_per_source == {false, false},
+         do: messages,
+         else: get_last_trip_messages(messages, service_statuses_per_source, sign.source_config)
 
     early_am_status =
       Signs.Utilities.EarlyAmSuppression.get_early_am_state(current_time, scheduled)
@@ -184,7 +185,9 @@ defmodule Signs.Utilities.Messages do
     message_string = Content.Message.to_string(message)
 
     if is_list(message_string) do
-      List.first(message_string) |> elem(0) |> String.length()
+      Enum.max_by(message_string, fn {string, _} -> String.length(string) end)
+      |> elem(0)
+      |> String.length()
     else
       String.length(message_string)
     end
