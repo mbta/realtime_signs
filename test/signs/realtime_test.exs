@@ -14,6 +14,15 @@ defmodule Signs.RealtimeTest do
     announce_boarding?: false
   }
 
+  @src_2 %Signs.Utilities.SourceConfig{
+    stop_id: "2",
+    direction_id: 0,
+    platform: nil,
+    terminal?: false,
+    announce_arriving?: true,
+    announce_boarding?: false
+  }
+
   @fake_time DateTime.new!(~D[2023-01-01], ~T[12:00:00], "America/New_York")
   def fake_time_fn, do: @fake_time
 
@@ -33,6 +42,7 @@ defmodule Signs.RealtimeTest do
     headway_engine: Engine.ScheduledHeadways.Mock,
     config_engine: Engine.Config.Mock,
     alerts_engine: Engine.Alerts.Mock,
+    last_trip_engine: Engine.LastTrip.Mock,
     current_time_fn: &Signs.RealtimeTest.fake_time_fn/0,
     sign_updater: PaEss.Updater.Mock,
     last_update: @fake_time,
@@ -44,7 +54,7 @@ defmodule Signs.RealtimeTest do
     @sign
     | source_config: {
         %{sources: [@src], headway_group: "group", headway_destination: :northbound},
-        %{sources: [@src], headway_group: "group", headway_destination: :southbound}
+        %{sources: [@src_2], headway_group: "group", headway_destination: :southbound}
       },
       current_content_top: "Trains",
       current_content_bottom: "Every 11 to 13 min"
@@ -85,6 +95,8 @@ defmodule Signs.RealtimeTest do
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
       stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
+      stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> false end)
+      stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ -> %{} end)
 
       stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
         datetime(~T[05:00:00])
@@ -1321,6 +1333,8 @@ defmodule Signs.RealtimeTest do
       stub(Engine.Config.Mock, :sign_config, fn _ -> :auto end)
       stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_transfer_station end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> false end)
+      stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ -> %{} end)
 
       stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
         datetime(~T[05:00:00])
@@ -1337,6 +1351,128 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"No train service", "Use Routes 86, 87, or 91"})
       expect_audios([{:ad_hoc, {"No Train Service. Use routes 86, 87, or 91", :audio}}])
+      Signs.Realtime.handle_info(:run_loop, sign)
+    end
+  end
+
+  describe "Last Trip of the Day" do
+    setup do
+      stub(Engine.Config.Mock, :sign_config, fn _ -> :auto end)
+      stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+      stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> true end)
+      stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ -> %{"a" => 12345} end)
+      stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
+      stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
+
+      stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
+        datetime(~T[05:00:00])
+      end)
+
+      :ok
+    end
+
+    test "Platform is closed" do
+      sign = %{
+        @sign
+        | tick_read: 0
+      }
+
+      expect_messages({"Platform closed", "Service ended for night"})
+      expect_audios(canned: {"107", ["884", "21000", "787", "21000", "882"], :audio})
+      Signs.Realtime.handle_info(:run_loop, sign)
+    end
+
+    test "Station is closed" do
+      sign = %{
+        @mezzanine_sign
+        | tick_read: 0
+      }
+
+      expect_messages({"Station closed", "Service ended for night"})
+      expect_audios(canned: {"103", ["883"], :audio})
+      Signs.Realtime.handle_info(:run_loop, sign)
+    end
+
+    test "No service goes on bottom line when top line fits in 18 chars or less" do
+      sign = %{
+        @mezzanine_sign
+        | tick_read: 0,
+          announced_stalls: [{"a", 8}]
+      }
+
+      expect(Engine.Predictions.Mock, :for_stop, fn "1", 0 ->
+        [prediction(destination: :mattapan, arrival: 1100, stopped: 8, trip_id: "a")]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn "2", 0 ->
+        []
+      end)
+
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "1" -> %{"a" => 12345} end)
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "2" -> %{"b" => 12345} end)
+      expect(Engine.LastTrip.Mock, :is_last_trip?, fn "a" -> false end)
+      expect(Engine.LastTrip.Mock, :is_last_trip?, fn "b" -> true end)
+
+      expect_messages(
+        {[{"Mattapan   Stopped", 6}, {"Mattapan   8 stops", 6}, {"Mattapan      away", 6}],
+         [{"Southbound     No trains", 6}, {"Southbound     Svc ended", 6}]}
+      )
+
+      expect_audios([
+        {:canned,
+         {"115",
+          [
+            "501",
+            "21000",
+            "507",
+            "21000",
+            "4100",
+            "21000",
+            "533",
+            "21000",
+            "641",
+            "21000",
+            "5008",
+            "21000",
+            "534"
+          ], :audio}},
+        {:canned, {"105", ["787", "21000", "882"], :audio}}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, sign)
+    end
+
+    test "No service goes on top line when bottom line needs more than 18 characters" do
+      sign = %{
+        @jfk_mezzanine_sign
+        | tick_read: 0
+      }
+
+      expect(Engine.Predictions.Mock, :for_stop, fn "1", 0 ->
+        []
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn "70086", 1 ->
+        [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
+      end)
+
+      expect(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
+
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "1" -> %{"a" => 12345} end)
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "70086" -> %{"b" => 12345} end)
+      expect(Engine.LastTrip.Mock, :is_last_trip?, fn "a" -> true end)
+      expect(Engine.LastTrip.Mock, :is_last_trip?, fn "b" -> false end)
+
+      expect_messages(
+        {"Southbound  No Svc", [{"Alewife (A)  4 min", 6}, {"Alewife (Ashmont plat)", 6}]}
+      )
+
+      expect_audios([
+        {:canned, {"105", ["787", "21000", "882"], :audio}},
+        {:canned, {"98", ["4000", "503", "5004", "4016"], :audio}}
+      ])
+
       Signs.Realtime.handle_info(:run_loop, sign)
     end
   end
