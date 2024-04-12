@@ -30,23 +30,27 @@ defmodule Content.Audio.ServiceEnded do
       Utilities.take_message([@station_closed], :audio)
     end
 
-    def to_params(%Content.Audio.ServiceEnded{location: :platform, destination: destination}) do
+    def to_params(
+          %Content.Audio.ServiceEnded{location: :platform, destination: destination} = audio
+        ) do
       case Utilities.destination_var(destination) do
         {:ok, destination_var} ->
           Utilities.take_message([@platform_closed, destination_var, @service_ended], :audio)
 
         {:error, :unknown} ->
-          nil
+          to_tts(audio)
       end
     end
 
-    def to_params(%Content.Audio.ServiceEnded{location: :direction, destination: destination}) do
+    def to_params(
+          %Content.Audio.ServiceEnded{location: :direction, destination: destination} = audio
+        ) do
       case Utilities.destination_var(destination) do
         {:ok, destination_var} ->
           Utilities.take_message([destination_var, @service_ended], :audio)
 
         {:error, :unknown} ->
-          nil
+          to_tts(audio)
       end
     end
 
