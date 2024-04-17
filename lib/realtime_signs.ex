@@ -10,6 +10,15 @@ defmodule RealtimeSigns do
 
     log_runtime_config()
 
+    scu_updater_children =
+      Signs.Utilities.SignsConfig.all_scu_ids()
+      |> Enum.flat_map(fn id ->
+        [
+          Supervisor.child_spec({PaEss.ScuQueue, id}, id: {PaEss.ScuQueue, id}),
+          Supervisor.child_spec({PaEss.ScuUpdater, id}, id: {PaEss.ScuUpdater, id})
+        ]
+      end)
+
     children =
       [
         :hackney_pool.child_spec(:default, []),
@@ -30,6 +39,7 @@ defmodule RealtimeSigns do
         HeadwayAnalysis.Supervisor
       ] ++
         http_updater_children() ++
+        scu_updater_children ++
         [
           Signs.Supervisor
         ]
