@@ -59,6 +59,13 @@ defmodule Signs.Utilities.SignsConfig do
     Enum.uniq(train_routes ++ bus_routes)
   end
 
+  def all_scu_ids do
+    for %{"scu_id" => scu_id} <- children_config(),
+        uniq: true do
+      scu_id
+    end
+  end
+
   @spec get_stop_ids_for_sign(map()) :: [String.t()]
   def get_stop_ids_for_sign(sign) do
     sign["source_config"]
