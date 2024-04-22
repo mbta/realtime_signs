@@ -34,7 +34,8 @@ config :realtime_signs,
   number_of_http_updaters: 4,
   restart_fn: &Engine.Health.restart_noop/0
 
-config :realtime_signs, RealtimeSignsWeb.Endpoint, secret_key_base: "local_secret_key_base_at_least_64_bytes_________________________________"
+config :realtime_signs, RealtimeSignsWeb.Endpoint,
+  secret_key_base: "local_secret_key_base_at_least_64_bytes_________________________________"
 
 config :ex_aws,
   access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],
