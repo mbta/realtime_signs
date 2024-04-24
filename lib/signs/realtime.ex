@@ -212,8 +212,12 @@ defmodule Signs.Realtime do
   end
 
   defp has_service_ended_for_source?(sign, source, current_time) do
-    SourceConfig.sign_stop_ids(source)
-    |> Enum.all?(&has_last_trip_departed_stop?(&1, sign, current_time))
+    stop_ids = SourceConfig.sign_stop_ids(source)
+
+    # Red Line trunk stops will have two last trips in both directions
+    if Enum.all?(stop_ids, &is_red_line_trunk_stop?/1),
+      do: Enum.count(stop_ids, &has_last_trip_departed_stop?(&1, sign, current_time)) >= 2,
+      else: Enum.any?(stop_ids, &has_last_trip_departed_stop?(&1, sign, current_time))
   end
 
   defp has_last_trip_departed_stop?(stop_id, sign, current_time) do
@@ -284,5 +288,39 @@ defmodule Signs.Realtime do
   @spec decrement_ticks(Signs.Realtime.t()) :: Signs.Realtime.t()
   def decrement_ticks(sign) do
     %{sign | tick_read: sign.tick_read - 1}
+  end
+
+  defp is_red_line_trunk_stop?(stop_id) do
+    stop_id in [
+      "70061",
+      "Alewife-01",
+      "Alewife-02",
+      "70064",
+      "70063",
+      "70066",
+      "70065",
+      "70068",
+      "70067",
+      "70070",
+      "70069",
+      "70072",
+      "70071",
+      "70074",
+      "70073",
+      "70076",
+      "70075",
+      "70078",
+      "70077",
+      "70080",
+      "70079",
+      "70082",
+      "70081",
+      "70084",
+      "70083",
+      "70085",
+      "70095",
+      "70086",
+      "70096"
+    ]
   end
 end

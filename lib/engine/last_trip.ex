@@ -35,9 +35,16 @@ defmodule Engine.LastTrip do
     end
   end
 
+  def update_last_trips(last_trips) do
+    GenServer.cast(__MODULE__, {:update_last_trips, last_trips})
+  end
+
+  def update_recent_departures(new_recent_departures) do
+    GenServer.cast(__MODULE__, {:update_recent_departures, new_recent_departures})
+  end
+
   @impl true
   def init(_) do
-    schedule_update(self())
     schedule_clean(self())
 
     state = %{
@@ -56,43 +63,43 @@ defmodule Engine.LastTrip do
   end
 
   @impl true
-  def handle_info(:update, %{last_modified: last_modified} = state) do
-    schedule_update(self())
+  def handle_cast({:update_last_trips, last_trips}, %{last_trips: last_trips_table} = state) do
+    current_time = Timex.now()
 
-    http_client = Application.get_env(:realtime_signs, :http_client)
+    last_trips =
+      Enum.map(last_trips, fn {trip_id, route_id} -> {trip_id, route_id, current_time} end)
 
-    new_last_modified =
-      case http_client.get(
-             Application.get_env(:realtime_signs, :trip_update_url),
-             if(last_modified, do: [{"If-Modified-Since", last_modified}], else: []),
-             timeout: 2000,
-             recv_timeout: 2000
-           ) do
-        {:ok, %HTTPoison.Response{body: body, status_code: 200, headers: headers}} ->
-          predictions_feed = Predictions.Predictions.parse_json_response(body)
+    :ets.insert(last_trips_table, last_trips)
 
-          predictions_feed["entity"]
-          |> Stream.map(& &1["trip_update"])
-          |> Stream.reject(&(&1["trip"]["schedule_relationship"] == "CANCELED"))
-          |> tap(fn trips ->
-            insert_last_trips(trips, state)
-          end)
-          |> Stream.map(&{&1["trip"]["trip_id"], &1["stop_time_update"]})
-          |> tap(fn predictions_by_trip ->
-            insert_recent_departures(predictions_by_trip, state)
-          end)
+    {:noreply, state}
+  end
 
-          Enum.find_value(headers, fn {key, value} -> if(key == "Last-Modified", do: value) end)
+  @impl true
+  def handle_cast(
+        {:update_recent_departures, new_recent_departures},
+        %{recent_departures: recent_departures_table} = state
+      ) do
+    current_recent_departures =
+      :ets.tab2list(recent_departures_table)
+      |> Stream.map(&{elem(&1, 0), elem(&1, 1)})
+      |> Map.new()
 
-        {:ok, %HTTPoison.Response{status_code: 304}} ->
-          last_modified
+    Enum.reduce(new_recent_departures, current_recent_departures, fn {stop_id, trip_id, route_id,
+                                                                      departure_time},
+                                                                     acc ->
+      Map.get_and_update(acc, {stop_id, route_id}, fn recent_departures ->
+        if recent_departures do
+          {recent_departures, Map.put(recent_departures, trip_id, departure_time)}
+        else
+          {recent_departures, Map.new([{trip_id, departure_time}])}
+        end
+      end)
+      |> elem(1)
+    end)
+    |> Map.to_list()
+    |> then(&:ets.insert(recent_departures_table, &1))
 
-        {_, response} ->
-          Logger.warn("Could not fetch predictions: #{inspect(response)}")
-          last_modified
-      end
-
-    {:noreply, %{state | last_modified: new_last_modified}}
+    {:noreply, state}
   end
 
   @impl true
@@ -104,50 +111,11 @@ defmodule Engine.LastTrip do
     {:noreply, state}
   end
 
-  defp insert_last_trips(trips, state) do
-    current_time = Timex.now()
-
-    Stream.filter(trips, &(&1["trip"]["last_trip"] == true))
-    |> Stream.map(&{&1["trip"]["trip_id"], current_time})
-    |> Enum.each(fn {trip_id, timestamp} ->
-      :ets.insert(state.last_trips, {trip_id, timestamp})
-    end)
-  end
-
-  defp insert_recent_departures(predictions_by_trip, state) do
-    current_time = Timex.now()
-
-    for {trip_id, predictions} <- predictions_by_trip,
-        prediction <- predictions,
-        prediction["departure"] do
-      seconds_until_departure = prediction["departure"]["time"] - DateTime.to_unix(current_time)
-
-      if seconds_until_departure <= 0 and abs(seconds_until_departure) <= @hour_in_seconds do
-        :ets.tab2list(state.recent_departures)
-        |> Stream.map(&{elem(&1, 0), elem(&1, 1)})
-        |> Map.new()
-        |> Map.get_and_update(prediction["stop_id"], fn recent_departures ->
-          if recent_departures do
-            {recent_departures,
-             Map.put(recent_departures, trip_id, prediction["departure"]["time"])}
-          else
-            {recent_departures, Map.new([{trip_id, prediction["departure"]["time"]}])}
-          end
-        end)
-        |> elem(1)
-        |> Map.to_list()
-        |> then(&:ets.insert(state.recent_departures, &1))
-      end
-    end
-  end
-
   defp clean_last_trips(state) do
     :ets.tab2list(state.last_trips)
     |> Enum.each(fn {trip_id, timestamp} ->
-      if Timex.diff(Timex.now(), timestamp, :seconds) > @hour_in_seconds do
+      if Timex.diff(Timex.now(), timestamp, :seconds) > @hour_in_seconds * 2 do
         :ets.delete(state.last_trips, trip_id)
-      else
-        :ok
       end
     end)
   end
@@ -156,19 +124,14 @@ defmodule Engine.LastTrip do
     current_time = Timex.now()
 
     :ets.tab2list(state.recent_departures)
-    |> Enum.each(fn {stop_id, departures} ->
+    |> Enum.each(fn {key, departures} ->
       departures_within_last_hour =
-        Enum.filter(departures, fn {_, departed_time} ->
+        Map.filter(departures, fn {_, departed_time} ->
           DateTime.to_unix(current_time) - departed_time <= @hour_in_seconds
         end)
-        |> Map.new()
 
-      :ets.insert(state.recent_departures, {stop_id, departures_within_last_hour})
+      :ets.insert(state.recent_departures, {key, departures_within_last_hour})
     end)
-  end
-
-  defp schedule_update(pid) do
-    Process.send_after(pid, :update, 1_000)
   end
 
   defp schedule_clean(pid) do
