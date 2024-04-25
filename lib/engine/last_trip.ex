@@ -8,7 +8,6 @@ defmodule Engine.LastTrip do
   @hour_in_seconds 3600
 
   @type state :: %{
-          last_modified: nil,
           recent_departures: :ets.tab(),
           last_trips: :ets.tab()
         }
@@ -49,8 +48,7 @@ defmodule Engine.LastTrip do
 
     state = %{
       recent_departures: @recent_departures_table,
-      last_trips: @last_trips_table,
-      last_modified: nil
+      last_trips: @last_trips_table
     }
 
     create_tables(state)
@@ -66,8 +64,7 @@ defmodule Engine.LastTrip do
   def handle_cast({:update_last_trips, last_trips}, %{last_trips: last_trips_table} = state) do
     current_time = Timex.now()
 
-    last_trips =
-      Enum.map(last_trips, fn {trip_id, route_id} -> {trip_id, route_id, current_time} end)
+    last_trips = Enum.map(last_trips, fn trip_id -> {trip_id, current_time} end)
 
     :ets.insert(last_trips_table, last_trips)
 
@@ -84,10 +81,10 @@ defmodule Engine.LastTrip do
       |> Stream.map(&{elem(&1, 0), elem(&1, 1)})
       |> Map.new()
 
-    Enum.reduce(new_recent_departures, current_recent_departures, fn {stop_id, trip_id, route_id,
+    Enum.reduce(new_recent_departures, current_recent_departures, fn {stop_id, trip_id,
                                                                       departure_time},
                                                                      acc ->
-      Map.get_and_update(acc, {stop_id, route_id}, fn recent_departures ->
+      Map.get_and_update(acc, stop_id, fn recent_departures ->
         if recent_departures do
           {recent_departures, Map.put(recent_departures, trip_id, departure_time)}
         else
