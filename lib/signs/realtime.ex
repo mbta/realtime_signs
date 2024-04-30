@@ -173,13 +173,13 @@ defmodule Signs.Realtime do
       end
 
     service_end_statuses_per_source =
-      if SourceConfig.multi_source?(sign.source_config) do
-        {top_source, bottom_source} = sign.source_config
+      case sign.source_config do
+        {top_source, bottom_source} ->
+          {has_service_ended_for_source?(sign, top_source, current_time),
+           has_service_ended_for_source?(sign, bottom_source, current_time)}
 
-        {has_service_ended_for_source?(sign, top_source, current_time),
-         has_service_ended_for_source?(sign, bottom_source, current_time)}
-      else
-        has_service_ended_for_source?(sign, sign.source_config, current_time)
+        source ->
+          has_service_ended_for_source?(sign, source, current_time)
       end
 
     {new_top, new_bottom} =
@@ -215,23 +215,17 @@ defmodule Signs.Realtime do
     stop_ids = SourceConfig.sign_stop_ids(source)
 
     # Red Line trunk stops will have two last trips in both directions
-    if Enum.all?(stop_ids, &is_red_line_trunk_stop?/1),
-      do: Enum.count(stop_ids, &has_last_trip_departed_stop?(&1, sign, current_time)) >= 2,
-      else: Enum.any?(stop_ids, &has_last_trip_departed_stop?(&1, sign, current_time))
+    trip_threshold = if(Enum.all?(stop_ids, &is_red_line_trunk_stop?/1), do: 2, else: 1)
+    Enum.count(stop_ids, &has_last_trip_departed_stop?(&1, sign, current_time)) >= trip_threshold
   end
 
   defp has_last_trip_departed_stop?(stop_id, sign, current_time) do
-    case sign.last_trip_engine.get_recent_departures(stop_id) do
-      nil ->
-        false
-
-      recent_departures ->
-        Enum.any?(recent_departures, fn {trip_id, timestamp} ->
-          # Use a 5 second buffer to make sure trips have fully departed
-          DateTime.to_unix(current_time) - timestamp > 5 and
-            sign.last_trip_engine.is_last_trip?(trip_id)
-        end)
-    end
+    sign.last_trip_engine.get_recent_departures(stop_id)
+    |> Enum.any?(fn {trip_id, timestamp} ->
+      # Use a 5 second buffer to make sure trips have fully departed
+      DateTime.to_unix(current_time) - timestamp > 5 and
+        sign.last_trip_engine.is_last_trip?(trip_id)
+    end)
   end
 
   defp prediction_key(prediction) do

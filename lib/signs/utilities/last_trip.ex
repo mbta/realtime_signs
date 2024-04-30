@@ -3,7 +3,7 @@ defmodule Signs.Utilities.LastTrip do
   alias Content.Message.LastTrip
 
   def get_last_trip_messages(
-        messages,
+        {top_message, bottom_message} = messages,
         service_status,
         source
       ) do
@@ -61,11 +61,12 @@ defmodule Signs.Utilities.LastTrip do
         end
 
       has_service_ended? ->
-        if has_service_ended?,
-          do:
-            {%LastTrip.PlatformClosed{destination: source.headway_destination},
-             %LastTrip.ServiceEnded{}},
-          else: messages
+        if has_service_ended? and
+             not (is_prediction?(top_message) or is_prediction?(bottom_message)),
+           do:
+             {%LastTrip.PlatformClosed{destination: source.headway_destination},
+              %LastTrip.ServiceEnded{}},
+           else: messages
     end
   end
 

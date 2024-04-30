@@ -19,16 +19,14 @@ defmodule Engine.LastTrip do
   @impl true
   def get_recent_departures(recent_departures_table \\ @recent_departures_table, stop_id) do
     case :ets.lookup(recent_departures_table, stop_id) do
-      [{_, :none}] -> nil
       [{^stop_id, departures}] -> departures
-      _ -> nil
+      _ -> []
     end
   end
 
   @impl true
   def is_last_trip?(last_trips_table \\ @last_trips_table, trip_id) do
     case :ets.lookup(last_trips_table, trip_id) do
-      [{_, :none}] -> false
       [{^trip_id, _timestamp}] -> true
       _ -> false
     end
@@ -77,21 +75,14 @@ defmodule Engine.LastTrip do
         %{recent_departures: recent_departures_table} = state
       ) do
     current_recent_departures =
-      :ets.tab2list(recent_departures_table)
-      |> Stream.map(&{elem(&1, 0), elem(&1, 1)})
-      |> Map.new()
+      :ets.tab2list(recent_departures_table) |> Map.new() |> IO.inspect()
 
     Enum.reduce(new_recent_departures, current_recent_departures, fn {stop_id, trip_id,
                                                                       departure_time},
                                                                      acc ->
-      Map.get_and_update(acc, stop_id, fn recent_departures ->
-        if recent_departures do
-          {recent_departures, Map.put(recent_departures, trip_id, departure_time)}
-        else
-          {recent_departures, Map.new([{trip_id, departure_time}])}
-        end
+      Map.update(acc, stop_id, %{trip_id => departure_time}, fn recent_departures ->
+        Map.put(recent_departures, trip_id, departure_time)
       end)
-      |> elem(1)
     end)
     |> Map.to_list()
     |> then(&:ets.insert(recent_departures_table, &1))
