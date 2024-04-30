@@ -97,9 +97,8 @@ defmodule Signs.Utilities.LastTrip do
     message_string = Content.Message.to_string(message)
 
     if is_list(message_string) do
-      Enum.max_by(message_string, fn {string, _} -> String.length(string) end)
-      |> elem(0)
-      |> String.length()
+      Stream.map(message_string, fn {string, _} -> String.length(string) end)
+      |> Enum.max()
     else
       String.length(message_string)
     end
