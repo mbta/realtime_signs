@@ -74,8 +74,7 @@ defmodule Engine.LastTrip do
         {:update_recent_departures, new_recent_departures},
         %{recent_departures: recent_departures_table} = state
       ) do
-    current_recent_departures =
-      :ets.tab2list(recent_departures_table) |> Map.new() |> IO.inspect()
+    current_recent_departures = :ets.tab2list(recent_departures_table) |> Map.new()
 
     Enum.reduce(new_recent_departures, current_recent_departures, fn {stop_id, trip_id,
                                                                       departure_time},
