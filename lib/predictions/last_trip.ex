@@ -14,19 +14,18 @@ defmodule Predictions.LastTrip do
   end
 
   def get_recent_departures(predictions_feed) do
-    current_time = Timex.now()
-
     predictions_by_trip =
       get_running_trips(predictions_feed)
-      |> Enum.map(&{&1["trip"]["trip_id"], &1["stop_time_update"]})
+      |> Enum.map(&{&1["trip"]["trip_id"], &1["stop_time_update"], &1["vehicle"]["id"]})
 
-    for {trip_id, predictions} <- predictions_by_trip,
-        prediction <- predictions,
-        prediction["departure"] do
-      seconds_until_departure = prediction["departure"]["time"] - DateTime.to_unix(current_time)
+    for {trip_id, predictions, vehicle_id} <- predictions_by_trip,
+        prediction <- predictions do
+      vehicle_location = Engine.Locations.for_vehicle(vehicle_id)
 
-      if seconds_until_departure in -@hour_in_seconds..0 do
-        {prediction["stop_id"], trip_id, prediction["departure"]["time"]}
+      if vehicle_location &&
+           (vehicle_location.stop_id == prediction["stop_id"] and
+              vehicle_location.status == :stopped_at) do
+        {prediction["stop_id"], trip_id, Timex.now()}
       end
     end
     |> Enum.reject(&is_nil/1)

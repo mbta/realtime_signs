@@ -221,9 +221,9 @@ defmodule Signs.Realtime do
 
   defp has_last_trip_departed_stop?(stop_id, sign, current_time) do
     sign.last_trip_engine.get_recent_departures(stop_id)
-    |> Enum.any?(fn {trip_id, timestamp} ->
-      # Use a 5 second buffer to make sure trips have fully departed
-      DateTime.to_unix(current_time) - timestamp > 5 and
+    |> Enum.any?(fn {trip_id, departure_time} ->
+      # Use a 3 second buffer to make sure trips have fully departed
+      DateTime.to_unix(current_time) - DateTime.to_unix(departure_time) > 3 and
         sign.last_trip_engine.is_last_trip?(trip_id)
     end)
   end
