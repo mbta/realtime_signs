@@ -1361,7 +1361,11 @@ defmodule Signs.RealtimeTest do
       stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> true end)
-      stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ -> %{"a" => 12345} end)
+
+      stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ ->
+        %{"a" => ~U[2023-01-01 00:00:00.000Z]}
+      end)
+
       stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
       stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
 
@@ -1409,8 +1413,14 @@ defmodule Signs.RealtimeTest do
         []
       end)
 
-      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "1" -> %{"a" => 12345} end)
-      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "2" -> %{"b" => 12345} end)
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "1" ->
+        %{"a" => ~U[2023-01-01 00:00:00.000Z]}
+      end)
+
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "2" ->
+        %{"b" => ~U[2023-01-01 00:00:00.000Z]}
+      end)
+
       expect(Engine.LastTrip.Mock, :is_last_trip?, fn "a" -> false end)
       expect(Engine.LastTrip.Mock, :is_last_trip?, fn "b" -> true end)
 
@@ -1459,8 +1469,14 @@ defmodule Signs.RealtimeTest do
 
       expect(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
 
-      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "1" -> %{"a" => 12345} end)
-      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "70086" -> %{"b" => 12345} end)
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "1" ->
+        %{"a" => ~U[2023-01-01 00:00:00.000Z]}
+      end)
+
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "70086" ->
+        %{"b" => ~U[2023-01-01 00:00:00.000Z]}
+      end)
+
       expect(Engine.LastTrip.Mock, :is_last_trip?, fn "a" -> true end)
       expect(Engine.LastTrip.Mock, :is_last_trip?, fn "b" -> false end)
 
