@@ -1,6 +1,4 @@
 defmodule Predictions.LastTrip do
-  @hour_in_seconds 3600
-
   defp get_running_trips(predictions_feed) do
     predictions_feed["entity"]
     |> Stream.map(& &1["trip_update"])
