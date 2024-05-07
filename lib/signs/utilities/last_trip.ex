@@ -28,7 +28,8 @@ defmodule Signs.Utilities.LastTrip do
               not is_prediction?(unpacked_mz_bottom) ->
             {%Content.Message.LastTrip.StationClosed{}, %Content.Message.LastTrip.ServiceEnded{}}
 
-          has_top_service_ended? and not is_prediction?(unpacked_mz_top) ->
+          has_top_service_ended? and not is_prediction?(unpacked_mz_top) and
+              not is_empty?(unpacked_mz_bottom) ->
             if get_message_length(unpacked_mz_bottom) <= 18 do
               {unpacked_mz_bottom,
                %Content.Message.LastTrip.NoService{
@@ -42,7 +43,8 @@ defmodule Signs.Utilities.LastTrip do
                }, unpacked_mz_bottom}
             end
 
-          has_bottom_service_ended? and not is_prediction?(unpacked_mz_bottom) ->
+          has_bottom_service_ended? and not is_prediction?(unpacked_mz_bottom) and
+              not is_empty?(unpacked_mz_top) ->
             if get_message_length(unpacked_mz_top) <= 18 do
               {unpacked_mz_top,
                %Content.Message.LastTrip.NoService{
@@ -91,6 +93,10 @@ defmodule Signs.Utilities.LastTrip do
 
   defp is_prediction?(message) do
     match?(%Content.Message.Predictions{}, message)
+  end
+
+  defp is_empty?(message) do
+    match?(%Content.Message.Empty{}, message)
   end
 
   defp get_message_length(message) do
