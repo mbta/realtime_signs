@@ -60,9 +60,16 @@ defmodule Engine.Predictions do
              recv_timeout: 2000
            ) do
         {:ok, %HTTPoison.Response{body: body, status_code: 200, headers: headers}} ->
+          parsed_json = Predictions.Predictions.parse_json_response(body)
+
           {new_predictions, vehicles_running_revenue_trips} =
-            Predictions.Predictions.parse_json_response(body)
-            |> Predictions.Predictions.get_all(current_time)
+            Predictions.Predictions.get_all(parsed_json, current_time)
+
+          Predictions.LastTrip.get_last_trips(parsed_json)
+          |> Engine.LastTrip.update_last_trips()
+
+          Predictions.LastTrip.get_recent_departures(parsed_json)
+          |> Engine.LastTrip.update_recent_departures()
 
           :ets.tab2list(state.trip_updates_table)
           |> Enum.map(&{elem(&1, 0), []})

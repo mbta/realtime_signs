@@ -24,6 +24,7 @@ defmodule Signs.Realtime do
     :headway_engine,
     :config_engine,
     :alerts_engine,
+    :last_trip_engine,
     :sign_updater,
     :last_update,
     :tick_read,
@@ -65,6 +66,7 @@ defmodule Signs.Realtime do
           headway_engine: module(),
           config_engine: module(),
           alerts_engine: module(),
+          last_trip_engine: module(),
           current_time_fn: fun(),
           sign_updater: module(),
           last_update: DateTime.t(),
@@ -90,6 +92,7 @@ defmodule Signs.Realtime do
     headway_engine = opts[:headway_engine] || Engine.ScheduledHeadways
     config_engine = opts[:config_engine] || Engine.Config
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
+    last_trip_engine = opts[:last_trip_engine] || Engine.LastTrip
     sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
 
     sign = %__MODULE__{
@@ -104,6 +107,7 @@ defmodule Signs.Realtime do
       headway_engine: headway_engine,
       config_engine: config_engine,
       alerts_engine: alerts_engine,
+      last_trip_engine: last_trip_engine,
       current_time_fn:
         opts[:current_time_fn] ||
           fn ->
@@ -168,6 +172,16 @@ defmodule Signs.Realtime do
           {predictions, predictions}
       end
 
+    service_end_statuses_per_source =
+      case sign.source_config do
+        {top_source, bottom_source} ->
+          {has_service_ended_for_source?(sign, top_source, current_time),
+           has_service_ended_for_source?(sign, bottom_source, current_time)}
+
+        source ->
+          has_service_ended_for_source?(sign, source, current_time)
+      end
+
     {new_top, new_bottom} =
       Utilities.Messages.get_messages(
         predictions,
@@ -175,7 +189,8 @@ defmodule Signs.Realtime do
         sign_config,
         current_time,
         alert_status,
-        first_scheduled_departures
+        first_scheduled_departures,
+        service_end_statuses_per_source
       )
 
     sign =
@@ -194,6 +209,24 @@ defmodule Signs.Realtime do
   def handle_info(msg, state) do
     Logger.warn("Signs.Realtime unknown_message: #{inspect(msg)}")
     {:noreply, state}
+  end
+
+  defp has_service_ended_for_source?(sign, source, current_time) do
+    if source.headway_group not in ["red_trunk", "red_ashmont", "red_braintree"] do
+      SourceConfig.sign_stop_ids(source)
+      |> Enum.count(&has_last_trip_departed_stop?(&1, sign, current_time)) >= 1
+    else
+      false
+    end
+  end
+
+  defp has_last_trip_departed_stop?(stop_id, sign, current_time) do
+    sign.last_trip_engine.get_recent_departures(stop_id)
+    |> Enum.any?(fn {trip_id, departure_time} ->
+      # Use a 3 second buffer to make sure trips have fully departed
+      DateTime.to_unix(current_time) - DateTime.to_unix(departure_time) > 3 and
+        sign.last_trip_engine.is_last_trip?(trip_id)
+    end)
   end
 
   defp prediction_key(prediction) do
