@@ -594,7 +594,9 @@ defmodule PaEss.Utilities do
     {"Silver Line Way", "570"},
     {"Drydock", "571"},
     {"Chelsea", "860"},
-    {"Gallivan Blvd", "881"}
+    {"Gallivan Blvd", "881"},
+    {"Brookline Ave", "885"},
+    {"Brookline Village", "886"}
   ]
 
   @route_take_lookup %{
