@@ -114,7 +114,8 @@ defmodule Engine.LastTrip do
     |> Enum.each(fn {key, departures} ->
       departures_within_last_hour =
         Map.filter(departures, fn {_, departed_time} ->
-          DateTime.to_unix(current_time) - DateTime.to_unix(departed_time) <= @hour_in_seconds
+          DateTime.to_unix(current_time) - DateTime.to_unix(departed_time) <=
+            @hour_in_seconds * 1.5
         end)
 
       :ets.insert(state.recent_departures, {key, departures_within_last_hour})
