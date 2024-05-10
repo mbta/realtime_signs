@@ -1426,7 +1426,7 @@ defmodule Signs.RealtimeTest do
 
       expect_messages(
         {[{"Mattapan   Stopped", 6}, {"Mattapan   8 stops", 6}, {"Mattapan      away", 6}],
-         [{"Southbound     No trains", 6}, {"Southbound     Svc ended", 6}]}
+         "Southbound     Svc ended"}
       )
 
       expect_audios([
