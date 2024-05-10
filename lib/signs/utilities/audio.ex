@@ -388,10 +388,17 @@ defmodule Signs.Utilities.Audio do
     end)
   end
 
-  def audio_log_details(audio) do
-    [
-      message_type: to_string(audio.__struct__) |> String.split(".") |> List.last(),
-      message_details: Map.from_struct(audio) |> inspect()
-    ]
+  @spec send_audio(Signs.Realtime.t(), [Content.Audio.t()]) :: :ok
+  def send_audio(sign, audios) do
+    sign.sign_updater.play_message(
+      sign,
+      Enum.map(audios, &Content.Audio.to_params(&1)),
+      Enum.map(audios, fn audio ->
+        [
+          message_type: to_string(audio.__struct__) |> String.split(".") |> List.last(),
+          message_details: Map.from_struct(audio) |> inspect()
+        ]
+      end)
+    )
   end
 end

@@ -137,6 +137,7 @@ defmodule Engine.ConfigTest do
           table_name_signs: :test_signs,
           table_name_headways: :test_headways,
           table_name_chelsea_bridge: :test_chelsea_bridge,
+          table_name_scus_migrated: :test_scus_migrated,
           current_version: nil,
           time_fetcher: &DateTime.utc_now/0
         },

@@ -37,7 +37,7 @@ defmodule Signs.Utilities.Predictions do
   defp prediction_messages(
          predictions,
          %{sources: sources},
-         %{text_id: {station_code, zone}} = sign
+         %{pa_ess_loc: station_code, text_zone: zone} = sign
        ) do
     predictions
     |> Enum.filter(fn p ->

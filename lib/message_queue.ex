@@ -6,8 +6,6 @@ defmodule MessageQueue do
   message to accommodate the new one.
   """
 
-  @behaviour PaEss.Updater
-
   @type message :: {
           :update_sign | :send_audio,
           [term()]
@@ -34,7 +32,15 @@ defmodule MessageQueue do
     {:ok, %{queue: :queue.new(), length: 0}}
   end
 
-  @impl PaEss.Updater
+  @spec update_sign(
+          GenServer.server(),
+          PaEss.text_id(),
+          Content.Message.value(),
+          Content.Message.value(),
+          integer(),
+          integer() | :now,
+          String.t()
+        ) :: :ok
   def update_sign(pid \\ __MODULE__, text_id, top_line, bottom_line, duration, start, sign_id) do
     GenServer.call(
       pid,
@@ -42,7 +48,15 @@ defmodule MessageQueue do
     )
   end
 
-  @impl PaEss.Updater
+  @spec send_audio(
+          GenServer.server(),
+          PaEss.audio_id(),
+          [Content.Audio.value()],
+          integer(),
+          integer(),
+          String.t(),
+          [keyword()]
+        ) :: :ok
   def send_audio(pid \\ __MODULE__, audio_id, audios, priority, timeout, sign_id, extra_logs) do
     GenServer.call(
       pid,
@@ -72,7 +86,7 @@ defmodule MessageQueue do
 
     queue = :queue.in(msg, queue)
 
-    {:reply, {:ok, :sent}, %{state | queue: queue, length: length + 1}}
+    {:reply, :ok, %{state | queue: queue, length: length + 1}}
   end
 
   def handle_call(:get_message, _from, state) do

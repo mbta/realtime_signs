@@ -28,8 +28,10 @@ defmodule Signs.RealtimeTest do
 
   @sign %Signs.Realtime{
     id: "sign_id",
-    text_id: {"TEST", "x"},
-    audio_id: {"TEST", ["x"]},
+    pa_ess_loc: "TEST",
+    scu_id: "TESTSCU001",
+    text_zone: "x",
+    audio_zones: ["x"],
     source_config: %{
       sources: [@src],
       headway_group: "headway_group",
@@ -62,7 +64,8 @@ defmodule Signs.RealtimeTest do
 
   @jfk_mezzanine_sign %{
     @sign
-    | text_id: {"RJFK", "m"},
+    | pa_ess_loc: "RJFK",
+      text_zone: "m",
       source_config: {
         %{sources: [@src], headway_group: "group", headway_destination: :southbound},
         %{
@@ -572,7 +575,8 @@ defmodule Signs.RealtimeTest do
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
-        | text_id: {"BBOW", "e"},
+        | pa_ess_loc: "BBOW",
+          text_zone: "e",
           source_config: %{@sign.source_config | sources: [%{@src | direction_id: 1}]}
       })
     end
@@ -1346,7 +1350,8 @@ defmodule Signs.RealtimeTest do
     test "Defaults to use routes message" do
       sign = %{
         @sign
-        | text_id: {"GUNS", "x"}
+        | pa_ess_loc: "GUNS",
+          text_zone: "x"
       }
 
       expect_messages({"No train service", "Use Routes 86, 87, or 91"})
@@ -1494,14 +1499,14 @@ defmodule Signs.RealtimeTest do
   end
 
   defp expect_messages(messages) do
-    expect(PaEss.Updater.Mock, :update_sign, fn {_, _}, top, bottom, 145, :now, _sign_id ->
+    expect(PaEss.Updater.Mock, :set_background_message, fn _, top, bottom ->
       assert {top, bottom} == messages
       :ok
     end)
   end
 
   defp expect_audios(audios) do
-    expect(PaEss.Updater.Mock, :send_audio, fn {_, _}, list, 5, 60, _sign_id, _ ->
+    expect(PaEss.Updater.Mock, :play_message, fn _, list, _ ->
       assert list == audios
       :ok
     end)

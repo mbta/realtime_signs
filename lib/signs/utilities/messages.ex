@@ -191,7 +191,7 @@ defmodule Signs.Utilities.Messages do
     Content.Message.Empty.new()
   end
 
-  defp get_alert_messages(alert_status, %{text_id: {"GUNS", _}}) do
+  defp get_alert_messages(alert_status, %{pa_ess_loc: "GUNS"}) do
     if alert_status in [:none, :alert_along_route],
       do: nil,
       else: {%Alert.NoService{}, %Alert.UseRoutes{}}
