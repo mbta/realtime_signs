@@ -22,7 +22,7 @@ defmodule Signs.Utilities.Updater do
          Timex.after?(current_time, Timex.shift(sign.last_update, seconds: 130)) ||
          sign.current_content_top != new_top ||
          sign.current_content_bottom != new_bottom do
-      sign.sign_updater.update_sign(sign.text_id, new_top, new_bottom, 145, :now, sign.id)
+      sign.sign_updater.set_background_message(sign, new_top, new_bottom)
 
       %{
         sign

@@ -14,8 +14,10 @@ defmodule Signs.Realtime do
 
   @enforce_keys [
     :id,
-    :text_id,
-    :audio_id,
+    :pa_ess_loc,
+    :scu_id,
+    :text_zone,
+    :audio_zones,
     :source_config,
     :current_content_top,
     :current_content_bottom,
@@ -56,8 +58,10 @@ defmodule Signs.Realtime do
 
   @type t :: %__MODULE__{
           id: String.t(),
-          text_id: PaEss.text_id(),
-          audio_id: PaEss.audio_id(),
+          pa_ess_loc: String.t(),
+          scu_id: String.t(),
+          text_zone: String.t(),
+          audio_zones: [String.t()],
           source_config: SourceConfig.config() | {SourceConfig.config(), SourceConfig.config()},
           current_content_top: Content.Message.value(),
           current_content_bottom: Content.Message.value(),
@@ -93,12 +97,13 @@ defmodule Signs.Realtime do
     config_engine = opts[:config_engine] || Engine.Config
     alerts_engine = opts[:alerts_engine] || Engine.Alerts
     last_trip_engine = opts[:last_trip_engine] || Engine.LastTrip
-    sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
-      text_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
-      audio_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "audio_zones")},
+      pa_ess_loc: Map.fetch!(config, "pa_ess_loc"),
+      scu_id: Map.fetch!(config, "scu_id"),
+      text_zone: Map.fetch!(config, "text_zone"),
+      audio_zones: Map.fetch!(config, "audio_zones"),
       source_config: source_config,
       current_content_top: "",
       current_content_bottom: "",
@@ -114,7 +119,7 @@ defmodule Signs.Realtime do
             time_zone = Application.get_env(:realtime_signs, :time_zone)
             DateTime.utc_now() |> DateTime.shift_zone!(time_zone)
           end,
-      sign_updater: sign_updater,
+      sign_updater: PaEss.Updater,
       last_update: nil,
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       read_period_seconds: 240,
@@ -262,14 +267,7 @@ defmodule Signs.Realtime do
     Utilities.Predictions.get_passthrough_train_audio(predictions)
     |> Enum.reduce(sign, fn audio, sign ->
       if audio.trip_id not in sign.announced_passthroughs do
-        sign.sign_updater.send_audio(
-          sign.audio_id,
-          [Content.Audio.to_params(audio)],
-          5,
-          60,
-          sign.id,
-          [Utilities.Audio.audio_log_details(audio)]
-        )
+        Signs.Utilities.Audio.send_audio(sign, [audio])
 
         update_in(sign.announced_passthroughs, fn list ->
           Enum.take([audio.trip_id | list], @announced_history_length)
