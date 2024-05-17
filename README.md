@@ -10,6 +10,8 @@ Here's a general overview of the realtime_signs application which should be help
 ## Development
 
 * Run `asdf install` from the repository root.
+  <!-- Remove this if upgrading the Erlang/OTP version beyond 25 -->
+  * Note: If running macOS Sonoma on an Apple Silicon (ARM) machine, use `KERL_CONFIGURE_OPTIONS="--disable-jit" asdf install`[^1]
 * `mix deps.get` to fetch dependencies.
 * At this point you should be able to run `mix test` and get a clean build.
 * Copy `.envrc.template` to `.envrc`, then edit `.envrc` and make sure all required environment variables are set. When finished, run `direnv allow` to activate them.
@@ -44,3 +46,7 @@ It requires repository secrets to be set in GitHub:
     AWS_ACCESS_KEY_ID
     AWS_SECRET_ACCESS_KEY
     DOCKER_REPO (the ECR repository to push images into)
+
+
+
+[^1]: The way memory is allocated for the JIT in OTP 25 is prohibited in macOS Sonomoa. [Disabling the JIT fixes the issue](https://github.com/erlang/otp/issues/7687#issuecomment-1737184968). This has [been fixed in OTP-25.3.2.7](https://github.com/erlang/otp/commit/ac591a599b09b48b45a7125aa30ec5419ba3cc2f) and beyond.
