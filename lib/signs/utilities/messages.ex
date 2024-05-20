@@ -70,7 +70,7 @@ defmodule Signs.Utilities.Messages do
       end
 
     messages =
-      if sign_config in [:off, :static_text],
+      if sign_config == :off or match?({:static_text, _}, sign_config),
         do: messages,
         else:
           Signs.Utilities.LastTrip.get_last_trip_messages(
