@@ -23,7 +23,7 @@ defmodule Content.Audio.Passthrough do
     def to_params(audio) do
       case destination_var(audio.destination, audio.route_id) do
         nil ->
-          {:ad_hoc, {Content.Audio.to_tts(audio), :audio_visual}}
+          {:ad_hoc, {tts_text(audio), :audio_visual}}
 
         var ->
           {:canned, {"103", [var], :audio_visual}}
@@ -31,6 +31,11 @@ defmodule Content.Audio.Passthrough do
     end
 
     def to_tts(%Content.Audio.Passthrough{} = audio) do
+      text = tts_text(audio)
+      {text, PaEss.Utilities.paginate_text(text)}
+    end
+
+    defp tts_text(%Content.Audio.Passthrough{} = audio) do
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
       "The next #{train} does not take customers. Please stand back from the yellow line."
     end

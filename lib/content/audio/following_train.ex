@@ -83,6 +83,10 @@ defmodule Content.Audio.FollowingTrain do
     end
 
     def to_tts(%Content.Audio.FollowingTrain{} = audio) do
+      {tts_text(audio), nil}
+    end
+
+    defp tts_text(%Content.Audio.FollowingTrain{} = audio) do
       train = Utilities.train_description(audio.destination, audio.route_id)
       arrives_or_departs = if audio.verb == :arrives, do: "arrives", else: "departs"
       min_or_mins = if audio.minutes == 1, do: "minute", else: "minutes"
@@ -90,7 +94,7 @@ defmodule Content.Audio.FollowingTrain do
     end
 
     defp do_ad_hoc_message(audio) do
-      {:ad_hoc, {Content.Audio.to_tts(audio), :audio}}
+      {:ad_hoc, {tts_text(audio), :audio}}
     end
 
     @spec green_line_with_branch_params(

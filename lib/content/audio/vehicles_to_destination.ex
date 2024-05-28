@@ -55,15 +55,19 @@ defmodule Content.Audio.VehiclesToDestination do
       if low_var && high_var && destination do
         {:canned, {message_id(audio), [low_var, high_var], :audio}}
       else
-        {:ad_hoc, {Content.Audio.to_tts(audio), :audio}}
+        {:ad_hoc, {tts_text(audio), :audio}}
       end
     end
 
-    def to_tts(%Content.Audio.VehiclesToDestination{
-          headway_range: {range_low, range_high},
-          destination: destination,
-          routes: routes
-        }) do
+    def to_tts(%Content.Audio.VehiclesToDestination{} = audio) do
+      {tts_text(audio), nil}
+    end
+
+    defp tts_text(%Content.Audio.VehiclesToDestination{
+           headway_range: {range_low, range_high},
+           destination: destination,
+           routes: routes
+         }) do
       trains =
         case {destination, routes} do
           {destination, nil} ->

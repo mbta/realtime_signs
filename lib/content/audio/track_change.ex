@@ -82,7 +82,8 @@ defmodule Content.Audio.TrackChange do
           "70199" -> "E"
         end
 
-      "Track change: The next #{train} is now boarding on the #{platform} platform"
+      text = "Track change: The next #{train} is now boarding on the #{platform} platform"
+      {text, PaEss.Utilities.paginate_text(text)}
     end
 
     defp track_change_message(msg_id) do

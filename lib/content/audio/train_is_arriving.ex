@@ -36,7 +36,7 @@ defmodule Content.Audio.TrainIsArriving do
         ) do
       case {dest_param(audio), crowding_description} do
         {nil, _} ->
-          {:ad_hoc, {Content.Audio.to_tts(audio), :audio_visual}}
+          {:ad_hoc, {tts_text(audio), :audio_visual}}
 
         {var, nil} ->
           Utilities.take_message([var], :audio_visual)
@@ -50,6 +50,11 @@ defmodule Content.Audio.TrainIsArriving do
     end
 
     def to_tts(%Content.Audio.TrainIsArriving{} = audio) do
+      text = tts_text(audio)
+      {text, PaEss.Utilities.paginate_text(text)}
+    end
+
+    defp tts_text(%Content.Audio.TrainIsArriving{} = audio) do
       train = Utilities.train_description(audio.destination, audio.route_id)
       crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
       "Attention passengers: The next #{train} is now arriving.#{crowding}"
