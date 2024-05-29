@@ -249,9 +249,12 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
-    test "ignores predictions with no departure time" do
+    test "ignores predictions with no departure time or skipped schedule_relationship" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :alewife, seconds_until_departure: nil)]
+        [
+          prediction(destination: :alewife, seconds_until_departure: nil),
+          prediction(destination: :alewife, arrival: 1, schedule_relationship: :skipped)
+        ]
       end)
 
       Signs.Realtime.handle_info(:run_loop, @sign)
@@ -1551,7 +1554,7 @@ defmodule Signs.RealtimeTest do
       departure_certainty: Keyword.get(opts, :departure_certainty),
       seconds_until_passthrough: Keyword.get(opts, :seconds_until_passthrough),
       direction_id: Keyword.get(opts, :direction_id, 0),
-      schedule_relationship: nil,
+      schedule_relationship: Keyword.get(opts, :schedule_relationship),
       route_id: Keyword.get(opts, :route_id),
       trip_id: Keyword.get(opts, :trip_id, "123"),
       destination_stop_id: Keyword.get(opts, :destination_stop_id),

@@ -41,7 +41,7 @@ defmodule Signs.Utilities.Predictions do
        ) do
     predictions
     |> Enum.filter(fn p ->
-      p.seconds_until_departure
+      p.seconds_until_departure && p.schedule_relationship != :skipped
     end)
     |> Enum.sort_by(fn prediction ->
       {if terminal_prediction?(prediction, sources) do
