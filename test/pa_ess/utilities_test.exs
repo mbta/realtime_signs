@@ -115,5 +115,6 @@ defmodule Content.Audio.UtilitiesTest do
              paginate_text("Attention passengers: the next Braintree train is now arriving", 24)
 
     assert [{"too-long", "word", 3}] = paginate_text(" too-long   word ", 5)
+    assert [{"fits", "", 3}] = paginate_text("fits", 24)
   end
 end
