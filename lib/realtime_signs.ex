@@ -25,6 +25,8 @@ defmodule RealtimeSigns do
         :hackney_pool.child_spec(:arinc_pool, []),
         Engine.Health,
         Engine.Config,
+        Engine.Locations,
+        Engine.LastTrip,
         Engine.Predictions,
         Engine.ScheduledHeadways,
         Engine.Static,
@@ -32,11 +34,9 @@ defmodule RealtimeSigns do
         Engine.BusPredictions,
         Engine.ChelseaBridge,
         Engine.Routes,
-        Engine.LastTrip,
         MessageQueue,
         RealtimeSigns.Scheduler,
         RealtimeSignsWeb.Endpoint,
-        Engine.Locations,
         HeadwayAnalysis.Supervisor
       ] ++
         http_updater_children() ++
