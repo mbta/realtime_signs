@@ -89,14 +89,8 @@ defmodule Signs.Realtime do
           uses_shuttles: boolean()
         }
 
-  def start_link(%{"type" => "realtime"} = config, opts \\ []) do
+  def start_link(%{"type" => "realtime"} = config) do
     source_config = config |> Map.fetch!("source_config") |> SourceConfig.parse!()
-
-    prediction_engine = opts[:prediction_engine] || Engine.Predictions
-    headway_engine = opts[:headway_engine] || Engine.ScheduledHeadways
-    config_engine = opts[:config_engine] || Engine.Config
-    alerts_engine = opts[:alerts_engine] || Engine.Alerts
-    last_trip_engine = opts[:last_trip_engine] || Engine.LastTrip
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
@@ -107,18 +101,16 @@ defmodule Signs.Realtime do
       source_config: source_config,
       current_content_top: "",
       current_content_bottom: "",
-      prediction_engine: prediction_engine,
-      location_engine: opts[:location_engine] || Engine.Locations,
-      headway_engine: headway_engine,
-      config_engine: config_engine,
-      alerts_engine: alerts_engine,
-      last_trip_engine: last_trip_engine,
-      current_time_fn:
-        opts[:current_time_fn] ||
-          fn ->
-            time_zone = Application.get_env(:realtime_signs, :time_zone)
-            DateTime.utc_now() |> DateTime.shift_zone!(time_zone)
-          end,
+      prediction_engine: Engine.Predictions,
+      location_engine: Engine.Locations,
+      headway_engine: Engine.ScheduledHeadways,
+      config_engine: Engine.Config,
+      alerts_engine: Engine.Alerts,
+      last_trip_engine: Engine.LastTrip,
+      current_time_fn: fn ->
+        time_zone = Application.get_env(:realtime_signs, :time_zone)
+        DateTime.utc_now() |> DateTime.shift_zone!(time_zone)
+      end,
       sign_updater: PaEss.Updater,
       last_update: nil,
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
