@@ -65,7 +65,7 @@ defmodule Signs.Bus do
           last_read_time: DateTime.t()
         }
 
-  def start_link(sign, opts \\ []) do
+  def start_link(sign) do
     state = %__MODULE__{
       id: Map.fetch!(sign, "id"),
       pa_ess_loc: Map.fetch!(sign, "pa_ess_loc"),
@@ -80,10 +80,10 @@ defmodule Signs.Bus do
       chelsea_bridge: sign["chelsea_bridge"],
       read_loop_interval: Map.fetch!(sign, "read_loop_interval"),
       read_loop_offset: Map.fetch!(sign, "read_loop_offset"),
-      config_engine: opts[:config_engine] || Engine.Config,
-      prediction_engine: opts[:prediction_engine] || Engine.BusPredictions,
-      bridge_engine: opts[:bridge_engine] || Engine.ChelseaBridge,
-      alerts_engine: opts[:alerts_engine] || Engine.Alerts,
+      config_engine: Engine.Config,
+      prediction_engine: Engine.BusPredictions,
+      bridge_engine: Engine.ChelseaBridge,
+      alerts_engine: Engine.Alerts,
       routes_engine: Engine.Routes,
       sign_updater: PaEss.Updater,
       prev_predictions: [],
