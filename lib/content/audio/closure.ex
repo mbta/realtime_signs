@@ -54,10 +54,14 @@ defmodule Content.Audio.Closure do
 
     # Hardcoded for Union Square
     def to_params(%Content.Audio.Closure{alert: :use_routes_alert, routes: []} = audio) do
-      {:ad_hoc, {Content.Audio.to_tts(audio), :audio}}
+      {:ad_hoc, {tts_text(audio), :audio}}
     end
 
     def to_tts(%Content.Audio.Closure{} = audio) do
+      {tts_text(audio), nil}
+    end
+
+    defp tts_text(%Content.Audio.Closure{} = audio) do
       if audio.alert == :use_routes_alert do
         # Hardcoded for Union Square
         "No Train Service. Use routes 86, 87, or 91"

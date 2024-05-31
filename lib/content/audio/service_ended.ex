@@ -38,7 +38,7 @@ defmodule Content.Audio.ServiceEnded do
           Utilities.take_message([@platform_closed, destination_var, @service_ended], :audio)
 
         {:error, :unknown} ->
-          to_tts(audio)
+          {:ad_hoc, {tts_text(audio), :audio}}
       end
     end
 
@@ -50,15 +50,19 @@ defmodule Content.Audio.ServiceEnded do
           Utilities.take_message([destination_var, @service_ended], :audio)
 
         {:error, :unknown} ->
-          to_tts(audio)
+          {:ad_hoc, {tts_text(audio), :audio}}
       end
     end
 
-    def to_tts(%Content.Audio.ServiceEnded{location: :station}) do
+    def to_tts(%Content.Audio.ServiceEnded{} = audio) do
+      {tts_text(audio), nil}
+    end
+
+    defp tts_text(%Content.Audio.ServiceEnded{location: :station}) do
       "This station is closed. Service has ended for the night."
     end
 
-    def to_tts(%Content.Audio.ServiceEnded{location: :platform, destination: destination}) do
+    defp tts_text(%Content.Audio.ServiceEnded{location: :platform, destination: destination}) do
       {:ok, destination_string} = Utilities.destination_to_ad_hoc_string(destination)
 
       service_ended =
@@ -69,7 +73,7 @@ defmodule Content.Audio.ServiceEnded do
       "This platform is closed. #{service_ended}"
     end
 
-    def to_tts(%Content.Audio.ServiceEnded{location: :direction, destination: destination}) do
+    defp tts_text(%Content.Audio.ServiceEnded{location: :direction, destination: destination}) do
       {:ok, destination_string} = Utilities.destination_to_ad_hoc_string(destination)
 
       "#{destination_string} service has ended for the night."

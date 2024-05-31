@@ -697,4 +697,28 @@ defmodule PaEss.Utilities do
 
   def audio_take({:route, route}), do: @route_take_lookup[route]
   def audio_take(atom) when is_atom(atom), do: @atom_take_lookup[atom]
+
+  @spec paginate_text(String.t(), integer()) :: [{String.t(), String.t(), integer()}]
+  def paginate_text(text, max_length \\ 24) do
+    String.split(text)
+    |> Stream.chunk_while(
+      nil,
+      fn word, acc ->
+        if is_nil(acc) do
+          {:cont, word}
+        else
+          new_acc = acc <> " " <> word
+
+          if String.length(new_acc) > max_length do
+            {:cont, acc, word}
+          else
+            {:cont, new_acc}
+          end
+        end
+      end,
+      fn acc -> {:cont, acc, nil} end
+    )
+    |> Stream.chunk_every(2, 2, [""])
+    |> Enum.map(fn [top, bottom] -> {top, bottom, 3} end)
+  end
 end

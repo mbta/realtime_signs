@@ -65,13 +65,17 @@ defmodule Content.Audio.StoppedTrain do
     end
 
     def to_tts(%Content.Audio.StoppedTrain{} = audio) do
+      {tts_text(audio), nil}
+    end
+
+    defp tts_text(%Content.Audio.StoppedTrain{} = audio) do
       train = Utilities.train_description(audio.destination, audio.route_id)
       stop_or_stops = if audio.stops_away == 1, do: "stop", else: "stops"
       "The next #{train} is stopped #{audio.stops_away} #{stop_or_stops} away"
     end
 
     defp do_ad_hoc_message(audio) do
-      {:ad_hoc, {Content.Audio.to_tts(audio), :audio}}
+      {:ad_hoc, {tts_text(audio), :audio}}
     end
 
     defp stops_away_var(1), do: "535"

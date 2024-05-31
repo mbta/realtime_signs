@@ -19,6 +19,6 @@ defprotocol Content.Audio do
   @doc "Converts an audio struct to the mid/vars params for the PA system"
   @spec to_params(Content.Audio.t()) :: value()
   def to_params(audio)
-  @spec to_tts(Content.Audio.t()) :: String.t()
+  @spec to_tts(Content.Audio.t()) :: {String.t(), [{String.t(), String.t(), integer()}] | nil}
   def to_tts(audio)
 end

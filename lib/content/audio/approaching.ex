@@ -50,7 +50,7 @@ defmodule Content.Audio.Approaching do
       case {destination_var(audio.destination, audio.platform, audio.route_id),
             crowding_description} do
         {nil, _} ->
-          {:ad_hoc, {Content.Audio.to_tts(audio), :audio_visual}}
+          {:ad_hoc, {tts_text(audio), :audio_visual}}
 
         {var, nil} ->
           Utilities.take_message([var], :audio_visual)
@@ -82,6 +82,11 @@ defmodule Content.Audio.Approaching do
     end
 
     def to_tts(%Content.Audio.Approaching{} = audio) do
+      text = tts_text(audio)
+      {text, PaEss.Utilities.paginate_text(text)}
+    end
+
+    defp tts_text(%Content.Audio.Approaching{} = audio) do
       train = Utilities.train_description(audio.destination, audio.route_id)
       crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
 

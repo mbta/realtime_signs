@@ -10,7 +10,10 @@ defmodule Content.Audio.BoardingButton do
     end
 
     def to_tts(%Content.Audio.BoardingButton{}) do
-      "Attention Passengers: To board the next train, please push the button on either side of the door."
+      text =
+        "Attention Passengers: To board the next train, please push the button on either side of the door."
+
+      {text, PaEss.Utilities.paginate_text(text)}
     end
   end
 end

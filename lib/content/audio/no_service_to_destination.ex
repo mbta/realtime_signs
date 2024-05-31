@@ -23,10 +23,14 @@ defmodule Content.Audio.NoServiceToDestination do
 
   defimpl Content.Audio do
     def to_params(%Content.Audio.NoServiceToDestination{} = audio) do
-      {:ad_hoc, {Content.Audio.to_tts(audio), :audio}}
+      {:ad_hoc, {tts_text(audio), :audio}}
     end
 
     def to_tts(%Content.Audio.NoServiceToDestination{} = audio) do
+      {tts_text(audio), nil}
+    end
+
+    defp tts_text(%Content.Audio.NoServiceToDestination{} = audio) do
       {:ok, destination_text} = PaEss.Utilities.destination_to_ad_hoc_string(audio.destination)
       shuttle = if(audio.use_shuttle, do: " Use shuttle.", else: "")
       "No #{destination_text} service.#{shuttle}"

@@ -39,7 +39,7 @@ defmodule Content.Audio.Custom do
     end
 
     def to_tts(%Content.Audio.Custom{} = audio) do
-      audio.message
+      {audio.message, nil}
     end
   end
 end
