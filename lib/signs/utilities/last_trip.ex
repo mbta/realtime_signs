@@ -12,11 +12,7 @@ defmodule Signs.Utilities.LastTrip do
         {unpacked_mz_top, unpacked_mz_bottom} = unpack_mezzanine_content(messages, source)
         {top_source_config, bottom_source_config} = source
 
-        routes =
-          Enum.flat_map(
-            top_source_config.sources ++ bottom_source_config.sources,
-            &List.wrap(&1.routes)
-          )
+        routes = Signs.Utilities.SourceConfig.sign_routes(source)
 
         cond do
           # If combined alert status, only switch to Last Trip messaging once service has fully ended.
