@@ -1420,7 +1420,7 @@ defmodule Signs.RealtimeTest do
       }
 
       expect_messages({"Station closed", "Service ended for night"})
-      expect_audios(canned: {"103", ["883"], :audio})
+      expect_audios(canned: {"105", ["864", "21000", "882"], :audio})
       Signs.Realtime.handle_info(:run_loop, sign)
     end
 
@@ -1431,7 +1431,7 @@ defmodule Signs.RealtimeTest do
       }
 
       expect_messages({"No Orange Line", "Service ended for night"})
-      expect_audios(canned: {"103", ["883"], :audio})
+      expect_audios(canned: {"105", ["3006", "21000", "882"], :audio})
       Signs.Realtime.handle_info(:run_loop, sign)
     end
 
