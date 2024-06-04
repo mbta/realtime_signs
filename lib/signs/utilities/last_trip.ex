@@ -67,7 +67,7 @@ defmodule Signs.Utilities.LastTrip do
              not (is_prediction?(top_message) or is_prediction?(bottom_message)),
            do:
              {%LastTrip.PlatformClosed{destination: source.headway_destination},
-              %LastTrip.ServiceEnded{}},
+              %LastTrip.ServiceEnded{destination: source.headway_destination}},
            else: messages
     end
   end

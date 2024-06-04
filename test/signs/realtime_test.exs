@@ -1390,7 +1390,7 @@ defmodule Signs.RealtimeTest do
         | tick_read: 0
       }
 
-      expect_messages({"Platform closed", "Service ended for night"})
+      expect_messages({"Service ended", "No Southbound trains"})
       expect_audios(canned: {"107", ["884", "21000", "787", "21000", "882"], :audio})
       Signs.Realtime.handle_info(:run_loop, sign)
     end
