@@ -11,7 +11,7 @@ defmodule Content.Message.LastTrip.ServiceEnded do
 
   defimpl Content.Message do
     def to_string(%Content.Message.LastTrip.ServiceEnded{destination: nil}) do
-      "Service ended for the night"
+      "Service ended for night"
     end
 
     def to_string(%Content.Message.LastTrip.ServiceEnded{destination: destination}) do

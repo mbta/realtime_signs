@@ -10,7 +10,13 @@ defmodule Signs.Utilities.LastTrip do
     case service_status do
       {has_top_service_ended?, has_bottom_service_ended?} ->
         {unpacked_mz_top, unpacked_mz_bottom} = unpack_mezzanine_content(messages, source)
-        {top_source, bottom_source} = source
+        {top_source_config, bottom_source_config} = source
+
+        routes =
+          Enum.flat_map(
+            top_source_config.sources ++ bottom_source_config.sources,
+            &List.wrap(&1.routes)
+          )
 
         cond do
           # If combined alert status, only switch to Last Trip messaging once service has fully ended.
@@ -19,26 +25,27 @@ defmodule Signs.Utilities.LastTrip do
           match?(%Message.Alert.NoService{}, unpacked_mz_top) ->
             if has_top_service_ended? and has_bottom_service_ended?,
               do:
-                {%Content.Message.LastTrip.StationClosed{},
+                {%Content.Message.LastTrip.StationClosed{routes: routes},
                  %Content.Message.LastTrip.ServiceEnded{}},
               else: messages
 
           has_top_service_ended? and has_bottom_service_ended? and
             not is_prediction?(unpacked_mz_top) and
               not is_prediction?(unpacked_mz_bottom) ->
-            {%Content.Message.LastTrip.StationClosed{}, %Content.Message.LastTrip.ServiceEnded{}}
+            {%Content.Message.LastTrip.StationClosed{routes: routes},
+             %Content.Message.LastTrip.ServiceEnded{}}
 
           has_top_service_ended? and not is_prediction?(unpacked_mz_top) and
               not is_empty?(unpacked_mz_bottom) ->
             if get_message_length(unpacked_mz_bottom) <= 18 do
               {unpacked_mz_bottom,
                %Content.Message.LastTrip.NoService{
-                 destination: top_source.headway_destination,
+                 destination: top_source_config.headway_destination,
                  line: :bottom
                }}
             else
               {%Content.Message.LastTrip.NoService{
-                 destination: top_source.headway_destination,
+                 destination: top_source_config.headway_destination,
                  line: :top
                }, unpacked_mz_bottom}
             end
@@ -48,12 +55,12 @@ defmodule Signs.Utilities.LastTrip do
             if get_message_length(unpacked_mz_top) <= 18 do
               {unpacked_mz_top,
                %Content.Message.LastTrip.NoService{
-                 destination: bottom_source.headway_destination,
+                 destination: bottom_source_config.headway_destination,
                  line: :bottom
                }}
             else
               {%Content.Message.LastTrip.NoService{
-                 destination: bottom_source.headway_destination,
+                 destination: bottom_source_config.headway_destination,
                  line: :top
                }, unpacked_mz_top}
             end
@@ -72,7 +79,7 @@ defmodule Signs.Utilities.LastTrip do
     end
   end
 
-  defp unpack_mezzanine_content(messages, {top_source, bottom_source}) do
+  defp unpack_mezzanine_content(messages, {top_source_config, bottom_source_config}) do
     case messages do
       # JFK/UMass case
       {%Message.GenericPaging{messages: [prediction, headway_top]},
@@ -83,8 +90,14 @@ defmodule Signs.Utilities.LastTrip do
          }, %{prediction | zone: "m"}}
 
       {%Message.Headways.Top{}, %Message.Headways.Bottom{range: range}} ->
-        {%Message.Headways.Paging{destination: top_source.headway_destination, range: range},
-         %Message.Headways.Paging{destination: bottom_source.headway_destination, range: range}}
+        {%Message.Headways.Paging{
+           destination: top_source_config.headway_destination,
+           range: range
+         },
+         %Message.Headways.Paging{
+           destination: bottom_source_config.headway_destination,
+           range: range
+         }}
 
       _ ->
         messages
