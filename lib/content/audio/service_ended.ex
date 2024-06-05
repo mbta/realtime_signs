@@ -1,16 +1,17 @@
 defmodule Content.Audio.ServiceEnded do
   alias PaEss.Utilities
   @enforce_keys [:location]
-  defstruct @enforce_keys ++ [:destination]
+  defstruct @enforce_keys ++ [:destination, :routes]
 
   @type location :: :platform | :station | :direction
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
+          routes: [String.t()] | nil,
           location: location()
         }
 
-  def from_message(%Content.Message.LastTrip.StationClosed{}) do
-    [%__MODULE__{location: :station}]
+  def from_message(%Content.Message.LastTrip.StationClosed{routes: routes}) do
+    [%__MODULE__{location: :station, routes: routes}]
   end
 
   def from_message(%Content.Message.LastTrip.PlatformClosed{destination: destination}) do
@@ -23,11 +24,16 @@ defmodule Content.Audio.ServiceEnded do
 
   defimpl Content.Audio do
     @service_ended "882"
-    @station_closed "883"
+    # @station_closed "883"
     @platform_closed "884"
 
-    def to_params(%Content.Audio.ServiceEnded{location: :station}) do
-      Utilities.take_message([@station_closed], :audio)
+    def to_params(%Content.Audio.ServiceEnded{location: :station, routes: routes}) do
+      line_var =
+        routes
+        |> Utilities.get_line_from_routes_list()
+        |> Utilities.line_to_var()
+
+      Utilities.take_message([line_var, @service_ended], :audio)
     end
 
     def to_params(

@@ -11,7 +11,7 @@ defmodule Content.Message.LastTrip.PlatformClosed do
 
   defimpl Content.Message do
     def to_string(%Content.Message.LastTrip.PlatformClosed{}) do
-      "Platform closed"
+      "Service ended"
     end
   end
 end

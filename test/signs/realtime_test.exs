@@ -62,6 +62,24 @@ defmodule Signs.RealtimeTest do
       current_content_bottom: "Every 11 to 13 min"
   }
 
+  @mezzanine_sign_with_routes %{
+    @mezzanine_sign
+    | source_config: {
+        %{
+          sources: [%{@src | routes: ["Orange"]}],
+          headway_group: "group",
+          headway_destination: :northbound
+        },
+        %{
+          sources: [%{@src_2 | routes: ["Orange"]}],
+          headway_group: "group",
+          headway_destination: :southbound
+        }
+      },
+      current_content_top: "Orange line trains",
+      current_content_bottom: "Every 11 to 13 min"
+  }
+
   @jfk_mezzanine_sign %{
     @sign
     | pa_ess_loc: "RJFK",
@@ -1390,7 +1408,7 @@ defmodule Signs.RealtimeTest do
         | tick_read: 0
       }
 
-      expect_messages({"Platform closed", "Service ended for night"})
+      expect_messages({"Service ended", "No Southbound trains"})
       expect_audios(canned: {"107", ["884", "21000", "787", "21000", "882"], :audio})
       Signs.Realtime.handle_info(:run_loop, sign)
     end
@@ -1402,13 +1420,24 @@ defmodule Signs.RealtimeTest do
       }
 
       expect_messages({"Station closed", "Service ended for night"})
-      expect_audios(canned: {"103", ["883"], :audio})
+      expect_audios(canned: {"105", ["864", "21000", "882"], :audio})
+      Signs.Realtime.handle_info(:run_loop, sign)
+    end
+
+    test "Station with routes is closed" do
+      sign = %{
+        @mezzanine_sign_with_routes
+        | tick_read: 0
+      }
+
+      expect_messages({"No Orange Line", "Service ended for night"})
+      expect_audios(canned: {"105", ["3006", "21000", "882"], :audio})
       Signs.Realtime.handle_info(:run_loop, sign)
     end
 
     test "No service goes on bottom line when top line fits in 18 chars or less" do
       sign = %{
-        @mezzanine_sign
+        @mezzanine_sign_with_routes
         | tick_read: 0,
           announced_stalls: [{"a", 8}]
       }
