@@ -355,7 +355,7 @@ defmodule Signs.BusTest do
   end
 
   defp expect_audios(audios) do
-    expect(PaEss.Updater.Mock, :play_message, fn _, list, _ ->
+    expect(PaEss.Updater.Mock, :play_message, fn _, list, _, _ ->
       assert list == audios
       :ok
     end)

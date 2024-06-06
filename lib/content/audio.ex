@@ -15,10 +15,11 @@ defprotocol Content.Audio do
 
   @type language :: :english | :spanish
   @type value :: canned_message() | ad_hoc_message() | nil
+  @type tts_value :: {String.t(), [{String.t(), String.t(), integer()}] | nil}
 
   @doc "Converts an audio struct to the mid/vars params for the PA system"
   @spec to_params(Content.Audio.t()) :: value()
   def to_params(audio)
-  @spec to_tts(Content.Audio.t()) :: {String.t(), [{String.t(), String.t(), integer()}] | nil}
+  @spec to_tts(Content.Audio.t()) :: tts_value()
   def to_tts(audio)
 end

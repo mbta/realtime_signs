@@ -393,6 +393,7 @@ defmodule Signs.Utilities.Audio do
     sign.sign_updater.play_message(
       sign,
       Enum.map(audios, &Content.Audio.to_params(&1)),
+      Enum.map(audios, &Content.Audio.to_tts(&1)),
       Enum.map(audios, fn audio ->
         [
           message_type: to_string(audio.__struct__) |> String.split(".") |> List.last(),
