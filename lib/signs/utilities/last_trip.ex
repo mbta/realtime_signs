@@ -101,7 +101,8 @@ defmodule Signs.Utilities.LastTrip do
   end
 
   defp is_prediction?(message) do
-    match?(%Content.Message.Predictions{}, message)
+    match?(%Content.Message.Predictions{}, message) or
+      match?(%Content.Message.StoppedTrain{}, message)
   end
 
   defp is_empty?(message) do
