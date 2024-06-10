@@ -23,6 +23,7 @@ defmodule RealtimeSigns do
       [
         :hackney_pool.child_spec(:default, []),
         :hackney_pool.child_spec(:arinc_pool, []),
+        {Task.Supervisor, name: PaEss.TaskSupervisor},
         Engine.Health,
         Engine.Config,
         Engine.Locations,

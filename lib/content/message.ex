@@ -15,6 +15,7 @@ defprotocol Content.Message do
   """
 
   @type value :: String.t() | [{String.t(), non_neg_integer()}]
+  @type pages :: [{top :: String.t(), bottom :: String.t(), duration :: integer()}]
 
   @doc "converts a content message to a string for display on a sign"
   @spec to_string(Content.Message.t()) :: value()
