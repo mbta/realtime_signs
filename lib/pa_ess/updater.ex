@@ -90,7 +90,12 @@ defmodule PaEss.Updater do
           list -> Enum.at(list, i, List.last(list))
         end)
 
-      ^top_duration = bottom_duration
+      if top_duration != bottom_duration do
+        Logger.error(
+          "duration mismatch when zipping pages: top=#{top_duration} bottom=#{bottom_duration}"
+        )
+      end
+
       {top, bottom, top_duration}
     end)
   end
