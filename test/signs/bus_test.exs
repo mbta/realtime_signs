@@ -97,6 +97,7 @@ defmodule Signs.BusTest do
   @sign_state %Signs.Bus{
     id: "auto_sign",
     pa_ess_loc: "ABCD",
+    scu_id: "ABCDSCU001",
     text_zone: "m",
     audio_zones: ["m"],
     max_minutes: 60,
@@ -347,14 +348,14 @@ defmodule Signs.BusTest do
   end
 
   defp expect_messages(messages) do
-    expect(PaEss.Updater.Mock, :update_sign, fn {"ABCD", "m"}, top, bottom, 180, :now, _sign_id ->
+    expect(PaEss.Updater.Mock, :set_background_message, fn _, top, bottom ->
       assert [top, bottom] == messages
       :ok
     end)
   end
 
   defp expect_audios(audios) do
-    expect(PaEss.Updater.Mock, :send_audio, fn {"ABCD", ["m"]}, list, 5, 180, _sign_id, _ ->
+    expect(PaEss.Updater.Mock, :play_message, fn _, list, _, _ ->
       assert list == audios
       :ok
     end)

@@ -37,11 +37,11 @@ defmodule Signs.Utilities.Predictions do
   defp prediction_messages(
          predictions,
          %{sources: sources},
-         %{text_id: {station_code, zone}} = sign
+         %{pa_ess_loc: station_code, text_zone: zone} = sign
        ) do
     predictions
     |> Enum.filter(fn p ->
-      p.seconds_until_departure
+      p.seconds_until_departure && p.schedule_relationship != :skipped
     end)
     |> Enum.sort_by(fn prediction ->
       {if terminal_prediction?(prediction, sources) do

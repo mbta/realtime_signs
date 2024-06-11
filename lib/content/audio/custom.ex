@@ -37,5 +37,9 @@ defmodule Content.Audio.Custom do
     def to_params(%Content.Audio.Custom{message: message}) do
       {:ad_hoc, {message, :audio}}
     end
+
+    def to_tts(%Content.Audio.Custom{} = audio) do
+      {audio.message, nil}
+    end
   end
 end

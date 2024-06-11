@@ -71,6 +71,21 @@ defmodule Content.Audio.TrackChange do
       end
     end
 
+    def to_tts(%Content.Audio.TrackChange{} = audio) do
+      train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
+
+      platform =
+        case audio.berth do
+          "70196" -> "B"
+          "70197" -> "C"
+          "70198" -> "D"
+          "70199" -> "E"
+        end
+
+      text = "Track change: The next #{train} is now boarding on the #{platform} platform"
+      {text, PaEss.Utilities.paginate_text(text)}
+    end
+
     defp track_change_message(msg_id) do
       vars = [@track_change, msg_id]
       PaEss.Utilities.take_message(vars, :audio_visual)

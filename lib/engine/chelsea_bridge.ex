@@ -3,7 +3,10 @@ defmodule Engine.ChelseaBridge do
   require Logger
 
   def bridge_status() do
-    GenServer.call(__MODULE__, {:bridge_status})
+    case :ets.lookup(:bridge_status, :value) do
+      [{:value, data}] -> data
+      _ -> %{raised?: nil, estimate: nil}
+    end
   end
 
   def start_link(_) do
@@ -12,7 +15,8 @@ defmodule Engine.ChelseaBridge do
 
   def init(_) do
     send(self(), :update)
-    {:ok, %{status: %{raised?: nil, estimate: nil}}}
+    :ets.new(:bridge_status, [:named_table, read_concurrency: true])
+    {:ok, %{}}
   end
 
   def handle_info(:update, state) do
@@ -36,22 +40,17 @@ defmodule Engine.ChelseaBridge do
             nil
         end
 
-      new_status = %{raised?: status == "Raised", estimate: estimate}
-
-      {:noreply, %{state | status: new_status}}
+      :ets.insert(:bridge_status, {:value, %{raised?: status == "Raised", estimate: estimate}})
     else
       err ->
         Logger.error("Error getting bridge status: #{inspect(err)}")
-        {:noreply, state}
     end
+
+    {:noreply, state}
   end
 
   def handle_info(msg, state) do
     Logger.warn("Engine.ChelseaBridge unknown_message: #{inspect(msg)}")
     {:noreply, state}
-  end
-
-  def handle_call({:bridge_status}, _from, state) do
-    {:reply, state.status, state}
   end
 end

@@ -1,6 +1,5 @@
 defmodule Content.Audio.TrainIsArrivingTest do
   use ExUnit.Case, async: true
-  import ExUnit.CaptureLog
 
   describe "Content.Audio.to_params protocol" do
     test "Next train to Ashmont is now arriving" do
@@ -46,38 +45,6 @@ defmodule Content.Audio.TrainIsArrivingTest do
       }
 
       assert Content.Audio.to_params(audio) == {:canned, {"103", ["32106"], :audio_visual}}
-    end
-
-    test "Southbound train" do
-      audio = %Content.Audio.TrainIsArriving{destination: :southbound, route_id: "Red"}
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc,
-                {"Attention passengers: The next Southbound Red Line train is now arriving.",
-                 :audio_visual}}
-    end
-
-    test "Returns ad_hoc audio for valid destinations" do
-      audio = %Content.Audio.TrainIsArriving{
-        destination: :westbound,
-        route_id: "Green-B"
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc,
-                {"Attention passengers: The next Westbound B train is now arriving.",
-                 :audio_visual}}
-    end
-
-    test "Handles unknown destination gracefully" do
-      audio = %Content.Audio.TrainIsArriving{destination: :unknown, route_id: "Red"}
-
-      log =
-        capture_log([level: :error], fn ->
-          assert Content.Audio.to_params(audio) == nil
-        end)
-
-      assert log =~ "unknown params"
     end
 
     test "Returns crowding info" do

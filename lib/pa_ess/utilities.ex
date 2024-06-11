@@ -126,11 +126,6 @@ defmodule PaEss.Utilities do
     n > 0 and n < 21
   end
 
-  @spec valid_destination?(PaEss.destination(), Content.Audio.language()) :: boolean()
-  def valid_destination?(destination, language) when not is_nil(destination) do
-    language == :english or destination in [:chelsea, :south_station]
-  end
-
   @spec number_var(integer(), Content.Audio.language()) :: String.t() | nil
   def number_var(n, :english) do
     if valid_range?(n, :english) do
@@ -312,17 +307,6 @@ defmodule PaEss.Utilities do
   def destination_to_ad_hoc_string(:medford_tufts), do: {:ok, "Medford/Tufts"}
   def destination_to_ad_hoc_string(_unknown), do: {:error, :unknown}
 
-  @spec route_to_ad_hoc_string(String.t()) :: {:ok, String.t()} | {:error, :unknown}
-  def route_to_ad_hoc_string("Red"), do: {:ok, "Red Line"}
-  def route_to_ad_hoc_string("Blue"), do: {:ok, "Blue Line"}
-  def route_to_ad_hoc_string("Orange"), do: {:ok, "Orange Line"}
-  def route_to_ad_hoc_string("Mattapan"), do: {:ok, "Mattapan"}
-  def route_to_ad_hoc_string("Green-B"), do: {:ok, "B"}
-  def route_to_ad_hoc_string("Green-C"), do: {:ok, "C"}
-  def route_to_ad_hoc_string("Green-D"), do: {:ok, "D"}
-  def route_to_ad_hoc_string("Green-E"), do: {:ok, "E"}
-  def route_to_ad_hoc_string(_unknown), do: {:error, :unknown}
-
   def line_to_var("Red Line"), do: "3005"
   def line_to_var("Orange Line"), do: "3006"
   def line_to_var("Blue Line"), do: "3007"
@@ -346,79 +330,37 @@ defmodule PaEss.Utilities do
         # routes (disregarding GL Branches) is the Ashmont Mezzanine.
         # Even in the Ashmont Mezzanine case though, we would page the Mattapan-specific
         # shuttle alert on the second line and show Red line predictions on top.
-        "train service"
+        "train"
     end
   end
 
   def directional_destination?(destination),
     do: destination in [:eastbound, :westbound, :southbound, :northbound, :inbound, :outbound]
 
-  @spec ad_hoc_trip_description(PaEss.destination(), String.t() | nil) ::
-          {:ok, String.t()} | {:error, :unknown}
-  def ad_hoc_trip_description(destination, route_id \\ nil)
+  def train_description(destination, route_id) do
+    route_text =
+      case route_id do
+        "Green-" <> branch -> branch
+        _ -> nil
+      end
 
-  def ad_hoc_trip_description(destination, route_id)
-      when destination == :eastbound and route_id in ["Green-B", "Green-C", "Green-D", "Green-E"] do
-    ad_hoc_trip_description(destination)
+    {:ok, destination_text} = destination_to_ad_hoc_string(destination)
+
+    if route_text do
+      "#{route_text} train to #{destination_text}"
+    else
+      "#{destination_text} train"
+    end
   end
 
-  def ad_hoc_trip_description(destination, route_id)
-      when destination in [
-             :lechmere,
-             :north_station,
-             :government_center,
-             :park_street,
-             :kenmore,
-             :union_square,
-             :medford_tufts
-           ] and
-             route_id in ["Green-B", "Green-C", "Green-D", "Green-E"] do
-    ad_hoc_trip_description(destination)
-  end
-
-  def ad_hoc_trip_description(destination, route_id) do
-    case {directional_destination?(destination), route_id} do
-      {true, nil} ->
-        case destination_to_ad_hoc_string(destination) do
-          {:ok, destination_string} ->
-            {:ok, "#{destination_string} train"}
-
-          _ ->
-            {:error, :unknown}
-        end
-
-      {true, route_id} ->
-        case {destination_to_ad_hoc_string(destination), route_to_ad_hoc_string(route_id)} do
-          {{:ok, destination_string}, {:ok, route_string}} ->
-            {:ok, "#{destination_string} #{route_string} train"}
-
-          {{:ok, _destination_string}, {:error, :unknown}} ->
-            ad_hoc_trip_description(destination)
-
-          _ ->
-            {:error, :unknown}
-        end
-
-      {false, nil} ->
-        case destination_to_ad_hoc_string(destination) do
-          {:ok, destination_string} ->
-            {:ok, "train to #{destination_string}"}
-
-          _ ->
-            {:error, :unknown}
-        end
-
-      {false, route_id} ->
-        case {destination_to_ad_hoc_string(destination), route_to_ad_hoc_string(route_id)} do
-          {{:ok, destination_string}, {:ok, route_string}} ->
-            {:ok, "#{route_string} train to #{destination_string}"}
-
-          {{:ok, _destination_string}, {:error, :unknown}} ->
-            ad_hoc_trip_description(destination)
-
-          _ ->
-            {:error, :unknown}
-        end
+  def crowding_text(crowding_description) do
+    case crowding_description do
+      {:front, _} -> " The front of the train has more space."
+      {:back, _} -> " The back of the train has more space."
+      {:middle, _} -> " The middle of the train has more space."
+      {:front_and_back, _} -> " The front and back of the train have more space."
+      {:train_level, :crowded} -> " The train is crowded."
+      _ -> ""
     end
   end
 
@@ -527,7 +469,8 @@ defmodule PaEss.Utilities do
     {"Adams & Gallivan", ["Gallivn", "Gallivan"]},
     {"Waltham", ["Waltham"]},
     {"Haymarket", ["Haymrkt", "Haymarkt", "Haymarket"]},
-    {"Silver Line Way", ["Slvr Ln Way"]}
+    {"Silver Line Way", ["Slvr Ln Way"]},
+    {"Gallivan Blvd", ["Gallivn", "Gallivan"]}
   ]
 
   @spec headsign_abbreviations(String.t() | nil) :: [String.t()]
@@ -650,7 +593,10 @@ defmodule PaEss.Utilities do
     {"Haymarket", "4028"},
     {"Silver Line Way", "570"},
     {"Drydock", "571"},
-    {"Chelsea", "860"}
+    {"Chelsea", "860"},
+    {"Gallivan Blvd", "881"},
+    {"Brookline Ave", "885"},
+    {"Brookline Village", "886"}
   ]
 
   @route_take_lookup %{
@@ -751,4 +697,28 @@ defmodule PaEss.Utilities do
 
   def audio_take({:route, route}), do: @route_take_lookup[route]
   def audio_take(atom) when is_atom(atom), do: @atom_take_lookup[atom]
+
+  @spec paginate_text(String.t(), integer()) :: Content.Message.pages()
+  def paginate_text(text, max_length \\ 24) do
+    String.split(text)
+    |> Stream.chunk_while(
+      nil,
+      fn word, acc ->
+        if is_nil(acc) do
+          {:cont, word}
+        else
+          new_acc = acc <> " " <> word
+
+          if String.length(new_acc) > max_length do
+            {:cont, acc, word}
+          else
+            {:cont, new_acc}
+          end
+        end
+      end,
+      fn acc -> {:cont, acc, nil} end
+    )
+    |> Stream.chunk_every(2, 2, [""])
+    |> Enum.map(fn [top, bottom] -> {top, bottom, 3} end)
+  end
 end

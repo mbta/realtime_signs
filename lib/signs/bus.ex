@@ -13,6 +13,7 @@ defmodule Signs.Bus do
   @enforce_keys [
     :id,
     :pa_ess_loc,
+    :scu_id,
     :text_zone,
     :audio_zones,
     :max_minutes,
@@ -37,10 +38,38 @@ defmodule Signs.Bus do
   ]
   defstruct @enforce_keys
 
-  def start_link(sign, opts \\ []) do
+  @type t :: %__MODULE__{
+          id: String.t(),
+          pa_ess_loc: String.t(),
+          scu_id: String.t(),
+          text_zone: String.t(),
+          audio_zones: [String.t()],
+          max_minutes: integer(),
+          configs: list(),
+          top_configs: list(),
+          bottom_configs: list(),
+          extra_audio_configs: list(),
+          chelsea_bridge: String.t() | nil,
+          read_loop_interval: integer(),
+          read_loop_offset: integer(),
+          config_engine: module(),
+          prediction_engine: module(),
+          bridge_engine: module(),
+          alerts_engine: module(),
+          routes_engine: module(),
+          sign_updater: module(),
+          prev_predictions: list(),
+          prev_bridge_status: nil | map(),
+          current_messages: tuple(),
+          last_update: nil | DateTime.t(),
+          last_read_time: DateTime.t()
+        }
+
+  def start_link(sign) do
     state = %__MODULE__{
       id: Map.fetch!(sign, "id"),
       pa_ess_loc: Map.fetch!(sign, "pa_ess_loc"),
+      scu_id: Map.fetch!(sign, "scu_id"),
       text_zone: Map.fetch!(sign, "text_zone"),
       audio_zones: Map.fetch!(sign, "audio_zones"),
       max_minutes: Map.fetch!(sign, "max_minutes"),
@@ -51,12 +80,12 @@ defmodule Signs.Bus do
       chelsea_bridge: sign["chelsea_bridge"],
       read_loop_interval: Map.fetch!(sign, "read_loop_interval"),
       read_loop_offset: Map.fetch!(sign, "read_loop_offset"),
-      config_engine: opts[:config_engine] || Engine.Config,
-      prediction_engine: opts[:prediction_engine] || Engine.BusPredictions,
-      bridge_engine: opts[:bridge_engine] || Engine.ChelseaBridge,
-      alerts_engine: opts[:alerts_engine] || Engine.Alerts,
+      config_engine: Engine.Config,
+      prediction_engine: Engine.BusPredictions,
+      bridge_engine: Engine.ChelseaBridge,
+      alerts_engine: Engine.Alerts,
       routes_engine: Engine.Routes,
-      sign_updater: opts[:sign_updater] || MessageQueue,
+      sign_updater: PaEss.Updater,
       prev_predictions: [],
       prev_bridge_status: nil,
       current_messages: {nil, nil},
@@ -98,14 +127,11 @@ defmodule Signs.Bus do
 
     %__MODULE__{
       id: id,
-      pa_ess_loc: pa_ess_loc,
-      text_zone: text_zone,
       configs: configs,
       config_engine: config_engine,
       prediction_engine: prediction_engine,
       bridge_engine: bridge_engine,
       alerts_engine: alerts_engine,
-      sign_updater: sign_updater,
       prev_predictions: prev_predictions
     } = state
 
@@ -191,7 +217,7 @@ defmodule Signs.Bus do
     state
     |> then(fn state ->
       if should_update?({top, bottom}, current_time, state) do
-        sign_updater.update_sign({pa_ess_loc, text_zone}, top, bottom, 180, :now, state.id)
+        state.sign_updater.set_background_message(state, top, bottom)
         %{state | current_messages: {top, bottom}, last_update: current_time}
       else
         state
@@ -803,15 +829,14 @@ defmodule Signs.Bus do
   end
 
   defp send_audio(audios, state) do
-    %{pa_ess_loc: pa_ess_loc, audio_zones: audio_zones, sign_updater: sign_updater} = state
+    %{audio_zones: audio_zones, sign_updater: sign_updater} = state
 
     if audios != [] && audio_zones != [] do
-      sign_updater.send_audio(
-        {pa_ess_loc, audio_zones},
+      sign_updater.play_message(
+        state,
         audios,
-        5,
-        180,
-        state.id,
+        # TODO: Implement TTS for bus audio
+        [],
         Enum.map(audios, fn _ -> [message_type: "Bus"] end)
       )
     end

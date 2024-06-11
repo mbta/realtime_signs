@@ -10,12 +10,24 @@ defmodule RealtimeSigns do
 
     log_runtime_config()
 
+    scu_updater_children =
+      Signs.Utilities.SignsConfig.all_scu_ids()
+      |> Enum.flat_map(fn id ->
+        [
+          Supervisor.child_spec({PaEss.ScuQueue, id}, id: {PaEss.ScuQueue, id}),
+          Supervisor.child_spec({PaEss.ScuUpdater, id}, id: {PaEss.ScuUpdater, id})
+        ]
+      end)
+
     children =
       [
         :hackney_pool.child_spec(:default, []),
         :hackney_pool.child_spec(:arinc_pool, []),
+        {Task.Supervisor, name: PaEss.TaskSupervisor},
         Engine.Health,
         Engine.Config,
+        Engine.Locations,
+        Engine.LastTrip,
         Engine.Predictions,
         Engine.ScheduledHeadways,
         Engine.Static,
@@ -26,10 +38,10 @@ defmodule RealtimeSigns do
         MessageQueue,
         RealtimeSigns.Scheduler,
         RealtimeSignsWeb.Endpoint,
-        Engine.Locations,
         HeadwayAnalysis.Supervisor
       ] ++
         http_updater_children() ++
+        scu_updater_children ++
         [
           Signs.Supervisor
         ]

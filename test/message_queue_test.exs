@@ -7,8 +7,7 @@ defmodule MessageQueueTest do
       state = %{queue: :queue.new(), length: 0}
       msg = {:msg, [:args]}
 
-      {:reply, {:ok, :sent}, state} =
-        MessageQueue.handle_call({:queue_update, msg}, self(), state)
+      {:reply, :ok, state} = MessageQueue.handle_call({:queue_update, msg}, self(), state)
 
       assert {{:value, ^msg}, _queue} = :queue.out(state.queue)
     end
@@ -18,8 +17,7 @@ defmodule MessageQueueTest do
       state = %{queue: q, length: 400}
       msg = 201
 
-      {:reply, {:ok, :sent}, state} =
-        MessageQueue.handle_call({:queue_update, msg}, self(), state)
+      {:reply, :ok, state} = MessageQueue.handle_call({:queue_update, msg}, self(), state)
 
       assert {{:value, 31}, _queue} = :queue.out(state.queue)
       assert state.length == 371
@@ -51,8 +49,8 @@ defmodule MessageQueueTest do
 
   describe "works through public interfaces" do
     {:ok, pid} = GenServer.start_link(MessageQueue, [])
-    {:ok, :sent} = MessageQueue.update_sign(pid, 1, 2, 3, 4, 5, "sign_id")
-    {:ok, :sent} = MessageQueue.send_audio(pid, 1, 2, 3, 4, "sign_id", [])
+    :ok = MessageQueue.update_sign(pid, 1, 2, 3, 4, 5, "sign_id")
+    :ok = MessageQueue.send_audio(pid, 1, 2, 3, 4, "sign_id", [])
 
     assert MessageQueue.get_message(pid) == {:update_sign, [1, 2, 3, 4, 5, "sign_id"]}
     assert MessageQueue.get_message(pid) == {:send_audio, [1, 2, 3, 4, "sign_id", []]}

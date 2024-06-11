@@ -50,14 +50,7 @@ defmodule Content.Audio.Approaching do
       case {destination_var(audio.destination, audio.platform, audio.route_id),
             crowding_description} do
         {nil, _} ->
-          case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
-            {:ok, trip_description} ->
-              text = "Attention passengers: The next #{trip_description} is now approaching."
-              {:ad_hoc, {text, :audio_visual}}
-
-            {:error, :unknown} ->
-              handle_unknown_destination(audio)
-          end
+          {:ad_hoc, {tts_text(audio), :audio_visual}}
 
         {var, nil} ->
           Utilities.take_message([var], :audio_visual)
@@ -86,6 +79,25 @@ defmodule Content.Audio.Approaching do
           vars = [@attention_passengers, destination_var, @space, approaching_var]
           {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio_visual}}
       end
+    end
+
+    def to_tts(%Content.Audio.Approaching{} = audio) do
+      text = tts_text(audio)
+      {text, PaEss.Utilities.paginate_text(text)}
+    end
+
+    defp tts_text(%Content.Audio.Approaching{} = audio) do
+      train = Utilities.train_description(audio.destination, audio.route_id)
+      crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
+
+      new_cars =
+        if audio.new_cars? && audio.route_id == "Red" do
+          ", with all new Red Line cars."
+        else
+          "."
+        end
+
+      "Attention passengers: The next #{train} is now approaching#{new_cars}#{crowding}"
     end
 
     @spec handle_unknown_destination(Content.Audio.Approaching.t()) :: nil

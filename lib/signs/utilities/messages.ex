@@ -12,7 +12,8 @@ defmodule Signs.Utilities.Messages do
           Engine.Config.sign_config(),
           DateTime.t(),
           Engine.Alerts.Fetcher.stop_status(),
-          DateTime.t() | {DateTime.t(), DateTime.t()}
+          DateTime.t() | {DateTime.t(), DateTime.t()},
+          boolean() | {boolean(), boolean()}
         ) :: Signs.Realtime.sign_messages()
   def get_messages(
         predictions,
@@ -20,7 +21,8 @@ defmodule Signs.Utilities.Messages do
         sign_config,
         current_time,
         alert_status,
-        scheduled
+        scheduled,
+        service_statuses_per_source
       ) do
     messages =
       cond do
@@ -66,6 +68,16 @@ defmodule Signs.Utilities.Messages do
               messages
           end
       end
+
+    messages =
+      if sign_config == :off or match?({:static_text, _}, sign_config),
+        do: messages,
+        else:
+          Signs.Utilities.LastTrip.get_last_trip_messages(
+            messages,
+            service_statuses_per_source,
+            sign.source_config
+          )
 
     early_am_status =
       Signs.Utilities.EarlyAmSuppression.get_early_am_state(current_time, scheduled)
@@ -179,7 +191,7 @@ defmodule Signs.Utilities.Messages do
     Content.Message.Empty.new()
   end
 
-  defp get_alert_messages(alert_status, %{text_id: {"GUNS", _}}) do
+  defp get_alert_messages(alert_status, %{pa_ess_loc: "GUNS"}) do
     if alert_status in [:none, :alert_along_route],
       do: nil,
       else: {%Alert.NoService{}, %Alert.UseRoutes{}}

@@ -10,23 +10,8 @@ defmodule Content.Audio.PassthroughTest do
       assert Content.Audio.to_params(audio) == {:canned, {"103", ["32114"], :audio_visual}}
     end
 
-    test "Returns ad-hoc audio for valid destinations" do
-      audio = %Passthrough{destination: :southbound, route_id: "Orange"}
-
-      assert Content.Audio.to_params(audio) ==
-               {:ad_hoc,
-                {"The next Southbound Orange Line train does not take customers. Please stand back from the yellow line.",
-                 :audio}}
-    end
-
     test "Returns nil for Green Line trips" do
       audio = %Passthrough{destination: :riverside, route_id: "Green-D"}
-      log = capture_log([level: :info], fn -> assert Content.Audio.to_params(audio) == nil end)
-      assert log =~ "unknown_passthrough_audio"
-    end
-
-    test "Returns nil when destination for which we don't have audio" do
-      audio = %Passthrough{destination: :unknown, route_id: "Red"}
       log = capture_log([level: :info], fn -> assert Content.Audio.to_params(audio) == nil end)
       assert log =~ "unknown_passthrough_audio"
     end

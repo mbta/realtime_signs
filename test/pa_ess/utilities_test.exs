@@ -10,12 +10,6 @@ defmodule Content.Audio.UtilitiesTest do
     refute valid_range?(100, :spanish)
   end
 
-  test "valid_destination?" do
-    assert valid_destination?(:chelsea, :spanish)
-    assert valid_destination?(:south_station, :english)
-    refute valid_destination?(:cleveland_circle, :spanish)
-  end
-
   test "number_var/2" do
     assert number_var(10, :english) == "5510"
     assert number_var(10, :spanish) == "37010"
@@ -98,54 +92,6 @@ defmodule Content.Audio.UtilitiesTest do
     assert destination_to_ad_hoc_string(:southbound) == {:ok, "Southbound"}
   end
 
-  describe "ad_hoc_trip_description/2" do
-    test "handles locations as destinations" do
-      assert ad_hoc_trip_description(:forest_hills) == {:ok, "train to Forest Hills"}
-
-      assert ad_hoc_trip_description(:forest_hills, "Orange") ==
-               {:ok, "Orange Line train to Forest Hills"}
-
-      assert ad_hoc_trip_description(:forest_hills, "An-Unexpected-Route") ==
-               {:ok, "train to Forest Hills"}
-
-      assert ad_hoc_trip_description(:unknown) == {:error, :unknown}
-      assert ad_hoc_trip_description(:unknown, "Green-D") == {:error, :unknown}
-    end
-
-    test "handles cardinal directions as destinations" do
-      assert ad_hoc_trip_description(:northbound) == {:ok, "Northbound train"}
-
-      assert ad_hoc_trip_description(:northbound, "Orange") ==
-               {:ok, "Northbound Orange Line train"}
-
-      assert ad_hoc_trip_description(:eastbound, "An-Unexpected-Route") ==
-               {:ok, "Eastbound train"}
-    end
-
-    test "does not include branch letter for eastbound Green Line trips" do
-      Enum.each(["Green-B", "Green-C", "Green-D", "Green-E"], fn route ->
-        assert ad_hoc_trip_description(:eastbound, route) == {:ok, "Eastbound train"}
-
-        Enum.each(
-          [
-            :lechmere,
-            :north_station,
-            :government_center,
-            :park_street,
-            :kenmore,
-            :union_square,
-            :medford_tufts
-          ],
-          fn destination ->
-            assert ad_hoc_trip_description(destination, route) ==
-                     {:ok,
-                      "train to #{Kernel.elem(destination_to_ad_hoc_string(destination), 1)}"}
-          end
-        )
-      end)
-    end
-  end
-
   describe "replace_abbreviations/1" do
     test "replaces multiple times, including binary start and end" do
       assert replace_abbreviations("RL and RL and OL") == "Red Line and Red Line and Orange Line"
@@ -162,5 +108,13 @@ defmodule Content.Audio.UtilitiesTest do
     test "case insenstive replacement of 'SVC' with 'Service'" do
       assert replace_abbreviations("SvC, OK") == "Service, OK"
     end
+  end
+
+  test "paginate_text" do
+    assert [{"Attention passengers:", "the next Braintree train", 3}, {"is now arriving", "", 3}] =
+             paginate_text("Attention passengers: the next Braintree train is now arriving", 24)
+
+    assert [{"too-long", "word", 3}] = paginate_text(" too-long   word ", 5)
+    assert [{"fits", "", 3}] = paginate_text("fits", 24)
   end
 end

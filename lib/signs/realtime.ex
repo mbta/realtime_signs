@@ -14,8 +14,10 @@ defmodule Signs.Realtime do
 
   @enforce_keys [
     :id,
-    :text_id,
-    :audio_id,
+    :pa_ess_loc,
+    :scu_id,
+    :text_zone,
+    :audio_zones,
     :source_config,
     :current_content_top,
     :current_content_bottom,
@@ -24,6 +26,7 @@ defmodule Signs.Realtime do
     :headway_engine,
     :config_engine,
     :alerts_engine,
+    :last_trip_engine,
     :sign_updater,
     :last_update,
     :tick_read,
@@ -55,8 +58,10 @@ defmodule Signs.Realtime do
 
   @type t :: %__MODULE__{
           id: String.t(),
-          text_id: PaEss.text_id(),
-          audio_id: PaEss.audio_id(),
+          pa_ess_loc: String.t(),
+          scu_id: String.t(),
+          text_zone: String.t(),
+          audio_zones: [String.t()],
           source_config: SourceConfig.config() | {SourceConfig.config(), SourceConfig.config()},
           current_content_top: Content.Message.value(),
           current_content_bottom: Content.Message.value(),
@@ -65,6 +70,7 @@ defmodule Signs.Realtime do
           headway_engine: module(),
           config_engine: module(),
           alerts_engine: module(),
+          last_trip_engine: module(),
           current_time_fn: fun(),
           sign_updater: module(),
           last_update: DateTime.t(),
@@ -83,34 +89,29 @@ defmodule Signs.Realtime do
           uses_shuttles: boolean()
         }
 
-  def start_link(%{"type" => "realtime"} = config, opts \\ []) do
+  def start_link(%{"type" => "realtime"} = config) do
     source_config = config |> Map.fetch!("source_config") |> SourceConfig.parse!()
-
-    prediction_engine = opts[:prediction_engine] || Engine.Predictions
-    headway_engine = opts[:headway_engine] || Engine.ScheduledHeadways
-    config_engine = opts[:config_engine] || Engine.Config
-    alerts_engine = opts[:alerts_engine] || Engine.Alerts
-    sign_updater = opts[:sign_updater] || Application.get_env(:realtime_signs, :sign_updater_mod)
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
-      text_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "text_zone")},
-      audio_id: {Map.fetch!(config, "pa_ess_loc"), Map.fetch!(config, "audio_zones")},
+      pa_ess_loc: Map.fetch!(config, "pa_ess_loc"),
+      scu_id: Map.fetch!(config, "scu_id"),
+      text_zone: Map.fetch!(config, "text_zone"),
+      audio_zones: Map.fetch!(config, "audio_zones"),
       source_config: source_config,
       current_content_top: "",
       current_content_bottom: "",
-      prediction_engine: prediction_engine,
-      location_engine: opts[:location_engine] || Engine.Locations,
-      headway_engine: headway_engine,
-      config_engine: config_engine,
-      alerts_engine: alerts_engine,
-      current_time_fn:
-        opts[:current_time_fn] ||
-          fn ->
-            time_zone = Application.get_env(:realtime_signs, :time_zone)
-            DateTime.utc_now() |> DateTime.shift_zone!(time_zone)
-          end,
-      sign_updater: sign_updater,
+      prediction_engine: Engine.Predictions,
+      location_engine: Engine.Locations,
+      headway_engine: Engine.ScheduledHeadways,
+      config_engine: Engine.Config,
+      alerts_engine: Engine.Alerts,
+      last_trip_engine: Engine.LastTrip,
+      current_time_fn: fn ->
+        time_zone = Application.get_env(:realtime_signs, :time_zone)
+        DateTime.utc_now() |> DateTime.shift_zone!(time_zone)
+      end,
+      sign_updater: PaEss.Updater,
       last_update: nil,
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       read_period_seconds: 240,
@@ -168,6 +169,16 @@ defmodule Signs.Realtime do
           {predictions, predictions}
       end
 
+    service_end_statuses_per_source =
+      case sign.source_config do
+        {top_source, bottom_source} ->
+          {has_service_ended_for_source?(sign, top_source, current_time),
+           has_service_ended_for_source?(sign, bottom_source, current_time)}
+
+        source ->
+          has_service_ended_for_source?(sign, source, current_time)
+      end
+
     {new_top, new_bottom} =
       Utilities.Messages.get_messages(
         predictions,
@@ -175,7 +186,8 @@ defmodule Signs.Realtime do
         sign_config,
         current_time,
         alert_status,
-        first_scheduled_departures
+        first_scheduled_departures,
+        service_end_statuses_per_source
       )
 
     sign =
@@ -194,6 +206,24 @@ defmodule Signs.Realtime do
   def handle_info(msg, state) do
     Logger.warn("Signs.Realtime unknown_message: #{inspect(msg)}")
     {:noreply, state}
+  end
+
+  defp has_service_ended_for_source?(sign, source, current_time) do
+    if source.headway_group not in ["red_trunk", "red_ashmont", "red_braintree"] do
+      SourceConfig.sign_stop_ids(source)
+      |> Enum.count(&has_last_trip_departed_stop?(&1, sign, current_time)) >= 1
+    else
+      false
+    end
+  end
+
+  defp has_last_trip_departed_stop?(stop_id, sign, current_time) do
+    sign.last_trip_engine.get_recent_departures(stop_id)
+    |> Enum.any?(fn {trip_id, departure_time} ->
+      # Use a 3 second buffer to make sure trips have fully departed
+      DateTime.to_unix(current_time) - DateTime.to_unix(departure_time) > 3 and
+        sign.last_trip_engine.is_last_trip?(trip_id)
+    end)
   end
 
   defp prediction_key(prediction) do
@@ -229,14 +259,7 @@ defmodule Signs.Realtime do
     Utilities.Predictions.get_passthrough_train_audio(predictions)
     |> Enum.reduce(sign, fn audio, sign ->
       if audio.trip_id not in sign.announced_passthroughs do
-        sign.sign_updater.send_audio(
-          sign.audio_id,
-          [Content.Audio.to_params(audio)],
-          5,
-          60,
-          sign.id,
-          [Utilities.Audio.audio_log_details(audio)]
-        )
+        Signs.Utilities.Audio.send_audio(sign, [audio])
 
         update_in(sign.announced_passthroughs, fn list ->
           Enum.take([audio.trip_id | list], @announced_history_length)

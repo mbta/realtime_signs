@@ -25,6 +25,7 @@ defmodule Engine.Config do
   @table_signs :config_engine_signs
   @table_headways :config_engine_headways
   @table_chelsea_bridge :config_engine_chelsea_bridge
+  @table_scus_migrated :config_engine_scus_migrated
 
   def start_link([]) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -42,6 +43,14 @@ defmodule Engine.Config do
   def headway_config(table_name \\ @table_headways, headway_group, current_time) do
     time_period = Headway.current_time_period(current_time)
     Headways.get_headway(table_name, {headway_group, time_period})
+  end
+
+  @impl true
+  def scu_migrated?(table_name \\ @table_scus_migrated, scu_id) do
+    case :ets.lookup(table_name, scu_id) do
+      [{^scu_id, value}] -> value
+      _ -> false
+    end
   end
 
   @spec chelsea_bridge_config(:ets.tab()) :: :off | :auto
@@ -62,6 +71,7 @@ defmodule Engine.Config do
       table_name_signs: @table_signs,
       table_name_headways: @table_headways,
       table_name_chelsea_bridge: @table_chelsea_bridge,
+      table_name_scus_migrated: @table_scus_migrated,
       current_version: nil,
       time_fetcher: opts[:time_fetcher] || fn -> DateTime.utc_now() end
     }
@@ -77,6 +87,7 @@ defmodule Engine.Config do
   def create_tables(state) do
     :ets.new(state.table_name_signs, [:set, :protected, :named_table, read_concurrency: true])
     Headways.create_table(state.table_name_headways)
+    :ets.new(state.table_name_scus_migrated, [:named_table, read_concurrency: true])
 
     :ets.new(state.table_name_chelsea_bridge, [
       :set,
@@ -105,11 +116,13 @@ defmodule Engine.Config do
             |> Map.get("configured_headways", %{})
             |> Headways.parse()
 
+          scus_migrated = Map.get(config, "scus_migrated", %{})
           config_chelsea_bridge = Map.get(config, "chelsea_bridge_announcements", "auto")
 
           :ets.insert(state.table_name_signs, Enum.into(config_signs, []))
           :ok = Headways.update_table(state.table_name_headways, config_headways)
           :ets.insert(state.table_name_chelsea_bridge, {:status, config_chelsea_bridge})
+          :ets.insert(state.table_name_scus_migrated, Map.to_list(scus_migrated))
 
           version
 

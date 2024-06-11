@@ -25,7 +25,6 @@ config :realtime_signs,
   http_client: HTTPoison,
   posts_log_dir: "log/posts/",
   time_zone: "America/New_York",
-  sign_updater_mod: MessageQueue,
   http_poster_mod: HTTPoison,
   scheduled_headway_requester: Headway.Request,
   external_config_getter: ExternalConfig.Local,
@@ -34,7 +33,8 @@ config :realtime_signs,
   number_of_http_updaters: 4,
   restart_fn: &Engine.Health.restart_noop/0
 
-config :realtime_signs, RealtimeSignsWeb.Endpoint, secret_key_base: "local_secret_key_base_at_least_64_bytes_________________________________"
+config :realtime_signs, RealtimeSignsWeb.Endpoint,
+  secret_key_base: "local_secret_key_base_at_least_64_bytes_________________________________"
 
 config :ex_aws,
   access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],
@@ -44,7 +44,7 @@ config :logger, backends: [:console], utc_log: true
 
 config :logger, :console,
   format: "$dateT$time [$level] node=$node $metadata$message\n",
-  metadata: [:request_id]
+  metadata: [:remote_ip, :request_id]
 
 config :ehmon, :report_mf, {:ehmon, :info_report}
 

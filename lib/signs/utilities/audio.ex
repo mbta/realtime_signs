@@ -91,6 +91,10 @@ defmodule Signs.Utilities.Audio do
     end
   end
 
+  defp get_passive_readout({:service_ended, top, _}) do
+    Audio.ServiceEnded.from_message(top)
+  end
+
   defp get_prediction_readout(%Message.Predictions{minutes: minutes} = prediction) do
     case minutes do
       :boarding ->
@@ -269,6 +273,7 @@ defmodule Signs.Utilities.Audio do
           | {:predictions, [Content.Message.t()]}
           | {:headway, Content.Message.t(), Content.Message.t() | nil}
           | {:scheduled_train, Content.Message.t(), Content.Message.t() | nil}
+          | {:service_ended, Content.Message.t(), Content.Message.t() | nil}
         ]
   defp decode_sign(sign, top_content, bottom_content) do
     case {sign, top_content, bottom_content} do
@@ -284,6 +289,12 @@ defmodule Signs.Utilities.Audio do
 
       {_, %Message.GenericPaging{} = top, %Message.GenericPaging{} = bottom} ->
         Enum.zip(top.messages, bottom.messages) |> Enum.flat_map(&decode_lines/1)
+
+      {_, %Message.LastTrip.PlatformClosed{} = top, bottom} ->
+        [{:service_ended, top, bottom}]
+
+      {_, %Message.LastTrip.StationClosed{} = top, bottom} ->
+        [{:service_ended, top, bottom}]
 
       # Mezzanine signs get separate treatment for each half, e.g. they will return two
       # separate prediction lists with one prediction each.
@@ -328,6 +339,7 @@ defmodule Signs.Utilities.Audio do
       %Message.Alert.DestinationNoService{} -> [{:alert, line, nil}]
       %Message.Headways.Paging{} -> [{:headway, line, nil}]
       %Message.EarlyAm.DestinationScheduledTime{} -> [{:scheduled_train, line, nil}]
+      %Message.LastTrip.NoService{} -> [{:service_ended, line, nil}]
       _ -> []
     end
   end
@@ -376,10 +388,18 @@ defmodule Signs.Utilities.Audio do
     end)
   end
 
-  def audio_log_details(audio) do
-    [
-      message_type: to_string(audio.__struct__) |> String.split(".") |> List.last(),
-      message_details: Map.from_struct(audio) |> inspect()
-    ]
+  @spec send_audio(Signs.Realtime.t(), [Content.Audio.t()]) :: :ok
+  def send_audio(sign, audios) do
+    sign.sign_updater.play_message(
+      sign,
+      Enum.map(audios, &Content.Audio.to_params(&1)),
+      Enum.map(audios, &Content.Audio.to_tts(&1)),
+      Enum.map(audios, fn audio ->
+        [
+          message_type: to_string(audio.__struct__) |> String.split(".") |> List.last(),
+          message_details: Map.from_struct(audio) |> inspect()
+        ]
+      end)
+    )
   end
 end

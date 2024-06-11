@@ -6,18 +6,23 @@ defmodule Content.Audio.StoppedTrain do
   require Logger
   alias PaEss.Utilities
 
-  @enforce_keys [:destination, :stops_away]
+  @enforce_keys [:destination, :route_id, :stops_away]
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
+          route_id: String.t(),
           stops_away: non_neg_integer()
         }
 
   @spec from_message(Content.Message.t()) :: [t()]
-  def from_message(%Content.Message.StoppedTrain{destination: destination, stops_away: stops_away})
+  def from_message(%Content.Message.StoppedTrain{
+        destination: destination,
+        stops_away: stops_away,
+        route_id: route_id
+      })
       when stops_away > 0 do
-    [%__MODULE__{destination: destination, stops_away: stops_away}]
+    [%__MODULE__{destination: destination, route_id: route_id, stops_away: stops_away}]
   end
 
   def from_message(%Content.Message.StoppedTrain{stops_away: 0}) do
@@ -59,23 +64,18 @@ defmodule Content.Audio.StoppedTrain do
       end
     end
 
+    def to_tts(%Content.Audio.StoppedTrain{} = audio) do
+      {tts_text(audio), nil}
+    end
+
+    defp tts_text(%Content.Audio.StoppedTrain{} = audio) do
+      train = Utilities.train_description(audio.destination, audio.route_id)
+      stop_or_stops = if audio.stops_away == 1, do: "stop", else: "stops"
+      "The next #{train} is stopped #{audio.stops_away} #{stop_or_stops} away"
+    end
+
     defp do_ad_hoc_message(audio) do
-      case Utilities.ad_hoc_trip_description(audio.destination) do
-        {:ok, trip_description} ->
-          stop_or_stops = if audio.stops_away == 1, do: "stop", else: "stops"
-
-          text =
-            "The next #{trip_description} is stopped #{audio.stops_away} #{stop_or_stops} away"
-
-          {:ad_hoc, {text, :audio}}
-
-        {:error, :unknown} ->
-          Logger.error(
-            "StoppedTrain.to_params unknown destination: #{inspect(audio.destination)}"
-          )
-
-          nil
-      end
+      {:ad_hoc, {tts_text(audio), :audio}}
     end
 
     defp stops_away_var(1), do: "535"

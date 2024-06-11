@@ -53,8 +53,23 @@ defmodule Content.Audio.Closure do
     end
 
     # Hardcoded for Union Square
-    def to_params(%Content.Audio.Closure{alert: :use_routes_alert, routes: []}) do
-      {:ad_hoc, {"No Train Service. Use routes 86, 87, or 91", :audio}}
+    def to_params(%Content.Audio.Closure{alert: :use_routes_alert, routes: []} = audio) do
+      {:ad_hoc, {tts_text(audio), :audio}}
+    end
+
+    def to_tts(%Content.Audio.Closure{} = audio) do
+      {tts_text(audio), nil}
+    end
+
+    defp tts_text(%Content.Audio.Closure{} = audio) do
+      if audio.alert == :use_routes_alert do
+        # Hardcoded for Union Square
+        "No Train Service. Use routes 86, 87, or 91"
+      else
+        shuttle = if(audio.alert == :shuttles_closed_station, do: " Use shuttle.", else: "")
+        line = PaEss.Utilities.get_line_from_routes_list(audio.routes)
+        "There is no #{line} service at this station.#{shuttle}"
+      end
     end
   end
 end

@@ -36,15 +36,7 @@ defmodule Content.Audio.TrainIsArriving do
         ) do
       case {dest_param(audio), crowding_description} do
         {nil, _} ->
-          case Utilities.ad_hoc_trip_description(audio.destination, audio.route_id) do
-            {:ok, trip_description} ->
-              text = "Attention passengers: The next #{trip_description} is now arriving."
-              {:ad_hoc, {text, :audio_visual}}
-
-            {:error, :unknown} ->
-              Logger.error("TrainIsArriving.to_params unknown params for #{inspect(audio)}")
-              nil
-          end
+          {:ad_hoc, {tts_text(audio), :audio_visual}}
 
         {var, nil} ->
           Utilities.take_message([var], :audio_visual)
@@ -55,6 +47,17 @@ defmodule Content.Audio.TrainIsArriving do
             :audio_visual
           )
       end
+    end
+
+    def to_tts(%Content.Audio.TrainIsArriving{} = audio) do
+      text = tts_text(audio)
+      {text, PaEss.Utilities.paginate_text(text)}
+    end
+
+    defp tts_text(%Content.Audio.TrainIsArriving{} = audio) do
+      train = Utilities.train_description(audio.destination, audio.route_id)
+      crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
+      "Attention passengers: The next #{train} is now arriving.#{crowding}"
     end
 
     @spec dest_param(Content.Audio.TrainIsArriving.t()) :: String.t() | nil
