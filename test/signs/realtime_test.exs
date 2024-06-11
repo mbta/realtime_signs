@@ -8,6 +8,7 @@ defmodule Signs.RealtimeTest do
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     direction_id: 0,
+    routes: ["Red"],
     platform: nil,
     terminal?: false,
     announce_arriving?: true,
@@ -17,6 +18,7 @@ defmodule Signs.RealtimeTest do
   @src_2 %Signs.Utilities.SourceConfig{
     stop_id: "2",
     direction_id: 0,
+    routes: ["Red"],
     platform: nil,
     terminal?: false,
     announce_arriving?: true,
@@ -58,25 +60,7 @@ defmodule Signs.RealtimeTest do
         %{sources: [@src], headway_group: "group", headway_destination: :northbound},
         %{sources: [@src_2], headway_group: "group", headway_destination: :southbound}
       },
-      current_content_top: "Trains",
-      current_content_bottom: "Every 11 to 13 min"
-  }
-
-  @mezzanine_sign_with_routes %{
-    @mezzanine_sign
-    | source_config: {
-        %{
-          sources: [%{@src | routes: ["Orange"]}],
-          headway_group: "group",
-          headway_destination: :northbound
-        },
-        %{
-          sources: [%{@src_2 | routes: ["Orange"]}],
-          headway_group: "group",
-          headway_destination: :southbound
-        }
-      },
-      current_content_top: "Orange line trains",
+      current_content_top: "Red line trains",
       current_content_bottom: "Every 11 to 13 min"
   }
 
@@ -104,7 +88,7 @@ defmodule Signs.RealtimeTest do
       }
   }
 
-  @no_service_audio {:canned, {"107", ["861", "21000", "864", "21000", "863"], :audio}}
+  @no_service_audio {:canned, {"107", ["861", "21000", "3005", "21000", "863"], :audio}}
 
   setup :verify_on_exit!
 
@@ -244,10 +228,10 @@ defmodule Signs.RealtimeTest do
 
     test "when sign is at a station closed by shuttles and there are no predictions, it says so" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
-      expect_messages({"No train service", "Use shuttle bus"})
+      expect_messages({"No Red Line", "Use shuttle bus"})
 
-      expect_audios([{:canned, {"199", ["864"], :audio}}], [
-        {"There is no train service at this station. Use shuttle.", nil}
+      expect_audios([{:canned, {"199", ["3005"], :audio}}], [
+        {"There is no Red Line service at this station. Use shuttle.", nil}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
@@ -255,22 +239,22 @@ defmodule Signs.RealtimeTest do
 
     test "when sign is at a station closed and there are no predictions, but shuttles do not run at this station" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
-      expect_messages({"No train service", ""})
-      expect_audios([@no_service_audio], [{"There is no train service at this station.", nil}])
+      expect_messages({"No Red Line", ""})
+      expect_audios([@no_service_audio], [{"There is no Red Line service at this station.", nil}])
       Signs.Realtime.handle_info(:run_loop, %{@sign | uses_shuttles: false})
     end
 
     test "when sign is at a station closed due to suspension and there are no predictions, it says so" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
-      expect_messages({"No train service", ""})
-      expect_audios([@no_service_audio], [{"There is no train service at this station.", nil}])
+      expect_messages({"No Red Line", ""})
+      expect_audios([@no_service_audio], [{"There is no Red Line service at this station.", nil}])
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "when sign is at a closed station and there are no predictions, it says so" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
-      expect_messages({"No train service", ""})
-      expect_audios([@no_service_audio], [{"There is no train service at this station.", nil}])
+      expect_messages({"No Red Line", ""})
+      expect_audios([@no_service_audio], [{"There is no Red Line service at this station.", nil}])
       assert {_, %{announced_alert: true}} = Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
@@ -341,8 +325,8 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
-      expect_messages({"No train service", ""})
-      expect_audios([@no_service_audio], [{"There is no train service at this station.", nil}])
+      expect_messages({"No Red Line", ""})
+      expect_audios([@no_service_audio], [{"There is no Red Line service at this station.", nil}])
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
@@ -363,7 +347,7 @@ defmodule Signs.RealtimeTest do
         %{@headway_config | range_high: 14}
       end)
 
-      expect_messages({"Trains", "Every 11 to 14 min"})
+      expect_messages({"Red line trains", "Every 11 to 14 min"})
       Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
     end
 
@@ -964,10 +948,10 @@ defmodule Signs.RealtimeTest do
 
     test "reads alerts" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
-      expect_messages({"No train service", "Use shuttle bus"})
+      expect_messages({"No Red Line", "Use shuttle bus"})
 
-      expect_audios([{:canned, {"199", ["864"], :audio}}], [
-        {"There is no train service at this station. Use shuttle.", nil}
+      expect_audios([{:canned, {"199", ["3005"], :audio}}], [
+        {"There is no Red Line service at this station. Use shuttle.", nil}
       ])
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_alert: true})
@@ -1358,7 +1342,7 @@ defmodule Signs.RealtimeTest do
         %{@headway_config | range_low: 9}
       end)
 
-      expect_messages({"Trains", "Every 9 to 13 min"})
+      expect_messages({"Red line trains", "Every 9 to 13 min"})
 
       Signs.Realtime.handle_info(:run_loop, %{
         @mezzanine_sign
@@ -1448,7 +1432,7 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_messages({"Trains", "Every 11 to 13 min"})
+      expect_messages({"Red line trains", "Every 11 to 13 min"})
 
       Signs.Realtime.handle_info(:run_loop, %{
         @jfk_mezzanine_sign
@@ -1625,9 +1609,19 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, sign)
     end
 
-    test "Station is closed" do
+    test "multi-route mezzanine sign, both sides closed" do
       sign = %{
-        @mezzanine_sign
+        put_in(
+          @mezzanine_sign,
+          [
+            Access.key(:source_config),
+            Access.elem(0),
+            :sources,
+            Access.at(0),
+            Access.key(:routes)
+          ],
+          ["Orange"]
+        )
         | tick_read: 0
       }
 
@@ -1640,15 +1634,15 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, sign)
     end
 
-    test "Station with routes is closed" do
+    test "single-route mezzanine sign, both sides closed" do
       sign = %{
-        @mezzanine_sign_with_routes
+        @mezzanine_sign
         | tick_read: 0
       }
 
-      expect_messages({"No Orange Line", "Service ended for night"})
+      expect_messages({"No Red Line", "Service ended for night"})
 
-      expect_audios([{:canned, {"105", ["3006", "21000", "882"], :audio}}], [
+      expect_audios([{:canned, {"105", ["3005", "21000", "882"], :audio}}], [
         {"This station is closed. Service has ended for the night.", nil}
       ])
 
@@ -1657,7 +1651,7 @@ defmodule Signs.RealtimeTest do
 
     test "No service goes on bottom line when top line fits in 18 chars or less" do
       sign = %{
-        @mezzanine_sign_with_routes
+        @mezzanine_sign
         | tick_read: 0,
           announced_stalls: [{"a", 8}]
       }
