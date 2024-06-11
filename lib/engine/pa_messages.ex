@@ -38,13 +38,13 @@ defmodule Engine.PaMessages do
         |> handle_inactive_pa_messages(state.pa_message_timers_table)
 
       {:error, %HTTPoison.Response{status_code: status_code, body: body}} ->
-        Logger.warn("pa_messages_response_error: status_code=#{status_code} body=#{body}")
+        Logger.error("pa_messages_response_error: status_code=#{status_code} body=#{body}")
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("pa_messages_response_error: reason=#{reason}")
+        Logger.error("pa_messages_response_error: reason=#{reason}")
 
       {:error, error} ->
-        Logger.warn("pa_messages_response_error: error=#{inspect(error)}")
+        Logger.error("pa_messages_response_error: error=#{inspect(error)}")
     end
 
     {:noreply, state}
@@ -76,7 +76,7 @@ defmodule Engine.PaMessages do
         visual_text: visual_text,
         audio_text: audio_text,
         priority: priority,
-        sign_ids: ["Silver_Line.South_Station_EB" | sign_ids],
+        sign_ids: sign_ids,
         interval_in_ms: interval_in_minutes * @minute_in_ms
       }
 
