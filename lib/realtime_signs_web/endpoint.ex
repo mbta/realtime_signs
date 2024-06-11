@@ -18,6 +18,7 @@ defmodule RealtimeSignsWeb.Endpoint do
     plug(Phoenix.CodeReloader)
   end
 
+  plug(RemoteIp)
   plug(Plug.RequestId)
   plug(Plug.Telemetry, event_prefix: [:phoenix, :endpoint])
 
