@@ -64,6 +64,20 @@ defmodule Signs.RealtimeTest do
       current_content_bottom: "Every 11 to 13 min"
   }
 
+  @multi_route_mezzanine_sign %{
+    @sign
+    | source_config: {
+        %{
+          sources: [%{@src | routes: ["Orange"]}],
+          headway_group: "group",
+          headway_destination: :northbound
+        },
+        %{sources: [@src_2], headway_group: "group", headway_destination: :southbound}
+      },
+      current_content_top: "Trains",
+      current_content_bottom: "Every 11 to 13 min"
+  }
+
   @jfk_mezzanine_sign %{
     @sign
     | pa_ess_loc: "RJFK",
@@ -256,6 +270,17 @@ defmodule Signs.RealtimeTest do
       expect_messages({"No Red Line", ""})
       expect_audios([@no_service_audio], [{"There is no Red Line service at this station.", nil}])
       assert {_, %{announced_alert: true}} = Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "multi-route mezzanine sign with alert" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
+      expect_messages({"No train service", ""})
+
+      expect_audios([{:canned, {"107", ["861", "21000", "864", "21000", "863"], :audio}}], [
+        {"There is no train service at this station.", nil}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
     end
 
     test "predictions take precedence over alerts" do
@@ -1610,28 +1635,13 @@ defmodule Signs.RealtimeTest do
     end
 
     test "multi-route mezzanine sign, both sides closed" do
-      sign = %{
-        put_in(
-          @mezzanine_sign,
-          [
-            Access.key(:source_config),
-            Access.elem(0),
-            :sources,
-            Access.at(0),
-            Access.key(:routes)
-          ],
-          ["Orange"]
-        )
-        | tick_read: 0
-      }
-
       expect_messages({"Station closed", "Service ended for night"})
 
       expect_audios([{:canned, {"105", ["864", "21000", "882"], :audio}}], [
         {"This station is closed. Service has ended for the night.", nil}
       ])
 
-      Signs.Realtime.handle_info(:run_loop, sign)
+      Signs.Realtime.handle_info(:run_loop, %{@multi_route_mezzanine_sign | tick_read: 0})
     end
 
     test "single-route mezzanine sign, both sides closed" do
