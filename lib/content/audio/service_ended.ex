@@ -64,8 +64,9 @@ defmodule Content.Audio.ServiceEnded do
       {tts_text(audio), nil}
     end
 
-    defp tts_text(%Content.Audio.ServiceEnded{location: :station}) do
-      "This station is closed. Service has ended for the night."
+    defp tts_text(%Content.Audio.ServiceEnded{location: :station, routes: routes}) do
+      line = Utilities.get_line_from_routes_list(routes) |> String.capitalize()
+      "#{line} service has ended for the night."
     end
 
     defp tts_text(%Content.Audio.ServiceEnded{location: :platform, destination: destination}) do

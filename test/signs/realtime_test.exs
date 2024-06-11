@@ -1369,9 +1369,14 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Red line trains", "Every 9 to 13 min"})
 
+      expect_audios([{:ad_hoc, {"Red line trains every 9 to 13 minutes.", :audio}}], [
+        {"Red line trains every 9 to 13 minutes.", nil}
+      ])
+
       Signs.Realtime.handle_info(:run_loop, %{
         @mezzanine_sign
-        | current_time_fn: fn -> datetime(~T[04:50:00]) end
+        | current_time_fn: fn -> datetime(~T[04:50:00]) end,
+          tick_read: 0
       })
     end
 
@@ -1638,7 +1643,7 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Station closed", "Service ended for night"})
 
       expect_audios([{:canned, {"105", ["864", "21000", "882"], :audio}}], [
-        {"This station is closed. Service has ended for the night.", nil}
+        {"Train service has ended for the night.", nil}
       ])
 
       Signs.Realtime.handle_info(:run_loop, %{@multi_route_mezzanine_sign | tick_read: 0})
@@ -1653,7 +1658,7 @@ defmodule Signs.RealtimeTest do
       expect_messages({"No Red Line", "Service ended for night"})
 
       expect_audios([{:canned, {"105", ["3005", "21000", "882"], :audio}}], [
-        {"This station is closed. Service has ended for the night.", nil}
+        {"Red line service has ended for the night.", nil}
       ])
 
       Signs.Realtime.handle_info(:run_loop, sign)
