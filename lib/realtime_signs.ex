@@ -35,6 +35,7 @@ defmodule RealtimeSigns do
         Engine.BusPredictions,
         Engine.ChelseaBridge,
         Engine.Routes,
+        Engine.PaMessages,
         MessageQueue,
         RealtimeSigns.Scheduler,
         RealtimeSignsWeb.Endpoint,

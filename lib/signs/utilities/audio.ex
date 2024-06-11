@@ -402,4 +402,25 @@ defmodule Signs.Utilities.Audio do
       end)
     )
   end
+
+  @spec send_pa_message(PaMessages.PaMessage.t(), %{integer() => DateTime.t()}, function()) :: %{
+          integer() => DateTime.t()
+        }
+  def send_pa_message(pa_message, pa_message_plays, send_audio_fn) do
+    case Map.get(pa_message_plays, pa_message.id) do
+      nil ->
+        send_audio_fn.()
+
+      last_sent ->
+        if DateTime.diff(DateTime.utc_now(), last_sent, :millisecond) >= pa_message.interval_in_ms do
+          send_audio_fn.()
+        else
+          Logger.warn("pa_message: action=skipped id=#{pa_message.id}")
+        end
+    end
+    |> then(fn
+      :ok -> Map.put(pa_message_plays, pa_message.id, DateTime.utc_now())
+      _ -> pa_message_plays
+    end)
+  end
 end
