@@ -118,7 +118,8 @@ defmodule Signs.BusTest do
     prev_bridge_status: nil,
     current_messages: {nil, nil},
     last_update: nil,
-    last_read_time: Timex.shift(Timex.now(), minutes: -10)
+    last_read_time: Timex.shift(Timex.now(), minutes: -10),
+    pa_message_plays: %{}
   }
 
   setup :verify_on_exit!

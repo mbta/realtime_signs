@@ -34,7 +34,8 @@ defmodule Signs.Bus do
     :prev_bridge_status,
     :current_messages,
     :last_update,
-    :last_read_time
+    :last_read_time,
+    :pa_message_plays
   ]
   defstruct @enforce_keys
 
@@ -62,7 +63,8 @@ defmodule Signs.Bus do
           prev_bridge_status: nil | map(),
           current_messages: tuple(),
           last_update: nil | DateTime.t(),
-          last_read_time: DateTime.t()
+          last_read_time: DateTime.t(),
+          pa_message_plays: %{integer() => DateTime.t()}
         }
 
   def start_link(sign) do
@@ -90,7 +92,8 @@ defmodule Signs.Bus do
       prev_bridge_status: nil,
       current_messages: {nil, nil},
       last_update: nil,
-      last_read_time: Timex.now()
+      last_read_time: Timex.now(),
+      pa_message_plays: %{}
     }
 
     GenServer.start_link(__MODULE__, state, name: :"Signs/#{state.id}")
@@ -119,6 +122,23 @@ defmodule Signs.Bus do
     # the whole app, allowing some resilience against temporary external failures.
     Process.send_after(self(), :run_loop, 5000)
     {:ok, state}
+  end
+
+  @impl true
+  def handle_info({:play_pa_message, pa_message}, sign) do
+    Logger.info("pa_message: action=send id=#{pa_message.id} destination=#{sign.id}")
+
+    pa_message_plays =
+      Signs.Utilities.Audio.send_pa_message(pa_message, sign.pa_message_plays, fn ->
+        send_audio([Content.Audio.to_params(pa_message)], sign)
+      end)
+
+    {:noreply, %{sign | pa_message_plays: pa_message_plays}}
+  end
+
+  @impl true
+  def handle_info({:delete_pa_message, pa_id}, sign) do
+    {:noreply, %{sign | pa_message_plays: Map.delete(sign.pa_message_plays, pa_id)}}
   end
 
   @impl true
