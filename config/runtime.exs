@@ -12,12 +12,12 @@ if config_env() != :test do
     trip_update_url:
       System.get_env(
         "TRIP_UPDATE_URL",
-        "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/TripUpdates_enhanced.json"
+        "https://s3.amazonaws.com/mbta-gtfs-s3/concentrate/TripUpdates_enhanced.json"
       ),
     vehicle_positions_url:
       System.get_env(
         "VEHICLE_POSITIONS_URL",
-        "https://s3.amazonaws.com/mbta-gtfs-s3/rtr/VehiclePositions_enhanced.json"
+        "https://s3.amazonaws.com/mbta-gtfs-s3/concentrate/VehiclePositions_enhanced.json"
       ),
     s3_bucket: System.get_env("SIGNS_S3_BUCKET"),
     s3_path: System.get_env("SIGNS_S3_PATH"),

@@ -290,7 +290,7 @@ defmodule Content.Message.PredictionsTest do
       assert log =~ "no_destination_for_prediction"
     end
 
-    test "puts boarding on the sign when train is supposed to be boarding according to rtr" do
+    test "puts boarding on the sign when train is supposed to be boarding according to concentrate" do
       prediction = %Predictions.Prediction{
         seconds_until_departure: 75,
         direction_id: 1,
