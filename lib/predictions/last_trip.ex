@@ -2,7 +2,18 @@ defmodule Predictions.LastTrip do
   defp get_running_trips(predictions_feed) do
     predictions_feed["entity"]
     |> Stream.map(& &1["trip_update"])
-    |> Enum.reject(&(&1["trip"]["schedule_relationship"] == "CANCELED"))
+    |> Stream.filter(
+      &(&1["trip"]["route_id"] in [
+          "Red",
+          "Blue",
+          "Orange",
+          "Green-B",
+          "Green-C",
+          "Green-D",
+          "Green-E",
+          "Mattapan"
+        ] and &1["trip"]["schedule_relationship"] != "CANCELED")
+    )
   end
 
   def get_last_trips(predictions_feed) do

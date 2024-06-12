@@ -29,8 +29,9 @@ defmodule Predictions.Predictions do
       end)
       |> Stream.map(&prediction_from_update(&1, current_time))
       |> Enum.reject(
-        &(is_nil(&1.seconds_until_arrival) and is_nil(&1.seconds_until_departure) and
-            is_nil(&1.seconds_until_passthrough))
+        &((is_nil(&1.seconds_until_arrival) and is_nil(&1.seconds_until_departure) and
+             is_nil(&1.seconds_until_passthrough)) or
+            (&1.seconds_until_departure && &1.seconds_until_departure < 0))
       )
 
     vehicles_running_revenue_trips =
@@ -99,7 +100,7 @@ defmodule Predictions.Predictions do
       direction_id: direction_id,
       seconds_until_arrival: max(0, seconds_until_arrival),
       arrival_certainty: stop_time_update["arrival"]["uncertainty"],
-      seconds_until_departure: max(0, seconds_until_departure),
+      seconds_until_departure: seconds_until_departure,
       departure_certainty: stop_time_update["departure"]["uncertainty"],
       seconds_until_passthrough: max(0, seconds_until_passthrough),
       schedule_relationship:
