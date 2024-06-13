@@ -11,16 +11,8 @@ defmodule Predictions.Predictions do
       feed_message["entity"]
       |> Stream.map(& &1["trip_update"])
       |> Stream.filter(
-        &(&1["trip"]["route_id"] in [
-            "Red",
-            "Blue",
-            "Orange",
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E",
-            "Mattapan"
-          ] and &1["trip"]["schedule_relationship"] != "CANCELED")
+        &(relevant_rail_route?(&1["trip"]["route_id"]) and
+            &1["trip"]["schedule_relationship"] != "CANCELED")
       )
       |> Stream.flat_map(&transform_stop_time_updates/1)
       |> Stream.filter(fn {update, _, _, _, _, _, _} ->
@@ -123,6 +115,19 @@ defmodule Predictions.Predictions do
 
   def parse_json_response(body) do
     Jason.decode!(body)
+  end
+
+  def relevant_rail_route?(route_id) do
+    route_id in [
+      "Red",
+      "Blue",
+      "Orange",
+      "Green-B",
+      "Green-C",
+      "Green-D",
+      "Green-E",
+      "Mattapan"
+    ]
   end
 
   @spec translate_schedule_relationship(String.t()) :: :skipped | :scheduled
