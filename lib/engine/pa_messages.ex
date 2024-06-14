@@ -5,10 +5,9 @@ defmodule Engine.PaMessages do
   alias PaMessages.PaMessage
 
   @type state :: %{
-          pa_message_timers_table: :ets.tab()
+          pa_messages_last_sent: %{non_neg_integer() => DateTime.t()}
         }
 
-  @pa_message_timers_table :pa_message_timers
   @minute_in_ms 1000 * 60
 
   def start_link([]) do
@@ -19,50 +18,38 @@ defmodule Engine.PaMessages do
   def init(_) do
     # Add some delay to wait for sign processes to come up before sending PA messages
     Process.send_after(self(), :update, 10000)
-    state = %{pa_message_timers_table: @pa_message_timers_table}
-    create_table(state)
-    {:ok, state}
-  end
-
-  def create_table(state) do
-    :ets.new(state.pa_message_timers_table, [:named_table, read_concurrency: true])
+    {:ok, %{pa_messages_last_sent: %{}}}
   end
 
   @impl true
   def handle_info(:update, state) do
     schedule_update(self())
 
-    case get_active_pa_messages() do
-      {:ok, pa_messages} ->
-        schedule_pa_messages(pa_messages, state.pa_message_timers_table)
-        |> handle_inactive_pa_messages(state.pa_message_timers_table)
+    state =
+      case get_active_pa_messages() do
+        {:ok, pa_messages} ->
+          recent_sends = send_pa_messages(pa_messages, state.pa_messages_last_sent)
+          handle_inactive_pa_messages(recent_sends, state.pa_messages_last_sent)
 
-      {:error, %HTTPoison.Response{status_code: status_code, body: body}} ->
-        Logger.error("pa_messages_response_error: status_code=#{status_code} body=#{body}")
+          %{state | pa_messages_last_sent: recent_sends}
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.error("pa_messages_response_error: reason=#{reason}")
+        {:error, %HTTPoison.Response{status_code: status_code, body: body}} ->
+          Logger.error("pa_messages_response_error: status_code=#{status_code} body=#{body}")
+          state
 
-      {:error, error} ->
-        Logger.error("pa_messages_response_error: error=#{inspect(error)}")
-    end
+        {:error, %HTTPoison.Error{reason: reason}} ->
+          Logger.error("pa_messages_response_error: reason=#{reason}")
+          state
 
-    {:noreply, state}
-  end
-
-  @impl true
-  def handle_info({:send_pa_message, pa_message}, state) do
-    Enum.each(pa_message.sign_ids, fn sign_id ->
-      send(
-        String.to_existing_atom("Signs/#{sign_id}"),
-        {:play_pa_message, pa_message}
-      )
-    end)
+        {:error, error} ->
+          Logger.error("pa_messages_response_error: error=#{inspect(error)}")
+          state
+      end
 
     {:noreply, state}
   end
 
-  defp schedule_pa_messages(pa_messages, table) do
+  defp send_pa_messages(pa_messages, pa_messages_last_sent) do
     for %{
           "id" => pa_id,
           "visual_text" => visual_text,
@@ -70,7 +57,8 @@ defmodule Engine.PaMessages do
           "interval_in_minutes" => interval_in_minutes,
           "priority" => priority,
           "sign_ids" => sign_ids
-        } <- pa_messages do
+        } <- pa_messages,
+        into: %{} do
       active_pa_message = %PaMessage{
         id: pa_id,
         visual_text: visual_text,
@@ -80,91 +68,50 @@ defmodule Engine.PaMessages do
         interval_in_ms: interval_in_minutes * @minute_in_ms
       }
 
-      case get_pa_message_timer(pa_id, table) do
-        {timer_ref, existing_pa_message}
-        when existing_pa_message.interval_in_ms != active_pa_message.interval_in_ms ->
-          case Process.read_timer(timer_ref) do
-            false ->
-              schedule_pa_message(active_pa_message, active_pa_message.interval_in_ms, table)
+      {_, last_sent_time} = Map.get(pa_messages_last_sent, pa_id, {nil, nil})
 
-            remaining_ms ->
-              ms_elapsed = existing_pa_message.interval_in_ms - remaining_ms
-              temp_interval = (active_pa_message.interval_in_ms - ms_elapsed) |> max(0)
-              cancel_pa_timer(timer_ref, pa_id)
-              schedule_pa_message(active_pa_message, temp_interval, table)
-          end
+      time_since_last_send =
+        if last_sent_time,
+          do: DateTime.diff(DateTime.utc_now(), last_sent_time, :millisecond),
+          else: active_pa_message.interval_in_ms
 
-        {timer, _} ->
-          if Process.read_timer(timer) == false do
-            schedule_pa_message(active_pa_message, active_pa_message.interval_in_ms, table)
-          end
-
-        nil ->
-          schedule_pa_message(active_pa_message, 0, table)
+      if time_since_last_send >= active_pa_message.interval_in_ms do
+        send_pa_message(active_pa_message)
+        {pa_id, {active_pa_message, DateTime.utc_now()}}
+      else
+        {pa_id, {active_pa_message, last_sent_time}}
       end
-
-      pa_id
     end
   end
 
-  defp schedule_pa_message(pa_message, interval_in_ms, table) do
-    Logger.info(
-      "pa_message: action=scheduled id=#{pa_message.id} interval_ms=#{interval_in_ms} sign_ids=#{inspect(pa_message.sign_ids)}"
-    )
-
-    timer_ref =
-      Process.send_after(
-        self(),
-        {:send_pa_message, pa_message},
-        interval_in_ms
-      )
-
-    :ets.insert(
-      table,
-      {pa_message.id, {timer_ref, pa_message}}
-    )
-  end
-
-  defp handle_inactive_pa_messages(active_pa_ids, table) do
-    :ets.tab2list(table)
-    |> Enum.each(fn {pa_id, {timer_ref, pa_message}} ->
-      if pa_id not in active_pa_ids do
-        cancel_pa_timer(timer_ref, pa_id)
-        delete_pa_message(pa_message, table)
-      end
-    end)
-  end
-
-  defp cancel_pa_timer(timer_ref, pa_id) do
-    Logger.info("pa_message: action=timer_canceled id=#{pa_id}")
-    Process.cancel_timer(timer_ref)
-  end
-
-  defp delete_pa_message(pa_message, table) do
-    Logger.info("pa_message: action=message_deleted id=#{pa_message.id}")
-
+  defp send_pa_message(pa_message) do
     Enum.each(pa_message.sign_ids, fn sign_id ->
+      Logger.info("pa_message: action=send id=#{pa_message.id} destination=#{sign_id}")
+
       send(
         String.to_existing_atom("Signs/#{sign_id}"),
-        {:delete_pa_message, pa_message.id}
+        {:play_pa_message, pa_message}
       )
     end)
-
-    :ets.delete(table, pa_message.id)
   end
 
-  defp get_pa_message_timer(pa_id, table) do
-    case :ets.lookup(table, pa_id) do
-      [{^pa_id, timer}] -> timer
-      _ -> nil
-    end
+  defp handle_inactive_pa_messages(active_pa_messages, pa_messages_last_sent) do
+    Enum.each(pa_messages_last_sent, fn {pa_id, {pa_message, _}} ->
+      if pa_id not in Map.keys(active_pa_messages) do
+        Logger.info("pa_message: action=message_deactivated id=#{pa_id}")
+
+        Enum.each(pa_message.sign_ids, fn sign_id ->
+          send(
+            String.to_existing_atom("Signs/#{sign_id}"),
+            {:deactivate_pa_message, pa_message.id}
+          )
+        end)
+      end
+    end)
   end
 
   defp get_active_pa_messages() do
-    active_pa_messages_url =
-      Application.get_env(:realtime_signs, :screenplay_url) <>
-        Application.get_env(:realtime_signs, :active_pa_messages_path)
-
+    active_pa_messages_url = Application.get_env(:realtime_signs, :active_pa_messages_url)
     http_client = Application.get_env(:realtime_signs, :http_client)
 
     with {:ok, response} <-
