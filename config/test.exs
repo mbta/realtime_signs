@@ -12,5 +12,4 @@ config :realtime_signs,
   sign_config_file: "priv/config.json",
   aws_client: Fake.ExAws,
   s3_client: Fake.ExAws,
-  screenplay_url: "fake-screenplay.com",
-  active_pa_messages_path: "active"
+  active_pa_messages_url: "fake-screenplay.com/active"

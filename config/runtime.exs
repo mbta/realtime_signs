@@ -39,9 +39,8 @@ if config_env() != :test do
     message_log_report_s3_folder: System.get_env("MESSAGE_LOG_REPORT_S3_FOLDER"),
     monitoring_api_key: System.get_env("MONITORING_API_KEY"),
     active_headend_path: System.get_env("ACTIVE_HEADEND_S3_PATH"),
-    screenplay_url: System.get_env("SCREENPLAY_URL"),
-    screenplay_api_key: System.get_env("SCREENPLAY_API_KEY"),
-    active_pa_messages_path: System.get_env("ACTIVE_PA_MESSAGES_PATH")
+    active_pa_messages_url: System.get_env("ACTIVE_PA_MESSAGES_URL"),
+    screenplay_api_key: System.get_env("SCREENPLAY_API_KEY")
 end
 
 if config_env() == :dev do

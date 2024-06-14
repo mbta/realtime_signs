@@ -1,80 +1,84 @@
 defmodule Engine.PaMessagesTest do
+  alias PaMessages.PaMessage
   use ExUnit.Case
 
   @state %{
-    pa_message_timers_table: :test_pa_message_timers
+    pa_messages_last_sent: %{}
   }
 
   setup_all do
-    screenplay_url = Application.get_env(:realtime_signs, :screenplay_url)
-    active_pa_messages_path = Application.get_env(:realtime_signs, :active_pa_messages_path)
-
-    Application.put_env(:realtime_signs, :screenplay_url, "https://screenplay-fake.mbtace.com")
-    Application.put_env(:realtime_signs, :active_pa_messages_path, "/api/pa-messages/active")
+    active_pa_messages_url = Application.get_env(:realtime_signs, :active_pa_messages_url)
 
     on_exit(fn ->
-      Application.put_env(:realtime_signs, :screenplay_url, screenplay_url)
-      Application.put_env(:realtime_signs, :active_pa_messages_path, active_pa_messages_path)
+      Application.put_env(:realtime_signs, :active_pa_messages_url, active_pa_messages_url)
     end)
   end
 
   setup do
-    Application.put_env(:realtime_signs, :active_pa_messages_path, "/api/pa-messages/active")
+    Application.put_env(
+      :realtime_signs,
+      :active_pa_messages_url,
+      "https://screenplay-fake.mbtace.com/api/pa-messages/active"
+    )
   end
 
-  describe "handle_info/2 schedule messages" do
-    test "Schedules PA messages" do
-      Engine.PaMessages.create_table(@state)
-      Engine.PaMessages.handle_info(:update, @state)
+  describe "handle_info/2" do
+    test "Plays PA messages" do
+      {:noreply, state} = Engine.PaMessages.handle_info(:update, @state)
 
-      pa_ids = Enum.map(:ets.tab2list(:test_pa_message_timers), &elem(&1, 0))
+      pa_ids = Map.keys(state.pa_messages_last_sent)
 
       assert 4 in pa_ids
       assert 5 in pa_ids
     end
-  end
 
-  describe "handle_info/2 changes or deletes messages" do
-    test "Unschedules inactive PA messages" do
-      Engine.PaMessages.create_table(@state)
-      Engine.PaMessages.handle_info(:update, @state)
-      pa_ids = Enum.map(:ets.tab2list(:test_pa_message_timers), &elem(&1, 0))
+    test "Doesn't play PA Message if less than interval has passed" do
+      last_played = DateTime.utc_now() |> DateTime.add(-1, :minute)
+
+      state = %{
+        pa_messages_last_sent: %{
+          4 => {%PaMessage{}, last_played},
+          5 => {%PaMessage{}, last_played}
+        }
+      }
+
+      {:noreply, state} = Engine.PaMessages.handle_info(:update, state)
+      assert last_played == Map.get(state.pa_messages_last_sent, 4) |> elem(1)
+      assert last_played == Map.get(state.pa_messages_last_sent, 5) |> elem(1)
+    end
+
+    test "Ignores inactive PA messages" do
+      {:noreply, state} = Engine.PaMessages.handle_info(:update, @state)
+      pa_ids = Map.keys(state.pa_messages_last_sent)
 
       assert 4 in pa_ids
       assert 5 in pa_ids
 
       Application.put_env(
         :realtime_signs,
-        :active_pa_messages_path,
-        "/api/pa-messages/no-longer-active"
+        :active_pa_messages_url,
+        "https://screenplay-fake.mbtace.com/api/pa-messages/no-longer-active"
       )
 
-      Engine.PaMessages.handle_info(:update, @state)
-      pa_ids = Enum.map(:ets.tab2list(:test_pa_message_timers), &elem(&1, 0))
+      {:noreply, state} = Engine.PaMessages.handle_info(:update, @state)
+      pa_ids = Map.keys(state.pa_messages_last_sent)
 
-      assert 4 not in pa_ids
+      refute 4 in pa_ids
       assert 5 in pa_ids
     end
 
-    test "Updates timer when interval changes" do
-      Engine.PaMessages.create_table(@state)
-      Engine.PaMessages.handle_info(:update, @state)
-
-      [{4, {timer_ref_before, pa_message_before}}] = :ets.lookup(:test_pa_message_timers, 4)
+    test "Plays PA Message when interval is edited to be shorter" do
+      last_play = DateTime.utc_now() |> DateTime.add(-2, :minute)
+      state = %{pa_messages_last_sent: %{5 => {%PaMessage{}, last_play}}}
 
       Application.put_env(
         :realtime_signs,
-        :active_pa_messages_path,
-        "/api/pa-messages/changed-interval"
+        :active_pa_messages_url,
+        "https://screenplay-fake.mbtace.com/api/pa-messages/changed-interval"
       )
 
-      Engine.PaMessages.handle_info(:update, @state)
-
-      [{4, {timer_ref_after, pa_message_after}}] = :ets.lookup(:test_pa_message_timers, 4)
-
-      assert timer_ref_before != timer_ref_after
-      assert Process.read_timer(timer_ref_before) == false
-      assert pa_message_before.interval_in_ms < pa_message_after.interval_in_ms
+      {:noreply, state} = Engine.PaMessages.handle_info(:update, state)
+      refute last_play == Map.get(state.pa_messages_last_sent, 5) |> elem(1)
     end
   end
 end
