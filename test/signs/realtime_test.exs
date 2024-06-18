@@ -1774,7 +1774,7 @@ defmodule Signs.RealtimeTest do
 
   describe "PA messages" do
     test "Plays message if no prior plays" do
-      expect_audios(ad_hoc: {"A PA Message", :audio_visual})
+      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}])
 
       pa_message = %PaMessages.PaMessage{
         id: 1,
@@ -1786,7 +1786,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "Plays message if interval has passed" do
-      expect_audios(ad_hoc: {"A PA Message", :audio_visual})
+      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}])
 
       pa_message = %PaMessages.PaMessage{
         id: 1,
