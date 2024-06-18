@@ -53,8 +53,6 @@ defmodule Signs.RealtimeTest do
     tick_read: 1,
     read_period_seconds: 100,
     pa_message_plays: %{}
-    read_period_seconds: 100,
-    pa_message_plays: %{}
   }
 
   @mezzanine_sign %{
@@ -1793,7 +1791,9 @@ defmodule Signs.RealtimeTest do
     end
 
     test "Plays message if no prior plays" do
-      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}])
+      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}], [
+        {"A PA Message", [{"A PA Message", "", 3}]}
+      ])
 
       pa_message = %PaMessages.PaMessage{
         id: 1,
@@ -1805,7 +1805,9 @@ defmodule Signs.RealtimeTest do
     end
 
     test "Plays message if interval has passed" do
-      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}])
+      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}], [
+        {"A PA Message", [{"A PA Message", "", 3}]}
+      ])
 
       pa_message = %PaMessages.PaMessage{
         id: 1,
