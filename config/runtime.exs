@@ -5,9 +5,6 @@ config :realtime_signs, RealtimeSignsWeb.Endpoint,
   url: [host: "localhost"],
   server: true
 
-config :realtime_signs,
-  screenplay_base_url: System.get_env("SCREENPLAY_BASE_URL")
-
 if config_env() != :test do
   config :realtime_signs,
     sign_ui_url: System.get_env("SIGN_UI_URL"),
@@ -42,6 +39,7 @@ if config_env() != :test do
     message_log_report_s3_folder: System.get_env("MESSAGE_LOG_REPORT_S3_FOLDER"),
     monitoring_api_key: System.get_env("MONITORING_API_KEY"),
     active_headend_path: System.get_env("ACTIVE_HEADEND_S3_PATH"),
+    screenplay_base_url: System.get_env("SCREENPLAY_BASE_URL"),
     screenplay_api_key: System.get_env("SCREENPLAY_API_KEY")
 end
 
