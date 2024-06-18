@@ -7,18 +7,26 @@ defmodule Engine.PaMessagesTest do
   }
 
   setup_all do
-    active_pa_messages_url = Application.get_env(:realtime_signs, :active_pa_messages_url)
+    screenplay_base_url = Application.get_env(:realtime_signs, :screenplay_base_url)
+    active_pa_messages_path = Application.get_env(:realtime_signs, :active_pa_messages_path)
+
+    Application.put_env(
+      :realtime_signs,
+      :screenplay_base_url,
+      "https://screenplay-fake.mbtace.com"
+    )
 
     on_exit(fn ->
-      Application.put_env(:realtime_signs, :active_pa_messages_url, active_pa_messages_url)
+      Application.put_env(:realtime_signs, :screenplay_base_url, screenplay_base_url)
+      Application.put_env(:realtime_signs, :active_pa_messages_path, active_pa_messages_path)
     end)
   end
 
   setup do
     Application.put_env(
       :realtime_signs,
-      :active_pa_messages_url,
-      "https://screenplay-fake.mbtace.com/api/pa-messages/active"
+      :active_pa_messages_path,
+      "/api/pa-messages/active"
     )
   end
 
@@ -56,8 +64,8 @@ defmodule Engine.PaMessagesTest do
 
       Application.put_env(
         :realtime_signs,
-        :active_pa_messages_url,
-        "https://screenplay-fake.mbtace.com/api/pa-messages/no-longer-active"
+        :active_pa_messages_path,
+        "/api/pa-messages/no-longer-active"
       )
 
       {:noreply, state} = Engine.PaMessages.handle_info(:update, @state)
@@ -73,8 +81,8 @@ defmodule Engine.PaMessagesTest do
 
       Application.put_env(
         :realtime_signs,
-        :active_pa_messages_url,
-        "https://screenplay-fake.mbtace.com/api/pa-messages/changed-interval"
+        :active_pa_messages_path,
+        "/api/pa-messages/changed-interval"
       )
 
       {:noreply, state} = Engine.PaMessages.handle_info(:update, state)

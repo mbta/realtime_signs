@@ -111,7 +111,10 @@ defmodule Engine.PaMessages do
   end
 
   defp get_active_pa_messages() do
-    active_pa_messages_url = Application.get_env(:realtime_signs, :active_pa_messages_url)
+    active_pa_messages_url =
+      Application.get_env(:realtime_signs, :screenplay_base_url) <>
+        Application.get_env(:realtime_signs, :active_pa_messages_path)
+
     http_client = Application.get_env(:realtime_signs, :http_client)
 
     with {:ok, response} <-
