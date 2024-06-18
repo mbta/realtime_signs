@@ -43,8 +43,7 @@ end
 
 if config_env() == :dev do
   config :realtime_signs,
-    sign_config_file: System.get_env("SIGN_CONFIG_FILE"),
-    screenplay_base_url: System.get_env("SCREENPLAY_BASE_URL")
+    sign_config_file: System.get_env("SIGN_CONFIG_FILE")
 end
 
 message_log_job =
