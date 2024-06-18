@@ -45,7 +45,7 @@ config :logger, backends: [:console], utc_log: true
 
 config :logger, :console,
   format: "$dateT$time [$level] node=$node $metadata$message\n",
-  metadata: [:request_id]
+  metadata: [:remote_ip, :request_id]
 
 config :ehmon, :report_mf, {:ehmon, :info_report}
 

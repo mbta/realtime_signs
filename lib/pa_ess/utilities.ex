@@ -698,7 +698,7 @@ defmodule PaEss.Utilities do
   def audio_take({:route, route}), do: @route_take_lookup[route]
   def audio_take(atom) when is_atom(atom), do: @atom_take_lookup[atom]
 
-  @spec paginate_text(String.t(), integer()) :: [{String.t(), String.t(), integer()}]
+  @spec paginate_text(String.t(), integer()) :: Content.Message.pages()
   def paginate_text(text, max_length \\ 24) do
     String.split(text)
     |> Stream.chunk_while(

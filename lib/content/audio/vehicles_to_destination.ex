@@ -46,13 +46,13 @@ defmodule Content.Audio.VehiclesToDestination do
     def to_params(
           %Content.Audio.VehiclesToDestination{
             headway_range: {range_low, range_high},
-            destination: destination
+            routes: routes
           } = audio
         ) do
       low_var = Utilities.number_var(range_low, :english)
       high_var = Utilities.number_var(range_high, :english)
 
-      if low_var && high_var && destination do
+      if low_var && high_var && !routes do
         {:canned, {message_id(audio), [low_var, high_var], :audio}}
       else
         {:ad_hoc, {tts_text(audio), :audio}}
@@ -70,15 +70,15 @@ defmodule Content.Audio.VehiclesToDestination do
          }) do
       trains =
         case {destination, routes} do
-          {destination, nil} ->
-            {:ok, destination_text} = PaEss.Utilities.destination_to_ad_hoc_string(destination)
-            "#{destination_text} trains"
-
-          {nil, [route]} ->
+          {_, [route]} ->
             "#{route} line trains"
 
-          {nil, _} ->
+          {_, routes} when is_list(routes) ->
             "Trains"
+
+          {destination, _} ->
+            {:ok, destination_text} = PaEss.Utilities.destination_to_ad_hoc_string(destination)
+            "#{destination_text} trains"
         end
 
       "#{trains} every #{range_low} to #{range_high} minutes."

@@ -43,7 +43,7 @@ defmodule RealtimeSigns.Mixfile do
       {:ex_aws_s3, "~> 2.0"},
       {:ex_aws, "~> 2.0"},
       {:lcov_ex, "~> 0.2", only: [:dev, :test], runtime: false},
-      {:hackney, "== 1.17.4"},
+      {:hackney, "== 1.20.1"},
       {:gen_stage, "~> 1.2"},
       {:httpoison, "~> 1.0"},
       {:jason, "~> 1.4.0"},
@@ -60,7 +60,8 @@ defmodule RealtimeSigns.Mixfile do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_view, "~> 2.0"},
       {:plug_cowboy, "~> 2.5"},
-      {:configparser_ex, "~> 4.0", only: [:prod]}
+      {:configparser_ex, "~> 4.0", only: [:prod]},
+      {:remote_ip, "~> 1.2"}
     ]
   end
 

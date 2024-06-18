@@ -855,6 +855,8 @@ defmodule Signs.Bus do
       sign_updater.play_message(
         state,
         audios,
+        # TODO: Implement TTS for bus audio
+        [],
         Enum.map(audios, fn _ -> [message_type: "Bus"] end)
       )
     end

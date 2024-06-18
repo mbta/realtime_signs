@@ -12,8 +12,9 @@ defmodule PaEss.ScuUpdater do
   end
 
   @impl true
-  def handle_events([{:message, scu_id, payload}], _from, state) do
+  def handle_events([{:message, scu_id, payload, logs}], _from, state) do
     body = Jason.encode!(payload)
+    log("play_message", logs)
 
     if send_to_scu(scu_id, "/message", body) == :ok do
       send_to_signs_ui(scu_id, "/message", body)
@@ -22,8 +23,9 @@ defmodule PaEss.ScuUpdater do
     {:noreply, [], state}
   end
 
-  def handle_events([{:background, scu_id, payload}], _from, state) do
+  def handle_events([{:background, scu_id, payload, logs}], _from, state) do
     body = Jason.encode!(payload)
+    log("set_background_message", logs)
 
     if send_to_scu(scu_id, "/background", body) == :ok do
       send_to_signs_ui(scu_id, "/background", body)
@@ -88,5 +90,12 @@ defmodule PaEss.ScuUpdater do
           Logger.warn("signs_ui_error: #{inspect(reason)}")
       end
     end
+  end
+
+  defp log(token, items) do
+    fields =
+      Enum.map([pid: inspect(self())] ++ items, fn {k, v} -> "#{k}=#{v}" end) |> Enum.join(" ")
+
+    Logger.info("#{token}: #{fields}")
   end
 end

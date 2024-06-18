@@ -96,13 +96,14 @@ defmodule Signs.Utilities.SourceConfig do
   @enforce_keys [
     :stop_id,
     :direction_id,
+    :routes,
     :platform,
     :terminal?,
     :announce_arriving?,
     :announce_boarding?
   ]
   defstruct @enforce_keys ++
-              [:routes, :headway_stop_id, multi_berth?: false]
+              [:headway_stop_id, multi_berth?: false]
 
   @type source :: %__MODULE__{
           stop_id: String.t(),

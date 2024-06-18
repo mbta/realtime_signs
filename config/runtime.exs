@@ -24,6 +24,8 @@ if config_env() != :test do
     api_v3_url: System.get_env("API_V3_URL"),
     api_v3_key: System.get_env("API_V3_KEY"),
     scully_api_key: System.get_env("SCULLY_API_KEY"),
+    watts_url: System.get_env("WATTS_URL"),
+    watts_api_key: System.get_env("WATTS_API_KEY"),
     scu_ip_map: System.get_env("SCU_IP_MAP", "null") |> Jason.decode!(),
     chelsea_bridge_url: System.get_env("CHELSEA_BRIDGE_URL"),
     chelsea_bridge_auth: System.get_env("CHELSEA_BRIDGE_AUTH"),
