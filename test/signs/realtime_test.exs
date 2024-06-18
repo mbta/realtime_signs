@@ -1503,6 +1503,23 @@ defmodule Signs.RealtimeTest do
   end
 
   describe "PA messages" do
+    setup do
+      stub(Engine.Config.Mock, :sign_config, fn _ -> :auto end)
+      stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
+      stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+      stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
+      stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
+      stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> false end)
+      stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ -> %{} end)
+
+      stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
+        datetime(~T[05:00:00])
+      end)
+
+      :ok
+    end
+
     test "Plays message if no prior plays" do
       expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}])
 
