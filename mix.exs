@@ -51,7 +51,7 @@ defmodule RealtimeSigns.Mixfile do
       {:mox, "~> 1.0.0", only: [:test]},
       {:sentry, "~> 8.0"},
       {:recon, "~> 2.5"},
-      {:stream_data, "~> 0.1", only: [:dev, :test]},
+      {:stream_data, "~> 1.1", only: [:dev, :test]},
       {:timex, "~> 3.1"},
       {:uuid, "~> 1.1", only: :test},
       {:quantum, "~> 3.0"},
