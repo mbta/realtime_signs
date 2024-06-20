@@ -167,7 +167,7 @@ defmodule Signs.Bus do
     # Compute new sign text and audio
     {[top, bottom], audios} =
       cond do
-        config == :off ->
+        config_off?(id, config) ->
           {["", ""], []}
 
         match?({:static_text, _}, config) ->
@@ -841,4 +841,9 @@ defmodule Signs.Bus do
       )
     end
   end
+
+  # If a Silver Line sign is in headway mode, SignsUI will flag its predictions but RTS needs to treat it as off
+  defp config_off?("Silver_Line." <> _, :headway), do: true
+  defp config_off?(_, :off), do: true
+  defp config_off?(_, _), do: false
 end
