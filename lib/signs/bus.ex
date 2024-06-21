@@ -9,7 +9,7 @@ defmodule Signs.Bus do
   @drawbridge_minutes_spanish "152"
   @drawbridge_soon_spanish "157"
   @alert_levels [:station_closure, :suspension_closed_station]
-  @sl_route_ids MapSet.new(["741", "742", "743", "746"])
+  @sl_waterfront_route_ids MapSet.new(["741", "742", "743", "746"])
 
   @enforce_keys [
     :id,
@@ -846,7 +846,7 @@ defmodule Signs.Bus do
 
   # If a Silver Line sign is in headway mode, SignsUI will flag its predictions but RTS needs to treat it as off
   defp config_off?(:headway, route_ids),
-    do: route_ids |> MapSet.new() |> MapSet.subset?(@sl_route_ids)
+    do: route_ids |> MapSet.new() |> MapSet.subset?(@sl_waterfront_route_ids)
 
   defp config_off?(:off, _), do: true
   defp config_off?(_, _), do: false
