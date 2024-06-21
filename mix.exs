@@ -47,7 +47,7 @@ defmodule RealtimeSigns.Mixfile do
       {:gen_stage, "~> 1.2"},
       {:httpoison, "~> 1.0"},
       {:jason, "~> 1.4.0"},
-      {:logger_splunk_backend, "~> 2.0"},
+      {:logger_splunk_backend, "~> 3.0"},
       {:mox, "~> 1.0.0", only: [:test]},
       {:sentry, "~> 8.0"},
       {:recon, "~> 2.5"},
