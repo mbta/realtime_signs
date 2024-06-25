@@ -127,29 +127,35 @@ defmodule Signs.BusTest do
     test "platform mode, top two" do
       expect_messages(["14 WakfldAv  2 min", "14 WakfldAv 11 min"])
 
-      expect_audios([
-        {:canned,
-         {"119",
-          [
-            "501",
-            "575",
-            "859",
-            "621",
-            "503",
-            "504",
-            "5502",
-            "505",
-            "21012",
-            "667",
-            "575",
-            "859",
-            "621",
-            "503",
-            "504",
-            "5511",
-            "505"
-          ], :audio}}
-      ])
+      expect_audios(
+        [
+          {:canned,
+           {"119",
+            [
+              "501",
+              "575",
+              "859",
+              "621",
+              "503",
+              "504",
+              "5502",
+              "505",
+              "21012",
+              "667",
+              "575",
+              "859",
+              "621",
+              "503",
+              "504",
+              "5511",
+              "505"
+            ], :audio}}
+        ],
+        [
+          {"The next route 14 bus to Wakefield Ave arrives in 2 minutes. The following route 14 bus to Wakefield Ave arrives in 11 minutes.",
+           nil}
+        ]
+      )
 
       state =
         Map.merge(@sign_state, %{
@@ -165,27 +171,33 @@ defmodule Signs.BusTest do
         [{"Chelsea      4 min", 6}, {"", 6}]
       ])
 
-      expect_audios([
-        {:canned,
-         {"117",
-          [
-            "548",
-            "21012",
-            "575",
-            "621",
-            "5502",
-            "505",
-            "21012",
-            "860",
-            "5504",
-            "505",
-            "21012",
-            "678",
-            "605",
-            "5507",
-            "505"
-          ], :audio}}
-      ])
+      expect_audios(
+        [
+          {:canned,
+           {"117",
+            [
+              "548",
+              "21012",
+              "575",
+              "621",
+              "5502",
+              "505",
+              "21012",
+              "860",
+              "5504",
+              "505",
+              "21012",
+              "678",
+              "605",
+              "5507",
+              "505"
+            ], :audio}}
+        ],
+        [
+          {"Upcoming departures: Route 14, Wakefield Ave, 2 minutes. Chelsea, 4 minutes. Route 34, Clarendon Hill, 7 minutes.",
+           nil}
+        ]
+      )
 
       state =
         Map.merge(@sign_state, %{
@@ -202,12 +214,18 @@ defmodule Signs.BusTest do
     test "mezzanine mode" do
       expect_messages(["SL5 Nubian   8 min", "14 WakefldAv 2 min"])
 
-      expect_audios([
-        {:canned,
-         {"113",
-          ["548", "21012", "587", "812", "5508", "505", "21012", "575", "621", "5502", "505"],
-          :audio}}
-      ])
+      expect_audios(
+        [
+          {:canned,
+           {"113",
+            ["548", "21012", "587", "812", "5508", "505", "21012", "575", "621", "5502", "505"],
+            :audio}}
+        ],
+        [
+          {"Upcoming departures: Route SL5, Nubian, 8 minutes. Route 14, Wakefield Ave, 2 minutes.",
+           nil}
+        ]
+      )
 
       state =
         Map.merge(@sign_state, %{
@@ -220,7 +238,7 @@ defmodule Signs.BusTest do
 
     test "static mode" do
       expect_messages(["custom", "message"])
-      expect_audios([{:ad_hoc, {"custom message", :audio}}])
+      expect_audios([{:ad_hoc, {"custom message", :audio}}], [{"custom message", nil}])
 
       state = Map.merge(@sign_state, %{id: "static_sign"})
 
@@ -245,31 +263,51 @@ defmodule Signs.BusTest do
         [{"14 WakfldAv 11 min", 6}, {"SL3 delays 4 more min", 6}]
       ])
 
-      expect_audios([
-        {:canned,
-         {"119",
-          [
-            "501",
-            "575",
-            "859",
-            "621",
-            "503",
-            "504",
-            "5502",
-            "505",
-            "21012",
-            "667",
-            "575",
-            "859",
-            "621",
-            "503",
-            "504",
-            "5511",
-            "505"
-          ], :audio}},
-        {:canned, {"135", ["5504"], :audio_visual}},
-        {:canned, {"152", ["37004"], :audio_visual}}
-      ])
+      expect_audios(
+        [
+          {:canned,
+           {"119",
+            [
+              "501",
+              "575",
+              "859",
+              "621",
+              "503",
+              "504",
+              "5502",
+              "505",
+              "21012",
+              "667",
+              "575",
+              "859",
+              "621",
+              "503",
+              "504",
+              "5511",
+              "505"
+            ], :audio}},
+          {:canned, {"135", ["5504"], :audio_visual}},
+          {:canned, {"152", ["37004"], :audio_visual}}
+        ],
+        [
+          {"The next route 14 bus to Wakefield Ave arrives in 2 minutes. The following route 14 bus to Wakefield Ave arrives in 11 minutes.",
+           nil},
+          {"The Chelsea Street bridge is raised. We expect this to last for at least 4 more minutes. SL3 buses may be delayed, detoured, or turned back.",
+           [
+             {"The Chelsea Street", "bridge is raised. We", 3},
+             {"expect this to last for", "at least 4 more minutes.", 3},
+             {"SL3 buses may be", "delayed, detoured, or", 3},
+             {"turned back.", "", 3}
+           ]},
+          {"Se levanta el puente de Chelsea Street. Esperamos que esto dure al menos 4 minutos más. Los autobuses SL3 pueden sufrir retrasos, desvíos o dar marcha atrás.",
+           [
+             {"Se levanta el puente de", "Chelsea Street.", 3},
+             {"Esperamos que esto dure", "al menos 4 minutos más.", 3},
+             {"Los autobuses SL3 pueden", "sufrir retrasos, desvíos", 3},
+             {"o dar marcha atrás.", "", 3}
+           ]}
+        ]
+      )
 
       state =
         Map.merge(@sign_state, %{
@@ -282,10 +320,28 @@ defmodule Signs.BusTest do
     end
 
     test "standalone bridge announcement" do
-      expect_audios([
-        {:canned, {"135", ["5504"], :audio_visual}},
-        {:canned, {"152", ["37004"], :audio_visual}}
-      ])
+      expect_audios(
+        [
+          {:canned, {"135", ["5504"], :audio_visual}},
+          {:canned, {"152", ["37004"], :audio_visual}}
+        ],
+        [
+          {"The Chelsea Street bridge is raised. We expect this to last for at least 4 more minutes. SL3 buses may be delayed, detoured, or turned back.",
+           [
+             {"The Chelsea Street", "bridge is raised. We", 3},
+             {"expect this to last for", "at least 4 more minutes.", 3},
+             {"SL3 buses may be", "delayed, detoured, or", 3},
+             {"turned back.", "", 3}
+           ]},
+          {"Se levanta el puente de Chelsea Street. Esperamos que esto dure al menos 4 minutos más. Los autobuses SL3 pueden sufrir retrasos, desvíos o dar marcha atrás.",
+           [
+             {"Se levanta el puente de", "Chelsea Street.", 3},
+             {"Esperamos que esto dure", "al menos 4 minutos más.", 3},
+             {"Los autobuses SL3 pueden", "sufrir retrasos, desvíos", 3},
+             {"o dar marcha atrás.", "", 3}
+           ]}
+        ]
+      )
 
       state =
         Map.merge(@sign_state, %{
@@ -303,7 +359,7 @@ defmodule Signs.BusTest do
 
     test "no service alert" do
       expect_messages(["No bus service", ""])
-      expect_audios([{:canned, {"103", ["878"], :audio}}])
+      expect_audios([{:canned, {"103", ["878"], :audio}}], [{"No bus service", nil}])
 
       state =
         Map.merge(@sign_state, %{
@@ -316,11 +372,17 @@ defmodule Signs.BusTest do
     test "route alert on multi-route sign" do
       expect_messages(["14 WakefldAv 2 min", "51 Resrvoir no svc"])
 
-      expect_audios([
-        {:canned,
-         {"112", ["548", "21012", "575", "621", "5502", "505", "21012", "687", "4076", "879"],
-          :audio}}
-      ])
+      expect_audios(
+        [
+          {:canned,
+           {"112", ["548", "21012", "575", "621", "5502", "505", "21012", "687", "4076", "879"],
+            :audio}}
+        ],
+        [
+          {"Upcoming departures: Route 14, Wakefield Ave, 2 minutes. Route 51, Reservoir Station, no service.",
+           nil}
+        ]
+      )
 
       state = %{
         @sign_state
@@ -336,7 +398,9 @@ defmodule Signs.BusTest do
     test "route alert on single-route sign" do
       expect_messages(["51 Resrvoir no svc", ""])
 
-      expect_audios([{:canned, {"106", ["880", "687", "877", "4076"], :audio}}])
+      expect_audios([{:canned, {"106", ["880", "687", "877", "4076"], :audio}}], [
+        {"There is no route 51 bus service to Reservoir Station.", nil}
+      ])
 
       state = %{
         @sign_state
@@ -354,9 +418,10 @@ defmodule Signs.BusTest do
     end)
   end
 
-  defp expect_audios(audios) do
-    expect(PaEss.Updater.Mock, :play_message, fn _, list, _, _ ->
+  defp expect_audios(audios, tts_audios) do
+    expect(PaEss.Updater.Mock, :play_message, fn _, list, tts_list, _ ->
       assert list == audios
+      assert tts_list == tts_audios
       :ok
     end)
   end

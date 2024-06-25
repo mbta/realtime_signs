@@ -165,10 +165,10 @@ defmodule Signs.Bus do
       |> Enum.group_by(&{&1.stop_id, &1.route_id, &1.direction_id})
 
     # Compute new sign text and audio
-    {[top, bottom], audios} =
+    {[top, bottom], audios, tts_audios} =
       cond do
         config == :off ->
-          {["", ""], []}
+          {["", ""], [], []}
 
         match?({:static_text, _}, config) ->
           static_text_content(
@@ -225,12 +225,16 @@ defmodule Signs.Bus do
     end)
     |> then(fn state ->
       if should_read?(current_time, state) do
-        send_audio(audios, state)
+        send_audio(audios, tts_audios, state)
         %{state | last_read_time: current_time}
       else
         if should_announce_drawbridge?(bridge_status, bridge_enabled?, current_time, state) do
-          bridge_audio(bridge_status, bridge_enabled?, current_time, state)
-          |> send_audio(state)
+          bridge_audios = bridge_audio(bridge_status, bridge_enabled?, current_time, state)
+
+          bridge_tts_audios =
+            bridge_tts_audio(bridge_status, bridge_enabled?, current_time, state)
+
+          send_audio(bridge_audios, bridge_tts_audios, state)
         end
 
         state
@@ -321,7 +325,9 @@ defmodule Signs.Bus do
       [{:ad_hoc, {"#{line1} #{line2}", :audio}}]
       |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
 
-    {messages, audios}
+    tts_audios = [{"#{line1} #{line2}", nil}]
+
+    {messages, audios, tts_audios}
   end
 
   # Platform mode. Display one prediction per route, but if all the predictions are for the
@@ -390,7 +396,24 @@ defmodule Signs.Bus do
         |> paginate_audio()
         |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
 
-      {messages, audios}
+      tts_audios =
+        case audio_content do
+          [] ->
+            []
+
+          [single] ->
+            [long_message_tts_audio(single, current_time, state)]
+
+          list ->
+            Enum.map(list, &message_tts_audio(&1, current_time, state))
+            |> Enum.join(" ")
+            |> add_tts_preamble()
+            |> List.wrap()
+        end
+        |> Enum.map(&{&1, nil})
+        |> Enum.concat(bridge_tts_audio(bridge_status, bridge_enabled?, current_time, state))
+
+      {messages, audios, tts_audios}
     end
   end
 
@@ -429,20 +452,36 @@ defmodule Signs.Bus do
         |> paginate_audio()
         |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
 
-      {messages, audios}
+      tts_audios =
+        case top_content ++ bottom_content do
+          [] ->
+            []
+
+          list ->
+            Enum.map(list, &message_tts_audio(&1, current_time, state))
+            |> Enum.join(" ")
+            |> add_tts_preamble()
+            |> List.wrap()
+        end
+        |> Enum.map(&{&1, nil})
+        |> Enum.concat(bridge_tts_audio(bridge_status, bridge_enabled?, current_time, state))
+
+      {messages, audios, tts_audios}
     end
   end
 
   defp special_harvard_content() do
     messages = ["Board routes 71", "and 73 on upper level"]
     audios = paginate_audio([:board_routes_71_and_73_on_upper_level])
-    {messages, audios}
+    tts_audios = [{"Board routes 71 and 73 on upper level", nil}]
+    {messages, audios, tts_audios}
   end
 
   defp no_service_content do
     messages = paginate_pairs([["No bus service", ""]])
     audios = paginate_audio([:no_bus_service])
-    {messages, audios}
+    tts_audios = [{"No bus service", nil}]
+    {messages, audios, tts_audios}
   end
 
   defp configs_content(nil, _, _), do: []
@@ -612,6 +651,36 @@ defmodule Signs.Bus do
     end
   end
 
+  defp bridge_tts_audio(bridge_status, bridge_enabled?, current_time, state) do
+    %{chelsea_bridge: chelsea_bridge} = state
+
+    if bridge_enabled? && chelsea_bridge &&
+         bridge_status_raised?(bridge_status, current_time) do
+      {duration, duration_spanish} =
+        case bridge_status_minutes(bridge_status, current_time) do
+          minutes when minutes < 2 ->
+            {"We expect it to be lowered soon.", "Esperamos que se reduzca pronto."}
+
+          minutes ->
+            {"We expect this to last for at least #{minutes} more minutes.",
+             "Esperamos que esto dure al menos #{minutes} minutos más."}
+        end
+
+      english_text =
+        "The Chelsea Street bridge is raised. #{duration} SL3 buses may be delayed, detoured, or turned back."
+
+      spanish_text =
+        "Se levanta el puente de Chelsea Street. #{duration_spanish} Los autobuses SL3 pueden sufrir retrasos, desvíos o dar marcha atrás."
+
+      [
+        {english_text, PaEss.Utilities.paginate_text(english_text)},
+        {spanish_text, PaEss.Utilities.paginate_text(spanish_text)}
+      ]
+    else
+      []
+    end
+  end
+
   defp format_message(nil, _, _, _state), do: ""
 
   defp format_message({:predictions, [first | _]}, other, current_time, _state) do
@@ -742,6 +811,8 @@ defmodule Signs.Bus do
   defp add_preamble([]), do: []
   defp add_preamble(items), do: [[:upcoming_departures] | items]
 
+  defp add_tts_preamble(str), do: "Upcoming departures: " <> str
+
   # Returns a list of audio tokens describing the given message.
   defp message_audio({:predictions, [prediction | _]}, current_time, _state) do
     route =
@@ -772,6 +843,34 @@ defmodule Signs.Bus do
     headsign = config_headsign(config, state)
 
     route ++ [{:headsign, headsign}, :no_service]
+  end
+
+  defp message_tts_audio({:predictions, [prediction | _]}, current_time, _state) do
+    route =
+      case PaEss.Utilities.prediction_route_name(prediction) do
+        nil -> ""
+        name -> "Route #{name}, "
+      end
+
+    time =
+      case prediction_minutes(prediction, current_time) do
+        0 -> "arriving"
+        1 -> "1 minute"
+        m -> "#{m} minutes"
+      end
+
+    "#{route}#{prediction.headsign}, #{time}."
+  end
+
+  defp message_tts_audio({:alert, config}, _, state) do
+    route =
+      case config_route_name(config) do
+        nil -> ""
+        name -> "Route #{name}, "
+      end
+
+    headsign = config_headsign(config, state)
+    "#{route}#{headsign}, no service."
   end
 
   # Returns a list of audio tokens representing the special "long form" description of
@@ -812,6 +911,38 @@ defmodule Signs.Bus do
     [Enum.concat([[:there_is_no], route, [:bus_service_to, {:headsign, headsign}]])]
   end
 
+  defp long_message_tts_audio({:predictions, predictions}, current_time, _state) do
+    Stream.take(predictions, 2)
+    |> Enum.zip_with(["next", "following"], fn prediction, next_or_following ->
+      route =
+        case PaEss.Utilities.prediction_route_name(prediction) do
+          nil -> ""
+          name -> "route #{name} "
+        end
+
+      time =
+        case prediction_minutes(prediction, current_time) do
+          0 -> "is now arriving"
+          1 -> "arrives in 1 minute"
+          m -> "arrives in #{m} minutes"
+        end
+
+      "The #{next_or_following} #{route}bus to #{prediction.headsign} #{time}."
+    end)
+    |> Enum.join(" ")
+  end
+
+  defp long_message_tts_audio({:alert, config}, _, state) do
+    route =
+      case config_route_name(config) do
+        nil -> ""
+        name -> "route #{name} "
+      end
+
+    headsign = config_headsign(config, state)
+    "There is no #{route}bus service to #{headsign}."
+  end
+
   # Turns a list of audio tokens into a list of audio messages, chunking as needed to stay under
   # the max var limit.
   defp paginate_audio(items) do
@@ -828,15 +959,14 @@ defmodule Signs.Bus do
     end)
   end
 
-  defp send_audio(audios, state) do
+  defp send_audio(audios, tts_audios, state) do
     %{audio_zones: audio_zones, sign_updater: sign_updater} = state
 
     if audios != [] && audio_zones != [] do
       sign_updater.play_message(
         state,
         audios,
-        # TODO: Implement TTS for bus audio
-        [],
+        tts_audios,
         Enum.map(audios, fn _ -> [message_type: "Bus"] end)
       )
     end
