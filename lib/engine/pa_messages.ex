@@ -29,7 +29,6 @@ defmodule Engine.PaMessages do
       case get_active_pa_messages() do
         {:ok, pa_messages} ->
           recent_sends = send_pa_messages(pa_messages, state.pa_messages_last_sent)
-          handle_inactive_pa_messages(recent_sends, state.pa_messages_last_sent)
 
           %{state | pa_messages_last_sent: recent_sends}
 
@@ -86,27 +85,10 @@ defmodule Engine.PaMessages do
 
   defp send_pa_message(pa_message) do
     Enum.each(pa_message.sign_ids, fn sign_id ->
-      Logger.info("pa_message: action=send id=#{pa_message.id} destination=#{sign_id}")
-
       send(
         String.to_existing_atom("Signs/#{sign_id}"),
         {:play_pa_message, pa_message}
       )
-    end)
-  end
-
-  defp handle_inactive_pa_messages(active_pa_messages, pa_messages_last_sent) do
-    Enum.each(pa_messages_last_sent, fn {pa_id, {pa_message, _}} ->
-      if pa_id not in Map.keys(active_pa_messages) do
-        Logger.info("pa_message: action=message_deactivated id=#{pa_id}")
-
-        Enum.each(pa_message.sign_ids, fn sign_id ->
-          send(
-            String.to_existing_atom("Signs/#{sign_id}"),
-            {:deactivate_pa_message, pa_message.id}
-          )
-        end)
-      end
     end)
   end
 

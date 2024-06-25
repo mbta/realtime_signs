@@ -126,19 +126,12 @@ defmodule Signs.Bus do
 
   @impl true
   def handle_info({:play_pa_message, pa_message}, sign) do
-    Logger.info("pa_message: action=send id=#{pa_message.id} destination=#{sign.id}")
-
     pa_message_plays =
-      Signs.Utilities.Audio.send_pa_message(pa_message, sign.pa_message_plays, fn ->
+      Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign, fn ->
         send_audio([Content.Audio.to_params(pa_message)], sign)
       end)
 
     {:noreply, %{sign | pa_message_plays: pa_message_plays}}
-  end
-
-  @impl true
-  def handle_info({:delete_pa_message, pa_id}, sign) do
-    {:noreply, %{sign | pa_message_plays: Map.delete(sign.pa_message_plays, pa_id)}}
   end
 
   @impl true
