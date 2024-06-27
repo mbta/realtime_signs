@@ -681,7 +681,7 @@ defmodule Signs.Bus do
       {duration, duration_spanish} =
         case bridge_status_minutes(bridge_status, current_time) do
           minutes when minutes < 2 ->
-            {"We expect it to be lowered soon.", "Esperamos que se reduzca pronto."}
+            {"We expect it to be lowered soon.", "Esperamos que baje pronto."}
 
           minutes ->
             {"We expect this to last for at least #{minutes} more minutes.",
