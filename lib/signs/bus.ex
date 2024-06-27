@@ -121,6 +121,10 @@ defmodule Signs.Bus do
     {:ok, state}
   end
 
+  @type content_values ::
+          {messages :: [Content.Message.value()], audios :: [Content.Audio.value()],
+           tts_audios :: [Content.Audio.tts_value()]}
+
   @impl true
   def handle_info(:run_loop, state) do
     Process.send_after(self(), :run_loop, 1000)
@@ -168,7 +172,10 @@ defmodule Signs.Bus do
     {[top, bottom], audios, tts_audios} =
       cond do
         config == :off ->
-          {["", ""], [], []}
+          messages = ["", ""]
+          audios = []
+          tts_audios = []
+          {messages, audios, tts_audios}
 
         match?({:static_text, _}, config) ->
           static_text_content(
@@ -296,6 +303,15 @@ defmodule Signs.Bus do
   end
 
   # Static text mode. Just display the configured text, and possibly the bridge message.
+  @spec static_text_content(
+          Engine.Config.sign_config(),
+          term(),
+          boolean(),
+          DateTime.t(),
+          map(),
+          map(),
+          t()
+        ) :: content_values()
   defp static_text_content(
          config,
          bridge_status,
@@ -332,6 +348,8 @@ defmodule Signs.Bus do
 
   # Platform mode. Display one prediction per route, but if all the predictions are for the
   # same route, then show a single page of two.
+  @spec platform_mode_content(map(), map(), map(), DateTime.t(), term(), boolean(), t()) ::
+          content_values()
   defp platform_mode_content(
          predictions_lookup,
          route_alerts_lookup,
@@ -418,6 +436,8 @@ defmodule Signs.Bus do
   end
 
   # Mezzanine mode. Display and paginate each line separately.
+  @spec mezzanine_mode_content(map(), map(), map(), DateTime.t(), term(), boolean(), t()) ::
+          content_values()
   defp mezzanine_mode_content(
          predictions_lookup,
          route_alerts_lookup,
@@ -470,6 +490,7 @@ defmodule Signs.Bus do
     end
   end
 
+  @spec special_harvard_content() :: content_values()
   defp special_harvard_content() do
     messages = ["Board routes 71", "and 73 on upper level"]
     audios = paginate_audio([:board_routes_71_and_73_on_upper_level])
@@ -477,6 +498,7 @@ defmodule Signs.Bus do
     {messages, audios, tts_audios}
   end
 
+  @spec no_service_content() :: content_values()
   defp no_service_content do
     messages = paginate_pairs([["No bus service", ""]])
     audios = paginate_audio([:no_bus_service])
