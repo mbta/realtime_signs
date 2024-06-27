@@ -299,9 +299,9 @@ defmodule Signs.BusTest do
              {"SL3 buses may be", "delayed, detoured, or", 3},
              {"turned back.", "", 3}
            ]},
-          {"Se levanta el puente de Chelsea Street. Esperamos que esto dure al menos 4 minutos más. Los autobuses SL3 pueden sufrir retrasos, desvíos o dar marcha atrás.",
+          {"El puente de Chelsea Street está levantado. Esperamos que esto dure al menos 4 minutos más. Los autobuses SL3 pueden sufrir retrasos, desvíos o dar marcha atrás.",
            [
-             {"Se levanta el puente de", "Chelsea Street.", 3},
+             {"El puente de Chelsea", "Street está levantado.", 3},
              {"Esperamos que esto dure", "al menos 4 minutos más.", 3},
              {"Los autobuses SL3 pueden", "sufrir retrasos, desvíos", 3},
              {"o dar marcha atrás.", "", 3}
@@ -333,9 +333,9 @@ defmodule Signs.BusTest do
              {"SL3 buses may be", "delayed, detoured, or", 3},
              {"turned back.", "", 3}
            ]},
-          {"Se levanta el puente de Chelsea Street. Esperamos que esto dure al menos 4 minutos más. Los autobuses SL3 pueden sufrir retrasos, desvíos o dar marcha atrás.",
+          {"El puente de Chelsea Street está levantado. Esperamos que esto dure al menos 4 minutos más. Los autobuses SL3 pueden sufrir retrasos, desvíos o dar marcha atrás.",
            [
-             {"Se levanta el puente de", "Chelsea Street.", 3},
+             {"El puente de Chelsea", "Street está levantado.", 3},
              {"Esperamos que esto dure", "al menos 4 minutos más.", 3},
              {"Los autobuses SL3 pueden", "sufrir retrasos, desvíos", 3},
              {"o dar marcha atrás.", "", 3}

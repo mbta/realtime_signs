@@ -678,7 +678,7 @@ defmodule Signs.Bus do
       {duration, duration_spanish} =
         case bridge_status_minutes(bridge_status, current_time) do
           minutes when minutes < 2 ->
-            {"We expect it to be lowered soon.", "Esperamos que baje pronto."}
+            {"We expect it to be lowered soon.", "Esperamos que se baje pronto."}
 
           minutes ->
             {"We expect this to last for at least #{minutes} more minutes.",
@@ -689,7 +689,7 @@ defmodule Signs.Bus do
         "The Chelsea Street bridge is raised. #{duration} SL3 buses may be delayed, detoured, or turned back."
 
       spanish_text =
-        "Se levanta el puente de Chelsea Street. #{duration_spanish} Los autobuses SL3 pueden sufrir retrasos, desvíos o dar marcha atrás."
+        "El puente de Chelsea Street está levantado. #{duration_spanish} Los autobuses SL3 pueden sufrir retrasos, desvíos o dar marcha atrás."
 
       [
         {english_text, PaEss.Utilities.paginate_text(english_text)},
