@@ -172,10 +172,7 @@ defmodule Signs.Bus do
     {[top, bottom], audios, tts_audios} =
       cond do
         config == :off ->
-          messages = ["", ""]
-          audios = []
-          tts_audios = []
-          {messages, audios, tts_audios}
+          {_messages = ["", ""], _audios = [], _tts_audios = []}
 
         match?({:static_text, _}, config) ->
           static_text_content(
