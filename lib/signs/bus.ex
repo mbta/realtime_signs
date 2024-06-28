@@ -65,15 +65,28 @@ defmodule Signs.Bus do
           last_read_time: DateTime.t()
         }
 
-  @type locals :: %{
-          config: Engine.Config.sign_config(),
-          bridge_enabled?: boolean(),
-          bridge_status: map(),
-          current_time: DateTime.t(),
-          route_alerts_lookup: %{String.t() => Engine.Alerts.Fetcher.stop_status()},
-          stop_alerts_lookup: %{String.t() => Engine.Alerts.Fetcher.stop_status()},
-          predictions_lookup: %{map() => Predictions.BusPrediction.t()}
-        }
+  defmodule Locals do
+    @enforce_keys [
+      :config,
+      :bridge_enabled?,
+      :bridge_status,
+      :current_time,
+      :route_alerts_lookup,
+      :stop_alerts_lookup,
+      :predictions_lookup
+    ]
+    defstruct @enforce_keys
+
+    @type t :: %__MODULE__{
+            config: Engine.Config.sign_config(),
+            bridge_enabled?: boolean(),
+            bridge_status: map(),
+            current_time: DateTime.t(),
+            route_alerts_lookup: %{String.t() => Engine.Alerts.Fetcher.stop_status()},
+            stop_alerts_lookup: %{String.t() => Engine.Alerts.Fetcher.stop_status()},
+            predictions_lookup: %{map() => Predictions.BusPrediction.t()}
+          }
+  end
 
   def start_link(sign) do
     state = %__MODULE__{
@@ -178,7 +191,7 @@ defmodule Signs.Bus do
       |> filter_predictions(current_time, state)
       |> Enum.group_by(&{&1.stop_id, &1.route_id, &1.direction_id})
 
-    locals = %{
+    locals = %Locals{
       config: config,
       bridge_enabled?: bridge_enabled?,
       bridge_status: bridge_status,
@@ -293,8 +306,8 @@ defmodule Signs.Bus do
   end
 
   # Static text mode. Just display the configured text, and possibly the bridge message.
-  @spec static_text_content(locals(), t()) :: content_values()
-  defp static_text_content(%{config: config} = locals, state) do
+  @spec static_text_content(Locals.t(), t()) :: content_values()
+  defp static_text_content(%Locals{config: config} = locals, state) do
     {_, {line1, line2}} = config
 
     messages =
@@ -313,9 +326,9 @@ defmodule Signs.Bus do
 
   # Platform mode. Display one prediction per route, but if all the predictions are for the
   # same route, then show a single page of two.
-  @spec platform_mode_content(locals(), t()) :: content_values()
+  @spec platform_mode_content(Locals.t(), t()) :: content_values()
   defp platform_mode_content(
-         %{stop_alerts_lookup: stop_alerts_lookup, current_time: current_time} = locals,
+         %Locals{stop_alerts_lookup: stop_alerts_lookup, current_time: current_time} = locals,
          %__MODULE__{configs: configs, extra_audio_configs: extra_audio_configs} = state
        ) do
     content = configs_content(configs, locals)
@@ -384,9 +397,9 @@ defmodule Signs.Bus do
   end
 
   # Mezzanine mode. Display and paginate each line separately.
-  @spec mezzanine_mode_content(locals(), t()) :: content_values()
+  @spec mezzanine_mode_content(Locals.t(), t()) :: content_values()
   defp mezzanine_mode_content(
-         %{stop_alerts_lookup: stop_alerts_lookup, current_time: current_time} = locals,
+         %Locals{stop_alerts_lookup: stop_alerts_lookup, current_time: current_time} = locals,
          %__MODULE__{top_configs: top_configs, bottom_configs: bottom_configs} = state
        ) do
     top_content = configs_content(top_configs, locals)
@@ -451,7 +464,7 @@ defmodule Signs.Bus do
 
   defp configs_content(
          configs,
-         %{predictions_lookup: predictions_lookup, route_alerts_lookup: route_alerts_lookup}
+         %Locals{predictions_lookup: predictions_lookup, route_alerts_lookup: route_alerts_lookup}
        ) do
     Enum.flat_map(configs, fn config ->
       content =
@@ -508,7 +521,7 @@ defmodule Signs.Bus do
   # 3. the content has changed, but wait until the existing content has paged at least once
   defp should_update?(
          messages,
-         %{current_time: current_time},
+         %Locals{current_time: current_time},
          %__MODULE__{last_update: last_update, current_messages: current_messages}
        ) do
     !last_update ||
@@ -521,7 +534,7 @@ defmodule Signs.Bus do
   end
 
   defp should_read?(
-         %{current_time: current_time},
+         %Locals{current_time: current_time},
          %__MODULE__{
            read_loop_interval: read_loop_interval,
            read_loop_offset: read_loop_offset,
@@ -539,7 +552,7 @@ defmodule Signs.Bus do
   # 2. drawbridge messages are enabled
   # 3. we are at a stop that is impacted, but does not show visual drawbridge messages
   defp should_announce_drawbridge?(
-         %{
+         %Locals{
            bridge_enabled?: bridge_enabled?,
            bridge_status: bridge_status,
            current_time: current_time
@@ -574,7 +587,7 @@ defmodule Signs.Bus do
   end
 
   defp bridge_message(
-         %{
+         %Locals{
            bridge_enabled?: bridge_enabled?,
            bridge_status: bridge_status,
            current_time: current_time
@@ -601,7 +614,7 @@ defmodule Signs.Bus do
 
   # Returns a list of audio messages describing the bridge status
   defp bridge_audio(
-         %{
+         %Locals{
            bridge_enabled?: bridge_enabled?,
            bridge_status: bridge_status,
            current_time: current_time
@@ -629,7 +642,7 @@ defmodule Signs.Bus do
   end
 
   defp bridge_tts_audio(
-         %{
+         %Locals{
            bridge_enabled?: bridge_enabled?,
            bridge_status: bridge_status,
            current_time: current_time
