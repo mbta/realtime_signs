@@ -47,7 +47,8 @@ defmodule Signs.Realtime do
                 announced_alert: false,
                 prev_prediction_keys: nil,
                 prev_predictions: [],
-                uses_shuttles: true
+                uses_shuttles: true,
+                pa_message_plays: %{}
               ]
 
   @type line_content :: Content.Message.t()
@@ -86,7 +87,8 @@ defmodule Signs.Realtime do
           prev_prediction_keys: [{String.t(), 0 | 1}] | nil,
           announced_alert: boolean(),
           prev_predictions: [Predictions.Prediction.t()],
-          uses_shuttles: boolean()
+          uses_shuttles: boolean(),
+          pa_message_plays: %{integer() => DateTime.t()}
         }
 
   def start_link(%{"type" => "realtime"} = config) do
@@ -116,7 +118,8 @@ defmodule Signs.Realtime do
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       read_period_seconds: 240,
       headway_stop_id: Map.get(config, "headway_stop_id"),
-      uses_shuttles: Map.get(config, "uses_shuttles", true)
+      uses_shuttles: Map.get(config, "uses_shuttles", true),
+      pa_message_plays: %{}
     }
 
     GenServer.start_link(__MODULE__, sign, name: :"Signs/#{sign.id}")
@@ -127,6 +130,15 @@ defmodule Signs.Realtime do
     # the whole app, allowing some resilience against temporary external failures.
     Process.send_after(self(), :run_loop, 5000)
     {:ok, sign}
+  end
+
+  def handle_info({:play_pa_message, pa_message}, sign) do
+    pa_message_plays =
+      Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign, fn ->
+        Signs.Utilities.Audio.send_audio(sign, [pa_message])
+      end)
+
+    {:noreply, %{sign | pa_message_plays: pa_message_plays}}
   end
 
   def handle_info(:run_loop, sign) do

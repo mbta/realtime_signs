@@ -11,4 +11,5 @@ config :realtime_signs,
   external_config_getter: Fake.ExternalConfig.Local,
   sign_config_file: "priv/config.json",
   aws_client: Fake.ExAws,
-  s3_client: Fake.ExAws
+  s3_client: Fake.ExAws,
+  screenplay_base_url: "fake-screenplay.com"

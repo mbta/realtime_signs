@@ -128,6 +128,116 @@ defmodule Fake.HTTPoison do
      }}
   end
 
+  def mock_response("https://screenplay-fake.mbtace.com/api/pa-messages/active") do
+    response = [
+      %{
+        "alert_id" => nil,
+        "audio_text" =>
+          "This is an example of a PA message that will be played at an MBTA station",
+        "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
+        "end_time" => "2033-12-05T23:53:23Z",
+        "id" => 4,
+        "inserted_at" => "2024-06-03T18:33:31Z",
+        "interval_in_minutes" => 2,
+        "message_type" => nil,
+        "paused" => nil,
+        "priority" => 1,
+        "saved" => nil,
+        "sign_ids" => [],
+        "start_time" => "2024-06-03T18:33:23Z",
+        "updated_at" => "2024-06-03T18:33:31Z",
+        "visual_text" =>
+          "This is an example of a PA message that will be played at an MBTA station"
+      },
+      %{
+        "alert_id" => nil,
+        "audio_text" => "This is another PA message that will play at MBTA stations",
+        "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
+        "end_time" => "2027-08-05T05:41:10Z",
+        "id" => 5,
+        "inserted_at" => "2024-06-03T19:54:40Z",
+        "interval_in_minutes" => 3,
+        "message_type" => nil,
+        "paused" => nil,
+        "priority" => 1,
+        "saved" => nil,
+        "sign_ids" => [],
+        "start_time" => "2024-06-03T19:54:30Z",
+        "updated_at" => "2024-06-03T19:54:40Z",
+        "visual_text" => "This is another PA message that will play at MBTA stations"
+      }
+    ]
+
+    {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(response)}}
+  end
+
+  def mock_response("https://screenplay-fake.mbtace.com/api/pa-messages/no-longer-active") do
+    response = [
+      %{
+        "alert_id" => nil,
+        "audio_text" => "This is another PA message that will play at MBTA stations",
+        "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
+        "end_time" => "2027-08-05T05:41:10Z",
+        "id" => 5,
+        "inserted_at" => "2024-06-03T19:54:40Z",
+        "interval_in_minutes" => 2,
+        "message_type" => nil,
+        "paused" => nil,
+        "priority" => 1,
+        "saved" => nil,
+        "sign_ids" => [],
+        "start_time" => "2024-06-03T19:54:30Z",
+        "updated_at" => "2024-06-03T19:54:40Z",
+        "visual_text" => "This is another PA message that will play at MBTA stations"
+      }
+    ]
+
+    {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(response)}}
+  end
+
+  def mock_response("https://screenplay-fake.mbtace.com/api/pa-messages/changed-interval") do
+    response = [
+      %{
+        "alert_id" => nil,
+        "audio_text" =>
+          "This is an example of a PA message that will be played at an MBTA station",
+        "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
+        "end_time" => "2033-12-05T23:53:23Z",
+        "id" => 4,
+        "inserted_at" => "2024-06-03T18:33:31Z",
+        "interval_in_minutes" => 1,
+        "message_type" => nil,
+        "paused" => nil,
+        "priority" => 1,
+        "saved" => nil,
+        "sign_ids" => [],
+        "start_time" => "2024-06-03T18:33:23Z",
+        "updated_at" => "2024-06-03T18:33:31Z",
+        "visual_text" =>
+          "This is an example of a PA message that will be played at an MBTA station"
+      },
+      %{
+        "alert_id" => nil,
+        "audio_text" => "This is another PA message that will play at MBTA stations",
+        "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
+        "end_time" => "2027-08-05T05:41:10Z",
+        "id" => 5,
+        "inserted_at" => "2024-06-03T19:54:40Z",
+        "interval_in_minutes" => 1,
+        "message_type" => nil,
+        "paused" => nil,
+        "priority" => 1,
+        "saved" => nil,
+        "sign_ids" => [],
+        "start_time" => "2024-06-03T19:54:30Z",
+        "updated_at" => "2024-06-03T19:54:40Z",
+        "visual_text" => "This is another PA message that will play at MBTA stations"
+      }
+    ]
+
+    {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(response)}}
+  end
+
   def mock_response("fake_trip_update2.json") do
     feed_message =
       %{

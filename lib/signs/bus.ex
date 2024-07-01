@@ -35,7 +35,8 @@ defmodule Signs.Bus do
     :prev_bridge_status,
     :current_messages,
     :last_update,
-    :last_read_time
+    :last_read_time,
+    :pa_message_plays
   ]
   defstruct @enforce_keys
 
@@ -63,7 +64,8 @@ defmodule Signs.Bus do
           prev_bridge_status: nil | map(),
           current_messages: tuple(),
           last_update: nil | DateTime.t(),
-          last_read_time: DateTime.t()
+          last_read_time: DateTime.t(),
+          pa_message_plays: %{integer() => DateTime.t()}
         }
 
   def start_link(sign) do
@@ -91,7 +93,8 @@ defmodule Signs.Bus do
       prev_bridge_status: nil,
       current_messages: {nil, nil},
       last_update: nil,
-      last_read_time: Timex.now()
+      last_read_time: Timex.now(),
+      pa_message_plays: %{}
     }
 
     GenServer.start_link(__MODULE__, state, name: :"Signs/#{state.id}")
@@ -125,6 +128,16 @@ defmodule Signs.Bus do
   @type content_values ::
           {messages :: [Content.Message.value()], audios :: [Content.Audio.value()],
            tts_audios :: [Content.Audio.tts_value()]}
+
+  @impl true
+  def handle_info({:play_pa_message, pa_message}, sign) do
+    pa_message_plays =
+      Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign, fn ->
+        send_audio([Content.Audio.to_params(pa_message)], sign)
+      end)
+
+    {:noreply, %{sign | pa_message_plays: pa_message_plays}}
+  end
 
   @impl true
   def handle_info(:run_loop, state) do

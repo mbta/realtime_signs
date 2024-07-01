@@ -51,7 +51,8 @@ defmodule Signs.RealtimeTest do
     sign_updater: PaEss.Updater.Mock,
     last_update: @fake_time,
     tick_read: 1,
-    read_period_seconds: 100
+    read_period_seconds: 100,
+    pa_message_plays: %{}
   }
 
   @mezzanine_sign %{
@@ -1768,6 +1769,69 @@ defmodule Signs.RealtimeTest do
       )
 
       Signs.Realtime.handle_info(:run_loop, sign)
+    end
+  end
+
+  describe "PA messages" do
+    setup do
+      stub(Engine.Config.Mock, :sign_config, fn _ -> :auto end)
+      stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
+      stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+      stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
+      stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
+      stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> false end)
+      stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ -> %{} end)
+
+      stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
+        datetime(~T[05:00:00])
+      end)
+
+      :ok
+    end
+
+    test "Plays message if no prior plays" do
+      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}], [
+        {"A PA Message", [{"A PA Message", "", 3}]}
+      ])
+
+      pa_message = %PaMessages.PaMessage{
+        id: 1,
+        visual_text: "A PA Message",
+        audio_text: "A PA Message"
+      }
+
+      Signs.Realtime.handle_info({:play_pa_message, pa_message}, @sign)
+    end
+
+    test "Plays message if interval has passed" do
+      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}], [
+        {"A PA Message", [{"A PA Message", "", 3}]}
+      ])
+
+      pa_message = %PaMessages.PaMessage{
+        id: 1,
+        visual_text: "A PA Message",
+        audio_text: "A PA Message",
+        interval_in_ms: 120_000
+      }
+
+      sign = %{@sign | pa_message_plays: %{1 => ~U[2024-06-10 12:00:00.000Z]}}
+
+      Signs.Realtime.handle_info({:play_pa_message, pa_message}, sign)
+    end
+
+    test "Does not play if less than interval has passed" do
+      pa_message = %PaMessages.PaMessage{
+        id: 1,
+        visual_text: "A PA Message",
+        audio_text: "A PA Message",
+        interval_in_ms: 120_000
+      }
+
+      sign = %{@sign | pa_message_plays: %{1 => DateTime.utc_now()}}
+
+      Signs.Realtime.handle_info({:play_pa_message, pa_message}, sign)
     end
   end
 

@@ -402,4 +402,36 @@ defmodule Signs.Utilities.Audio do
       end)
     )
   end
+
+  @spec handle_pa_message_play(
+          PaMessages.PaMessage.t(),
+          Signs.Realtime.t() | Signs.Bus.t(),
+          function()
+        ) :: %{
+          integer() => DateTime.t()
+        }
+  def handle_pa_message_play(
+        pa_message,
+        %{id: sign_id, pa_message_plays: pa_message_plays},
+        send_audio_fn
+      ) do
+    case Map.get(pa_message_plays, pa_message.id) do
+      nil ->
+        send_pa_message(pa_message, pa_message_plays, sign_id, send_audio_fn)
+
+      last_sent ->
+        if DateTime.diff(DateTime.utc_now(), last_sent, :millisecond) >= pa_message.interval_in_ms do
+          send_pa_message(pa_message, pa_message_plays, sign_id, send_audio_fn)
+        else
+          Logger.warn("pa_message: action=skipped id=#{pa_message.id} destination=#{sign_id}")
+          pa_message_plays
+        end
+    end
+  end
+
+  defp send_pa_message(pa_message, pa_message_plays, sign_id, send_audio_fn) do
+    Logger.info("pa_message: action=send id=#{pa_message.id} destination=#{sign_id}")
+    send_audio_fn.()
+    Map.put(pa_message_plays, pa_message.id, DateTime.utc_now())
+  end
 end
