@@ -71,6 +71,7 @@ defmodule Signs.BusTest do
   defmodule FakeConfig do
     def sign_config("auto_sign"), do: :auto
     def sign_config("off_sign"), do: :off
+    def sign_config("headway"), do: :headway
     def sign_config("static_sign"), do: {:static_text, {"custom", "message"}}
     def chelsea_bridge_config(), do: :auto
   end
@@ -252,6 +253,18 @@ defmodule Signs.BusTest do
         Map.merge(@sign_state, %{
           id: "off_sign",
           configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}]
+        })
+
+      Signs.Bus.handle_info(:run_loop, state)
+    end
+
+    test "SL headway mode" do
+      expect_messages(["", ""])
+
+      state =
+        Map.merge(@sign_state, %{
+          id: "headway",
+          configs: [%{sources: [%{stop_id: "stop1", route_id: "741", direction_id: 0}]}]
         })
 
       Signs.Bus.handle_info(:run_loop, state)
