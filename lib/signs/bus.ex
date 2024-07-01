@@ -133,7 +133,11 @@ defmodule Signs.Bus do
   def handle_info({:play_pa_message, pa_message}, sign) do
     pa_message_plays =
       Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign, fn ->
-        send_audio([Content.Audio.to_params(pa_message)], sign)
+        send_audio(
+          [Content.Audio.to_params(pa_message)],
+          [Content.Audio.to_tts(pa_message)],
+          sign
+        )
       end)
 
     {:noreply, %{sign | pa_message_plays: pa_message_plays}}
