@@ -470,7 +470,8 @@ defmodule PaEss.Utilities do
     {"Waltham", ["Waltham"]},
     {"Haymarket", ["Haymrkt", "Haymarkt", "Haymarket"]},
     {"Silver Line Way", ["Slvr Ln Way"]},
-    {"Gallivan Blvd", ["Gallivn", "Gallivan"]}
+    {"Gallivan Blvd", ["Gallivn", "Gallivan"]},
+    {"Cobbs Corner Canton", ["Canton"]}
   ]
 
   @spec headsign_abbreviations(String.t() | nil) :: [String.t()]
@@ -596,7 +597,8 @@ defmodule PaEss.Utilities do
     {"Chelsea", "860"},
     {"Gallivan Blvd", "881"},
     {"Brookline Ave", "885"},
-    {"Brookline Village", "886"}
+    {"Brookline Village", "886"},
+    {"Cobbs Corner Canton", "887"}
   ]
 
   @route_take_lookup %{
@@ -654,7 +656,8 @@ defmodule PaEss.Utilities do
     "226" => "809",
     "230" => "810",
     "236" => "811",
-    "245" => "628"
+    "245" => "628",
+    "716" => "888"
   }
 
   @atom_take_lookup %{

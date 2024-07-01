@@ -5757,7 +5757,7 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
+          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }

@@ -38,7 +38,7 @@ defmodule RealtimeSigns.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:dialyxir, "~> 1.3.0", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4.3", only: [:dev, :test], runtime: false},
       {:ehmon, git: "https://github.com/mbta/ehmon.git"},
       {:ex_aws_s3, "~> 2.0"},
       {:ex_aws, "~> 2.0"},
@@ -47,11 +47,11 @@ defmodule RealtimeSigns.Mixfile do
       {:gen_stage, "~> 1.2"},
       {:httpoison, "~> 1.0"},
       {:jason, "~> 1.4.0"},
-      {:logger_splunk_backend, "~> 2.0"},
-      {:mox, "~> 1.0.0", only: [:test]},
+      {:logger_splunk_backend, "~> 3.0"},
+      {:mox, "~> 1.1.0", only: [:test]},
       {:sentry, "~> 8.0"},
       {:recon, "~> 2.5"},
-      {:stream_data, "~> 0.1", only: [:dev, :test]},
+      {:stream_data, "~> 1.1", only: [:dev, :test]},
       {:timex, "~> 3.1"},
       {:uuid, "~> 1.1", only: :test},
       {:quantum, "~> 3.0"},

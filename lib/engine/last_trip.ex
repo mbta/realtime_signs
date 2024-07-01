@@ -5,7 +5,7 @@ defmodule Engine.LastTrip do
 
   @recent_departures_table :recent_departures
   @last_trips_table :last_trips
-  @hour_in_seconds 3600
+  @timezone "America/New_York"
 
   @type state :: %{
           recent_departures: :ets.tab(),
@@ -42,7 +42,7 @@ defmodule Engine.LastTrip do
 
   @impl true
   def init(_) do
-    schedule_clean(self())
+    schedule_loop(self())
 
     state = %{
       recent_departures: @recent_departures_table,
@@ -90,39 +90,24 @@ defmodule Engine.LastTrip do
   end
 
   @impl true
-  def handle_info(:clean_old_data, state) do
-    schedule_clean(self())
-    clean_last_trips(state)
-    clean_recent_departures(state)
+  def handle_info(:loop, state) do
+    schedule_loop(self())
+
+    {:ok, current_time_est} = DateTime.utc_now() |> DateTime.shift_zone(@timezone)
+
+    if current_time_est.hour == 3 and current_time_est.minute >= 30 do
+      clean_tables(state)
+    end
 
     {:noreply, state}
   end
 
-  defp clean_last_trips(state) do
-    :ets.tab2list(state.last_trips)
-    |> Enum.each(fn {trip_id, timestamp} ->
-      if Timex.diff(Timex.now(), timestamp, :seconds) > @hour_in_seconds * 2 do
-        :ets.delete(state.last_trips, trip_id)
-      end
-    end)
+  defp clean_tables(state) do
+    :ets.delete_all_objects(state.last_trips)
+    :ets.delete_all_objects(state.recent_departures)
   end
 
-  defp clean_recent_departures(state) do
-    current_time = Timex.now()
-
-    :ets.tab2list(state.recent_departures)
-    |> Enum.each(fn {key, departures} ->
-      departures_within_last_hour =
-        Map.filter(departures, fn {_, departed_time} ->
-          DateTime.to_unix(current_time) - DateTime.to_unix(departed_time) <=
-            @hour_in_seconds * 1.5
-        end)
-
-      :ets.insert(state.recent_departures, {key, departures_within_last_hour})
-    end)
-  end
-
-  defp schedule_clean(pid) do
-    Process.send_after(pid, :clean_old_data, 1_000)
+  defp schedule_loop(pid) do
+    Process.send_after(pid, :loop, 1_000)
   end
 end
