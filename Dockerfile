@@ -26,6 +26,7 @@ COPY lib lib
 COPY priv priv
 
 COPY config/runtime.exs config/runtime.exs
+RUN mix sentry.package_source_code
 RUN mix release linux
 
 # The one the elixir image was built with
