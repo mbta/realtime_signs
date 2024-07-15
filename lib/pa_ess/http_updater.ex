@@ -84,7 +84,7 @@ defmodule PaEss.HttpUpdater do
       top_line: inspect(top_line),
       bottom_line: inspect(bottom_line),
       sign_id: sign_id,
-      message_type:
+      current_config:
         case Engine.Config.sign_config(sign_id) do
           type when is_atom(type) -> type
           tuple when is_tuple(tuple) -> elem(tuple, 0)
