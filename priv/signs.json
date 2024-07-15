@@ -1,5 +1,52 @@
 [
   {
+    "id": "lab_test",
+    "type": "realtime",
+    "pa_ess_loc": "201",
+    "scu_id": "TBR01",
+    "read_loop_offset": 120,
+    "text_zone": "m",
+    "audio_zones": [
+      "m"
+    ],
+    "source_config": [
+      {
+        "headway_group": "blue_trunk",
+        "headway_direction_name": "Wonderland",
+        "sources": [
+          {
+            "stop_id": "70042",
+            "routes": [
+              "Blue"
+            ],
+            "direction_id": 1,
+            "platform": null,
+            "terminal": false,
+            "announce_arriving": true,
+            "announce_boarding": false
+          }
+        ]
+      },
+      {
+        "headway_group": "blue_trunk",
+        "headway_direction_name": "Bowdoin",
+        "sources": [
+          {
+            "stop_id": "70041",
+            "routes": [
+              "Blue"
+            ],
+            "direction_id": 0,
+            "platform": null,
+            "terminal": false,
+            "announce_arriving": true,
+            "announce_boarding": false
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "cedar_grove_outbound",
     "type": "realtime",
     "pa_ess_loc": "MCED",
