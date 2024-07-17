@@ -146,11 +146,26 @@ defmodule Signs.Realtime do
   end
 
   def handle_info(:run_loop, sign) do
-    sign_stop_ids = SourceConfig.sign_stop_ids(sign.source_config)
-    sign_routes = SourceConfig.sign_routes(sign.source_config)
-    alert_status = sign.alerts_engine.max_stop_status(sign_stop_ids, sign_routes)
     sign_config = sign.config_engine.sign_config(sign.id, sign.default_mode)
     current_time = sign.current_time_fn.()
+
+    alert_status =
+      case sign.source_config do
+        {top, bottom} ->
+          top_alert_status = get_alert_status_for_source_config(top, sign.alerts_engine)
+          bottom_alert_status = get_alert_status_for_source_config(bottom, sign.alerts_engine)
+
+          {top_alert_status, bottom_alert_status}
+
+        source_config ->
+          alert_status = get_alert_status_for_source_config(source_config, sign.alerts_engine)
+
+          alert_status
+      end
+      |> then(fn
+        {alert_status, alert_status} -> alert_status
+        alert_status -> alert_status
+      end)
 
     first_scheduled_departures =
       case sign.source_config do
@@ -164,8 +179,9 @@ defmodule Signs.Realtime do
           }
 
         source ->
-          {sign.headway_engine.get_first_scheduled_departure(sign_stop_ids),
-           source.headway_destination}
+          {sign.headway_engine.get_first_scheduled_departure(
+             SourceConfig.sign_stop_ids(sign.source_config)
+           ), source.headway_destination}
       end
 
     prev_predictions_lookup =
@@ -289,5 +305,13 @@ defmodule Signs.Realtime do
   @spec decrement_ticks(Signs.Realtime.t()) :: Signs.Realtime.t()
   def decrement_ticks(sign) do
     %{sign | tick_read: sign.tick_read - 1}
+  end
+
+  defp get_alert_status_for_source_config(config, alerts_engine) do
+    stop_ids = SourceConfig.sign_stop_ids(config)
+    routes = SourceConfig.sign_routes(config)
+    alert_status = alerts_engine.max_stop_status(stop_ids, routes)
+
+    alert_status
   end
 end
