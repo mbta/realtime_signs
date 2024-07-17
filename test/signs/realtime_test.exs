@@ -275,6 +275,7 @@ defmodule Signs.RealtimeTest do
 
     test "multi-route mezzanine sign with alert" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
       expect_messages({"No train service", ""})
 
       expect_audios([{:canned, {"107", ["861", "21000", "864", "21000", "863"], :audio}}], [
