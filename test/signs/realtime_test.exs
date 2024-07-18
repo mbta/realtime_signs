@@ -109,7 +109,7 @@ defmodule Signs.RealtimeTest do
 
   describe "run loop" do
     setup do
-      stub(Engine.Config.Mock, :sign_config, fn _ -> :auto end)
+      stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
       stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
       stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
@@ -214,7 +214,10 @@ defmodule Signs.RealtimeTest do
     end
 
     test "when custom text is present, display it, overriding alerts" do
-      expect(Engine.Config.Mock, :sign_config, fn _ -> {:static_text, {"custom", "message"}} end)
+      expect(Engine.Config.Mock, :sign_config, fn _, _ ->
+        {:static_text, {"custom", "message"}}
+      end)
+
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
       expect_messages({"custom", "message"})
       expect_audios([{:ad_hoc, {"custom message", :audio}}], [{"custom message", nil}])
@@ -224,9 +227,18 @@ defmodule Signs.RealtimeTest do
     end
 
     test "when sign is disabled, it's empty" do
-      expect(Engine.Config.Mock, :sign_config, fn _ -> :off end)
+      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :off end)
       expect_messages({"", ""})
       Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when sign has a default mode, uses that when the sign has no mode configured" do
+      expect(Engine.Config.Mock, :sign_config, fn _, default -> default end)
+      sign = %{@sign | default_mode: {:static_text, {"default", "message"}}}
+
+      expect_messages({"default", "message"})
+      expect_audios([{:ad_hoc, {"default message", :audio}}], [{"default message", nil}])
+      Signs.Realtime.handle_info(:run_loop, sign)
     end
 
     test "when sign is at a transfer station from a shuttle, and there are no predictions it's empty" do
@@ -329,7 +341,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "when sign is forced into headway mode but no alerts are present, displays headways" do
-      expect(Engine.Config.Mock, :sign_config, fn _ -> :headway end)
+      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
 
       expect(Engine.Config.Mock, :headway_config, fn _, _ ->
         %{@headway_config | range_high: 14}
@@ -344,7 +356,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "when sign is forced into headway mode but alerts are present, alert takes precedence" do
-      expect(Engine.Config.Mock, :sign_config, fn _ -> :headway end)
+      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :ashmont, arrival: 120)]
@@ -961,7 +973,10 @@ defmodule Signs.RealtimeTest do
     end
 
     test "reads custom messages" do
-      expect(Engine.Config.Mock, :sign_config, fn _ -> {:static_text, {"custom", "message"}} end)
+      expect(Engine.Config.Mock, :sign_config, fn _, _ ->
+        {:static_text, {"custom", "message"}}
+      end)
+
       expect_messages({"custom", "message"})
       expect_audios([{:ad_hoc, {"custom message", :audio}}], [{"custom message", nil}])
 
@@ -1574,7 +1589,7 @@ defmodule Signs.RealtimeTest do
 
   describe "Union Sq alert messaging" do
     setup do
-      stub(Engine.Config.Mock, :sign_config, fn _ -> :auto end)
+      stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
       stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_transfer_station end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> false end)
@@ -1606,7 +1621,7 @@ defmodule Signs.RealtimeTest do
 
   describe "Last Trip of the Day" do
     setup do
-      stub(Engine.Config.Mock, :sign_config, fn _ -> :auto end)
+      stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
       stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> true end)
@@ -1774,7 +1789,7 @@ defmodule Signs.RealtimeTest do
 
   describe "PA messages" do
     setup do
-      stub(Engine.Config.Mock, :sign_config, fn _ -> :auto end)
+      stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
       stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
       stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)

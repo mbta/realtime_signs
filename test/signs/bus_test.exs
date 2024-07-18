@@ -69,10 +69,10 @@ defmodule Signs.BusTest do
   end
 
   defmodule FakeConfig do
-    def sign_config("auto_sign"), do: :auto
-    def sign_config("off_sign"), do: :off
-    def sign_config("headway"), do: :headway
-    def sign_config("static_sign"), do: {:static_text, {"custom", "message"}}
+    def sign_config("auto_sign", _default), do: :auto
+    def sign_config("off_sign", _default), do: :off
+    def sign_config("headway", _default), do: :headway
+    def sign_config("static_sign", _default), do: {:static_text, {"custom", "message"}}
     def chelsea_bridge_config(), do: :auto
   end
 

@@ -45,6 +45,7 @@ defmodule Signs.Realtime do
                 announced_stalls: [],
                 announced_custom_text: nil,
                 announced_alert: false,
+                default_mode: :off,
                 prev_prediction_keys: nil,
                 prev_predictions: [],
                 uses_shuttles: true,
@@ -64,6 +65,7 @@ defmodule Signs.Realtime do
           text_zone: String.t(),
           audio_zones: [String.t()],
           source_config: SourceConfig.config() | {SourceConfig.config(), SourceConfig.config()},
+          default_mode: Engine.Config.sign_config(),
           current_content_top: Content.Message.value(),
           current_content_bottom: Content.Message.value(),
           prediction_engine: module(),
@@ -101,6 +103,8 @@ defmodule Signs.Realtime do
       text_zone: Map.fetch!(config, "text_zone"),
       audio_zones: Map.fetch!(config, "audio_zones"),
       source_config: source_config,
+      default_mode:
+        config |> Map.get("default_mode") |> then(&if(&1 == "auto", do: :auto, else: :off)),
       current_content_top: "",
       current_content_bottom: "",
       prediction_engine: Engine.Predictions,
@@ -145,7 +149,7 @@ defmodule Signs.Realtime do
     sign_stop_ids = SourceConfig.sign_stop_ids(sign.source_config)
     sign_routes = SourceConfig.sign_routes(sign.source_config)
     alert_status = sign.alerts_engine.max_stop_status(sign_stop_ids, sign_routes)
-    sign_config = sign.config_engine.sign_config(sign.id)
+    sign_config = sign.config_engine.sign_config(sign.id, sign.default_mode)
     current_time = sign.current_time_fn.()
 
     first_scheduled_departures =
