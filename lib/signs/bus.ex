@@ -38,7 +38,7 @@ defmodule Signs.Bus do
     :last_read_time,
     :pa_message_plays
   ]
-  defstruct @enforce_keys
+  defstruct @enforce_keys ++ [default_mode: :off]
 
   @type t :: %__MODULE__{
           id: String.t(),
@@ -47,6 +47,7 @@ defmodule Signs.Bus do
           text_zone: String.t(),
           audio_zones: [String.t()],
           max_minutes: integer(),
+          default_mode: Engine.Config.sign_config(),
           configs: list(),
           top_configs: list(),
           bottom_configs: list(),
@@ -149,6 +150,7 @@ defmodule Signs.Bus do
 
     %__MODULE__{
       id: id,
+      default_mode: default_mode,
       configs: configs,
       config_engine: config_engine,
       prediction_engine: prediction_engine,
@@ -158,7 +160,7 @@ defmodule Signs.Bus do
     } = state
 
     # Fetch the data we need to compute the updated sign content.
-    config = config_engine.sign_config(id)
+    config = config_engine.sign_config(id, default_mode)
     bridge_enabled? = config_engine.chelsea_bridge_config() == :auto
     bridge_status = bridge_engine.bridge_status()
     current_time = Timex.now()

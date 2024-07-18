@@ -10,11 +10,21 @@ defmodule PaEss.Updater do
           scu_id: scu_id,
           pa_ess_loc: pa_ess_loc,
           text_zone: text_zone,
+          default_mode: default_mode,
           config_engine: config_engine
         },
         top,
         bottom
       ) do
+    log_config =
+      case config_engine.sign_config(id, default_mode) do
+        mode when is_atom(mode) -> mode
+        mode when is_tuple(mode) -> elem(mode, 0)
+        _ -> nil
+      end
+
+    log_meta = [sign_id: id, current_config: log_config]
+
     if config_engine.scu_migrated?(scu_id) do
       pages = zip_pages(top, bottom)
 
@@ -26,10 +36,10 @@ defmodule PaEss.Updater do
            visual_data: format_pages(pages),
            expiration: 180,
            tag: nil
-         }, [sign_id: id, visual: inspect(pages)]}
+         }, [visual: inspect(pages)] ++ log_meta}
       )
     else
-      MessageQueue.update_sign({pa_ess_loc, text_zone}, top, bottom, 180, :now, id)
+      MessageQueue.update_sign({pa_ess_loc, text_zone}, top, bottom, 180, :now, log_meta)
     end
   end
 
@@ -44,8 +54,10 @@ defmodule PaEss.Updater do
         },
         audios,
         tts_audios,
-        extra_logs
+        log_metas
       ) do
+    log_metas = Enum.map(log_metas, fn log_meta -> [{:sign_id, id} | log_meta] end)
+
     if config_engine.scu_migrated?(scu_id) do
       Task.Supervisor.start_child(PaEss.TaskSupervisor, fn ->
         files =
@@ -54,8 +66,8 @@ defmodule PaEss.Updater do
           end)
           |> Task.await_many()
 
-        Enum.zip([files, tts_audios, extra_logs])
-        |> Enum.each(fn {file, {text, pages}, logs} ->
+        Enum.zip([files, tts_audios, log_metas])
+        |> Enum.each(fn {file, {text, pages}, log_meta} ->
           PaEss.ScuQueue.enqueue_message(
             scu_id,
             {:message, scu_id,
@@ -66,12 +78,12 @@ defmodule PaEss.Updater do
                audio_data: [Base.encode64(file)],
                expiration: 30,
                tag: nil
-             }, [sign_id: id, audio: inspect(text), visual: inspect(pages)] ++ logs}
+             }, [audio: inspect(text), visual: inspect(pages)] ++ log_meta}
           )
         end)
       end)
     else
-      MessageQueue.send_audio({pa_ess_loc, audio_zones}, audios, 5, 60, id, extra_logs)
+      MessageQueue.send_audio({pa_ess_loc, audio_zones}, audios, 5, 60, log_metas)
     end
   end
 

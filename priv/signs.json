@@ -4,6 +4,7 @@
     "type": "realtime",
     "pa_ess_loc": "201",
     "scu_id": "TBR01",
+    "default_mode": "auto",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
