@@ -146,39 +146,18 @@ defmodule Signs.Realtime do
     current_time = sign.current_time_fn.()
 
     alert_status =
-      case sign.source_config do
-        {top, bottom} ->
-          top_alert_status = get_alert_status_for_source_config(top, sign.alerts_engine)
-          bottom_alert_status = get_alert_status_for_source_config(bottom, sign.alerts_engine)
-
-          {top_alert_status, bottom_alert_status}
-
-        source_config ->
-          alert_status = get_alert_status_for_source_config(source_config, sign.alerts_engine)
-
-          alert_status
-      end
-      |> then(fn
-        {alert_status, alert_status} -> alert_status
-        alert_status -> alert_status
-      end)
+      sign.source_config
+      |> SourceConfig.map(&get_alert_status_for_source_config(&1, sign.alerts_engine))
+      |> SourceConfig.simplify()
 
     first_scheduled_departures =
-      case sign.source_config do
-        {top, bottom} ->
-          {
-            {sign.headway_engine.get_first_scheduled_departure(SourceConfig.sign_stop_ids(top)),
-             top.headway_destination},
-            {sign.headway_engine.get_first_scheduled_departure(
-               SourceConfig.sign_stop_ids(bottom)
-             ), bottom.headway_destination}
-          }
-
-        source ->
-          {sign.headway_engine.get_first_scheduled_departure(
-             SourceConfig.sign_stop_ids(sign.source_config)
-           ), source.headway_destination}
-      end
+      sign.source_config
+      |> SourceConfig.map(
+        &{
+          sign.headway_engine.get_first_scheduled_departure(SourceConfig.sign_stop_ids(&1)),
+          &1.headway_destination
+        }
+      )
 
     prev_predictions_lookup =
       for prediction <- sign.prev_predictions, into: %{} do
@@ -198,14 +177,7 @@ defmodule Signs.Realtime do
       end
 
     service_end_statuses_per_source =
-      case sign.source_config do
-        {top_source, bottom_source} ->
-          {has_service_ended_for_source?(sign, top_source, current_time),
-           has_service_ended_for_source?(sign, bottom_source, current_time)}
-
-        source ->
-          has_service_ended_for_source?(sign, source, current_time)
-      end
+      SourceConfig.map(sign.source_config, &has_service_ended_for_source?(sign, &1, current_time))
 
     {new_top, new_bottom} =
       Utilities.Messages.get_messages(
