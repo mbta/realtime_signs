@@ -205,14 +205,24 @@ defmodule Signs.Utilities.Messages do
     end
   end
 
+  @spec get_alert_messages(
+          Engine.Alerts.Fetcher.stop_status()
+          | {Engine.Alerts.Fetcher.stop_status(), Engine.Alerts.Fetcher.stop_status()},
+          Signs.Realtime.t()
+        ) ::
+          Signs.Realtime.sign_messages() | nil
+  defp get_alert_messages({top_alert_status, bottom_alert_status}, sign) do
+    top_alert_status
+    |> Engine.Alerts.Fetcher.higher_priority_status(bottom_alert_status)
+    |> get_alert_messages(sign)
+  end
+
   defp get_alert_messages(alert_status, %{pa_ess_loc: "GUNS"}) do
     if alert_status in [:none, :alert_along_route],
       do: nil,
       else: {%Alert.NoService{}, %Alert.UseRoutes{}}
   end
 
-  @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status(), Signs.Realtime.t()) ::
-          Signs.Realtime.sign_messages() | nil
   defp get_alert_messages(alert_status, sign) do
     sign_routes = Signs.Utilities.SourceConfig.sign_routes(sign.source_config)
 
