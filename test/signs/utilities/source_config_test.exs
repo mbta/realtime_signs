@@ -1,5 +1,6 @@
 defmodule Signs.Utilities.SourceConfigTest do
   use ExUnit.Case, async: true
+  doctest Signs.Utilities.SourceConfig
 
   alias Signs.Utilities.SourceConfig
 
@@ -35,7 +36,7 @@ defmodule Signs.Utilities.SourceConfigTest do
   [
     {
       "headway_group": "headway_group",
-      "headway_direction_name": "Southbound",
+      "headway_direction_name": "Northbound",
       "sources": [
         {
           "stop_id": "123",
@@ -131,7 +132,7 @@ defmodule Signs.Utilities.SourceConfigTest do
                {
                  %{
                    headway_group: "headway_group",
-                   headway_destination: :southbound,
+                   headway_destination: :northbound,
                    sources: [
                      %SourceConfig{
                        stop_id: "123",
@@ -214,6 +215,21 @@ defmodule Signs.Utilities.SourceConfigTest do
                |> SourceConfig.parse!()
                |> SourceConfig.sign_routes() == ["Foo", "Bar"]
       end)
+    end
+  end
+
+  describe "map/2" do
+    test "applies the function to a single source config value" do
+      source_config = @one_source_json |> Jason.decode!() |> SourceConfig.parse!()
+
+      assert :southbound == SourceConfig.map(source_config, & &1[:headway_destination])
+    end
+
+    test "applies the function to both source config values in a two config tuple" do
+      source_config = @two_source_json |> Jason.decode!() |> SourceConfig.parse!()
+
+      assert {:northbound, :southbound} ==
+               SourceConfig.map(source_config, & &1[:headway_destination])
     end
   end
 end

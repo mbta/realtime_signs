@@ -218,4 +218,40 @@ defmodule Signs.Utilities.SourceConfig do
       &(&1.stop_id == stop_id and &1.direction_id == direction_id)
     )
   end
+
+  @doc """
+  Maps a function over a source config value or a 2-tuple of top and bottom
+  source config values.
+  """
+  @spec map({config(), config()}, (config() -> any())) :: {any(), any()}
+  @spec map(config(), (config() -> any())) :: any()
+  def map({top, bottom}, fun), do: {fun.(top), fun.(bottom)}
+  def map(config, fun), do: fun.(config)
+
+  @doc """
+  Potentially simplies 2-tuples where each element is the same into a single
+  unwrapped (non-tuple) value. Otherwise returns the passed value unchanged.
+
+  ## Examples
+
+      # Returns a single value if the elements are the same
+      iex> Signs.Utilities.SourceConfig.simplify({1, 1})
+      1
+
+      # Returns a 2-tuple as-is if the elements are not the same
+      iex> Signs.Utilities.SourceConfig.simplify({1, 2})
+      {1, 2}
+
+      # Passes through non-tuple values
+      iex> Signs.Utilities.SourceConfig.simplify(2)
+      2
+
+      # Does not simplify other tuple sizes
+      iex> Signs.Utilities.SourceConfig.simplify({1, 1, 1})
+      {1, 1, 1}
+
+  """
+  @spec simplify(any() | {any(), any()}) :: any() | {any(), any()}
+  def simplify({el, el}), do: el
+  def simplify(el), do: el
 end
