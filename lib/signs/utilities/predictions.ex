@@ -47,10 +47,9 @@ defmodule Signs.Utilities.Predictions do
       {if terminal_prediction?(prediction, sources) do
          0
        else
-         case prediction.stops_away do
-           0 -> 0
-           _ -> 1
-         end
+         if prediction.stopped_at_predicted_stop?,
+           do: 0,
+           else: 1
        end, prediction.seconds_until_departure, prediction.seconds_until_arrival}
     end)
     |> filter_large_red_line_gaps()

@@ -17,7 +17,6 @@ export API_V3_URL=https://api-dev-green.mbtace.com
 #export CHELSEA_BRIDGE_URL=
 #export CHELSEA_BRIDGE_AUTH=
 
-# URLs of the enhanced trip-update and vehicle-position feeds. Default to the real feed URLs if
-# not set here.
-#export TRIP_UPDATE_URL=
-#export VEHICLE_POSITIONS_URL=
+# URLs of the enhanced trip-update and vehicle-position feeds. Required.
+#export TRIP_UPDATE_URL="https://s3.amazonaws.com/mbta-gtfs-s3/concentrate/TripUpdates_enhanced.json"
+#export VEHICLE_POSITIONS_URL="https://s3.amazonaws.com/mbta-gtfs-s3/concentrate/VehiclePositions_enhanced.json"
