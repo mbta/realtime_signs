@@ -287,6 +287,7 @@ defmodule Signs.RealtimeTest do
 
     test "multi-route mezzanine sign with alert" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
       expect_messages({"No train service", ""})
 
       expect_audios([{:canned, {"107", ["861", "21000", "864", "21000", "863"], :audio}}], [
@@ -1571,6 +1572,20 @@ defmodule Signs.RealtimeTest do
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "signs in headway mode with split alert_status will show the first alert" do
+      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
+
+      expect_messages({"No train service", "Use shuttle bus"})
+
+      expect_audios([{:canned, {"199", ["864"], :audio}}], [
+        {"There is no train service at this station. Use shuttle.", nil}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
     end
   end
 
