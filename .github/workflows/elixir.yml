@@ -47,15 +47,5 @@ jobs:
       - name: Check formatting
         run: mix format --check-formatted
       - name: Run tests
-        run: mix test --cover
-      - name: Save PR information
-        run: |
-          echo "${{ github.event.pull_request.number }}" > cover/PR_NUMBER
-          echo "${{ github.event.pull_request.head.sha }}" > cover/PR_SHA
-        if: github.event.pull_request
-      - name: Upload coverage artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: elixir-lcov
-          path: cover/
+        run: mix test
       - uses: mbta/actions/dialyzer@v1
