@@ -481,8 +481,8 @@ defmodule Signs.RealtimeTest do
     test "only the first prediction in a source list can be BRD" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
-          prediction(destination: :mattapan, arrival: 0, stopped: 0, trip_id: "1"),
-          prediction(destination: :mattapan, arrival: 100)
+          prediction(destination: :mattapan, arrival: 0, stops_away: 0, trip_id: "1"),
+          prediction(destination: :mattapan, arrival: 100, stops_away: 1)
         ]
       end)
 
@@ -502,7 +502,7 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
           prediction(destination: :boston_college, arrival: 200),
-          prediction(destination: :cleveland_circle, arrival: 250, stopped: 0)
+          prediction(destination: :cleveland_circle, arrival: 250, stops_away: 0)
         ]
       end)
 
@@ -608,21 +608,21 @@ defmodule Signs.RealtimeTest do
         [
           prediction(
             destination: :riverside,
-            stopped: 0,
+            stops_away: 0,
             seconds_until_arrival: -30,
             seconds_until_departure: 60,
             trip_id: "1"
           ),
           prediction(
             destination: :riverside,
-            stopped: 0,
+            stops_away: 0,
             seconds_until_arrival: -15,
             seconds_until_departure: 75,
             trip_id: "2"
           ),
           prediction(
             destination: :boston_college,
-            stopped: 0,
+            stops_away: 0,
             seconds_until_arrival: nil,
             seconds_until_departure: 60,
             trip_id: "3"
@@ -678,7 +678,7 @@ defmodule Signs.RealtimeTest do
 
     test "reads special boarding button announcement at Bowdoin" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(arrival: 0, destination: :wonderland, stopped: 0)]
+        [prediction(arrival: 0, destination: :wonderland, stops_away: 0)]
       end)
 
       expect_audios(
@@ -1053,7 +1053,7 @@ defmodule Signs.RealtimeTest do
       # special case.
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
-          prediction(destination: :ashmont, arrival: 0, stopped: 0, trip_id: "1"),
+          prediction(destination: :ashmont, arrival: 0, stops_away: 0, trip_id: "1"),
           prediction(destination: :braintree, arrival: 45, trip_id: "2")
         ]
       end)
@@ -1907,14 +1907,8 @@ defmodule Signs.RealtimeTest do
     opts =
       opts ++
         case Keyword.get(opts, :stopped) do
-          nil ->
-            []
-
-          0 ->
-            [stopped_at_predicted_stop: true]
-
-          stops ->
-            [stopped_at_predicted_stop: false, boarding_status: "Stopped #{stops} stop away"]
+          nil -> []
+          stops -> [stops_away: stops, boarding_status: "Stopped #{stops} stop away"]
         end
 
     %Predictions.Prediction{
@@ -1929,7 +1923,8 @@ defmodule Signs.RealtimeTest do
       route_id: Keyword.get(opts, :route_id),
       trip_id: Keyword.get(opts, :trip_id, "123"),
       destination_stop_id: Keyword.get(opts, :destination_stop_id),
-      stopped_at_predicted_stop?: Keyword.get(opts, :stopped_at_predicted_stop, false),
+      stopped?: false,
+      stops_away: Keyword.get(opts, :stops_away, 1),
       boarding_status: Keyword.get(opts, :boarding_status),
       revenue_trip?: true,
       vehicle_id: "v1"
