@@ -65,11 +65,15 @@ defmodule Fake.HTTPoison do
       %{
         "entity" => [
           %{
+            "alert" => nil,
             "id" => "1490783458_32568935",
+            "is_deleted" => false,
             "trip_update" => %{
+              "delay" => nil,
               "stop_time_update" => [
                 %{
                   "arrival" => %{
+                    "delay" => nil,
                     "time" => 1_491_570_120,
                     "uncertainty" => nil
                   },
@@ -80,6 +84,7 @@ defmodule Fake.HTTPoison do
                 },
                 %{
                   "arrival" => %{
+                    "delay" => nil,
                     "time" => 1_491_570_180,
                     "uncertainty" => nil
                   },
@@ -238,17 +243,23 @@ defmodule Fake.HTTPoison do
       %{
         "entity" => [
           %{
+            "alert" => nil,
             "id" => "1490783458_32568935",
+            "is_deleted" => false,
             "trip_update" => %{
+              "delay" => nil,
               "stop_time_update" => [
                 %{
                   "arrival" => %{
+                    "delay" => nil,
                     "time" => 1_491_570_180,
-                    "uncertainty" => 60
+                    "uncertainty" => nil
                   },
                   "departure" => nil,
+                  "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "stop_to_update",
-                  "stop_sequence" => 1
+                  "stop_sequence" => 1,
+                  "stops_away" => 0
                 }
               ],
               "timestamp" => nil,
@@ -258,15 +269,15 @@ defmodule Fake.HTTPoison do
                 "schedule_relationship" => "SCHEDULED",
                 "start_date" => "20170329",
                 "start_time" => nil,
-                "trip_id" => "32568935",
-                "revenue" => true
+                "trip_id" => "32568935"
               },
               "vehicle" => %{
                 "id" => "G-10040",
                 "label" => "3260",
                 "license_plate" => nil
               }
-            }
+            },
+            "vehicle" => nil
           }
         ],
         "header" => %{

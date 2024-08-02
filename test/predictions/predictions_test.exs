@@ -7,32 +7,47 @@ defmodule Predictions.PredictionsTest do
   @feed_message %{
     "entity" => [
       %{
+        "alert" => nil,
         "id" => "1490783458_32568935",
+        "is_deleted" => false,
         "trip_update" => %{
+          "delay" => nil,
           "stop_time_update" => [
             %{
               "arrival" => nil,
               "departure" => nil,
+              "schedule_relationship" => "SKIPPED",
               "stop_id" => "70265",
-              "stop_sequence" => 1
+              "stop_sequence" => 1,
+              "stops_away" => nil,
+              "stopped?" => false,
+              "passthrough_time" => 1_491_570_110
             },
             %{
               "arrival" => nil,
               "departure" => %{
+                "delay" => nil,
                 "time" => 1_491_570_120,
-                "uncertainty" => 60
+                "uncertainty" => nil
               },
+              "schedule_relationship" => "SCHEDULED",
               "stop_id" => "70263",
               "stop_sequence" => 1,
+              "stops_away" => 1,
+              "stopped?" => true,
               "boarding_status" => "Stopped 1 stop away"
             },
             %{
               "arrival" => %{
+                "delay" => nil,
                 "time" => 1_491_570_180,
-                "uncertainty" => 60
+                "uncertainty" => nil
               },
               "departure" => nil,
+              "schedule_relationship" => "SCHEDULED",
               "stop_id" => "70261",
+              "stops_away" => 1,
+              "stopped?" => false,
               "stop_sequence" => 1
             }
           ],
@@ -43,8 +58,7 @@ defmodule Predictions.PredictionsTest do
             "schedule_relationship" => "SCHEDULED",
             "start_date" => "20170329",
             "start_time" => nil,
-            "trip_id" => "32568935",
-            "revenue" => true
+            "trip_id" => "32568935"
           },
           "vehicle" => %{
             "id" => "G-10040",
@@ -69,10 +83,11 @@ defmodule Predictions.PredictionsTest do
           %Predictions.Prediction{
             stop_id: "70261",
             seconds_until_arrival: 180,
-            arrival_certainty: 60,
             direction_id: 0,
             schedule_relationship: :scheduled,
             route_id: "Mattapan",
+            stops_away: 1,
+            stopped?: false,
             destination_stop_id: "70261",
             trip_id: "32568935",
             revenue_trip?: true,
@@ -83,12 +98,28 @@ defmodule Predictions.PredictionsTest do
           %Predictions.Prediction{
             stop_id: "70263",
             seconds_until_departure: 120,
-            departure_certainty: 60,
             direction_id: 0,
             schedule_relationship: :scheduled,
             route_id: "Mattapan",
             destination_stop_id: "70261",
+            stops_away: 1,
+            stopped?: true,
             boarding_status: "Stopped 1 stop away",
+            trip_id: "32568935",
+            revenue_trip?: true,
+            vehicle_id: "G-10040"
+          }
+        ],
+        {"70265", 0} => [
+          %Predictions.Prediction{
+            stop_id: "70265",
+            seconds_until_passthrough: 110,
+            direction_id: 0,
+            schedule_relationship: :skipped,
+            route_id: "Mattapan",
+            destination_stop_id: "70261",
+            stops_away: nil,
+            stopped?: false,
             trip_id: "32568935",
             revenue_trip?: true,
             vehicle_id: "G-10040"
@@ -113,9 +144,10 @@ defmodule Predictions.PredictionsTest do
                   "arrival" => %{
                     "delay" => nil,
                     "time" => 1_491_570_120,
-                    "uncertainty" => 60
+                    "uncertainty" => nil
                   },
                   "departure" => nil,
+                  "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70263",
                   "stopped?" => false,
                   "stops_away" => 1,
@@ -125,9 +157,10 @@ defmodule Predictions.PredictionsTest do
                   "arrival" => %{
                     "delay" => nil,
                     "time" => 1_491_570_180,
-                    "uncertainty" => 60
+                    "uncertainty" => nil
                   },
                   "departure" => nil,
+                  "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70261",
                   "stopped?" => false,
                   "stops_away" => 1,
@@ -136,6 +169,7 @@ defmodule Predictions.PredictionsTest do
                 %{
                   "arrival" => nil,
                   "departure" => nil,
+                  "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70261",
                   "stopped?" => false,
                   "stops_away" => 1,
@@ -149,8 +183,7 @@ defmodule Predictions.PredictionsTest do
                 "schedule_relationship" => "SCHEDULED",
                 "start_date" => "20170329",
                 "start_time" => nil,
-                "trip_id" => "32568935",
-                "revenue" => true
+                "trip_id" => "32568935"
               },
               "vehicle" => %{
                 "id" => "G-10040",
@@ -171,9 +204,10 @@ defmodule Predictions.PredictionsTest do
                   "arrival" => %{
                     "delay" => nil,
                     "time" => 1_491_570_200,
-                    "uncertainty" => 60
+                    "uncertainty" => nil
                   },
                   "departure" => nil,
+                  "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70038",
                   "stopped?" => false,
                   "stops_away" => 1,
@@ -183,9 +217,10 @@ defmodule Predictions.PredictionsTest do
                   "arrival" => %{
                     "delay" => nil,
                     "time" => 1_491_570_400,
-                    "uncertainty" => 60
+                    "uncertainty" => nil
                   },
                   "departure" => nil,
+                  "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70060",
                   "stopped?" => false,
                   "stops_away" => 1,
@@ -199,8 +234,7 @@ defmodule Predictions.PredictionsTest do
                 "schedule_relationship" => "SCHEDULED",
                 "start_date" => "20170329",
                 "start_time" => nil,
-                "trip_id" => "trip_2",
-                "revenue" => true
+                "trip_id" => "trip_2"
               },
               "vehicle" => %{
                 "id" => "vehicle_2",
@@ -224,8 +258,7 @@ defmodule Predictions.PredictionsTest do
                 "schedule_relationship" => "CANCELED",
                 "start_date" => "20190821",
                 "start_time" => nil,
-                "trip_id" => "40826503",
-                "revenue" => true
+                "trip_id" => "40826503"
               },
               "vehicle" => %{
                 "id" => nil,
@@ -248,10 +281,11 @@ defmodule Predictions.PredictionsTest do
           %Predictions.Prediction{
             stop_id: "70261",
             seconds_until_arrival: 180,
-            arrival_certainty: 60,
             schedule_relationship: :scheduled,
             direction_id: 0,
             route_id: "Mattapan",
+            stopped?: false,
+            stops_away: 1,
             destination_stop_id: "70261",
             trip_id: "32568935",
             revenue_trip?: true,
@@ -262,10 +296,11 @@ defmodule Predictions.PredictionsTest do
           %Predictions.Prediction{
             stop_id: "70263",
             seconds_until_arrival: 120,
-            arrival_certainty: 60,
             direction_id: 0,
             schedule_relationship: :scheduled,
             route_id: "Mattapan",
+            stopped?: false,
+            stops_away: 1,
             destination_stop_id: "70261",
             trip_id: "32568935",
             revenue_trip?: true,
@@ -276,10 +311,11 @@ defmodule Predictions.PredictionsTest do
           %Predictions.Prediction{
             stop_id: "70038",
             seconds_until_arrival: 200,
-            arrival_certainty: 60,
             direction_id: 1,
             schedule_relationship: :scheduled,
             route_id: "Blue",
+            stopped?: false,
+            stops_away: 1,
             destination_stop_id: "70060",
             trip_id: "trip_2",
             revenue_trip?: true,
@@ -290,10 +326,11 @@ defmodule Predictions.PredictionsTest do
           %Predictions.Prediction{
             stop_id: "70060",
             seconds_until_arrival: 400,
-            arrival_certainty: 60,
             direction_id: 1,
             schedule_relationship: :scheduled,
             route_id: "Blue",
+            stopped?: false,
+            stops_away: 1,
             destination_stop_id: "70060",
             trip_id: "trip_2",
             revenue_trip?: true,
@@ -319,7 +356,7 @@ defmodule Predictions.PredictionsTest do
                   "arrival" => %{
                     "delay" => nil,
                     "time" => Timex.to_unix(@current_time) - 100,
-                    "uncertainty" => 60
+                    "uncertainty" => nil
                   },
                   "departure" => nil,
                   "schedule_relationship" => "SCHEDULED",
@@ -336,8 +373,7 @@ defmodule Predictions.PredictionsTest do
                 "schedule_relationship" => "SCHEDULED",
                 "start_date" => "20170329",
                 "start_time" => nil,
-                "trip_id" => "32568935",
-                "revenue" => true
+                "trip_id" => "32568935"
               },
               "vehicle" => %{
                 "id" => "G-10040",
@@ -363,6 +399,8 @@ defmodule Predictions.PredictionsTest do
                     direction_id: 0,
                     schedule_relationship: :scheduled,
                     route_id: "Mattapan",
+                    stopped?: false,
+                    stops_away: 1,
                     destination_stop_id: "70263",
                     trip_id: "32568935",
                     revenue_trip?: true,
@@ -370,6 +408,109 @@ defmodule Predictions.PredictionsTest do
                   }
                 ]
               }, _} = get_all(feed_message, @current_time)
+    end
+
+    test "filters stop_time_updates where stops_away == nil" do
+      feed_message = %{
+        "entity" => [
+          %{
+            "alert" => nil,
+            "id" => "1490783458_32568935",
+            "is_deleted" => false,
+            "trip_update" => %{
+              "delay" => nil,
+              "stop_time_update" => [
+                %{
+                  "arrival" => %{
+                    "delay" => nil,
+                    "time" => Timex.to_unix(@current_time) - 100,
+                    "uncertainty" => nil
+                  },
+                  "departure" => %{
+                    "delay" => nil,
+                    "time" => Timex.to_unix(@current_time) - 100,
+                    "uncertainty" => nil
+                  },
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70262",
+                  "stopped?" => false,
+                  "stops_away" => nil,
+                  "stop_sequence" => 1
+                },
+                %{
+                  "arrival" => nil,
+                  "departure" => %{
+                    "delay" => nil,
+                    "time" => Timex.to_unix(@current_time) - 100,
+                    "uncertainty" => nil
+                  },
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70263",
+                  "stopped?" => false,
+                  "stops_away" => nil,
+                  "stop_sequence" => 1
+                },
+                %{
+                  "arrival" => nil,
+                  "departure" => %{
+                    "delay" => nil,
+                    "time" => Timex.to_unix(@current_time) + 100,
+                    "uncertainty" => nil
+                  },
+                  "schedule_relationship" => "SCHEDULED",
+                  "stop_id" => "70264",
+                  "stopped?" => false,
+                  "stops_away" => 1,
+                  "stop_sequence" => 2
+                }
+              ],
+              "timestamp" => nil,
+              "trip" => %{
+                "direction_id" => 0,
+                "route_id" => "Mattapan",
+                "schedule_relationship" => "SCHEDULED",
+                "start_date" => "20170329",
+                "start_time" => nil,
+                "trip_id" => "32568935"
+              },
+              "vehicle" => %{
+                "id" => "G-10040",
+                "label" => "3260",
+                "license_plate" => nil
+              }
+            },
+            "vehicle" => nil
+          }
+        ],
+        "header" => %{
+          "gtfs_realtime_version" => "1.0",
+          "incrementality" => "FULL_DATASET",
+          "timestamp" => 1_490_783_458
+        }
+      }
+
+      {predictions_map, _} = get_all(feed_message, @current_time)
+
+      assert predictions_map == %{
+               {"70264", 0} => [
+                 %Predictions.Prediction{
+                   boarding_status: nil,
+                   destination_stop_id: "70262",
+                   direction_id: 0,
+                   revenue_trip?: true,
+                   route_id: "Mattapan",
+                   schedule_relationship: :scheduled,
+                   seconds_until_arrival: nil,
+                   seconds_until_departure: 100,
+                   seconds_until_passthrough: nil,
+                   stop_id: "70264",
+                   stopped?: false,
+                   stops_away: 1,
+                   trip_id: "32568935",
+                   vehicle_id: "G-10040"
+                 }
+               ]
+             }
     end
 
     test "include predictions with low uncertainty" do
@@ -406,8 +547,7 @@ defmodule Predictions.PredictionsTest do
                 "schedule_relationship" => "SCHEDULED",
                 "start_date" => "20170329",
                 "start_time" => nil,
-                "trip_id" => "32568935",
-                "revenue" => true
+                "trip_id" => "32568935"
               },
               "vehicle" => %{
                 "id" => "R-54639F6C",
@@ -472,8 +612,7 @@ defmodule Predictions.PredictionsTest do
                 "schedule_relationship" => "SCHEDULED",
                 "start_date" => "20170329",
                 "start_time" => nil,
-                "trip_id" => "32568935",
-                "revenue" => true
+                "trip_id" => "32568935"
               },
               "vehicle" => %{
                 "id" => "R-54639F6C",
@@ -534,8 +673,7 @@ defmodule Predictions.PredictionsTest do
                 "schedule_relationship" => "SCHEDULED",
                 "start_date" => "20170329",
                 "start_time" => nil,
-                "trip_id" => "32568935",
-                "revenue" => true
+                "trip_id" => "32568935"
               },
               "vehicle" => %{
                 "id" => "R-54639F6C",
@@ -601,8 +739,7 @@ defmodule Predictions.PredictionsTest do
                 "schedule_relationship" => "SCHEDULED",
                 "start_date" => "20170329",
                 "start_time" => nil,
-                "trip_id" => "32568935",
-                "revenue" => true
+                "trip_id" => "32568935"
               },
               "vehicle" => %{
                 "id" => "G-10040",
