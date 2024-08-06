@@ -18,6 +18,7 @@ test -e "_build" && mv _build _build-prev
 env MIX_ENV=prod PATH="/c/Users/RTRUser/bin/$ERL_DIR/bin/:/c/Users/RTRUser/bin/$ELIXIR_DIR/bin/:$PATH" mix local.hex --force
 env MIX_ENV=prod PATH="/c/Users/RTRUser/bin/$ERL_DIR/bin/:/c/Users/RTRUser/bin/$ELIXIR_DIR/bin/:$PATH" mix local.rebar --force
 env MIX_ENV=prod PATH="/c/Users/RTRUser/bin/$ERL_DIR/bin/:/c/Users/RTRUser/bin/$ELIXIR_DIR/bin/:$PATH" mix deps.get
+env MIX_ENV=prod PATH="/c/Users/RTRUser/bin/$ERL_DIR/bin/:/c/Users/RTRUser/bin/$ELIXIR_DIR/bin/:$PATH" mix sentry.package_source_code
 env MIX_ENV=prod PATH="/c/Users/RTRUser/bin/$ERL_DIR/bin/:/c/Users/RTRUser/bin/$ELIXIR_DIR/bin/:$PATH" RELEASE_NODE=$1 mix release
 
 echo "Release is built. Restart the Windows service to run it."
