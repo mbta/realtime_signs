@@ -130,6 +130,26 @@ defmodule Content.Message.Predictions do
   def terminal(prediction, station_code, zone, sign, width) do
     stopped_at? = prediction.stops_away == 0
 
+    if stopped_at? and
+         prediction.seconds_until_departure + @terminal_prediction_offset_seconds <=
+           @terminal_brd_seconds do
+      Logger.info([
+        "prediction_info: ",
+        "trip_id=",
+        prediction.trip_id,
+        " stop_id=",
+        prediction.stop_id,
+        " vehicle_id=",
+        prediction.vehicle_id,
+        " direction_id=",
+        prediction.direction_id,
+        " seconds_until_departure=",
+        prediction.seconds_until_departure,
+        " boarding_status=",
+        prediction.boarding_status
+      ])
+    end
+
     {minutes, approximate?} =
       case prediction.seconds_until_departure + @terminal_prediction_offset_seconds do
         x when x <= @terminal_brd_seconds and stopped_at? -> {:boarding, false}
