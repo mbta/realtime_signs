@@ -135,7 +135,11 @@ defmodule Content.Message.Predictions do
            @terminal_brd_seconds do
       Logger.info([
         "prediction_info: ",
-        "trip_id=",
+        "station_code=",
+        station_code,
+        " zone=",
+        zone,
+        " trip_id=",
         prediction.trip_id,
         " stop_id=",
         prediction.stop_id,
