@@ -146,7 +146,7 @@ defmodule Content.Message.Predictions do
       " stop_id=",
       prediction.stop_id,
       " vehicle_id=",
-      prediction.vehicle_id,
+      insepct(prediction.vehicle_id),
       " direction_id=",
       inspect(prediction.direction_id),
       " seconds_until_departure=",
