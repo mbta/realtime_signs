@@ -135,6 +135,32 @@ defmodule Content.Message.Predictions do
   def terminal(prediction, station_code, zone, sign, width \\ 18)
 
   def terminal(prediction, station_code, zone, sign, width) do
+    Logger.info([
+      "prediction_info: ",
+      "station_code=",
+      station_code,
+      " zone=",
+      zone,
+      " trip_id=",
+      prediction.trip_id,
+      " stop_id=",
+      prediction.stop_id,
+      " vehicle_id=",
+      prediction.vehicle_id,
+      " direction_id=",
+      prediction.direction_id,
+      " seconds_until_departure=",
+      prediction.seconds_until_departure,
+      " boarding_status=",
+      prediction.boarding_status,
+      " vehicle_status=",
+      inspect(prediction.vehicle_status),
+      " vehicle_location_stop_id=",
+      prediction.vehicle_location_stop_id,
+      " vehicle_location_trip_id=",
+      prediction.vehicle_location_trip_id
+    ])
+
     {minutes, approximate?} =
       case prediction.seconds_until_departure + @terminal_prediction_offset_seconds do
         x when x <= @terminal_brd_seconds and prediction.stopped_at_predicted_stop? ->

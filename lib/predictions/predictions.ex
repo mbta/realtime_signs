@@ -105,7 +105,10 @@ defmodule Predictions.Predictions do
           stop_time_update["stop_id"] == vehicle_location.stop_id,
       boarding_status: stop_time_update["boarding_status"],
       revenue_trip?: revenue_trip?,
-      vehicle_id: vehicle_id
+      vehicle_id: vehicle_id,
+      vehicle_status: vehicle_location.status,
+      vehicle_location_stop_id: vehicle_location.stop_id,
+      vehicle_location_trip_id: vehicle_location.trip_id
     }
   end
 
