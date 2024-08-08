@@ -148,17 +148,17 @@ defmodule Content.Message.Predictions do
       " vehicle_id=",
       prediction.vehicle_id,
       " direction_id=",
-      prediction.direction_id,
+      inspect(prediction.direction_id),
       " seconds_until_departure=",
-      prediction.seconds_until_departure,
+      inspect(prediction.seconds_until_departure),
       " boarding_status=",
-      prediction.boarding_status,
+      inspect(prediction.boarding_status),
       " vehicle_status=",
       inspect(prediction.vehicle_status),
       " vehicle_location_stop_id=",
-      prediction.vehicle_location_stop_id,
+      inspect(prediction.vehicle_location_stop_id),
       " vehicle_location_trip_id=",
-      prediction.vehicle_location_trip_id
+      inspect(prediction.vehicle_location_trip_id)
     ])
 
     {minutes, approximate?} =
