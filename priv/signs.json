@@ -1,14 +1,14 @@
 [
   {
-    "id": "lab_test",
+    "id": "lab_test_1",
     "type": "realtime",
     "pa_ess_loc": "201",
     "scu_id": "TBR01",
     "default_mode": "auto",
     "read_loop_offset": 120,
-    "text_zone": "m",
+    "text_zone": "n",
     "audio_zones": [
-      "m"
+      "n"
     ],
     "source_config": [
       {
@@ -46,6 +46,35 @@
         ]
       }
     ]
+  },
+  {
+    "id": "lab_test_2",
+    "type": "realtime",
+    "pa_ess_loc": "201",
+    "scu_id": "TBR01",
+    "default_mode": "auto",
+    "read_loop_offset": 30,
+    "text_zone": "s",
+    "audio_zones": [
+      "s"
+    ],
+    "source_config": {
+      "headway_group": "blue_trunk",
+      "headway_direction_name": "Wonderland",
+      "sources": [
+        {
+          "stop_id": "70042",
+          "routes": [
+            "Blue"
+          ],
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    }
   },
   {
     "id": "cedar_grove_outbound",
