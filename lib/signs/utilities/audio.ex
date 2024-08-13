@@ -394,13 +394,26 @@ defmodule Signs.Utilities.Audio do
       sign,
       Enum.map(audios, &Content.Audio.to_params(&1)),
       Enum.map(audios, &Content.Audio.to_tts(&1)),
-      Enum.map(audios, fn audio ->
-        [
-          message_type: to_string(audio.__struct__) |> String.split(".") |> List.last(),
-          message_details: Map.from_struct(audio) |> inspect()
-        ]
-      end)
+      Enum.map(audios, &format_message/1)
     )
+  end
+
+  # Format PA Messages separately to ensure backwards compatibility
+  defp format_message(%PaMessages.PaMessage{} = audio) do
+    stuff =
+      audio
+      |> Map.from_struct()
+      |> Map.drop([:sign_ids])
+      |> Enum.map(fn {k, v} -> {k, v} end)
+
+    [message_type: to_string(audio.__struct__) |> String.split(".") |> List.last()] ++ stuff
+  end
+
+  defp format_message(audio) do
+    [
+      message_type: to_string(audio.__struct__) |> String.split(".") |> List.last(),
+      message_details: Map.from_struct(audio) |> inspect()
+    ]
   end
 
   @spec handle_pa_message_play(
