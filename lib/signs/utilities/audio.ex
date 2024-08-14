@@ -400,13 +400,14 @@ defmodule Signs.Utilities.Audio do
 
   # Format PA Messages separately to ensure backwards compatibility
   defp format_message(%PaMessages.PaMessage{} = audio) do
-    stuff =
+    message_details =
       audio
       |> Map.from_struct()
       |> Map.drop([:sign_ids])
-      |> Enum.map(fn {k, v} -> {k, v} end)
+      |> Enum.map(fn {k, v} -> {k, inspect(v)} end)
 
-    [message_type: to_string(audio.__struct__) |> String.split(".") |> List.last()] ++ stuff
+    [message_type: to_string(audio.__struct__) |> String.split(".") |> List.last()] ++
+      message_details
   end
 
   defp format_message(audio) do
