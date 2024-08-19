@@ -23,7 +23,7 @@ defmodule Predictions.Predictions do
       |> Enum.reject(
         &((is_nil(&1.seconds_until_arrival) and is_nil(&1.seconds_until_departure) and
              is_nil(&1.seconds_until_passthrough)) or
-            (&1.seconds_until_departure && &1.seconds_until_departure < 0))
+            (&1.seconds_until_departure && &1.seconds_until_departure < -5))
       )
 
     vehicles_running_revenue_trips =
