@@ -2,8 +2,8 @@
   {
     "id": "lab_test_1",
     "type": "realtime",
-    "pa_ess_loc": "201",
-    "scu_id": "TBR01",
+    "pa_ess_loc": "TBR01",
+    "scu_id": "TBR01SCU001",
     "default_mode": "auto",
     "read_loop_offset": 120,
     "text_zone": "n",
@@ -50,8 +50,8 @@
   {
     "id": "lab_test_2",
     "type": "realtime",
-    "pa_ess_loc": "201",
-    "scu_id": "TBR01",
+    "pa_ess_loc": "TBR01",
+    "scu_id": "TBR01SCU001",
     "default_mode": "auto",
     "read_loop_offset": 30,
     "text_zone": "s",
