@@ -230,6 +230,8 @@ defmodule Content.Message.Predictions do
         inspect(prediction.seconds_until_departure),
         " boarding_status=",
         inspect(prediction.boarding_status),
+        " stopped_at_predicted_stop=",
+        inspect(prediction.stopped_at_predicted_stop?),
         " vehicle_status=",
         inspect(prediction.vehicle_status),
         " vehicle_location_stop_id=",
