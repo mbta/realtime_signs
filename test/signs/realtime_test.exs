@@ -8,6 +8,7 @@ defmodule Signs.RealtimeTest do
   @src %Signs.Utilities.SourceConfig{
     stop_id: "1",
     direction_id: 0,
+    routes: ["Red"],
     platform: nil,
     terminal?: false,
     announce_arriving?: true,
@@ -17,6 +18,7 @@ defmodule Signs.RealtimeTest do
   @src_2 %Signs.Utilities.SourceConfig{
     stop_id: "2",
     direction_id: 0,
+    routes: ["Red"],
     platform: nil,
     terminal?: false,
     announce_arriving?: true,
@@ -49,7 +51,8 @@ defmodule Signs.RealtimeTest do
     sign_updater: PaEss.Updater.Mock,
     last_update: @fake_time,
     tick_read: 1,
-    read_period_seconds: 100
+    read_period_seconds: 100,
+    pa_message_plays: %{}
   }
 
   @mezzanine_sign %{
@@ -58,25 +61,21 @@ defmodule Signs.RealtimeTest do
         %{sources: [@src], headway_group: "group", headway_destination: :northbound},
         %{sources: [@src_2], headway_group: "group", headway_destination: :southbound}
       },
-      current_content_top: "Trains",
+      current_content_top: "Red line trains",
       current_content_bottom: "Every 11 to 13 min"
   }
 
-  @mezzanine_sign_with_routes %{
-    @mezzanine_sign
+  @multi_route_mezzanine_sign %{
+    @sign
     | source_config: {
         %{
           sources: [%{@src | routes: ["Orange"]}],
           headway_group: "group",
           headway_destination: :northbound
         },
-        %{
-          sources: [%{@src_2 | routes: ["Orange"]}],
-          headway_group: "group",
-          headway_destination: :southbound
-        }
+        %{sources: [@src_2], headway_group: "group", headway_destination: :southbound}
       },
-      current_content_top: "Orange line trains",
+      current_content_top: "Trains",
       current_content_bottom: "Every 11 to 13 min"
   }
 
@@ -104,13 +103,13 @@ defmodule Signs.RealtimeTest do
       }
   }
 
-  @no_service_audio {:canned, {"107", ["861", "21000", "864", "21000", "863"], :audio}}
+  @no_service_audio {:canned, {"107", ["861", "21000", "3005", "21000", "863"], :audio}}
 
   setup :verify_on_exit!
 
   describe "run loop" do
     setup do
-      stub(Engine.Config.Mock, :sign_config, fn _ -> :auto end)
+      stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
       stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
       stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
@@ -215,7 +214,10 @@ defmodule Signs.RealtimeTest do
     end
 
     test "when custom text is present, display it, overriding alerts" do
-      expect(Engine.Config.Mock, :sign_config, fn _ -> {:static_text, {"custom", "message"}} end)
+      expect(Engine.Config.Mock, :sign_config, fn _, _ ->
+        {:static_text, {"custom", "message"}}
+      end)
+
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
       expect_messages({"custom", "message"})
       expect_audios([{:ad_hoc, {"custom message", :audio}}], [{"custom message", nil}])
@@ -225,9 +227,18 @@ defmodule Signs.RealtimeTest do
     end
 
     test "when sign is disabled, it's empty" do
-      expect(Engine.Config.Mock, :sign_config, fn _ -> :off end)
+      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :off end)
       expect_messages({"", ""})
       Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "when sign has a default mode, uses that when the sign has no mode configured" do
+      expect(Engine.Config.Mock, :sign_config, fn _, default -> default end)
+      sign = %{@sign | default_mode: {:static_text, {"default", "message"}}}
+
+      expect_messages({"default", "message"})
+      expect_audios([{:ad_hoc, {"default message", :audio}}], [{"default message", nil}])
+      Signs.Realtime.handle_info(:run_loop, sign)
     end
 
     test "when sign is at a transfer station from a shuttle, and there are no predictions it's empty" do
@@ -244,10 +255,10 @@ defmodule Signs.RealtimeTest do
 
     test "when sign is at a station closed by shuttles and there are no predictions, it says so" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
-      expect_messages({"No train service", "Use shuttle bus"})
+      expect_messages({"No Red Line", "Use shuttle bus"})
 
-      expect_audios([{:canned, {"199", ["864"], :audio}}], [
-        {"There is no train service at this station. Use shuttle.", nil}
+      expect_audios([{:canned, {"199", ["3005"], :audio}}], [
+        {"There is no Red Line service at this station. Use shuttle.", nil}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
@@ -255,23 +266,35 @@ defmodule Signs.RealtimeTest do
 
     test "when sign is at a station closed and there are no predictions, but shuttles do not run at this station" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
-      expect_messages({"No train service", ""})
-      expect_audios([@no_service_audio], [{"There is no train service at this station.", nil}])
+      expect_messages({"No Red Line", ""})
+      expect_audios([@no_service_audio], [{"There is no Red Line service at this station.", nil}])
       Signs.Realtime.handle_info(:run_loop, %{@sign | uses_shuttles: false})
     end
 
     test "when sign is at a station closed due to suspension and there are no predictions, it says so" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
-      expect_messages({"No train service", ""})
-      expect_audios([@no_service_audio], [{"There is no train service at this station.", nil}])
+      expect_messages({"No Red Line", ""})
+      expect_audios([@no_service_audio], [{"There is no Red Line service at this station.", nil}])
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "when sign is at a closed station and there are no predictions, it says so" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
-      expect_messages({"No train service", ""})
-      expect_audios([@no_service_audio], [{"There is no train service at this station.", nil}])
+      expect_messages({"No Red Line", ""})
+      expect_audios([@no_service_audio], [{"There is no Red Line service at this station.", nil}])
       assert {_, %{announced_alert: true}} = Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "multi-route mezzanine sign with alert" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
+      expect_messages({"No train service", ""})
+
+      expect_audios([{:canned, {"107", ["861", "21000", "864", "21000", "863"], :audio}}], [
+        {"There is no train service at this station.", nil}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
     end
 
     test "predictions take precedence over alerts" do
@@ -319,7 +342,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "when sign is forced into headway mode but no alerts are present, displays headways" do
-      expect(Engine.Config.Mock, :sign_config, fn _ -> :headway end)
+      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
 
       expect(Engine.Config.Mock, :headway_config, fn _, _ ->
         %{@headway_config | range_high: 14}
@@ -334,15 +357,15 @@ defmodule Signs.RealtimeTest do
     end
 
     test "when sign is forced into headway mode but alerts are present, alert takes precedence" do
-      expect(Engine.Config.Mock, :sign_config, fn _ -> :headway end)
+      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :ashmont, arrival: 120)]
       end)
 
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
-      expect_messages({"No train service", ""})
-      expect_audios([@no_service_audio], [{"There is no train service at this station.", nil}])
+      expect_messages({"No Red Line", ""})
+      expect_audios([@no_service_audio], [{"There is no Red Line service at this station.", nil}])
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
@@ -363,7 +386,7 @@ defmodule Signs.RealtimeTest do
         %{@headway_config | range_high: 14}
       end)
 
-      expect_messages({"Trains", "Every 11 to 14 min"})
+      expect_messages({"Red line trains", "Every 11 to 14 min"})
       Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
     end
 
@@ -951,7 +974,10 @@ defmodule Signs.RealtimeTest do
     end
 
     test "reads custom messages" do
-      expect(Engine.Config.Mock, :sign_config, fn _ -> {:static_text, {"custom", "message"}} end)
+      expect(Engine.Config.Mock, :sign_config, fn _, _ ->
+        {:static_text, {"custom", "message"}}
+      end)
+
       expect_messages({"custom", "message"})
       expect_audios([{:ad_hoc, {"custom message", :audio}}], [{"custom message", nil}])
 
@@ -964,10 +990,10 @@ defmodule Signs.RealtimeTest do
 
     test "reads alerts" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
-      expect_messages({"No train service", "Use shuttle bus"})
+      expect_messages({"No Red Line", "Use shuttle bus"})
 
-      expect_audios([{:canned, {"199", ["864"], :audio}}], [
-        {"There is no train service at this station. Use shuttle.", nil}
+      expect_audios([{:canned, {"199", ["3005"], :audio}}], [
+        {"There is no Red Line service at this station. Use shuttle.", nil}
       ])
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_alert: true})
@@ -1358,11 +1384,16 @@ defmodule Signs.RealtimeTest do
         %{@headway_config | range_low: 9}
       end)
 
-      expect_messages({"Trains", "Every 9 to 13 min"})
+      expect_messages({"Red line trains", "Every 9 to 13 min"})
+
+      expect_audios([{:ad_hoc, {"Red line trains every 9 to 13 minutes.", :audio}}], [
+        {"Red line trains every 9 to 13 minutes.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{
         @mezzanine_sign
-        | current_time_fn: fn -> datetime(~T[04:50:00]) end
+        | current_time_fn: fn -> datetime(~T[04:50:00]) end,
+          tick_read: 0
       })
     end
 
@@ -1448,7 +1479,7 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_messages({"Trains", "Every 11 to 13 min"})
+      expect_messages({"Red line trains", "Every 11 to 13 min"})
 
       Signs.Realtime.handle_info(:run_loop, %{
         @jfk_mezzanine_sign
@@ -1542,6 +1573,20 @@ defmodule Signs.RealtimeTest do
 
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
+
+    test "signs in headway mode with split alert_status will show the first alert" do
+      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
+
+      expect_messages({"No train service", "Use shuttle bus"})
+
+      expect_audios([{:canned, {"199", ["864"], :audio}}], [
+        {"There is no train service at this station. Use shuttle.", nil}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
+    end
   end
 
   describe "decrement_ticks/1" do
@@ -1559,7 +1604,7 @@ defmodule Signs.RealtimeTest do
 
   describe "Union Sq alert messaging" do
     setup do
-      stub(Engine.Config.Mock, :sign_config, fn _ -> :auto end)
+      stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
       stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_transfer_station end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> false end)
@@ -1591,7 +1636,7 @@ defmodule Signs.RealtimeTest do
 
   describe "Last Trip of the Day" do
     setup do
-      stub(Engine.Config.Mock, :sign_config, fn _ -> :auto end)
+      stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
       stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> true end)
@@ -1625,31 +1670,26 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, sign)
     end
 
-    test "Station is closed" do
+    test "multi-route mezzanine sign, both sides closed" do
+      expect_messages({"Station closed", "Service ended for night"})
+
+      expect_audios([{:canned, {"105", ["864", "21000", "882"], :audio}}], [
+        {"Train service has ended for the night.", nil}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, %{@multi_route_mezzanine_sign | tick_read: 0})
+    end
+
+    test "single-route mezzanine sign, both sides closed" do
       sign = %{
         @mezzanine_sign
         | tick_read: 0
       }
 
-      expect_messages({"Station closed", "Service ended for night"})
+      expect_messages({"No Red Line", "Service ended for night"})
 
-      expect_audios([{:canned, {"105", ["864", "21000", "882"], :audio}}], [
-        {"This station is closed. Service has ended for the night.", nil}
-      ])
-
-      Signs.Realtime.handle_info(:run_loop, sign)
-    end
-
-    test "Station with routes is closed" do
-      sign = %{
-        @mezzanine_sign_with_routes
-        | tick_read: 0
-      }
-
-      expect_messages({"No Orange Line", "Service ended for night"})
-
-      expect_audios([{:canned, {"105", ["3006", "21000", "882"], :audio}}], [
-        {"This station is closed. Service has ended for the night.", nil}
+      expect_audios([{:canned, {"105", ["3005", "21000", "882"], :audio}}], [
+        {"Red line service has ended for the night.", nil}
       ])
 
       Signs.Realtime.handle_info(:run_loop, sign)
@@ -1657,7 +1697,7 @@ defmodule Signs.RealtimeTest do
 
     test "No service goes on bottom line when top line fits in 18 chars or less" do
       sign = %{
-        @mezzanine_sign_with_routes
+        @mezzanine_sign
         | tick_read: 0,
           announced_stalls: [{"a", 8}]
       }
@@ -1759,6 +1799,69 @@ defmodule Signs.RealtimeTest do
       )
 
       Signs.Realtime.handle_info(:run_loop, sign)
+    end
+  end
+
+  describe "PA messages" do
+    setup do
+      stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
+      stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
+      stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+      stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
+      stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
+      stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> false end)
+      stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ -> %{} end)
+
+      stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
+        datetime(~T[05:00:00])
+      end)
+
+      :ok
+    end
+
+    test "Plays message if no prior plays" do
+      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}], [
+        {"A PA Message", [{"A PA Message", "", 3}]}
+      ])
+
+      pa_message = %PaMessages.PaMessage{
+        id: 1,
+        visual_text: "A PA Message",
+        audio_text: "A PA Message"
+      }
+
+      Signs.Realtime.handle_info({:play_pa_message, pa_message}, @sign)
+    end
+
+    test "Plays message if interval has passed" do
+      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}], [
+        {"A PA Message", [{"A PA Message", "", 3}]}
+      ])
+
+      pa_message = %PaMessages.PaMessage{
+        id: 1,
+        visual_text: "A PA Message",
+        audio_text: "A PA Message",
+        interval_in_ms: 120_000
+      }
+
+      sign = %{@sign | pa_message_plays: %{1 => ~U[2024-06-10 12:00:00.000Z]}}
+
+      Signs.Realtime.handle_info({:play_pa_message, pa_message}, sign)
+    end
+
+    test "Does not play if less than interval has passed" do
+      pa_message = %PaMessages.PaMessage{
+        id: 1,
+        visual_text: "A PA Message",
+        audio_text: "A PA Message",
+        interval_in_ms: 120_000
+      }
+
+      sign = %{@sign | pa_message_plays: %{1 => DateTime.utc_now()}}
+
+      Signs.Realtime.handle_info({:play_pa_message, pa_message}, sign)
     end
   end
 

@@ -45,9 +45,11 @@ defmodule Signs.Realtime do
                 announced_stalls: [],
                 announced_custom_text: nil,
                 announced_alert: false,
+                default_mode: :off,
                 prev_prediction_keys: nil,
                 prev_predictions: [],
-                uses_shuttles: true
+                uses_shuttles: true,
+                pa_message_plays: %{}
               ]
 
   @type line_content :: Content.Message.t()
@@ -63,6 +65,7 @@ defmodule Signs.Realtime do
           text_zone: String.t(),
           audio_zones: [String.t()],
           source_config: SourceConfig.config() | {SourceConfig.config(), SourceConfig.config()},
+          default_mode: Engine.Config.sign_config(),
           current_content_top: Content.Message.value(),
           current_content_bottom: Content.Message.value(),
           prediction_engine: module(),
@@ -86,7 +89,8 @@ defmodule Signs.Realtime do
           prev_prediction_keys: [{String.t(), 0 | 1}] | nil,
           announced_alert: boolean(),
           prev_predictions: [Predictions.Prediction.t()],
-          uses_shuttles: boolean()
+          uses_shuttles: boolean(),
+          pa_message_plays: %{integer() => DateTime.t()}
         }
 
   def start_link(%{"type" => "realtime"} = config) do
@@ -99,6 +103,8 @@ defmodule Signs.Realtime do
       text_zone: Map.fetch!(config, "text_zone"),
       audio_zones: Map.fetch!(config, "audio_zones"),
       source_config: source_config,
+      default_mode:
+        config |> Map.get("default_mode") |> then(&if(&1 == "auto", do: :auto, else: :off)),
       current_content_top: "",
       current_content_bottom: "",
       prediction_engine: Engine.Predictions,
@@ -116,7 +122,8 @@ defmodule Signs.Realtime do
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       read_period_seconds: 240,
       headway_stop_id: Map.get(config, "headway_stop_id"),
-      uses_shuttles: Map.get(config, "uses_shuttles", true)
+      uses_shuttles: Map.get(config, "uses_shuttles", true),
+      pa_message_plays: %{}
     }
 
     GenServer.start_link(__MODULE__, sign, name: :"Signs/#{sign.id}")
@@ -129,28 +136,35 @@ defmodule Signs.Realtime do
     {:ok, sign}
   end
 
+  def handle_info({:play_pa_message, pa_message}, sign) do
+    pa_message_plays =
+      Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign, fn ->
+        Signs.Utilities.Audio.send_audio(sign, [pa_message])
+      end)
+
+    {:noreply, %{sign | pa_message_plays: pa_message_plays}}
+  end
+
   def handle_info(:run_loop, sign) do
-    sign_stop_ids = SourceConfig.sign_stop_ids(sign.source_config)
-    sign_routes = SourceConfig.sign_routes(sign.source_config)
-    alert_status = sign.alerts_engine.max_stop_status(sign_stop_ids, sign_routes)
-    sign_config = sign.config_engine.sign_config(sign.id)
+    sign_config = sign.config_engine.sign_config(sign.id, sign.default_mode)
     current_time = sign.current_time_fn.()
 
-    first_scheduled_departures =
-      case sign.source_config do
-        {top, bottom} ->
-          {
-            {sign.headway_engine.get_first_scheduled_departure(SourceConfig.sign_stop_ids(top)),
-             top.headway_destination},
-            {sign.headway_engine.get_first_scheduled_departure(
-               SourceConfig.sign_stop_ids(bottom)
-             ), bottom.headway_destination}
-          }
+    alert_status =
+      sign.source_config
+      |> map_source_config(&get_alert_status_for_source_config(&1, sign.alerts_engine))
+      |> then(fn
+        {alert_status, alert_status} -> alert_status
+        alert_status -> alert_status
+      end)
 
-        source ->
-          {sign.headway_engine.get_first_scheduled_departure(sign_stop_ids),
-           source.headway_destination}
-      end
+    first_scheduled_departures =
+      sign.source_config
+      |> map_source_config(
+        &{
+          sign.headway_engine.get_first_scheduled_departure(SourceConfig.sign_stop_ids(&1)),
+          &1.headway_destination
+        }
+      )
 
     prev_predictions_lookup =
       for prediction <- sign.prev_predictions, into: %{} do
@@ -170,14 +184,10 @@ defmodule Signs.Realtime do
       end
 
     service_end_statuses_per_source =
-      case sign.source_config do
-        {top_source, bottom_source} ->
-          {has_service_ended_for_source?(sign, top_source, current_time),
-           has_service_ended_for_source?(sign, bottom_source, current_time)}
-
-        source ->
-          has_service_ended_for_source?(sign, source, current_time)
-      end
+      map_source_config(
+        sign.source_config,
+        &has_service_ended_for_source?(sign, &1, current_time)
+      )
 
     {new_top, new_bottom} =
       Utilities.Messages.get_messages(
@@ -274,4 +284,15 @@ defmodule Signs.Realtime do
   def decrement_ticks(sign) do
     %{sign | tick_read: sign.tick_read - 1}
   end
+
+  defp get_alert_status_for_source_config(config, alerts_engine) do
+    stop_ids = SourceConfig.sign_stop_ids(config)
+    routes = SourceConfig.sign_routes(config)
+    alert_status = alerts_engine.max_stop_status(stop_ids, routes)
+
+    alert_status
+  end
+
+  defp map_source_config({top, bottom}, fun), do: {fun.(top), fun.(bottom)}
+  defp map_source_config(config, fun), do: fun.(config)
 end

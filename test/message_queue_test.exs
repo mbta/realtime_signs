@@ -49,11 +49,11 @@ defmodule MessageQueueTest do
 
   describe "works through public interfaces" do
     {:ok, pid} = GenServer.start_link(MessageQueue, [])
-    :ok = MessageQueue.update_sign(pid, 1, 2, 3, 4, 5, "sign_id")
-    :ok = MessageQueue.send_audio(pid, 1, 2, 3, 4, "sign_id", [])
+    :ok = MessageQueue.update_sign(pid, 1, 2, 3, 4, 5, [])
+    :ok = MessageQueue.send_audio(pid, 1, 2, 3, 4, [[]])
 
-    assert MessageQueue.get_message(pid) == {:update_sign, [1, 2, 3, 4, 5, "sign_id"]}
-    assert MessageQueue.get_message(pid) == {:send_audio, [1, 2, 3, 4, "sign_id", []]}
+    assert MessageQueue.get_message(pid) == {:update_sign, [1, 2, 3, 4, 5, []]}
+    assert MessageQueue.get_message(pid) == {:send_audio, [1, 2, 3, 4, [[]]]}
     assert MessageQueue.get_message(pid) == nil
   end
 end

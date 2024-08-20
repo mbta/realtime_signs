@@ -32,10 +32,10 @@ defmodule Engine.Config do
   end
 
   @impl true
-  def sign_config(table_name \\ @table_signs, sign_id) do
-    case :ets.lookup(table_name, sign_id) do
-      [{^sign_id, config}] -> config
-      _ -> :off
+  def sign_config(table \\ @table_signs, sign_id, default) do
+    case :ets.lookup(table, sign_id) do
+      [{^sign_id, config}] when not is_nil(config) -> config
+      _ -> default
     end
   end
 
@@ -200,7 +200,7 @@ defmodule Engine.Config do
         :temporary_terminal
 
       true ->
-        :off
+        nil
     end
   end
 

@@ -11,7 +11,8 @@ defmodule Signs.Utilities.Messages do
           Signs.Realtime.t(),
           Engine.Config.sign_config(),
           DateTime.t(),
-          Engine.Alerts.Fetcher.stop_status(),
+          Engine.Alerts.Fetcher.stop_status()
+          | {Engine.Alerts.Fetcher.stop_status(), Engine.Alerts.Fetcher.stop_status()},
           DateTime.t() | {DateTime.t(), DateTime.t()},
           boolean() | {boolean(), boolean()}
         ) :: Signs.Realtime.sign_messages()
@@ -175,20 +176,45 @@ defmodule Signs.Utilities.Messages do
           Engine.Alerts.Fetcher.stop_status(),
           :top | :bottom
         ) :: Signs.Realtime.line_content()
-  defp get_paging_headway_or_alert_messages(
-         %Signs.Realtime{source_config: {top, bottom}} = sign,
-         current_time,
-         alert_status,
-         line
-       ) do
-    config = if(line == :top, do: top, else: bottom)
+  defp get_paging_headway_or_alert_messages(sign, current_time, alert_status, pos) do
+    config_and_alert_status =
+      case {sign, alert_status, pos} do
+        {%Signs.Realtime{source_config: {config, _bottom}}, {alert_status, _}, :top} ->
+          {config, alert_status}
 
-    get_paging_alert_message(alert_status, sign.uses_shuttles, config.headway_destination) ||
-      Signs.Utilities.Headways.get_paging_message(sign, config, current_time)
+        {%Signs.Realtime{source_config: {config, _bottom}}, alert_status, :top} ->
+          {config, alert_status}
+
+        {%Signs.Realtime{source_config: {_top, config}}, {_, alert_status}, :bottom} ->
+          {config, alert_status}
+
+        {%Signs.Realtime{source_config: {_top, config}}, alert_status, :bottom} ->
+          {config, alert_status}
+
+        _ ->
+          nil
+      end
+
+    case config_and_alert_status do
+      {config, alert_status} ->
+        get_paging_alert_message(alert_status, sign.uses_shuttles, config.headway_destination) ||
+          Signs.Utilities.Headways.get_paging_message(sign, config, current_time)
+
+      _ ->
+        Content.Message.Empty.new()
+    end
   end
 
-  defp get_paging_headway_or_alert_messages(_, _, _, _) do
-    Content.Message.Empty.new()
+  @spec get_alert_messages(
+          Engine.Alerts.Fetcher.stop_status()
+          | {Engine.Alerts.Fetcher.stop_status(), Engine.Alerts.Fetcher.stop_status()},
+          Signs.Realtime.t()
+        ) ::
+          Signs.Realtime.sign_messages() | nil
+  defp get_alert_messages({top_alert_status, bottom_alert_status}, sign) do
+    top_alert_status
+    |> Engine.Alerts.Fetcher.higher_priority_status(bottom_alert_status)
+    |> get_alert_messages(sign)
   end
 
   defp get_alert_messages(alert_status, %{pa_ess_loc: "GUNS"}) do
@@ -197,8 +223,6 @@ defmodule Signs.Utilities.Messages do
       else: {%Alert.NoService{}, %Alert.UseRoutes{}}
   end
 
-  @spec get_alert_messages(Engine.Alerts.Fetcher.stop_status(), Signs.Realtime.t()) ::
-          Signs.Realtime.sign_messages() | nil
   defp get_alert_messages(alert_status, sign) do
     sign_routes = Signs.Utilities.SourceConfig.sign_routes(sign.source_config)
 

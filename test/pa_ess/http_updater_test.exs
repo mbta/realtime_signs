@@ -1,6 +1,6 @@
 defmodule Fake.MessageQueue do
   def get_message do
-    {:update_sign, [{"SBOX", "c"}, "", "", 60, :now, "sign_id"]}
+    {:update_sign, [{"SBOX", "c"}, "", "", 60, :now, []]}
   end
 end
 
@@ -21,7 +21,7 @@ defmodule PaEss.HttpUpdaterTest do
 
       assert {:error, :bad_status} ==
                PaEss.HttpUpdater.process(
-                 {:update_sign, [{"bad_sign", "n"}, "top", "bottom", 60, 1234, "sign_id"]},
+                 {:update_sign, [{"bad_sign", "n"}, "top", "bottom", 60, 1234, []]},
                  state
                )
     end
@@ -33,7 +33,7 @@ defmodule PaEss.HttpUpdaterTest do
         capture_log(fn ->
           assert {:ok, :sent} ==
                    PaEss.HttpUpdater.process(
-                     {:update_sign, [{"ABCD", "n"}, "top", "bottom", 60, :now, "sign_id"]},
+                     {:update_sign, [{"ABCD", "n"}, "top", "bottom", 60, :now, []]},
                      state
                    )
         end)
@@ -49,7 +49,7 @@ defmodule PaEss.HttpUpdaterTest do
         capture_log([level: :info], fn ->
           assert {:error, :post_error} ==
                    PaEss.HttpUpdater.process(
-                     {:update_sign, [{"timeout", "n"}, "top", "bottom", 60, :now, "sign_id"]},
+                     {:update_sign, [{"timeout", "n"}, "top", "bottom", 60, :now, []]},
                      state
                    )
         end)
@@ -62,7 +62,7 @@ defmodule PaEss.HttpUpdaterTest do
       state = make_state()
 
       assert PaEss.HttpUpdater.process(
-               {:update_sign, [{"SBOX", "c"}, "", "", 60, :now, "sign_id"]},
+               {:update_sign, [{"SBOX", "c"}, "", "", 60, :now, []]},
                state
              ) == {:ok, :sent}
     end
@@ -72,7 +72,7 @@ defmodule PaEss.HttpUpdaterTest do
 
       assert {:ok, :no_audio} ==
                PaEss.HttpUpdater.process(
-                 {:send_audio, [{"GKEN", ["m"]}, [nil], 5, 60, "sign_id", [[]]]},
+                 {:send_audio, [{"GKEN", ["m"]}, [nil], 5, 60, [[]]]},
                  state
                )
     end
@@ -88,7 +88,7 @@ defmodule PaEss.HttpUpdaterTest do
         capture_log(fn ->
           assert {:ok, :sent} ==
                    PaEss.HttpUpdater.process(
-                     {:send_audio, [{"SBOX", ["c"]}, [audio], 5, 60, "sign_id", [[]]]},
+                     {:send_audio, [{"SBOX", ["c"]}, [audio], 5, 60, [[]]]},
                      state
                    )
         end)
@@ -105,7 +105,7 @@ defmodule PaEss.HttpUpdaterTest do
         capture_log(fn ->
           assert {:ok, :sent} ==
                    PaEss.HttpUpdater.process(
-                     {:send_audio, [{"MCAP", ["n"]}, [audio], 5, 60, "sign_id", [[]]]},
+                     {:send_audio, [{"MCAP", ["n"]}, [audio], 5, 60, [[]]]},
                      state
                    )
         end)
@@ -123,7 +123,7 @@ defmodule PaEss.HttpUpdaterTest do
         capture_log(fn ->
           assert {:ok, :sent} =
                    PaEss.HttpUpdater.process(
-                     {:send_audio, [{"MCAP", ["n"]}, [audio], 5, 60, "sign_id", [[]]]},
+                     {:send_audio, [{"MCAP", ["n"]}, [audio], 5, 60, [[]]]},
                      state
                    )
         end)
@@ -139,7 +139,7 @@ defmodule PaEss.HttpUpdaterTest do
       audio2 = {:canned, {"msg2", ["4021"], :audio}}
 
       PaEss.HttpUpdater.process(
-        {:send_audio, [{"RPRK", ["s"]}, [audio1, audio2], 5, 60, "sign_id", [[], []]]},
+        {:send_audio, [{"RPRK", ["s"]}, [audio1, audio2], 5, 60, [[], []]]},
         state
       )
 
@@ -157,7 +157,7 @@ defmodule PaEss.HttpUpdaterTest do
     audio = {:canned, {"msg", [], :audio}}
 
     PaEss.HttpUpdater.process(
-      {:send_audio, [{"RPRK", ["m", "s", "c"]}, [audio], 5, 60, "sign_id", [[]]]},
+      {:send_audio, [{"RPRK", ["m", "s", "c"]}, [audio], 5, 60, [[]]]},
       state
     )
 

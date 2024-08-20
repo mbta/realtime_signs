@@ -39,12 +39,12 @@ defmodule MessageQueue do
           Content.Message.value(),
           integer(),
           integer() | :now,
-          String.t()
+          keyword()
         ) :: :ok
-  def update_sign(pid \\ __MODULE__, text_id, top_line, bottom_line, duration, start, sign_id) do
+  def update_sign(pid \\ __MODULE__, text_id, top_line, bottom_line, duration, start, log_meta) do
     GenServer.call(
       pid,
-      {:queue_update, {:update_sign, [text_id, top_line, bottom_line, duration, start, sign_id]}}
+      {:queue_update, {:update_sign, [text_id, top_line, bottom_line, duration, start, log_meta]}}
     )
   end
 
@@ -54,13 +54,12 @@ defmodule MessageQueue do
           [Content.Audio.value()],
           integer(),
           integer(),
-          String.t(),
           [keyword()]
         ) :: :ok
-  def send_audio(pid \\ __MODULE__, audio_id, audios, priority, timeout, sign_id, extra_logs) do
+  def send_audio(pid \\ __MODULE__, audio_id, audios, priority, timeout, log_metas) do
     GenServer.call(
       pid,
-      {:queue_update, {:send_audio, [audio_id, audios, priority, timeout, sign_id, extra_logs]}}
+      {:queue_update, {:send_audio, [audio_id, audios, priority, timeout, log_metas]}}
     )
   end
 

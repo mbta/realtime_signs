@@ -31,7 +31,8 @@ config :realtime_signs,
   aws_client: ExAws,
   s3_client: ExAws.S3,
   number_of_http_updaters: 4,
-  restart_fn: &Engine.Health.restart_noop/0
+  restart_fn: &Engine.Health.restart_noop/0,
+  active_pa_messages_path: "/api/pa-messages/active"
 
 config :realtime_signs, RealtimeSignsWeb.Endpoint,
   secret_key_base: "local_secret_key_base_at_least_64_bytes_________________________________"

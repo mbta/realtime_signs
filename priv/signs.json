@@ -1,5 +1,82 @@
 [
   {
+    "id": "lab_test_1",
+    "type": "realtime",
+    "pa_ess_loc": "TBR01",
+    "scu_id": "TBR01SCU001",
+    "default_mode": "auto",
+    "read_loop_offset": 120,
+    "text_zone": "n",
+    "audio_zones": [
+      "n"
+    ],
+    "source_config": [
+      {
+        "headway_group": "blue_trunk",
+        "headway_direction_name": "Wonderland",
+        "sources": [
+          {
+            "stop_id": "70042",
+            "routes": [
+              "Blue"
+            ],
+            "direction_id": 1,
+            "platform": null,
+            "terminal": false,
+            "announce_arriving": true,
+            "announce_boarding": false
+          }
+        ]
+      },
+      {
+        "headway_group": "blue_trunk",
+        "headway_direction_name": "Bowdoin",
+        "sources": [
+          {
+            "stop_id": "70041",
+            "routes": [
+              "Blue"
+            ],
+            "direction_id": 0,
+            "platform": null,
+            "terminal": false,
+            "announce_arriving": true,
+            "announce_boarding": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "lab_test_2",
+    "type": "realtime",
+    "pa_ess_loc": "TBR01",
+    "scu_id": "TBR01SCU001",
+    "default_mode": "auto",
+    "read_loop_offset": 30,
+    "text_zone": "s",
+    "audio_zones": [
+      "s"
+    ],
+    "source_config": {
+      "headway_group": "blue_trunk",
+      "headway_direction_name": "Wonderland",
+      "sources": [
+        {
+          "stop_id": "70042",
+          "routes": [
+            "Blue"
+          ],
+          "direction_id": 1,
+          "platform": null,
+          "terminal": false,
+          "announce_arriving": true,
+          "announce_boarding": false
+        }
+      ]
+    }
+  },
+  {
     "id": "cedar_grove_outbound",
     "type": "realtime",
     "pa_ess_loc": "MCED",
@@ -5757,7 +5834,7 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
+          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -9735,6 +9812,15 @@
           {
             "stop_id": "185",
             "route_id": "33",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "185",
+            "route_id": "716",
             "direction_id": 0
           }
         ]

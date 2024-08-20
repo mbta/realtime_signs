@@ -60,7 +60,7 @@ defmodule PaEss.HttpUpdater do
   end
 
   def process(
-        {:update_sign, [{station, zone}, top_line, bottom_line, duration, start_secs, sign_id]},
+        {:update_sign, [{station, zone}, top_line, bottom_line, duration, start_secs, log_meta]},
         state
       ) do
     top_cmd = to_command(top_line, duration, start_secs, zone, 1)
@@ -78,23 +78,23 @@ defmodule PaEss.HttpUpdater do
 
     {arinc_ms, signs_ui_ms, result} = send_payload(encoded, state)
 
-    log("update_sign", encoded,
-      arinc_ms: arinc_ms,
-      signs_ui_ms: signs_ui_ms,
-      top_line: inspect(top_line),
-      bottom_line: inspect(bottom_line),
-      sign_id: sign_id
+    log(
+      "update_sign",
+      encoded,
+      [
+        arinc_ms: arinc_ms,
+        signs_ui_ms: signs_ui_ms,
+        top_line: inspect(top_line),
+        bottom_line: inspect(bottom_line)
+      ] ++ log_meta
     )
 
     result
   end
 
-  def process(
-        {:send_audio, [{station, zones}, audios, priority, timeout, sign_id, extra_logs]},
-        state
-      ) do
-    for {audio, extra_logs} <- Enum.zip(audios, extra_logs) do
-      process_send_audio(station, zones, audio, priority, timeout, sign_id, extra_logs, state)
+  def process({:send_audio, [{station, zones}, audios, priority, timeout, log_metas]}, state) do
+    for {audio, log_meta} <- Enum.zip(audios, log_metas) do
+      process_send_audio(station, zones, audio, priority, timeout, log_meta, state)
     end
     |> List.last()
   end
@@ -105,12 +105,11 @@ defmodule PaEss.HttpUpdater do
           Content.Audio.value(),
           integer(),
           integer(),
-          String.t(),
-          list,
+          keyword(),
           t()
         ) ::
           post_result()
-  defp process_send_audio(station, zones, audio, priority, timeout, sign_id, extra_logs, state) do
+  defp process_send_audio(station, zones, audio, priority, timeout, log_meta, state) do
     case audio do
       {:canned, {message_id, vars, type}} ->
         encoded =
@@ -128,11 +127,7 @@ defmodule PaEss.HttpUpdater do
 
         {arinc_ms, signs_ui_ms, result} = send_payload(encoded, state)
 
-        log(
-          "send_audio",
-          encoded,
-          [arinc_ms: arinc_ms, signs_ui_ms: signs_ui_ms, sign_id: sign_id] ++ extra_logs
-        )
+        log("send_audio", encoded, [arinc_ms: arinc_ms, signs_ui_ms: signs_ui_ms] ++ log_meta)
 
         result
 
@@ -154,7 +149,7 @@ defmodule PaEss.HttpUpdater do
         log(
           "send_custom_audio",
           encoded,
-          [arinc_ms: arinc_ms, signs_ui_ms: signs_ui_ms, sign_id: sign_id] ++ extra_logs
+          [arinc_ms: arinc_ms, signs_ui_ms: signs_ui_ms] ++ log_meta
         )
 
         result

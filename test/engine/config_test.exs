@@ -7,21 +7,21 @@ defmodule Engine.ConfigTest do
       Engine.Config.update()
 
       Process.sleep(50)
-      assert Engine.Config.sign_config("chelsea_inbound") == :auto
+      assert Engine.Config.sign_config("chelsea_inbound", :off) == :auto
     end
 
     test "is off when the sign is disabled" do
       Engine.Config.update()
 
       Process.sleep(50)
-      assert Engine.Config.sign_config("chelsea_outbound") == :off
+      assert Engine.Config.sign_config("chelsea_outbound", :auto) == :off
     end
 
-    test "is off when the sign is unspecified" do
+    test "is the provided default value when the sign is unspecified" do
       Engine.Config.update()
 
       Process.sleep(50)
-      assert Engine.Config.sign_config("unspecified_sign") == :off
+      assert Engine.Config.sign_config("unspecified_sign", :headway) == :headway
     end
 
     test "returns custom text when it's not expired" do
@@ -33,7 +33,7 @@ defmodule Engine.ConfigTest do
           end
         })
 
-      assert Engine.Config.sign_config(state.table_name_signs, "custom_text_test") ==
+      assert Engine.Config.sign_config(state.table_name_signs, "custom_text_test", :off) ==
                {:static_text, {"Test message", "Please ignore"}}
     end
 
@@ -46,14 +46,14 @@ defmodule Engine.ConfigTest do
           end
         })
 
-      assert Engine.Config.sign_config(state.table_name_signs, "custom_text_test") == :auto
+      assert Engine.Config.sign_config(state.table_name_signs, "custom_text_test", :off) == :auto
     end
 
     test "properly returns headway mode" do
       Engine.Config.update()
 
       Process.sleep(50)
-      assert Engine.Config.sign_config("headway_test") == :headway
+      assert Engine.Config.sign_config("headway_test", :off) == :headway
     end
   end
 
@@ -66,7 +66,7 @@ defmodule Engine.ConfigTest do
     test "handles new format of config" do
       initialize_test_state(%{table_name_signs: :test_new_format, current_version: "new_format"})
 
-      assert Engine.Config.sign_config(:test_new_format, "some_custom_sign") ==
+      assert Engine.Config.sign_config(:test_new_format, "some_custom_sign", :off) ==
                {:static_text, {"custom", ""}}
     end
 
@@ -89,19 +89,19 @@ defmodule Engine.ConfigTest do
     test "correctly loads config for a sign with a mode of \"off\"" do
       initialize_test_state(%{table_name_signs: :config_test_off})
 
-      assert Engine.Config.sign_config(:config_test_off, "off_test") == :off
+      assert Engine.Config.sign_config(:config_test_off, "off_test", :auto) == :off
     end
 
     test "correctly loads config for a sign with a mode of \"auto\"" do
       initialize_test_state(%{table_name_signs: :config_test_auto})
 
-      assert Engine.Config.sign_config(:config_test_auto, "auto_test") == :auto
+      assert Engine.Config.sign_config(:config_test_auto, "auto_test", :off) == :auto
     end
 
     test "correctly loads config for a sign with a mode of \"headway\"" do
       initialize_test_state(%{table_name_signs: :config_test_headway})
 
-      assert Engine.Config.sign_config(:config_test_headway, "headway_test") == :headway
+      assert Engine.Config.sign_config(:config_test_headway, "headway_test", :off) == :headway
     end
 
     test "loads chelsea bridge config" do
