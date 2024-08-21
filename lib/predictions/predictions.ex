@@ -21,8 +21,7 @@ defmodule Predictions.Predictions do
       end)
       |> Stream.map(&prediction_from_update(&1, current_time))
       |> Enum.reject(
-        &((is_nil(&1.seconds_until_arrival) and is_nil(&1.seconds_until_departure) and
-             is_nil(&1.seconds_until_passthrough)) or
+        &((is_nil(&1.seconds_until_arrival) and is_nil(&1.seconds_until_departure)) or
             (&1.seconds_until_departure && &1.seconds_until_departure < -10))
       )
 
@@ -68,6 +67,9 @@ defmodule Predictions.Predictions do
        ) do
     current_time_seconds = DateTime.to_unix(current_time)
 
+    schedule_relationship =
+      translate_schedule_relationship(stop_time_update["schedule_relationship"])
+
     seconds_until_arrival =
       if stop_time_update["arrival"] &&
            sufficient_certainty?(stop_time_update["arrival"], route_id),
@@ -81,7 +83,7 @@ defmodule Predictions.Predictions do
          else: nil
 
     seconds_until_passthrough =
-      if not revenue_trip?,
+      if not revenue_trip? or schedule_relationship == :skipped,
         do: seconds_until_arrival || seconds_until_departure,
         else: nil
 
@@ -102,8 +104,7 @@ defmodule Predictions.Predictions do
       seconds_until_departure: seconds_until_departure,
       departure_certainty: stop_time_update["departure"]["uncertainty"],
       seconds_until_passthrough: max(0, seconds_until_passthrough),
-      schedule_relationship:
-        translate_schedule_relationship(stop_time_update["schedule_relationship"]),
+      schedule_relationship: schedule_relationship,
       route_id: route_id,
       trip_id: trip_id,
       destination_stop_id: last_stop_id,
