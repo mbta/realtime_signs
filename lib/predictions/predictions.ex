@@ -22,7 +22,7 @@ defmodule Predictions.Predictions do
       |> Stream.map(&prediction_from_update(&1, current_time))
       |> Enum.reject(
         &((is_nil(&1.seconds_until_arrival) and is_nil(&1.seconds_until_departure)) or
-            (&1.seconds_until_departure && &1.seconds_until_departure < -10))
+            has_departed?(&1))
       )
 
     vehicles_running_revenue_trips =
@@ -162,5 +162,11 @@ defmodule Predictions.Predictions do
     else
       true
     end
+  end
+
+  @spec has_departed?(Predictions.Prediction.t()) :: boolean()
+  defp has_departed?(prediction) do
+    prediction.seconds_until_departure && prediction.seconds_until_departure < 0 &&
+      not prediction.stopped_at_predicted_stop?
   end
 end
