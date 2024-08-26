@@ -13,10 +13,7 @@ defmodule Predictions.Prediction do
             stopped_at_predicted_stop?: false,
             boarding_status: nil,
             revenue_trip?: true,
-            vehicle_id: nil,
-            vehicle_status: nil,
-            vehicle_location_stop_id: nil,
-            vehicle_location_trip_id: nil
+            vehicle_id: nil
 
   @type trip_id :: String.t()
 
@@ -35,9 +32,6 @@ defmodule Predictions.Prediction do
           stopped_at_predicted_stop?: boolean(),
           boarding_status: String.t() | nil,
           revenue_trip?: boolean(),
-          vehicle_id: String.t() | nil,
-          vehicle_status: :incoming_at | :stopped_at | :in_transit_to,
-          vehicle_location_stop_id: String.t(),
-          vehicle_location_trip_id: String.t()
+          vehicle_id: String.t() | nil
         }
 end

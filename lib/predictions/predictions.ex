@@ -88,13 +88,6 @@ defmodule Predictions.Predictions do
         else: nil
 
     vehicle_location = Engine.Locations.for_vehicle(vehicle_id)
-    vehicle_status = if not is_nil(vehicle_location), do: vehicle_location.status, else: "none"
-
-    vehicle_locaton_stop_id =
-      if not is_nil(vehicle_location), do: vehicle_location.stop_id, else: "none"
-
-    vehicle_location_trip_id =
-      if not is_nil(vehicle_location), do: vehicle_location.trip_id, else: "none"
 
     %Prediction{
       stop_id: stop_time_update["stop_id"],
@@ -113,10 +106,7 @@ defmodule Predictions.Predictions do
           stop_time_update["stop_id"] == vehicle_location.stop_id,
       boarding_status: stop_time_update["boarding_status"],
       revenue_trip?: revenue_trip?,
-      vehicle_id: vehicle_id,
-      vehicle_status: vehicle_status,
-      vehicle_location_stop_id: vehicle_locaton_stop_id,
-      vehicle_location_trip_id: vehicle_location_trip_id
+      vehicle_id: vehicle_id
     }
   end
 

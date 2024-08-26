@@ -70,41 +70,6 @@ defmodule Content.Message.Predictions do
     # e.g., North Station which is non-terminal but has trips that begin there
     predicted_time = prediction.seconds_until_arrival || prediction.seconds_until_departure
 
-    if sign.id in [
-         "malden_center_platform",
-         "green_street_northbound",
-         "revere_beach_westbound",
-         "davis_southbound",
-         "quincy_adams_northbound",
-         "shawmut_northbound"
-       ] do
-      Logger.info([
-        "prediction_info: ",
-        "station_code=",
-        station_code,
-        " zone=",
-        zone,
-        " trip_id=",
-        prediction.trip_id,
-        " stop_id=",
-        prediction.stop_id,
-        " vehicle_id=",
-        inspect(prediction.vehicle_id),
-        " direction_id=",
-        inspect(prediction.direction_id),
-        " seconds_until_departure=",
-        inspect(prediction.seconds_until_departure),
-        " boarding_status=",
-        inspect(prediction.boarding_status),
-        " vehicle_status=",
-        inspect(prediction.vehicle_status),
-        " vehicle_location_stop_id=",
-        inspect(prediction.vehicle_location_stop_id),
-        " vehicle_location_trip_id=",
-        inspect(prediction.vehicle_location_trip_id)
-      ])
-    end
-
     certainty =
       if prediction.seconds_until_arrival,
         do: prediction.arrival_certainty,
@@ -209,43 +174,6 @@ defmodule Content.Message.Predictions do
           Logger.warn("no_destination_for_prediction #{inspect(prediction)}")
           nil
       end
-
-    if prediction.seconds_until_departure + @terminal_prediction_offset_seconds <=
-         @terminal_brd_seconds do
-      Logger.info([
-        "prediction_info: ",
-        "station_code=",
-        station_code,
-        " zone=",
-        zone,
-        " trip_id=",
-        prediction.trip_id,
-        " stop_id=",
-        prediction.stop_id,
-        " vehicle_id=",
-        inspect(prediction.vehicle_id),
-        " direction_id=",
-        inspect(prediction.direction_id),
-        " seconds_until_departure=",
-        inspect(prediction.seconds_until_departure),
-        " boarding_status=",
-        inspect(prediction.boarding_status),
-        " stopped_at_predicted_stop=",
-        inspect(prediction.stopped_at_predicted_stop?),
-        " vehicle_status=",
-        inspect(prediction.vehicle_status),
-        " vehicle_location_stop_id=",
-        inspect(prediction.vehicle_location_stop_id),
-        " vehicle_location_trip_id=",
-        inspect(prediction.vehicle_location_trip_id),
-        " computed_minute=",
-        inspect(minutes),
-        " prediction_certainty=",
-        inspect(prediction.departure_certainty),
-        " terminal_prediction=",
-        inspect(terminal_prediction)
-      ])
-    end
 
     terminal_prediction
   end
