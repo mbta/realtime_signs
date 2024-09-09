@@ -406,13 +406,12 @@ defmodule Signs.Utilities.Audio do
       |> Map.drop([:sign_ids])
       |> Enum.map(fn {k, v} -> {k, inspect(v)} end)
 
-    [message_type: to_string(audio.__struct__) |> String.split(".") |> List.last()] ++
-      message_details
+    [message_type: Module.split(audio.__struct__) |> List.last()] ++ message_details
   end
 
   defp format_message(audio) do
     [
-      message_type: to_string(audio.__struct__) |> String.split(".") |> List.last(),
+      message_type: Module.split(audio.__struct__) |> List.last(),
       message_details: Map.from_struct(audio) |> inspect()
     ]
   end
