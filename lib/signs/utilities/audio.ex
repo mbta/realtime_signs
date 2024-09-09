@@ -398,8 +398,7 @@ defmodule Signs.Utilities.Audio do
     )
   end
 
-  # Format PA Messages separately to ensure backwards compatibility
-  defp format_message(%PaMessages.PaMessage{} = audio) do
+  defp format_message(audio) do
     message_details =
       audio
       |> Map.from_struct()
@@ -407,13 +406,6 @@ defmodule Signs.Utilities.Audio do
       |> Enum.map(fn {k, v} -> {k, inspect(v)} end)
 
     [message_type: Module.split(audio.__struct__) |> List.last()] ++ message_details
-  end
-
-  defp format_message(audio) do
-    [
-      message_type: Module.split(audio.__struct__) |> List.last(),
-      message_details: Map.from_struct(audio) |> inspect()
-    ]
   end
 
   @spec handle_pa_message_play(
