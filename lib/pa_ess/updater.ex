@@ -23,20 +23,26 @@ defmodule PaEss.Updater do
         _ -> nil
       end
 
-    log_meta = [sign_id: id, current_config: log_config]
+    visual = zip_pages(top, bottom) |> format_pages()
+    tag = create_tag()
+
+    log_meta = [
+      sign_id: id,
+      current_config: log_config,
+      visual: Jason.encode!(visual),
+      tag: inspect(tag)
+    ]
 
     if config_engine.scu_migrated?(scu_id) do
-      pages = zip_pages(top, bottom)
-
       PaEss.ScuQueue.enqueue_message(
         scu_id,
         {:background, scu_id,
          %{
            visual_zones: [text_zone],
-           visual_data: format_pages(pages),
+           visual_data: visual,
            expiration: 180,
-           tag: nil
-         }, [visual: inspect(pages)] ++ log_meta}
+           tag: tag
+         }, log_meta}
       )
     else
       MessageQueue.update_sign({pa_ess_loc, text_zone}, top, bottom, 180, :now, log_meta)
@@ -56,7 +62,19 @@ defmodule PaEss.Updater do
         tts_audios,
         log_metas
       ) do
-    log_metas = Enum.map(log_metas, fn log_meta -> [{:sign_id, id} | log_meta] end)
+    tags = Enum.map(audios, fn _ -> create_tag() end)
+
+    log_metas =
+      Enum.zip([tts_audios, tags, log_metas])
+      |> Enum.map(fn {{text, pages}, tag, log_meta} ->
+        [
+          sign_id: id,
+          audio: inspect(text),
+          visual: format_pages(pages) |> Jason.encode!(),
+          tag: inspect(tag)
+        ] ++
+          log_meta
+      end)
 
     if config_engine.scu_migrated?(scu_id) do
       Task.Supervisor.start_child(PaEss.TaskSupervisor, fn ->
@@ -66,8 +84,8 @@ defmodule PaEss.Updater do
           end)
           |> Task.await_many()
 
-        Enum.zip([files, tts_audios, log_metas])
-        |> Enum.each(fn {file, {text, pages}, log_meta} ->
+        Enum.zip([files, tts_audios, tags, log_metas])
+        |> Enum.each(fn {file, {_, pages}, tag, log_meta} ->
           PaEss.ScuQueue.enqueue_message(
             scu_id,
             {:message, scu_id,
@@ -77,8 +95,8 @@ defmodule PaEss.Updater do
                audio_zones: audio_zones,
                audio_data: [Base.encode64(file)],
                expiration: 30,
-               tag: nil
-             }, [audio: inspect(text), visual: inspect(pages)] ++ log_meta}
+               tag: tag
+             }, log_meta}
           )
         end)
       end)
@@ -136,5 +154,9 @@ defmodule PaEss.Updater do
       {:ok, %HTTPoison.Response{status_code: status, body: body}} when status in 200..299 ->
         body
     end
+  end
+
+  defp create_tag() do
+    :rand.bytes(16) |> Base.encode64(padding: false)
   end
 end
