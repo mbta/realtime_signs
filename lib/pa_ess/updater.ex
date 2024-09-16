@@ -25,15 +25,17 @@ defmodule PaEss.Updater do
 
     visual = zip_pages(top, bottom) |> format_pages()
     tag = create_tag()
+    scu_migrated? = config_engine.scu_migrated?(scu_id)
 
     log_meta = [
       sign_id: id,
       current_config: log_config,
       visual: Jason.encode!(visual),
-      tag: inspect(tag)
+      tag: inspect(tag),
+      legacy: !scu_migrated?
     ]
 
-    if config_engine.scu_migrated?(scu_id) do
+    if scu_migrated? do
       PaEss.ScuQueue.enqueue_message(
         scu_id,
         {:background, scu_id,
@@ -63,6 +65,7 @@ defmodule PaEss.Updater do
         log_metas
       ) do
     tags = Enum.map(audios, fn _ -> create_tag() end)
+    scu_migrated? = config_engine.scu_migrated?(scu_id)
 
     log_metas =
       Enum.zip([tts_audios, tags, log_metas])
@@ -71,12 +74,13 @@ defmodule PaEss.Updater do
           sign_id: id,
           audio: inspect(text),
           visual: format_pages(pages) |> Jason.encode!(),
-          tag: inspect(tag)
+          tag: inspect(tag),
+          legacy: !scu_migrated?
         ] ++
           log_meta
       end)
 
-    if config_engine.scu_migrated?(scu_id) do
+    if scu_migrated? do
       Task.Supervisor.start_child(PaEss.TaskSupervisor, fn ->
         files =
           Enum.map(tts_audios, fn {text, _} ->
