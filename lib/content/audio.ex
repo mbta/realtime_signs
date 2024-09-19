@@ -22,4 +22,6 @@ defprotocol Content.Audio do
   def to_params(audio)
   @spec to_tts(Content.Audio.t()) :: tts_value()
   def to_tts(audio)
+  @spec to_logs(Content.Audio.t()) :: keyword()
+  def to_logs(audio)
 end

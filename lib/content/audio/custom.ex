@@ -41,5 +41,9 @@ defmodule Content.Audio.Custom do
     def to_tts(%Content.Audio.Custom{} = audio) do
       {audio.message, nil}
     end
+
+    def to_logs(%Content.Audio.Custom{}) do
+      []
+    end
   end
 end

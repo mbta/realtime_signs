@@ -15,5 +15,9 @@ defmodule Content.Audio.BoardingButton do
 
       {text, PaEss.Utilities.paginate_text(text)}
     end
+
+    def to_logs(%Content.Audio.BoardingButton{}) do
+      []
+    end
   end
 end
