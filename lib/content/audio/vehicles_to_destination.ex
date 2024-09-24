@@ -63,6 +63,10 @@ defmodule Content.Audio.VehiclesToDestination do
       {tts_text(audio), nil}
     end
 
+    def to_logs(%Content.Audio.VehiclesToDestination{}) do
+      []
+    end
+
     defp tts_text(%Content.Audio.VehiclesToDestination{
            headway_range: {range_low, range_high},
            destination: destination,

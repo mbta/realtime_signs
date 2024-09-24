@@ -68,6 +68,10 @@ defmodule Content.Audio.StoppedTrain do
       {tts_text(audio), nil}
     end
 
+    def to_logs(%Content.Audio.StoppedTrain{}) do
+      []
+    end
+
     defp tts_text(%Content.Audio.StoppedTrain{} = audio) do
       train = Utilities.train_description(audio.destination, audio.route_id)
       stop_or_stops = if audio.stops_away == 1, do: "stop", else: "stops"

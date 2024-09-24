@@ -54,6 +54,10 @@ defmodule Content.Audio.TrainIsArriving do
       {text, PaEss.Utilities.paginate_text(text)}
     end
 
+    def to_logs(%Content.Audio.TrainIsArriving{}) do
+      []
+    end
+
     defp tts_text(%Content.Audio.TrainIsArriving{} = audio) do
       train = Utilities.train_description(audio.destination, audio.route_id)
       crowding = PaEss.Utilities.crowding_text(audio.crowding_description)

@@ -137,12 +137,7 @@ defmodule Signs.Realtime do
   end
 
   def handle_info({:play_pa_message, pa_message}, sign) do
-    pa_message_plays =
-      Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign, fn ->
-        Signs.Utilities.Audio.send_audio(sign, [pa_message])
-      end)
-
-    {:noreply, %{sign | pa_message_plays: pa_message_plays}}
+    {:noreply, Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign)}
   end
 
   def handle_info(:run_loop, sign) do

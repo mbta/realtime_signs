@@ -35,6 +35,10 @@ defmodule Content.Audio.Passthrough do
       {text, PaEss.Utilities.paginate_text(text)}
     end
 
+    def to_logs(%Content.Audio.Passthrough{}) do
+      []
+    end
+
     defp tts_text(%Content.Audio.Passthrough{} = audio) do
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
       "The next #{train} does not take customers. Please stand back from the yellow line."

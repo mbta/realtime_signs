@@ -61,6 +61,10 @@ defmodule Content.Audio.Closure do
       {tts_text(audio), nil}
     end
 
+    def to_logs(%Content.Audio.Closure{}) do
+      []
+    end
+
     defp tts_text(%Content.Audio.Closure{} = audio) do
       if audio.alert == :use_routes_alert do
         # Hardcoded for Union Square

@@ -388,55 +388,32 @@ defmodule Signs.Utilities.Audio do
     end)
   end
 
-  @spec send_audio(Signs.Realtime.t(), [Content.Audio.t()]) :: :ok
+  @spec send_audio(Signs.Realtime.t() | Signs.Bus.t(), [Content.Audio.t()]) :: :ok
   def send_audio(sign, audios) do
     sign.sign_updater.play_message(
       sign,
       Enum.map(audios, &Content.Audio.to_params(&1)),
       Enum.map(audios, &Content.Audio.to_tts(&1)),
-      Enum.map(audios, &format_message/1)
+      Enum.map(audios, fn audio ->
+        [message_type: Module.split(audio.__struct__) |> List.last()] ++
+          Content.Audio.to_logs(audio)
+      end)
     )
   end
 
-  defp format_message(audio) do
-    message_details =
-      audio
-      |> Map.from_struct()
-      |> Map.drop([:sign_ids])
-      |> Enum.map(fn {k, v} -> {k, inspect(v)} end)
+  @spec handle_pa_message_play(PaMessages.PaMessage.t(), Signs.Realtime.t() | Signs.Bus.t()) ::
+          Signs.Realtime.t() | Signs.Bus.t()
+  def handle_pa_message_play(pa_message, sign) do
+    last_sent = sign.pa_message_plays[pa_message.id]
+    now = DateTime.utc_now()
 
-    [message_type: Module.split(audio.__struct__) |> List.last()] ++ message_details
-  end
-
-  @spec handle_pa_message_play(
-          PaMessages.PaMessage.t(),
-          Signs.Realtime.t() | Signs.Bus.t(),
-          function()
-        ) :: %{
-          integer() => DateTime.t()
-        }
-  def handle_pa_message_play(
-        pa_message,
-        %{id: sign_id, pa_message_plays: pa_message_plays},
-        send_audio_fn
-      ) do
-    case Map.get(pa_message_plays, pa_message.id) do
-      nil ->
-        send_pa_message(pa_message, pa_message_plays, sign_id, send_audio_fn)
-
-      last_sent ->
-        if DateTime.diff(DateTime.utc_now(), last_sent, :millisecond) >= pa_message.interval_in_ms do
-          send_pa_message(pa_message, pa_message_plays, sign_id, send_audio_fn)
-        else
-          Logger.warn("pa_message: action=skipped id=#{pa_message.id} destination=#{sign_id}")
-          pa_message_plays
-        end
+    if !last_sent || DateTime.diff(now, last_sent, :millisecond) >= pa_message.interval_in_ms do
+      Logger.info("pa_message: action=send id=#{pa_message.id} destination=#{sign.id}")
+      send_audio(sign, [pa_message])
+      update_in(sign.pa_message_plays, &Map.put(&1, pa_message.id, now))
+    else
+      Logger.warn("pa_message: action=skipped id=#{pa_message.id} destination=#{sign.id}")
+      sign
     end
-  end
-
-  defp send_pa_message(pa_message, pa_message_plays, sign_id, send_audio_fn) do
-    Logger.info("pa_message: action=send id=#{pa_message.id} destination=#{sign_id}")
-    send_audio_fn.()
-    Map.put(pa_message_plays, pa_message.id, DateTime.utc_now())
   end
 end

@@ -68,6 +68,10 @@ defmodule Content.Audio.TrainIsBoarding do
       {tts_text(audio), nil}
     end
 
+    def to_logs(%Content.Audio.TrainIsBoarding{}) do
+      []
+    end
+
     defp tts_text(%Content.Audio.TrainIsBoarding{} = audio) do
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
       track = if(audio.track_number, do: " on track #{audio.track_number}", else: ".")

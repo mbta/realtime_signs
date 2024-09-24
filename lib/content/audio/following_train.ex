@@ -86,6 +86,10 @@ defmodule Content.Audio.FollowingTrain do
       {tts_text(audio), nil}
     end
 
+    def to_logs(%Content.Audio.FollowingTrain{}) do
+      []
+    end
+
     defp tts_text(%Content.Audio.FollowingTrain{} = audio) do
       train = Utilities.train_description(audio.destination, audio.route_id)
       arrives_or_departs = if audio.verb == :arrives, do: "arrives", else: "departs"

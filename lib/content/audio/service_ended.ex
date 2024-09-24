@@ -64,6 +64,10 @@ defmodule Content.Audio.ServiceEnded do
       {tts_text(audio), nil}
     end
 
+    def to_logs(%Content.Audio.ServiceEnded{}) do
+      []
+    end
+
     defp tts_text(%Content.Audio.ServiceEnded{location: :station, routes: routes}) do
       line = Utilities.get_line_from_routes_list(routes) |> String.capitalize()
       "#{line} service has ended for the night."

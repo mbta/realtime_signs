@@ -60,5 +60,9 @@ defmodule Content.Audio.FirstTrainScheduled do
       time = Content.Utilities.render_datetime_as_time(audio.scheduled_time)
       {"The first #{train} is scheduled to arrive at #{time}", nil}
     end
+
+    def to_logs(%Content.Audio.FirstTrainScheduled{}) do
+      []
+    end
   end
 end
