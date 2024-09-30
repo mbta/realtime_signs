@@ -148,10 +148,7 @@ defmodule Signs.Utilities.Messages do
            messages: [
              # Make zone nil in order to prevent the usual paging platform message
              %{prediction | zone: nil},
-             %Content.Message.Headways.Top{
-               destination: destination,
-               vehicle_type: :train
-             }
+             %Content.Message.Headways.Top{destination: destination}
            ]
          },
          %Content.Message.GenericPaging{

@@ -103,7 +103,7 @@ defmodule Signs.Utilities.EarlyAmSuppression do
               |> PaEss.Utilities.get_unique_routes()
 
             {t1, t2} = top_content
-            {%{t1 | routes: routes}, t2}
+            {%{t1 | routes: routes, destination: nil}, t2}
 
           true ->
             paginate(top_content, bottom_content)
@@ -163,8 +163,7 @@ defmodule Signs.Utilities.EarlyAmSuppression do
         |> case do
           # If line has status :none, then it could be a paging headway message
           {%Headways.Paging{destination: destination, range: range}, _} ->
-            {%Headways.Top{destination: destination, vehicle_type: :train},
-             %Headways.Bottom{range: range}}
+            {%Headways.Top{destination: destination}, %Headways.Bottom{range: range}}
 
           # If we get one half of a headway message, it means the mz sign was showing headways in the original content generation
           # but that one or the other mz lines has an early am status of :none.
