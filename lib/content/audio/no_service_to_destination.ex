@@ -21,6 +21,20 @@ defmodule Content.Audio.NoServiceToDestination do
     [%__MODULE__{destination: destination, use_shuttle: true}]
   end
 
+  def from_messages(
+        %Content.Message.Alert.NoService{destination: destination},
+        %Content.Message.Alert.UseShuttleBus{}
+      ) do
+    [%__MODULE__{destination: destination, use_shuttle: true}]
+  end
+
+  def from_messages(
+        %Content.Message.Alert.NoService{destination: destination},
+        %Content.Message.Empty{}
+      ) do
+    [%__MODULE__{destination: destination, use_shuttle: false}]
+  end
+
   defimpl Content.Audio do
     def to_params(%Content.Audio.NoServiceToDestination{} = audio) do
       {:ad_hoc, {tts_text(audio), :audio}}
