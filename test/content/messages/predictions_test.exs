@@ -17,8 +17,6 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_arrival: 0,
         direction_id: 1,
         route_id: "NON-ROUTE",
-        stopped?: false,
-        stops_away: 1,
         destination_stop_id: "70261"
       }
 
@@ -35,8 +33,6 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_arrival: 0,
         direction_id: 1,
         route_id: "Mattapan",
-        stopped?: false,
-        stops_away: 1,
         destination_stop_id: "70261"
       }
 
@@ -50,8 +46,7 @@ defmodule Content.Message.PredictionsTest do
         direction_id: 1,
         route_id: "Mattapan",
         destination_stop_id: "70261",
-        stopped?: false,
-        stops_away: 0,
+        stopped_at_predicted_stop?: true,
         boarding_status: "Boarding"
       }
 
@@ -65,8 +60,6 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_arrival: 30,
         direction_id: 0,
         route_id: "Mattapan",
-        stopped?: false,
-        stops_away: 1,
         destination_stop_id: "70275"
       }
 
@@ -80,8 +73,6 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_arrival: 31,
         direction_id: 0,
         route_id: "Mattapan",
-        stopped?: false,
-        stops_away: 1,
         destination_stop_id: "70275"
       }
 
@@ -95,8 +86,6 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_arrival: 61,
         direction_id: 0,
         route_id: "Mattapan",
-        stopped?: false,
-        stops_away: 1,
         destination_stop_id: "70275"
       }
 
@@ -111,8 +100,6 @@ defmodule Content.Message.PredictionsTest do
         arrival_certainty: 360,
         direction_id: 0,
         route_id: "Mattapan",
-        stopped?: false,
-        stops_away: 10,
         destination_stop_id: "70275"
       }
 
@@ -126,8 +113,6 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_arrival: 550,
         route_id: "Mattapan",
         direction_id: 0,
-        stopped?: false,
-        stops_away: 3,
         destination_stop_id: "70275"
       }
 
@@ -140,8 +125,6 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_arrival: 65,
         direction_id: 1,
         route_id: "Mattapan",
-        stopped?: false,
-        stops_away: 1,
         destination_stop_id: "70261"
       }
 
@@ -155,8 +138,6 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_arrival: 125,
         direction_id: 1,
         route_id: "Mattapan",
-        stopped?: false,
-        stops_away: 2,
         destination_stop_id: "70261"
       }
 
@@ -170,8 +151,6 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_arrival: -5,
         route_id: "Mattapan",
         direction_id: 1,
-        stopped?: false,
-        stops_away: 1,
         destination_stop_id: "70261"
       }
 
@@ -185,8 +164,7 @@ defmodule Content.Message.PredictionsTest do
         route_id: "Mattapan",
         direction_id: 1,
         destination_stop_id: "70261",
-        stopped?: false,
-        stops_away: 0,
+        stopped_at_predicted_stop?: true,
         boarding_status: "Boarding"
       }
 
@@ -200,8 +178,6 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_arrival: 91,
         route_id: "Mattapan",
         direction_id: 1,
-        stopped?: false,
-        stops_away: 2,
         destination_stop_id: "70261"
       }
 
@@ -215,8 +191,6 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_arrival: 91,
         route_id: "Mattapan",
         direction_id: 1,
-        stopped?: false,
-        stops_away: 2,
         destination_stop_id: "70261",
         trip_id: "trip1"
       }
@@ -231,9 +205,7 @@ defmodule Content.Message.PredictionsTest do
         stop_id: "70086",
         seconds_until_arrival: 300,
         direction_id: 1,
-        route_id: "Red",
-        stopped?: false,
-        stops_away: 2
+        route_id: "Red"
       }
 
       msg = Content.Message.Predictions.non_terminal(prediction, "RJFK", "m", @sign)
@@ -249,9 +221,7 @@ defmodule Content.Message.PredictionsTest do
         stop_id: "70096",
         seconds_until_arrival: 300,
         direction_id: 1,
-        route_id: "Red",
-        stopped?: false,
-        stops_away: 2
+        route_id: "Red"
       }
 
       msg = Content.Message.Predictions.non_terminal(prediction, "RJFK", "m", @sign)
@@ -267,9 +237,7 @@ defmodule Content.Message.PredictionsTest do
         stop_id: "70096",
         seconds_until_arrival: 360,
         direction_id: 1,
-        route_id: "Red",
-        stopped?: false,
-        stops_away: 2
+        route_id: "Red"
       }
 
       msg = Content.Message.Predictions.non_terminal(prediction, "RJFK", "m", @sign)
@@ -294,8 +262,7 @@ defmodule Content.Message.PredictionsTest do
         direction_id: 1,
         route_id: "NON-ROUTE",
         destination_stop_id: "70261",
-        stopped?: false,
-        stops_away: 0,
+        stopped_at_predicted_stop?: true,
         boarding_status: "Boarding"
       }
 
@@ -312,8 +279,6 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_departure: 0,
         direction_id: 1,
         route_id: "NON-ROUTE",
-        stopped?: false,
-        stops_away: 1,
         destination_stop_id: "70261"
       }
 
@@ -325,14 +290,13 @@ defmodule Content.Message.PredictionsTest do
       assert log =~ "no_destination_for_prediction"
     end
 
-    test "puts boarding on the sign when train is supposed to be boarding according to rtr" do
+    test "puts boarding on the sign when train is supposed to be boarding according to concentrate" do
       prediction = %Predictions.Prediction{
         seconds_until_departure: 75,
         direction_id: 1,
         route_id: "Mattapan",
         destination_stop_id: "70261",
-        stopped?: false,
-        stops_away: 0,
+        stopped_at_predicted_stop?: true,
         boarding_status: "Stopped at station"
       }
 
@@ -347,8 +311,7 @@ defmodule Content.Message.PredictionsTest do
         direction_id: 1,
         route_id: "Mattapan",
         destination_stop_id: "70261",
-        stopped?: false,
-        stops_away: 0,
+        stopped_at_predicted_stop?: true,
         boarding_status: "Stopped at station"
       }
 
@@ -363,8 +326,7 @@ defmodule Content.Message.PredictionsTest do
         direction_id: 1,
         route_id: "Mattapan",
         destination_stop_id: "70261",
-        stopped?: false,
-        stops_away: 0,
+        stopped_at_predicted_stop?: true,
         boarding_status: "Stopped at station"
       }
 
@@ -378,8 +340,6 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_departure: 70,
         direction_id: 1,
         route_id: "Mattapan",
-        stopped?: false,
-        stops_away: 1,
         destination_stop_id: "70261"
       }
 
@@ -394,8 +354,7 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_departure: 180,
         direction_id: 1,
         route_id: "Orange",
-        stopped?: false,
-        stops_away: 0
+        stopped_at_predicted_stop?: true
       }
 
       msg = Content.Message.Predictions.terminal(prediction, "test", "m", @sign)
@@ -411,8 +370,6 @@ defmodule Content.Message.PredictionsTest do
         seconds_until_departure: 91,
         route_id: "Mattapan",
         direction_id: 1,
-        stopped?: false,
-        stops_away: 2,
         destination_stop_id: "70261",
         trip_id: "trip1"
       }

@@ -77,10 +77,17 @@ defmodule Content.Message.Predictions do
 
     {minutes, approximate?} =
       cond do
-        prediction.stops_away == 0 -> {:boarding, false}
-        predicted_time <= 30 -> {:arriving, false}
-        predicted_time <= 60 -> {:approaching, false}
-        true -> compute_minutes(predicted_time, certainty)
+        prediction.stopped_at_predicted_stop? ->
+          {:boarding, false}
+
+        predicted_time <= 30 ->
+          {:arriving, false}
+
+        predicted_time <= 60 ->
+          {:approaching, false}
+
+        true ->
+          compute_minutes(predicted_time, certainty)
       end
 
     {crowding_data_confidence, crowding_description} =
@@ -128,41 +135,47 @@ defmodule Content.Message.Predictions do
   def terminal(prediction, station_code, zone, sign, width \\ 18)
 
   def terminal(prediction, station_code, zone, sign, width) do
-    stopped_at? = prediction.stops_away == 0
-
     {minutes, approximate?} =
       case prediction.seconds_until_departure + @terminal_prediction_offset_seconds do
-        x when x <= @terminal_brd_seconds and stopped_at? -> {:boarding, false}
-        x when x <= @terminal_brd_seconds -> {1, false}
-        x -> compute_minutes(x, prediction.departure_certainty)
+        x when x <= @terminal_brd_seconds and prediction.stopped_at_predicted_stop? ->
+          {:boarding, false}
+
+        x when x <= @terminal_brd_seconds ->
+          {1, false}
+
+        x ->
+          compute_minutes(x, prediction.departure_certainty)
       end
 
-    case Content.Utilities.destination_for_prediction(
-           prediction.route_id,
-           prediction.direction_id,
-           prediction.destination_stop_id
-         ) do
-      {:ok, destination} ->
-        %__MODULE__{
-          destination: destination,
-          minutes: minutes,
-          approximate?: approximate?,
-          route_id: prediction.route_id,
-          stop_id: prediction.stop_id,
-          trip_id: prediction.trip_id,
-          direction_id: prediction.direction_id,
-          width: width,
-          new_cars?: sign.location_engine.for_vehicle(prediction.vehicle_id) |> new_cars?(),
-          station_code: station_code,
-          zone: zone,
-          terminal?: true,
-          certainty: prediction.departure_certainty
-        }
+    terminal_prediction =
+      case Content.Utilities.destination_for_prediction(
+             prediction.route_id,
+             prediction.direction_id,
+             prediction.destination_stop_id
+           ) do
+        {:ok, destination} ->
+          %__MODULE__{
+            destination: destination,
+            minutes: minutes,
+            approximate?: approximate?,
+            route_id: prediction.route_id,
+            stop_id: prediction.stop_id,
+            trip_id: prediction.trip_id,
+            direction_id: prediction.direction_id,
+            width: width,
+            new_cars?: sign.location_engine.for_vehicle(prediction.vehicle_id) |> new_cars?(),
+            station_code: station_code,
+            zone: zone,
+            terminal?: true,
+            certainty: prediction.departure_certainty
+          }
 
-      {:error, _} ->
-        Logger.warn("no_destination_for_prediction #{inspect(prediction)}")
-        nil
-    end
+        {:error, _} ->
+          Logger.warn("no_destination_for_prediction #{inspect(prediction)}")
+          nil
+      end
+
+    terminal_prediction
   end
 
   defp compute_minutes(sec, certainty) do
