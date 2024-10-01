@@ -1,9 +1,11 @@
 defmodule Content.Message.Headways.Paging do
-  defstruct [:destination, :range]
+  @enforce_keys [:destination, :range]
+  defstruct @enforce_keys ++ [:route]
 
   @type t :: %__MODULE__{
           destination: PaEss.destination() | nil,
-          range: {non_neg_integer(), non_neg_integer()}
+          range: {non_neg_integer(), non_neg_integer()},
+          route: String.t() | nil
         }
 
   defimpl Content.Message do

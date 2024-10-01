@@ -12,7 +12,7 @@ defmodule Signs.Utilities.LastTrip do
         {unpacked_mz_top, unpacked_mz_bottom} = unpack_mezzanine_content(messages, source)
         {top_source_config, bottom_source_config} = source
 
-        routes = Signs.Utilities.SourceConfig.sign_routes(source)
+        route = Signs.Utilities.SourceConfig.single_route(source)
 
         cond do
           # If combined alert status, only switch to Last Trip messaging once service has fully ended.
@@ -21,14 +21,14 @@ defmodule Signs.Utilities.LastTrip do
           match?(%Message.Alert.NoService{}, unpacked_mz_top) ->
             if has_top_service_ended? and has_bottom_service_ended?,
               do:
-                {%Content.Message.LastTrip.StationClosed{routes: routes},
+                {%Content.Message.LastTrip.StationClosed{route: route},
                  %Content.Message.LastTrip.ServiceEnded{}},
               else: messages
 
           has_top_service_ended? and has_bottom_service_ended? and
             not is_prediction?(unpacked_mz_top) and
               not is_prediction?(unpacked_mz_bottom) ->
-            {%Content.Message.LastTrip.StationClosed{routes: routes},
+            {%Content.Message.LastTrip.StationClosed{route: route},
              %Content.Message.LastTrip.ServiceEnded{}}
 
           has_top_service_ended? and not is_prediction?(unpacked_mz_top) and

@@ -98,12 +98,9 @@ defmodule Signs.Utilities.EarlyAmSuppression do
             {top, bottom}
 
           match?({{%Headways.Top{}, _}, {%Headways.Top{}, _}}, {top_content, bottom_content}) ->
-            routes =
-              Signs.Utilities.SourceConfig.sign_routes(sign.source_config)
-              |> PaEss.Utilities.get_unique_routes()
-
+            route = Signs.Utilities.SourceConfig.single_route(sign.source_config)
             {t1, t2} = top_content
-            {%{t1 | routes: routes, destination: nil}, t2}
+            {%{t1 | route: route, destination: nil}, t2}
 
           true ->
             paginate(top_content, bottom_content)
@@ -213,8 +210,8 @@ defmodule Signs.Utilities.EarlyAmSuppression do
               {headway_top, %Headways.Bottom{range: {_, high}} = headway_bottom} ->
                 # Check against schedule to account for mezzanine sources having different first scheduled arrivals
                 if DateTime.add(current_time, high, :minute) |> DateTime.compare(scheduled) == :gt do
-                  # Make sure routes is nil so that destination is used as headsign
-                  {%{headway_top | destination: destination, routes: nil}, headway_bottom}
+                  # Make sure route is nil so that destination is used as headsign
+                  {%{headway_top | destination: destination, route: nil}, headway_bottom}
                 else
                   {%EarlyAm.DestinationTrain{
                      destination: destination

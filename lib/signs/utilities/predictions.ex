@@ -76,10 +76,7 @@ defmodule Signs.Utilities.Predictions do
     # Take next two predictions, but if the list has multiple destinations, prefer showing
     # distinct ones. This helps e.g. the red line trunk where people may need to know about
     # a particular branch.
-    |> get_unique_destination_predictions(
-      SourceConfig.sign_routes(sign.source_config)
-      |> PaEss.Utilities.get_unique_routes()
-    )
+    |> get_unique_destination_predictions(SourceConfig.single_route(sign.source_config))
     |> case do
       [] ->
         {Content.Message.Empty.new(), Content.Message.Empty.new()}
@@ -102,8 +99,7 @@ defmodule Signs.Utilities.Predictions do
     end
   end
 
-  defp get_unique_destination_predictions(predictions, sign_routes)
-       when sign_routes == ["Green"] do
+  defp get_unique_destination_predictions(predictions, "Green") do
     Enum.take(predictions, 2)
   end
 

@@ -1,22 +1,22 @@
 defmodule Content.Message.Headways.Top do
-  defstruct [:destination, :routes]
+  defstruct [:destination, :route]
 
   @type t :: %__MODULE__{
           destination: PaEss.destination() | nil,
-          routes: [String.t()] | nil
+          route: String.t() | nil
         }
 
   defimpl Content.Message do
-    def to_string(%Content.Message.Headways.Top{destination: nil, routes: ["Mattapan"]}) do
+    def to_string(%Content.Message.Headways.Top{destination: nil, route: nil}) do
+      "Trains"
+    end
+
+    def to_string(%Content.Message.Headways.Top{destination: nil, route: "Mattapan"}) do
       "Mattapan trains"
     end
 
-    def to_string(%Content.Message.Headways.Top{destination: nil, routes: [route]}) do
+    def to_string(%Content.Message.Headways.Top{destination: nil, route: route}) do
       "#{route} line trains"
-    end
-
-    def to_string(%Content.Message.Headways.Top{destination: nil}) do
-      "Trains"
     end
 
     def to_string(%Content.Message.Headways.Top{destination: destination}) do

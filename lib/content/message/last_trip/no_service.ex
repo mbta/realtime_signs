@@ -1,9 +1,10 @@
 defmodule Content.Message.LastTrip.NoService do
   @enforce_keys [:destination, :line]
-  defstruct @enforce_keys
+  defstruct @enforce_keys ++ [:route]
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
+          route: String.t() | nil,
           line: :top | :bottom
         }
 

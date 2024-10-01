@@ -307,32 +307,12 @@ defmodule PaEss.Utilities do
   def destination_to_ad_hoc_string(:medford_tufts), do: {:ok, "Medford/Tufts"}
   def destination_to_ad_hoc_string(_unknown), do: {:error, :unknown}
 
-  def line_to_var("Red Line"), do: "3005"
-  def line_to_var("Orange Line"), do: "3006"
-  def line_to_var("Blue Line"), do: "3007"
-  def line_to_var("Green Line"), do: "3008"
-  def line_to_var("Mattapan Line"), do: "3009"
+  def line_to_var("Red"), do: "3005"
+  def line_to_var("Orange"), do: "3006"
+  def line_to_var("Blue"), do: "3007"
+  def line_to_var("Green"), do: "3008"
+  def line_to_var("Mattapan"), do: "3009"
   def line_to_var(_), do: "864"
-
-  def get_unique_routes(routes) do
-    routes
-    |> Enum.map(fn route -> route |> String.split("-") |> List.first() end)
-    |> Enum.uniq()
-  end
-
-  def get_line_from_routes_list(routes) do
-    case get_unique_routes(routes) do
-      [route] ->
-        "#{route} Line"
-
-      _ ->
-        # Currently, the only case where there would be two fully distinct
-        # routes (disregarding GL Branches) is the Ashmont Mezzanine.
-        # Even in the Ashmont Mezzanine case though, we would page the Mattapan-specific
-        # shuttle alert on the second line and show Red line predictions on top.
-        "train"
-    end
-  end
 
   def directional_destination?(destination),
     do: destination in [:eastbound, :westbound, :southbound, :northbound, :inbound, :outbound]

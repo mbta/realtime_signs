@@ -20,11 +20,7 @@ defmodule Signs.Utilities.Headways do
 
       headways ->
         if Signs.Utilities.SourceConfig.multi_source?(sign.source_config) do
-          {%Content.Message.Headways.Top{
-             routes:
-               SourceConfig.sign_routes(sign.source_config)
-               |> PaEss.Utilities.get_unique_routes()
-           },
+          {%Content.Message.Headways.Top{route: SourceConfig.single_route(sign.source_config)},
            %Content.Message.Headways.Bottom{
              range: {headways.range_low, headways.range_high}
            }}
