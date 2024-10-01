@@ -23,14 +23,13 @@ defmodule Signs.Utilities.Headways do
           {%Content.Message.Headways.Top{
              routes:
                SourceConfig.sign_routes(sign.source_config)
-               |> PaEss.Utilities.get_unique_routes(),
-             vehicle_type: :train
+               |> PaEss.Utilities.get_unique_routes()
            },
            %Content.Message.Headways.Bottom{
              range: {headways.range_low, headways.range_high}
            }}
         else
-          {%Content.Message.Headways.Top{destination: destination, vehicle_type: :train},
+          {%Content.Message.Headways.Top{destination: destination},
            %Content.Message.Headways.Bottom{
              range: {headways.range_low, headways.range_high}
            }}

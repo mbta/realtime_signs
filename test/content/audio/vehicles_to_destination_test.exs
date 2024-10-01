@@ -161,7 +161,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
                }
              ] =
                from_headway_message(
-                 %Content.Message.Headways.Top{destination: nil, vehicle_type: :train},
+                 %Content.Message.Headways.Top{destination: nil},
                  %Content.Message.Headways.Bottom{range: {8, 10}}
                )
     end
