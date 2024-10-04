@@ -1,17 +1,17 @@
 defmodule Content.Audio.ServiceEnded do
   alias PaEss.Utilities
   @enforce_keys [:location]
-  defstruct @enforce_keys ++ [:destination, :routes]
+  defstruct @enforce_keys ++ [:destination, :route]
 
   @type location :: :platform | :station | :direction
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
-          routes: [String.t()] | nil,
+          route: String.t() | nil,
           location: location()
         }
 
-  def from_message(%Content.Message.LastTrip.StationClosed{routes: routes}) do
-    [%__MODULE__{location: :station, routes: routes}]
+  def from_message(%Content.Message.LastTrip.StationClosed{route: route}) do
+    [%__MODULE__{location: :station, route: route}]
   end
 
   def from_message(%Content.Message.LastTrip.PlatformClosed{destination: destination}) do
@@ -27,12 +27,8 @@ defmodule Content.Audio.ServiceEnded do
     # @station_closed "883"
     @platform_closed "884"
 
-    def to_params(%Content.Audio.ServiceEnded{location: :station, routes: routes}) do
-      line_var =
-        routes
-        |> Utilities.get_line_from_routes_list()
-        |> Utilities.line_to_var()
-
+    def to_params(%Content.Audio.ServiceEnded{location: :station, route: route}) do
+      line_var = Utilities.line_to_var(route)
       Utilities.take_message([line_var, @service_ended], :audio)
     end
 
@@ -68,8 +64,8 @@ defmodule Content.Audio.ServiceEnded do
       []
     end
 
-    defp tts_text(%Content.Audio.ServiceEnded{location: :station, routes: routes}) do
-      line = Utilities.get_line_from_routes_list(routes) |> String.capitalize()
+    defp tts_text(%Content.Audio.ServiceEnded{location: :station, route: route}) do
+      line = if(route, do: "#{route} line", else: "Train")
       "#{line} service has ended for the night."
     end
 

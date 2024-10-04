@@ -5,25 +5,25 @@ defmodule Content.Message.Headways.TopTest do
     test "works" do
       assert Content.Message.to_string(%Content.Message.Headways.Top{
                destination: :alewife,
-               routes: ["Red"]
+               route: "Red"
              }) ==
                "Alewife trains"
 
       assert Content.Message.to_string(%Content.Message.Headways.Top{
                destination: nil,
-               routes: ["Mattapan"]
+               route: "Mattapan"
              }) ==
                "Mattapan trains"
 
       assert Content.Message.to_string(%Content.Message.Headways.Top{
                destination: nil,
-               routes: ["Red"]
+               route: "Red"
              }) ==
                "Red line trains"
 
       assert Content.Message.to_string(%Content.Message.Headways.Top{
                destination: nil,
-               routes: ["Red", "Green"]
+               route: nil
              }) ==
                "Trains"
     end

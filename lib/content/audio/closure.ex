@@ -6,23 +6,23 @@ defmodule Content.Audio.Closure do
   require Logger
 
   @enforce_keys [:alert]
-  defstruct [routes: []] ++ @enforce_keys
+  defstruct @enforce_keys ++ [:route]
 
   @type t :: %__MODULE__{
           alert: :shuttles_closed_station | :suspension_closed_station,
-          routes: [String.t()]
+          route: String.t() | nil
         }
 
   @spec from_messages(Content.Message.t(), Content.Message.t()) :: [t()]
   def from_messages(
-        %Content.Message.Alert.NoService{routes: routes},
+        %Content.Message.Alert.NoService{route: route},
         %Content.Message.Alert.UseShuttleBus{}
       ) do
-    [%Content.Audio.Closure{alert: :shuttles_closed_station, routes: routes}]
+    [%Content.Audio.Closure{alert: :shuttles_closed_station, route: route}]
   end
 
-  def from_messages(%Content.Message.Alert.NoService{routes: routes}, %Content.Message.Empty{}) do
-    [%Content.Audio.Closure{alert: :suspension_closed_station, routes: routes}]
+  def from_messages(%Content.Message.Alert.NoService{route: route}, %Content.Message.Empty{}) do
+    [%Content.Audio.Closure{alert: :suspension_closed_station, route: route}]
   end
 
   def from_messages(%Content.Message.Alert.NoService{}, %Content.Message.Alert.UseRoutes{}) do
@@ -38,22 +38,17 @@ defmodule Content.Audio.Closure do
     @there_is_no "861"
     @service_at_this_station "863"
 
-    def to_params(%Content.Audio.Closure{alert: :shuttles_closed_station, routes: routes}) do
-      line_var =
-        PaEss.Utilities.get_line_from_routes_list(routes) |> PaEss.Utilities.line_to_var()
-
-      {:canned, {"199", [line_var], :audio}}
+    def to_params(%Content.Audio.Closure{alert: :shuttles_closed_station, route: route}) do
+      {:canned, {"199", [PaEss.Utilities.line_to_var(route)], :audio}}
     end
 
-    def to_params(%Content.Audio.Closure{alert: :suspension_closed_station, routes: routes}) do
-      line_var =
-        PaEss.Utilities.get_line_from_routes_list(routes) |> PaEss.Utilities.line_to_var()
-
+    def to_params(%Content.Audio.Closure{alert: :suspension_closed_station, route: route}) do
+      line_var = PaEss.Utilities.line_to_var(route)
       PaEss.Utilities.take_message([@there_is_no, line_var, @service_at_this_station], :audio)
     end
 
     # Hardcoded for Union Square
-    def to_params(%Content.Audio.Closure{alert: :use_routes_alert, routes: []} = audio) do
+    def to_params(%Content.Audio.Closure{alert: :use_routes_alert, route: nil} = audio) do
       {:ad_hoc, {tts_text(audio), :audio}}
     end
 
@@ -65,13 +60,13 @@ defmodule Content.Audio.Closure do
       []
     end
 
-    defp tts_text(%Content.Audio.Closure{} = audio) do
+    defp tts_text(%Content.Audio.Closure{route: route} = audio) do
       if audio.alert == :use_routes_alert do
         # Hardcoded for Union Square
         "No Train Service. Use routes 86, 87, or 91"
       else
         shuttle = if(audio.alert == :shuttles_closed_station, do: " Use shuttle.", else: "")
-        line = PaEss.Utilities.get_line_from_routes_list(audio.routes)
+        line = if(route, do: "#{route} Line", else: "train")
         "There is no #{line} service at this station.#{shuttle}"
       end
     end

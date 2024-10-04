@@ -221,26 +221,26 @@ defmodule Signs.Utilities.Messages do
   end
 
   defp get_alert_messages(alert_status, sign) do
-    sign_routes = Signs.Utilities.SourceConfig.sign_routes(sign.source_config)
+    route = Signs.Utilities.SourceConfig.single_route(sign.source_config)
 
     case {alert_status, sign.uses_shuttles} do
       {:shuttles_transfer_station, _} ->
         {Content.Message.Empty.new(), Content.Message.Empty.new()}
 
       {:shuttles_closed_station, true} ->
-        {%Alert.NoService{routes: sign_routes}, %Alert.UseShuttleBus{}}
+        {%Alert.NoService{route: route}, %Alert.UseShuttleBus{}}
 
       {:shuttles_closed_station, false} ->
-        {%Alert.NoService{routes: sign_routes}, Content.Message.Empty.new()}
+        {%Alert.NoService{route: route}, Content.Message.Empty.new()}
 
       {:suspension_transfer_station, _} ->
         {Content.Message.Empty.new(), Content.Message.Empty.new()}
 
       {:suspension_closed_station, _} ->
-        {%Alert.NoService{routes: sign_routes}, Content.Message.Empty.new()}
+        {%Alert.NoService{route: route}, Content.Message.Empty.new()}
 
       {:station_closure, _} ->
-        {%Alert.NoService{routes: sign_routes}, Content.Message.Empty.new()}
+        {%Alert.NoService{route: route}, Content.Message.Empty.new()}
 
       _ ->
         nil

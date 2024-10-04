@@ -4,9 +4,12 @@ defmodule Content.Message.Alert.DestinationNoService do
   """
 
   @enforce_keys [:destination]
-  defstruct @enforce_keys
+  defstruct @enforce_keys ++ [:route]
 
-  @type t :: %__MODULE__{}
+  @type t :: %__MODULE__{
+          destination: PaEss.destination(),
+          route: String.t() | nil
+        }
 
   defimpl Content.Message do
     @default_page_width 24

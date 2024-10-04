@@ -199,6 +199,17 @@ defmodule Signs.Utilities.SourceConfig do
     Enum.flat_map(sources, &(&1.routes || []))
   end
 
+  @spec single_route(config() | {config(), config()}) :: String.t() | nil
+  def single_route(config) do
+    sign_routes(config)
+    |> Enum.map(fn route -> route |> String.split("-") |> List.first() end)
+    |> Enum.uniq()
+    |> case do
+      [single] -> single
+      _ -> nil
+    end
+  end
+
   def get_source_by_stop_and_direction(
         {%{sources: top_source_list}, %{sources: bottom_source_list}},
         stop_id,
