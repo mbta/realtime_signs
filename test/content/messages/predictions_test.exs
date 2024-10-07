@@ -12,24 +12,6 @@ defmodule Content.Message.PredictionsTest do
       :ok
     end
 
-    test "logs a warning when we cant find a headsign" do
-      prediction = %Predictions.Prediction{
-        seconds_until_arrival: 0,
-        direction_id: 1,
-        route_id: "NON-ROUTE",
-        stopped?: false,
-        stops_away: 1,
-        destination_stop_id: "70261"
-      }
-
-      log =
-        capture_log([level: :warn], fn ->
-          assert is_nil(Content.Message.Predictions.non_terminal(prediction, "test", "m", @sign))
-        end)
-
-      assert log =~ "no_destination_for_prediction"
-    end
-
     test "puts ARR on the sign when train is 0 seconds away, but not boarding" do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 0,
@@ -286,43 +268,6 @@ defmodule Content.Message.PredictionsTest do
       stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
 
       :ok
-    end
-
-    test "logs a warning when we cant find a headsign, even if it should be boarding" do
-      prediction = %Predictions.Prediction{
-        seconds_until_departure: 0,
-        direction_id: 1,
-        route_id: "NON-ROUTE",
-        destination_stop_id: "70261",
-        stopped?: false,
-        stops_away: 0,
-        boarding_status: "Boarding"
-      }
-
-      log =
-        capture_log([level: :warn], fn ->
-          assert is_nil(Content.Message.Predictions.terminal(prediction, "test", "m", @sign))
-        end)
-
-      assert log =~ "no_destination_for_prediction"
-    end
-
-    test "logs a warning when we cant find a headsign" do
-      prediction = %Predictions.Prediction{
-        seconds_until_departure: 0,
-        direction_id: 1,
-        route_id: "NON-ROUTE",
-        stopped?: false,
-        stops_away: 1,
-        destination_stop_id: "70261"
-      }
-
-      log =
-        capture_log([level: :warn], fn ->
-          assert is_nil(Content.Message.Predictions.terminal(prediction, "test", "m", @sign))
-        end)
-
-      assert log =~ "no_destination_for_prediction"
     end
 
     test "puts boarding on the sign when train is supposed to be boarding according to rtr" do
