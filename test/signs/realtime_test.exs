@@ -382,7 +382,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "generates non-directional headway message at center/mezz signs" do
-      expect(Engine.Config.Mock, :headway_config, fn _, _ ->
+      expect(Engine.Config.Mock, :headway_config, 2, fn _, _ ->
         %{@headway_config | range_high: 14}
       end)
 
@@ -1202,18 +1202,18 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages(
-        {[{"Alewife      4 min", 6}, {"Southbound trains", 6}],
-         [{"on Ashmont platform", 6}, {"Every 11 to 13 min", 6}]}
+        {[{"Southbound trains", 6}, {"Alewife      4 min", 6}],
+         [{"Every 11 to 13 min", 6}, {"on Ashmont platform", 6}]}
       )
 
       expect_audios(
         [
-          {:canned, {"98", ["4000", "503", "5004", "4016"], :audio}},
-          {:canned, {"184", ["5511", "5513"], :audio}}
+          {:canned, {"184", ["5511", "5513"], :audio}},
+          {:canned, {"98", ["4000", "503", "5004", "4016"], :audio}}
         ],
         [
-          {"The next Alewife train arrives in 4 minutes on the ashmont platform", nil},
-          {"Southbound trains every 11 to 13 minutes.", nil}
+          {"Southbound trains every 11 to 13 minutes.", nil},
+          {"The next Alewife train arrives in 4 minutes on the ashmont platform", nil}
         ]
       )
 
@@ -1239,6 +1239,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Southbound train", "due 5:00"})
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
@@ -1263,7 +1264,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "When sign in partial am suppression, no valid predictions, and within range of upper headway, show headways" do
-      expect(Engine.Config.Mock, :headway_config, 2, fn _, _ ->
+      expect(Engine.Config.Mock, :headway_config, fn _, _ ->
         %{@headway_config | range_low: 9}
       end)
 
@@ -1277,6 +1278,7 @@ defmodule Signs.RealtimeTest do
 
     test "When sign in partial am suppression, no valid predictions, but not within range of upper headway, show timestamp" do
       expect_messages({"Southbound train", "due 5:00"})
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
@@ -1315,6 +1317,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, 2, fn _, _, _ -> false end)
 
       expect_messages(
         {[{"Northbound train", 6}, {"Southbound train", 6}], [{"due 5:00", 6}, {"due 5:00", 6}]}
@@ -1337,9 +1340,13 @@ defmodule Signs.RealtimeTest do
         datetime(~T[05:30:00])
       end)
 
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
+
       expect(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
         datetime(~T[05:00:00])
       end)
+
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
 
       expect_messages(
         {[{"Northbound train", 6}, {"Southbound trains", 6}],
@@ -1359,7 +1366,7 @@ defmodule Signs.RealtimeTest do
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
 
-      expect(Engine.Config.Mock, :headway_config, 3, fn _, _ ->
+      expect(Engine.Config.Mock, :headway_config, 2, fn _, _ ->
         %{@headway_config | range_low: 9}
       end)
 
@@ -1400,6 +1407,8 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 180, destination: :ashmont)]
       end)
 
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
+
       expect_messages({"Ashmont      3 min", "Northbound due 5:00"})
 
       Signs.Realtime.handle_info(:run_loop, %{
@@ -1414,6 +1423,8 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
       end)
+
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
 
       expect_messages(
         {[{"Southbound train", 6}, {"Alewife      4 min", 6}],
@@ -1553,16 +1564,47 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
-    test "signs in headway mode with split alert_status will show the first alert" do
+    test "mezzanine sign, headways and shuttle alert" do
       expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
 
-      expect_messages({"No train service", "Use shuttle bus"})
+      expect_messages({
+        [{"Northbound trains", 6}, {"No Southbound svc", 6}],
+        [{"Every 11 to 13 min", 6}, {"Use shuttle bus", 6}]
+      })
 
-      expect_audios([{:canned, {"199", ["864"], :audio}}], [
-        {"There is no train service at this station. Use shuttle.", nil}
+      expect_audios([{:ad_hoc, {"No Southbound service. Use shuttle.", :audio}}], [
+        {"No Southbound service. Use shuttle.", nil}
       ])
+
+      Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
+    end
+
+    test "mezzanine sign, non-shuttle alert and headways" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+
+      expect_messages(
+        {"Northbound  no svc", [{"Southbound  trains every", 6}, {"Southbound  11 to 13 min", 6}]}
+      )
+
+      expect_audios([{:ad_hoc, {"No Northbound service.", :audio}}], [
+        {"No Northbound service.", nil}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
+    end
+
+    test "multi-route mezzanine sign, different headways" do
+      expect(Engine.Config.Mock, :headway_config, fn _, _ -> %{@headway_config | range_low: 9} end)
+
+      expect(Engine.Config.Mock, :headway_config, fn _, _ -> %{@headway_config | range_low: 7} end)
+
+      expect_messages(
+        {[{"Northbound trains", 6}, {"Southbound trains", 6}],
+         [{"Every 9 to 13 min", 6}, {"Every 7 to 13 min", 6}]}
+      )
 
       Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
     end
