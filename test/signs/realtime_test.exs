@@ -595,14 +595,6 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, @terminal_sign)
     end
 
-    test "properly handles case where destination can't be determined" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(route_id: "invalid", destination_stop_id: "invalid")]
-      end)
-
-      Signs.Realtime.handle_info(:run_loop, @sign)
-    end
-
     test "Correctly orders BRD predictions between trains mid-trip and those starting their trip" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
@@ -661,19 +653,6 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Ashmont      2 min", "Braintree   12 min"})
       Signs.Realtime.handle_info(:run_loop, @sign)
-    end
-
-    test "handles passthrough audio where headsign can't be determined" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(seconds_until_passthrough: 30, route_id: "Foo", destination_stop_id: "Bar")]
-      end)
-
-      log =
-        capture_log([level: :info], fn ->
-          Signs.Realtime.handle_info(:run_loop, @sign)
-        end)
-
-      assert log =~ "no_passthrough_audio_for_prediction"
     end
 
     test "reads special boarding button announcement at Bowdoin" do

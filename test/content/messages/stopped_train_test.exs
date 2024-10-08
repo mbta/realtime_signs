@@ -52,11 +52,5 @@ defmodule Content.Message.StoppedTrainTest do
       assert %Content.Message.StoppedTrain{destination: :alewife, stops_away: 10} =
                Content.Message.StoppedTrain.from_prediction(prediction)
     end
-
-    test "handles unknown final stop_id" do
-      prediction = %{@prediction | route_id: "Fake Route", destination_stop_id: "123"}
-
-      assert is_nil(Content.Message.StoppedTrain.from_prediction(prediction))
-    end
   end
 end

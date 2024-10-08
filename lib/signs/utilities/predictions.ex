@@ -134,35 +134,19 @@ defmodule Signs.Utilities.Predictions do
     end)
     |> Enum.sort_by(fn prediction -> prediction.seconds_until_passthrough end)
     |> Enum.flat_map(fn prediction ->
-      route_id = prediction.route_id
+      destination =
+        case Content.Utilities.destination_for_prediction(prediction) do
+          :southbound -> :ashmont
+          destination -> destination
+        end
 
-      case Content.Utilities.destination_for_prediction(
-             route_id,
-             prediction.direction_id,
-             prediction.destination_stop_id
-           ) do
-        {:ok, :southbound} when route_id == "Red" ->
-          [
-            %Content.Audio.Passthrough{
-              destination: :ashmont,
-              trip_id: prediction.trip_id,
-              route_id: prediction.route_id
-            }
-          ]
-
-        {:ok, destination} ->
-          [
-            %Content.Audio.Passthrough{
-              destination: destination,
-              trip_id: prediction.trip_id,
-              route_id: prediction.route_id
-            }
-          ]
-
-        _ ->
-          Logger.info("no_passthrough_audio_for_prediction prediction=#{inspect(prediction)}")
-          []
-      end
+      [
+        %Content.Audio.Passthrough{
+          destination: destination,
+          trip_id: prediction.trip_id,
+          route_id: prediction.route_id
+        }
+      ]
     end)
     |> Enum.take(1)
   end

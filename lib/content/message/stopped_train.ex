@@ -27,28 +27,17 @@ defmodule Content.Message.StoppedTrain do
 
   @spec from_prediction(Predictions.Prediction.t()) :: t() | nil
   def from_prediction(%{boarding_status: status} = prediction) when not is_nil(status) do
-    case Content.Utilities.destination_for_prediction(
-           prediction.route_id,
-           prediction.direction_id,
-           prediction.destination_stop_id
-         ) do
-      {:ok, destination} ->
-        stops_away = parse_stops_away(prediction.boarding_status)
+    stops_away = parse_stops_away(prediction.boarding_status)
 
-        %__MODULE__{
-          destination: destination,
-          stops_away: stops_away,
-          certainty: prediction.arrival_certainty || prediction.departure_certainty,
-          stop_id: prediction.stop_id,
-          trip_id: prediction.trip_id,
-          route_id: prediction.route_id,
-          direction_id: prediction.direction_id
-        }
-
-      {:error, _} ->
-        Logger.warn("no_destination_for_prediction #{inspect(prediction)}")
-        nil
-    end
+    %__MODULE__{
+      destination: Content.Utilities.destination_for_prediction(prediction),
+      stops_away: stops_away,
+      certainty: prediction.arrival_certainty || prediction.departure_certainty,
+      stop_id: prediction.stop_id,
+      trip_id: prediction.trip_id,
+      route_id: prediction.route_id,
+      direction_id: prediction.direction_id
+    }
   end
 
   defp parse_stops_away(str) do
