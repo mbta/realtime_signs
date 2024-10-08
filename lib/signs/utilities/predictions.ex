@@ -13,32 +13,23 @@ defmodule Signs.Utilities.Predictions do
   @max_prediction_sec 60 * 60
   @reverse_prediction_cutoff_sec 20 * 60
 
-  @spec get_messages(Signs.Realtime.predictions(), Signs.Realtime.t()) ::
-          Signs.Realtime.sign_messages()
-  def get_messages(
-        {top_predictions, bottom_predictions},
-        %{source_config: {top_config, bottom_config}} = sign
-      ) do
-    {top, _} = prediction_messages(top_predictions, top_config, sign)
-    {bottom, _} = prediction_messages(bottom_predictions, bottom_config, sign)
-
-    {top, bottom}
-  end
-
-  def get_messages(predictions, %{source_config: config} = sign) do
-    prediction_messages(predictions, config, sign)
+  def prediction_message(predictions, config, sign) do
+    case prediction_messages(predictions, config, sign) do
+      nil -> nil
+      {first, _} -> first
+    end
   end
 
   @spec prediction_messages(
           [Predictions.Prediction.t()],
           SourceConfig.config(),
           Signs.Realtime.t()
-        ) :: Signs.Realtime.sign_messages()
-  defp prediction_messages(
-         predictions,
-         %{sources: sources},
-         %{pa_ess_loc: station_code, text_zone: zone} = sign
-       ) do
+        ) :: Signs.Realtime.sign_messages() | nil
+  def prediction_messages(
+        predictions,
+        %{sources: sources},
+        %{pa_ess_loc: station_code, text_zone: zone} = sign
+      ) do
     predictions
     |> Enum.filter(fn p ->
       p.seconds_until_departure && p.schedule_relationship != :skipped
@@ -79,7 +70,7 @@ defmodule Signs.Utilities.Predictions do
     |> get_unique_destination_predictions(SourceConfig.single_route(sign.source_config))
     |> case do
       [] ->
-        {Content.Message.Empty.new(), Content.Message.Empty.new()}
+        nil
 
       [msg] ->
         {msg, Content.Message.Empty.new()}
@@ -96,6 +87,14 @@ defmodule Signs.Utilities.Predictions do
 
       [msg1, msg2] ->
         {msg1, msg2}
+    end
+  end
+
+  def prediction_certainty(prediction, config) do
+    if terminal_prediction?(prediction, config.sources) || !prediction.seconds_until_arrival do
+      prediction.departure_certainty
+    else
+      prediction.arrival_certainty
     end
   end
 
