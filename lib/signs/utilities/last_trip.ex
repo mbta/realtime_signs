@@ -37,12 +37,12 @@ defmodule Signs.Utilities.LastTrip do
               {unpacked_mz_bottom,
                %Content.Message.LastTrip.NoService{
                  destination: top_source_config.headway_destination,
-                 line: :bottom
+                 variant: :long
                }}
             else
               {%Content.Message.LastTrip.NoService{
                  destination: top_source_config.headway_destination,
-                 line: :top
+                 variant: :short
                }, unpacked_mz_bottom}
             end
 
@@ -52,12 +52,12 @@ defmodule Signs.Utilities.LastTrip do
               {unpacked_mz_top,
                %Content.Message.LastTrip.NoService{
                  destination: bottom_source_config.headway_destination,
-                 line: :bottom
+                 variant: :long
                }}
             else
               {%Content.Message.LastTrip.NoService{
                  destination: bottom_source_config.headway_destination,
-                 line: :top
+                 variant: :short
                }, unpacked_mz_top}
             end
 

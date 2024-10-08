@@ -47,8 +47,11 @@ defmodule Signs.Utilities.Audio do
 
   defp get_passive_readout({:alert, top, bottom}) do
     case top do
-      %Message.Alert.NoService{} ->
+      %Message.Alert.NoService{destination: nil} ->
         Audio.Closure.from_messages(top, bottom)
+
+      %Message.Alert.NoService{} ->
+        Audio.NoServiceToDestination.from_messages(top, bottom)
 
       %Message.Alert.DestinationNoService{} ->
         Audio.NoServiceToDestination.from_message(top)
@@ -150,8 +153,11 @@ defmodule Signs.Utilities.Audio do
       {:alert, top, bottom} ->
         new_audios =
           case top do
-            %Message.Alert.NoService{} ->
+            %Message.Alert.NoService{destination: nil} ->
               Audio.Closure.from_messages(top, bottom)
+
+            %Message.Alert.NoService{} ->
+              Audio.NoServiceToDestination.from_messages(top, bottom)
 
             %Message.Alert.DestinationNoService{} ->
               Audio.NoServiceToDestination.from_message(top)
@@ -322,6 +328,9 @@ defmodule Signs.Utilities.Audio do
 
       {%Message.Headways.Top{}, %Message.Headways.Bottom{}} ->
         [{:headway, top, bottom}]
+
+      {%Message.Alert.NoService{}, _} ->
+        [{:alert, top, bottom}]
 
       {%Message.EarlyAm.DestinationTrain{}, %Message.EarlyAm.ScheduledTime{}} ->
         [{:scheduled_train, top, bottom}]
