@@ -10,7 +10,6 @@ defmodule Signs.RealtimeTest do
     direction_id: 0,
     routes: ["Red"],
     platform: nil,
-    terminal?: false,
     announce_arriving?: true,
     announce_boarding?: false
   }
@@ -20,7 +19,6 @@ defmodule Signs.RealtimeTest do
     direction_id: 0,
     routes: ["Red"],
     platform: nil,
-    terminal?: false,
     announce_arriving?: true,
     announce_boarding?: false
   }
@@ -35,6 +33,7 @@ defmodule Signs.RealtimeTest do
     text_zone: "x",
     audio_zones: ["x"],
     source_config: %{
+      terminal?: false,
       sources: [@src],
       headway_group: "headway_group",
       headway_destination: :southbound
@@ -58,8 +57,18 @@ defmodule Signs.RealtimeTest do
   @mezzanine_sign %{
     @sign
     | source_config: {
-        %{sources: [@src], headway_group: "group", headway_destination: :northbound},
-        %{sources: [@src_2], headway_group: "group", headway_destination: :southbound}
+        %{
+          sources: [@src],
+          headway_group: "group",
+          headway_destination: :northbound,
+          terminal?: false
+        },
+        %{
+          sources: [@src_2],
+          headway_group: "group",
+          headway_destination: :southbound,
+          terminal?: false
+        }
       },
       current_content_top: "Red line trains",
       current_content_bottom: "Every 11 to 13 min"
@@ -71,9 +80,15 @@ defmodule Signs.RealtimeTest do
         %{
           sources: [%{@src | routes: ["Orange"]}],
           headway_group: "group",
-          headway_destination: :northbound
+          headway_destination: :northbound,
+          terminal?: false
         },
-        %{sources: [@src_2], headway_group: "group", headway_destination: :southbound}
+        %{
+          sources: [@src_2],
+          headway_group: "group",
+          headway_destination: :southbound,
+          terminal?: false
+        }
       },
       current_content_top: "Trains",
       current_content_bottom: "Every 11 to 13 min"
@@ -84,11 +99,17 @@ defmodule Signs.RealtimeTest do
     | pa_ess_loc: "RJFK",
       text_zone: "m",
       source_config: {
-        %{sources: [@src], headway_group: "group", headway_destination: :southbound},
+        %{
+          sources: [@src],
+          headway_group: "group",
+          headway_destination: :southbound,
+          terminal?: false
+        },
         %{
           sources: [%{@src | stop_id: "70086", direction_id: 1, platform: :ashmont}],
           headway_group: "group",
-          headway_destination: :alewife
+          headway_destination: :alewife,
+          terminal?: false
         }
       }
   }
@@ -97,8 +118,9 @@ defmodule Signs.RealtimeTest do
     @sign
     | source_config: %{
         @sign.source_config
-        | sources: [
-            %{@src | terminal?: true, announce_arriving?: false, announce_boarding?: true}
+        | terminal?: true,
+          sources: [
+            %{@src | announce_arriving?: false, announce_boarding?: true}
           ]
       }
   }

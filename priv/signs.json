@@ -14,6 +14,7 @@
       {
         "headway_group": "blue_trunk",
         "headway_direction_name": "Wonderland",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70042",
@@ -22,7 +23,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -31,6 +31,7 @@
       {
         "headway_group": "blue_trunk",
         "headway_direction_name": "Bowdoin",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70041",
@@ -39,7 +40,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -61,6 +61,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Wonderland",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70042",
@@ -69,7 +70,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -89,6 +89,7 @@
     "source_config": {
       "headway_group": "mattapan_trunk",
       "headway_direction_name": "Mattapan",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70263",
@@ -97,7 +98,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -117,6 +117,7 @@
     "source_config": {
       "headway_group": "mattapan_trunk",
       "headway_direction_name": "Ashmont",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70264",
@@ -125,7 +126,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -146,6 +146,7 @@
       {
         "headway_group": "mattapan_trunk",
         "headway_direction_name": "Ashmont",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70266",
@@ -154,7 +155,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -163,6 +163,7 @@
       {
         "headway_group": "mattapan_trunk",
         "headway_direction_name": "Mattapan",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70265",
@@ -171,7 +172,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -192,6 +192,7 @@
     "source_config": {
       "headway_group": "mattapan_trunk",
       "headway_direction_name": "Mattapan",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70267",
@@ -200,7 +201,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -220,6 +220,7 @@
     "source_config": {
       "headway_group": "mattapan_trunk",
       "headway_direction_name": "Ashmont",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70268",
@@ -228,7 +229,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -248,6 +248,7 @@
     "source_config": {
       "headway_group": "mattapan_trunk",
       "headway_direction_name": "Mattapan",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70269",
@@ -256,7 +257,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -276,6 +276,7 @@
     "source_config": {
       "headway_group": "mattapan_trunk",
       "headway_direction_name": "Ashmont",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70270",
@@ -284,7 +285,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -304,6 +304,7 @@
     "source_config": {
       "headway_group": "mattapan_trunk",
       "headway_direction_name": "Mattapan",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70271",
@@ -312,7 +313,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -332,6 +332,7 @@
     "source_config": {
       "headway_group": "mattapan_trunk",
       "headway_direction_name": "Ashmont",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70272",
@@ -340,7 +341,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -360,6 +360,7 @@
     "source_config": {
       "headway_group": "mattapan_trunk",
       "headway_direction_name": "Ashmont",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70274",
@@ -368,7 +369,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -388,6 +388,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Bowdoin",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70059",
@@ -396,7 +397,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -416,6 +416,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Bowdoin",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70059",
@@ -424,7 +425,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -444,6 +444,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Wonderland",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70058",
@@ -452,7 +453,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -473,6 +473,7 @@
       {
         "headway_group": "blue_trunk",
         "headway_direction_name": "Wonderland",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70058",
@@ -481,7 +482,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -490,6 +490,7 @@
       {
         "headway_group": "blue_trunk",
         "headway_direction_name": "Bowdoin",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70057",
@@ -498,7 +499,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -519,6 +519,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Bowdoin",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70057",
@@ -527,7 +528,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -547,6 +547,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Wonderland",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70056",
@@ -555,7 +556,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -575,6 +575,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Bowdoin",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70055",
@@ -583,7 +584,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -603,6 +603,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Wonderland",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70054",
@@ -611,7 +612,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -631,6 +631,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Bowdoin",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70053",
@@ -639,7 +640,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -659,6 +659,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Wonderland",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70052",
@@ -667,7 +668,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -688,6 +688,7 @@
       {
         "headway_group": "blue_trunk",
         "headway_direction_name": "Wonderland",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70052",
@@ -696,7 +697,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -705,6 +705,7 @@
       {
         "headway_group": "blue_trunk",
         "headway_direction_name": "Bowdoin",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70051",
@@ -713,7 +714,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -734,6 +734,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Bowdoin",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70051",
@@ -742,7 +743,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -762,6 +762,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Wonderland",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70050",
@@ -770,7 +771,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -791,6 +791,7 @@
       {
         "headway_group": "blue_trunk",
         "headway_direction_name": "Wonderland",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70050",
@@ -799,7 +800,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -808,6 +808,7 @@
       {
         "headway_group": "blue_trunk",
         "headway_direction_name": "Bowdoin",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70049",
@@ -816,7 +817,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -837,6 +837,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Bowdoin",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70049",
@@ -845,7 +846,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -865,6 +865,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Wonderland",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70048",
@@ -873,7 +874,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -893,6 +893,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Bowdoin",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70047",
@@ -901,7 +902,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -921,6 +921,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Wonderland",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70046",
@@ -929,7 +930,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -949,6 +949,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Bowdoin",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70045",
@@ -957,7 +958,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -977,6 +977,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Wonderland",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70044",
@@ -985,7 +986,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -1006,6 +1006,7 @@
       {
         "headway_group": "blue_trunk",
         "headway_direction_name": "Wonderland",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70044",
@@ -1014,7 +1015,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1023,6 +1023,7 @@
       {
         "headway_group": "blue_trunk",
         "headway_direction_name": "Bowdoin",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70043",
@@ -1031,7 +1032,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1052,6 +1052,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Bowdoin",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70043",
@@ -1060,7 +1061,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -1080,6 +1080,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Wonderland",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70042",
@@ -1088,7 +1089,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -1109,6 +1109,7 @@
       {
         "headway_group": "blue_trunk",
         "headway_direction_name": "Wonderland",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70042",
@@ -1117,7 +1118,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1126,6 +1126,7 @@
       {
         "headway_group": "blue_trunk",
         "headway_direction_name": "Bowdoin",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70041",
@@ -1134,7 +1135,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1155,6 +1155,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Bowdoin",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70041",
@@ -1163,7 +1164,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -1183,6 +1183,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Wonderland",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70040",
@@ -1191,7 +1192,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -1212,6 +1212,7 @@
       {
         "headway_group": "blue_trunk",
         "headway_direction_name": "Wonderland",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70040",
@@ -1220,7 +1221,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1229,6 +1229,7 @@
       {
         "headway_group": "blue_trunk",
         "headway_direction_name": "Bowdoin",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70039",
@@ -1237,7 +1238,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1258,6 +1258,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Bowdoin",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70039",
@@ -1266,7 +1267,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -1286,6 +1286,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Wonderland",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70038",
@@ -1294,7 +1295,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -1314,6 +1314,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Wonderland",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70038",
@@ -1322,7 +1323,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
         }
@@ -1342,6 +1342,7 @@
     "source_config": {
       "headway_group": "blue_trunk",
       "headway_direction_name": "Wonderland",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70038",
@@ -1350,7 +1351,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -1370,6 +1370,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70036",
@@ -1378,7 +1379,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -1389,7 +1389,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -1400,7 +1399,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -1420,6 +1418,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70036",
@@ -1428,7 +1427,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -1439,7 +1437,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -1450,7 +1447,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -1470,6 +1466,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70036",
@@ -1478,7 +1475,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -1489,7 +1485,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -1500,7 +1495,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -1521,6 +1515,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70035",
@@ -1529,7 +1524,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1538,6 +1532,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70034",
@@ -1546,7 +1541,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1568,6 +1562,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70035",
@@ -1576,7 +1571,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1585,6 +1579,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70034",
@@ -1593,7 +1588,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1615,6 +1609,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70033",
@@ -1623,7 +1618,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1632,6 +1626,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70032",
@@ -1640,7 +1635,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1661,6 +1655,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70033",
@@ -1669,7 +1664,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -1689,6 +1683,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70032",
@@ -1697,7 +1692,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         },
@@ -1708,7 +1702,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -1729,6 +1722,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70279",
@@ -1737,7 +1731,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1746,6 +1739,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70278",
@@ -1754,7 +1748,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1775,6 +1768,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70279",
@@ -1783,7 +1777,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -1803,6 +1796,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70278",
@@ -1811,7 +1805,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -1832,6 +1825,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70031",
@@ -1840,7 +1834,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1849,6 +1842,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70030",
@@ -1857,7 +1851,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1878,6 +1871,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70031",
@@ -1886,7 +1880,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -1906,6 +1899,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70030",
@@ -1914,7 +1908,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -1935,6 +1928,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70029",
@@ -1943,7 +1937,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1952,6 +1945,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70028",
@@ -1960,7 +1954,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -1981,6 +1974,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70029",
@@ -1989,7 +1983,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2009,6 +2002,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70028",
@@ -2017,7 +2011,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2037,6 +2030,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70027",
@@ -2045,7 +2039,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2065,6 +2058,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70026",
@@ -2073,7 +2067,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2094,6 +2087,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70027",
@@ -2102,7 +2096,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2111,6 +2104,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70026",
@@ -2119,7 +2113,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2141,6 +2134,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70027",
@@ -2149,7 +2143,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2158,6 +2151,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70026",
@@ -2166,7 +2160,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2188,6 +2181,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70025",
@@ -2196,7 +2190,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2205,6 +2198,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70024",
@@ -2213,7 +2207,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2234,6 +2227,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70025",
@@ -2242,7 +2236,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2262,6 +2255,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70024",
@@ -2270,7 +2264,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2291,6 +2284,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70023",
@@ -2299,7 +2293,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2308,6 +2301,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70022",
@@ -2316,7 +2310,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2337,6 +2330,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70023",
@@ -2345,7 +2339,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2365,6 +2358,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70022",
@@ -2373,7 +2367,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2393,6 +2386,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70021",
@@ -2401,7 +2395,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2421,6 +2414,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70020",
@@ -2429,7 +2423,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2449,6 +2442,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70019",
@@ -2457,7 +2451,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2477,6 +2470,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70018",
@@ -2485,7 +2479,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2505,6 +2498,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70019",
@@ -2513,7 +2507,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2533,6 +2526,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70018",
@@ -2541,7 +2535,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2562,6 +2555,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70017",
@@ -2570,7 +2564,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2579,6 +2572,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70016",
@@ -2587,7 +2581,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2608,6 +2601,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70017",
@@ -2616,7 +2610,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2636,6 +2629,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70016",
@@ -2644,7 +2638,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2665,6 +2658,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70015",
@@ -2673,7 +2667,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2682,6 +2675,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70014",
@@ -2690,7 +2684,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2711,6 +2704,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70015",
@@ -2719,7 +2713,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2739,6 +2732,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70014",
@@ -2747,7 +2741,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2768,6 +2761,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70013",
@@ -2776,7 +2770,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2785,6 +2778,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70012",
@@ -2793,7 +2787,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2814,6 +2807,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70013",
@@ -2822,7 +2816,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2842,6 +2835,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70012",
@@ -2850,7 +2844,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2870,6 +2863,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70011",
@@ -2878,7 +2872,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2898,6 +2891,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70010",
@@ -2906,7 +2900,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -2927,6 +2920,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70011",
@@ -2935,7 +2929,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2944,6 +2937,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70010",
@@ -2952,7 +2946,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2974,6 +2967,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70011",
@@ -2982,7 +2976,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -2991,6 +2984,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70010",
@@ -2999,7 +2993,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3021,6 +3014,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70009",
@@ -3029,7 +3023,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3038,6 +3031,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70008",
@@ -3046,7 +3040,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3067,6 +3060,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70009",
@@ -3075,7 +3069,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -3095,6 +3088,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70008",
@@ -3103,7 +3097,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -3124,6 +3117,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70007",
@@ -3132,7 +3126,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3141,6 +3134,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70006",
@@ -3149,7 +3143,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3170,6 +3163,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70007",
@@ -3178,7 +3172,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -3198,6 +3191,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70006",
@@ -3206,7 +3200,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -3227,6 +3220,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70005",
@@ -3235,7 +3229,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3244,6 +3237,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70004",
@@ -3252,7 +3246,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3273,6 +3266,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70005",
@@ -3281,7 +3275,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -3301,6 +3294,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70004",
@@ -3309,7 +3303,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -3330,6 +3323,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70003",
@@ -3338,7 +3332,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3347,6 +3340,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70002",
@@ -3355,7 +3349,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3376,6 +3369,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70003",
@@ -3384,7 +3378,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -3404,6 +3397,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Forest Hills",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70002",
@@ -3412,7 +3406,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -3432,6 +3425,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70001",
@@ -3440,7 +3434,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -3451,7 +3444,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -3462,7 +3454,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -3482,6 +3473,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70001",
@@ -3490,7 +3482,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -3501,7 +3492,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -3512,7 +3502,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -3532,6 +3521,7 @@
     "source_config": {
       "headway_group": "orange_trunk",
       "headway_direction_name": "Oak Grove",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70001",
@@ -3540,7 +3530,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -3551,7 +3540,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -3562,7 +3550,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -3583,6 +3570,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Forest Hills",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70011",
@@ -3591,7 +3579,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3600,6 +3587,7 @@
       {
         "headway_group": "orange_trunk",
         "headway_direction_name": "Oak Grove",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70010",
@@ -3608,7 +3596,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3629,6 +3616,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Southbound",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70061",
@@ -3637,7 +3625,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -3648,7 +3635,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -3659,7 +3645,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -3679,6 +3664,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Southbound",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70061",
@@ -3687,7 +3673,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -3698,7 +3683,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -3709,7 +3693,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -3730,6 +3713,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70064",
@@ -3738,7 +3722,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3747,6 +3730,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Southbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70063",
@@ -3755,7 +3739,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3776,6 +3759,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70064",
@@ -3784,7 +3768,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -3804,6 +3787,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Southbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70063",
@@ -3812,7 +3796,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -3833,6 +3816,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70066",
@@ -3841,7 +3825,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3850,6 +3833,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Southbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70065",
@@ -3858,7 +3842,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3879,6 +3862,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70066",
@@ -3887,7 +3871,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -3907,6 +3890,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Southbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70065",
@@ -3915,7 +3899,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -3936,6 +3919,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70068",
@@ -3944,7 +3928,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3953,6 +3936,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Southbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70067",
@@ -3961,7 +3945,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -3982,6 +3965,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70068",
@@ -3990,7 +3974,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4010,6 +3993,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Southbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70067",
@@ -4018,7 +4002,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4038,6 +4021,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70070",
@@ -4046,7 +4030,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4066,6 +4049,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Southbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70069",
@@ -4074,7 +4058,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4094,6 +4077,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70072",
@@ -4102,7 +4086,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4122,6 +4105,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Southbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70071",
@@ -4130,7 +4114,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4150,6 +4133,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70074",
@@ -4158,7 +4142,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4178,6 +4161,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Southbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70073",
@@ -4186,7 +4170,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4207,6 +4190,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70076",
@@ -4215,7 +4199,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4236,6 +4219,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Southbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70075",
@@ -4244,7 +4228,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4263,6 +4246,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70076",
@@ -4271,7 +4255,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4280,6 +4263,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Southbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70075",
@@ -4288,7 +4272,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4309,6 +4292,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70078",
@@ -4317,7 +4301,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4337,6 +4320,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Southbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70077",
@@ -4345,7 +4329,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4366,6 +4349,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70080",
@@ -4374,7 +4358,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4383,6 +4366,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Southbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70079",
@@ -4391,7 +4375,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4412,6 +4395,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70080",
@@ -4420,7 +4404,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4440,6 +4423,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Southbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70079",
@@ -4448,7 +4432,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4469,6 +4452,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70080",
@@ -4477,7 +4461,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4486,6 +4469,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Southbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70079",
@@ -4494,7 +4478,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4516,6 +4499,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70082",
@@ -4524,7 +4508,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4533,6 +4516,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Southbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70081",
@@ -4541,7 +4525,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4562,6 +4545,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70082",
@@ -4570,7 +4554,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4590,6 +4573,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Southbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70081",
@@ -4598,7 +4582,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4619,6 +4602,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70084",
@@ -4627,7 +4611,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4636,6 +4619,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Southbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70083",
@@ -4644,7 +4628,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4665,6 +4648,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70084",
@@ -4673,7 +4657,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4693,6 +4676,7 @@
     "source_config": {
       "headway_group": "red_trunk",
       "headway_direction_name": "Southbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70083",
@@ -4701,7 +4685,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4722,6 +4705,7 @@
       {
         "headway_group": "red_ashmont",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70088",
@@ -4730,7 +4714,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4739,6 +4722,7 @@
       {
         "headway_group": "red_ashmont",
         "headway_direction_name": "Ashmont",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70087",
@@ -4747,7 +4731,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4768,6 +4751,7 @@
     "source_config": {
       "headway_group": "red_ashmont",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70088",
@@ -4776,7 +4760,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4796,6 +4779,7 @@
     "source_config": {
       "headway_group": "red_ashmont",
       "headway_direction_name": "Ashmont",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70087",
@@ -4804,7 +4788,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4825,6 +4808,7 @@
       {
         "headway_group": "red_ashmont",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70090",
@@ -4833,7 +4817,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4842,6 +4825,7 @@
       {
         "headway_group": "red_ashmont",
         "headway_direction_name": "Ashmont",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70089",
@@ -4850,7 +4834,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4871,6 +4854,7 @@
     "source_config": {
       "headway_group": "red_ashmont",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70090",
@@ -4879,7 +4863,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4899,6 +4882,7 @@
     "source_config": {
       "headway_group": "red_ashmont",
       "headway_direction_name": "Ashmont",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70089",
@@ -4907,7 +4891,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -4928,6 +4911,7 @@
       {
         "headway_group": "red_ashmont",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70092",
@@ -4936,7 +4920,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4945,6 +4928,7 @@
       {
         "headway_group": "red_ashmont",
         "headway_direction_name": "Ashmont",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70091",
@@ -4953,7 +4937,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -4974,6 +4957,7 @@
     "source_config": {
       "headway_group": "red_ashmont",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70092",
@@ -4982,7 +4966,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5002,6 +4985,7 @@
     "source_config": {
       "headway_group": "red_ashmont",
       "headway_direction_name": "Ashmont",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70091",
@@ -5010,7 +4994,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5031,6 +5014,7 @@
       {
         "headway_group": "red_ashmont",
         "headway_direction_name": "Alewife",
+        "terminal": true,
         "sources": [
           {
             "stop_id": "70094",
@@ -5039,7 +5023,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": true,
             "announce_arriving": false,
             "announce_boarding": true
           }
@@ -5048,6 +5031,7 @@
       {
         "headway_group": "mattapan_trunk",
         "headway_direction_name": "Mattapan",
+        "terminal": true,
         "sources": [
           {
             "stop_id": "70261",
@@ -5056,7 +5040,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": true,
             "announce_arriving": true,
             "announce_boarding": true
           }
@@ -5077,6 +5060,7 @@
     "source_config": {
       "headway_group": "red_ashmont",
       "headway_direction_name": "Alewife",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70094",
@@ -5085,7 +5069,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -5105,6 +5088,7 @@
     "source_config": {
       "headway_group": "mattapan_trunk",
       "headway_direction_name": "Mattapan",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70261",
@@ -5113,7 +5097,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": true,
           "announce_arriving": true,
           "announce_boarding": true
         }
@@ -5134,6 +5117,7 @@
       {
         "headway_group": "red_braintree",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70098",
@@ -5142,7 +5126,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -5151,6 +5134,7 @@
       {
         "headway_group": "red_braintree",
         "headway_direction_name": "Braintree",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70097",
@@ -5159,7 +5143,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -5180,6 +5163,7 @@
     "source_config": {
       "headway_group": "red_braintree",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70098",
@@ -5188,7 +5172,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5208,6 +5191,7 @@
     "source_config": {
       "headway_group": "red_braintree",
       "headway_direction_name": "Braintree",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70097",
@@ -5216,7 +5200,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5237,6 +5220,7 @@
       {
         "headway_group": "red_braintree",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70100",
@@ -5245,7 +5229,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -5254,6 +5237,7 @@
       {
         "headway_group": "red_braintree",
         "headway_direction_name": "Braintree",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70099",
@@ -5262,7 +5246,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -5283,6 +5266,7 @@
     "source_config": {
       "headway_group": "red_braintree",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70100",
@@ -5291,7 +5275,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5311,6 +5294,7 @@
     "source_config": {
       "headway_group": "red_braintree",
       "headway_direction_name": "Braintree",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70099",
@@ -5319,7 +5303,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5340,6 +5323,7 @@
       {
         "headway_group": "red_braintree",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70102",
@@ -5348,7 +5332,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -5357,6 +5340,7 @@
       {
         "headway_group": "red_braintree",
         "headway_direction_name": "Braintree",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70101",
@@ -5365,7 +5349,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -5386,6 +5369,7 @@
     "source_config": {
       "headway_group": "red_braintree",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70102",
@@ -5394,7 +5378,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5414,6 +5397,7 @@
     "source_config": {
       "headway_group": "red_braintree",
       "headway_direction_name": "Braintree",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70101",
@@ -5422,7 +5406,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5443,6 +5426,7 @@
       {
         "headway_group": "red_braintree",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70104",
@@ -5451,7 +5435,6 @@
             ],
             "direction_id": 1,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -5460,6 +5443,7 @@
       {
         "headway_group": "red_braintree",
         "headway_direction_name": "Braintree",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70103",
@@ -5468,7 +5452,6 @@
             ],
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -5489,6 +5472,7 @@
     "source_config": {
       "headway_group": "red_braintree",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70104",
@@ -5497,7 +5481,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5517,6 +5500,7 @@
     "source_config": {
       "headway_group": "red_braintree",
       "headway_direction_name": "Braintree",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70103",
@@ -5525,7 +5509,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5545,6 +5528,7 @@
     "source_config": {
       "headway_group": "red_braintree",
       "headway_direction_name": "Alewife",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70105",
@@ -5553,7 +5537,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -5564,7 +5547,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -5575,7 +5557,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -5595,6 +5576,7 @@
     "source_config": {
       "headway_group": "red_braintree",
       "headway_direction_name": "Alewife",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70105",
@@ -5603,7 +5585,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -5614,7 +5595,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -5625,7 +5605,6 @@
           ],
           "direction_id": 1,
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -5645,6 +5624,7 @@
     "source_config": {
       "headway_group": "red_ashmont",
       "headway_direction_name": "Ashmont",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70085",
@@ -5653,7 +5633,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5673,6 +5652,7 @@
     "source_config": {
       "headway_group": "red_braintree",
       "headway_direction_name": "Braintree",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70095",
@@ -5681,7 +5661,6 @@
           ],
           "direction_id": 0,
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5701,6 +5680,7 @@
     "source_config": {
       "headway_group": "red_ashmont",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70086",
@@ -5709,7 +5689,6 @@
           ],
           "direction_id": 1,
           "platform": "ashmont",
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5729,6 +5708,7 @@
     "source_config": {
       "headway_group": "red_braintree",
       "headway_direction_name": "Alewife",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70096",
@@ -5737,7 +5717,6 @@
           ],
           "direction_id": 1,
           "platform": "braintree",
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5758,6 +5737,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Southbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70085",
@@ -5766,7 +5746,6 @@
               "Red"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           },
@@ -5774,7 +5753,6 @@
             "stop_id": "70095",
             "direction_id": 0,
             "platform": null,
-            "terminal": false,
             "routes": [
               "Red"
             ],
@@ -5786,6 +5764,7 @@
       {
         "headway_group": "red_trunk",
         "headway_direction_name": "Alewife",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70086",
@@ -5794,7 +5773,6 @@
             ],
             "direction_id": 1,
             "platform": "ashmont",
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           },
@@ -5805,7 +5783,6 @@
               "Red"
             ],
             "platform": "braintree",
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -5826,6 +5803,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Union Square",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70160",
@@ -5834,7 +5812,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -5854,6 +5831,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Union Square",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70162",
@@ -5862,7 +5840,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5882,6 +5859,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Riverside",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70163",
@@ -5890,7 +5868,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5910,6 +5887,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Union Square",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70164",
@@ -5918,7 +5896,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5938,6 +5915,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Riverside",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70165",
@@ -5946,7 +5924,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5966,6 +5943,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Union Square",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70166",
@@ -5974,7 +5952,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -5994,6 +5971,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Riverside",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70167",
@@ -6002,7 +5980,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6022,6 +5999,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Union Square",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70168",
@@ -6030,7 +6008,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6050,6 +6027,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Riverside",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70169",
@@ -6058,7 +6036,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6078,6 +6055,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Union Square",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70170",
@@ -6086,7 +6064,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6106,6 +6083,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Riverside",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70171",
@@ -6114,7 +6092,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6134,6 +6111,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Union Square",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70172",
@@ -6142,7 +6120,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6162,6 +6139,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Riverside",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70173",
@@ -6170,7 +6148,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6190,6 +6167,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Union Square",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70174",
@@ -6198,7 +6176,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6218,6 +6195,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Riverside",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70175",
@@ -6226,7 +6204,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6247,6 +6224,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Union Square",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70176",
@@ -6255,7 +6233,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6276,6 +6253,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Riverside",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70177",
@@ -6284,7 +6262,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6304,6 +6281,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Union Square",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70178",
@@ -6312,7 +6290,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6332,6 +6309,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Riverside",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70179",
@@ -6340,7 +6318,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6360,6 +6337,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Union Square",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70180",
@@ -6368,7 +6346,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6388,6 +6365,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Riverside",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70181",
@@ -6396,7 +6374,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6416,6 +6393,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Union Square",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70182",
@@ -6424,7 +6402,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6444,6 +6421,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Riverside",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70183",
@@ -6452,7 +6430,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6472,6 +6449,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Union Square",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70186",
@@ -6480,7 +6458,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6500,6 +6477,7 @@
     "source_config": {
       "headway_group": "green_d",
       "headway_direction_name": "Riverside",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70187",
@@ -6508,7 +6486,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6528,6 +6505,7 @@
     "source_config": {
       "headway_group": "green_b",
       "headway_direction_name": "Government Center",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "170136",
@@ -6536,7 +6514,6 @@
             "Green-B"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6556,6 +6533,7 @@
     "source_config": {
       "headway_group": "green_b",
       "headway_direction_name": "Boston College",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "170137",
@@ -6564,7 +6542,6 @@
             "Green-B"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6584,6 +6561,7 @@
     "source_config": {
       "headway_group": "green_b",
       "headway_direction_name": "Government Center",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "170140",
@@ -6592,7 +6570,6 @@
             "Green-B"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6612,6 +6589,7 @@
     "source_config": {
       "headway_group": "green_b",
       "headway_direction_name": "Boston College",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "170141",
@@ -6620,7 +6598,6 @@
             "Green-B"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6640,6 +6617,7 @@
     "source_config": {
       "headway_group": "green_b",
       "headway_direction_name": "Eastbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "71150",
@@ -6648,7 +6626,6 @@
             "Green-B"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6668,6 +6645,7 @@
     "source_config": {
       "headway_group": "green_b",
       "headway_direction_name": "Boston College",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "71151",
@@ -6676,7 +6654,6 @@
             "Green-B"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6696,6 +6673,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Eastbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70150",
@@ -6705,7 +6683,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6725,6 +6702,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Westbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70151",
@@ -6734,7 +6712,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6755,6 +6732,7 @@
       {
         "headway_group": "green_trunk",
         "headway_direction_name": "Eastbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70150",
@@ -6764,7 +6742,6 @@
               "Green-D"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           },
@@ -6775,7 +6752,6 @@
               "Green-B"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -6784,6 +6760,7 @@
       {
         "headway_group": "green_trunk",
         "headway_direction_name": "Westbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70151",
@@ -6793,7 +6770,6 @@
               "Green-D"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           },
@@ -6804,7 +6780,6 @@
               "Green-B"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -6825,6 +6800,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Eastbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70152",
@@ -6835,7 +6811,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6855,6 +6830,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Westbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70153",
@@ -6865,7 +6841,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6886,6 +6861,7 @@
       {
         "headway_group": "green_trunk",
         "headway_direction_name": "Eastbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70152",
@@ -6896,7 +6872,6 @@
               "Green-D"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -6905,6 +6880,7 @@
       {
         "headway_group": "green_trunk",
         "headway_direction_name": "Westbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70153",
@@ -6915,7 +6891,6 @@
               "Green-D"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -6936,6 +6911,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Eastbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70154",
@@ -6947,7 +6923,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6967,6 +6942,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Westbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70155",
@@ -6978,7 +6954,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -6998,6 +6973,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Eastbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70156",
@@ -7009,7 +6985,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7029,6 +7004,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Westbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70157",
@@ -7040,7 +7016,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7061,6 +7036,7 @@
       {
         "headway_group": "green_trunk",
         "headway_direction_name": "Eastbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70156",
@@ -7072,7 +7048,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -7081,6 +7056,7 @@
       {
         "headway_group": "green_trunk",
         "headway_direction_name": "Westbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70157",
@@ -7092,7 +7068,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -7113,6 +7088,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Eastbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70158",
@@ -7124,7 +7100,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7144,6 +7119,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Westbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70159",
@@ -7155,7 +7131,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7175,6 +7150,7 @@
     "source_config": {
       "headway_group": "green_e",
       "headway_direction_name": "Medford/Tufts",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70242",
@@ -7183,7 +7159,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7203,6 +7178,7 @@
     "source_config": {
       "headway_group": "green_e",
       "headway_direction_name": "Heath Street",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70241",
@@ -7211,7 +7187,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7231,6 +7206,7 @@
     "source_config": {
       "headway_group": "green_e",
       "headway_direction_name": "Medford/Tufts",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70240",
@@ -7239,7 +7215,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7259,6 +7234,7 @@
     "source_config": {
       "headway_group": "green_e",
       "headway_direction_name": "Heath Street",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70239",
@@ -7267,7 +7243,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7288,6 +7263,7 @@
       {
         "headway_group": "green_e",
         "headway_direction_name": "Medford/Tufts",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70240",
@@ -7296,7 +7272,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -7305,6 +7280,7 @@
       {
         "headway_group": "green_e",
         "headway_direction_name": "Heath Street",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70239",
@@ -7313,7 +7289,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -7334,6 +7309,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Eastbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "71199",
@@ -7345,7 +7321,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         },
@@ -7359,7 +7334,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7379,6 +7353,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Eastbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "71199",
@@ -7390,7 +7365,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         },
@@ -7404,7 +7378,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7424,6 +7397,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Westbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70198",
@@ -7432,7 +7406,6 @@
           "routes": [
             "Green-D"
           ],
-          "terminal": false,
           "announce_arriving": false,
           "announce_boarding": true,
           "multi_berth": true
@@ -7444,7 +7417,6 @@
           "routes": [
             "Green-E"
           ],
-          "terminal": false,
           "announce_arriving": false,
           "announce_boarding": true,
           "multi_berth": true
@@ -7465,6 +7437,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Westbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70196",
@@ -7473,7 +7446,6 @@
             "Green-B"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": false,
           "announce_boarding": true,
           "multi_berth": true
@@ -7485,7 +7457,6 @@
             "Green-C"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": false,
           "announce_boarding": true,
           "multi_berth": true
@@ -7506,6 +7477,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Eastbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70201",
@@ -7517,7 +7489,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -7537,6 +7508,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Westbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70202",
@@ -7548,7 +7520,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -7569,6 +7540,7 @@
       {
         "headway_group": "green_trunk",
         "headway_direction_name": "Eastbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70201",
@@ -7580,7 +7552,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -7589,6 +7560,7 @@
       {
         "headway_group": "green_trunk",
         "headway_direction_name": "Westbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70202",
@@ -7600,7 +7572,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -7621,6 +7592,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Eastbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70203",
@@ -7630,7 +7602,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7650,6 +7621,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Westbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70204",
@@ -7659,7 +7631,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7679,6 +7650,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Outbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70205",
@@ -7688,7 +7660,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -7708,6 +7679,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Inbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70206",
@@ -7717,7 +7689,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -7738,6 +7709,7 @@
       {
         "headway_group": "green_trunk",
         "headway_direction_name": "Outbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70205",
@@ -7747,7 +7719,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": false,
             "announce_boarding": true
           }
@@ -7756,6 +7727,7 @@
       {
         "headway_group": "green_trunk",
         "headway_direction_name": "Inbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70206",
@@ -7765,7 +7737,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": false,
             "announce_boarding": true
           }
@@ -7786,6 +7757,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Outbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70207",
@@ -7795,7 +7767,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7815,6 +7786,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Inbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70208",
@@ -7824,7 +7796,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7845,6 +7816,7 @@
       {
         "headway_group": "green_trunk",
         "headway_direction_name": "Outbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70207",
@@ -7854,7 +7826,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -7863,6 +7834,7 @@
       {
         "headway_group": "green_trunk",
         "headway_direction_name": "Inbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70208",
@@ -7872,7 +7844,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -7893,6 +7864,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Outbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70501",
@@ -7902,7 +7874,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7922,6 +7893,7 @@
     "source_config": {
       "headway_group": "green_trunk",
       "headway_direction_name": "Inbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70502",
@@ -7931,7 +7903,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -7952,6 +7923,7 @@
       {
         "headway_group": "green_trunk",
         "headway_direction_name": "Outbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70501",
@@ -7961,7 +7933,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -7970,6 +7941,7 @@
       {
         "headway_group": "green_trunk",
         "headway_direction_name": "Inbound",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70502",
@@ -7979,7 +7951,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -7998,6 +7969,7 @@
     "source_config": {
       "headway_group": "glx_union",
       "headway_direction_name": "Riverside",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70504",
@@ -8006,7 +7978,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -8017,7 +7988,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -8028,7 +7998,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -8046,6 +8015,7 @@
     "source_config": {
       "headway_group": "glx_union",
       "headway_direction_name": "Riverside",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70504",
@@ -8054,7 +8024,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -8065,7 +8034,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -8076,7 +8044,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -8098,6 +8065,7 @@
     "source_config": {
       "headway_group": "glx_union",
       "headway_direction_name": "Riverside",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70504",
@@ -8106,7 +8074,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -8117,7 +8084,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         },
@@ -8128,7 +8094,6 @@
             "Green-D"
           ],
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
@@ -8148,6 +8113,7 @@
     "source_config": {
       "headway_group": "glx_medford",
       "headway_direction_name": "Medford/Tufts",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70513",
@@ -8156,7 +8122,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -8176,6 +8141,7 @@
     "source_config": {
       "headway_group": "glx_medford",
       "headway_direction_name": "Heath Street",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70514",
@@ -8184,7 +8150,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -8203,6 +8168,7 @@
       {
         "headway_group": "glx_medford",
         "headway_direction_name": "Medford/Tufts",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70513",
@@ -8211,7 +8177,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -8220,6 +8185,7 @@
       {
         "headway_group": "glx_medford",
         "headway_direction_name": "Heath Street",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70514",
@@ -8228,7 +8194,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -8249,6 +8214,7 @@
     "source_config": {
       "headway_group": "glx_medford",
       "headway_direction_name": "Medford/Tufts",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70505",
@@ -8257,7 +8223,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -8277,6 +8242,7 @@
     "source_config": {
       "headway_group": "glx_medford",
       "headway_direction_name": "Heath Street",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70506",
@@ -8285,7 +8251,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -8306,6 +8271,7 @@
       {
         "headway_group": "glx_medford",
         "headway_direction_name": "Medford/Tufts",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70505",
@@ -8314,7 +8280,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -8323,6 +8288,7 @@
       {
         "headway_group": "glx_medford",
         "headway_direction_name": "Heath Street",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70506",
@@ -8331,7 +8297,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -8352,6 +8317,7 @@
     "source_config": {
       "headway_group": "glx_medford",
       "headway_direction_name": "Medford/Tufts",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70507",
@@ -8360,7 +8326,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -8380,6 +8345,7 @@
     "source_config": {
       "headway_group": "glx_medford",
       "headway_direction_name": "Heath Street",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70508",
@@ -8388,7 +8354,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -8409,6 +8374,7 @@
       {
         "headway_group": "glx_medford",
         "headway_direction_name": "Medford/Tufts",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70507",
@@ -8417,7 +8383,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -8426,6 +8391,7 @@
       {
         "headway_group": "glx_medford",
         "headway_direction_name": "Heath Street",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70508",
@@ -8434,7 +8400,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -8455,6 +8420,7 @@
     "source_config": {
       "headway_group": "glx_medford",
       "headway_direction_name": "Medford/Tufts",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70509",
@@ -8463,7 +8429,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -8483,6 +8448,7 @@
     "source_config": {
       "headway_group": "glx_medford",
       "headway_direction_name": "Heath Street",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "70510",
@@ -8491,7 +8457,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": false,
           "announce_arriving": true,
           "announce_boarding": false
         }
@@ -8512,6 +8477,7 @@
       {
         "headway_group": "glx_medford",
         "headway_direction_name": "Medford/Tufts",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70509",
@@ -8520,7 +8486,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -8529,6 +8494,7 @@
       {
         "headway_group": "glx_medford",
         "headway_direction_name": "Heath Street",
+        "terminal": false,
         "sources": [
           {
             "stop_id": "70510",
@@ -8537,7 +8503,6 @@
               "Green-E"
             ],
             "platform": null,
-            "terminal": false,
             "announce_arriving": true,
             "announce_boarding": false
           }
@@ -8556,6 +8521,7 @@
     "source_config": {
       "headway_group": "glx_medford",
       "headway_direction_name": "Heath Street",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70512",
@@ -8564,7 +8530,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
         }
@@ -8582,6 +8547,7 @@
     "source_config": {
       "headway_group": "glx_medford",
       "headway_direction_name": "Heath Street",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70512",
@@ -8590,7 +8556,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": false
         }
@@ -8612,6 +8577,7 @@
     "source_config": {
       "headway_group": "glx_medford",
       "headway_direction_name": "Heath Street",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "70512",
@@ -8620,7 +8586,6 @@
             "Green-E"
           ],
           "platform": null,
-          "terminal": true,
           "announce_arriving": false,
           "announce_boarding": true
         }
