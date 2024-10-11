@@ -13,7 +13,6 @@ defmodule Signs.Utilities.SourceConfigTest do
         "stop_id": "123",
         "routes": ["Foo"],
         "direction_id": 0,
-        "platform": null,
         "announce_arriving": false,
         "announce_boarding": false
       },
@@ -21,7 +20,6 @@ defmodule Signs.Utilities.SourceConfigTest do
         "stop_id": "234",
         "routes": ["Bar"],
         "direction_id": 1,
-        "platform": "ashmont",
         "announce_arriving": true,
         "announce_boarding": false,
         "multi_berth": true
@@ -41,7 +39,6 @@ defmodule Signs.Utilities.SourceConfigTest do
           "stop_id": "123",
           "routes": ["Foo"],
           "direction_id": 0,
-          "platform": null,
           "announce_arriving": false,
           "announce_boarding": false
         }
@@ -57,7 +54,6 @@ defmodule Signs.Utilities.SourceConfigTest do
           "headway_direction_name": "Southbound",
           "routes": ["Bar"],
           "direction_id": 1,
-          "platform": "braintree",
           "announce_arriving": true,
           "announce_boarding": true
         }
@@ -76,7 +72,6 @@ defmodule Signs.Utilities.SourceConfigTest do
         "stop_id": "123",
         "routes": ["Foo"],
         "direction_id": 0,
-        "platform": null,
         "announce_arriving": false,
         "announce_boarding": false
       },
@@ -84,7 +79,6 @@ defmodule Signs.Utilities.SourceConfigTest do
         "stop_id": "234",
         "routes": ["Bar"],
         "direction_id": 1,
-        "platform": "ashmont",
         "announce_arriving": true,
         "announce_boarding": false,
         "multi_berth": true
@@ -105,7 +99,6 @@ defmodule Signs.Utilities.SourceConfigTest do
                      stop_id: "123",
                      routes: ["Foo"],
                      direction_id: 0,
-                     platform: nil,
                      announce_arriving?: false,
                      announce_boarding?: false,
                      multi_berth?: false
@@ -114,7 +107,6 @@ defmodule Signs.Utilities.SourceConfigTest do
                      stop_id: "234",
                      routes: ["Bar"],
                      direction_id: 1,
-                     platform: :ashmont,
                      announce_arriving?: true,
                      announce_boarding?: false,
                      multi_berth?: true
@@ -135,7 +127,6 @@ defmodule Signs.Utilities.SourceConfigTest do
                        stop_id: "123",
                        routes: ["Foo"],
                        direction_id: 0,
-                       platform: nil,
                        announce_arriving?: false,
                        announce_boarding?: false
                      }
@@ -150,7 +141,6 @@ defmodule Signs.Utilities.SourceConfigTest do
                        stop_id: "234",
                        routes: ["Bar"],
                        direction_id: 1,
-                       platform: :braintree,
                        announce_arriving?: true,
                        announce_boarding?: true
                      }
@@ -171,7 +161,6 @@ defmodule Signs.Utilities.SourceConfigTest do
                 stop_id: "123",
                 routes: ["Foo"],
                 direction_id: 0,
-                platform: nil,
                 announce_arriving?: false,
                 announce_boarding?: false,
                 multi_berth?: false
@@ -180,7 +169,6 @@ defmodule Signs.Utilities.SourceConfigTest do
                 stop_id: "234",
                 routes: ["Bar"],
                 direction_id: 1,
-                platform: :ashmont,
                 announce_arriving?: true,
                 announce_boarding?: false,
                 multi_berth?: true

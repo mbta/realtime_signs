@@ -29,7 +29,6 @@ defmodule Content.Message.Predictions do
     :direction_id,
     :zone,
     width: 18,
-    platform: nil,
     new_cars?: false,
     terminal?: false,
     certainty: nil,
@@ -49,7 +48,6 @@ defmodule Content.Message.Predictions do
           new_cars?: boolean(),
           station_code: String.t() | nil,
           zone: String.t() | nil,
-          platform: Content.platform() | nil,
           terminal?: boolean(),
           certainty: non_neg_integer() | nil,
           crowding_data_confidence: :high | :low | nil,
@@ -61,12 +59,11 @@ defmodule Content.Message.Predictions do
           String.t(),
           String.t(),
           Signs.Realtime.t(),
-          Content.platform() | nil,
           integer()
         ) :: t() | nil
-  def non_terminal(prediction, station_code, zone, sign, platform \\ nil, width \\ 18)
+  def non_terminal(prediction, station_code, zone, sign, width \\ 18)
 
-  def non_terminal(prediction, station_code, zone, sign, platform, width) do
+  def non_terminal(prediction, station_code, zone, sign, width) do
     # e.g., North Station which is non-terminal but has trips that begin there
     predicted_time = prediction.seconds_until_arrival || prediction.seconds_until_departure
 
@@ -100,7 +97,6 @@ defmodule Content.Message.Predictions do
       new_cars?: sign.location_engine.for_vehicle(prediction.vehicle_id) |> new_cars?(),
       station_code: station_code,
       zone: zone,
-      platform: platform,
       certainty: certainty,
       crowding_data_confidence: crowding_data_confidence,
       crowding_description: crowding_description
