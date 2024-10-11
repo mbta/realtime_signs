@@ -7,7 +7,7 @@ defmodule Signs.Utilities.Headways do
   require Logger
 
   @spec headway_messages(Signs.Realtime.t(), SourceConfig.config(), DateTime.t()) ::
-          Signs.Realtime.sign_messages()
+          Signs.Realtime.sign_messages() | nil
   def headway_messages(sign, config, current_time) do
     case fetch_headways(sign, config.headway_group, config.sources, current_time) do
       nil ->
@@ -22,7 +22,7 @@ defmodule Signs.Utilities.Headways do
   end
 
   @spec headway_message(Signs.Realtime.t(), SourceConfig.config(), DateTime.t()) ::
-          Signs.Realtime.line_content()
+          Signs.Realtime.line_content() | nil
   def headway_message(sign, config, current_time) do
     case fetch_headways(sign, config.headway_group, config.sources, current_time) do
       nil ->

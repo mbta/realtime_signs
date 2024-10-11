@@ -214,9 +214,13 @@ defmodule Signs.Utilities.Messages do
     end)
   end
 
+  defp in_early_am?(_, nil), do: false
+
   defp in_early_am?(current_time, scheduled) do
     Timex.between?(DateTime.to_time(current_time), @early_am_start, DateTime.to_time(scheduled))
   end
+
+  defp before_early_am_threshold?(_, nil), do: false
 
   defp before_early_am_threshold?(current_time, scheduled) do
     Timex.before?(current_time, Timex.shift(scheduled, minutes: @early_am_buffer))
