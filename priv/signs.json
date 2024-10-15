@@ -9618,72 +9618,34 @@
       {
         "sources": [
           {
+            "stop_id": "76123",
+            "route_id": "71",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "76123",
+            "route_id": "73",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
             "stop_id": "76124",
-            "route_id": "66",
-            "direction_id": 0
-          }
-        ]
-      },
-      {
-        "sources": [
-          {
-            "stop_id": "20761",
-            "route_id": "71",
-            "direction_id": 0
-          },
-          {
-            "stop_id": "76123",
-            "route_id": "71",
-            "direction_id": 0
-          }
-        ]
-      },
-      {
-        "sources": [
-          {
-            "stop_id": "20761",
-            "route_id": "72",
-            "direction_id": 0
-          }
-        ]
-      },
-      {
-        "sources": [
-          {
-            "stop_id": "20761",
-            "route_id": "73",
-            "direction_id": 0
-          },
-          {
-            "stop_id": "76123",
-            "route_id": "73",
-            "direction_id": 0
-          }
-        ]
-      },
-      {
-        "sources": [
-          {
-            "stop_id": "20761",
             "route_id": "74",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
             "stop_id": "76125",
-            "route_id": "74",
-            "direction_id": 0
-          }
-        ]
-      },
-      {
-        "sources": [
-          {
-            "stop_id": "20761",
-            "route_id": "75",
-            "direction_id": 0
-          },
-          {
-            "stop_id": "76126",
             "route_id": "75",
             "direction_id": 0
           }
@@ -9691,11 +9653,6 @@
       },
       {
         "sources": [
-          {
-            "stop_id": "20761",
-            "route_id": "77",
-            "direction_id": 0
-          },
           {
             "stop_id": "76121",
             "route_id": "77",
@@ -9706,27 +9663,8 @@
       {
         "sources": [
           {
-            "stop_id": "20761",
-            "route_id": "78",
-            "direction_id": 0
-          },
-          {
-            "stop_id": "76125",
-            "route_id": "78",
-            "direction_id": 0
-          }
-        ]
-      },
-      {
-        "sources": [
-          {
-            "stop_id": "20761",
-            "route_id": "86",
-            "direction_id": 0
-          },
-          {
             "stop_id": "76124",
-            "route_id": "86",
+            "route_id": "78",
             "direction_id": 0
           }
         ]
@@ -9734,10 +9672,14 @@
       {
         "sources": [
           {
-            "stop_id": "20761",
-            "route_id": "96",
+            "stop_id": "76123",
+            "route_id": "86",
             "direction_id": 0
-          },
+          }
+        ]
+      },
+      {
+        "sources": [
           {
             "stop_id": "76122",
             "route_id": "96",
