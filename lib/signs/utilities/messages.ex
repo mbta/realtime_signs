@@ -279,6 +279,9 @@ defmodule Signs.Utilities.Messages do
     route = Signs.Utilities.SourceConfig.single_route(config)
 
     case {alert_status, sign.uses_shuttles} do
+      {:shuttles_transfer_station, _} ->
+        %Content.Message.Empty{}
+
       {:shuttles_closed_station, true} ->
         %Alert.NoServiceUseShuttle{route: route, destination: config.headway_destination}
 
