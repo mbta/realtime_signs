@@ -30,7 +30,7 @@ defmodule Content.Audio.NextTrainCountdown do
         minutes: if(message.minutes == :approaching, do: 1, else: message.minutes),
         verb: if(message.terminal?, do: :departs, else: :arrives),
         track_number: Content.Utilities.stop_track_number(message.stop_id),
-        platform: message.platform,
+        platform: Content.Utilities.stop_platform(message.stop_id),
         station_code: message.station_code,
         zone: message.zone
       }

@@ -23,7 +23,7 @@ defmodule Content.Audio.TrainIsArriving do
       %__MODULE__{
         destination: message.destination,
         trip_id: message.trip_id,
-        platform: message.platform,
+        platform: Content.Utilities.stop_platform(message.stop_id),
         route_id: message.route_id,
         crowding_description: if(include_crowding?, do: message.crowding_description)
       }

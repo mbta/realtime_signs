@@ -72,7 +72,6 @@ defmodule Signs.Utilities.SourceConfig do
     "routes": ["Orange"],
     "direction_id": 0,
     "headway_direction_name": "Forest Hills",
-    "platform": null,
     "announce_arriving": true,
     "announce_boarding": false
   }
@@ -80,8 +79,6 @@ defmodule Signs.Utilities.SourceConfig do
   * stop_id: The GTFS stop_id that it uses for prediction data.
   * routes: A list of routes that are relevant to this sign regarding alerts.
   * direction_id: 0 or 1, used in tandem with the stop ID for predictions
-  * platform: mostly null, but :ashmont | :braintree for JFK/UMass, where it's used for the "next
-    train to X is approaching, on the Y platform" audio.
   * announce_arriving: whether to play audio when a sign goes to ARR.
   * announce_boarding: whether to play audio when a sign goes to BRD. Generally we do one or the
     other. Considerations include how noisy the station is, what we've done in the past, how
@@ -96,7 +93,6 @@ defmodule Signs.Utilities.SourceConfig do
     :stop_id,
     :direction_id,
     :routes,
-    :platform,
     :announce_arriving?,
     :announce_boarding?
   ]
@@ -108,7 +104,6 @@ defmodule Signs.Utilities.SourceConfig do
           headway_stop_id: String.t() | nil,
           direction_id: 0 | 1,
           routes: [String.t()] | nil,
-          platform: Content.platform() | nil,
           announce_arriving?: boolean(),
           announce_boarding?: boolean(),
           multi_berth?: boolean()
@@ -146,18 +141,10 @@ defmodule Signs.Utilities.SourceConfig do
          %{
            "stop_id" => stop_id,
            "direction_id" => direction_id,
-           "platform" => platform,
            "announce_arriving" => announce_arriving?,
            "announce_boarding" => announce_boarding?
          } = source
        ) do
-    platform =
-      case platform do
-        nil -> nil
-        "ashmont" -> :ashmont
-        "braintree" -> :braintree
-      end
-
     multi_berth? =
       case source["multi_berth"] do
         true -> true
@@ -168,7 +155,6 @@ defmodule Signs.Utilities.SourceConfig do
       stop_id: stop_id,
       direction_id: direction_id,
       routes: source["routes"],
-      platform: platform,
       announce_arriving?: announce_arriving?,
       announce_boarding?: announce_boarding?,
       multi_berth?: multi_berth?
