@@ -27,7 +27,7 @@ defmodule Signs.Utilities.Predictions do
         ) :: Signs.Realtime.sign_messages() | nil
   def prediction_messages(
         predictions,
-        %{sources: sources},
+        %{sources: sources, terminal?: terminal?},
         %{pa_ess_loc: station_code, text_zone: zone} = sign
       ) do
     predictions
@@ -35,7 +35,7 @@ defmodule Signs.Utilities.Predictions do
       p.seconds_until_departure && p.schedule_relationship != :skipped
     end)
     |> Enum.sort_by(fn prediction ->
-      {if terminal_prediction?(prediction, sources) do
+      {if terminal? do
          0
        else
          case prediction.stops_away do
@@ -50,7 +50,7 @@ defmodule Signs.Utilities.Predictions do
         stopped_train?(prediction) ->
           Content.Message.StoppedTrain.from_prediction(prediction)
 
-        terminal_prediction?(prediction, sources) ->
+        terminal? ->
           Content.Message.Predictions.terminal(prediction, station_code, zone, sign)
 
         true ->
@@ -91,7 +91,7 @@ defmodule Signs.Utilities.Predictions do
   end
 
   def prediction_certainty(prediction, config) do
-    if terminal_prediction?(prediction, config.sources) || !prediction.seconds_until_arrival do
+    if config.terminal? || !prediction.seconds_until_arrival do
       prediction.departure_certainty
     else
       prediction.arrival_certainty
@@ -199,18 +199,6 @@ defmodule Signs.Utilities.Predictions do
 
   defp allowed_multi_berth_platform?(_, _) do
     false
-  end
-
-  defp terminal_prediction?(prediction, source_list) do
-    source_list
-    |> SourceConfig.get_source_by_stop_and_direction(
-      prediction.stop_id,
-      prediction.direction_id
-    )
-    |> case do
-      nil -> false
-      source -> source.terminal?
-    end
   end
 
   defp platform(prediction, source_list) do

@@ -51,6 +51,8 @@ defmodule Signs.Utilities.SourceConfig do
     exception is Ashmont, which handles both the Ashmont and Mattapan headway groups.
   * headway_direction_name: The headsign used to generate the "trains every X minutes" message in
     headway mode. Must be a value recognized by `PaEss.Utilities.headsign_to_destination/1`.
+  * terminal: whether this is a "terminal", and should use arrival or departure times in its
+    countdown.
   * sources: A list of source objects (see below for details). The sources determine which
     predictions to use in the `Engine.Predictions` process. When a list of multiple sources is
     provided, their corresponding predictions are aggregated and sorted by arrival time (or
@@ -71,7 +73,6 @@ defmodule Signs.Utilities.SourceConfig do
     "direction_id": 0,
     "headway_direction_name": "Forest Hills",
     "platform": null,
-    "terminal": false,
     "announce_arriving": true,
     "announce_boarding": false
   }
@@ -81,8 +82,6 @@ defmodule Signs.Utilities.SourceConfig do
   * direction_id: 0 or 1, used in tandem with the stop ID for predictions
   * platform: mostly null, but :ashmont | :braintree for JFK/UMass, where it's used for the "next
     train to X is approaching, on the Y platform" audio.
-  * terminal: whether this is a "terminal", and should use arrival or departure times in its
-    countdown.
   * announce_arriving: whether to play audio when a sign goes to ARR.
   * announce_boarding: whether to play audio when a sign goes to BRD. Generally we do one or the
     other. Considerations include how noisy the station is, what we've done in the past, how
@@ -98,7 +97,6 @@ defmodule Signs.Utilities.SourceConfig do
     :direction_id,
     :routes,
     :platform,
-    :terminal?,
     :announce_arriving?,
     :announce_boarding?
   ]
@@ -111,7 +109,6 @@ defmodule Signs.Utilities.SourceConfig do
           direction_id: 0 | 1,
           routes: [String.t()] | nil,
           platform: Content.platform() | nil,
-          terminal?: boolean(),
           announce_arriving?: boolean(),
           announce_boarding?: boolean(),
           multi_berth?: boolean()
@@ -120,6 +117,7 @@ defmodule Signs.Utilities.SourceConfig do
   @type config :: %{
           headway_group: String.t(),
           headway_destination: PaEss.destination() | nil,
+          terminal?: boolean(),
           sources: [source()]
         }
 
@@ -127,6 +125,7 @@ defmodule Signs.Utilities.SourceConfig do
   def parse!(%{
         "headway_group" => headway_group,
         "headway_direction_name" => headway_direction_name,
+        "terminal" => terminal,
         "sources" => sources
       }) do
     {:ok, headway_destination} = PaEss.Utilities.headsign_to_destination(headway_direction_name)
@@ -134,6 +133,7 @@ defmodule Signs.Utilities.SourceConfig do
     %{
       headway_group: headway_group,
       headway_destination: headway_destination,
+      terminal?: terminal,
       sources: Enum.map(sources, &parse_source!/1)
     }
   end
@@ -147,7 +147,6 @@ defmodule Signs.Utilities.SourceConfig do
            "stop_id" => stop_id,
            "direction_id" => direction_id,
            "platform" => platform,
-           "terminal" => terminal?,
            "announce_arriving" => announce_arriving?,
            "announce_boarding" => announce_boarding?
          } = source
@@ -170,7 +169,6 @@ defmodule Signs.Utilities.SourceConfig do
       direction_id: direction_id,
       routes: source["routes"],
       platform: platform,
-      terminal?: terminal?,
       announce_arriving?: announce_arriving?,
       announce_boarding?: announce_boarding?,
       multi_berth?: multi_berth?
