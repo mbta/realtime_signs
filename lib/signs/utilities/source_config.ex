@@ -96,8 +96,7 @@ defmodule Signs.Utilities.SourceConfig do
     :announce_arriving?,
     :announce_boarding?
   ]
-  defstruct @enforce_keys ++
-              [:headway_stop_id, multi_berth?: false]
+  defstruct @enforce_keys ++ [:headway_stop_id]
 
   @type source :: %__MODULE__{
           stop_id: String.t(),
@@ -105,8 +104,7 @@ defmodule Signs.Utilities.SourceConfig do
           direction_id: 0 | 1,
           routes: [String.t()] | nil,
           announce_arriving?: boolean(),
-          announce_boarding?: boolean(),
-          multi_berth?: boolean()
+          announce_boarding?: boolean()
         }
 
   @type config :: %{
@@ -145,19 +143,12 @@ defmodule Signs.Utilities.SourceConfig do
            "announce_boarding" => announce_boarding?
          } = source
        ) do
-    multi_berth? =
-      case source["multi_berth"] do
-        true -> true
-        _ -> false
-      end
-
     %__MODULE__{
       stop_id: stop_id,
       direction_id: direction_id,
       routes: source["routes"],
       announce_arriving?: announce_arriving?,
-      announce_boarding?: announce_boarding?,
-      multi_berth?: multi_berth?
+      announce_boarding?: announce_boarding?
     }
   end
 

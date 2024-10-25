@@ -7111,8 +7111,7 @@
             "Green-D"
           ],
           "announce_arriving": false,
-          "announce_boarding": true,
-          "multi_berth": true
+          "announce_boarding": true
         },
         {
           "stop_id": "70199",
@@ -7121,8 +7120,7 @@
             "Green-E"
           ],
           "announce_arriving": false,
-          "announce_boarding": true,
-          "multi_berth": true
+          "announce_boarding": true
         }
       ]
     }
@@ -7149,8 +7147,7 @@
             "Green-B"
           ],
           "announce_arriving": false,
-          "announce_boarding": true,
-          "multi_berth": true
+          "announce_boarding": true
         },
         {
           "stop_id": "70197",
@@ -7159,8 +7156,7 @@
             "Green-C"
           ],
           "announce_arriving": false,
-          "announce_boarding": true,
-          "multi_berth": true
+          "announce_boarding": true
         }
       ]
     }
