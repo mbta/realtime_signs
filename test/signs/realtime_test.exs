@@ -554,10 +554,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["90007"], :audio_visual}}], [
         {"Attention passengers: The next C train to Cleveland Circle is now arriving.",
-         [
-           {"Attention passengers:", "The next C train to", 3},
-           {"Cleveland Circle is now", "arriving.", 3}
-         ]}
+         [{"C train to Clvlnd Cir", "now arriving", 6}]}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
@@ -581,15 +578,9 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"Attention passengers: The next C train to Cleveland Circle is now arriving.",
-           [
-             {"Attention passengers:", "The next C train to", 3},
-             {"Cleveland Circle is now", "arriving.", 3}
-           ]},
+           [{"C train to Clvlnd Cir", "now arriving", 6}]},
           {"Attention passengers: The next D train to Riverside is now arriving.",
-           [
-             {"Attention passengers:", "The next D train to", 3},
-             {"Riverside is now", "arriving.", 3}
-           ]}
+           [{"D train to Riverside", "now arriving", 6}]}
         ]
       )
 
@@ -739,7 +730,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32127"], :audio_visual}}], [
         {"Attention passengers: The next Ashmont train is now approaching.",
-         [{"Attention passengers:", "The next Ashmont train", 3}, {"is now approaching.", "", 3}]}
+         [{"Ashmont train", "now approaching", 6}]}
       ])
 
       assert {_, %{announced_approachings: ["1"]}} = Signs.Realtime.handle_info(:run_loop, @sign)
@@ -798,7 +789,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32127"], :audio_visual}}], [
         {"Attention passengers: The next Ashmont train is now approaching.",
-         [{"Attention passengers:", "The next Ashmont train", 3}, {"is now approaching.", "", 3}]}
+         [{"Ashmont train", "now approaching", 6}]}
       ])
 
       assert {_, %{tick_read: 119}} =
@@ -818,10 +809,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32123"], :audio_visual}}], [
         {"Attention passengers: The next Forest Hills train is now approaching.",
-         [
-           {"Attention passengers:", "The next Forest Hills", 3},
-           {"train is now", "approaching.", 3}
-         ]}
+         [{"Frst Hills train", "now approaching", 6}]}
       ])
 
       assert {_, %{announced_approachings_with_crowding: ["1"]}} =
@@ -841,10 +829,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32123"], :audio_visual}}], [
         {"Attention passengers: The next Forest Hills train is now approaching.",
-         [
-           {"Attention passengers:", "The next Forest Hills", 3},
-           {"train is now", "approaching.", 3}
-         ]}
+         [{"Frst Hills train", "now approaching", 6}]}
       ])
 
       assert {_, %{announced_approachings_with_crowding: []}} =
@@ -864,10 +849,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32103"], :audio_visual}}], [
         {"Attention passengers: The next Forest Hills train is now arriving.",
-         [
-           {"Attention passengers:", "The next Forest Hills", 3},
-           {"train is now arriving.", "", 3}
-         ]}
+         [{"Frst Hills train", "now arriving", 6}]}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
@@ -886,10 +868,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32103"], :audio_visual}}], [
         {"Attention passengers: The next Forest Hills train is now arriving.",
-         [
-           {"Attention passengers:", "The next Forest Hills", 3},
-           {"train is now arriving.", "", 3}
-         ]}
+         [{"Frst Hills train", "now arriving", 6}]}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
@@ -908,10 +887,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32103"], :audio_visual}}], [
         {"Attention passengers: The next Forest Hills train is now arriving.",
-         [
-           {"Attention passengers:", "The next Forest Hills", 3},
-           {"train is now arriving.", "", 3}
-         ]}
+         [{"Frst Hills train", "now arriving", 6}]}
       ])
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | announced_approachings_with_crowding: ["1"]})
@@ -1038,7 +1014,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32107"], :audio_visual}}], [
         {"Attention passengers: The next Ashmont train is now arriving.",
-         [{"Attention passengers:", "The next Ashmont train", 3}, {"is now arriving.", "", 3}]}
+         [{"Ashmont train", "now arriving", 6}]}
       ])
 
       Signs.Realtime.handle_info(:run_loop, %{
@@ -1097,7 +1073,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"Attention passengers: The next Ashmont train is now arriving.",
-           [{"Attention passengers:", "The next Ashmont train", 3}, {"is now arriving.", "", 3}]},
+           [{"Ashmont train", "now arriving", 6}]},
           {"The following Ashmont train arrives in 2 minutes", nil}
         ]
       )
@@ -1124,7 +1100,7 @@ defmodule Signs.RealtimeTest do
         [
           {"The next Ashmont train arrives in 2 minutes.", nil},
           {"Attention passengers: The next Alewife train is now arriving.",
-           [{"Attention passengers:", "The next Alewife train", 3}, {"is now arriving.", "", 3}]}
+           [{"Alewife train", "now arriving", 6}]}
         ]
       )
 
@@ -1548,10 +1524,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"106", ["783", "4016", "21000", "786"], :audio_visual}}], [
         {"Attention passengers: The next Ashmont train is now approaching, with all new Red Line cars.",
-         [
-           {"Attention passengers:", "The next Ashmont train", 3},
-           {"is now approaching, with", "all new Red Line cars.", 3}
-         ]}
+         [{"Ashmont train", "now approaching", 6}, {"with all new Red Line", "cars", 3}]}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
@@ -1580,7 +1553,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32127"], :audio_visual}}], [
         {"Attention passengers: The next Ashmont train is now approaching.",
-         [{"Attention passengers:", "The next Ashmont train", 3}, {"is now approaching.", "", 3}]}
+         [{"Ashmont train", "now approaching", 6}]}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)

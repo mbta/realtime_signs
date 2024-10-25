@@ -82,8 +82,17 @@ defmodule Content.Audio.Approaching do
     end
 
     def to_tts(%Content.Audio.Approaching{} = audio) do
-      text = tts_text(audio)
-      {text, PaEss.Utilities.paginate_text(text)}
+      train = PaEss.Utilities.train_description(audio.destination, audio.route_id, :visual)
+      crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
+
+      new_cars =
+        if(audio.new_cars? && audio.route_id == "Red", do: "with all new Red Line cars", else: "")
+
+      pages =
+        [{train, "now approaching", 6}] ++
+          PaEss.Utilities.paginate_text(new_cars) ++ PaEss.Utilities.paginate_text(crowding)
+
+      {tts_text(audio), pages}
     end
 
     def to_logs(%Content.Audio.Approaching{}) do
