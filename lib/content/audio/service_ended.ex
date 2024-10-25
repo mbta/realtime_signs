@@ -71,21 +71,12 @@ defmodule Content.Audio.ServiceEnded do
 
     defp tts_text(%Content.Audio.ServiceEnded{location: :platform, destination: destination}) do
       {:ok, destination_string} = Utilities.destination_to_ad_hoc_string(destination)
-
-      service_ended =
-        "#{destination_string} service has ended for the night."
-        |> String.trim_leading()
-        |> String.capitalize()
-
-      "This platform is closed. #{service_ended}"
+      "This platform is closed. #{destination_string} service has ended for the night."
     end
 
     defp tts_text(%Content.Audio.ServiceEnded{location: :direction, destination: destination}) do
       {:ok, destination_string} = Utilities.destination_to_ad_hoc_string(destination)
-
       "#{destination_string} service has ended for the night."
-      |> String.trim_leading()
-      |> String.capitalize()
     end
   end
 end
