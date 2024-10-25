@@ -317,14 +317,23 @@ defmodule PaEss.Utilities do
   def directional_destination?(destination),
     do: destination in [:eastbound, :westbound, :southbound, :northbound, :inbound, :outbound]
 
-  def train_description(destination, route_id) do
+  @spec train_description(PaEss.destination(), String.t() | nil, :audio | :visual) :: String.t()
+  def train_description(destination, route_id, av \\ :audio) do
     route_text =
       case route_id do
         "Green-" <> branch -> branch
         _ -> nil
       end
 
-    {:ok, destination_text} = destination_to_ad_hoc_string(destination)
+    destination_text =
+      case av do
+        :audio ->
+          {:ok, string} = destination_to_ad_hoc_string(destination)
+          string
+
+        :visual ->
+          destination_to_sign_string(destination)
+      end
 
     if route_text do
       "#{route_text} train to #{destination_text}"
@@ -699,7 +708,10 @@ defmodule PaEss.Utilities do
           end
         end
       end,
-      fn acc -> {:cont, acc, nil} end
+      fn
+        nil -> {:cont, nil}
+        acc -> {:cont, acc, nil}
+      end
     )
     |> Stream.chunk_every(2, 2, [""])
     |> Enum.map(fn [top, bottom] -> {top, bottom, 3} end)
