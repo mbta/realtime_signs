@@ -9,7 +9,6 @@ defmodule Signs.RealtimeTest do
     stop_id: "1",
     direction_id: 0,
     routes: ["Red"],
-    platform: nil,
     announce_arriving?: true,
     announce_boarding?: false
   }
@@ -18,7 +17,6 @@ defmodule Signs.RealtimeTest do
     stop_id: "2",
     direction_id: 0,
     routes: ["Red"],
-    platform: nil,
     announce_arriving?: true,
     announce_boarding?: false
   }
@@ -106,7 +104,7 @@ defmodule Signs.RealtimeTest do
           terminal?: false
         },
         %{
-          sources: [%{@src | stop_id: "70086", direction_id: 1, platform: :ashmont}],
+          sources: [%{@src | stop_id: "70086", direction_id: 1}],
           headway_group: "group",
           headway_destination: :alewife,
           terminal?: false

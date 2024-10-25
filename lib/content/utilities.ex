@@ -119,6 +119,11 @@ defmodule Content.Utilities do
   def stop_track_number("Union Square-02"), do: 2
   def stop_track_number(_), do: nil
 
+  @spec stop_platform(String.t()) :: Content.platform() | nil
+  def stop_platform("70086"), do: :ashmont
+  def stop_platform("70096"), do: :braintree
+  def stop_platform(_), do: nil
+
   def stop_platform_name("70086"), do: "Ashmont"
   def stop_platform_name("70096"), do: "Braintree"
 

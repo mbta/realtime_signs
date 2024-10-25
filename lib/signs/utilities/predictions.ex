@@ -54,13 +54,7 @@ defmodule Signs.Utilities.Predictions do
           Content.Message.Predictions.terminal(prediction, station_code, zone, sign)
 
         true ->
-          Content.Message.Predictions.non_terminal(
-            prediction,
-            station_code,
-            zone,
-            sign,
-            platform(prediction, sources)
-          )
+          Content.Message.Predictions.non_terminal(prediction, station_code, zone, sign)
       end
     end)
     |> Enum.reject(&is_nil(&1))
@@ -199,18 +193,6 @@ defmodule Signs.Utilities.Predictions do
 
   defp allowed_multi_berth_platform?(_, _) do
     false
-  end
-
-  defp platform(prediction, source_list) do
-    source_list
-    |> SourceConfig.get_source_by_stop_and_direction(
-      prediction.stop_id,
-      prediction.direction_id
-    )
-    |> case do
-      nil -> nil
-      source -> source.platform
-    end
   end
 
   # This is a temporary fix for a situation where spotty train sheet data can
