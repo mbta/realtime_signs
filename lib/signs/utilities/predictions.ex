@@ -51,10 +51,10 @@ defmodule Signs.Utilities.Predictions do
           Content.Message.StoppedTrain.from_prediction(prediction)
 
         terminal? ->
-          Content.Message.Predictions.terminal(prediction, station_code, zone, sign)
+          Content.Message.Predictions.terminal(prediction, station_code, zone)
 
         true ->
-          Content.Message.Predictions.non_terminal(prediction, station_code, zone, sign)
+          Content.Message.Predictions.non_terminal(prediction, station_code, zone)
       end
     end)
     |> Enum.reject(&is_nil(&1))

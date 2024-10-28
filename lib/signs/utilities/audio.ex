@@ -104,7 +104,7 @@ defmodule Signs.Utilities.Audio do
         Audio.TrainIsBoarding.from_message(prediction)
 
       :arriving ->
-        Audio.TrainIsArriving.from_message(prediction)
+        Audio.TrainIsArriving.from_message(prediction, nil)
 
       :approaching ->
         Audio.NextTrainCountdown.from_message(%{prediction | minutes: 1})
@@ -198,11 +198,12 @@ defmodule Signs.Utilities.Audio do
             match?(%Message.Predictions{minutes: :arriving}, message) &&
               message.prediction.trip_id not in sign.announced_arrivals &&
                 announce_arriving?(sign, message) ->
-              include_crowding? =
-                message.crowding_data_confidence == :high &&
-                  message.prediction.trip_id not in sign.announced_approachings_with_crowding
+              crowding =
+                if message.prediction.trip_id not in sign.announced_approachings_with_crowding do
+                  PaEss.Utilities.crowding_description(message.prediction, sign)
+                end
 
-              {Audio.TrainIsArriving.from_message(message, include_crowding?),
+              {Audio.TrainIsArriving.from_message(message, crowding),
                update_in(sign.announced_arrivals, &cache_value(&1, message.prediction.trip_id))}
 
             # Announce approaching if configured to
@@ -210,9 +211,10 @@ defmodule Signs.Utilities.Audio do
               message.prediction.trip_id not in sign.announced_approachings &&
               announce_arriving?(sign, message) &&
                 message.prediction.route_id in @heavy_rail_routes ->
-              include_crowding? = message.crowding_data_confidence == :high
+              crowding = PaEss.Utilities.crowding_description(message.prediction, sign)
+              new_cars? = PaEss.Utilities.prediction_new_cars?(message.prediction, sign)
 
-              {Audio.Approaching.from_message(message, include_crowding?),
+              {Audio.Approaching.from_message(message, crowding, new_cars?),
                sign
                |> update_in(
                  [Access.key!(:announced_approachings)],
@@ -220,7 +222,7 @@ defmodule Signs.Utilities.Audio do
                )
                |> update_in(
                  [Access.key!(:announced_approachings_with_crowding)],
-                 &if(include_crowding?, do: cache_value(&1, message.prediction.trip_id), else: &1)
+                 &if(!!crowding, do: cache_value(&1, message.prediction.trip_id), else: &1)
                )}
 
             # Announce stopped trains

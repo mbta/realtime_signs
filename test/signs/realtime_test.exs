@@ -803,7 +803,7 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 15, destination: :forest_hills)]
       end)
 
-      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
+      expect(Engine.Locations.Mock, :for_vehicle, 1, fn _ ->
         location(crowding_confidence: :high)
       end)
 
@@ -822,7 +822,7 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 15, destination: :forest_hills)]
       end)
 
-      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
+      expect(Engine.Locations.Mock, :for_vehicle, 1, fn _ ->
         location(crowding_confidence: :low)
       end)
 
@@ -839,10 +839,6 @@ defmodule Signs.RealtimeTest do
     test "Don't announce arrival with crowding if already announced with approaching" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(arrival: 15, destination: :forest_hills, trip_id: "1")]
-      end)
-
-      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
-        location(crowding_confidence: :high)
       end)
 
       expect_messages({"Frst Hills     ARR", ""})
@@ -1747,8 +1743,6 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Predictions.Mock, :for_stop, fn "70086", 1 ->
         [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
       end)
-
-      expect(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
 
       expect(Engine.LastTrip.Mock, :get_recent_departures, fn "1" ->
         %{"a" => ~U[2023-01-01 00:00:00.000Z]}
