@@ -10,29 +10,29 @@ defmodule Engine.Config.HeadwaysTest do
 
       :ok =
         Headways.update_table(table, [
-          %Headway{headway_id: {"A", :peak}, range_low: 8, range_high: 10},
-          %Headway{headway_id: {"B", :off_peak}, range_low: 10, range_high: 12}
+          %Headway{headway_id: {"A", :weekday}, range_low: 8, range_high: 10},
+          %Headway{headway_id: {"B", :saturday}, range_low: 10, range_high: 12}
         ])
 
-      assert %Headway{headway_id: {"A", :peak}, range_low: 8, range_high: 10} =
-               Headways.get_headway(table, {"A", :peak})
+      assert %Headway{headway_id: {"A", :weekday}, range_low: 8, range_high: 10} =
+               Headways.get_headway(table, {"A", :weekday})
 
-      assert %Headway{headway_id: {"B", :off_peak}, range_low: 10, range_high: 12} =
-               Headways.get_headway(table, {"B", :off_peak})
+      assert %Headway{headway_id: {"B", :saturday}, range_low: 10, range_high: 12} =
+               Headways.get_headway(table, {"B", :saturday})
 
       :ok =
         Headways.update_table(table, [
-          %Headway{headway_id: {"B", :off_peak}, range_low: 12, range_high: 14},
-          %Headway{headway_id: {"C", :peak}, range_low: 8, range_high: 10}
+          %Headway{headway_id: {"B", :saturday}, range_low: 12, range_high: 14},
+          %Headway{headway_id: {"C", :weekday}, range_low: 8, range_high: 10}
         ])
 
-      refute Headways.get_headway(table, {"A", :peak})
+      refute Headways.get_headway(table, {"A", :weekday})
 
-      assert %Headway{headway_id: {"B", :off_peak}, range_low: 12, range_high: 14} =
-               Headways.get_headway(table, {"B", :off_peak})
+      assert %Headway{headway_id: {"B", :saturday}, range_low: 12, range_high: 14} =
+               Headways.get_headway(table, {"B", :saturday})
 
-      assert %Headway{headway_id: {"C", :peak}, range_low: 8, range_high: 10} =
-               Headways.get_headway(table, {"C", :peak})
+      assert %Headway{headway_id: {"C", :weekday}, range_low: 8, range_high: 10} =
+               Headways.get_headway(table, {"C", :weekday})
     end
   end
 
@@ -40,21 +40,21 @@ defmodule Engine.Config.HeadwaysTest do
     test "parses data and ignores invalid entries" do
       data = %{
         "red_trunk" => %{
-          "peak" => %{
+          "weekday" => %{
             "range_low" => 8,
             "range_high" => 10
           },
-          "off_peak" => %{
+          "saturday" => %{
             "range_low" => 12,
             "range_high" => 15
           }
         },
         "red_braintree" => %{
-          "peak" => %{
+          "weekday" => %{
             "range_low" => 16,
             "range_high" => 20
           },
-          "off_peak" => %{
+          "saturday" => %{
             "range_low" => 24,
             "range_high" => 30
           },
@@ -67,10 +67,10 @@ defmodule Engine.Config.HeadwaysTest do
       headways = Headways.parse(data)
 
       assert [
-               %Headway{headway_id: {"red_braintree", :off_peak}, range_low: 24, range_high: 30},
-               %Headway{headway_id: {"red_braintree", :peak}, range_low: 16, range_high: 20},
-               %Headway{headway_id: {"red_trunk", :off_peak}, range_low: 12, range_high: 15},
-               %Headway{headway_id: {"red_trunk", :peak}, range_low: 8, range_high: 10}
+               %Headway{headway_id: {"red_braintree", :saturday}, range_low: 24, range_high: 30},
+               %Headway{headway_id: {"red_braintree", :weekday}, range_low: 16, range_high: 20},
+               %Headway{headway_id: {"red_trunk", :saturday}, range_low: 12, range_high: 15},
+               %Headway{headway_id: {"red_trunk", :weekday}, range_low: 8, range_high: 10}
              ] = Enum.sort(headways)
     end
   end

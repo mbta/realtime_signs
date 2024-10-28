@@ -154,7 +154,12 @@ defmodule Engine.ScheduledHeadwaysTest do
     test "returns true/false depending on time" do
       table = :display_headways_test
       stop = "stop"
-      headways = %Engine.Config.Headway{headway_id: {"test", :peak}, range_high: 12, range_low: 5}
+
+      headways = %Engine.Config.Headway{
+        headway_id: {"test", :weekday},
+        range_high: 12,
+        range_low: 5
+      }
 
       first_departure = DateTime.from_naive!(~N[2020-03-24 10:00:00], "America/New_York")
       last_departure = DateTime.from_naive!(~N[2020-03-25 01:00:00], "America/New_York")
@@ -196,7 +201,12 @@ defmodule Engine.ScheduledHeadwaysTest do
       early_last_dep = DateTime.from_naive!(~N[2020-03-21 00:00:00], "America/New_York")
       later_last_dep = DateTime.from_naive!(~N[2020-03-21 02:00:00], "America/New_York")
       no_service_late = DateTime.from_naive!(~N[2020-03-21 01:00:00], "America/New_York")
-      headways = %Engine.Config.Headway{headway_id: {"test", :peak}, range_high: 0, range_low: 0}
+
+      headways = %Engine.Config.Headway{
+        headway_id: {"test", :weekday},
+        range_high: 0,
+        range_low: 0
+      }
 
       :ets.new(table, @ets_table_params)
       :ets.insert(table, {"stop1", {early_first_dep, later_last_dep}})
@@ -220,7 +230,12 @@ defmodule Engine.ScheduledHeadwaysTest do
     test "handles when the only departure times are nil" do
       table = :dh_nil_test
       datetime = DateTime.from_naive!(~N[2020-03-20 12:00:00], "America/New_York")
-      headways = %Engine.Config.Headway{headway_id: {"test", :peak}, range_high: 0, range_low: 0}
+
+      headways = %Engine.Config.Headway{
+        headway_id: {"test", :weekday},
+        range_high: 0,
+        range_low: 0
+      }
 
       :ets.new(table, @ets_table_params)
       :ets.insert(table, {"stop_id", {nil, nil}})
@@ -232,13 +247,25 @@ defmodule Engine.ScheduledHeadwaysTest do
     test "returns false if missing first/last trip timing" do
       :ets.new(:no_data, @ets_table_params)
       time = DateTime.from_naive!(~N[2020-03-20 10:00:00], "America/New_York")
-      headways = %Engine.Config.Headway{headway_id: {"test", :peak}, range_high: 0, range_low: 0}
+
+      headways = %Engine.Config.Headway{
+        headway_id: {"test", :weekday},
+        range_high: 0,
+        range_low: 0
+      }
+
       refute Engine.ScheduledHeadways.display_headways?(:no_data, ["no_stop"], time, headways)
     end
 
     test "display_headways?/3 fills in ETS table name" do
       time = DateTime.from_naive!(~N[2020-03-20 10:00:00], "America/New_York")
-      headways = %Engine.Config.Headway{headway_id: {"test", :peak}, range_high: 0, range_low: 0}
+
+      headways = %Engine.Config.Headway{
+        headway_id: {"test", :weekday},
+        range_high: 0,
+        range_low: 0
+      }
+
       refute Engine.ScheduledHeadways.display_headways?(["no_data"], time, headways)
     end
   end

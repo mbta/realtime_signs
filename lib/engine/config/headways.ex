@@ -31,20 +31,16 @@ defmodule Engine.Config.Headways do
 
   @spec parse(map()) :: [Headway.t()]
   def parse(map) do
-    Enum.flat_map(map, fn {group, group_conf} ->
-      Enum.flat_map(group_conf, fn {time_period, headway_conf} ->
-        case Headway.from_map(group, time_period, headway_conf) do
-          {:ok, conf} ->
-            [conf]
-
-          :error ->
-            Logger.error(
-              "event=group_headways_parse_error headway_id=#{inspect({group, time_period})} group_conf=#{inspect(group_conf)}"
-            )
-
-            []
-        end
-      end)
-    end)
+    for {group, periods} <- map,
+        {period, %{"range_low" => low, "range_high" => high}} <- periods,
+        time_period = parse_time_period(period) do
+      %Headway{headway_id: {group, time_period}, range_high: high, range_low: low}
+    end
   end
+
+  @spec parse_time_period(String.t()) :: Headway.time_period() | nil
+  defp parse_time_period("weekday"), do: :weekday
+  defp parse_time_period("saturday"), do: :saturday
+  defp parse_time_period("sunday"), do: :sunday
+  defp parse_time_period(_), do: nil
 end

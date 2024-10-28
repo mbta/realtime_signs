@@ -25,7 +25,7 @@ defmodule Fake.ExternalConfig.Local do
         "signs" => %{},
         "configured_headways" => %{
           "custom_headway" => %{
-            "peak" => %{"range_high" => 10, "range_low" => 8}
+            "weekday" => %{"range_high" => 10, "range_low" => 8}
           }
         }
       }
