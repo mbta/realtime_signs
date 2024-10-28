@@ -22,16 +22,11 @@ defmodule Content.Message.Predictions do
     :destination,
     :minutes,
     :approximate?,
-    :route_id,
+    :prediction,
     :station_code,
-    :stop_id,
-    :trip_id,
-    :direction_id,
     :zone,
-    width: 18,
     new_cars?: false,
     terminal?: false,
-    certainty: nil,
     crowding_data_confidence: nil,
     crowding_description: nil
   ]
@@ -40,30 +35,18 @@ defmodule Content.Message.Predictions do
           destination: PaEss.destination(),
           minutes: integer() | :boarding | :arriving | :approaching,
           approximate?: boolean(),
-          route_id: String.t(),
-          stop_id: String.t(),
-          trip_id: Predictions.Prediction.trip_id() | nil,
-          direction_id: 0 | 1,
-          width: integer(),
+          prediction: Predictions.Prediction.t(),
           new_cars?: boolean(),
           station_code: String.t() | nil,
           zone: String.t() | nil,
           terminal?: boolean(),
-          certainty: non_neg_integer() | nil,
           crowding_data_confidence: :high | :low | nil,
           crowding_description: {atom(), atom()} | nil
         }
 
-  @spec non_terminal(
-          Predictions.Prediction.t(),
-          String.t(),
-          String.t(),
-          Signs.Realtime.t(),
-          integer()
-        ) :: t() | nil
-  def non_terminal(prediction, station_code, zone, sign, width \\ 18)
-
-  def non_terminal(prediction, station_code, zone, sign, width) do
+  @spec non_terminal(Predictions.Prediction.t(), String.t(), String.t(), Signs.Realtime.t()) ::
+          t() | nil
+  def non_terminal(prediction, station_code, zone, sign) do
     # e.g., North Station which is non-terminal but has trips that begin there
     predicted_time = prediction.seconds_until_arrival || prediction.seconds_until_departure
 
@@ -89,30 +72,18 @@ defmodule Content.Message.Predictions do
       destination: Content.Utilities.destination_for_prediction(prediction),
       minutes: minutes,
       approximate?: approximate?,
-      route_id: prediction.route_id,
-      stop_id: prediction.stop_id,
-      trip_id: prediction.trip_id,
-      direction_id: prediction.direction_id,
-      width: width,
+      prediction: prediction,
       new_cars?: sign.location_engine.for_vehicle(prediction.vehicle_id) |> new_cars?(),
       station_code: station_code,
       zone: zone,
-      certainty: certainty,
       crowding_data_confidence: crowding_data_confidence,
       crowding_description: crowding_description
     }
   end
 
-  @spec terminal(
-          Predictions.Prediction.t(),
-          String.t(),
-          String.t(),
-          Signs.Realtime.t(),
-          integer()
-        ) :: t() | nil
-  def terminal(prediction, station_code, zone, sign, width \\ 18)
-
-  def terminal(prediction, station_code, zone, sign, width) do
+  @spec terminal(Predictions.Prediction.t(), String.t(), String.t(), Signs.Realtime.t()) ::
+          t() | nil
+  def terminal(prediction, station_code, zone, sign) do
     stopped_at? = prediction.stops_away == 0
 
     {minutes, approximate?} =
@@ -126,16 +97,11 @@ defmodule Content.Message.Predictions do
       destination: Content.Utilities.destination_for_prediction(prediction),
       minutes: minutes,
       approximate?: approximate?,
-      route_id: prediction.route_id,
-      stop_id: prediction.stop_id,
-      trip_id: prediction.trip_id,
-      direction_id: prediction.direction_id,
-      width: width,
+      prediction: prediction,
       new_cars?: sign.location_engine.for_vehicle(prediction.vehicle_id) |> new_cars?(),
       station_code: station_code,
       zone: zone,
-      terminal?: true,
-      certainty: prediction.departure_certainty
+      terminal?: true
     }
   end
 
@@ -265,6 +231,7 @@ defmodule Content.Message.Predictions do
   defimpl Content.Message do
     require Logger
 
+    @width 18
     @boarding "BRD"
     @arriving "ARR"
 
@@ -272,8 +239,7 @@ defmodule Content.Message.Predictions do
           destination: destination,
           minutes: minutes,
           approximate?: approximate?,
-          width: width,
-          stop_id: stop_id,
+          prediction: %{stop_id: stop_id},
           station_code: station_code,
           zone: zone
         }) do
@@ -304,19 +270,19 @@ defmodule Content.Message.Predictions do
             {Content.Utilities.width_padded_string(
                headsign_message,
                "#{duration_string}",
-               width
+               @width
              ), 6},
             {headsign <> platform_message, 6}
           ]
 
         track_number ->
           [
-            {Content.Utilities.width_padded_string(headsign, duration_string, width), 6},
-            {Content.Utilities.width_padded_string(headsign, "Trk #{track_number}", width), 6}
+            {Content.Utilities.width_padded_string(headsign, duration_string, @width), 6},
+            {Content.Utilities.width_padded_string(headsign, "Trk #{track_number}", @width), 6}
           ]
 
         true ->
-          Content.Utilities.width_padded_string(headsign, duration_string, width)
+          Content.Utilities.width_padded_string(headsign, duration_string, @width)
       end
     end
 

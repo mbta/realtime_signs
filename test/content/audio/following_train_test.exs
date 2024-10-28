@@ -16,7 +16,7 @@ defmodule Content.Audio.FollowingTrainTest do
     test "when its a non terminal it uses arrives" do
       message = %Content.Message.Predictions{
         destination: :ashmont,
-        route_id: "Mattapan",
+        prediction: %Predictions.Prediction{route_id: "Mattapan"},
         minutes: 5,
         terminal?: false
       }
@@ -36,7 +36,7 @@ defmodule Content.Audio.FollowingTrainTest do
     test "when its a terminal it uses departs" do
       message = %Content.Message.Predictions{
         destination: :ashmont,
-        route_id: "Mattapan",
+        prediction: %Predictions.Prediction{route_id: "Mattapan"},
         minutes: 5,
         terminal?: true
       }

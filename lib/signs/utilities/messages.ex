@@ -148,7 +148,7 @@ defmodule Signs.Utilities.Messages do
          %Content.Message.Predictions{
            station_code: "RJFK",
            zone: "m",
-           stop_id: stop_id,
+           prediction: %{stop_id: stop_id},
            minutes: minutes
          } = prediction
        ) do

@@ -187,56 +187,56 @@ defmodule Signs.Utilities.Audio do
             # Announce boarding if configured to. Also, if we normally announce arrivals, but the
             # prediction went straight to boarding, announce boarding instead.
             match?(%Message.Predictions{minutes: :boarding}, message) &&
-              message.trip_id not in sign.announced_boardings &&
+              message.prediction.trip_id not in sign.announced_boardings &&
                 (announce_boarding?(sign, message) ||
                    (announce_arriving?(sign, message) &&
-                      message.trip_id not in sign.announced_arrivals)) ->
+                      message.prediction.trip_id not in sign.announced_arrivals)) ->
               {Audio.TrainIsBoarding.from_message(message),
-               update_in(sign.announced_boardings, &cache_value(&1, message.trip_id))}
+               update_in(sign.announced_boardings, &cache_value(&1, message.prediction.trip_id))}
 
             # Announce arriving if configured to
             match?(%Message.Predictions{minutes: :arriving}, message) &&
-              message.trip_id not in sign.announced_arrivals &&
+              message.prediction.trip_id not in sign.announced_arrivals &&
                 announce_arriving?(sign, message) ->
               include_crowding? =
                 message.crowding_data_confidence == :high &&
-                  message.trip_id not in sign.announced_approachings_with_crowding
+                  message.prediction.trip_id not in sign.announced_approachings_with_crowding
 
               {Audio.TrainIsArriving.from_message(message, include_crowding?),
-               update_in(sign.announced_arrivals, &cache_value(&1, message.trip_id))}
+               update_in(sign.announced_arrivals, &cache_value(&1, message.prediction.trip_id))}
 
             # Announce approaching if configured to
             match?(%Message.Predictions{minutes: :approaching}, message) &&
-              message.trip_id not in sign.announced_approachings &&
+              message.prediction.trip_id not in sign.announced_approachings &&
               announce_arriving?(sign, message) &&
-                message.route_id in @heavy_rail_routes ->
+                message.prediction.route_id in @heavy_rail_routes ->
               include_crowding? = message.crowding_data_confidence == :high
 
               {Audio.Approaching.from_message(message, include_crowding?),
                sign
                |> update_in(
                  [Access.key!(:announced_approachings)],
-                 &cache_value(&1, message.trip_id)
+                 &cache_value(&1, message.prediction.trip_id)
                )
                |> update_in(
                  [Access.key!(:announced_approachings_with_crowding)],
-                 &if(include_crowding?, do: cache_value(&1, message.trip_id), else: &1)
+                 &if(include_crowding?, do: cache_value(&1, message.prediction.trip_id), else: &1)
                )}
 
             # Announce stopped trains
             match?(%Message.StoppedTrain{}, message) && index == 0 &&
-                {message.trip_id, message.stops_away} not in sign.announced_stalls ->
+                {message.prediction.trip_id, message.stops_away} not in sign.announced_stalls ->
               {Audio.StoppedTrain.from_message(message),
                update_in(
                  sign.announced_stalls,
-                 &cache_value(&1, {message.trip_id, message.stops_away})
+                 &cache_value(&1, {message.prediction.trip_id, message.stops_away})
                )}
 
             # If we didn't have any predictions for a particular route/direction last update, but
             # now we do, announce the next prediction.
             match?(%Message.Predictions{}, message) && is_integer(message.minutes) && index == 0 &&
               sign.prev_prediction_keys &&
-                {message.route_id, message.direction_id} not in sign.prev_prediction_keys ->
+                {message.prediction.route_id, message.prediction.direction_id} not in sign.prev_prediction_keys ->
               {Audio.NextTrainCountdown.from_message(message), sign}
 
             true ->
@@ -251,7 +251,7 @@ defmodule Signs.Utilities.Audio do
       sign
       | prev_prediction_keys:
           for {:predictions, list} <- items, message <- list, uniq: true do
-            {message.route_id, message.direction_id}
+            {message.prediction.route_id, message.prediction.direction_id}
           end
     }
 
@@ -355,7 +355,7 @@ defmodule Signs.Utilities.Audio do
 
   defp announce_arriving?(
          %Signs.Realtime{source_config: source_config},
-         %Message.Predictions{stop_id: stop_id, direction_id: direction_id}
+         %Message.Predictions{prediction: %{stop_id: stop_id, direction_id: direction_id}}
        ) do
     case SourceConfig.get_source_by_stop_and_direction(source_config, stop_id, direction_id) do
       nil -> false
@@ -365,7 +365,7 @@ defmodule Signs.Utilities.Audio do
 
   defp announce_boarding?(
          %Signs.Realtime{source_config: source_config},
-         %Message.Predictions{stop_id: stop_id, direction_id: direction_id}
+         %Message.Predictions{prediction: %{stop_id: stop_id, direction_id: direction_id}}
        ) do
     case SourceConfig.get_source_by_stop_and_direction(source_config, stop_id, direction_id) do
       nil -> false
