@@ -540,7 +540,7 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
-    test "does not allow ARR on second line if platform does not have multiple berths" do
+    test "allows ARR on second line" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
           prediction(destination: :cleveland_circle, arrival: 15, stop_id: "1"),
@@ -548,7 +548,7 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_messages({"Clvlnd Cir     ARR", "Riverside    1 min"})
+      expect_messages({"Clvlnd Cir     ARR", "Riverside      ARR"})
 
       expect_audios([{:canned, {"103", ["90007"], :audio_visual}}], [
         {"Attention passengers: The next C train to Cleveland Circle is now arriving.",
@@ -556,42 +556,6 @@ defmodule Signs.RealtimeTest do
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
-    end
-
-    test "allows ARR on second line if platform does have multiple berths" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :cleveland_circle, arrival: 15, stop_id: "1", trip_id: "1")]
-      end)
-
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :riverside, arrival: 16, stop_id: "2", trip_id: "2")]
-      end)
-
-      expect_messages({"Clvlnd Cir     ARR", "Riverside      ARR"})
-
-      expect_audios(
-        [
-          {:canned, {"103", ["90007"], :audio_visual}},
-          {:canned, {"103", ["90008"], :audio_visual}}
-        ],
-        [
-          {"Attention passengers: The next C train to Cleveland Circle is now arriving.",
-           [{"C train to Clvlnd Cir", "now arriving", 6}]},
-          {"Attention passengers: The next D train to Riverside is now arriving.",
-           [{"D train to Riverside", "now arriving", 6}]}
-        ]
-      )
-
-      Signs.Realtime.handle_info(:run_loop, %{
-        @sign
-        | source_config: %{
-            @sign.source_config
-            | sources: [
-                %{@src | stop_id: "1", multi_berth?: true},
-                %{@src | stop_id: "2", multi_berth?: true}
-              ]
-          }
-      })
     end
 
     test "doesn't sort 0 stops away to first for terminals when another departure is sooner" do

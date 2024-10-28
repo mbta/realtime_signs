@@ -21,8 +21,7 @@ defmodule Signs.Utilities.SourceConfigTest do
         "routes": ["Bar"],
         "direction_id": 1,
         "announce_arriving": true,
-        "announce_boarding": false,
-        "multi_berth": true
+        "announce_boarding": false
       }
     ]
   }
@@ -80,8 +79,7 @@ defmodule Signs.Utilities.SourceConfigTest do
         "routes": ["Bar"],
         "direction_id": 1,
         "announce_arriving": true,
-        "announce_boarding": false,
-        "multi_berth": true
+        "announce_boarding": false
       }
     ]
   }
@@ -100,16 +98,14 @@ defmodule Signs.Utilities.SourceConfigTest do
                      routes: ["Foo"],
                      direction_id: 0,
                      announce_arriving?: false,
-                     announce_boarding?: false,
-                     multi_berth?: false
+                     announce_boarding?: false
                    },
                    %SourceConfig{
                      stop_id: "234",
                      routes: ["Bar"],
                      direction_id: 1,
                      announce_arriving?: true,
-                     announce_boarding?: false,
-                     multi_berth?: true
+                     announce_boarding?: false
                    }
                  ]
                }
@@ -162,16 +158,14 @@ defmodule Signs.Utilities.SourceConfigTest do
                 routes: ["Foo"],
                 direction_id: 0,
                 announce_arriving?: false,
-                announce_boarding?: false,
-                multi_berth?: false
+                announce_boarding?: false
               },
               %SourceConfig{
                 stop_id: "234",
                 routes: ["Bar"],
                 direction_id: 1,
                 announce_arriving?: true,
-                announce_boarding?: false,
-                multi_berth?: true
+                announce_boarding?: false
               }
             ]
           }

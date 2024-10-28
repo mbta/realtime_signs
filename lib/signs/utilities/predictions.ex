@@ -27,7 +27,7 @@ defmodule Signs.Utilities.Predictions do
         ) :: Signs.Realtime.sign_messages() | nil
   def prediction_messages(
         predictions,
-        %{sources: sources, terminal?: terminal?},
+        %{terminal?: terminal?},
         %{pa_ess_loc: station_code, text_zone: zone} = sign
       ) do
     predictions
@@ -68,16 +68,6 @@ defmodule Signs.Utilities.Predictions do
 
       [msg] ->
         {msg, Content.Message.Empty.new()}
-
-      [
-        %Content.Message.Predictions{minutes: :arriving} = p1,
-        %Content.Message.Predictions{minutes: :arriving} = p2
-      ] ->
-        if allowed_multi_berth_platform?(sources, p1, p2) do
-          {p1, p2}
-        else
-          {p1, %{p2 | minutes: 1}}
-        end
 
       [msg1, msg2] ->
         {msg1, msg2}
@@ -166,33 +156,6 @@ defmodule Signs.Utilities.Predictions do
 
     boarding_status && String.starts_with?(boarding_status, "Stopped") &&
       boarding_status != "Stopped at station" && !approximate_arrival? && !approximate_departure?
-  end
-
-  defp allowed_multi_berth_platform?(source_list, p1, p2) do
-    allowed_multi_berth_platform?(
-      SourceConfig.get_source_by_stop_and_direction(
-        source_list,
-        p1.stop_id,
-        p1.direction_id
-      ),
-      SourceConfig.get_source_by_stop_and_direction(
-        source_list,
-        p2.stop_id,
-        p2.direction_id
-      )
-    )
-  end
-
-  defp allowed_multi_berth_platform?(
-         %SourceConfig{multi_berth?: true} = s1,
-         %SourceConfig{multi_berth?: true} = s2
-       )
-       when s1 != s2 do
-    true
-  end
-
-  defp allowed_multi_berth_platform?(_, _) do
-    false
   end
 
   # This is a temporary fix for a situation where spotty train sheet data can
