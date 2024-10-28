@@ -24,9 +24,9 @@ defmodule Content.Audio.Approaching do
     [
       %__MODULE__{
         destination: message.destination,
-        trip_id: message.trip_id,
-        platform: Content.Utilities.stop_platform(message.stop_id),
-        route_id: message.route_id,
+        trip_id: message.prediction.trip_id,
+        platform: Content.Utilities.stop_platform(message.prediction.stop_id),
+        route_id: message.prediction.route_id,
         new_cars?: message.new_cars?,
         crowding_description: if(include_crowding?, do: message.crowding_description)
       }

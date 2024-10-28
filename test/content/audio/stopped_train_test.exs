@@ -53,7 +53,7 @@ defmodule Content.Audio.StoppedTrainTest do
     test "Converts a stopped train message with known headsign" do
       msg = %Content.Message.StoppedTrain{
         destination: :forest_hills,
-        route_id: "Orange",
+        prediction: %Predictions.Prediction{route_id: "Orange"},
         stops_away: 1
       }
 

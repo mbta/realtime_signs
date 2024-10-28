@@ -103,20 +103,6 @@ defmodule Content.Message.PredictionsTest do
       assert Content.Message.to_string(msg) == "Mattapan   20+ min"
     end
 
-    test "can use a shorter line length" do
-      prediction = %Predictions.Prediction{
-        seconds_until_arrival: 550,
-        route_id: "Mattapan",
-        direction_id: 0,
-        stopped?: false,
-        stops_away: 3,
-        destination_stop_id: "70275"
-      }
-
-      msg = Content.Message.Predictions.non_terminal(prediction, "test", "m", @sign, 15)
-      assert Content.Message.to_string(msg) == "Mattapan  9 min"
-    end
-
     test "1 minute (singular) prediction" do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 65,
@@ -190,22 +176,6 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.non_terminal(prediction, "test", "m", @sign)
 
       assert Content.Message.to_string(msg) == "Ashmont      2 min"
-    end
-
-    test "Includes the prediction's trip_id" do
-      prediction = %Predictions.Prediction{
-        seconds_until_arrival: 91,
-        route_id: "Mattapan",
-        direction_id: 1,
-        stopped?: false,
-        stops_away: 2,
-        destination_stop_id: "70261",
-        trip_id: "trip1"
-      }
-
-      msg = Content.Message.Predictions.non_terminal(prediction, "test", "m", @sign)
-
-      assert msg.trip_id == "trip1"
     end
 
     test "Includes Ashmont platform when northbound to JFK/UMass Mezzanine" do
@@ -349,22 +319,6 @@ defmodule Content.Message.PredictionsTest do
                {"Oak Grove    2 min", 6},
                {"Oak Grove    Trk 2", 6}
              ]
-    end
-
-    test "Includes the prediction's trip_id" do
-      prediction = %Predictions.Prediction{
-        seconds_until_departure: 91,
-        route_id: "Mattapan",
-        direction_id: 1,
-        stopped?: false,
-        stops_away: 2,
-        destination_stop_id: "70261",
-        trip_id: "trip1"
-      }
-
-      msg = Content.Message.Predictions.terminal(prediction, "test", "m", @sign)
-
-      assert msg.trip_id == "trip1"
     end
   end
 end

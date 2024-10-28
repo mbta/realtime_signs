@@ -24,7 +24,7 @@ defmodule Content.Audio.FollowingTrain do
   def from_predictions_message(%Content.Message.Predictions{
         minutes: n,
         destination: destination,
-        route_id: route_id,
+        prediction: prediction,
         station_code: station_code,
         terminal?: terminal
       })
@@ -32,7 +32,7 @@ defmodule Content.Audio.FollowingTrain do
     [
       %__MODULE__{
         destination: destination,
-        route_id: route_id,
+        route_id: prediction.route_id,
         minutes: n,
         verb: arrives_or_departs(terminal),
         station_code: station_code
