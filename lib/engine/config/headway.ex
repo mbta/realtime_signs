@@ -3,7 +3,7 @@ defmodule Engine.Config.Headway do
   defstruct @enforce_keys
 
   @type headway_group :: String.t()
-  @type time_period :: :peak | :off_peak
+  @type time_period :: :peak | :off_peak | :saturday | :sunday
   @type headway_id :: {headway_group(), time_period()}
 
   @type t :: %__MODULE__{
@@ -33,19 +33,25 @@ defmodule Engine.Config.Headway do
 
   @spec current_time_period(DateTime.t()) :: time_period()
   def current_time_period(dt) do
-    day_of_week = dt |> DateTime.to_date() |> Date.day_of_week()
-
-    weekday? = day_of_week in 1..5
+    # Subtract 3 hours, since the service day ends at 3 AM
+    day_of_week = DateTime.add(dt, -3, :hour) |> Date.day_of_week()
 
     rush_hour? =
       (dt.hour >= 7 and dt.hour < 9) or (dt.hour >= 16 and dt.hour < 18) or
         (dt.hour == 18 and dt.minute <= 30)
 
-    if(weekday? and rush_hour?, do: :peak, else: :off_peak)
+    case {day_of_week, rush_hour?} do
+      {6, _} -> :saturday
+      {7, _} -> :sunday
+      {_, true} -> :peak
+      {_, false} -> :off_peak
+    end
   end
 
   @spec parse_time_period(String.t()) :: {:ok, time_period()} | :error
   defp parse_time_period("peak"), do: {:ok, :peak}
   defp parse_time_period("off_peak"), do: {:ok, :off_peak}
+  defp parse_time_period("saturday"), do: {:ok, :saturday}
+  defp parse_time_period("sunday"), do: {:ok, :sunday}
   defp parse_time_period(_), do: :error
 end
