@@ -323,7 +323,7 @@ defmodule Signs.Utilities.Audio do
 
       # This only occurs at the RJFK mezzanine zone
       {%Message.Predictions{}, %Message.PlatformPredictionBottom{}} ->
-        [{:predictions, [%{top | zone: "m"}]}]
+        [{:predictions, [%{top | special_sign: :jfk_mezzanine}]}]
 
       {top, _} when top.__struct__ in [Message.Predictions, Message.StoppedTrain] ->
         [{:predictions, [top]}]

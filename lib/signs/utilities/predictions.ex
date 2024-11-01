@@ -25,11 +25,7 @@ defmodule Signs.Utilities.Predictions do
           SourceConfig.config(),
           Signs.Realtime.t()
         ) :: Signs.Realtime.sign_messages() | nil
-  def prediction_messages(
-        predictions,
-        %{terminal?: terminal?},
-        %{pa_ess_loc: station_code, text_zone: zone} = sign
-      ) do
+  def prediction_messages(predictions, %{terminal?: terminal?}, sign) do
     predictions
     |> Enum.filter(fn p ->
       p.seconds_until_departure && p.schedule_relationship != :skipped
@@ -46,18 +42,19 @@ defmodule Signs.Utilities.Predictions do
     end)
     |> filter_large_red_line_gaps()
     |> Enum.map(fn prediction ->
-      cond do
-        stopped_train?(prediction) ->
-          Content.Message.StoppedTrain.from_prediction(prediction)
+      special_sign =
+        case sign do
+          %{pa_ess_loc: "RJFK", text_zone: "m"} -> :jfk_mezzanine
+          %{pa_ess_loc: "BBOW", text_zone: "e"} -> :bowdoin_eastbound
+          _ -> nil
+        end
 
-        terminal? ->
-          Content.Message.Predictions.terminal(prediction, station_code, zone)
-
-        true ->
-          Content.Message.Predictions.non_terminal(prediction, station_code, zone)
+      if stopped_train?(prediction) do
+        Content.Message.StoppedTrain.from_prediction(prediction)
+      else
+        Content.Message.Predictions.new(prediction, terminal?, special_sign)
       end
     end)
-    |> Enum.reject(&is_nil(&1))
     # Take next two predictions, but if the list has multiple destinations, prefer showing
     # distinct ones. This helps e.g. the red line trunk where people may need to know about
     # a particular branch.
@@ -74,12 +71,16 @@ defmodule Signs.Utilities.Predictions do
     end
   end
 
-  def prediction_certainty(prediction, config) do
-    if config.terminal? || !prediction.seconds_until_arrival do
-      prediction.departure_certainty
-    else
-      prediction.arrival_certainty
-    end
+  @spec reverse_prediction?(Predictions.Prediction.t(), boolean()) :: boolean()
+  def reverse_prediction?(%Predictions.Prediction{} = prediction, terminal?) do
+    certainty =
+      if terminal? || !prediction.seconds_until_arrival do
+        prediction.departure_certainty
+      else
+        prediction.arrival_certainty
+      end
+
+    certainty == @reverse_prediction_certainty
   end
 
   defp get_unique_destination_predictions(predictions, "Green") do
