@@ -200,7 +200,7 @@ defmodule Signs.Utilities.Audio do
                 announce_arriving?(sign, message) ->
               crowding =
                 if message.prediction.trip_id not in sign.announced_approachings_with_crowding do
-                  PaEss.Utilities.crowding_description(message.prediction, sign)
+                  Signs.Utilities.Crowding.crowding_description(message.prediction, sign)
                 end
 
               {Audio.TrainIsArriving.from_message(message, crowding),
@@ -211,7 +211,7 @@ defmodule Signs.Utilities.Audio do
               message.prediction.trip_id not in sign.announced_approachings &&
               announce_arriving?(sign, message) &&
                 message.prediction.route_id in @heavy_rail_routes ->
-              crowding = PaEss.Utilities.crowding_description(message.prediction, sign)
+              crowding = Signs.Utilities.Crowding.crowding_description(message.prediction, sign)
               new_cars? = PaEss.Utilities.prediction_new_cars?(message.prediction, sign)
 
               {Audio.Approaching.from_message(message, crowding, new_cars?),
