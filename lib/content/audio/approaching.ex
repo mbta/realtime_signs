@@ -20,15 +20,15 @@ defmodule Content.Audio.Approaching do
           crowding_description: {atom(), atom()} | nil
         }
 
-  def from_message(%Message.Predictions{} = message, include_crowding?) do
+  def from_message(%Message.Predictions{} = message, crowding_description, new_cars?) do
     [
       %__MODULE__{
         destination: message.destination,
         trip_id: message.prediction.trip_id,
         platform: Content.Utilities.stop_platform(message.prediction.stop_id),
         route_id: message.prediction.route_id,
-        new_cars?: message.new_cars?,
-        crowding_description: if(include_crowding?, do: message.crowding_description)
+        new_cars?: new_cars?,
+        crowding_description: crowding_description
       }
     ]
   end

@@ -716,4 +716,21 @@ defmodule PaEss.Utilities do
     |> Stream.chunk_every(2, 2, [""])
     |> Enum.map(fn [top, bottom] -> {top, bottom, 3} end)
   end
+
+  @spec prediction_new_cars?(Predictions.Prediction.t(), Signs.Realtime.t()) :: boolean()
+  def prediction_new_cars?(prediction, sign) do
+    case sign.location_engine.for_vehicle(prediction.vehicle_id) do
+      %Locations.Location{route_id: "Red", multi_carriage_details: carriage_details} ->
+        Enum.any?(carriage_details, fn carriage ->
+          # See http://roster.transithistory.org/ for numbers of new cars
+          case Integer.parse(carriage.label) do
+            :error -> false
+            {n, _remaining} -> n in 1900..2151
+          end
+        end)
+
+      _ ->
+        false
+    end
+  end
 end
