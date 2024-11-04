@@ -155,8 +155,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         minutes: 9,
         track_number: nil,
         platform: :braintree,
-        station_code: "RJFK",
-        zone: "m"
+        special_sign: :jfk_mezzanine
       }
 
       assert Content.Audio.to_params(audio) ==
@@ -189,8 +188,7 @@ defmodule Content.Audio.NextTrainCountdownTest do
         minutes: 10,
         track_number: nil,
         platform: :braintree,
-        station_code: "RJFK",
-        zone: "m"
+        special_sign: :jfk_mezzanine
       }
 
       assert Content.Audio.to_params(audio) ==

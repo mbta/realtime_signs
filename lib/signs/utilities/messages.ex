@@ -5,7 +5,6 @@ defmodule Signs.Utilities.Messages do
   """
 
   alias Content.Message.Alert
-  @reverse_prediction_certainty 360
   @early_am_start ~T[03:29:00]
   @early_am_buffer -40
 
@@ -146,13 +145,12 @@ defmodule Signs.Utilities.Messages do
 
   defp expand_message(
          %Content.Message.Predictions{
-           station_code: "RJFK",
-           zone: "m",
+           special_sign: :jfk_mezzanine,
            prediction: %{stop_id: stop_id},
            minutes: minutes
          } = prediction
        ) do
-    {%{prediction | zone: nil},
+    {%{prediction | special_sign: nil},
      %Content.Message.PlatformPredictionBottom{stop_id: stop_id, minutes: minutes}}
   end
 
@@ -206,8 +204,7 @@ defmodule Signs.Utilities.Messages do
           # except for Prudential or Symphony EB
           Enum.reject(
             predictions,
-            &(Signs.Utilities.Predictions.prediction_certainty(&1, config) ==
-                @reverse_prediction_certainty and
+            &(Signs.Utilities.Predictions.reverse_prediction?(&1, config.terminal?) and
                 &1.stop_id not in ["70240", "70242"])
           )
       end

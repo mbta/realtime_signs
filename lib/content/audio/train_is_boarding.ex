@@ -35,7 +35,7 @@ defmodule Content.Audio.TrainIsBoarding do
           track_number: Content.Utilities.stop_track_number(message.prediction.stop_id)
         }
       ] ++
-        if message.station_code == "BBOW" && message.zone == "e" do
+        if message.special_sign == :bowdoin_eastbound do
           [%Audio.BoardingButton{}]
         else
           []

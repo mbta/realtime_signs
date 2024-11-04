@@ -4,7 +4,7 @@ defmodule Content.Audio.FollowingTrain do
   """
 
   @enforce_keys [:destination, :route_id, :verb, :minutes]
-  defstruct @enforce_keys ++ [station_code: nil]
+  defstruct @enforce_keys
 
   @type verb :: :arrives | :departs
 
@@ -12,8 +12,7 @@ defmodule Content.Audio.FollowingTrain do
           destination: PaEss.destination(),
           route_id: String.t(),
           verb: verb(),
-          minutes: integer(),
-          station_code: String.t() | nil
+          minutes: integer()
         }
 
   require Logger
@@ -25,7 +24,6 @@ defmodule Content.Audio.FollowingTrain do
         minutes: n,
         destination: destination,
         prediction: prediction,
-        station_code: station_code,
         terminal?: terminal
       })
       when is_integer(n) do
@@ -34,8 +32,7 @@ defmodule Content.Audio.FollowingTrain do
         destination: destination,
         route_id: prediction.route_id,
         minutes: n,
-        verb: arrives_or_departs(terminal),
-        station_code: station_code
+        verb: arrives_or_departs(terminal)
       }
     ]
   end
