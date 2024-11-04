@@ -10,24 +10,17 @@ defmodule Content.Audio.FirstTrainScheduled do
         %Content.Message.EarlyAm.DestinationTrain{destination: destination},
         %Content.Message.EarlyAm.ScheduledTime{scheduled_time: scheduled_time}
       ) do
-    [
-      %__MODULE__{
-        destination: destination,
-        scheduled_time: scheduled_time
-      }
-    ]
+    [%__MODULE__{destination: destination, scheduled_time: scheduled_time}]
   end
 
-  def from_messages(%Content.Message.EarlyAm.DestinationScheduledTime{
-        destination: destination,
-        scheduled_time: scheduled_time
-      }) do
-    [
-      %__MODULE__{
-        destination: destination,
-        scheduled_time: scheduled_time
-      }
-    ]
+  def from_messages(
+        %Content.Message.EarlyAm.DestinationScheduledTime{
+          destination: destination,
+          scheduled_time: scheduled_time
+        },
+        nil
+      ) do
+    [%__MODULE__{destination: destination, scheduled_time: scheduled_time}]
   end
 
   defimpl Content.Audio do

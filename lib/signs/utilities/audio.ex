@@ -26,39 +26,15 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_passive_readout({:headway, top, bottom}) do
-    case top do
-      %Message.Headways.Top{} ->
-        Audio.VehiclesToDestination.from_headway_message(top, bottom)
-
-      %Message.Headways.Paging{} ->
-        Audio.VehiclesToDestination.from_paging_headway_message(top)
-    end
+    Audio.VehiclesToDestination.from_messages(top, bottom)
   end
 
   defp get_passive_readout({:scheduled_train, top, bottom}) do
-    case top do
-      %Message.EarlyAm.DestinationTrain{} ->
-        Audio.FirstTrainScheduled.from_messages(top, bottom)
-
-      %Message.EarlyAm.DestinationScheduledTime{} ->
-        Audio.FirstTrainScheduled.from_messages(top)
-    end
+    Audio.FirstTrainScheduled.from_messages(top, bottom)
   end
 
   defp get_passive_readout({:alert, top, bottom}) do
-    case top do
-      %Message.Alert.NoService{destination: nil} ->
-        Audio.Closure.from_messages(top, bottom)
-
-      %Message.Alert.NoService{} ->
-        Audio.NoServiceToDestination.from_messages(top, bottom)
-
-      %Message.Alert.DestinationNoService{} ->
-        Audio.NoServiceToDestination.from_message(top)
-
-      %Message.Alert.NoServiceUseShuttle{} ->
-        Audio.NoServiceToDestination.from_message(top)
-    end
+    Audio.NoService.from_messages(top, bottom)
   end
 
   defp get_passive_readout({:predictions, predictions}) do
@@ -151,20 +127,7 @@ defmodule Signs.Utilities.Audio do
   defp get_alert_announcements({audios, sign}, items) do
     case Enum.find(items, &match?({:alert, _, _}, &1)) do
       {:alert, top, bottom} ->
-        new_audios =
-          case top do
-            %Message.Alert.NoService{destination: nil} ->
-              Audio.Closure.from_messages(top, bottom)
-
-            %Message.Alert.NoService{} ->
-              Audio.NoServiceToDestination.from_messages(top, bottom)
-
-            %Message.Alert.DestinationNoService{} ->
-              Audio.NoServiceToDestination.from_message(top)
-
-            %Message.Alert.NoServiceUseShuttle{} ->
-              Audio.NoServiceToDestination.from_message(top)
-          end
+        new_audios = Content.Audio.NoService.from_messages(top, bottom)
 
         if !sign.announced_alert do
           {audios ++ new_audios, %{sign | announced_alert: true}}
