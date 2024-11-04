@@ -42,16 +42,16 @@ defmodule Signs.Utilities.Predictions do
     end)
     |> filter_large_red_line_gaps()
     |> Enum.map(fn prediction ->
-      special_sign =
-        case sign do
-          %{pa_ess_loc: "RJFK", text_zone: "m"} -> :jfk_mezzanine
-          %{pa_ess_loc: "BBOW", text_zone: "e"} -> :bowdoin_eastbound
-          _ -> nil
-        end
-
       if stopped_train?(prediction) do
         Content.Message.StoppedTrain.from_prediction(prediction)
       else
+        special_sign =
+          case sign do
+            %{pa_ess_loc: "RJFK", text_zone: "m"} -> :jfk_mezzanine
+            %{pa_ess_loc: "BBOW", text_zone: "e"} -> :bowdoin_eastbound
+            _ -> nil
+          end
+
         Content.Message.Predictions.new(prediction, terminal?, special_sign)
       end
     end)
