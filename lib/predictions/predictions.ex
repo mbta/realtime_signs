@@ -82,9 +82,10 @@ defmodule Predictions.Predictions do
          do: stop_time_update["departure"]["time"] - current_time_seconds,
          else: nil
 
-    if stop_time_update["passthrough_time"],
-      do: stop_time_update["passthrough_time"] - current_time_seconds,
-      else: nil
+    seconds_until_passthrough =
+      if stop_time_update["passthrough_time"],
+        do: stop_time_update["passthrough_time"] - current_time_seconds,
+        else: nil
 
     vehicle_location = Engine.Locations.for_vehicle(vehicle_id)
 
