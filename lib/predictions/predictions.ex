@@ -82,10 +82,9 @@ defmodule Predictions.Predictions do
          do: stop_time_update["departure"]["time"] - current_time_seconds,
          else: nil
 
-    seconds_until_passthrough =
-      if not revenue_trip? or schedule_relationship == :skipped,
-        do: seconds_until_arrival || seconds_until_departure,
-        else: nil
+    if stop_time_update["passthrough_time"],
+      do: stop_time_update["passthrough_time"] - current_time_seconds,
+      else: nil
 
     vehicle_location = Engine.Locations.for_vehicle(vehicle_id)
 
