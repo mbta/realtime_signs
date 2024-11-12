@@ -88,13 +88,13 @@ defmodule Content.Audio.NoService do
       shuttle = if(use_shuttle?, do: " Use shuttle.", else: "")
 
       cond do
-        destination ->
-          {:ok, destination_text} = PaEss.Utilities.destination_to_ad_hoc_string(destination)
-          "No #{destination_text} service.#{shuttle}"
-
         use_routes? ->
           # Hardcoded for Union Square
           "No Train Service. Use routes 86, 87, or 91"
+
+        destination ->
+          {:ok, destination_text} = PaEss.Utilities.destination_to_ad_hoc_string(destination)
+          "No #{destination_text} service.#{shuttle}"
 
         true ->
           line = if(route, do: "#{route} Line", else: "train")

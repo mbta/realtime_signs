@@ -32,7 +32,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
     end
   end
 
-  test "from_messags/2" do
+  test "from_messages/2" do
     assert [
              %Content.Audio.VehiclesToDestination{
                destination: :lechmere,
