@@ -17,11 +17,13 @@ defmodule Predictions.Predictions do
       |> Stream.flat_map(&transform_stop_time_updates/1)
       |> Stream.filter(fn {update, _, _, _, _, _, _} ->
         (update["arrival"] && update["arrival"]["uncertainty"]) ||
-          (update["departure"] && update["departure"]["uncertainty"])
+          (update["departure"] && update["departure"]["uncertainty"]) ||
+          update["passthrough_time"]
       end)
       |> Stream.map(&prediction_from_update(&1, current_time))
       |> Enum.reject(
-        &((is_nil(&1.seconds_until_arrival) and is_nil(&1.seconds_until_departure)) or
+        &((is_nil(&1.seconds_until_arrival) and is_nil(&1.seconds_until_departure) and
+             is_nil(&1.passthrough_time)) or
             has_departed?(&1))
       )
 
