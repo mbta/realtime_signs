@@ -23,7 +23,7 @@ defmodule Predictions.Predictions do
       |> Stream.map(&prediction_from_update(&1, current_time))
       |> Enum.reject(
         &((is_nil(&1.seconds_until_arrival) and is_nil(&1.seconds_until_departure) and
-             is_nil(&1.passthrough_time)) or
+             is_nil(&1.seconds_until_passthrough)) or
             has_departed?(&1))
       )
 
