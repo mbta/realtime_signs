@@ -275,10 +275,10 @@ defmodule Signs.RealtimeTest do
 
     test "when sign is at a station closed by shuttles and there are no predictions, it says so" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
-      expect_messages({"No Red Line", "Use shuttle bus"})
+      expect_messages({"No Southbound svc", "Use shuttle bus"})
 
-      expect_audios([{:canned, {"199", ["3005"], :audio}}], [
-        {"There is no Red Line service at this station. Use shuttle.", nil}
+      expect_audios([{:ad_hoc, {"No Southbound service. Use shuttle.", :audio}}], [
+        {"No Southbound service. Use shuttle.", nil}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
@@ -286,23 +286,43 @@ defmodule Signs.RealtimeTest do
 
     test "when sign is at a station closed and there are no predictions, but shuttles do not run at this station" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
-      expect_messages({"No Red Line", ""})
-      expect_audios([@no_service_audio], [{"There is no Red Line service at this station.", nil}])
+      expect_messages({"No Southbound svc", ""})
+
+      expect_audios([{:ad_hoc, {"No Southbound service.", :audio}}], [
+        {"No Southbound service.", nil}
+      ])
+
       Signs.Realtime.handle_info(:run_loop, %{@sign | uses_shuttles: false})
     end
 
     test "when sign is at a station closed due to suspension and there are no predictions, it says so" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
-      expect_messages({"No Red Line", ""})
-      expect_audios([@no_service_audio], [{"There is no Red Line service at this station.", nil}])
+      expect_messages({"No Southbound svc", ""})
+
+      expect_audios([{:ad_hoc, {"No Southbound service.", :audio}}], [
+        {"No Southbound service.", nil}
+      ])
+
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "when sign is at a closed station and there are no predictions, it says so" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
+      expect_messages({"No Southbound svc", ""})
+
+      expect_audios([{:ad_hoc, {"No Southbound service.", :audio}}], [
+        {"No Southbound service.", nil}
+      ])
+
+      assert {_, %{announced_alert: true}} = Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "mezzanine sign with alert" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
       expect_messages({"No Red Line", ""})
       expect_audios([@no_service_audio], [{"There is no Red Line service at this station.", nil}])
-      assert {_, %{announced_alert: true}} = Signs.Realtime.handle_info(:run_loop, @sign)
+      Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
     end
 
     test "multi-route mezzanine sign with alert" do
@@ -384,8 +404,12 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
-      expect_messages({"No Red Line", ""})
-      expect_audios([@no_service_audio], [{"There is no Red Line service at this station.", nil}])
+      expect_messages({"No Southbound svc", ""})
+
+      expect_audios([{:ad_hoc, {"No Southbound service.", :audio}}], [
+        {"No Southbound service.", nil}
+      ])
+
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
@@ -925,10 +949,10 @@ defmodule Signs.RealtimeTest do
 
     test "reads alerts" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
-      expect_messages({"No Red Line", "Use shuttle bus"})
+      expect_messages({"No Southbound svc", "Use shuttle bus"})
 
-      expect_audios([{:canned, {"199", ["3005"], :audio}}], [
-        {"There is no Red Line service at this station. Use shuttle.", nil}
+      expect_audios([{:ad_hoc, {"No Southbound service. Use shuttle.", :audio}}], [
+        {"No Southbound service. Use shuttle.", nil}
       ])
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_alert: true})
@@ -1598,10 +1622,10 @@ defmodule Signs.RealtimeTest do
           text_zone: "x"
       }
 
-      expect_messages({"No train service", "Use Routes 86, 87, or 91"})
+      expect_messages({"No Southbound svc", "Use Routes 86, 87, or 91"})
 
-      expect_audios([{:ad_hoc, {"No Train Service. Use routes 86, 87, or 91", :audio}}], [
-        {"No Train Service. Use routes 86, 87, or 91", nil}
+      expect_audios([{:ad_hoc, {"No Southbound service. Use routes 86, 87, or 91", :audio}}], [
+        {"No Southbound service. Use routes 86, 87, or 91", nil}
       ])
 
       Signs.Realtime.handle_info(:run_loop, sign)

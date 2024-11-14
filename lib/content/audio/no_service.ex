@@ -85,20 +85,20 @@ defmodule Content.Audio.NoService do
            use_shuttle?: use_shuttle?,
            use_routes?: use_routes?
          }) do
-      shuttle = if(use_shuttle?, do: " Use shuttle.", else: "")
-
-      cond do
-        use_routes? ->
+      suffix =
+        cond do
+          use_shuttle? -> " Use shuttle."
           # Hardcoded for Union Square
-          "No Train Service. Use routes 86, 87, or 91"
+          use_routes? -> " Use routes 86, 87, or 91"
+          true -> ""
+        end
 
-        destination ->
-          {:ok, destination_text} = PaEss.Utilities.destination_to_ad_hoc_string(destination)
-          "No #{destination_text} service.#{shuttle}"
-
-        true ->
-          line = if(route, do: "#{route} Line", else: "train")
-          "There is no #{line} service at this station.#{shuttle}"
+      if destination do
+        {:ok, destination_text} = PaEss.Utilities.destination_to_ad_hoc_string(destination)
+        "No #{destination_text} service.#{suffix}"
+      else
+        line = if(route, do: "#{route} Line", else: "train")
+        "There is no #{line} service at this station.#{suffix}"
       end
     end
   end
