@@ -307,44 +307,33 @@ defmodule PaEss.Utilities do
   def destination_to_ad_hoc_string(:medford_tufts), do: {:ok, "Medford/Tufts"}
   def destination_to_ad_hoc_string(_unknown), do: {:error, :unknown}
 
-  def line_to_var("Red Line"), do: "3005"
-  def line_to_var("Orange Line"), do: "3006"
-  def line_to_var("Blue Line"), do: "3007"
-  def line_to_var("Green Line"), do: "3008"
-  def line_to_var("Mattapan Line"), do: "3009"
+  def line_to_var("Red"), do: "3005"
+  def line_to_var("Orange"), do: "3006"
+  def line_to_var("Blue"), do: "3007"
+  def line_to_var("Green"), do: "3008"
+  def line_to_var("Mattapan"), do: "3009"
   def line_to_var(_), do: "864"
-
-  def get_unique_routes(routes) do
-    routes
-    |> Enum.map(fn route -> route |> String.split("-") |> List.first() end)
-    |> Enum.uniq()
-  end
-
-  def get_line_from_routes_list(routes) do
-    case get_unique_routes(routes) do
-      [route] ->
-        "#{route} Line"
-
-      _ ->
-        # Currently, the only case where there would be two fully distinct
-        # routes (disregarding GL Branches) is the Ashmont Mezzanine.
-        # Even in the Ashmont Mezzanine case though, we would page the Mattapan-specific
-        # shuttle alert on the second line and show Red line predictions on top.
-        "train"
-    end
-  end
 
   def directional_destination?(destination),
     do: destination in [:eastbound, :westbound, :southbound, :northbound, :inbound, :outbound]
 
-  def train_description(destination, route_id) do
+  @spec train_description(PaEss.destination(), String.t() | nil, :audio | :visual) :: String.t()
+  def train_description(destination, route_id, av \\ :audio) do
     route_text =
       case route_id do
         "Green-" <> branch -> branch
         _ -> nil
       end
 
-    {:ok, destination_text} = destination_to_ad_hoc_string(destination)
+    destination_text =
+      case av do
+        :audio ->
+          {:ok, string} = destination_to_ad_hoc_string(destination)
+          string
+
+        :visual ->
+          destination_to_sign_string(destination)
+      end
 
     if route_text do
       "#{route_text} train to #{destination_text}"
@@ -719,9 +708,29 @@ defmodule PaEss.Utilities do
           end
         end
       end,
-      fn acc -> {:cont, acc, nil} end
+      fn
+        nil -> {:cont, nil}
+        acc -> {:cont, acc, nil}
+      end
     )
     |> Stream.chunk_every(2, 2, [""])
     |> Enum.map(fn [top, bottom] -> {top, bottom, 3} end)
+  end
+
+  @spec prediction_new_cars?(Predictions.Prediction.t(), Signs.Realtime.t()) :: boolean()
+  def prediction_new_cars?(prediction, sign) do
+    case sign.location_engine.for_vehicle(prediction.vehicle_id) do
+      %Locations.Location{route_id: "Red", multi_carriage_details: carriage_details} ->
+        Enum.any?(carriage_details, fn carriage ->
+          # See http://roster.transithistory.org/ for numbers of new cars
+          case Integer.parse(carriage.label) do
+            :error -> false
+            {n, _remaining} -> n in 1900..2151
+          end
+        end)
+
+      _ ->
+        false
+    end
   end
 end

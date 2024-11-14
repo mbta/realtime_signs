@@ -137,12 +137,7 @@ defmodule Signs.Realtime do
   end
 
   def handle_info({:play_pa_message, pa_message}, sign) do
-    pa_message_plays =
-      Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign, fn ->
-        Signs.Utilities.Audio.send_audio(sign, [pa_message])
-      end)
-
-    {:noreply, %{sign | pa_message_plays: pa_message_plays}}
+    {:noreply, Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign)}
   end
 
   def handle_info(:run_loop, sign) do
@@ -150,21 +145,16 @@ defmodule Signs.Realtime do
     current_time = sign.current_time_fn.()
 
     alert_status =
-      sign.source_config
-      |> map_source_config(&get_alert_status_for_source_config(&1, sign.alerts_engine))
-      |> then(fn
-        {alert_status, alert_status} -> alert_status
-        alert_status -> alert_status
+      map_source_config(sign.source_config, fn config ->
+        stop_ids = SourceConfig.sign_stop_ids(config)
+        routes = SourceConfig.sign_routes(config)
+        sign.alerts_engine.max_stop_status(stop_ids, routes)
       end)
 
     first_scheduled_departures =
-      sign.source_config
-      |> map_source_config(
-        &{
-          sign.headway_engine.get_first_scheduled_departure(SourceConfig.sign_stop_ids(&1)),
-          &1.headway_destination
-        }
-      )
+      map_source_config(sign.source_config, fn config ->
+        sign.headway_engine.get_first_scheduled_departure(SourceConfig.sign_stop_ids(config))
+      end)
 
     prev_predictions_lookup =
       for prediction <- sign.prev_predictions, into: %{} do
@@ -283,14 +273,6 @@ defmodule Signs.Realtime do
   @spec decrement_ticks(Signs.Realtime.t()) :: Signs.Realtime.t()
   def decrement_ticks(sign) do
     %{sign | tick_read: sign.tick_read - 1}
-  end
-
-  defp get_alert_status_for_source_config(config, alerts_engine) do
-    stop_ids = SourceConfig.sign_stop_ids(config)
-    routes = SourceConfig.sign_routes(config)
-    alert_status = alerts_engine.max_stop_status(stop_ids, routes)
-
-    alert_status
   end
 
   defp map_source_config({top, bottom}, fun), do: {fun.(top), fun.(bottom)}

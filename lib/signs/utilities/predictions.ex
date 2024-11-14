@@ -13,38 +13,25 @@ defmodule Signs.Utilities.Predictions do
   @max_prediction_sec 60 * 60
   @reverse_prediction_cutoff_sec 20 * 60
 
-  @spec get_messages(Signs.Realtime.predictions(), Signs.Realtime.t()) ::
-          Signs.Realtime.sign_messages()
-  def get_messages(
-        {top_predictions, bottom_predictions},
-        %{source_config: {top_config, bottom_config}} = sign
-      ) do
-    {top, _} = prediction_messages(top_predictions, top_config, sign)
-    {bottom, _} = prediction_messages(bottom_predictions, bottom_config, sign)
-
-    {top, bottom}
-  end
-
-  def get_messages(predictions, %{source_config: config} = sign) do
-    prediction_messages(predictions, config, sign)
+  def prediction_message(predictions, config, sign) do
+    case prediction_messages(predictions, config, sign) do
+      nil -> nil
+      {first, _} -> first
+    end
   end
 
   @spec prediction_messages(
           [Predictions.Prediction.t()],
           SourceConfig.config(),
           Signs.Realtime.t()
-        ) :: Signs.Realtime.sign_messages()
-  defp prediction_messages(
-         predictions,
-         %{sources: sources},
-         %{pa_ess_loc: station_code, text_zone: zone} = sign
-       ) do
+        ) :: Signs.Realtime.sign_messages() | nil
+  def prediction_messages(predictions, %{terminal?: terminal?}, sign) do
     predictions
     |> Enum.filter(fn p ->
       p.seconds_until_departure && p.schedule_relationship != :skipped
     end)
     |> Enum.sort_by(fn prediction ->
-      {if terminal_prediction?(prediction, sources) do
+      {if terminal? do
          0
        else
          if prediction.stopped_at_predicted_stop?,
@@ -54,55 +41,48 @@ defmodule Signs.Utilities.Predictions do
     end)
     |> filter_large_red_line_gaps()
     |> Enum.map(fn prediction ->
-      cond do
-        stopped_train?(prediction) ->
-          Content.Message.StoppedTrain.from_prediction(prediction)
+      if stopped_train?(prediction) do
+        Content.Message.StoppedTrain.from_prediction(prediction)
+      else
+        special_sign =
+          case sign do
+            %{pa_ess_loc: "RJFK", text_zone: "m"} -> :jfk_mezzanine
+            %{pa_ess_loc: "BBOW", text_zone: "e"} -> :bowdoin_eastbound
+            _ -> nil
+          end
 
-        terminal_prediction?(prediction, sources) ->
-          Content.Message.Predictions.terminal(prediction, station_code, zone, sign)
-
-        true ->
-          Content.Message.Predictions.non_terminal(
-            prediction,
-            station_code,
-            zone,
-            sign,
-            platform(prediction, sources)
-          )
+        Content.Message.Predictions.new(prediction, terminal?, special_sign)
       end
     end)
-    |> Enum.reject(&is_nil(&1))
     # Take next two predictions, but if the list has multiple destinations, prefer showing
     # distinct ones. This helps e.g. the red line trunk where people may need to know about
     # a particular branch.
-    |> get_unique_destination_predictions(
-      SourceConfig.sign_routes(sign.source_config)
-      |> PaEss.Utilities.get_unique_routes()
-    )
+    |> get_unique_destination_predictions(SourceConfig.single_route(sign.source_config))
     |> case do
       [] ->
-        {Content.Message.Empty.new(), Content.Message.Empty.new()}
+        nil
 
       [msg] ->
         {msg, Content.Message.Empty.new()}
-
-      [
-        %Content.Message.Predictions{minutes: :arriving} = p1,
-        %Content.Message.Predictions{minutes: :arriving} = p2
-      ] ->
-        if allowed_multi_berth_platform?(sources, p1, p2) do
-          {p1, p2}
-        else
-          {p1, %{p2 | minutes: 1}}
-        end
 
       [msg1, msg2] ->
         {msg1, msg2}
     end
   end
 
-  defp get_unique_destination_predictions(predictions, sign_routes)
-       when sign_routes == ["Green"] do
+  @spec reverse_prediction?(Predictions.Prediction.t(), boolean()) :: boolean()
+  def reverse_prediction?(%Predictions.Prediction{} = prediction, terminal?) do
+    certainty =
+      if terminal? || !prediction.seconds_until_arrival do
+        prediction.departure_certainty
+      else
+        prediction.arrival_certainty
+      end
+
+    certainty == @reverse_prediction_certainty
+  end
+
+  defp get_unique_destination_predictions(predictions, "Green") do
     Enum.take(predictions, 2)
   end
 
@@ -137,35 +117,19 @@ defmodule Signs.Utilities.Predictions do
     end)
     |> Enum.sort_by(fn prediction -> prediction.seconds_until_passthrough end)
     |> Enum.flat_map(fn prediction ->
-      route_id = prediction.route_id
+      destination =
+        case Content.Utilities.destination_for_prediction(prediction) do
+          :southbound -> :ashmont
+          destination -> destination
+        end
 
-      case Content.Utilities.destination_for_prediction(
-             route_id,
-             prediction.direction_id,
-             prediction.destination_stop_id
-           ) do
-        {:ok, :southbound} when route_id == "Red" ->
-          [
-            %Content.Audio.Passthrough{
-              destination: :ashmont,
-              trip_id: prediction.trip_id,
-              route_id: prediction.route_id
-            }
-          ]
-
-        {:ok, destination} ->
-          [
-            %Content.Audio.Passthrough{
-              destination: destination,
-              trip_id: prediction.trip_id,
-              route_id: prediction.route_id
-            }
-          ]
-
-        _ ->
-          Logger.info("no_passthrough_audio_for_prediction prediction=#{inspect(prediction)}")
-          []
-      end
+      [
+        %Content.Audio.Passthrough{
+          destination: destination,
+          trip_id: prediction.trip_id,
+          route_id: prediction.route_id
+        }
+      ]
     end)
     |> Enum.take(1)
   end
@@ -192,57 +156,6 @@ defmodule Signs.Utilities.Predictions do
 
     boarding_status && String.starts_with?(boarding_status, "Stopped") &&
       boarding_status != "Stopped at station" && !approximate_arrival? && !approximate_departure?
-  end
-
-  defp allowed_multi_berth_platform?(source_list, p1, p2) do
-    allowed_multi_berth_platform?(
-      SourceConfig.get_source_by_stop_and_direction(
-        source_list,
-        p1.stop_id,
-        p1.direction_id
-      ),
-      SourceConfig.get_source_by_stop_and_direction(
-        source_list,
-        p2.stop_id,
-        p2.direction_id
-      )
-    )
-  end
-
-  defp allowed_multi_berth_platform?(
-         %SourceConfig{multi_berth?: true} = s1,
-         %SourceConfig{multi_berth?: true} = s2
-       )
-       when s1 != s2 do
-    true
-  end
-
-  defp allowed_multi_berth_platform?(_, _) do
-    false
-  end
-
-  defp terminal_prediction?(prediction, source_list) do
-    source_list
-    |> SourceConfig.get_source_by_stop_and_direction(
-      prediction.stop_id,
-      prediction.direction_id
-    )
-    |> case do
-      nil -> false
-      source -> source.terminal?
-    end
-  end
-
-  defp platform(prediction, source_list) do
-    source_list
-    |> SourceConfig.get_source_by_stop_and_direction(
-      prediction.stop_id,
-      prediction.direction_id
-    )
-    |> case do
-      nil -> nil
-      source -> source.platform
-    end
   end
 
   # This is a temporary fix for a situation where spotty train sheet data can

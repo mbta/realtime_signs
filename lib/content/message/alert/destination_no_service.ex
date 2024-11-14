@@ -4,17 +4,34 @@ defmodule Content.Message.Alert.DestinationNoService do
   """
 
   @enforce_keys [:destination]
-  defstruct @enforce_keys
+  defstruct @enforce_keys ++ [:route, variant: :long]
 
-  @type t :: %__MODULE__{}
+  @type t :: %__MODULE__{
+          destination: PaEss.destination(),
+          route: String.t() | nil,
+          variant: :long | :short
+        }
 
   defimpl Content.Message do
-    @default_page_width 24
-    def to_string(%Content.Message.Alert.DestinationNoService{destination: destination}) do
+    def to_string(%Content.Message.Alert.DestinationNoService{
+          destination: destination,
+          variant: :long
+        }) do
       Content.Utilities.width_padded_string(
         PaEss.Utilities.destination_to_sign_string(destination),
         "no service",
-        @default_page_width
+        24
+      )
+    end
+
+    def to_string(%Content.Message.Alert.DestinationNoService{
+          destination: destination,
+          variant: :short
+        }) do
+      Content.Utilities.width_padded_string(
+        PaEss.Utilities.destination_to_sign_string(destination),
+        "no svc",
+        18
       )
     end
   end

@@ -5,35 +5,96 @@ defmodule Content.UtilitiesTest do
 
   describe "destination_for_prediction/3" do
     test "handles child stops properly" do
-      assert destination_for_prediction("Red", 1, "Alewife-01") == {:ok, :alewife}
-      assert destination_for_prediction("Red", 1, "Alewife-02") == {:ok, :alewife}
+      assert destination_for_prediction(%{
+               route_id: "Red",
+               direction_id: 1,
+               destination_stop_id: "Alewife-01"
+             }) == :alewife
 
-      assert destination_for_prediction("Red", 0, "Braintree-01") == {:ok, :braintree}
-      assert destination_for_prediction("Red", 0, "Braintree-02") == {:ok, :braintree}
+      assert destination_for_prediction(%{
+               route_id: "Red",
+               direction_id: 1,
+               destination_stop_id: "Alewife-02"
+             }) == :alewife
 
-      assert destination_for_prediction("Orange", 0, "Forest Hills-01") == {:ok, :forest_hills}
-      assert destination_for_prediction("Orange", 0, "Forest Hills-02") == {:ok, :forest_hills}
+      assert destination_for_prediction(%{
+               route_id: "Red",
+               direction_id: 0,
+               destination_stop_id: "Braintree-01"
+             }) == :braintree
 
-      assert destination_for_prediction("Orange", 1, "Oak Grove-01") == {:ok, :oak_grove}
-      assert destination_for_prediction("Orange", 1, "Oak Grove-02") == {:ok, :oak_grove}
+      assert destination_for_prediction(%{
+               route_id: "Red",
+               direction_id: 0,
+               destination_stop_id: "Braintree-02"
+             }) == :braintree
 
-      assert destination_for_prediction("Green-D", 0, "Government Center-Brattle") ==
-               {:ok, :government_center}
+      assert destination_for_prediction(%{
+               route_id: "Orange",
+               direction_id: 0,
+               destination_stop_id: "Forest Hills-01"
+             }) == :forest_hills
 
-      assert destination_for_prediction("Green-E", 1, "71199") == {:ok, :park_street}
+      assert destination_for_prediction(%{
+               route_id: "Orange",
+               direction_id: 0,
+               destination_stop_id: "Forest Hills-02"
+             }) == :forest_hills
+
+      assert destination_for_prediction(%{
+               route_id: "Orange",
+               direction_id: 1,
+               destination_stop_id: "Oak Grove-01"
+             }) == :oak_grove
+
+      assert destination_for_prediction(%{
+               route_id: "Orange",
+               direction_id: 1,
+               destination_stop_id: "Oak Grove-02"
+             }) == :oak_grove
+
+      assert destination_for_prediction(%{
+               route_id: "Green-D",
+               direction_id: 0,
+               destination_stop_id: "Government Center-Brattle"
+             }) ==
+               :government_center
+
+      assert destination_for_prediction(%{
+               route_id: "Green-E",
+               direction_id: 1,
+               destination_stop_id: "71199"
+             }) == :park_street
     end
 
     test "Southbound headsign on Red Line trunk" do
-      assert destination_for_prediction("Red", 0, "70063") == {:ok, :southbound}
+      assert destination_for_prediction(%{
+               route_id: "Red",
+               direction_id: 0,
+               destination_stop_id: "70063"
+             }) == :southbound
     end
 
     test "Regular headsigns for regular Red Line trips to Ashmont / Braintree" do
-      assert destination_for_prediction("Red", 0, "70093") == {:ok, :ashmont}
-      assert destination_for_prediction("Red", 0, "70105") == {:ok, :braintree}
+      assert destination_for_prediction(%{
+               route_id: "Red",
+               direction_id: 0,
+               destination_stop_id: "70093"
+             }) == :ashmont
+
+      assert destination_for_prediction(%{
+               route_id: "Red",
+               direction_id: 0,
+               destination_stop_id: "70105"
+             }) == :braintree
     end
 
     test "Dont show kenmore on signs when the destination is blandford st" do
-      assert destination_for_prediction("Green-B", 0, "70149") == {:ok, :boston_college}
+      assert destination_for_prediction(%{
+               route_id: "Green-B",
+               direction_id: 0,
+               destination_stop_id: "70149"
+             }) == :boston_college
     end
   end
 

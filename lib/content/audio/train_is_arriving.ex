@@ -18,14 +18,14 @@ defmodule Content.Audio.TrainIsArriving do
           crowding_description: {atom(), atom()} | nil
         }
 
-  def from_message(%Message.Predictions{} = message, include_crowding? \\ false) do
+  def from_message(%Message.Predictions{} = message, crowding_description) do
     [
       %__MODULE__{
         destination: message.destination,
-        trip_id: message.trip_id,
-        platform: message.platform,
-        route_id: message.route_id,
-        crowding_description: if(include_crowding?, do: message.crowding_description)
+        trip_id: message.prediction.trip_id,
+        platform: Content.Utilities.stop_platform(message.prediction.stop_id),
+        route_id: message.prediction.route_id,
+        crowding_description: crowding_description
       }
     ]
   end
@@ -50,8 +50,14 @@ defmodule Content.Audio.TrainIsArriving do
     end
 
     def to_tts(%Content.Audio.TrainIsArriving{} = audio) do
-      text = tts_text(audio)
-      {text, PaEss.Utilities.paginate_text(text)}
+      train = PaEss.Utilities.train_description(audio.destination, audio.route_id, :visual)
+      crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
+      pages = [{train, "now arriving", 6}] ++ PaEss.Utilities.paginate_text(crowding)
+      {tts_text(audio), pages}
+    end
+
+    def to_logs(%Content.Audio.TrainIsArriving{}) do
+      []
     end
 
     defp tts_text(%Content.Audio.TrainIsArriving{} = audio) do

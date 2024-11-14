@@ -86,6 +86,10 @@ defmodule Content.Audio.TrackChange do
       {text, PaEss.Utilities.paginate_text(text)}
     end
 
+    def to_logs(%Content.Audio.TrackChange{}) do
+      []
+    end
+
     defp track_change_message(msg_id) do
       vars = [@track_change, msg_id]
       PaEss.Utilities.take_message(vars, :audio_visual)

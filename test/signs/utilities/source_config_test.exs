@@ -7,13 +7,12 @@ defmodule Signs.Utilities.SourceConfigTest do
   {
     "headway_group": "headway_group",
     "headway_direction_name": "Southbound",
+    "terminal": false,
     "sources": [
       {
         "stop_id": "123",
         "routes": ["Foo"],
         "direction_id": 0,
-        "platform": null,
-        "terminal": false,
         "announce_arriving": false,
         "announce_boarding": false
       },
@@ -21,11 +20,8 @@ defmodule Signs.Utilities.SourceConfigTest do
         "stop_id": "234",
         "routes": ["Bar"],
         "direction_id": 1,
-        "platform": "ashmont",
-        "terminal": true,
         "announce_arriving": true,
-        "announce_boarding": false,
-        "multi_berth": true
+        "announce_boarding": false
       }
     ]
   }
@@ -36,13 +32,12 @@ defmodule Signs.Utilities.SourceConfigTest do
     {
       "headway_group": "headway_group",
       "headway_direction_name": "Southbound",
+      "terminal": false,
       "sources": [
         {
           "stop_id": "123",
           "routes": ["Foo"],
           "direction_id": 0,
-          "platform": null,
-          "terminal": false,
           "announce_arriving": false,
           "announce_boarding": false
         }
@@ -51,14 +46,13 @@ defmodule Signs.Utilities.SourceConfigTest do
     {
       "headway_group": "headway_group",
       "headway_direction_name": "Southbound",
+      "terminal": true,
       "sources": [
         {
           "stop_id": "234",
           "headway_direction_name": "Southbound",
           "routes": ["Bar"],
           "direction_id": 1,
-          "platform": "braintree",
-          "terminal": true,
           "announce_arriving": true,
           "announce_boarding": true
         }
@@ -71,13 +65,12 @@ defmodule Signs.Utilities.SourceConfigTest do
   {
     "headway_group": "headway_group",
     "headway_direction_name": "Bar",
+    "terminal": false,
     "sources": [
       {
         "stop_id": "123",
         "routes": ["Foo"],
         "direction_id": 0,
-        "platform": null,
-        "terminal": false,
         "announce_arriving": false,
         "announce_boarding": false
       },
@@ -85,11 +78,8 @@ defmodule Signs.Utilities.SourceConfigTest do
         "stop_id": "234",
         "routes": ["Bar"],
         "direction_id": 1,
-        "platform": "ashmont",
-        "terminal": true,
         "announce_arriving": true,
-        "announce_boarding": false,
-        "multi_berth": true
+        "announce_boarding": false
       }
     ]
   }
@@ -101,26 +91,21 @@ defmodule Signs.Utilities.SourceConfigTest do
                %{
                  headway_group: "headway_group",
                  headway_destination: :southbound,
+                 terminal?: false,
                  sources: [
                    %SourceConfig{
                      stop_id: "123",
                      routes: ["Foo"],
                      direction_id: 0,
-                     platform: nil,
-                     terminal?: false,
                      announce_arriving?: false,
-                     announce_boarding?: false,
-                     multi_berth?: false
+                     announce_boarding?: false
                    },
                    %SourceConfig{
                      stop_id: "234",
                      routes: ["Bar"],
                      direction_id: 1,
-                     platform: :ashmont,
-                     terminal?: true,
                      announce_arriving?: true,
-                     announce_boarding?: false,
-                     multi_berth?: true
+                     announce_boarding?: false
                    }
                  ]
                }
@@ -132,13 +117,12 @@ defmodule Signs.Utilities.SourceConfigTest do
                  %{
                    headway_group: "headway_group",
                    headway_destination: :southbound,
+                   terminal?: false,
                    sources: [
                      %SourceConfig{
                        stop_id: "123",
                        routes: ["Foo"],
                        direction_id: 0,
-                       platform: nil,
-                       terminal?: false,
                        announce_arriving?: false,
                        announce_boarding?: false
                      }
@@ -147,13 +131,12 @@ defmodule Signs.Utilities.SourceConfigTest do
                  %{
                    headway_group: "headway_group",
                    headway_destination: :southbound,
+                   terminal?: true,
                    sources: [
                      %SourceConfig{
                        stop_id: "234",
                        routes: ["Bar"],
                        direction_id: 1,
-                       platform: :braintree,
-                       terminal?: true,
                        announce_arriving?: true,
                        announce_boarding?: true
                      }
@@ -168,26 +151,21 @@ defmodule Signs.Utilities.SourceConfigTest do
           %{
             headway_group: "headway_group",
             headway_destination: nil,
+            terminal?: false,
             sources: [
               %SourceConfig{
                 stop_id: "123",
                 routes: ["Foo"],
                 direction_id: 0,
-                platform: nil,
-                terminal?: false,
                 announce_arriving?: false,
-                announce_boarding?: false,
-                multi_berth?: false
+                announce_boarding?: false
               },
               %SourceConfig{
                 stop_id: "234",
                 routes: ["Bar"],
                 direction_id: 1,
-                platform: :ashmont,
-                terminal?: true,
                 announce_arriving?: true,
-                announce_boarding?: false,
-                multi_berth?: true
+                announce_boarding?: false
               }
             ]
           }

@@ -20,15 +20,15 @@ defmodule Content.Audio.Approaching do
           crowding_description: {atom(), atom()} | nil
         }
 
-  def from_message(%Message.Predictions{} = message, include_crowding?) do
+  def from_message(%Message.Predictions{} = message, crowding_description, new_cars?) do
     [
       %__MODULE__{
         destination: message.destination,
-        trip_id: message.trip_id,
-        platform: message.platform,
-        route_id: message.route_id,
-        new_cars?: message.new_cars?,
-        crowding_description: if(include_crowding?, do: message.crowding_description)
+        trip_id: message.prediction.trip_id,
+        platform: Content.Utilities.stop_platform(message.prediction.stop_id),
+        route_id: message.prediction.route_id,
+        new_cars?: new_cars?,
+        crowding_description: crowding_description
       }
     ]
   end
@@ -82,8 +82,21 @@ defmodule Content.Audio.Approaching do
     end
 
     def to_tts(%Content.Audio.Approaching{} = audio) do
-      text = tts_text(audio)
-      {text, PaEss.Utilities.paginate_text(text)}
+      train = PaEss.Utilities.train_description(audio.destination, audio.route_id, :visual)
+      crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
+
+      new_cars =
+        if(audio.new_cars? && audio.route_id == "Red", do: "with all new Red Line cars", else: "")
+
+      pages =
+        [{train, "now approaching", 6}] ++
+          PaEss.Utilities.paginate_text(new_cars) ++ PaEss.Utilities.paginate_text(crowding)
+
+      {tts_text(audio), pages}
+    end
+
+    def to_logs(%Content.Audio.Approaching{}) do
+      []
     end
 
     defp tts_text(%Content.Audio.Approaching{} = audio) do

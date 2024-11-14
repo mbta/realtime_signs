@@ -3,19 +3,21 @@ defmodule Content.Message.Alert.NoService do
   A message displayed when a station is closed due to shuttles or a suspension
   """
 
-  defstruct routes: []
+  defstruct [:route, :destination]
 
-  @type t :: %__MODULE__{}
+  @type t :: %__MODULE__{
+          route: String.t() | nil,
+          destination: PaEss.destination() | nil
+        }
 
   defimpl Content.Message do
-    def to_string(%Content.Message.Alert.NoService{routes: routes}) do
-      service =
-        case PaEss.Utilities.get_line_from_routes_list(routes) do
-          "train" -> "train service"
-          line -> line
-        end
-
+    def to_string(%Content.Message.Alert.NoService{destination: nil, route: route}) do
+      service = if(route, do: "#{route} Line", else: "train service")
       "No #{service}"
+    end
+
+    def to_string(%Content.Message.Alert.NoService{destination: destination}) do
+      "No #{PaEss.Utilities.destination_to_sign_string(destination)} svc"
     end
   end
 end

@@ -8,7 +8,7 @@ defmodule Content.Message.EarlyAm.DestinationTrain do
 
   defimpl Content.Message do
     def to_string(%Content.Message.EarlyAm.DestinationTrain{destination: destination}) do
-      "#{String.capitalize(PaEss.Utilities.destination_to_sign_string(destination))} train"
+      "#{PaEss.Utilities.destination_to_sign_string(destination)} train"
     end
   end
 end

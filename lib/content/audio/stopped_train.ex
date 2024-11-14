@@ -19,10 +19,10 @@ defmodule Content.Audio.StoppedTrain do
   def from_message(%Content.Message.StoppedTrain{
         destination: destination,
         stops_away: stops_away,
-        route_id: route_id
+        prediction: prediction
       })
       when stops_away > 0 do
-    [%__MODULE__{destination: destination, route_id: route_id, stops_away: stops_away}]
+    [%__MODULE__{destination: destination, route_id: prediction.route_id, stops_away: stops_away}]
   end
 
   def from_message(%Content.Message.StoppedTrain{stops_away: 0}) do
@@ -66,6 +66,10 @@ defmodule Content.Audio.StoppedTrain do
 
     def to_tts(%Content.Audio.StoppedTrain{} = audio) do
       {tts_text(audio), nil}
+    end
+
+    def to_logs(%Content.Audio.StoppedTrain{}) do
+      []
     end
 
     defp tts_text(%Content.Audio.StoppedTrain{} = audio) do

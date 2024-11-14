@@ -7,37 +7,26 @@ defmodule Content.Audio.VehiclesToDestination do
   alias PaEss.Utilities
 
   @enforce_keys [:destination, :headway_range]
-  defstruct @enforce_keys ++ [:routes]
+  defstruct @enforce_keys ++ [:route]
 
   @type t :: %__MODULE__{
           destination: PaEss.destination() | nil,
           headway_range: {non_neg_integer(), non_neg_integer()},
-          routes: [String.t()] | nil
+          route: String.t() | nil
         }
 
-  def from_headway_message(
-        %Content.Message.Headways.Top{destination: destination, routes: routes},
+  def from_messages(
+        %Content.Message.Headways.Top{destination: destination, route: route},
         %Content.Message.Headways.Bottom{range: range}
       ) do
-    [
-      %__MODULE__{
-        destination: destination,
-        headway_range: range,
-        routes: routes
-      }
-    ]
+    [%__MODULE__{destination: destination, headway_range: range, route: route}]
   end
 
-  def from_paging_headway_message(%Content.Message.Headways.Paging{
-        destination: destination,
-        range: range
-      }) do
-    [
-      %__MODULE__{
-        destination: destination,
-        headway_range: range
-      }
-    ]
+  def from_messages(
+        %Content.Message.Headways.Paging{destination: destination, route: route, range: range},
+        nil
+      ) do
+    [%__MODULE__{destination: destination, headway_range: range, route: route}]
   end
 
   defimpl Content.Audio do
@@ -46,13 +35,13 @@ defmodule Content.Audio.VehiclesToDestination do
     def to_params(
           %Content.Audio.VehiclesToDestination{
             headway_range: {range_low, range_high},
-            routes: routes
+            destination: destination
           } = audio
         ) do
       low_var = Utilities.number_var(range_low, :english)
       high_var = Utilities.number_var(range_high, :english)
 
-      if low_var && high_var && !routes do
+      if low_var && high_var && destination do
         {:canned, {message_id(audio), [low_var, high_var], :audio}}
       else
         {:ad_hoc, {tts_text(audio), :audio}}
@@ -63,18 +52,22 @@ defmodule Content.Audio.VehiclesToDestination do
       {tts_text(audio), nil}
     end
 
+    def to_logs(%Content.Audio.VehiclesToDestination{}) do
+      []
+    end
+
     defp tts_text(%Content.Audio.VehiclesToDestination{
            headway_range: {range_low, range_high},
            destination: destination,
-           routes: routes
+           route: route
          }) do
       trains =
-        case {destination, routes} do
-          {_, [route]} ->
-            "#{route} line trains"
-
-          {_, routes} when is_list(routes) ->
+        case {destination, route} do
+          {nil, nil} ->
             "Trains"
+
+          {nil, route} ->
+            "#{route} line trains"
 
           {destination, _} ->
             {:ok, destination_text} = PaEss.Utilities.destination_to_ad_hoc_string(destination)

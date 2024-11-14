@@ -9,8 +9,6 @@ defmodule Signs.RealtimeTest do
     stop_id: "1",
     direction_id: 0,
     routes: ["Red"],
-    platform: nil,
-    terminal?: false,
     announce_arriving?: true,
     announce_boarding?: false
   }
@@ -19,8 +17,6 @@ defmodule Signs.RealtimeTest do
     stop_id: "2",
     direction_id: 0,
     routes: ["Red"],
-    platform: nil,
-    terminal?: false,
     announce_arriving?: true,
     announce_boarding?: false
   }
@@ -35,6 +31,7 @@ defmodule Signs.RealtimeTest do
     text_zone: "x",
     audio_zones: ["x"],
     source_config: %{
+      terminal?: false,
       sources: [@src],
       headway_group: "headway_group",
       headway_destination: :southbound
@@ -58,8 +55,18 @@ defmodule Signs.RealtimeTest do
   @mezzanine_sign %{
     @sign
     | source_config: {
-        %{sources: [@src], headway_group: "group", headway_destination: :northbound},
-        %{sources: [@src_2], headway_group: "group", headway_destination: :southbound}
+        %{
+          sources: [@src],
+          headway_group: "group",
+          headway_destination: :northbound,
+          terminal?: false
+        },
+        %{
+          sources: [@src_2],
+          headway_group: "group",
+          headway_destination: :southbound,
+          terminal?: false
+        }
       },
       current_content_top: "Red line trains",
       current_content_bottom: "Every 11 to 13 min"
@@ -71,9 +78,15 @@ defmodule Signs.RealtimeTest do
         %{
           sources: [%{@src | routes: ["Orange"]}],
           headway_group: "group",
-          headway_destination: :northbound
+          headway_destination: :northbound,
+          terminal?: false
         },
-        %{sources: [@src_2], headway_group: "group", headway_destination: :southbound}
+        %{
+          sources: [@src_2],
+          headway_group: "group",
+          headway_destination: :southbound,
+          terminal?: false
+        }
       },
       current_content_top: "Trains",
       current_content_bottom: "Every 11 to 13 min"
@@ -84,11 +97,17 @@ defmodule Signs.RealtimeTest do
     | pa_ess_loc: "RJFK",
       text_zone: "m",
       source_config: {
-        %{sources: [@src], headway_group: "group", headway_destination: :southbound},
         %{
-          sources: [%{@src | stop_id: "70086", direction_id: 1, platform: :ashmont}],
+          sources: [@src],
           headway_group: "group",
-          headway_destination: :alewife
+          headway_destination: :southbound,
+          terminal?: false
+        },
+        %{
+          sources: [%{@src | stop_id: "70086", direction_id: 1}],
+          headway_group: "group",
+          headway_destination: :alewife,
+          terminal?: false
         }
       }
   }
@@ -97,8 +116,9 @@ defmodule Signs.RealtimeTest do
     @sign
     | source_config: %{
         @sign.source_config
-        | sources: [
-            %{@src | terminal?: true, announce_arriving?: false, announce_boarding?: true}
+        | terminal?: true,
+          sources: [
+            %{@src | announce_arriving?: false, announce_boarding?: true}
           ]
       }
   }
@@ -382,7 +402,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "generates non-directional headway message at center/mezz signs" do
-      expect(Engine.Config.Mock, :headway_config, fn _, _ ->
+      expect(Engine.Config.Mock, :headway_config, 2, fn _, _ ->
         %{@headway_config | range_high: 14}
       end)
 
@@ -520,7 +540,7 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
-    test "does not allow ARR on second line if platform does not have multiple berths" do
+    test "allows ARR on second line" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
           prediction(destination: :cleveland_circle, arrival: 15, stop_id: "1"),
@@ -528,59 +548,14 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_messages({"Clvlnd Cir     ARR", "Riverside    1 min"})
+      expect_messages({"Clvlnd Cir     ARR", "Riverside      ARR"})
 
       expect_audios([{:canned, {"103", ["90007"], :audio_visual}}], [
         {"Attention passengers: The next C train to Cleveland Circle is now arriving.",
-         [
-           {"Attention passengers:", "The next C train to", 3},
-           {"Cleveland Circle is now", "arriving.", 3}
-         ]}
+         [{"C train to Clvlnd Cir", "now arriving", 6}]}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
-    end
-
-    test "allows ARR on second line if platform does have multiple berths" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :cleveland_circle, arrival: 15, stop_id: "1", trip_id: "1")]
-      end)
-
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :riverside, arrival: 16, stop_id: "2", trip_id: "2")]
-      end)
-
-      expect_messages({"Clvlnd Cir     ARR", "Riverside      ARR"})
-
-      expect_audios(
-        [
-          {:canned, {"103", ["90007"], :audio_visual}},
-          {:canned, {"103", ["90008"], :audio_visual}}
-        ],
-        [
-          {"Attention passengers: The next C train to Cleveland Circle is now arriving.",
-           [
-             {"Attention passengers:", "The next C train to", 3},
-             {"Cleveland Circle is now", "arriving.", 3}
-           ]},
-          {"Attention passengers: The next D train to Riverside is now arriving.",
-           [
-             {"Attention passengers:", "The next D train to", 3},
-             {"Riverside is now", "arriving.", 3}
-           ]}
-        ]
-      )
-
-      Signs.Realtime.handle_info(:run_loop, %{
-        @sign
-        | source_config: %{
-            @sign.source_config
-            | sources: [
-                %{@src | stop_id: "1", multi_berth?: true},
-                %{@src | stop_id: "2", multi_berth?: true}
-              ]
-          }
-      })
     end
 
     test "doesn't sort 0 stops away to first for terminals when another departure is sooner" do
@@ -593,14 +568,6 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Boston Col   3 min", "Clvlnd Cir   4 min"})
       Signs.Realtime.handle_info(:run_loop, @terminal_sign)
-    end
-
-    test "properly handles case where destination can't be determined" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(route_id: "invalid", destination_stop_id: "invalid")]
-      end)
-
-      Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "Correctly orders BRD predictions between trains mid-trip and those starting their trip" do
@@ -661,19 +628,6 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Ashmont      2 min", "Braintree   12 min"})
       Signs.Realtime.handle_info(:run_loop, @sign)
-    end
-
-    test "handles passthrough audio where headsign can't be determined" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(seconds_until_passthrough: 30, route_id: "Foo", destination_stop_id: "Bar")]
-      end)
-
-      log =
-        capture_log([level: :info], fn ->
-          Signs.Realtime.handle_info(:run_loop, @sign)
-        end)
-
-      assert log =~ "no_passthrough_audio_for_prediction"
     end
 
     test "reads special boarding button announcement at Bowdoin" do
@@ -738,7 +692,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32127"], :audio_visual}}], [
         {"Attention passengers: The next Ashmont train is now approaching.",
-         [{"Attention passengers:", "The next Ashmont train", 3}, {"is now approaching.", "", 3}]}
+         [{"Ashmont train", "now approaching", 6}]}
       ])
 
       assert {_, %{announced_approachings: ["1"]}} = Signs.Realtime.handle_info(:run_loop, @sign)
@@ -797,7 +751,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32127"], :audio_visual}}], [
         {"Attention passengers: The next Ashmont train is now approaching.",
-         [{"Attention passengers:", "The next Ashmont train", 3}, {"is now approaching.", "", 3}]}
+         [{"Ashmont train", "now approaching", 6}]}
       ])
 
       assert {_, %{tick_read: 119}} =
@@ -817,10 +771,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32123"], :audio_visual}}], [
         {"Attention passengers: The next Forest Hills train is now approaching.",
-         [
-           {"Attention passengers:", "The next Forest Hills", 3},
-           {"train is now", "approaching.", 3}
-         ]}
+         [{"Frst Hills train", "now approaching", 6}]}
       ])
 
       assert {_, %{announced_approachings_with_crowding: ["1"]}} =
@@ -840,10 +791,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32123"], :audio_visual}}], [
         {"Attention passengers: The next Forest Hills train is now approaching.",
-         [
-           {"Attention passengers:", "The next Forest Hills", 3},
-           {"train is now", "approaching.", 3}
-         ]}
+         [{"Frst Hills train", "now approaching", 6}]}
       ])
 
       assert {_, %{announced_approachings_with_crowding: []}} =
@@ -855,7 +803,7 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 15, destination: :forest_hills)]
       end)
 
-      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
+      expect(Engine.Locations.Mock, :for_vehicle, 1, fn _ ->
         location(crowding_confidence: :high)
       end)
 
@@ -863,10 +811,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32103"], :audio_visual}}], [
         {"Attention passengers: The next Forest Hills train is now arriving.",
-         [
-           {"Attention passengers:", "The next Forest Hills", 3},
-           {"train is now arriving.", "", 3}
-         ]}
+         [{"Frst Hills train", "now arriving", 6}]}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
@@ -877,7 +822,7 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 15, destination: :forest_hills)]
       end)
 
-      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
+      expect(Engine.Locations.Mock, :for_vehicle, 1, fn _ ->
         location(crowding_confidence: :low)
       end)
 
@@ -885,10 +830,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32103"], :audio_visual}}], [
         {"Attention passengers: The next Forest Hills train is now arriving.",
-         [
-           {"Attention passengers:", "The next Forest Hills", 3},
-           {"train is now arriving.", "", 3}
-         ]}
+         [{"Frst Hills train", "now arriving", 6}]}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
@@ -899,18 +841,11 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 15, destination: :forest_hills, trip_id: "1")]
       end)
 
-      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
-        location(crowding_confidence: :high)
-      end)
-
       expect_messages({"Frst Hills     ARR", ""})
 
       expect_audios([{:canned, {"103", ["32103"], :audio_visual}}], [
         {"Attention passengers: The next Forest Hills train is now arriving.",
-         [
-           {"Attention passengers:", "The next Forest Hills", 3},
-           {"train is now arriving.", "", 3}
-         ]}
+         [{"Frst Hills train", "now arriving", 6}]}
       ])
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | announced_approachings_with_crowding: ["1"]})
@@ -1037,7 +972,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32107"], :audio_visual}}], [
         {"Attention passengers: The next Ashmont train is now arriving.",
-         [{"Attention passengers:", "The next Ashmont train", 3}, {"is now arriving.", "", 3}]}
+         [{"Ashmont train", "now arriving", 6}]}
       ])
 
       Signs.Realtime.handle_info(:run_loop, %{
@@ -1096,7 +1031,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"Attention passengers: The next Ashmont train is now arriving.",
-           [{"Attention passengers:", "The next Ashmont train", 3}, {"is now arriving.", "", 3}]},
+           [{"Ashmont train", "now arriving", 6}]},
           {"The following Ashmont train arrives in 2 minutes", nil}
         ]
       )
@@ -1123,7 +1058,7 @@ defmodule Signs.RealtimeTest do
         [
           {"The next Ashmont train arrives in 2 minutes.", nil},
           {"Attention passengers: The next Alewife train is now arriving.",
-           [{"Attention passengers:", "The next Alewife train", 3}, {"is now arriving.", "", 3}]}
+           [{"Alewife train", "now arriving", 6}]}
         ]
       )
 
@@ -1223,18 +1158,18 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages(
-        {[{"Alewife      4 min", 6}, {"Southbound trains", 6}],
-         [{"on Ashmont platform", 6}, {"Every 11 to 13 min", 6}]}
+        {[{"Southbound trains", 6}, {"Alewife      4 min", 6}],
+         [{"Every 11 to 13 min", 6}, {"on Ashmont platform", 6}]}
       )
 
       expect_audios(
         [
-          {:canned, {"98", ["4000", "503", "5004", "4016"], :audio}},
-          {:canned, {"184", ["5511", "5513"], :audio}}
+          {:canned, {"184", ["5511", "5513"], :audio}},
+          {:canned, {"98", ["4000", "503", "5004", "4016"], :audio}}
         ],
         [
-          {"The next Alewife train arrives in 4 minutes on the ashmont platform", nil},
-          {"Southbound trains every 11 to 13 minutes.", nil}
+          {"Southbound trains every 11 to 13 minutes.", nil},
+          {"The next Alewife train arrives in 4 minutes on the ashmont platform", nil}
         ]
       )
 
@@ -1260,6 +1195,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Southbound train", "due 5:00"})
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
@@ -1284,7 +1220,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "When sign in partial am suppression, no valid predictions, and within range of upper headway, show headways" do
-      expect(Engine.Config.Mock, :headway_config, 2, fn _, _ ->
+      expect(Engine.Config.Mock, :headway_config, fn _, _ ->
         %{@headway_config | range_low: 9}
       end)
 
@@ -1298,6 +1234,7 @@ defmodule Signs.RealtimeTest do
 
     test "When sign in partial am suppression, no valid predictions, but not within range of upper headway, show timestamp" do
       expect_messages({"Southbound train", "due 5:00"})
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
@@ -1336,6 +1273,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, 2, fn _, _, _ -> false end)
 
       expect_messages(
         {[{"Northbound train", 6}, {"Southbound train", 6}], [{"due 5:00", 6}, {"due 5:00", 6}]}
@@ -1358,9 +1296,13 @@ defmodule Signs.RealtimeTest do
         datetime(~T[05:30:00])
       end)
 
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
+
       expect(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
         datetime(~T[05:00:00])
       end)
+
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
 
       expect_messages(
         {[{"Northbound train", 6}, {"Southbound trains", 6}],
@@ -1380,7 +1322,7 @@ defmodule Signs.RealtimeTest do
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
 
-      expect(Engine.Config.Mock, :headway_config, 3, fn _, _ ->
+      expect(Engine.Config.Mock, :headway_config, 2, fn _, _ ->
         %{@headway_config | range_low: 9}
       end)
 
@@ -1421,6 +1363,8 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 180, destination: :ashmont)]
       end)
 
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
+
       expect_messages({"Ashmont      3 min", "Northbound due 5:00"})
 
       Signs.Realtime.handle_info(:run_loop, %{
@@ -1435,6 +1379,8 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
       end)
+
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
 
       expect_messages(
         {[{"Southbound train", 6}, {"Alewife      4 min", 6}],
@@ -1536,10 +1482,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"106", ["783", "4016", "21000", "786"], :audio_visual}}], [
         {"Attention passengers: The next Ashmont train is now approaching, with all new Red Line cars.",
-         [
-           {"Attention passengers:", "The next Ashmont train", 3},
-           {"is now approaching, with", "all new Red Line cars.", 3}
-         ]}
+         [{"Ashmont train", "now approaching", 6}, {"with all new Red Line", "cars", 3}]}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
@@ -1568,22 +1511,53 @@ defmodule Signs.RealtimeTest do
 
       expect_audios([{:canned, {"103", ["32127"], :audio_visual}}], [
         {"Attention passengers: The next Ashmont train is now approaching.",
-         [{"Attention passengers:", "The next Ashmont train", 3}, {"is now approaching.", "", 3}]}
+         [{"Ashmont train", "now approaching", 6}]}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
-    test "signs in headway mode with split alert_status will show the first alert" do
+    test "mezzanine sign, headways and shuttle alert" do
       expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
 
-      expect_messages({"No train service", "Use shuttle bus"})
+      expect_messages({
+        [{"Northbound trains", 6}, {"No Southbound svc", 6}],
+        [{"Every 11 to 13 min", 6}, {"Use shuttle bus", 6}]
+      })
 
-      expect_audios([{:canned, {"199", ["864"], :audio}}], [
-        {"There is no train service at this station. Use shuttle.", nil}
+      expect_audios([{:ad_hoc, {"No Southbound service. Use shuttle.", :audio}}], [
+        {"No Southbound service. Use shuttle.", nil}
       ])
+
+      Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
+    end
+
+    test "mezzanine sign, non-shuttle alert and headways" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+
+      expect_messages(
+        {"Northbound  no svc", [{"Southbound  trains every", 6}, {"Southbound  11 to 13 min", 6}]}
+      )
+
+      expect_audios([{:ad_hoc, {"No Northbound service.", :audio}}], [
+        {"No Northbound service.", nil}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
+    end
+
+    test "multi-route mezzanine sign, different headways" do
+      expect(Engine.Config.Mock, :headway_config, fn _, _ -> %{@headway_config | range_low: 9} end)
+
+      expect(Engine.Config.Mock, :headway_config, fn _, _ -> %{@headway_config | range_low: 7} end)
+
+      expect_messages(
+        {[{"Northbound trains", 6}, {"Southbound trains", 6}],
+         [{"Every 9 to 13 min", 6}, {"Every 7 to 13 min", 6}]}
+      )
 
       Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
     end
@@ -1769,8 +1743,6 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Predictions.Mock, :for_stop, fn "70086", 1 ->
         [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
       end)
-
-      expect(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
 
       expect(Engine.LastTrip.Mock, :get_recent_departures, fn "1" ->
         %{"a" => ~U[2023-01-01 00:00:00.000Z]}

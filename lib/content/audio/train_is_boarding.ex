@@ -22,20 +22,20 @@ defmodule Content.Audio.TrainIsBoarding do
       [
         %Audio.TrackChange{
           destination: message.destination,
-          route_id: message.route_id,
-          berth: message.stop_id
+          route_id: message.prediction.route_id,
+          berth: message.prediction.stop_id
         }
       ]
     else
       [
         %__MODULE__{
           destination: message.destination,
-          trip_id: message.trip_id,
-          route_id: message.route_id,
-          track_number: Content.Utilities.stop_track_number(message.stop_id)
+          trip_id: message.prediction.trip_id,
+          route_id: message.prediction.route_id,
+          track_number: Content.Utilities.stop_track_number(message.prediction.stop_id)
         }
       ] ++
-        if message.station_code == "BBOW" && message.zone == "e" do
+        if message.special_sign == :bowdoin_eastbound do
           [%Audio.BoardingButton{}]
         else
           []
@@ -66,6 +66,10 @@ defmodule Content.Audio.TrainIsBoarding do
 
     def to_tts(%Content.Audio.TrainIsBoarding{} = audio) do
       {tts_text(audio), nil}
+    end
+
+    def to_logs(%Content.Audio.TrainIsBoarding{}) do
+      []
     end
 
     defp tts_text(%Content.Audio.TrainIsBoarding{} = audio) do
