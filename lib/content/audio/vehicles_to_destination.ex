@@ -15,29 +15,18 @@ defmodule Content.Audio.VehiclesToDestination do
           route: String.t() | nil
         }
 
-  def from_headway_message(
+  def from_messages(
         %Content.Message.Headways.Top{destination: destination, route: route},
         %Content.Message.Headways.Bottom{range: range}
       ) do
-    [
-      %__MODULE__{
-        destination: destination,
-        headway_range: range,
-        route: route
-      }
-    ]
+    [%__MODULE__{destination: destination, headway_range: range, route: route}]
   end
 
-  def from_paging_headway_message(%Content.Message.Headways.Paging{
-        destination: destination,
-        range: range
-      }) do
-    [
-      %__MODULE__{
-        destination: destination,
-        headway_range: range
-      }
-    ]
+  def from_messages(
+        %Content.Message.Headways.Paging{destination: destination, route: route, range: range},
+        nil
+      ) do
+    [%__MODULE__{destination: destination, headway_range: range, route: route}]
   end
 
   defimpl Content.Audio do
