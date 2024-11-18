@@ -690,22 +690,22 @@ defmodule Signs.Bus do
       {duration, duration_spanish} =
         case bridge_status_minutes(bridge_status, current_time) do
           minutes when minutes < 2 ->
-            {"We expect it to be lowered soon.", "Esperamos que se baje pronto."}
+            {"We expect it to be lowered soon.", "Esperamos que cierre pronto."}
 
           minutes ->
             {"We expect this to last for at least #{minutes} more minutes.",
-             "Esperamos que esto dure al menos #{minutes} minutos más."}
+             "Permanecerá abierto aproximadamente #{minutes} minutos."}
         end
 
       english_text =
         "The Chelsea Street bridge is raised. #{duration} SL3 buses may be delayed, detoured, or turned back."
 
       spanish_text =
-        "El puente de Chelsea Street está levantado. #{duration_spanish} Los autobuses SL3 pueden sufrir retrasos, desvíos o dar marcha atrás."
+        "El puente levadizo de Chelsea está abierto. #{duration_spanish} Autobuses S.L. tres pueden experimentar retrasos, ser desviados o devueltos."
 
       [
         {english_text, PaEss.Utilities.paginate_text(english_text)},
-        {spanish_text, PaEss.Utilities.paginate_text(spanish_text)}
+        {{:spanish, spanish_text}, PaEss.Utilities.paginate_text(spanish_text)}
       ]
     else
       []

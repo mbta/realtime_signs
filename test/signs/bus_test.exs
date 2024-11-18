@@ -313,13 +313,16 @@ defmodule Signs.BusTest do
              {"SL3 buses may be", "delayed, detoured, or", 3},
              {"turned back.", "", 3}
            ]},
-          {"El puente de Chelsea Street está levantado. Esperamos que esto dure al menos 4 minutos más. Los autobuses SL3 pueden sufrir retrasos, desvíos o dar marcha atrás.",
-           [
-             {"El puente de Chelsea", "Street está levantado.", 3},
-             {"Esperamos que esto dure", "al menos 4 minutos más.", 3},
-             {"Los autobuses SL3 pueden", "sufrir retrasos, desvíos", 3},
-             {"o dar marcha atrás.", "", 3}
-           ]}
+          {
+            {:spanish,
+             "El puente levadizo de Chelsea está abierto. Permanecerá abierto aproximadamente 4 minutos. Autobuses S.L. tres pueden experimentar retrasos, ser desviados o devueltos."},
+            [
+              {"El puente levadizo de", "Chelsea está abierto.", 3},
+              {"Permanecerá abierto", "aproximadamente 4", 3},
+              {"minutos. Autobuses S.L.", "tres pueden experimentar", 3},
+              {"retrasos, ser desviados", "o devueltos.", 3}
+            ]
+          }
         ]
       )
 
@@ -347,13 +350,16 @@ defmodule Signs.BusTest do
              {"SL3 buses may be", "delayed, detoured, or", 3},
              {"turned back.", "", 3}
            ]},
-          {"El puente de Chelsea Street está levantado. Esperamos que esto dure al menos 4 minutos más. Los autobuses SL3 pueden sufrir retrasos, desvíos o dar marcha atrás.",
-           [
-             {"El puente de Chelsea", "Street está levantado.", 3},
-             {"Esperamos que esto dure", "al menos 4 minutos más.", 3},
-             {"Los autobuses SL3 pueden", "sufrir retrasos, desvíos", 3},
-             {"o dar marcha atrás.", "", 3}
-           ]}
+          {
+            {:spanish,
+             "El puente levadizo de Chelsea está abierto. Permanecerá abierto aproximadamente 4 minutos. Autobuses S.L. tres pueden experimentar retrasos, ser desviados o devueltos."},
+            [
+              {"El puente levadizo de", "Chelsea está abierto.", 3},
+              {"Permanecerá abierto", "aproximadamente 4", 3},
+              {"minutos. Autobuses S.L.", "tres pueden experimentar", 3},
+              {"retrasos, ser desviados", "o devueltos.", 3}
+            ]
+          }
         ]
       )
 
