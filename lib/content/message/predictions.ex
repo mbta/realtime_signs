@@ -29,7 +29,7 @@ defmodule Content.Message.Predictions do
   def new(%Predictions.Prediction{} = prediction, terminal?, special_sign) do
     sec =
       if terminal? do
-        prediction.seconds_until_departure - 60
+        prediction.seconds_until_departure
       else
         prediction.seconds_until_arrival || prediction.seconds_until_departure
       end
