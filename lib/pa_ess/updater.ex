@@ -72,7 +72,12 @@ defmodule PaEss.Updater do
       |> Enum.map(fn {{text, pages}, tag, log_meta} ->
         [
           sign_id: id,
-          audio: inspect(text),
+          audio:
+            case text do
+              {:spanish, text} -> text
+              text -> text
+            end
+            |> inspect(),
           visual: format_pages(pages) |> Jason.encode!(),
           tag: inspect(tag),
           legacy: !scu_migrated?
@@ -150,7 +155,15 @@ defmodule PaEss.Updater do
     watts_url = Application.get_env(:realtime_signs, :watts_url)
     watts_api_key = Application.get_env(:realtime_signs, :watts_api_key)
 
-    http_poster.post("#{watts_url}/tts", %{text: text, voice_id: "Matthew"} |> Jason.encode!(), [
+    {voice_id, text} =
+      case text do
+        {:spanish, text} -> {"Mia", ~s(<prosody rate="90%">#{text}</prosody>)}
+        text -> {"Matthew", text}
+      end
+
+    text = ~s(<speak><amazon:effect name="drc">#{text}</amazon:effect></speak>)
+
+    http_poster.post("#{watts_url}/tts", %{text: text, voice_id: voice_id} |> Jason.encode!(), [
       {"Content-type", "application/json"},
       {"x-api-key", watts_api_key}
     ])
