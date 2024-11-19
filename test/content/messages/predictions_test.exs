@@ -228,7 +228,7 @@ defmodule Content.Message.PredictionsTest do
   describe "terminal new/3" do
     test "puts boarding on the sign when train is supposed to be boarding according to rtr" do
       prediction = %Predictions.Prediction{
-        seconds_until_departure: 75,
+        seconds_until_departure: 15,
         direction_id: 1,
         route_id: "Mattapan",
         destination_stop_id: "70261",
@@ -244,7 +244,7 @@ defmodule Content.Message.PredictionsTest do
 
     test "does not put boarding on the sign too early when train is stopped at terminal" do
       prediction = %Predictions.Prediction{
-        seconds_until_departure: 95,
+        seconds_until_departure: 35,
         direction_id: 1,
         route_id: "Mattapan",
         destination_stop_id: "70261",
@@ -256,22 +256,6 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.new(prediction, true, nil)
 
       assert Content.Message.to_string(msg) == "Ashmont      1 min"
-    end
-
-    test "offsets the prediction by 60 seconds" do
-      prediction = %Predictions.Prediction{
-        seconds_until_departure: 209,
-        direction_id: 1,
-        route_id: "Mattapan",
-        destination_stop_id: "70261",
-        stopped?: false,
-        stops_away: 0,
-        boarding_status: "Stopped at station"
-      }
-
-      msg = Content.Message.Predictions.new(prediction, true, nil)
-
-      assert Content.Message.to_string(msg) == "Ashmont      2 min"
     end
 
     test "puts 1 min on the sign when train is not boarding, but is predicted to depart in less than a minute when offset" do
@@ -292,7 +276,7 @@ defmodule Content.Message.PredictionsTest do
     test "pages track information when available" do
       prediction = %Predictions.Prediction{
         stop_id: "Forest Hills-02",
-        seconds_until_departure: 180,
+        seconds_until_departure: 120,
         direction_id: 1,
         route_id: "Orange",
         stopped?: false,

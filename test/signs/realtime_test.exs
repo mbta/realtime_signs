@@ -566,7 +566,7 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_messages({"Boston Col   3 min", "Clvlnd Cir   4 min"})
+      expect_messages({"Boston Col   4 min", "Clvlnd Cir   5 min"})
       Signs.Realtime.handle_info(:run_loop, @terminal_sign)
     end
 
