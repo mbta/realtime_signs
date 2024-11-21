@@ -188,27 +188,80 @@ defmodule Signs.Utilities.Messages do
         ) :: [Predictions.Prediction.t()]
   defp filter_predictions(predictions, config, sign_config, current_time, scheduled) do
     predictions
-    |> then(fn predictions -> if(sign_config == :headway, do: [], else: predictions) end)
-    |> then(fn predictions ->
-      case {in_early_am?(current_time, scheduled),
-            before_early_am_threshold?(current_time, scheduled)} do
-        {false, _} ->
-          predictions
-
-        {true, true} ->
-          # More than 40 minutes before the first scheduled trip, filter out all predictions.
-          []
-
-        {true, false} ->
-          # Less than 40 minutes before the first scheduled trip, filter out reverse predictions,
-          # except for Prudential or Symphony EB
-          Enum.reject(
-            predictions,
-            &(Signs.Utilities.Predictions.reverse_prediction?(&1, config.terminal?) and
-                &1.stop_id not in ["70240", "70242"])
-          )
-      end
+    |> Enum.filter(fn p -> p.seconds_until_departure && p.schedule_relationship != :skipped end)
+    |> Enum.sort_by(fn prediction ->
+      {cond do
+         config.terminal? -> 0
+         prediction.stops_away == 0 -> 0
+         true -> 1
+       end, prediction.seconds_until_departure, prediction.seconds_until_arrival}
     end)
+    |> then(fn predictions -> if(sign_config == :headway, do: [], else: predictions) end)
+    |> filter_early_am_predictions(config, current_time, scheduled)
+    |> filter_large_red_line_gaps()
+    |> get_unique_destination_predictions(Signs.Utilities.SourceConfig.single_route(config))
+  end
+
+  defp filter_early_am_predictions(predictions, config, current_time, scheduled) do
+    cond do
+      !in_early_am?(current_time, scheduled) ->
+        predictions
+
+      before_early_am_threshold?(current_time, scheduled) ->
+        # More than 40 minutes before the first scheduled trip, filter out all predictions.
+        []
+
+      true ->
+        # Less than 40 minutes before the first scheduled trip, filter out reverse predictions,
+        # except for Prudential or Symphony EB
+        Enum.reject(
+          predictions,
+          &(Signs.Utilities.Predictions.reverse_prediction?(&1, config.terminal?) and
+              &1.stop_id not in ["70240", "70242"])
+        )
+    end
+  end
+
+  # This is a temporary fix for a situation where spotty train sheet data can
+  # cause some predictions to not show up until right before they leave the
+  # terminal. This makes it appear that the next train will be much later than
+  # it is. At stations near Ashmont and Braintree, we're discarding any
+  # predictions following a gap of more than 21 minutes from the previous one,
+  # since this is a reasonable indicator of this problem.
+  defp filter_large_red_line_gaps([first | _] = predictions)
+       when first.stop_id in ~w(70105 Braintree-01 Braintree-02 70104 70102 70100 70094 70092 70090 70088 70098 70086 70096) do
+    [%{seconds_until_departure: 0} | predictions]
+    |> Enum.chunk_every(2, 1, :discard)
+    |> Enum.take_while(fn [prev, current] ->
+      current.seconds_until_departure - prev.seconds_until_departure < 21 * 60
+    end)
+    |> Enum.map(&List.last/1)
+  end
+
+  defp filter_large_red_line_gaps(predictions), do: predictions
+
+  # Take next two predictions, but if the list has multiple destinations, prefer showing
+  # distinct ones. This helps e.g. the red line trunk where people may need to know about
+  # a particular branch.
+  defp get_unique_destination_predictions(predictions, "Green") do
+    Enum.take(predictions, 2)
+  end
+
+  defp get_unique_destination_predictions(predictions, _) do
+    case predictions do
+      [msg1, msg2 | rest] ->
+        first_destination = Content.Utilities.destination_for_prediction(msg1)
+
+        case Enum.find([msg2 | rest], fn x ->
+               Content.Utilities.destination_for_prediction(x) != first_destination
+             end) do
+          nil -> [msg1, msg2]
+          preferred -> [msg1, preferred]
+        end
+
+      messages ->
+        messages
+    end
   end
 
   defp in_early_am?(_, nil), do: false

@@ -27,20 +27,6 @@ defmodule Signs.Utilities.Predictions do
         ) :: Signs.Realtime.sign_messages() | nil
   def prediction_messages(predictions, %{terminal?: terminal?}, sign) do
     predictions
-    |> Enum.filter(fn p ->
-      p.seconds_until_departure && p.schedule_relationship != :skipped
-    end)
-    |> Enum.sort_by(fn prediction ->
-      {if terminal? do
-         0
-       else
-         case prediction.stops_away do
-           0 -> 0
-           _ -> 1
-         end
-       end, prediction.seconds_until_departure, prediction.seconds_until_arrival}
-    end)
-    |> filter_large_red_line_gaps()
     |> Enum.map(fn prediction ->
       if stopped_train?(prediction) do
         Content.Message.StoppedTrain.from_prediction(prediction)
@@ -55,10 +41,6 @@ defmodule Signs.Utilities.Predictions do
         Content.Message.Predictions.new(prediction, terminal?, special_sign)
       end
     end)
-    # Take next two predictions, but if the list has multiple destinations, prefer showing
-    # distinct ones. This helps e.g. the red line trunk where people may need to know about
-    # a particular branch.
-    |> get_unique_destination_predictions(SourceConfig.single_route(sign.source_config))
     |> case do
       [] ->
         nil
@@ -81,23 +63,6 @@ defmodule Signs.Utilities.Predictions do
       end
 
     certainty == @reverse_prediction_certainty
-  end
-
-  defp get_unique_destination_predictions(predictions, "Green") do
-    Enum.take(predictions, 2)
-  end
-
-  defp get_unique_destination_predictions(predictions, _) do
-    case predictions do
-      [msg1, msg2 | rest] ->
-        case Enum.find([msg2 | rest], fn x -> x.destination != msg1.destination end) do
-          nil -> [msg1, msg2]
-          preferred -> [msg1, preferred]
-        end
-
-      messages ->
-        messages
-    end
   end
 
   @spec get_passthrough_train_audio(Signs.Realtime.predictions()) :: [Content.Audio.t()]
@@ -158,22 +123,4 @@ defmodule Signs.Utilities.Predictions do
     boarding_status && String.starts_with?(boarding_status, "Stopped") &&
       boarding_status != "Stopped at station" && !approximate_arrival? && !approximate_departure?
   end
-
-  # This is a temporary fix for a situation where spotty train sheet data can
-  # cause some predictions to not show up until right before they leave the
-  # terminal. This makes it appear that the next train will be much later than
-  # it is. At stations near Ashmont and Braintree, we're discarding any
-  # predictions following a gap of more than 21 minutes from the previous one,
-  # since this is a reasonable indicator of this problem.
-  defp filter_large_red_line_gaps([first | _] = predictions)
-       when first.stop_id in ~w(70105 Braintree-01 Braintree-02 70104 70102 70100 70094 70092 70090 70088 70098 70086 70096) do
-    [%{seconds_until_departure: 0} | predictions]
-    |> Enum.chunk_every(2, 1, :discard)
-    |> Enum.take_while(fn [prev, current] ->
-      current.seconds_until_departure - prev.seconds_until_departure < 21 * 60
-    end)
-    |> Enum.map(&List.last/1)
-  end
-
-  defp filter_large_red_line_gaps(predictions), do: predictions
 end
