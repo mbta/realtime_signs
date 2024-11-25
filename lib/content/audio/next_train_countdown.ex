@@ -49,45 +49,39 @@ defmodule Content.Audio.NextTrainCountdown do
     @platform_when_closer "857"
 
     def to_params(audio) do
-      case Utilities.destination_var(audio.destination) do
-        {:ok, dest_var} ->
-          green_line_branch = Content.Utilities.route_branch_letter(audio.route_id)
+      dest_var = Utilities.destination_var(audio.destination)
+      green_line_branch = Content.Utilities.route_branch_letter(audio.route_id)
 
-          cond do
-            Utilities.directional_destination?(audio.destination) ->
-              do_ad_hoc_message(audio)
-
-            !is_nil(audio.track_number) ->
-              terminal_track_params(audio, dest_var)
-
-            !is_nil(green_line_branch) ->
-              green_line_with_branch_params(audio, green_line_branch, dest_var)
-
-            is_nil(audio.platform) and audio.minutes == 1 ->
-              {:canned, {"141", [dest_var, verb_var(audio)], :audio}}
-
-            is_nil(audio.platform) ->
-              {:canned, {"90", [dest_var, verb_var(audio), minutes_var(audio)], :audio}}
-
-            audio.minutes == 1 ->
-              {:canned, {"142", [dest_var, platform_var(audio), verb_var(audio)], :audio}}
-
-            audio.destination == :alewife and audio.special_sign == :jfk_mezzanine and
-                audio.minutes > 5 ->
-              platform_tbd_params(
-                audio,
-                dest_var,
-                if(audio.minutes < 10, do: @platform_soon, else: @platform_when_closer)
-              )
-
-            true ->
-              {:canned,
-               {"98", [dest_var, verb_var(audio), minutes_var(audio), platform_var(audio)],
-                :audio}}
-          end
-
-        {:error, :unknown} ->
+      cond do
+        Utilities.directional_destination?(audio.destination) ->
           do_ad_hoc_message(audio)
+
+        !is_nil(audio.track_number) ->
+          terminal_track_params(audio, dest_var)
+
+        !is_nil(green_line_branch) ->
+          green_line_with_branch_params(audio, green_line_branch, dest_var)
+
+        is_nil(audio.platform) and audio.minutes == 1 ->
+          {:canned, {"141", [dest_var, verb_var(audio)], :audio}}
+
+        is_nil(audio.platform) ->
+          {:canned, {"90", [dest_var, verb_var(audio), minutes_var(audio)], :audio}}
+
+        audio.minutes == 1 ->
+          {:canned, {"142", [dest_var, platform_var(audio), verb_var(audio)], :audio}}
+
+        audio.destination == :alewife and audio.special_sign == :jfk_mezzanine and
+            audio.minutes > 5 ->
+          platform_tbd_params(
+            audio,
+            dest_var,
+            if(audio.minutes < 10, do: @platform_soon, else: @platform_when_closer)
+          )
+
+        true ->
+          {:canned,
+           {"98", [dest_var, verb_var(audio), minutes_var(audio), platform_var(audio)], :audio}}
       end
     end
 

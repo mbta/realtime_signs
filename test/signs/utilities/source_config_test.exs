@@ -146,7 +146,7 @@ defmodule Signs.Utilities.SourceConfigTest do
     end
 
     test "logs error when headway destination is invalid" do
-      assert_raise MatchError, fn ->
+      assert_raise FunctionClauseError, fn ->
         @invalid_headway_destination_json |> Jason.decode!() |> SourceConfig.parse!() ==
           %{
             headway_group: "headway_group",

@@ -51,16 +51,12 @@ defmodule Content.Audio.TrainIsBoarding do
     @on_track_2 "542"
 
     def to_params(audio) do
-      case PaEss.Utilities.destination_var(audio.destination) do
-        {:ok, destination_var} ->
-          if PaEss.Utilities.directional_destination?(audio.destination) do
-            do_ad_hoc_message(audio)
-          else
-            do_to_params(audio, destination_var)
-          end
+      destination_var = PaEss.Utilities.destination_var(audio.destination)
 
-        {:error, :unknown} ->
-          do_ad_hoc_message(audio)
+      if PaEss.Utilities.directional_destination?(audio.destination) do
+        do_ad_hoc_message(audio)
+      else
+        do_to_params(audio, destination_var)
       end
     end
 

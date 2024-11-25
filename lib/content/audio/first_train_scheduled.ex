@@ -33,7 +33,7 @@ defmodule Content.Audio.FirstTrainScheduled do
           destination: destination,
           scheduled_time: scheduled_time
         }) do
-      {:ok, destination} = PaEss.Utilities.destination_var(destination)
+      destination = PaEss.Utilities.destination_var(destination)
 
       vars = [
         @the_first,
