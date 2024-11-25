@@ -9,23 +9,28 @@ defmodule Predictions.Predictions do
   def get_all(feed_message, current_time) do
     predictions =
       feed_message["entity"]
-      |> Enum.map(& &1["trip_update"])
-      |> Enum.reject(&(&1["trip"]["schedule_relationship"] == "CANCELED"))
-      |> Enum.flat_map(&transform_stop_time_updates/1)
-      |> Enum.filter(fn {update, _, _, _, _, _, _} ->
-        ((update["arrival"] || update["departure"]) &&
-           not is_nil(update["stops_away"])) || update["passthrough_time"]
+      |> Stream.map(& &1["trip_update"])
+      |> Stream.filter(
+        &(relevant_rail_route?(&1["trip"]["route_id"]) and
+            &1["trip"]["schedule_relationship"] != "CANCELED")
+      )
+      |> Stream.flat_map(&transform_stop_time_updates/1)
+      |> Stream.filter(fn {update, _, _, _, _, _, _} ->
+        (update["arrival"] && update["arrival"]["uncertainty"]) ||
+          (update["departure"] && update["departure"]["uncertainty"]) ||
+          update["passthrough_time"]
       end)
-      |> Enum.map(&prediction_from_update(&1, current_time))
+      |> Stream.map(&prediction_from_update(&1, current_time))
       |> Enum.reject(
-        &(is_nil(&1.seconds_until_arrival) and is_nil(&1.seconds_until_departure) and
-            is_nil(&1.seconds_until_passthrough))
+        &((is_nil(&1.seconds_until_arrival) and is_nil(&1.seconds_until_departure) and
+             is_nil(&1.seconds_until_passthrough)) or
+            has_departed?(&1))
       )
 
     vehicles_running_revenue_trips =
       predictions
-      |> Enum.filter(& &1.revenue_trip?)
-      |> Enum.map(& &1.vehicle_id)
+      |> Stream.filter(& &1.revenue_trip?)
+      |> Stream.map(& &1.vehicle_id)
       |> MapSet.new()
 
     {Enum.group_by(predictions, fn prediction ->
@@ -43,15 +48,12 @@ defmodule Predictions.Predictions do
       end)
       |> Map.get("stop_id")
 
-    revenue_trip? =
-      Enum.any?(trip_update["stop_time_update"], &(&1["schedule_relationship"] != "SKIPPED"))
-
     vehicle_id = get_in(trip_update, ["vehicle", "id"])
 
     Enum.map(
       trip_update["stop_time_update"],
       &{&1, last_stop_id, trip_update["trip"]["route_id"], trip_update["trip"]["direction_id"],
-       trip_update["trip"]["trip_id"], revenue_trip?, vehicle_id}
+       trip_update["trip"]["trip_id"], trip_update["trip"]["revenue"], vehicle_id}
     )
   end
 
@@ -66,6 +68,9 @@ defmodule Predictions.Predictions do
          current_time
        ) do
     current_time_seconds = DateTime.to_unix(current_time)
+
+    schedule_relationship =
+      translate_schedule_relationship(stop_time_update["schedule_relationship"])
 
     seconds_until_arrival =
       if stop_time_update["arrival"] &&
@@ -84,21 +89,23 @@ defmodule Predictions.Predictions do
         do: stop_time_update["passthrough_time"] - current_time_seconds,
         else: nil
 
+    vehicle_location = Engine.Locations.for_vehicle(vehicle_id)
+
     %Prediction{
       stop_id: stop_time_update["stop_id"],
       direction_id: direction_id,
       seconds_until_arrival: max(0, seconds_until_arrival),
       arrival_certainty: stop_time_update["arrival"]["uncertainty"],
-      seconds_until_departure: max(0, seconds_until_departure),
+      seconds_until_departure: seconds_until_departure,
       departure_certainty: stop_time_update["departure"]["uncertainty"],
       seconds_until_passthrough: max(0, seconds_until_passthrough),
-      schedule_relationship:
-        translate_schedule_relationship(stop_time_update["schedule_relationship"]),
+      schedule_relationship: schedule_relationship,
       route_id: route_id,
       trip_id: trip_id,
       destination_stop_id: last_stop_id,
-      stopped?: stop_time_update["stopped?"],
-      stops_away: stop_time_update["stops_away"],
+      stopped_at_predicted_stop?:
+        not is_nil(vehicle_location) and vehicle_location.status == :stopped_at and
+          stop_time_update["stop_id"] == vehicle_location.stop_id,
       boarding_status: stop_time_update["boarding_status"],
       revenue_trip?: revenue_trip?,
       vehicle_id: vehicle_id
@@ -111,6 +118,19 @@ defmodule Predictions.Predictions do
 
   def parse_json_response(body) do
     Jason.decode!(body)
+  end
+
+  def relevant_rail_route?(route_id) do
+    route_id in [
+      "Red",
+      "Blue",
+      "Orange",
+      "Green-B",
+      "Green-C",
+      "Green-D",
+      "Green-E",
+      "Mattapan"
+    ]
   end
 
   @spec translate_schedule_relationship(String.t()) :: :skipped | :scheduled
@@ -134,5 +154,11 @@ defmodule Predictions.Predictions do
     else
       true
     end
+  end
+
+  @spec has_departed?(Predictions.Prediction.t()) :: boolean()
+  defp has_departed?(prediction) do
+    prediction.seconds_until_departure && prediction.seconds_until_departure < 0 &&
+      not prediction.stopped_at_predicted_stop?
   end
 end
