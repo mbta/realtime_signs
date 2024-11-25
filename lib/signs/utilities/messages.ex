@@ -239,33 +239,37 @@ defmodule Signs.Utilities.Messages do
     end
   end
 
-  defp alert_messages(alert_status, %{pa_ess_loc: "GUNS"}, _) do
+  defp alert_messages(alert_status, %{pa_ess_loc: "GUNS"}, config) do
+    route = Signs.Utilities.SourceConfig.single_route(config)
+    destination = config.headway_destination
+
     if alert_status in [:none, :alert_along_route],
       do: nil,
-      else: {%Alert.NoService{}, %Alert.UseRoutes{}}
+      else: {%Alert.NoService{route: route, destination: destination}, %Alert.UseRoutes{}}
   end
 
   defp alert_messages(alert_status, sign, config) do
     route = Signs.Utilities.SourceConfig.single_route(config)
+    destination = config.headway_destination
 
     case {alert_status, sign.uses_shuttles} do
       {:shuttles_transfer_station, _} ->
         {%Content.Message.Empty{}, %Content.Message.Empty{}}
 
       {:shuttles_closed_station, true} ->
-        {%Alert.NoService{route: route}, %Alert.UseShuttleBus{}}
+        {%Alert.NoService{route: route, destination: destination}, %Alert.UseShuttleBus{}}
 
       {:shuttles_closed_station, false} ->
-        {%Alert.NoService{route: route}, %Content.Message.Empty{}}
+        {%Alert.NoService{route: route, destination: destination}, %Content.Message.Empty{}}
 
       {:suspension_transfer_station, _} ->
         {%Content.Message.Empty{}, %Content.Message.Empty{}}
 
       {:suspension_closed_station, _} ->
-        {%Alert.NoService{route: route}, %Content.Message.Empty{}}
+        {%Alert.NoService{route: route, destination: destination}, %Content.Message.Empty{}}
 
       {:station_closure, _} ->
-        {%Alert.NoService{route: route}, %Content.Message.Empty{}}
+        {%Alert.NoService{route: route, destination: destination}, %Content.Message.Empty{}}
 
       _ ->
         nil
