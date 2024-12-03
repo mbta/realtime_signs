@@ -192,7 +192,7 @@ defmodule Signs.Utilities.Messages do
     |> Enum.sort_by(fn prediction ->
       {cond do
          config.terminal? -> 0
-         prediction.stops_away == 0 -> 0
+         prediction.stopped_at_predicted_stop? -> 0
          true -> 1
        end, prediction.seconds_until_departure, prediction.seconds_until_arrival}
     end)

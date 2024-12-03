@@ -35,12 +35,11 @@ defmodule Content.Message.Predictions do
       end
 
     min = round(sec / 60)
-    stopped_at? = prediction.stops_away == 0
     reverse_prediction? = Signs.Utilities.Predictions.reverse_prediction?(prediction, terminal?)
 
     {minutes, approximate?} =
       cond do
-        stopped_at? and (!terminal? or sec <= 30) -> {:boarding, false}
+        prediction.stopped_at_predicted_stop? and (!terminal? or sec <= 30) -> {:boarding, false}
         !terminal? and sec <= 30 -> {:arriving, false}
         !terminal? and sec <= 60 -> {:approaching, false}
         min > 60 -> {60, true}
