@@ -37,49 +37,48 @@ defmodule Content.Audio.UtilitiesTest do
   end
 
   test "destination_var/1" do
-    assert destination_var(:alewife) == {:ok, "4000"}
-    assert destination_var(:ashmont) == {:ok, "4016"}
-    assert destination_var(:boston_college) == {:ok, "4202"}
-    assert destination_var(:bowdoin) == {:ok, "4055"}
-    assert destination_var(:braintree) == {:ok, "4021"}
-    assert destination_var(:cleveland_circle) == {:ok, "4203"}
-    assert destination_var(:forest_hills) == {:ok, "4043"}
-    assert destination_var(:government_center) == {:ok, "4061"}
-    assert destination_var(:heath_street) == {:ok, "4204"}
-    assert destination_var(:kenmore) == {:ok, "4070"}
-    assert destination_var(:lechmere) == {:ok, "4056"}
-    assert destination_var(:mattapan) == {:ok, "4100"}
-    assert destination_var(:north_station) == {:ok, "4027"}
-    assert destination_var(:oak_grove) == {:ok, "4022"}
-    assert destination_var(:park_street) == {:ok, "4007"}
-    assert destination_var(:reservoir) == {:ok, "4076"}
-    assert destination_var(:riverside) == {:ok, "4084"}
-    assert destination_var(:wonderland) == {:ok, "4044"}
-    assert destination_var(:union_square) == {:ok, "695"}
-    assert destination_var(:medford_tufts) == {:ok, "852"}
+    assert destination_var(:alewife) == "4000"
+    assert destination_var(:ashmont) == "4016"
+    assert destination_var(:boston_college) == "4202"
+    assert destination_var(:bowdoin) == "4055"
+    assert destination_var(:braintree) == "4021"
+    assert destination_var(:cleveland_circle) == "4203"
+    assert destination_var(:forest_hills) == "4043"
+    assert destination_var(:government_center) == "4061"
+    assert destination_var(:heath_street) == "4204"
+    assert destination_var(:kenmore) == "4070"
+    assert destination_var(:lechmere) == "4056"
+    assert destination_var(:mattapan) == "4100"
+    assert destination_var(:north_station) == "4027"
+    assert destination_var(:oak_grove) == "4022"
+    assert destination_var(:park_street) == "4007"
+    assert destination_var(:reservoir) == "4076"
+    assert destination_var(:riverside) == "4084"
+    assert destination_var(:wonderland) == "4044"
+    assert destination_var(:union_square) == "695"
+    assert destination_var(:medford_tufts) == "852"
   end
 
   test "headsign_to_destination/1" do
-    assert headsign_to_destination("Alewife") == {:ok, :alewife}
-    assert headsign_to_destination("Ashmont") == {:ok, :ashmont}
-    assert headsign_to_destination("Boston College") == {:ok, :boston_college}
-    assert headsign_to_destination("Bowdoin") == {:ok, :bowdoin}
-    assert headsign_to_destination("Braintree") == {:ok, :braintree}
-    assert headsign_to_destination("Cleveland Circle") == {:ok, :cleveland_circle}
-    assert headsign_to_destination("Forest Hills") == {:ok, :forest_hills}
-    assert headsign_to_destination("Government Center") == {:ok, :government_center}
-    assert headsign_to_destination("Heath Street") == {:ok, :heath_street}
-    assert headsign_to_destination("Lechmere") == {:ok, :lechmere}
-    assert headsign_to_destination("Union Square") == {:ok, :union_square}
-    assert headsign_to_destination("Mattapan") == {:ok, :mattapan}
-    assert headsign_to_destination("North Station") == {:ok, :north_station}
-    assert headsign_to_destination("Oak Grove") == {:ok, :oak_grove}
-    assert headsign_to_destination("Park Street") == {:ok, :park_street}
-    assert headsign_to_destination("Reservoir") == {:ok, :reservoir}
-    assert headsign_to_destination("Riverside") == {:ok, :riverside}
-    assert headsign_to_destination("Wonderland") == {:ok, :wonderland}
-    assert headsign_to_destination("Medford/Tufts") == {:ok, :medford_tufts}
-    assert headsign_to_destination("Unknown") == {:error, :unknown}
+    assert headsign_to_destination("Alewife") == :alewife
+    assert headsign_to_destination("Ashmont") == :ashmont
+    assert headsign_to_destination("Boston College") == :boston_college
+    assert headsign_to_destination("Bowdoin") == :bowdoin
+    assert headsign_to_destination("Braintree") == :braintree
+    assert headsign_to_destination("Cleveland Circle") == :cleveland_circle
+    assert headsign_to_destination("Forest Hills") == :forest_hills
+    assert headsign_to_destination("Government Center") == :government_center
+    assert headsign_to_destination("Heath Street") == :heath_street
+    assert headsign_to_destination("Lechmere") == :lechmere
+    assert headsign_to_destination("Union Square") == :union_square
+    assert headsign_to_destination("Mattapan") == :mattapan
+    assert headsign_to_destination("North Station") == :north_station
+    assert headsign_to_destination("Oak Grove") == :oak_grove
+    assert headsign_to_destination("Park Street") == :park_street
+    assert headsign_to_destination("Reservoir") == :reservoir
+    assert headsign_to_destination("Riverside") == :riverside
+    assert headsign_to_destination("Wonderland") == :wonderland
+    assert headsign_to_destination("Medford/Tufts") == :medford_tufts
   end
 
   test "destination_to_sign_string/1" do
@@ -88,8 +87,8 @@ defmodule Content.Audio.UtilitiesTest do
   end
 
   test "destination_to_ad_hoc_string/1" do
-    assert destination_to_ad_hoc_string(:heath_street) == {:ok, "Heath Street"}
-    assert destination_to_ad_hoc_string(:southbound) == {:ok, "Southbound"}
+    assert destination_to_ad_hoc_string(:heath_street) == "Heath Street"
+    assert destination_to_ad_hoc_string(:southbound) == "Southbound"
   end
 
   describe "replace_abbreviations/1" do

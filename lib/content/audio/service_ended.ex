@@ -32,28 +32,14 @@ defmodule Content.Audio.ServiceEnded do
       Utilities.take_message([line_var, @service_ended], :audio)
     end
 
-    def to_params(
-          %Content.Audio.ServiceEnded{location: :platform, destination: destination} = audio
-        ) do
-      case Utilities.destination_var(destination) do
-        {:ok, destination_var} ->
-          Utilities.take_message([@platform_closed, destination_var, @service_ended], :audio)
-
-        {:error, :unknown} ->
-          {:ad_hoc, {tts_text(audio), :audio}}
-      end
+    def to_params(%Content.Audio.ServiceEnded{location: :platform, destination: destination}) do
+      destination_var = Utilities.destination_var(destination)
+      Utilities.take_message([@platform_closed, destination_var, @service_ended], :audio)
     end
 
-    def to_params(
-          %Content.Audio.ServiceEnded{location: :direction, destination: destination} = audio
-        ) do
-      case Utilities.destination_var(destination) do
-        {:ok, destination_var} ->
-          Utilities.take_message([destination_var, @service_ended], :audio)
-
-        {:error, :unknown} ->
-          {:ad_hoc, {tts_text(audio), :audio}}
-      end
+    def to_params(%Content.Audio.ServiceEnded{location: :direction, destination: destination}) do
+      destination_var = Utilities.destination_var(destination)
+      Utilities.take_message([destination_var, @service_ended], :audio)
     end
 
     def to_tts(%Content.Audio.ServiceEnded{} = audio) do
@@ -70,12 +56,12 @@ defmodule Content.Audio.ServiceEnded do
     end
 
     defp tts_text(%Content.Audio.ServiceEnded{location: :platform, destination: destination}) do
-      {:ok, destination_string} = Utilities.destination_to_ad_hoc_string(destination)
+      destination_string = Utilities.destination_to_ad_hoc_string(destination)
       "This platform is closed. #{destination_string} service has ended for the night."
     end
 
     defp tts_text(%Content.Audio.ServiceEnded{location: :direction, destination: destination}) do
-      {:ok, destination_string} = Utilities.destination_to_ad_hoc_string(destination)
+      destination_string = Utilities.destination_to_ad_hoc_string(destination)
       "#{destination_string} service has ended for the night."
     end
   end

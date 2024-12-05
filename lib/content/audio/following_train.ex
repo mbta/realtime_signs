@@ -55,27 +55,23 @@ defmodule Content.Audio.FollowingTrain do
     @minute "532"
 
     def to_params(audio) do
-      case Utilities.destination_var(audio.destination) do
-        {:ok, dest_var} ->
-          if Utilities.directional_destination?(audio.destination) do
-            do_ad_hoc_message(audio)
-          else
-            green_line_branch = Content.Utilities.route_branch_letter(audio.route_id)
+      dest_var = Utilities.destination_var(audio.destination)
 
-            cond do
-              !is_nil(green_line_branch) ->
-                green_line_with_branch_params(audio, green_line_branch, dest_var)
+      if Utilities.directional_destination?(audio.destination) do
+        do_ad_hoc_message(audio)
+      else
+        green_line_branch = Content.Utilities.route_branch_letter(audio.route_id)
 
-              audio.minutes == 1 ->
-                {:canned, {"159", [dest_var, verb_var(audio)], :audio}}
+        cond do
+          !is_nil(green_line_branch) ->
+            green_line_with_branch_params(audio, green_line_branch, dest_var)
 
-              true ->
-                {:canned, {"160", [dest_var, verb_var(audio), minutes_var(audio)], :audio}}
-            end
-          end
+          audio.minutes == 1 ->
+            {:canned, {"159", [dest_var, verb_var(audio)], :audio}}
 
-        {:error, :unknown} ->
-          do_ad_hoc_message(audio)
+          true ->
+            {:canned, {"160", [dest_var, verb_var(audio), minutes_var(audio)], :audio}}
+        end
       end
     end
 

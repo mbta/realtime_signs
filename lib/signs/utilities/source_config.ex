@@ -121,7 +121,7 @@ defmodule Signs.Utilities.SourceConfig do
         "terminal" => terminal,
         "sources" => sources
       }) do
-    {:ok, headway_destination} = PaEss.Utilities.headsign_to_destination(headway_direction_name)
+    headway_destination = PaEss.Utilities.headsign_to_destination(headway_direction_name)
 
     %{
       headway_group: headway_group,

@@ -94,7 +94,7 @@ defmodule Content.Audio.NoService do
         end
 
       if destination do
-        {:ok, destination_text} = PaEss.Utilities.destination_to_ad_hoc_string(destination)
+        destination_text = PaEss.Utilities.destination_to_ad_hoc_string(destination)
         "No #{destination_text} service.#{suffix}"
       else
         line = if(route, do: "#{route} Line", else: "train")
