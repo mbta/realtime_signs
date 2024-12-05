@@ -41,15 +41,13 @@ defmodule Content.Audio.StoppedTrain do
     @stopped "641"
 
     def to_params(audio) do
-      dest_var = PaEss.Utilities.destination_var(audio.destination)
-
       if Utilities.directional_destination?(audio.destination) do
         do_ad_hoc_message(audio)
       else
         vars = [
           @the_next,
           @train_to,
-          dest_var,
+          PaEss.Utilities.destination_var(audio.destination),
           @is,
           @stopped,
           number_var(audio.stops_away),
