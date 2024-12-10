@@ -69,6 +69,29 @@ defmodule Signs.Bus do
           pa_message_plays: %{integer() => DateTime.t()}
         }
 
+  defmodule Locals do
+    @enforce_keys [
+      :config,
+      :bridge_enabled?,
+      :bridge_status,
+      :current_time,
+      :route_alerts_lookup,
+      :stop_alerts_lookup,
+      :predictions_lookup
+    ]
+    defstruct @enforce_keys
+
+    @type t :: %__MODULE__{
+            config: Engine.Config.sign_config(),
+            bridge_enabled?: boolean(),
+            bridge_status: map(),
+            current_time: DateTime.t(),
+            route_alerts_lookup: %{String.t() => Engine.Alerts.Fetcher.stop_status()},
+            stop_alerts_lookup: %{String.t() => Engine.Alerts.Fetcher.stop_status()},
+            predictions_lookup: %{map() => Predictions.BusPrediction.t()}
+          }
+  end
+
   def start_link(sign) do
     state = %__MODULE__{
       id: Map.fetch!(sign, "id"),
@@ -180,6 +203,16 @@ defmodule Signs.Bus do
       |> filter_predictions(current_time, state)
       |> Enum.group_by(&{&1.stop_id, &1.route_id, &1.direction_id})
 
+    locals = %Locals{
+      config: config,
+      bridge_enabled?: bridge_enabled?,
+      bridge_status: bridge_status,
+      current_time: current_time,
+      predictions_lookup: predictions_lookup,
+      route_alerts_lookup: route_alerts_lookup,
+      stop_alerts_lookup: stop_alerts_lookup
+    }
+
     # Compute new sign text and audio
     {[top, bottom], audios, tts_audios} =
       cond do
@@ -187,15 +220,7 @@ defmodule Signs.Bus do
           {_messages = ["", ""], _audios = [], _tts_audios = []}
 
         match?({:static_text, _}, config) ->
-          static_text_content(
-            config,
-            bridge_status,
-            bridge_enabled?,
-            current_time,
-            predictions_lookup,
-            route_alerts_lookup,
-            state
-          )
+          static_text_content(locals, state)
 
         # Special case: 71 and 73 buses board on the Harvard upper busway at certain times. If
         # they are predicted there, let people on the lower busway know.
@@ -207,32 +232,16 @@ defmodule Signs.Bus do
           special_harvard_content()
 
         configs ->
-          platform_mode_content(
-            predictions_lookup,
-            route_alerts_lookup,
-            stop_alerts_lookup,
-            current_time,
-            bridge_status,
-            bridge_enabled?,
-            state
-          )
+          platform_mode_content(locals, state)
 
         true ->
-          mezzanine_mode_content(
-            predictions_lookup,
-            route_alerts_lookup,
-            stop_alerts_lookup,
-            current_time,
-            bridge_status,
-            bridge_enabled?,
-            state
-          )
+          mezzanine_mode_content(locals, state)
       end
 
     # Update the sign (if appropriate), and record changes in state
     state
     |> then(fn state ->
-      if should_update?({top, bottom}, current_time, state) do
+      if should_update?({top, bottom}, locals, state) do
         state.sign_updater.set_background_message(state, top, bottom)
         %{state | current_messages: {top, bottom}, last_update: current_time}
       else
@@ -240,16 +249,13 @@ defmodule Signs.Bus do
       end
     end)
     |> then(fn state ->
-      if should_read?(current_time, state) do
+      if should_read?(locals, state) do
         send_audio(audios, tts_audios, state)
         %{state | last_read_time: current_time}
       else
-        if should_announce_drawbridge?(bridge_status, bridge_enabled?, current_time, state) do
-          bridge_audios = bridge_audio(bridge_status, bridge_enabled?, current_time, state)
-
-          bridge_tts_audios =
-            bridge_tts_audio(bridge_status, bridge_enabled?, current_time, state)
-
+        if should_announce_drawbridge?(locals, state) do
+          bridge_audios = bridge_audio(locals, state)
+          bridge_tts_audios = bridge_tts_audio(locals, state)
           send_audio(bridge_audios, bridge_tts_audios, state)
         end
 
@@ -312,43 +318,18 @@ defmodule Signs.Bus do
   end
 
   # Static text mode. Just display the configured text, and possibly the bridge message.
-  @spec static_text_content(
-          Engine.Config.sign_config(),
-          term(),
-          boolean(),
-          DateTime.t(),
-          map(),
-          map(),
-          t()
-        ) :: content_values()
-  defp static_text_content(
-         config,
-         bridge_status,
-         bridge_enabled?,
-         current_time,
-         predictions_lookup,
-         route_alerts_lookup,
-         state
-       ) do
+  @spec static_text_content(Locals.t(), t()) :: content_values()
+  defp static_text_content(%Locals{config: config} = locals, state) do
     {_, {line1, line2}} = config
 
     messages =
       [[line1, line2]]
-      |> Enum.concat(
-        bridge_message(
-          bridge_status,
-          bridge_enabled?,
-          current_time,
-          predictions_lookup,
-          route_alerts_lookup,
-          state
-        )
-      )
+      |> Enum.concat(bridge_message(locals, state))
       |> paginate_pairs()
 
     audios =
       [{:ad_hoc, {"#{line1} #{line2}", :audio}}]
-      |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
+      |> Enum.concat(bridge_audio(locals, state))
 
     tts_audios = [{"#{line1} #{line2}", nil}]
 
@@ -357,24 +338,16 @@ defmodule Signs.Bus do
 
   # Platform mode. Display one prediction per route, but if all the predictions are for the
   # same route, then show a single page of two.
-  @spec platform_mode_content(map(), map(), map(), DateTime.t(), term(), boolean(), t()) ::
-          content_values()
+  @spec platform_mode_content(Locals.t(), t()) :: content_values()
   defp platform_mode_content(
-         predictions_lookup,
-         route_alerts_lookup,
-         stop_alerts_lookup,
-         current_time,
-         bridge_status,
-         bridge_enabled?,
-         state
+         %Locals{stop_alerts_lookup: stop_alerts_lookup, current_time: current_time} = locals,
+         %__MODULE__{configs: configs, extra_audio_configs: extra_audio_configs} = state
        ) do
-    %{configs: configs, extra_audio_configs: extra_audio_configs} = state
-    content = configs_content(configs, predictions_lookup, route_alerts_lookup)
+    content = configs_content(configs, locals)
     # Special case: Nubian platform E has two separate text zones, but only one audio zone due
     # to close proximity. One sign process is configured to read out the other sign's prediction
     # list in addition to its own, while the other one stays silent.
-    audio_content =
-      content ++ configs_content(extra_audio_configs, predictions_lookup, route_alerts_lookup)
+    audio_content = content ++ configs_content(extra_audio_configs, locals)
 
     if !Enum.any?(audio_content, &match?({:predictions, _}, &1)) &&
          all_stop_ids(state)
@@ -397,16 +370,7 @@ defmodule Signs.Bus do
               ]
             end)
         end
-        |> Enum.concat(
-          bridge_message(
-            bridge_status,
-            bridge_enabled?,
-            current_time,
-            predictions_lookup,
-            route_alerts_lookup,
-            state
-          )
-        )
+        |> Enum.concat(bridge_message(locals, state))
         |> paginate_pairs()
 
       audios =
@@ -421,7 +385,7 @@ defmodule Signs.Bus do
         |> Stream.intersperse([:_])
         |> Stream.concat()
         |> paginate_audio()
-        |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
+        |> Enum.concat(bridge_audio(locals, state))
 
       tts_audios =
         case audio_content do
@@ -438,27 +402,20 @@ defmodule Signs.Bus do
             |> List.wrap()
         end
         |> Enum.map(&{&1, nil})
-        |> Enum.concat(bridge_tts_audio(bridge_status, bridge_enabled?, current_time, state))
+        |> Enum.concat(bridge_tts_audio(locals, state))
 
       {messages, audios, tts_audios}
     end
   end
 
   # Mezzanine mode. Display and paginate each line separately.
-  @spec mezzanine_mode_content(map(), map(), map(), DateTime.t(), term(), boolean(), t()) ::
-          content_values()
+  @spec mezzanine_mode_content(Locals.t(), t()) :: content_values()
   defp mezzanine_mode_content(
-         predictions_lookup,
-         route_alerts_lookup,
-         stop_alerts_lookup,
-         current_time,
-         bridge_status,
-         bridge_enabled?,
-         state
+         %Locals{stop_alerts_lookup: stop_alerts_lookup, current_time: current_time} = locals,
+         %__MODULE__{top_configs: top_configs, bottom_configs: bottom_configs} = state
        ) do
-    %{top_configs: top_configs, bottom_configs: bottom_configs} = state
-    top_content = configs_content(top_configs, predictions_lookup, route_alerts_lookup)
-    bottom_content = configs_content(bottom_configs, predictions_lookup, route_alerts_lookup)
+    top_content = configs_content(top_configs, locals)
+    bottom_content = configs_content(bottom_configs, locals)
 
     if !Enum.any?(top_content ++ bottom_content, &match?({:predictions, _}, &1)) &&
          all_stop_ids(state)
@@ -479,7 +436,7 @@ defmodule Signs.Bus do
         |> Stream.intersperse([:_])
         |> Stream.concat()
         |> paginate_audio()
-        |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
+        |> Enum.concat(bridge_audio(locals, state))
 
       tts_audios =
         case top_content ++ bottom_content do
@@ -493,7 +450,7 @@ defmodule Signs.Bus do
             |> List.wrap()
         end
         |> Enum.map(&{&1, nil})
-        |> Enum.concat(bridge_tts_audio(bridge_status, bridge_enabled?, current_time, state))
+        |> Enum.concat(bridge_tts_audio(locals, state))
 
       {messages, audios, tts_audios}
     end
@@ -515,9 +472,12 @@ defmodule Signs.Bus do
     {messages, audios, tts_audios}
   end
 
-  defp configs_content(nil, _, _), do: []
+  defp configs_content(nil, _), do: []
 
-  defp configs_content(configs, predictions_lookup, route_alerts_lookup) do
+  defp configs_content(
+         configs,
+         %Locals{predictions_lookup: predictions_lookup, route_alerts_lookup: route_alerts_lookup}
+       ) do
     Enum.flat_map(configs, fn config ->
       content =
         Stream.flat_map(config.sources, fn source ->
@@ -571,9 +531,11 @@ defmodule Signs.Bus do
   # 1. it has never been updated before (we just booted up)
   # 2. the sign is about to auto-blank, so refresh it
   # 3. the content has changed, but wait until the existing content has paged at least once
-  defp should_update?(messages, current_time, state) do
-    %{last_update: last_update, current_messages: current_messages} = state
-
+  defp should_update?(
+         messages,
+         %Locals{current_time: current_time},
+         %__MODULE__{last_update: last_update, current_messages: current_messages}
+       ) do
     !last_update ||
       Timex.after?(current_time, Timex.shift(last_update, seconds: 150)) ||
       (current_messages != messages &&
@@ -583,13 +545,14 @@ defmodule Signs.Bus do
          ))
   end
 
-  defp should_read?(current_time, state) do
-    %{
-      read_loop_interval: read_loop_interval,
-      read_loop_offset: read_loop_offset,
-      last_read_time: last_read_time
-    } = state
-
+  defp should_read?(
+         %Locals{current_time: current_time},
+         %__MODULE__{
+           read_loop_interval: read_loop_interval,
+           read_loop_offset: read_loop_offset,
+           last_read_time: last_read_time
+         }
+       ) do
     period = fn time -> div(Timex.to_unix(time) - read_loop_offset, read_loop_interval) end
     period.(current_time) != period.(last_read_time)
   end
@@ -600,9 +563,14 @@ defmodule Signs.Bus do
   # 1. the drawbridge just went up
   # 2. drawbridge messages are enabled
   # 3. we are at a stop that is impacted, but does not show visual drawbridge messages
-  defp should_announce_drawbridge?(bridge_status, bridge_enabled?, current_time, state) do
-    %{chelsea_bridge: chelsea_bridge, prev_bridge_status: prev_bridge_status} = state
-
+  defp should_announce_drawbridge?(
+         %Locals{
+           bridge_enabled?: bridge_enabled?,
+           bridge_status: bridge_status,
+           current_time: current_time
+         },
+         %__MODULE__{chelsea_bridge: chelsea_bridge, prev_bridge_status: prev_bridge_status}
+       ) do
     chelsea_bridge == "audio" && bridge_enabled? && prev_bridge_status &&
       bridge_status_raised?(bridge_status, current_time) &&
       !bridge_status_raised?(prev_bridge_status, current_time)
@@ -631,21 +599,19 @@ defmodule Signs.Bus do
   end
 
   defp bridge_message(
-         bridge_status,
-         bridge_enabled?,
-         current_time,
-         predictions_lookup,
-         route_alerts_lookup,
-         state
+         %Locals{
+           bridge_enabled?: bridge_enabled?,
+           bridge_status: bridge_status,
+           current_time: current_time
+         } = locals,
+         %__MODULE__{chelsea_bridge: chelsea_bridge, configs: configs}
        ) do
-    %{chelsea_bridge: chelsea_bridge, configs: configs} = state
-
     if bridge_enabled? && chelsea_bridge == "audio_visual" &&
          bridge_status_raised?(bridge_status, current_time) do
       mins = bridge_status_minutes(bridge_status, current_time)
 
       line2 =
-        case {mins > 0, configs_content(configs, predictions_lookup, route_alerts_lookup) != []} do
+        case {mins > 0, configs_content(configs, locals) != []} do
           {true, true} -> "SL3 delays #{mins} more min"
           {true, false} -> "for #{mins} more minutes"
           {false, true} -> "Expect SL3 delays"
@@ -659,9 +625,14 @@ defmodule Signs.Bus do
   end
 
   # Returns a list of audio messages describing the bridge status
-  defp bridge_audio(bridge_status, bridge_enabled?, current_time, state) do
-    %{chelsea_bridge: chelsea_bridge} = state
-
+  defp bridge_audio(
+         %Locals{
+           bridge_enabled?: bridge_enabled?,
+           bridge_status: bridge_status,
+           current_time: current_time
+         },
+         %__MODULE__{chelsea_bridge: chelsea_bridge}
+       ) do
     if bridge_enabled? && chelsea_bridge &&
          bridge_status_raised?(bridge_status, current_time) do
       case bridge_status_minutes(bridge_status, current_time) do
@@ -682,9 +653,14 @@ defmodule Signs.Bus do
     end
   end
 
-  defp bridge_tts_audio(bridge_status, bridge_enabled?, current_time, state) do
-    %{chelsea_bridge: chelsea_bridge} = state
-
+  defp bridge_tts_audio(
+         %Locals{
+           bridge_enabled?: bridge_enabled?,
+           bridge_status: bridge_status,
+           current_time: current_time
+         },
+         %__MODULE__{chelsea_bridge: chelsea_bridge}
+       ) do
     if bridge_enabled? && chelsea_bridge &&
          bridge_status_raised?(bridge_status, current_time) do
       {duration, duration_spanish} =
