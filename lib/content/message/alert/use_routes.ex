@@ -9,7 +9,7 @@ defmodule Content.Message.Alert.UseRoutes do
 
   defimpl Content.Message do
     def to_string(_) do
-      "Use routes 87, 91 or 109"
+      "Use Routes 87, 91 or 109"
     end
   end
 end
