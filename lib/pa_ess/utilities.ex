@@ -407,7 +407,7 @@ defmodule PaEss.Utilities do
     {"Arlington Heights", ["Arlngtn", "Arlingtn", "Arlington"]},
     {"North Cambridge", ["N Camb", "NorthCamb"]},
     {"Arlmont", ["Arlmont"]},
-    {"Sullivan", ["Sullivn", "Sullivan"]},
+    {"Sullivan", ["Sullvn", "Sullivn", "Sullivan"]},
     {"Medford", ["Medford"]},
     {"Wakefield Ave", ["WkfldAv", "WakfldAv", "WakefldAv"]},
     {"Quincy Center", ["Quincy", "QuincyCtr"]},
@@ -452,7 +452,8 @@ defmodule PaEss.Utilities do
     {"Haymarket", ["Haymrkt", "Haymarkt", "Haymarket"]},
     {"Silver Line Way", ["Slvr Ln Way"]},
     {"Gallivan Blvd", ["Gallivn", "Gallivan"]},
-    {"Cobbs Corner Canton", ["Canton"]}
+    {"Cobbs Corner Canton", ["Canton"]},
+    {"Linden Square", ["Linden", "Linden Sq"]}
   ]
 
   @spec headsign_abbreviations(String.t() | nil) :: [String.t()]
@@ -579,7 +580,8 @@ defmodule PaEss.Utilities do
     {"Gallivan Blvd", "881"},
     {"Brookline Ave", "885"},
     {"Brookline Village", "886"},
-    {"Cobbs Corner Canton", "887"}
+    {"Cobbs Corner Canton", "887"},
+    {"Linden Sq", "889"}
   ]
 
   @route_take_lookup %{
@@ -632,6 +634,7 @@ defmodule PaEss.Utilities do
     "90" => "689",
     "94" => "690",
     "96" => "604",
+    "109" => "890",
     "170" => "588",
     "171" => "589",
     "226" => "809",
