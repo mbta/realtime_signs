@@ -1622,10 +1622,10 @@ defmodule Signs.RealtimeTest do
           text_zone: "x"
       }
 
-      expect_messages({"No Southbound svc", "Use Routes 86, 87, or 91"})
+      expect_messages({"No Southbound svc", "Use routes 87, 91 or 109"})
 
-      expect_audios([{:ad_hoc, {"No Southbound service. Use routes 86, 87, or 91", :audio}}], [
-        {"No Southbound service. Use routes 86, 87, or 91", nil}
+      expect_audios([{:ad_hoc, {"No Southbound service. Use routes 87, 91 or 109", :audio}}], [
+        {"No Southbound service. Use routes 87, 91 or 109", nil}
       ])
 
       Signs.Realtime.handle_info(:run_loop, sign)
