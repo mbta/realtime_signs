@@ -89,7 +89,7 @@ defmodule Content.Audio.NoService do
         cond do
           use_shuttle? -> " Use shuttle."
           # Hardcoded for Union Square
-          use_routes? -> " Use Routes 87, 91 or 109"
+          use_routes? -> " Use Routes 87, 91, or 109"
           true -> ""
         end
 
