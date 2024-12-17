@@ -10,7 +10,24 @@ defmodule Content.Audio.FollowingTrainTest do
         minutes: 5
       }
 
-      assert Content.Audio.to_params(audio) == {:canned, {"160", ["4016", "503", "5005"], :audio}}
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"115",
+                 [
+                   "667",
+                   "21000",
+                   "4016",
+                   "21000",
+                   "864",
+                   "21000",
+                   "503",
+                   "21000",
+                   "504",
+                   "21000",
+                   "5005",
+                   "21000",
+                   "505"
+                 ], :audio}}
     end
 
     test "when its a non terminal it uses arrives" do
@@ -65,7 +82,24 @@ defmodule Content.Audio.FollowingTrainTest do
         minutes: 1
       }
 
-      assert Content.Audio.to_params(audio) == {:canned, {"159", ["4016", "503"], :audio}}
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"115",
+                 [
+                   "667",
+                   "21000",
+                   "4016",
+                   "21000",
+                   "864",
+                   "21000",
+                   "503",
+                   "21000",
+                   "504",
+                   "21000",
+                   "5001",
+                   "21000",
+                   "532"
+                 ], :audio}}
     end
 
     test "Next D train in 5 minutes" do

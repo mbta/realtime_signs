@@ -418,7 +418,7 @@ defmodule Signs.Bus do
             Enum.map(list, &message_audio(&1, current_time, state))
             |> add_preamble()
         end
-        |> Stream.intersperse([:_])
+        |> Stream.intersperse([:","])
         |> Stream.concat()
         |> paginate_audio()
         |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
@@ -476,7 +476,7 @@ defmodule Signs.Bus do
       audios =
         Enum.map(top_content ++ bottom_content, &message_audio(&1, current_time, state))
         |> add_preamble()
-        |> Stream.intersperse([:_])
+        |> Stream.intersperse([:","])
         |> Stream.concat()
         |> paginate_audio()
         |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
@@ -981,7 +981,7 @@ defmodule Signs.Bus do
       PaEss.Utilities.audio_take(item) ||
         (
           Logger.error("No audio for: #{inspect(item)}")
-          PaEss.Utilities.audio_take(:_)
+          PaEss.Utilities.audio_take(:",")
         )
     end
     |> Stream.chunk_every(@var_max)

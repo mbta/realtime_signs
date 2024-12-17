@@ -478,9 +478,9 @@ defmodule Signs.RealtimeTest do
             [
               "501",
               "21000",
-              "507",
-              "21000",
               "4100",
+              "21000",
+              "864",
               "21000",
               "533",
               "21000",
@@ -533,9 +533,7 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Mattapan       BRD", "Mattapan     2 min"})
 
       expect_audios(
-        [
-          {:canned, {"109", ["501", "21000", "507", "21000", "4100", "21000", "544"], :audio}}
-        ],
+        [{:canned, {"109", ["501", "21000", "4100", "21000", "864", "21000", "544"], :audio}}],
         [{"The next Mattapan train is now boarding.", nil}]
       )
 
@@ -661,7 +659,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned, {"109", ["501", "21000", "507", "21000", "4044", "21000", "544"], :audio}},
+          {:canned, {"109", ["501", "21000", "4044", "21000", "864", "21000", "544"], :audio}},
           {:canned, {"103", ["869"], :audio_visual}}
         ],
         [
@@ -750,9 +748,28 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Ashmont      2 min", "Ashmont      4 min"})
 
-      expect_audios([{:canned, {"90", ["4016", "503", "5002"], :audio}}], [
-        {"The next Ashmont train arrives in 2 minutes.", nil}
-      ])
+      expect_audios(
+        [
+          {:canned,
+           {"115",
+            [
+              "501",
+              "21000",
+              "4016",
+              "21000",
+              "864",
+              "21000",
+              "503",
+              "21000",
+              "504",
+              "21000",
+              "5002",
+              "21000",
+              "505"
+            ], :audio}}
+        ],
+        [{"The next Ashmont train arrives in 2 minutes.", nil}]
+      )
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | prev_prediction_keys: []})
     end
@@ -887,8 +904,40 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned, {"90", ["4016", "503", "5002"], :audio}},
-          {:canned, {"160", ["4016", "503", "5004"], :audio}}
+          {:canned,
+           {"115",
+            [
+              "501",
+              "21000",
+              "4016",
+              "21000",
+              "864",
+              "21000",
+              "503",
+              "21000",
+              "504",
+              "21000",
+              "5002",
+              "21000",
+              "505"
+            ], :audio}},
+          {:canned,
+           {"115",
+            [
+              "667",
+              "21000",
+              "4016",
+              "21000",
+              "864",
+              "21000",
+              "503",
+              "21000",
+              "504",
+              "21000",
+              "5004",
+              "21000",
+              "505"
+            ], :audio}}
         ],
         [
           {"The next Ashmont train arrives in 2 minutes.", nil},
@@ -920,7 +969,23 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned, {"90", ["4016", "503", "5002"], :audio}},
+          {:canned,
+           {"115",
+            [
+              "501",
+              "21000",
+              "4016",
+              "21000",
+              "864",
+              "21000",
+              "503",
+              "21000",
+              "504",
+              "21000",
+              "5002",
+              "21000",
+              "505"
+            ], :audio}},
           {:canned, {"184", ["5511", "5513"], :audio}}
         ],
         [
@@ -970,8 +1035,40 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned, {"141", ["4016", "503"], :audio}},
-          {:canned, {"160", ["4016", "503", "5002"], :audio}}
+          {:canned,
+           {"115",
+            [
+              "501",
+              "21000",
+              "4016",
+              "21000",
+              "864",
+              "21000",
+              "503",
+              "21000",
+              "504",
+              "21000",
+              "5001",
+              "21000",
+              "532"
+            ], :audio}},
+          {:canned,
+           {"115",
+            [
+              "667",
+              "21000",
+              "4016",
+              "21000",
+              "864",
+              "21000",
+              "503",
+              "21000",
+              "504",
+              "21000",
+              "5002",
+              "21000",
+              "505"
+            ], :audio}}
         ],
         [
           {"The next Ashmont train arrives in 1 minute.", nil},
@@ -1021,8 +1118,24 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned, {"109", ["501", "21000", "507", "21000", "4016", "21000", "544"], :audio}},
-          {:canned, {"141", ["4021", "503"], :audio}}
+          {:canned, {"109", ["501", "21000", "4016", "21000", "864", "21000", "544"], :audio}},
+          {:canned,
+           {"115",
+            [
+              "501",
+              "21000",
+              "4021",
+              "21000",
+              "864",
+              "21000",
+              "503",
+              "21000",
+              "504",
+              "21000",
+              "5001",
+              "21000",
+              "532"
+            ], :audio}}
         ],
         [
           {"The next Ashmont train is now boarding.", nil},
@@ -1051,7 +1164,23 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [
           {:canned, {"103", ["32107"], :audio_visual}},
-          {:canned, {"160", ["4016", "503", "5002"], :audio}}
+          {:canned,
+           {"115",
+            [
+              "667",
+              "21000",
+              "4016",
+              "21000",
+              "864",
+              "21000",
+              "503",
+              "21000",
+              "504",
+              "21000",
+              "5002",
+              "21000",
+              "505"
+            ], :audio}}
         ],
         [
           {"Attention passengers: The next Ashmont train is now arriving.",
@@ -1076,7 +1205,23 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned, {"90", ["4016", "503", "5002"], :audio}},
+          {:canned,
+           {"115",
+            [
+              "501",
+              "21000",
+              "4016",
+              "21000",
+              "864",
+              "21000",
+              "503",
+              "21000",
+              "504",
+              "21000",
+              "5002",
+              "21000",
+              "505"
+            ], :audio}},
           {:canned, {"103", ["32104"], :audio_visual}}
         ],
         [
@@ -1115,9 +1260,9 @@ defmodule Signs.RealtimeTest do
             [
               "501",
               "21000",
-              "507",
-              "21000",
               "4016",
+              "21000",
+              "864",
               "21000",
               "533",
               "21000",
@@ -1155,9 +1300,9 @@ defmodule Signs.RealtimeTest do
             [
               "501",
               "21000",
-              "507",
-              "21000",
               "4016",
+              "21000",
+              "864",
               "21000",
               "533",
               "21000",
@@ -1189,7 +1334,32 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [
           {:canned, {"184", ["5511", "5513"], :audio}},
-          {:canned, {"98", ["4000", "503", "5004", "4016"], :audio}}
+          {:canned,
+           {
+             "121",
+             [
+               "501",
+               "21000",
+               "4000",
+               "21000",
+               "864",
+               "21000",
+               "503",
+               "21000",
+               "504",
+               "21000",
+               "5004",
+               "21000",
+               "505",
+               "21000",
+               "851",
+               "21000",
+               "4016",
+               "21000",
+               "529"
+             ],
+             :audio
+           }}
         ],
         [
           {"Southbound trains every 11 to 13 minutes.", nil},
@@ -1731,9 +1901,9 @@ defmodule Signs.RealtimeTest do
             [
               "501",
               "21000",
-              "507",
-              "21000",
               "4100",
+              "21000",
+              "864",
               "21000",
               "533",
               "21000",
@@ -1786,7 +1956,32 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [
           {:canned, {"105", ["787", "21000", "882"], :audio}},
-          {:canned, {"98", ["4000", "503", "5004", "4016"], :audio}}
+          {:canned,
+           {
+             "121",
+             [
+               "501",
+               "21000",
+               "4000",
+               "21000",
+               "864",
+               "21000",
+               "503",
+               "21000",
+               "504",
+               "21000",
+               "5004",
+               "21000",
+               "505",
+               "21000",
+               "851",
+               "21000",
+               "4016",
+               "21000",
+               "529"
+             ],
+             :audio
+           }}
         ],
         [
           {"Southbound service has ended for the night.", nil},
@@ -1870,8 +2065,8 @@ defmodule Signs.RealtimeTest do
 
   defp expect_audios(audios, tts_audios) do
     expect(PaEss.Updater.Mock, :play_message, fn _, list, tts_list, _ ->
-      assert list == audios
-      assert tts_list == tts_audios
+      assert audios == list
+      assert tts_audios == tts_list
       :ok
     end)
   end
