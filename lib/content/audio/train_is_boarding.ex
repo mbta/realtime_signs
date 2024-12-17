@@ -44,18 +44,19 @@ defmodule Content.Audio.TrainIsBoarding do
   end
 
   defimpl Content.Audio do
-    @the_next "501"
-    @train_to "507"
-    @is_now_boarding "544"
-    @on_track_1 "541"
-    @on_track_2 "542"
-
     def to_params(audio) do
-      if PaEss.Utilities.directional_destination?(audio.destination) do
-        do_ad_hoc_message(audio)
-      else
-        do_to_params(audio, PaEss.Utilities.destination_var(audio.destination))
-      end
+      track =
+        case audio.track_number do
+          1 -> [:on_track_1]
+          2 -> [:on_track_2]
+          nil -> []
+        end
+
+      PaEss.Utilities.audio_message(
+        [:the_next] ++
+          PaEss.Utilities.train_description_tokens(audio.destination, audio.route_id) ++
+          [:is_now_boarding] ++ track
+      )
     end
 
     def to_tts(%Content.Audio.TrainIsBoarding{} = audio) do
@@ -71,69 +72,5 @@ defmodule Content.Audio.TrainIsBoarding do
       track = if(audio.track_number, do: " on track #{audio.track_number}", else: ".")
       "The next #{train} is now boarding#{track}"
     end
-
-    defp do_ad_hoc_message(audio) do
-      {:ad_hoc, {tts_text(audio), :audio}}
-    end
-
-    defp do_to_params(%{destination: destination, route_id: "Green-" <> _branch}, destination_var)
-         when destination in [
-                :lechmere,
-                :north_station,
-                :government_center,
-                :park_st,
-                :kenmore,
-                :union_square,
-                :medford_tufts
-              ] do
-      vars = [
-        @the_next,
-        @train_to,
-        destination_var,
-        @is_now_boarding
-      ]
-
-      PaEss.Utilities.take_message(vars, :audio)
-    end
-
-    defp do_to_params(
-           %{route_id: route_id, track_number: track_number},
-           destination_var
-         ) do
-      vars =
-        case {Content.Utilities.route_branch_letter(route_id), track_number} do
-          {nil, nil} ->
-            [
-              @the_next,
-              @train_to,
-              destination_var,
-              @is_now_boarding
-            ]
-
-          {nil, track_number} ->
-            [
-              @the_next,
-              @train_to,
-              destination_var,
-              @is_now_boarding,
-              track(track_number)
-            ]
-
-          {green_line_branch, _track_number} ->
-            [
-              @the_next,
-              PaEss.Utilities.green_line_branch_var(green_line_branch),
-              @train_to,
-              destination_var,
-              @is_now_boarding
-            ]
-        end
-
-      PaEss.Utilities.take_message(vars, :audio)
-    end
-
-    @spec track(Content.Utilities.track_number()) :: String.t()
-    defp track(1), do: @on_track_1
-    defp track(2), do: @on_track_2
   end
 end

@@ -334,6 +334,16 @@ defmodule PaEss.Utilities do
     end
   end
 
+  def train_description_tokens(destination, route_id) do
+    branch = Content.Utilities.route_branch_letter(route_id)
+
+    if branch do
+      [branch, :train_to, {:destination, destination}]
+    else
+      [{:destination, destination}, :train]
+    end
+  end
+
   def crowding_text(crowding_description) do
     case crowding_description do
       {:front, _} -> " The front of the train has more space."
@@ -649,29 +659,51 @@ defmodule PaEss.Utilities do
     the_following_bus_to: "858",
     the_next: "501",
     the_following: "667",
+    train: "864",
     bus_to: "859",
+    train_to: "507",
     departs: "502",
     arrives: "503",
+    is_now_boarding: "544",
     in: "504",
+    is: "533",
+    stopped: "641",
+    stop_away: "535",
+    stops_away: "534",
     upcoming_departures: "548",
     upcoming_arrivals: "550",
     is_now_arriving: "24055",
     upper_level_departures: "616",
     lower_level_departures: "617",
     board_routes_71_and_73_on_upper_level: "618",
+    will_announce_platform_soon: "849",
+    will_announce_platform_later: "857",
     departing: "530",
     arriving: "531",
-    _: "21012",
+    on_track_1: "541",
+    on_track_2: "542",
+    on_the: "851",
+    platform: "529",
+    _: "21000",
+    ",": "21012",
     minute: "532",
     minutes: "505",
     no_service: "879",
     there_is_no: "880",
     bus_service_to: "877",
-    no_bus_service: "878"
+    no_bus_service: "878",
+    b: "536",
+    c: "537",
+    d: "538",
+    e: "539"
   }
 
   def audio_take({:minutes, minutes}) do
     number_var(minutes, :english) || generic_number_var(minutes)
+  end
+
+  def audio_take({:number, number}) do
+    generic_number_var(number)
   end
 
   def audio_take({:headsign, nil}), do: nil
@@ -682,8 +714,30 @@ defmodule PaEss.Utilities do
     end)
   end
 
+  def audio_take({:destination, destination}) do
+    destination_var(destination)
+  end
+
   def audio_take({:route, route}), do: @route_take_lookup[route]
   def audio_take(atom) when is_atom(atom), do: @atom_take_lookup[atom]
+
+  @spec audio_message([term()]) :: Content.Audio.canned_message()
+  def audio_message(items) do
+    vars =
+      Enum.intersperse(items, :_)
+      |> Enum.map(fn item ->
+        case audio_take(item) do
+          nil ->
+            Logger.error("No audio for: #{inspect(item)}")
+            audio_take(:_)
+
+          take ->
+            take
+        end
+      end)
+
+    {:canned, {take_message_id(vars), vars, :audio}}
+  end
 
   @spec paginate_text(String.t(), integer()) :: Content.Message.pages()
   def paginate_text(text, max_length \\ 24) do
