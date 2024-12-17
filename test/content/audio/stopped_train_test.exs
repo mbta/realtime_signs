@@ -7,22 +7,7 @@ defmodule Content.Audio.StoppedTrainTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"115",
-                 [
-                   "501",
-                   "21000",
-                   "4000",
-                   "21000",
-                   "864",
-                   "21000",
-                   "533",
-                   "21000",
-                   "641",
-                   "21000",
-                   "5002",
-                   "21000",
-                   "534"
-                 ], :audio}}
+                {"115", spaced(["501", "4000", "864", "533", "641", "5002", "534"]), :audio}}
     end
 
     test "Uses singular 'stop' if 1 stop away" do
@@ -30,22 +15,7 @@ defmodule Content.Audio.StoppedTrainTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"115",
-                 [
-                   "501",
-                   "21000",
-                   "4000",
-                   "21000",
-                   "864",
-                   "21000",
-                   "533",
-                   "21000",
-                   "641",
-                   "21000",
-                   "5001",
-                   "21000",
-                   "535"
-                 ], :audio}}
+                {"115", spaced(["501", "4000", "864", "533", "641", "5001", "535"]), :audio}}
     end
   end
 
@@ -78,4 +48,6 @@ defmodule Content.Audio.StoppedTrainTest do
       assert Content.Audio.StoppedTrain.from_message(msg) == []
     end
   end
+
+  defp spaced(list), do: Enum.intersperse(list, "21000")
 end
