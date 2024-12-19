@@ -123,8 +123,6 @@ defmodule Signs.RealtimeTest do
       }
   }
 
-  @no_service_audio {:canned, {"107", ["861", "21000", "3005", "21000", "863"], :audio}}
-
   setup :verify_on_exit!
 
   describe "run loop" do
@@ -321,7 +319,11 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
       expect_messages({"No Red Line", ""})
-      expect_audios([@no_service_audio], [{"There is no Red Line service at this station.", nil}])
+
+      expect_audios([{:canned, {"107", spaced(["861", "3005", "863"]), :audio}}], [
+        {"There is no Red Line service at this station.", nil}
+      ])
+
       Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
     end
 
@@ -330,7 +332,7 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
       expect_messages({"No train service", ""})
 
-      expect_audios([{:canned, {"107", ["861", "21000", "864", "21000", "863"], :audio}}], [
+      expect_audios([{:canned, {"107", spaced(["861", "864", "863"]), :audio}}], [
         {"There is no train service at this station.", nil}
       ])
 
@@ -515,7 +517,7 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Mattapan       BRD", "Mattapan     2 min"})
 
       expect_audios(
-        [{:canned, {"109", ["501", "21000", "4100", "21000", "864", "21000", "544"], :audio}}],
+        [{:canned, {"109", spaced(["501", "4100", "864", "544"]), :audio}}],
         [{"The next Mattapan train is now boarding.", nil}]
       )
 
@@ -533,11 +535,7 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Clvlnd Cir     BRD", "Boston Col   3 min"})
 
       expect_audios(
-        [
-          {:canned,
-           {"111", ["501", "21000", "537", "21000", "507", "21000", "4203", "21000", "544"],
-            :audio}}
-        ],
+        [{:canned, {"111", spaced(["501", "537", "507", "4203", "544"]), :audio}}],
         [{"The next C train to Cleveland Circle is now boarding.", nil}]
       )
 
@@ -605,12 +603,8 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned,
-           {"111", ["501", "21000", "538", "21000", "507", "21000", "4084", "21000", "544"],
-            :audio}},
-          {:canned,
-           {"111", ["501", "21000", "536", "21000", "507", "21000", "4202", "21000", "544"],
-            :audio}}
+          {:canned, {"111", spaced(["501", "538", "507", "4084", "544"]), :audio}},
+          {:canned, {"111", spaced(["501", "536", "507", "4202", "544"]), :audio}}
         ],
         [
           {"The next D train to Riverside is now boarding.", nil},
@@ -641,7 +635,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned, {"109", ["501", "21000", "4044", "21000", "864", "21000", "544"], :audio}},
+          {:canned, {"109", spaced(["501", "4044", "864", "544"]), :audio}},
           {:canned, {"103", ["869"], :audio_visual}}
         ],
         [
@@ -1002,7 +996,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned, {"109", ["501", "21000", "4016", "21000", "864", "21000", "544"], :audio}},
+          {:canned, {"109", spaced(["501", "4016", "864", "544"]), :audio}},
           {:canned, {"115", spaced(["501", "4021", "864", "503", "504", "5001", "532"]), :audio}}
         ],
         [
@@ -1609,7 +1603,7 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Service ended", "No Southbound trains"})
 
-      expect_audios([{:canned, {"107", ["884", "21000", "787", "21000", "882"], :audio}}], [
+      expect_audios([{:canned, {"107", spaced(["884", "787", "882"]), :audio}}], [
         {"This platform is closed. Southbound service has ended for the night.", nil}
       ])
 
@@ -1619,7 +1613,7 @@ defmodule Signs.RealtimeTest do
     test "multi-route mezzanine sign, both sides closed" do
       expect_messages({"Station closed", "Service ended for night"})
 
-      expect_audios([{:canned, {"105", ["864", "21000", "882"], :audio}}], [
+      expect_audios([{:canned, {"105", spaced(["864", "882"]), :audio}}], [
         {"Train service has ended for the night.", nil}
       ])
 
@@ -1634,7 +1628,7 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"No Red Line", "Service ended for night"})
 
-      expect_audios([{:canned, {"105", ["3005", "21000", "882"], :audio}}], [
+      expect_audios([{:canned, {"105", spaced(["3005", "882"]), :audio}}], [
         {"Red line service has ended for the night.", nil}
       ])
 
@@ -1675,7 +1669,7 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [
           {:canned, {"115", spaced(["501", "4100", "864", "533", "641", "5008", "534"]), :audio}},
-          {:canned, {"105", ["787", "21000", "882"], :audio}}
+          {:canned, {"105", spaced(["787", "882"]), :audio}}
         ],
         [
           {"The next Mattapan train is stopped 8 stops away", nil},
@@ -1717,7 +1711,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned, {"105", ["787", "21000", "882"], :audio}},
+          {:canned, {"105", spaced(["787", "882"]), :audio}},
           {:canned,
            {"121",
             spaced(["501", "4000", "864", "503", "504", "5004", "505", "851", "4016", "529"]),
