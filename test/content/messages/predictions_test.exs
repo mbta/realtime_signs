@@ -215,9 +215,25 @@ defmodule Content.Message.PredictionsTest do
       assert Content.Message.to_string(msg) == "Ashmont        BRD"
     end
 
+
+    test "put boarding on the sign when train is stopped at terminal and departing in less than 60 seconds" do
+      prediction = %Predictions.Prediction{
+        seconds_until_departure: 59,
+        direction_id: 1,
+        route_id: "Mattapan",
+        destination_stop_id: "70261",
+        stopped_at_predicted_stop?: true,
+        boarding_status: "Stopped at station"
+      }
+
+      msg = Content.Message.Predictions.new(prediction, true, nil)
+
+      assert Content.Message.to_string(msg) == "Ashmont        BRD"
+    end
+
     test "does not put boarding on the sign too early when train is stopped at terminal" do
       prediction = %Predictions.Prediction{
-        seconds_until_departure: 35,
+        seconds_until_departure: 61,
         direction_id: 1,
         route_id: "Mattapan",
         destination_stop_id: "70261",
@@ -228,6 +244,21 @@ defmodule Content.Message.PredictionsTest do
       msg = Content.Message.Predictions.new(prediction, true, nil)
 
       assert Content.Message.to_string(msg) == "Ashmont      1 min"
+    end
+
+    test "puts minutes on sign when train is stopped at terminal but departure is >=1.5 minutes" do
+      prediction = %Predictions.Prediction{
+        seconds_until_departure: 92,
+        direction_id: 1,
+        route_id: "Mattapan",
+        destination_stop_id: "70261",
+        stopped_at_predicted_stop?: true,
+        boarding_status: "Stopped at station"
+      }
+
+      msg = Content.Message.Predictions.new(prediction, true, nil)
+
+      assert Content.Message.to_string(msg) == "Ashmont      2 min"
     end
 
     test "puts 1 min on the sign when train is not boarding, but is predicted to depart in less than a minute when offset" do
