@@ -215,7 +215,6 @@ defmodule Content.Message.PredictionsTest do
       assert Content.Message.to_string(msg) == "Ashmont        BRD"
     end
 
-
     test "put boarding on the sign when train is stopped at terminal and departing in less than 60 seconds" do
       prediction = %Predictions.Prediction{
         seconds_until_departure: 59,
