@@ -9,7 +9,6 @@ defmodule Signs.Utilities.Predictions do
   require Content.Utilities
   alias Signs.Utilities.SourceConfig
 
-  @reverse_prediction_certainty 360
   @max_prediction_sec 60 * 60
   @reverse_prediction_cutoff_sec 20 * 60
 
@@ -53,18 +52,6 @@ defmodule Signs.Utilities.Predictions do
     end
   end
 
-  @spec reverse_prediction?(Predictions.Prediction.t(), boolean()) :: boolean()
-  def reverse_prediction?(%Predictions.Prediction{} = prediction, terminal?) do
-    certainty =
-      if terminal? || !prediction.seconds_until_arrival do
-        prediction.departure_certainty
-      else
-        prediction.arrival_certainty
-      end
-
-    certainty == @reverse_prediction_certainty
-  end
-
   @spec get_passthrough_train_audio(Signs.Realtime.predictions()) :: [Content.Audio.t()]
   def get_passthrough_train_audio({top_predictions, bottom_predictions}) do
     prediction_passthrough_audios(top_predictions) ++
@@ -100,10 +87,10 @@ defmodule Signs.Utilities.Predictions do
     |> Enum.take(1)
   end
 
-  defp approximate_time?(sec, certainty) do
+  defp approximate_time?(sec, prediction_type) do
     sec &&
       (sec > @max_prediction_sec ||
-         (sec > @reverse_prediction_cutoff_sec && certainty == @reverse_prediction_certainty))
+         (sec > @reverse_prediction_cutoff_sec && prediction_type == :reverse))
   end
 
   @spec stopped_train?(Predictions.Prediction.t()) :: boolean()
@@ -111,14 +98,13 @@ defmodule Signs.Utilities.Predictions do
          boarding_status: boarding_status,
          seconds_until_arrival: seconds_until_arrival,
          seconds_until_departure: seconds_until_departure,
-         arrival_certainty: arrival_certainty,
-         departure_certainty: departure_certainty
+         type: type
        }) do
     # Note: This performs a similar (but not identical) calculation to the one in the Message
     # code for determining whether a prediction will show an approximate time. Ideally they
     # should both call the same logic.
-    approximate_arrival? = approximate_time?(seconds_until_arrival, arrival_certainty)
-    approximate_departure? = approximate_time?(seconds_until_departure, departure_certainty)
+    approximate_arrival? = approximate_time?(seconds_until_arrival, type)
+    approximate_departure? = approximate_time?(seconds_until_departure, type)
 
     boarding_status && String.starts_with?(boarding_status, "Stopped") &&
       boarding_status != "Stopped at station" && !approximate_arrival? && !approximate_departure?
