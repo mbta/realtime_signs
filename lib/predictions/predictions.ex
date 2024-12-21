@@ -6,7 +6,7 @@ defmodule Predictions.Predictions do
 
   @spec get_all(map(), DateTime.t()) ::
           {%{
-             optional({String.t(), integer()}) => [Predictions.Prediction.t()]
+             optional({String.t(), integer()}) => [Prediction.t()]
            }, MapSet.t(String.t())}
   def get_all(feed_message, current_time) do
     predictions =
@@ -31,9 +31,7 @@ defmodule Predictions.Predictions do
       trip_update["trip"]["schedule_relationship"] != "CANCELED"
   end
 
-  @spec trip_update_to_predictions(map(), DateTime.t()) :: [
-          {map(), String.t(), String.t(), integer(), String.t(), boolean(), String.t() | nil}
-        ]
+  @spec trip_update_to_predictions(map(), DateTime.t()) :: [Prediction.t()]
   defp trip_update_to_predictions(trip_update, current_time) do
     current_time_seconds = DateTime.to_unix(current_time)
     destination_stop_id = get_destination_stop_id(trip_update)
@@ -175,7 +173,7 @@ defmodule Predictions.Predictions do
            is_nil(stop_time_update["passthrough_time"]))
   end
 
-  @spec is_excluded_prediction_type?(Predictions.Prediction.t()) :: boolean()
+  @spec is_excluded_prediction_type?(Prediction.t()) :: boolean()
   defp is_excluded_prediction_type?(prediction)
        when prediction.route_id in ["Mattapan", "Green-B", "Green-C", "Green-D", "Green-E"],
        do: false
@@ -186,7 +184,7 @@ defmodule Predictions.Predictions do
       else: false
   end
 
-  @spec has_departed?(Predictions.Prediction.t()) :: boolean()
+  @spec has_departed?(Prediction.t()) :: boolean()
   defp has_departed?(prediction) do
     prediction.seconds_until_departure < 0 and not prediction.stopped_at_predicted_stop?
   end
