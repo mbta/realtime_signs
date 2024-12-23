@@ -19,8 +19,7 @@ defmodule Predictions.PredictionsTest do
             %{
               "arrival" => nil,
               "departure" => %{
-                "time" => 1_491_570_120,
-                "uncertainty" => 60
+                "time" => 1_491_570_120
               },
               "stop_id" => "70263",
               "stop_sequence" => 1,
@@ -28,8 +27,7 @@ defmodule Predictions.PredictionsTest do
             },
             %{
               "arrival" => %{
-                "time" => 1_491_570_180,
-                "uncertainty" => 60
+                "time" => 1_491_570_180
               },
               "departure" => nil,
               "stop_id" => "70261",
@@ -50,7 +48,8 @@ defmodule Predictions.PredictionsTest do
             "id" => "G-10040",
             "label" => "3260",
             "license_plate" => nil
-          }
+          },
+          "update_type" => "mid_trip"
         },
         "vehicle" => nil
       }
@@ -69,21 +68,20 @@ defmodule Predictions.PredictionsTest do
           %Predictions.Prediction{
             stop_id: "70261",
             seconds_until_arrival: 180,
-            arrival_certainty: 60,
             direction_id: 0,
             schedule_relationship: :scheduled,
             route_id: "Mattapan",
             destination_stop_id: "70261",
             trip_id: "32568935",
             revenue_trip?: true,
-            vehicle_id: "G-10040"
+            vehicle_id: "G-10040",
+            type: :mid_trip
           }
         ],
         {"70263", 0} => [
           %Predictions.Prediction{
             stop_id: "70263",
             seconds_until_departure: 120,
-            departure_certainty: 60,
             direction_id: 0,
             schedule_relationship: :scheduled,
             route_id: "Mattapan",
@@ -91,7 +89,8 @@ defmodule Predictions.PredictionsTest do
             boarding_status: "Stopped 1 stop away",
             trip_id: "32568935",
             revenue_trip?: true,
-            vehicle_id: "G-10040"
+            vehicle_id: "G-10040",
+            type: :mid_trip
           }
         ]
       }
@@ -112,8 +111,7 @@ defmodule Predictions.PredictionsTest do
                 %{
                   "arrival" => %{
                     "delay" => nil,
-                    "time" => 1_491_570_120,
-                    "uncertainty" => 60
+                    "time" => 1_491_570_120
                   },
                   "departure" => nil,
                   "stop_id" => "70263",
@@ -124,8 +122,7 @@ defmodule Predictions.PredictionsTest do
                 %{
                   "arrival" => %{
                     "delay" => nil,
-                    "time" => 1_491_570_180,
-                    "uncertainty" => 60
+                    "time" => 1_491_570_180
                   },
                   "departure" => nil,
                   "stop_id" => "70261",
@@ -156,7 +153,8 @@ defmodule Predictions.PredictionsTest do
                 "id" => "G-10040",
                 "label" => "3260",
                 "license_plate" => nil
-              }
+              },
+              "update_type" => "mid_trip"
             },
             "vehicle" => nil
           },
@@ -170,8 +168,7 @@ defmodule Predictions.PredictionsTest do
                 %{
                   "arrival" => %{
                     "delay" => nil,
-                    "time" => 1_491_570_200,
-                    "uncertainty" => 60
+                    "time" => 1_491_570_200
                   },
                   "departure" => nil,
                   "stop_id" => "70038",
@@ -182,8 +179,7 @@ defmodule Predictions.PredictionsTest do
                 %{
                   "arrival" => %{
                     "delay" => nil,
-                    "time" => 1_491_570_400,
-                    "uncertainty" => 60
+                    "time" => 1_491_570_400
                   },
                   "departure" => nil,
                   "stop_id" => "70060",
@@ -206,7 +202,8 @@ defmodule Predictions.PredictionsTest do
                 "id" => "vehicle_2",
                 "label" => "3261",
                 "license_plate" => nil
-              }
+              },
+              "update_type" => "mid_trip"
             },
             "vehicle" => nil
           },
@@ -248,56 +245,56 @@ defmodule Predictions.PredictionsTest do
           %Predictions.Prediction{
             stop_id: "70261",
             seconds_until_arrival: 180,
-            arrival_certainty: 60,
             schedule_relationship: :scheduled,
             direction_id: 0,
             route_id: "Mattapan",
             destination_stop_id: "70261",
             trip_id: "32568935",
             revenue_trip?: true,
-            vehicle_id: "G-10040"
+            vehicle_id: "G-10040",
+            type: :mid_trip
           }
         ],
         {"70263", 0} => [
           %Predictions.Prediction{
             stop_id: "70263",
             seconds_until_arrival: 120,
-            arrival_certainty: 60,
             direction_id: 0,
             schedule_relationship: :scheduled,
             route_id: "Mattapan",
             destination_stop_id: "70261",
             trip_id: "32568935",
             revenue_trip?: true,
-            vehicle_id: "G-10040"
+            vehicle_id: "G-10040",
+            type: :mid_trip
           }
         ],
         {"70038", 1} => [
           %Predictions.Prediction{
             stop_id: "70038",
             seconds_until_arrival: 200,
-            arrival_certainty: 60,
             direction_id: 1,
             schedule_relationship: :scheduled,
             route_id: "Blue",
             destination_stop_id: "70060",
             trip_id: "trip_2",
             revenue_trip?: true,
-            vehicle_id: "vehicle_2"
+            vehicle_id: "vehicle_2",
+            type: :mid_trip
           }
         ],
         {"70060", 1} => [
           %Predictions.Prediction{
             stop_id: "70060",
             seconds_until_arrival: 400,
-            arrival_certainty: 60,
             direction_id: 1,
             schedule_relationship: :scheduled,
             route_id: "Blue",
             destination_stop_id: "70060",
             trip_id: "trip_2",
             revenue_trip?: true,
-            vehicle_id: "vehicle_2"
+            vehicle_id: "vehicle_2",
+            type: :mid_trip
           }
         ]
       }
@@ -318,8 +315,7 @@ defmodule Predictions.PredictionsTest do
                 %{
                   "arrival" => %{
                     "delay" => nil,
-                    "time" => Timex.to_unix(@current_time) - 100,
-                    "uncertainty" => 60
+                    "time" => Timex.to_unix(@current_time) - 100
                   },
                   "departure" => nil,
                   "schedule_relationship" => "SCHEDULED",
@@ -372,7 +368,7 @@ defmodule Predictions.PredictionsTest do
               }, _} = get_all(feed_message, @current_time)
     end
 
-    test "include predictions with low uncertainty" do
+    test "include non reverse predictions" do
       reassign_env(:filter_uncertain_predictions?, true)
 
       feed_message = %{
@@ -388,8 +384,7 @@ defmodule Predictions.PredictionsTest do
                   "arrival" => nil,
                   "departure" => %{
                     "delay" => nil,
-                    "time" => 1_491_570_120,
-                    "uncertainty" => 60
+                    "time" => 1_491_570_120
                   },
                   "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70063",
@@ -413,7 +408,8 @@ defmodule Predictions.PredictionsTest do
                 "id" => "R-54639F6C",
                 "label" => "1631",
                 "license_plate" => nil
-              }
+              },
+              "update_type" => "mid_trip"
             },
             "vehicle" => nil
           }
@@ -434,7 +430,7 @@ defmodule Predictions.PredictionsTest do
               }, _} = get_all(feed_message, @current_time)
     end
 
-    test "filter predictions with high uncertainty" do
+    test "filter reverse predictions" do
       reassign_env(:filter_uncertain_predictions?, true)
 
       feed_message = %{
@@ -449,13 +445,11 @@ defmodule Predictions.PredictionsTest do
                 %{
                   "arrival" => %{
                     "delay" => nil,
-                    "time" => 1_491_570_110,
-                    "uncertainty" => 360
+                    "time" => 1_491_570_110
                   },
                   "departure" => %{
                     "delay" => nil,
-                    "time" => 1_491_570_120,
-                    "uncertainty" => 360
+                    "time" => 1_491_570_120
                   },
                   "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70063",
@@ -479,7 +473,8 @@ defmodule Predictions.PredictionsTest do
                 "id" => "R-54639F6C",
                 "label" => "1631",
                 "license_plate" => nil
-              }
+              },
+              "update_type" => "reverse_trip"
             },
             "vehicle" => nil
           }
@@ -496,7 +491,7 @@ defmodule Predictions.PredictionsTest do
       assert predictions_map == %{}
     end
 
-    test "doesn't filter predictions with high uncertainty when feature is off" do
+    test "doesn't filter reverse predictions when feature is off" do
       reassign_env(:filter_uncertain_predictions?, false)
 
       feed_message = %{
@@ -511,13 +506,11 @@ defmodule Predictions.PredictionsTest do
                 %{
                   "arrival" => %{
                     "delay" => nil,
-                    "time" => 1_491_570_110,
-                    "uncertainty" => 360
+                    "time" => 1_491_570_110
                   },
                   "departure" => %{
                     "delay" => nil,
-                    "time" => 1_491_570_120,
-                    "uncertainty" => 360
+                    "time" => 1_491_570_120
                   },
                   "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70063",
@@ -541,7 +534,8 @@ defmodule Predictions.PredictionsTest do
                 "id" => "R-54639F6C",
                 "label" => "1631",
                 "license_plate" => nil
-              }
+              },
+              "update_type" => "reverse_trip"
             },
             "vehicle" => nil
           }
@@ -563,7 +557,7 @@ defmodule Predictions.PredictionsTest do
               }, _} = get_all(feed_message, @current_time)
     end
 
-    test "doesn't filter out uncertain light rail predictions" do
+    test "doesn't filter out light rail reverse predictions" do
       reassign_env(:filter_uncertain_predictions?, true)
 
       feed_message = %{
@@ -578,13 +572,11 @@ defmodule Predictions.PredictionsTest do
                 %{
                   "arrival" => %{
                     "delay" => nil,
-                    "time" => 1_491_570_110,
-                    "uncertainty" => 360
+                    "time" => 1_491_570_110
                   },
                   "departure" => %{
                     "delay" => nil,
-                    "time" => 1_491_570_120,
-                    "uncertainty" => 360
+                    "time" => 1_491_570_120
                   },
                   "schedule_relationship" => "SCHEDULED",
                   "stop_id" => "70263",
@@ -608,7 +600,8 @@ defmodule Predictions.PredictionsTest do
                 "id" => "G-10040",
                 "label" => "3260",
                 "license_plate" => nil
-              }
+              },
+              "update_type" => "reverse_trip"
             },
             "vehicle" => nil
           }

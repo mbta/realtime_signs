@@ -197,12 +197,12 @@ defmodule Signs.Utilities.Messages do
        end, prediction.seconds_until_departure, prediction.seconds_until_arrival}
     end)
     |> then(fn predictions -> if(sign_config == :headway, do: [], else: predictions) end)
-    |> filter_early_am_predictions(config, current_time, scheduled)
+    |> filter_early_am_predictions(current_time, scheduled)
     |> filter_large_red_line_gaps()
     |> get_unique_destination_predictions(Signs.Utilities.SourceConfig.single_route(config))
   end
 
-  defp filter_early_am_predictions(predictions, config, current_time, scheduled) do
+  defp filter_early_am_predictions(predictions, current_time, scheduled) do
     cond do
       !in_early_am?(current_time, scheduled) ->
         predictions
@@ -216,7 +216,7 @@ defmodule Signs.Utilities.Messages do
         # except for Prudential or Symphony EB
         Enum.reject(
           predictions,
-          &(Signs.Utilities.Predictions.reverse_prediction?(&1, config.terminal?) and
+          &(&1.type == :reverse and
               &1.stop_id not in ["70240", "70242"])
         )
     end

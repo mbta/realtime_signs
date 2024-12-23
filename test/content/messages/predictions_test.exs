@@ -72,10 +72,10 @@ defmodule Content.Message.PredictionsTest do
     test "shows approximate minutes for longer turnaround predictions" do
       prediction = %Predictions.Prediction{
         seconds_until_arrival: 25 * 60,
-        arrival_certainty: 360,
         direction_id: 0,
         route_id: "Mattapan",
-        destination_stop_id: "70275"
+        destination_stop_id: "70275",
+        type: :reverse
       }
 
       msg = Content.Message.Predictions.new(prediction, false, nil)
