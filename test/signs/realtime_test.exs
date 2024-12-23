@@ -514,7 +514,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned, {"109", ["501", "21000", "507", "21000", "4100", "21000", "544"], :audio}}
+          {:canned, {"109", ["501", "21000", "4100", "21000", "864", "21000", "544"], :audio}}
         ],
         [{"The next Mattapan train is now boarding.", nil}]
       )
