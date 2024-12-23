@@ -497,6 +497,48 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, @terminal_sign)
     end
 
+    test "When the train is stopped at the terminal and departing in <= 60 seconds, shows BRD" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(
+            destination: :mattapan,
+            stopped: 0,
+            seconds_until_arrival: -1,
+            seconds_until_departure: 60,
+            trip_id: "3"
+          )
+        ]
+      end)
+
+      expect_messages({"Mattapan       BRD", ""})
+
+      expect_audios(
+        [
+          {:canned, {"109", ["501", "21000", "4100", "21000", "864", "21000", "544"], :audio}}
+        ],
+        [{"The next Mattapan train is now boarding.", nil}]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, @terminal_sign)
+    end
+
+    test "When the train is stopped at the terminal and departing in more than 60 seconds, shows mins to departure" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(
+            destination: :mattapan,
+            stopped: 0,
+            seconds_until_arrival: nil,
+            seconds_until_departure: 91,
+            trip_id: "3"
+          )
+        ]
+      end)
+
+      expect_messages({"Mattapan     2 min", ""})
+      Signs.Realtime.handle_info(:run_loop, @terminal_sign)
+    end
+
     test "When the train is stopped a long time away, shows max time instead of stopped" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :mattapan, arrival: 3700, stopped: 8)]
