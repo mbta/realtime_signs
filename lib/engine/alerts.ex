@@ -3,6 +3,7 @@ defmodule Engine.Alerts do
   use GenServer
   require Logger
   alias Engine.Alerts.Fetcher
+  alias Engine.ETS
 
   @type ets_tables :: %{
           stops_table: :ets.tab(),
@@ -101,8 +102,9 @@ defmodule Engine.Alerts do
 
     case state.fetcher.get_statuses(state.all_route_ids) do
       {:ok, %{:stop_statuses => stop_statuses, :route_statuses => route_statuses}} ->
-        replace_contents(state.tables.routes_table, route_statuses)
-        replace_contents(state.tables.stops_table, stop_statuses)
+        ETS.replace_contents(state.tables.routes_table, route_statuses)
+        ETS.replace_contents(state.tables.stops_table, stop_statuses)
+
         Logger.info(
           "Engine.Alerts Stop alert statuses: #{inspect(stop_statuses)} Route alert statuses #{inspect(route_statuses)}"
         )
@@ -122,39 +124,4 @@ defmodule Engine.Alerts do
   defp schedule_fetch(pid, ms) do
     Process.send_after(pid, :fetch, ms)
   end
-
-  # Safely replaces table contents.
-  #
-  # ETS doesn't support atomic bulk writes, so we can't just clear the whole table
-  # (:ets.delete_all_objects/1) and then insert all of the new entries (:ets.insert/2),
-  # because that would leave the table completely empty for a short period,
-  # causing any concurrent reads during that time to fail.
-  #
-  # Instead, we remove only the table entries that are absent from new_entries.
-  defp replace_contents(table, new_entry) when is_tuple(new_entry) do
-    replace_contents(table, [new_entry])
-  end
-
-  defp replace_contents(table, new_entries) do
-    new_keys = MapSet.new(new_entries, &elem(&1, 0))
-    current_table_keys = keys(table)
-
-    removed_keys = MapSet.difference(current_table_keys, new_keys)
-    Enum.each(removed_keys, &:ets.delete(table, &1))
-
-    # Insert/update the new entries. (Analogous to Map.merge/2)
-    :ets.insert(table, new_entries)
-  end
-
-  # Returns a MapSet of all keys in the table.
-  defp keys(table) do
-    keys(table, :ets.first(table), [])
-  end
-
-  defp keys(_table, :"$end_of_table", acc), do: MapSet.new(acc)
-
-  defp keys(table, key, acc) do
-    keys(table, :ets.next(table, key), [key | acc])
-  end
-
 end
