@@ -1,5 +1,6 @@
-defmodule Engine.ETSTest do
+defmodule ETSTest do
   use ExUnit.Case
+  alias Engine.ETS
 
   # Helper to create a temporary ETS table
   defp create_table do
@@ -14,7 +15,7 @@ defmodule Engine.ETSTest do
 
   test "inserts single tuple into an empty table", %{table: table} do
     # Act
-    Engine.ETS.replace_contents(table, {:key1, "value1"})
+    ETS.replace_contents(table, {:key1, "value1"})
 
     # Assert
     assert {:key1, "value1"} in :ets.tab2list(table)
@@ -22,7 +23,7 @@ defmodule Engine.ETSTest do
 
   test "inserts a single entry when new entry is a tuple", %{table: table} do
     # Act
-    Engine.ETS.replace_contents(table, {:key1, "value1"})
+    ETS.replace_contents(table, {:key1, "value1"})
 
     # Assert
     assert {:key1, "value1"} in :ets.tab2list(table)
@@ -30,7 +31,7 @@ defmodule Engine.ETSTest do
 
   test "inserts multiple entries when new entries is a list of tuples", %{table: table} do
     # Act
-    Engine.ETS.replace_contents(table, [{:key1, "value1"}, {:key2, "value2"}, {:key3, "value3"}])
+    ETS.replace_contents(table, [{:key1, "value1"}, {:key2, "value2"}, {:key3, "value3"}])
 
     # Assert
     assert {:key1, "value1"} in :ets.tab2list(table)
@@ -44,7 +45,7 @@ defmodule Engine.ETSTest do
     :ets.insert(table, {:key2, "old_value2"})
 
     # Act
-    Engine.ETS.replace_contents(table, [{:key1, "new_value1"}, {:key3, "new_value3"}])
+    ETS.replace_contents(table, [{:key1, "new_value1"}, {:key3, "new_value3"}])
 
     # Assert
     assert {:key1, "new_value1"} in :ets.tab2list(table)
@@ -58,7 +59,7 @@ defmodule Engine.ETSTest do
     :ets.insert(table, {:key2, "old_value2"})
 
     # Act
-    Engine.ETS.replace_contents(table, [{:key1, "new_value1"}])
+    ETS.replace_contents(table, [{:key1, "new_value1"}])
 
     # Assert
     assert {:key1, "new_value1"} in :ets.tab2list(table)
