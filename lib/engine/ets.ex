@@ -1,6 +1,4 @@
 defmodule Engine.ETS do
-  @alias Engine.ETS
-
   # Safely replaces table contents.
   #
   # ETS doesn't support atomic bulk writes, so we can't just clear the whole table
@@ -33,5 +31,4 @@ defmodule Engine.ETS do
   defp keys(table, key, acc) do
     keys(table, :ets.next(table, key), [key | acc])
   end
-
 end
