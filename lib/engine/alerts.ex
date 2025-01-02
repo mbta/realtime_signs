@@ -3,7 +3,7 @@ defmodule Engine.Alerts do
   use GenServer
   require Logger
   alias Engine.Alerts.Fetcher
-  alias Engine.ETS
+  alias Signs.Utilities.EtsUtils
 
   @type ets_tables :: %{
           stops_table: :ets.tab(),
@@ -102,8 +102,8 @@ defmodule Engine.Alerts do
 
     case state.fetcher.get_statuses(state.all_route_ids) do
       {:ok, %{:stop_statuses => stop_statuses, :route_statuses => route_statuses}} ->
-        ETS.replace_contents(state.tables.routes_table, route_statuses)
-        ETS.replace_contents(state.tables.stops_table, stop_statuses)
+        EtsUtils.replace_contents(state.tables.routes_table, route_statuses)
+        EtsUtils.replace_contents(state.tables.stops_table, stop_statuses)
 
         Logger.info(
           "Engine.Alerts Stop alert statuses: #{inspect(stop_statuses)} Route alert statuses #{inspect(route_statuses)}"

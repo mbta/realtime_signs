@@ -7,6 +7,7 @@ defmodule Engine.Locations do
 
   use GenServer
   require Logger
+  alias Signs.Utilities.EtsUtils
 
   @type state :: %{
           last_modified_vehicle_positions: String.t() | nil,
@@ -67,8 +68,8 @@ defmodule Engine.Locations do
       case download_data(full_url, state.last_modified_vehicle_positions) do
         {:ok, body, new_last_modified} ->
           {locations_by_vehicle, locations_by_stop} = map_locations_data(body)
-          write_ets(state.vehicle_locations_table, locations_by_vehicle, :none)
-          write_ets(state.stop_locations_table, locations_by_stop, [])
+          EtsUtils.write_ets(state.vehicle_locations_table, locations_by_vehicle, :none)
+          EtsUtils.write_ets(state.stop_locations_table, locations_by_stop, [])
           new_last_modified
 
         :error ->
@@ -178,14 +179,5 @@ defmodule Engine.Locations do
 
   defp schedule_update(pid) do
     Process.send_after(pid, :update, 1_000)
-  end
-
-  defp write_ets(table, values, empty_value) do
-    :ets.tab2list(table)
-    |> Enum.map(&{elem(&1, 0), empty_value})
-    |> Map.new()
-    |> Map.merge(values)
-    |> Map.to_list()
-    |> then(&:ets.insert(table, &1))
   end
 end
