@@ -504,7 +504,7 @@ defmodule Signs.RealtimeTest do
             destination: :mattapan,
             seconds_until_departure: 2020,
             stopped: 8,
-            prediction_type: :reverse
+            type: :reverse
           )
         ]
       end)
@@ -1230,8 +1230,8 @@ defmodule Signs.RealtimeTest do
     test "When sign in partial am suppression shows mid-trip and terminal predictions but filters out reverse predictions" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
-          prediction(destination: :ashmont, arrival: 120, prediction_type: :reverse),
-          prediction(destination: :ashmont, arrival: 240, prediction_type: :terminal)
+          prediction(destination: :ashmont, arrival: 120, type: :reverse),
+          prediction(destination: :ashmont, arrival: 240, type: :terminal)
         ]
       end)
 
@@ -1269,13 +1269,13 @@ defmodule Signs.RealtimeTest do
     test "When sign in partial am suppression, filters stopped predictions based on prediction type" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
-          prediction(destination: :ashmont, arrival: 120, stopped: 2, prediction_type: :reverse),
+          prediction(destination: :ashmont, arrival: 120, stopped: 2, type: :reverse),
           prediction(
             destination: :ashmont,
             arrival: 240,
             stopped: 3,
             trip_id: "1",
-            prediction_type: :terminal
+            type: :terminal
           )
         ]
       end)
@@ -1311,7 +1311,7 @@ defmodule Signs.RealtimeTest do
 
     test "mezzanine sign, one line in full am suppression, one line in partial am suppression defaulting to headways" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(arrival: 180, destination: :ashmont, prediction_type: :reverse)]
+        [prediction(arrival: 180, destination: :ashmont, type: :reverse)]
       end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
@@ -1341,7 +1341,7 @@ defmodule Signs.RealtimeTest do
 
     test "mezzanine sign, early am, both lines in partial am suppression defaulting to headways" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(arrival: 180, destination: :ashmont, prediction_type: :reverse)]
+        [prediction(arrival: 180, destination: :ashmont, type: :reverse)]
       end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
@@ -1444,7 +1444,7 @@ defmodule Signs.RealtimeTest do
             destination: :alewife,
             arrival: 240,
             stop_id: "70086",
-            prediction_type: :reverse
+            type: :reverse
           )
         ]
       end)
@@ -1927,7 +1927,7 @@ defmodule Signs.RealtimeTest do
       boarding_status: Keyword.get(opts, :boarding_status),
       revenue_trip?: true,
       vehicle_id: "v1",
-      type: Keyword.get(opts, :prediction_type, :mid_trip)
+      type: Keyword.get(opts, :type, :mid_trip)
     }
   end
 

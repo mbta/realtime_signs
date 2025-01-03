@@ -2,8 +2,6 @@ defmodule Predictions.Predictions do
   alias Predictions.Prediction
   require Logger
 
-  @excluded_prediction_types [:reverse]
-
   @spec get_all(map(), DateTime.t()) ::
           {%{
              optional({String.t(), integer()}) => [Prediction.t()]
@@ -33,33 +31,24 @@ defmodule Predictions.Predictions do
 
   @spec trip_update_to_predictions(map(), DateTime.t()) :: [Prediction.t()]
   defp trip_update_to_predictions(trip_update, current_time) do
-    current_time_seconds = DateTime.to_unix(current_time)
-    destination_stop_id = get_destination_stop_id(trip_update)
     vehicle_id = trip_update["vehicle"]["id"]
-    vehicle_location = Engine.Locations.for_vehicle(vehicle_id)
-    route_id = trip_update["trip"]["route_id"]
-    direction_id = trip_update["trip"]["direction_id"]
-    trip_id = trip_update["trip"]["trip_id"]
-    revenue_trip? = trip_update["trip"]["revenue"]
-    prediction_type = get_prediction_type(trip_update["update_type"])
 
     for stop_time_update <- trip_update["stop_time_update"],
         is_valid_prediction?(stop_time_update),
         prediction =
           build_prediction(
             stop_time_update,
-            destination_stop_id,
+            get_destination_stop_id(trip_update),
             vehicle_id,
-            vehicle_location,
-            route_id,
-            direction_id,
-            trip_id,
-            revenue_trip?,
-            prediction_type,
-            current_time_seconds
+            Engine.Locations.for_vehicle(vehicle_id),
+            trip_update["trip"]["route_id"],
+            trip_update["trip"]["direction_id"],
+            trip_update["trip"]["trip_id"],
+            trip_update["trip"]["revenue"],
+            get_prediction_type(trip_update["update_type"]),
+            DateTime.to_unix(current_time)
           ),
         not has_departed?(prediction),
-        not is_excluded_prediction_type?(prediction),
         do: prediction
   end
 
@@ -173,19 +162,9 @@ defmodule Predictions.Predictions do
            is_nil(stop_time_update["passthrough_time"]))
   end
 
-  @spec is_excluded_prediction_type?(Prediction.t()) :: boolean()
-  defp is_excluded_prediction_type?(prediction)
-       when prediction.route_id in ["Mattapan", "Green-B", "Green-C", "Green-D", "Green-E"],
-       do: false
-
-  defp is_excluded_prediction_type?(prediction) do
-    if Application.get_env(:realtime_signs, :filter_uncertain_predictions?),
-      do: prediction.type in @excluded_prediction_types,
-      else: false
-  end
-
   @spec has_departed?(Prediction.t()) :: boolean()
   defp has_departed?(prediction) do
-    prediction.seconds_until_departure < 0 and not prediction.stopped_at_predicted_stop?
+    not is_nil(prediction.seconds_until_departure) and prediction.seconds_until_departure < 0 and
+      not prediction.stopped_at_predicted_stop?
   end
 end
