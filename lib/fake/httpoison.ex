@@ -70,8 +70,7 @@ defmodule Fake.HTTPoison do
               "stop_time_update" => [
                 %{
                   "arrival" => %{
-                    "time" => 1_491_570_120,
-                    "uncertainty" => nil
+                    "time" => 1_491_570_120
                   },
                   "departure" => nil,
                   "schedule_relationship" => "SCHEDULED",
@@ -80,8 +79,7 @@ defmodule Fake.HTTPoison do
                 },
                 %{
                   "arrival" => %{
-                    "time" => 1_491_570_180,
-                    "uncertainty" => nil
+                    "time" => 1_491_570_180
                   },
                   "departure" => nil,
                   "schedule_relationship" => "SCHEDULED",
@@ -243,8 +241,7 @@ defmodule Fake.HTTPoison do
               "stop_time_update" => [
                 %{
                   "arrival" => %{
-                    "time" => 1_491_570_180,
-                    "uncertainty" => 60
+                    "time" => 1_491_570_180
                   },
                   "departure" => nil,
                   "stop_id" => "stop_to_update",
@@ -299,8 +296,7 @@ defmodule Fake.HTTPoison do
                 %{
                   "arrival" => %{
                     "delay" => nil,
-                    "time" => 1_491_570_080,
-                    "uncertainty" => nil
+                    "time" => 1_491_570_080
                   },
                   "departure" => nil,
                   "schedule_relationship" => "SCHEDULED",

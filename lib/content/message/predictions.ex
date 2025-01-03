@@ -35,7 +35,6 @@ defmodule Content.Message.Predictions do
       end
 
     min = round(sec / 60)
-    reverse_prediction? = Signs.Utilities.Predictions.reverse_prediction?(prediction, terminal?)
 
     {minutes, approximate?} =
       cond do
@@ -43,7 +42,7 @@ defmodule Content.Message.Predictions do
         !terminal? and sec <= 30 -> {:arriving, false}
         !terminal? and sec <= 60 -> {:approaching, false}
         min > 60 -> {60, true}
-        reverse_prediction? and min > 20 -> {div(min, 10) * 10, true}
+        prediction.type == :reverse and min > 20 -> {div(min, 10) * 10, true}
         true -> {max(min, 1), false}
       end
 
