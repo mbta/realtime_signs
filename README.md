@@ -9,6 +9,7 @@ Here's a general overview of the realtime_signs application which should be help
 
 ## Development
 
+* If it's your first time using asdf, run `asdf plugin add erlang && asdf plugin add elixir`.
 * Run `asdf install` from the repository root.
   <!-- Remove this if upgrading the Erlang/OTP version beyond 25 -->
   * Note: If running macOS Sonoma on an Apple Silicon (ARM) machine, use `KERL_CONFIGURE_OPTIONS="--disable-jit" asdf install`[^1]

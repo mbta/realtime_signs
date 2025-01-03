@@ -11,6 +11,7 @@ defmodule Engine.Predictions do
 
   use GenServer
   require Logger
+  alias Signs.Utilities.EtsUtils
 
   defstruct last_modified: nil,
             trip_updates_table: :trip_updates,
@@ -71,12 +72,7 @@ defmodule Engine.Predictions do
           Predictions.LastTrip.get_recent_departures(parsed_json)
           |> Engine.LastTrip.update_recent_departures()
 
-          :ets.tab2list(state.trip_updates_table)
-          |> Enum.map(&{elem(&1, 0), []})
-          |> Map.new()
-          |> Map.merge(new_predictions)
-          |> Map.to_list()
-          |> then(&:ets.insert(state.trip_updates_table, &1))
+          EtsUtils.write_ets(state.trip_updates_table, new_predictions, [])
 
           :ets.insert(state.revenue_vehicles_table, {:all, vehicles_running_revenue_trips})
 
