@@ -5,220 +5,147 @@ defmodule Monitoring.Uptime do
   def monitor_node_uptime(nodes, timestamp) do
     {:ok, date_time} = DateTime.from_unix(timestamp, :second)
 
-    {splunk_time, :ok} =
-      :timer.tc(fn ->
-        Enum.each(nodes, fn node ->
-          log_node_status(node, date_time)
-        end)
-      end)
+    Enum.each(nodes, fn node ->
+      prefix = get_prefix(node)
 
-    Logger.info("arinc_status_to_splunk_ms: #{div(splunk_time, 1000)}")
+      log_fields =
+        case prefix do
+          "software_uptime" ->
+            get_live_pa_app_fields(node)
+
+          "headend_server_stats" ->
+            get_headend_server_fields(node)
+
+          "live_pa_connectivity" ->
+            get_live_pa_connectivity_fields(node)
+
+          "device_uptime" ->
+            get_device_status_fields(node)
+
+          "unknown" ->
+            Logger.warn("unknown_node: ", inspect(node))
+            []
+        end
+
+      log(prefix, date_time, log_fields)
+    end)
   end
 
-  defp log_node_status(
-         %{
-           "IPAddress" => ip_address,
-           "Uptime" => uptime,
-           "TotalMemory" => total_memory,
-           "Total_C_Space" => total_c_space,
-           "Total_D_Space" => total_d_space,
-           "AvailableMemory" => available_memory,
-           "Available_C_Space" => available_c_space,
-           "Available_D_Space" => available_d_space
-         },
-         date_time
-       ) do
+  defp get_prefix(%{"sw_component" => _}), do: "software_uptime"
+  defp get_prefix(%{"TotalMemory" => _}), do: "headend_server_stats"
+  defp get_prefix(%{"Location ID" => _}), do: "live_pa_connectivity"
+  defp get_prefix(%{"node_type" => _}), do: "device_uptime"
+  defp get_prefix(_), do: "unknown"
+
+  defp get_live_pa_connectivity_fields(%{
+         "Location ID" => station_code,
+         "IP Address" => ip_address,
+         "Status" => status
+       }) do
+    [
+      station_code: station_code,
+      ip_address: ip_address,
+      status: String.replace(status, " ", "_")
+    ]
+  end
+
+  defp get_headend_server_fields(%{
+         "IPAddress" => ip_address,
+         "Uptime" => uptime,
+         "TotalMemory" => total_memory,
+         "Total_C_Space" => total_c_space,
+         "Total_D_Space" => total_d_space,
+         "AvailableMemory" => available_memory,
+         "Available_C_Space" => available_c_space,
+         "Available_D_Space" => available_d_space
+       }) do
     [days, hours, minutes] =
       String.split(uptime, ",")
       |> Enum.map(&(String.trim_leading(&1) |> String.split() |> List.first()))
 
-    Logger.info([
-      "headend_server_stats: ",
-      "date_time=",
-      DateTime.to_string(date_time),
-      " ip_address=",
-      ip_address,
-      " uptime_days=",
-      days,
-      " uptime_hours=",
-      hours,
-      " uptime_minutes=",
-      minutes,
-      " total_memory=",
-      total_memory,
-      " total_c_space=",
-      total_c_space,
-      " total_d_space=",
-      total_d_space,
-      " available_memory=",
-      available_memory,
-      " available_c_space=",
-      available_c_space,
-      " available_d_space=",
-      available_d_space
-    ])
+    [
+      ip_address: ip_address,
+      uptime_days: days,
+      uptime_hours: hours,
+      uptime_minutes: minutes,
+      total_memory: total_memory,
+      total_c_space: total_c_space,
+      total_d_space: total_d_space,
+      available_memory: available_memory,
+      available_c_space: available_c_space,
+      available_d_space: available_d_space
+    ]
   end
 
-  defp log_node_status(
-         %{"sw_component" => _, "is_online" => is_online, "status" => status} = node,
-         date_time
-       ) do
-    case get_software_component_type(node) do
-      :live_pa ->
-        Logger.info([
-          "software_uptime: ",
-          "date_time=",
-          DateTime.to_string(date_time),
-          " application=live_pa",
-          " is_online=",
-          is_online,
-          " status=",
-          status
-        ])
-
-      _ ->
-        Logger.warn(
-          "Received uptime info of a node with an unknown or unspecified type #{inspect(node)}"
-        )
-    end
+  defp get_live_pa_app_fields(%{
+         "sw_component" => sw_component,
+         "is_online" => is_online,
+         "status" => status
+       }) do
+    [
+      application: String.replace(sw_component, " ", "_"),
+      is_online: is_online,
+      status: status
+    ]
   end
 
-  defp log_node_status(
-         %{"description" => description, "is_online" => is_online} = node,
-         date_time
-       ) do
-    case get_device_type(node) do
-      :scu ->
-        [line, station, scu_id | _] = String.split(description, ":")
+  defp get_device_status_fields(%{"description" => description, "is_online" => is_online} = node) do
+    device_type = get_device_type(node)
 
-        Logger.info([
-          "device_uptime: ",
-          "date_time=",
-          DateTime.to_string(date_time),
-          " device_type=scu",
-          " line=",
-          line,
-          " station=",
-          String.replace(station, " ", "_"),
-          " scu_id=",
-          scu_id,
-          " is_online=",
-          is_online
-        ])
+    [line, station, device_id, maybe_sign_zone] = String.split(description, ":")
 
-      :sign ->
-        [line, station, sign_id, sign_zone] = String.split(description, ":")
+    log_fields = [
+      node_type: device_type,
+      line: line,
+      station: String.replace(station, " ", "_"),
+      device_id: device_id,
+      is_online: is_online
+    ]
 
-        Logger.info([
-          "device_uptime: ",
-          "date_time=",
-          DateTime.to_string(date_time),
-          " device_type=sign",
-          " line=",
-          line,
-          " station=",
-          String.replace(station, " ", "_"),
-          " sign_id=",
-          sign_id,
-          " sign_zone=",
-          sign_zone,
-          " is_online=",
-          is_online
-        ])
-
-      :dsp ->
-        [line, station, dsp_id | _] = String.split(description, ":")
-
-        Logger.info([
-          "device_uptime: ",
-          "date_time=",
-          DateTime.to_string(date_time),
-          " device_type=dsp",
-          " line=",
-          line,
-          " station=",
-          String.replace(station, " ", "_"),
-          " dsp_id=",
-          dsp_id,
-          " is_online=",
-          is_online
-        ])
-
-      :amplifier ->
-        [line, station, amp_id | _] = String.split(description, ":")
-
-        Logger.info([
-          "device_uptime: ",
-          "date_time=",
-          DateTime.to_string(date_time),
-          " device_type=amp",
-          " line=",
-          line,
-          " station=",
-          String.replace(station, " ", "_"),
-          " amp_id=",
-          amp_id,
-          " is_online=",
-          is_online
-        ])
-
-      :comrex ->
-        [line, station, comrex_id | _] = String.split(description, ":")
-
-        Logger.info([
-          "device_uptime: ",
-          "date_time=",
-          DateTime.to_string(date_time),
-          " device_type=comrex",
-          " line=",
-          line,
-          " station=",
-          String.replace(station, " ", "_"),
-          " comrex_id=",
-          comrex_id,
-          " is_online=",
-          is_online
-        ])
-
-      _ ->
-        Logger.info("unknown_node_type: #{inspect(node)}")
-    end
+    if device_type == "sign",
+      do: log_fields ++ [sign_zone: maybe_sign_zone],
+      else: log_fields
   end
 
-  defp get_software_component_type(%{"sw_component" => sw_component}) do
-    case sw_component do
-      "Live PA" ->
-        :live_pa
-
-      _ ->
-        :unknown
-    end
-  end
-
-  defp get_device_type(%{"node_type" => node_type} = _node) do
+  defp get_device_type(%{"node_type" => node_type}) do
     case node_type do
       "SGN" ->
-        :sign
+        "sign"
 
       "PSS" ->
-        :scu
+        "scu"
 
       "P8810" ->
-        :dsp
+        "dsp"
 
       "BLU-80" ->
-        :dsp
+        "dsp"
 
       "C4200" ->
-        :amplifier
+        "amplifier"
 
       "DGTY" ->
-        :comrex
+        "comrex"
 
       _ ->
-        :unknown
+        "unknown"
     end
   end
 
-  defp get_device_type(_), do: :unspecified
+  def log(_, _, []) do
+    nil
+  end
+
+  def log(prefix, date_time, fields) do
+    base = [
+      "#{prefix}: ",
+      "date_time=",
+      DateTime.to_string(date_time)
+    ]
+
+    Enum.reduce(fields, base, fn {k, v}, acc ->
+      acc ++ [" #{Atom.to_string(k)}=", v]
+    end)
+    |> Logger.info()
+  end
 end
