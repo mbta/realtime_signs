@@ -2,6 +2,8 @@ defmodule Predictions.Predictions do
   alias Predictions.Prediction
   require Logger
 
+  @excluded_prediction_types []
+
   @spec get_all(map(), DateTime.t()) ::
           {%{
              optional({String.t(), integer()}) => [Prediction.t()]
@@ -49,6 +51,7 @@ defmodule Predictions.Predictions do
             DateTime.to_unix(current_time)
           ),
         not has_departed?(prediction),
+        not is_excluded_prediction_type?(prediction),
         do: prediction
   end
 
@@ -160,6 +163,15 @@ defmodule Predictions.Predictions do
   defp is_valid_prediction?(stop_time_update) do
     not (is_nil(stop_time_update["arrival"]) and is_nil(stop_time_update["departure"]) and
            is_nil(stop_time_update["passthrough_time"]))
+  end
+
+  @spec is_excluded_prediction_type?(Prediction.t()) :: boolean()
+  defp is_excluded_prediction_type?(prediction)
+       when prediction.route_id in ["Mattapan", "Green-B", "Green-C", "Green-D", "Green-E"],
+       do: false
+
+  defp is_excluded_prediction_type?(prediction) do
+    prediction.type in @excluded_prediction_types
   end
 
   @spec has_departed?(Prediction.t()) :: boolean()
