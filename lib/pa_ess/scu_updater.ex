@@ -7,7 +7,6 @@ defmodule PaEss.ScuUpdater do
   end
 
   @impl true
-  @spec init(any()) :: {:consumer, %{}, [{:subscribe_to, [...]}, ...]}
   def init(id) do
     {:consumer, %{}, subscribe_to: [{PaEss.ScuQueue.stage_name(id), []}]}
   end
