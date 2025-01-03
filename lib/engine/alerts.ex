@@ -102,8 +102,8 @@ defmodule Engine.Alerts do
 
     case state.fetcher.get_statuses(state.all_route_ids) do
       {:ok, %{:stop_statuses => stop_statuses, :route_statuses => route_statuses}} ->
-        EtsUtils.replace_contents(state.tables.routes_table, route_statuses)
-        EtsUtils.replace_contents(state.tables.stops_table, stop_statuses)
+        EtsUtils.write_ets(state.tables.routes_table, route_statuses, :none)
+        EtsUtils.write_ets(state.tables.stops_table, stop_statuses, :none)
 
         Logger.info(
           "Engine.Alerts Stop alert statuses: #{inspect(stop_statuses)} Route alert statuses #{inspect(route_statuses)}"

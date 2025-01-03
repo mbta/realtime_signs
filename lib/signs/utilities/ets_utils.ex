@@ -4,7 +4,8 @@ defmodule Signs.Utilities.EtsUtils do
   and then merging new values into the table.
   Existing values will be overwritten with the empty_value in ETS.
   """
-  def write_ets(table, values, empty_value) do
+  @spec write_ets(:ets.tab(), map(), any()) :: boolean()
+  def write_ets(table, values, empty_value) when is_map(values) do
     :ets.tab2list(table)
     |> Enum.map(&{elem(&1, 0), empty_value})
     |> Map.new()
@@ -13,23 +14,13 @@ defmodule Signs.Utilities.EtsUtils do
     |> then(&:ets.insert(table, &1))
   end
 
-  @doc "Writes new key-values to table and removes any existing keys from ETS that aren't in new_entries."
-  def replace_contents(table, new_entry) when is_tuple(new_entry) do
-    replace_contents(table, [new_entry])
+  @spec write_ets(:ets.tab(), [{any(), any()}], any()) :: boolean()
+  def write_ets(table, values_list, empty_value) when is_list(values_list) do
+    write_ets(table, Map.new(values_list), empty_value)
   end
 
-  def replace_contents(table, new_entries) do
-    new_keys = MapSet.new(new_entries, &elem(&1, 0))
-
-    current_table_keys =
-      table
-      |> :ets.tab2list()
-      |> Enum.map(fn {key, _value} -> key end)
-      |> MapSet.new()
-
-    removed_keys = MapSet.difference(current_table_keys, new_keys)
-    Enum.each(removed_keys, &:ets.delete(table, &1))
-
-    :ets.insert(table, Enum.into(new_entries, []))
+  @spec write_ets(:ets.tab(), {any(), any()}, any()) :: boolean()
+  def write_ets(table, single_tuple, empty_value) when is_tuple(single_tuple) do
+    write_ets(table, Map.new([single_tuple]), empty_value)
   end
 end
