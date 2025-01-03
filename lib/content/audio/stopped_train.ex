@@ -35,27 +35,14 @@ defmodule Content.Audio.StoppedTrain do
   end
 
   defimpl Content.Audio do
-    @the_next "501"
-    @train_to "507"
-    @is "533"
-    @stopped "641"
-
     def to_params(audio) do
-      if Utilities.directional_destination?(audio.destination) do
-        do_ad_hoc_message(audio)
-      else
-        vars = [
-          @the_next,
-          @train_to,
-          PaEss.Utilities.destination_var(audio.destination),
-          @is,
-          @stopped,
-          number_var(audio.stops_away),
-          stops_away_var(audio.stops_away)
-        ]
+      stops_away = if(audio.stops_away == 1, do: :stop_away, else: :stops_away)
 
-        PaEss.Utilities.take_message(vars, :audio)
-      end
+      PaEss.Utilities.audio_message(
+        [:the_next] ++
+          PaEss.Utilities.train_description_tokens(audio.destination, audio.route_id) ++
+          [:is, :stopped, {:number, audio.stops_away}, stops_away]
+      )
     end
 
     def to_tts(%Content.Audio.StoppedTrain{} = audio) do
@@ -70,17 +57,6 @@ defmodule Content.Audio.StoppedTrain do
       train = Utilities.train_description(audio.destination, audio.route_id)
       stop_or_stops = if audio.stops_away == 1, do: "stop", else: "stops"
       "The next #{train} is stopped #{audio.stops_away} #{stop_or_stops} away"
-    end
-
-    defp do_ad_hoc_message(audio) do
-      {:ad_hoc, {tts_text(audio), :audio}}
-    end
-
-    defp stops_away_var(1), do: "535"
-    defp stops_away_var(_plural), do: "534"
-
-    defp number_var(n) when n >= 0 and n <= 100 do
-      Integer.to_string(5000 + n)
     end
   end
 end
