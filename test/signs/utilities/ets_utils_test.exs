@@ -13,10 +13,6 @@ defmodule EtsUtilsTest do
     {:ok, table: table}
   end
 
-  ###################################################################
-  # write_ets tests
-  ###################################################################
-
   test "inserts a single key-value pair into the table", %{table: table} do
     # Act
     EtsUtils.write_ets(table, %{:key1 => "value1"}, :none)
