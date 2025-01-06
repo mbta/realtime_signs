@@ -125,9 +125,9 @@ defmodule Monitoring.Uptime do
   defp log(fields) do
     formatted_fields =
       Enum.map(fields, fn {k, v} ->
-        " #{k}=#{v}"
+        "#{k}=#{v}"
       end)
-      |> Enum.join()
+      |> Enum.join(" ")
 
     Logger.info(formatted_fields)
   end

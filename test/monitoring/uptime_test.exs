@@ -53,7 +53,7 @@ defmodule Monitoring.UptimeTest do
       end)
 
     assert log =~
-             " date_time=2009-02-13 23:31:30Z tag=device_uptime node_type=unknown line=line station=station device_id=UNITTESTSIGN001 is_online=true"
+             "date_time=2009-02-13 23:31:30Z tag=device_uptime node_type=unknown line=line station=station device_id=UNITTESTSIGN001 is_online=true"
   end
 
   test "Processes live PA connectivity" do
