@@ -16,6 +16,8 @@ defmodule Monitoring.UptimeTest do
         Monitoring.Uptime.monitor_nodes(nodes, 1_234_567_890)
       end)
 
+    IO.inspect(log)
+
     assert log =~
              "node_type=scu line=line station=station device_id=UNITTESTSCU001 is_online=true"
   end
@@ -38,20 +40,22 @@ defmodule Monitoring.UptimeTest do
              "node_type=sign line=line station=station device_id=UNITTESTSIGN001 is_online=true sign_zone=C"
   end
 
-  test "Test unspecified node type" do
+  test "Logs unknown node type" do
     nodes = [
       %{
         "description" => "line:station:UNITTESTSIGN001:C",
-        "is_online" => "true"
+        "is_online" => "true",
+        "node_type" => "unknown_node"
       }
     ]
 
     log =
-      capture_log([level: :warn], fn ->
+      capture_log([level: :info], fn ->
         Monitoring.Uptime.monitor_nodes(nodes, 1_234_567_890)
       end)
 
-    assert log =~ "unknown_node"
+    assert log =~
+             " date_time=2009-02-13 23:31:30Z tag=device_uptime node_type=unknown line=line station=station device_id=UNITTESTSIGN001 is_online=true"
   end
 
   test "Processes live PA connectivity" do
@@ -69,7 +73,7 @@ defmodule Monitoring.UptimeTest do
       end)
 
     assert log =~
-             "node_type=live_pa_connectivity station_code=TEST ip_address=0.0.0.0 status=Timed_out"
+             "date_time=2009-02-13 23:31:30Z tag=live_pa_connectivity station_code=TEST ip_address=0.0.0.0 status=Timed_out"
   end
 
   test "Processes live PA application status" do
@@ -109,6 +113,6 @@ defmodule Monitoring.UptimeTest do
       end)
 
     assert log =~
-             "node_type=headend_server ip_address=0.0.0.0 uptime_days=864 uptime_hours=21 uptime_minutes=55 total_memory=127.69 total_c_space=60 total_d_space=60 available_memory=71.27 available_c_space=29.78 available_d_space=29.78"
+             "date_time=2009-02-13 23:31:30Z tag=headend_server_stats ip_address=0.0.0.0 uptime_days=864 uptime_hours=21 uptime_minutes=55 total_memory=127.69 total_c_space=60 total_d_space=60 available_memory=71.27 available_c_space=29.78 available_d_space=29.78"
   end
 end

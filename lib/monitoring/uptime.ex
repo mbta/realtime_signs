@@ -6,51 +6,31 @@ defmodule Monitoring.Uptime do
     {:ok, date_time} = DateTime.from_unix(timestamp, :second)
 
     Enum.each(nodes, fn node ->
-      prefix = get_prefix(node)
+      case get_log_fields(node) do
+        {:ok, log_fields} ->
+          log([date_time: date_time] ++ log_fields)
 
-      log_fields =
-        case prefix do
-          "software_uptime" ->
-            get_live_pa_app_fields(node)
-
-          "headend_server_stats" ->
-            get_headend_server_fields(node)
-
-          "live_pa_connectivity" ->
-            get_live_pa_connectivity_fields(node)
-
-          "device_uptime" ->
-            get_device_status_fields(node)
-
-          "unknown" ->
-            Logger.warn("unknown_node: #{inspect(node)}")
-            []
-        end
-
-      log(prefix, date_time, log_fields)
+        :error ->
+          Logger.warn("unknown_node: #{inspect(node)}")
+      end
     end)
   end
 
-  defp get_prefix(%{"sw_component" => _}), do: "software_uptime"
-  defp get_prefix(%{"TotalMemory" => _}), do: "headend_server_stats"
-  defp get_prefix(%{"Location ID" => _}), do: "live_pa_connectivity"
-  defp get_prefix(%{"node_type" => _}), do: "device_uptime"
-  defp get_prefix(_), do: "unknown"
-
-  defp get_live_pa_connectivity_fields(%{
+  defp get_log_fields(%{
          "Location ID" => station_code,
          "IP Address" => ip_address,
          "Status" => status
        }) do
-    [
-      node_type: "live_pa_connectivity",
-      station_code: station_code,
-      ip_address: ip_address,
-      status: String.replace(status, " ", "_")
-    ]
+    {:ok,
+     [
+       tag: "live_pa_connectivity",
+       station_code: station_code,
+       ip_address: ip_address,
+       status: String.replace(status, " ", "_")
+     ]}
   end
 
-  defp get_headend_server_fields(%{
+  defp get_log_fields(%{
          "IPAddress" => ip_address,
          "Uptime" => uptime,
          "TotalMemory" => total_memory,
@@ -64,39 +44,43 @@ defmodule Monitoring.Uptime do
       String.split(uptime, ",")
       |> Enum.map(&(String.trim_leading(&1) |> String.split() |> List.first()))
 
-    [
-      node_type: "headend_server",
-      ip_address: ip_address,
-      uptime_days: days,
-      uptime_hours: hours,
-      uptime_minutes: minutes,
-      total_memory: total_memory,
-      total_c_space: total_c_space,
-      total_d_space: total_d_space,
-      available_memory: available_memory,
-      available_c_space: available_c_space,
-      available_d_space: available_d_space
-    ]
+    {:ok,
+     [
+       tag: "headend_server_stats",
+       ip_address: ip_address,
+       uptime_days: days,
+       uptime_hours: hours,
+       uptime_minutes: minutes,
+       total_memory: total_memory,
+       total_c_space: total_c_space,
+       total_d_space: total_d_space,
+       available_memory: available_memory,
+       available_c_space: available_c_space,
+       available_d_space: available_d_space
+     ]}
   end
 
-  defp get_live_pa_app_fields(%{
+  defp get_log_fields(%{
          "sw_component" => sw_component,
          "is_online" => is_online,
          "status" => status
        }) do
-    [
-      node_type: String.replace(sw_component, " ", "_"),
-      is_online: is_online,
-      status: status
-    ]
+    {:ok,
+     [
+       tag: "software_uptime",
+       node_type: String.replace(sw_component, " ", "_"),
+       is_online: is_online,
+       status: status
+     ]}
   end
 
-  defp get_device_status_fields(%{"description" => description, "is_online" => is_online} = node) do
+  defp get_log_fields(%{"description" => description, "is_online" => is_online} = node) do
     node_type = get_node_type(node)
 
     [line, station, device_id, maybe_sign_zone] = String.split(description, ":")
 
     log_fields = [
+      tag: "device_uptime",
       node_type: node_type,
       line: line,
       station: String.replace(station, " ", "_"),
@@ -104,10 +88,14 @@ defmodule Monitoring.Uptime do
       is_online: is_online
     ]
 
-    if node_type == "sign",
-      do: log_fields ++ [sign_zone: maybe_sign_zone],
-      else: log_fields
+    {:ok,
+     if(node_type == "sign",
+       do: log_fields ++ [sign_zone: maybe_sign_zone],
+       else: log_fields
+     )}
   end
+
+  defp get_log_fields(_), do: :error
 
   defp get_node_type(%{"node_type" => node_type}) do
     case node_type do
@@ -134,22 +122,13 @@ defmodule Monitoring.Uptime do
     end
   end
 
-  def log(_, _, []) do
-    nil
-  end
-
-  def log(prefix, date_time, fields) do
-    base = [
-      "#{prefix}: ",
-      "date_time=",
-      DateTime.to_string(date_time)
-    ]
-
+  defp log(fields) do
     formatted_fields =
-      Enum.flat_map(fields, fn {k, v} ->
-        [" #{Atom.to_string(k)}=", v]
+      Enum.map(fields, fn {k, v} ->
+        " #{k}=#{v}"
       end)
+      |> Enum.join()
 
-    Logger.info(base ++ formatted_fields)
+    Logger.info(formatted_fields)
   end
 end
