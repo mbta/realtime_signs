@@ -16,8 +16,6 @@ defmodule Monitoring.UptimeTest do
         Monitoring.Uptime.monitor_nodes(nodes, 1_234_567_890)
       end)
 
-    IO.inspect(log)
-
     assert log =~
              "node_type=scu line=line station=station device_id=UNITTESTSCU001 is_online=true"
   end
