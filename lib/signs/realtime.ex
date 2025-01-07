@@ -213,14 +213,18 @@ defmodule Signs.Realtime do
       SourceConfig.sign_stop_ids(source)
       |> Stream.flat_map(&sign.last_trip_engine.get_recent_departures(&1))
       |> Enum.count(fn {trip_id, departure_time} ->
-        # Use a 3 second buffer to make sure trips have fully departed
-        DateTime.to_unix(current_time) - DateTime.to_unix(departure_time) > 3 and
+        trip_departed?(departure_time, current_time) and
           sign.last_trip_engine.is_last_trip?(trip_id)
       end)
 
     # Red line trunk should wait for two last trips, one for each branch
     threshold = if(source.headway_group == "red_trunk", do: 2, else: 1)
     num_last_trips >= threshold
+  end
+
+  defp trip_departed?(departure_time, current_time) do
+    # Use a 3 second buffer to make sure trips have fully departed
+    DateTime.to_unix(current_time) - DateTime.to_unix(departure_time) > 3
   end
 
   defp prediction_key(prediction) do
