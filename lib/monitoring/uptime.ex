@@ -77,7 +77,8 @@ defmodule Monitoring.Uptime do
   defp get_log_fields(%{"description" => description, "is_online" => is_online} = node) do
     node_type = get_node_type(node)
 
-    [line, station, device_id, maybe_sign_zone] = String.split(description, ":")
+    [line, station, device_id, maybe_sign_zone] =
+      String.split(description, ":") |> Enum.concat([nil]) |> Enum.take(4)
 
     log_fields = [
       tag: "device_uptime",
