@@ -9,9 +9,6 @@ defmodule Signs.Utilities.Predictions do
   require Content.Utilities
   alias Signs.Utilities.SourceConfig
 
-  @max_prediction_sec 60 * 60
-  @reverse_prediction_cutoff_sec 20 * 60
-
   def prediction_message(predictions, config, sign) do
     case prediction_messages(predictions, config, sign) do
       nil -> nil
@@ -27,7 +24,7 @@ defmodule Signs.Utilities.Predictions do
   def prediction_messages(predictions, %{terminal?: terminal?}, sign) do
     predictions
     |> Enum.map(fn prediction ->
-      if stopped_train?(prediction) do
+      if PaEss.Utilities.prediction_stopped?(prediction, terminal?) do
         Content.Message.StoppedTrain.from_prediction(prediction)
       else
         special_sign =
@@ -85,28 +82,5 @@ defmodule Signs.Utilities.Predictions do
       ]
     end)
     |> Enum.take(1)
-  end
-
-  defp approximate_time?(sec, prediction_type) do
-    sec &&
-      (sec > @max_prediction_sec ||
-         (sec > @reverse_prediction_cutoff_sec && prediction_type == :reverse))
-  end
-
-  @spec stopped_train?(Predictions.Prediction.t()) :: boolean()
-  defp stopped_train?(%{
-         boarding_status: boarding_status,
-         seconds_until_arrival: seconds_until_arrival,
-         seconds_until_departure: seconds_until_departure,
-         type: type
-       }) do
-    # Note: This performs a similar (but not identical) calculation to the one in the Message
-    # code for determining whether a prediction will show an approximate time. Ideally they
-    # should both call the same logic.
-    approximate_arrival? = approximate_time?(seconds_until_arrival, type)
-    approximate_departure? = approximate_time?(seconds_until_departure, type)
-
-    boarding_status && String.starts_with?(boarding_status, "Stopped") &&
-      boarding_status != "Stopped at station" && !approximate_arrival? && !approximate_departure?
   end
 end

@@ -17,7 +17,7 @@ defmodule Content.Message.Predictions do
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
-          minutes: integer() | :boarding | :arriving | :approaching,
+          minutes: integer() | :boarding | :arriving,
           approximate?: boolean(),
           prediction: Predictions.Prediction.t(),
           special_sign: :jfk_mezzanine | :bowdoin_eastbound | nil,
@@ -27,24 +27,7 @@ defmodule Content.Message.Predictions do
   @spec new(Predictions.Prediction.t(), boolean(), :jfk_mezzanine | :bowdoin_eastbound | nil) ::
           t()
   def new(%Predictions.Prediction{} = prediction, terminal?, special_sign) do
-    sec =
-      if terminal? do
-        prediction.seconds_until_departure
-      else
-        prediction.seconds_until_arrival || prediction.seconds_until_departure
-      end
-
-    min = round(sec / 60)
-
-    {minutes, approximate?} =
-      cond do
-        prediction.stopped_at_predicted_stop? and (!terminal? or sec <= 60) -> {:boarding, false}
-        !terminal? and sec <= 30 -> {:arriving, false}
-        !terminal? and sec <= 60 -> {:approaching, false}
-        min > 60 -> {60, true}
-        prediction.type == :reverse and min > 20 -> {div(min, 10) * 10, true}
-        true -> {max(min, 1), false}
-      end
+    {minutes, approximate?} = PaEss.Utilities.prediction_minutes(prediction, terminal?)
 
     %__MODULE__{
       destination: Content.Utilities.destination_for_prediction(prediction),
@@ -72,7 +55,6 @@ defmodule Content.Message.Predictions do
         case minutes do
           :boarding -> "BRD"
           :arriving -> "ARR"
-          :approaching -> "1 min"
           n -> "#{n}#{if approximate?, do: "+", else: ""} min"
         end
 

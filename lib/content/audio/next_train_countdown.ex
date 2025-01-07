@@ -26,7 +26,7 @@ defmodule Content.Audio.NextTrainCountdown do
       %__MODULE__{
         destination: message.destination,
         route_id: message.prediction.route_id,
-        minutes: if(message.minutes == :approaching, do: 1, else: message.minutes),
+        minutes: message.minutes,
         verb: if(message.terminal?, do: :departs, else: :arrives),
         track_number: Content.Utilities.stop_track_number(message.prediction.stop_id),
         platform: Content.Utilities.stop_platform(message.prediction.stop_id),
