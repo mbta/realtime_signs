@@ -131,8 +131,9 @@ defmodule Signs.Bus do
            tts_audios :: [Content.Audio.tts_value()]}
 
   @impl true
-  def handle_info({:play_pa_message, pa_message}, sign) do
-    {:noreply, Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign)}
+  def handle_call({:play_pa_message, pa_message}, _from, sign) do
+    {sign, should_play?} = Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign)
+    {:reply, {sign, should_play?}, sign}
   end
 
   @impl true

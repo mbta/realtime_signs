@@ -375,18 +375,17 @@ defmodule Signs.Utilities.Audio do
   end
 
   @spec handle_pa_message_play(PaMessages.PaMessage.t(), Signs.Realtime.t() | Signs.Bus.t()) ::
-          Signs.Realtime.t() | Signs.Bus.t()
+          {Signs.Realtime.t() | Signs.Bus.t(), boolean()}
   def handle_pa_message_play(pa_message, sign) do
     last_sent = sign.pa_message_plays[pa_message.id]
     now = DateTime.utc_now()
 
     if !last_sent || DateTime.diff(now, last_sent, :millisecond) >= pa_message.interval_in_ms do
       Logger.info("pa_message: action=send id=#{pa_message.id} destination=#{sign.id}")
-      send_audio(sign, [pa_message])
-      update_in(sign.pa_message_plays, &Map.put(&1, pa_message.id, now))
+      {update_in(sign.pa_message_plays, &Map.put(&1, pa_message.id, now)), true}
     else
       Logger.warn("pa_message: action=skipped id=#{pa_message.id} destination=#{sign.id}")
-      sign
+      {sign, false}
     end
   end
 end
