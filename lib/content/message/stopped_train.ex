@@ -23,20 +23,11 @@ defmodule Content.Message.StoppedTrain do
 
   @spec from_prediction(Predictions.Prediction.t()) :: t() | nil
   def from_prediction(%{boarding_status: status} = prediction) when not is_nil(status) do
-    stops_away = parse_stops_away(prediction.boarding_status)
-
     %__MODULE__{
       destination: Content.Utilities.destination_for_prediction(prediction),
-      stops_away: stops_away,
+      stops_away: PaEss.Utilities.prediction_stops_away(prediction),
       prediction: prediction
     }
-  end
-
-  defp parse_stops_away(str) do
-    ~r/Stopped (?<stops_away>\d+) stops? away/
-    |> Regex.named_captures(str)
-    |> Map.fetch!("stops_away")
-    |> String.to_integer()
   end
 
   defimpl Content.Message do

@@ -999,31 +999,6 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_approachings: ["1"]})
     end
 
-    test "does not read approaching for following trains" do
-      # Note: This behavior exists because we didn't have recorded audio to cover this case at the
-      # time, but we should fix this so it works the same as other readouts.
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [
-          prediction(destination: :ashmont, arrival: 15, trip_id: "1"),
-          prediction(destination: :ashmont, arrival: 45, trip_id: "2")
-        ]
-      end)
-
-      expect_messages({"Ashmont        ARR", "Ashmont      1 min"})
-
-      expect_audios([{:canned, {"103", ["32107"], :audio_visual}}], [
-        {"Attention passengers: The next Ashmont train is now arriving.",
-         [{"Ashmont train", "now arriving", 6}]}
-      ])
-
-      Signs.Realtime.handle_info(:run_loop, %{
-        @sign
-        | tick_read: 0,
-          announced_arrivals: ["1"],
-          announced_approachings: ["2"]
-      })
-    end
-
     test "reads approaching as 1 minute when on the bottom line and a different headsign" do
       # Note: This should be the default behavior for reading approaching trains, rather than a
       # special case.

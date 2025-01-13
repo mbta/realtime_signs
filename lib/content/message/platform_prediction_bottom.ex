@@ -3,7 +3,7 @@ defmodule Content.Message.PlatformPredictionBottom do
 
   @type t :: %__MODULE__{
           stop_id: String.t(),
-          minutes: integer() | :boarding | :arriving | :approaching,
+          minutes: integer() | :boarding | :arriving,
           destination: PaEss.destination()
         }
 

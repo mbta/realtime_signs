@@ -82,9 +82,6 @@ defmodule Signs.Utilities.Audio do
       :arriving ->
         Audio.TrainIsArriving.from_message(prediction, nil)
 
-      :approaching ->
-        Audio.NextTrainCountdown.from_message(%{prediction | minutes: 1})
-
       minutes when is_integer(minutes) ->
         Audio.NextTrainCountdown.from_message(prediction)
 
@@ -170,7 +167,8 @@ defmodule Signs.Utilities.Audio do
                update_in(sign.announced_arrivals, &cache_value(&1, message.prediction.trip_id))}
 
             # Announce approaching if configured to
-            match?(%Message.Predictions{minutes: :approaching}, message) &&
+            match?(%Message.Predictions{}, message) &&
+              PaEss.Utilities.prediction_approaching?(message.prediction, message.terminal?) &&
               message.prediction.trip_id not in sign.announced_approachings &&
               announce_arriving?(sign, message) &&
                 message.prediction.route_id in @heavy_rail_routes ->
