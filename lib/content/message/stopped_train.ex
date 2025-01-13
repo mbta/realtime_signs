@@ -13,20 +13,25 @@ defmodule Content.Message.StoppedTrain do
   require Logger
 
   @enforce_keys [:destination, :stops_away]
-  defstruct @enforce_keys ++ [:prediction]
+  defstruct @enforce_keys ++ [:prediction, :terminal?, :special_sign]
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
           stops_away: non_neg_integer(),
-          prediction: Predictions.Prediction.t()
+          prediction: Predictions.Prediction.t(),
+          special_sign: :jfk_mezzanine | :bowdoin_eastbound | nil,
+          terminal?: boolean()
         }
 
-  @spec from_prediction(Predictions.Prediction.t()) :: t() | nil
-  def from_prediction(%{boarding_status: status} = prediction) when not is_nil(status) do
+  @spec new(Predictions.Prediction.t(), boolean(), :jfk_mezzanine | :bowdoin_eastbound | nil) ::
+          t()
+  def new(prediction, terminal?, special_sign) do
     %__MODULE__{
       destination: Content.Utilities.destination_for_prediction(prediction),
       stops_away: PaEss.Utilities.prediction_stops_away(prediction),
-      prediction: prediction
+      prediction: prediction,
+      terminal?: terminal?,
+      special_sign: special_sign
     }
   end
 

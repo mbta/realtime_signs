@@ -22,18 +22,18 @@ defmodule Signs.Utilities.Predictions do
           Signs.Realtime.t()
         ) :: Signs.Realtime.sign_messages() | nil
   def prediction_messages(predictions, %{terminal?: terminal?}, sign) do
+    special_sign =
+      case sign do
+        %{pa_ess_loc: "RJFK", text_zone: "m"} -> :jfk_mezzanine
+        %{pa_ess_loc: "BBOW", text_zone: "e"} -> :bowdoin_eastbound
+        _ -> nil
+      end
+
     predictions
     |> Enum.map(fn prediction ->
       if PaEss.Utilities.prediction_stopped?(prediction, terminal?) do
-        Content.Message.StoppedTrain.from_prediction(prediction)
+        Content.Message.StoppedTrain.new(prediction, terminal?, special_sign)
       else
-        special_sign =
-          case sign do
-            %{pa_ess_loc: "RJFK", text_zone: "m"} -> :jfk_mezzanine
-            %{pa_ess_loc: "BBOW", text_zone: "e"} -> :bowdoin_eastbound
-            _ -> nil
-          end
-
         Content.Message.Predictions.new(prediction, terminal?, special_sign)
       end
     end)
