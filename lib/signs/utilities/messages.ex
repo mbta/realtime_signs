@@ -53,7 +53,7 @@ defmodule Signs.Utilities.Messages do
           Signs.Utilities.Predictions.prediction_message(predictions, config, sign) ||
             service_ended_message(service_status, config) ||
             alert_message(alert_status, sign, config) ||
-            Signs.Utilities.Headways.headway_message(sign, config, current_time) ||
+            Signs.Utilities.Headways.headway_message(config, current_time) ||
             early_am_message(current_time, scheduled, config) ||
             %Content.Message.Empty{}
         end)
@@ -71,7 +71,7 @@ defmodule Signs.Utilities.Messages do
         Signs.Utilities.Predictions.prediction_messages(predictions, config, sign) ||
           service_ended_messages(service_status, config) ||
           alert_messages(alert_status, sign, config) ||
-          Signs.Utilities.Headways.headway_messages(sign, config, current_time) ||
+          Signs.Utilities.Headways.headway_messages(config, current_time) ||
           early_am_messages(current_time, scheduled, config) ||
           {%Content.Message.Empty{}, %Content.Message.Empty{}}
     end

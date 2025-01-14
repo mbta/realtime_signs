@@ -11,10 +11,7 @@ defmodule HeadwayAnalysis.Server do
     :sign_id,
     :headway_group,
     :stop_ids,
-    :vehicles_present,
-    :prediction_engine,
-    :config_engine,
-    :location_engine
+    :vehicles_present
   ]
   defstruct @enforce_keys
 
@@ -31,10 +28,7 @@ defmodule HeadwayAnalysis.Server do
        sign_id: config["id"],
        headway_group: config["source_config"]["headway_group"],
        stop_ids: Enum.map(config["source_config"]["sources"], & &1["stop_id"]),
-       vehicles_present: MapSet.new(),
-       prediction_engine: Engine.Predictions,
-       config_engine: Engine.Config,
-       location_engine: Engine.Locations
+       vehicles_present: MapSet.new()
      }}
   end
 
@@ -46,16 +40,16 @@ defmodule HeadwayAnalysis.Server do
       DateTime.utc_now() |> DateTime.shift_zone!(Application.get_env(:realtime_signs, :time_zone))
 
     {headway_low, headway_high} =
-      case state.config_engine.headway_config(state.headway_group, current_time) do
+      case RealtimeSigns.config_engine().headway_config(state.headway_group, current_time) do
         %Engine.Config.Headway{range_low: low, range_high: high} -> {low, high}
         nil -> {nil, nil}
       end
 
-    revenue_vehicles = state.prediction_engine.revenue_vehicles()
+    revenue_vehicles = RealtimeSigns.prediction_engine().revenue_vehicles()
 
     new_vehicles_present =
       for stop_id <- state.stop_ids,
-          location <- state.location_engine.for_stop(stop_id),
+          location <- RealtimeSigns.location_engine().for_stop(stop_id),
           location.status == :stopped_at,
           into: MapSet.new() do
         location.vehicle_id

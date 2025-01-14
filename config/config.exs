@@ -22,6 +22,16 @@ import Config
 #
 
 config :realtime_signs,
+  location_engine: Engine.Locations,
+  config_engine: Engine.Config,
+  headway_engine: Engine.ScheduledHeadways,
+  prediction_engine: Engine.Predictions,
+  alert_engine: Engine.Alerts,
+  last_trip_engine: Engine.LastTrip,
+  bridge_engine: Engine.ChelseaBridge,
+  route_engine: Engine.Routes,
+  bus_prediction_engine: Engine.BusPredictions,
+  sign_updater: PaEss.Updater,
   http_client: HTTPoison,
   posts_log_dir: "log/posts/",
   time_zone: "America/New_York",

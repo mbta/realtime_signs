@@ -2,99 +2,6 @@ defmodule Signs.BusTest do
   use ExUnit.Case, async: true
   import Mox
 
-  defmodule FakeBusPredictions do
-    def predictions_for_stop("stop1") do
-      [
-        %Predictions.BusPrediction{
-          direction_id: 0,
-          departure_time: Timex.shift(Timex.now(), minutes: 2),
-          route_id: "14",
-          stop_id: "stop1",
-          headsign: "Wakefield Ave",
-          vehicle_id: "a",
-          trip_id: "a",
-          updated_at: ""
-        },
-        %Predictions.BusPrediction{
-          direction_id: 0,
-          departure_time: Timex.shift(Timex.now(), minutes: 11),
-          route_id: "14",
-          stop_id: "stop1",
-          headsign: "Wakefield Ave",
-          vehicle_id: "b",
-          trip_id: "b",
-          updated_at: ""
-        },
-        %Predictions.BusPrediction{
-          direction_id: 1,
-          departure_time: Timex.shift(Timex.now(), minutes: 7),
-          route_id: "34",
-          stop_id: "stop1",
-          headsign: "Clarendon Hill",
-          vehicle_id: "c",
-          trip_id: "c",
-          updated_at: ""
-        },
-        %Predictions.BusPrediction{
-          direction_id: 1,
-          departure_time: Timex.shift(Timex.now(), minutes: 4),
-          route_id: "741",
-          stop_id: "stop1",
-          headsign: "Chelsea",
-          vehicle_id: "d",
-          trip_id: "d",
-          updated_at: ""
-        }
-      ]
-    end
-
-    def predictions_for_stop("stop2") do
-      [
-        %Predictions.BusPrediction{
-          direction_id: 0,
-          departure_time: Timex.shift(Timex.now(), minutes: 8),
-          route_id: "749",
-          stop_id: "stop2",
-          headsign: "Nubian",
-          vehicle_id: "e",
-          trip_id: "e",
-          updated_at: ""
-        }
-      ]
-    end
-
-    def predictions_for_stop("stop3") do
-      []
-    end
-  end
-
-  defmodule FakeConfig do
-    def sign_config("auto_sign", _default), do: :auto
-    def sign_config("off_sign", _default), do: :off
-    def sign_config("headway", _default), do: :headway
-    def sign_config("static_sign", _default), do: {:static_text, {"custom", "message"}}
-    def chelsea_bridge_config(), do: :auto
-  end
-
-  defmodule FakeChelseaBridge do
-    def bridge_status(), do: %{raised?: false, estimate: nil}
-  end
-
-  defmodule FakeChelseaBridgeRaised do
-    def bridge_status(), do: %{raised?: true, estimate: Timex.shift(Timex.now(), minutes: 4)}
-  end
-
-  defmodule FakeAlerts do
-    def stop_status("stop3"), do: :station_closure
-    def stop_status(_), do: :none
-    def route_status("51"), do: :suspension_closed_station
-    def route_status(_), do: :none
-  end
-
-  defmodule FakeRoutes do
-    def route_destination("51", 0), do: "Reservoir Station"
-  end
-
   @sign_state %Signs.Bus{
     id: "auto_sign",
     pa_ess_loc: "ABCD",
@@ -109,12 +16,6 @@ defmodule Signs.BusTest do
     chelsea_bridge: nil,
     read_loop_interval: 360,
     read_loop_offset: 30,
-    config_engine: FakeConfig,
-    prediction_engine: FakeBusPredictions,
-    bridge_engine: FakeChelseaBridge,
-    alerts_engine: FakeAlerts,
-    routes_engine: FakeRoutes,
-    sign_updater: PaEss.Updater.Mock,
     prev_predictions: [],
     prev_bridge_status: nil,
     current_messages: {nil, nil},
@@ -126,6 +27,80 @@ defmodule Signs.BusTest do
   setup :verify_on_exit!
 
   describe "run loop" do
+    setup do
+      stub(Engine.BusPredictions.Mock, :predictions_for_stop, fn
+        "stop1" ->
+          [
+            prediction(
+              departure: 2,
+              stop_id: "stop1",
+              direction_id: 0,
+              route_id: "14",
+              headsign: "Wakefield Ave"
+            ),
+            prediction(
+              departure: 11,
+              stop_id: "stop1",
+              direction_id: 0,
+              route_id: "14",
+              headsign: "Wakefield Ave"
+            ),
+            prediction(
+              departure: 7,
+              stop_id: "stop1",
+              direction_id: 1,
+              route_id: "34",
+              headsign: "Clarendon Hill"
+            ),
+            prediction(
+              departure: 4,
+              stop_id: "stop1",
+              direction_id: 1,
+              route_id: "741",
+              headsign: "Chelsea"
+            )
+          ]
+
+        "stop2" ->
+          [
+            prediction(
+              departure: 8,
+              stop_id: "stop2",
+              direction_id: 0,
+              route_id: "749",
+              headsign: "Nubian"
+            )
+          ]
+
+        "stop3" ->
+          []
+      end)
+
+      stub(Engine.Config.Mock, :sign_config, fn
+        "auto_sign", _default -> :auto
+        "off_sign", _default -> :off
+        "headway", _default -> :headway
+        "static_sign", _default -> {:static_text, {"custom", "message"}}
+      end)
+
+      stub(Engine.Config.Mock, :chelsea_bridge_config, fn -> :auto end)
+
+      stub(Engine.Alerts.Mock, :stop_status, fn
+        "stop3" -> :station_closure
+        _ -> :none
+      end)
+
+      stub(Engine.Alerts.Mock, :route_status, fn
+        "51" -> :suspension_closed_station
+        _ -> :none
+      end)
+
+      stub(Engine.ChelseaBridge.Mock, :bridge_status, fn -> %{raised?: false, estimate: nil} end)
+      stub(Engine.Routes.Mock, :route_destination, fn "51", 0 -> "Reservoir Station" end)
+
+      :ok
+    end
+
     test "platform mode, top two" do
       expect_messages(["14 WakfldAv  2 min", "14 WakfldAv 11 min"])
 
@@ -272,6 +247,10 @@ defmodule Signs.BusTest do
     end
 
     test "bridge raised" do
+      expect(Engine.ChelseaBridge.Mock, :bridge_status, fn ->
+        %{raised?: true, estimate: Timex.shift(Timex.now(), minutes: 4)}
+      end)
+
       expect_messages([
         [{"14 WakfldAv  2 min", 6}, {"Drawbridge is up", 6}],
         [{"14 WakfldAv 11 min", 6}, {"SL3 delays 4 more min", 6}]
@@ -329,14 +308,17 @@ defmodule Signs.BusTest do
       state =
         Map.merge(@sign_state, %{
           configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}],
-          chelsea_bridge: "audio_visual",
-          bridge_engine: FakeChelseaBridgeRaised
+          chelsea_bridge: "audio_visual"
         })
 
       Signs.Bus.handle_info(:run_loop, state)
     end
 
     test "standalone bridge announcement" do
+      expect(Engine.ChelseaBridge.Mock, :bridge_status, fn ->
+        %{raised?: true, estimate: Timex.shift(Timex.now(), minutes: 4)}
+      end)
+
       expect_audios(
         [
           {:canned, {"135", ["5504"], :audio_visual}},
@@ -367,7 +349,6 @@ defmodule Signs.BusTest do
         Map.merge(@sign_state, %{
           configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}],
           chelsea_bridge: "audio",
-          bridge_engine: FakeChelseaBridgeRaised,
           prev_bridge_status: %{raised?: false, estimate: nil},
           current_messages: {"14 WakfldAv  2 min", "14 WakfldAv 11 min"},
           last_update: Timex.shift(Timex.now(), seconds: -40),
@@ -444,5 +425,18 @@ defmodule Signs.BusTest do
       assert tts_list == tts_audios
       :ok
     end)
+  end
+
+  defp prediction(opts) do
+    %Predictions.BusPrediction{
+      direction_id: Keyword.get(opts, :direction_id),
+      departure_time: Timex.shift(Timex.now(), minutes: Keyword.get(opts, :departure)),
+      route_id: Keyword.get(opts, :route_id),
+      stop_id: Keyword.get(opts, :stop_id),
+      headsign: Keyword.get(opts, :headsign),
+      vehicle_id: "a",
+      trip_id: "a",
+      updated_at: ""
+    }
   end
 end

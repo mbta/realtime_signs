@@ -173,7 +173,7 @@ defmodule Signs.Utilities.Audio do
               announce_arriving?(sign, message) &&
                 message.prediction.route_id in @heavy_rail_routes ->
               crowding = Signs.Utilities.Crowding.crowding_description(message.prediction, sign)
-              new_cars? = PaEss.Utilities.prediction_new_cars?(message.prediction, sign)
+              new_cars? = PaEss.Utilities.prediction_new_cars?(message.prediction)
 
               {Audio.Approaching.from_message(message, crowding, new_cars?),
                sign
@@ -361,7 +361,7 @@ defmodule Signs.Utilities.Audio do
 
   @spec send_audio(Signs.Realtime.t() | Signs.Bus.t(), [Content.Audio.t()]) :: :ok
   def send_audio(sign, audios) do
-    sign.sign_updater.play_message(
+    RealtimeSigns.sign_updater().play_message(
       sign,
       Enum.map(audios, &Content.Audio.to_params(&1)),
       Enum.map(audios, &Content.Audio.to_tts(&1)),
