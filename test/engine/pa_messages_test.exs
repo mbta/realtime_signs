@@ -1,5 +1,4 @@
 defmodule Engine.PaMessagesTest do
-  alias PaMessages.PaMessage
   use ExUnit.Case
 
   @state %{
@@ -45,14 +44,14 @@ defmodule Engine.PaMessagesTest do
 
       state = %{
         pa_messages_last_sent: %{
-          4 => {%PaMessage{}, last_played},
-          5 => {%PaMessage{}, last_played}
+          4 => last_played,
+          5 => last_played
         }
       }
 
       {:noreply, state} = Engine.PaMessages.handle_info(:update, state)
-      assert last_played == Map.get(state.pa_messages_last_sent, 4) |> elem(1)
-      assert last_played == Map.get(state.pa_messages_last_sent, 5) |> elem(1)
+      assert last_played == Map.get(state.pa_messages_last_sent, 4)
+      assert last_played == Map.get(state.pa_messages_last_sent, 5)
     end
 
     test "Ignores inactive PA messages" do
@@ -77,7 +76,7 @@ defmodule Engine.PaMessagesTest do
 
     test "Plays PA Message when interval is edited to be shorter" do
       last_play = DateTime.utc_now() |> DateTime.add(-2, :minute)
-      state = %{pa_messages_last_sent: %{5 => {%PaMessage{}, last_play}}}
+      state = %{pa_messages_last_sent: %{5 => last_play}}
 
       Application.put_env(
         :realtime_signs,
@@ -86,7 +85,7 @@ defmodule Engine.PaMessagesTest do
       )
 
       {:noreply, state} = Engine.PaMessages.handle_info(:update, state)
-      refute last_play == Map.get(state.pa_messages_last_sent, 5) |> elem(1)
+      refute last_play == Map.get(state.pa_messages_last_sent, 5)
     end
   end
 end

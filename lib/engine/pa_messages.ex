@@ -28,9 +28,9 @@ defmodule Engine.PaMessages do
     state =
       case get_active_pa_messages() do
         {:ok, pa_messages} ->
-          recent_sends = send_pa_messages(pa_messages, state.pa_messages_last_sent)
-
-          %{state | pa_messages_last_sent: recent_sends}
+          {selected_pa_messages, state} = select_pa_messages(pa_messages, state)
+          play_pa_messages(selected_pa_messages)
+          state
 
         {:error, %HTTPoison.Response{status_code: status_code, body: body}} ->
           Logger.error("pa_messages_response_error: status_code=#{status_code} body=#{body}")
@@ -48,47 +48,39 @@ defmodule Engine.PaMessages do
     {:noreply, state}
   end
 
-  defp send_pa_messages(pa_messages, pa_messages_last_sent) do
-    for %{
-          "id" => pa_id,
-          "visual_text" => visual_text,
-          "audio_text" => audio_text,
-          "interval_in_minutes" => interval_in_minutes,
-          "priority" => priority,
-          "sign_ids" => sign_ids
-        } <- pa_messages,
-        into: %{} do
-      active_pa_message = %PaMessage{
-        id: pa_id,
-        visual_text: visual_text,
-        audio_text: audio_text,
-        priority: priority,
-        sign_ids: sign_ids,
-        interval_in_ms: interval_in_minutes * @minute_in_ms
-      }
+  defp select_pa_messages(pa_messages, state) do
+    now = DateTime.utc_now()
 
-      {_, last_sent_time} = Map.get(pa_messages_last_sent, pa_id, {nil, nil})
+    Enum.flat_map_reduce(pa_messages, state, fn message, state ->
+      last_sent = Map.get(state.pa_messages_last_sent, message.id, DateTime.from_unix!(0))
 
-      time_since_last_send =
-        if last_sent_time,
-          do: DateTime.diff(DateTime.utc_now(), last_sent_time, :millisecond),
-          else: active_pa_message.interval_in_ms
-
-      if time_since_last_send >= active_pa_message.interval_in_ms do
-        send_pa_message(active_pa_message)
-        {pa_id, {active_pa_message, DateTime.utc_now()}}
+      if DateTime.diff(DateTime.utc_now(), last_sent, :millisecond) >= message.interval_in_ms do
+        {[message], put_in(state, [:pa_messages_last_sent, message.id], now)}
       else
-        {pa_id, {active_pa_message, last_sent_time}}
+        {[], state}
       end
-    end
+    end)
   end
 
-  defp send_pa_message(pa_message) do
-    Enum.each(pa_message.sign_ids, fn sign_id ->
-      send(
-        String.to_existing_atom("Signs/#{sign_id}"),
-        {:play_pa_message, pa_message}
-      )
+  defp play_pa_messages(pa_messages) do
+    Enum.flat_map(pa_messages, fn message ->
+      for sign_id <- message.sign_ids,
+          {sign, should_play?} = GenServer.call(:"Signs/#{sign_id}", {:play_pa_message, message}),
+          should_play? do
+        sign
+      end
+      |> Enum.group_by(& &1.pa_ess_loc)
+      |> Enum.map(fn {_, [first | _] = signs} ->
+        {message,
+         %{
+           first
+           | audio_zones: Enum.flat_map(signs, & &1.audio_zones) |> Enum.uniq(),
+             id: Enum.map_join(signs, ",", & &1.id)
+         }}
+      end)
+    end)
+    |> Enum.each(fn {message, sign} ->
+      Signs.Utilities.Audio.send_audio(sign, [message])
     end)
   end
 
@@ -109,7 +101,26 @@ defmodule Engine.PaMessages do
              recv_timeout: 2000
            ),
          %{status_code: 200, body: body} <- response,
-         {:ok, pa_messages} <- Jason.decode(body) do
+         {:ok, data} <- Jason.decode(body) do
+      pa_messages =
+        for %{
+              "id" => pa_id,
+              "visual_text" => visual_text,
+              "audio_text" => audio_text,
+              "interval_in_minutes" => interval_in_minutes,
+              "priority" => priority,
+              "sign_ids" => sign_ids
+            } <- data do
+          %PaMessage{
+            id: pa_id,
+            visual_text: visual_text,
+            audio_text: audio_text,
+            priority: priority,
+            sign_ids: sign_ids,
+            interval_in_ms: interval_in_minutes * @minute_in_ms
+          }
+        end
+
       {:ok, pa_messages}
     else
       error ->

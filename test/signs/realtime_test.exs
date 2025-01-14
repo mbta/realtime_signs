@@ -1763,24 +1763,17 @@ defmodule Signs.RealtimeTest do
     end
 
     test "Plays message if no prior plays" do
-      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}], [
-        {"A PA Message", [{"A PA Message", "", 3}]}
-      ])
-
       pa_message = %PaMessages.PaMessage{
         id: 1,
         visual_text: "A PA Message",
         audio_text: "A PA Message"
       }
 
-      Signs.Realtime.handle_info({:play_pa_message, pa_message}, @sign)
+      assert {:reply, {_, true}, _} =
+               Signs.Realtime.handle_call({:play_pa_message, pa_message}, nil, @sign)
     end
 
     test "Plays message if interval has passed" do
-      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}], [
-        {"A PA Message", [{"A PA Message", "", 3}]}
-      ])
-
       pa_message = %PaMessages.PaMessage{
         id: 1,
         visual_text: "A PA Message",
@@ -1790,7 +1783,8 @@ defmodule Signs.RealtimeTest do
 
       sign = %{@sign | pa_message_plays: %{1 => ~U[2024-06-10 12:00:00.000Z]}}
 
-      Signs.Realtime.handle_info({:play_pa_message, pa_message}, sign)
+      assert {:reply, {_, true}, _} =
+               Signs.Realtime.handle_call({:play_pa_message, pa_message}, nil, sign)
     end
 
     test "Does not play if less than interval has passed" do
@@ -1803,7 +1797,8 @@ defmodule Signs.RealtimeTest do
 
       sign = %{@sign | pa_message_plays: %{1 => DateTime.utc_now()}}
 
-      Signs.Realtime.handle_info({:play_pa_message, pa_message}, sign)
+      assert {:reply, {_, false}, _} =
+               Signs.Realtime.handle_call({:play_pa_message, pa_message}, nil, sign)
     end
   end
 
