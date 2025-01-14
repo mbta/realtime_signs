@@ -2,18 +2,18 @@ defmodule Content.Audio.Predictions do
   @enforce_keys [:prediction, :special_sign, :terminal?, :next_or_following]
   defstruct @enforce_keys
 
-  def from_message(%Content.Message.Predictions{} = message, next_or_following) do
-    [
-      %__MODULE__{
-        prediction: message.prediction,
-        special_sign: message.special_sign,
-        terminal?: message.terminal?,
-        next_or_following: next_or_following
-      }
-    ]
-  end
+  @type t :: %__MODULE__{
+          prediction: Predictions.Prediction.t(),
+          special_sign: :jfk_mezzanine | :bowdoin_eastbound | nil,
+          terminal?: boolean(),
+          next_or_following: :next | :following
+        }
 
-  def from_message(%Content.Message.StoppedTrain{} = message, next_or_following) do
+  @spec from_message(
+          Content.Message.Predictions.t() | Content.Message.StoppedTrain.t(),
+          :next | :following
+        ) :: [t()]
+  def from_message(message, next_or_following) do
     [
       %__MODULE__{
         prediction: message.prediction,
@@ -25,6 +25,9 @@ defmodule Content.Audio.Predictions do
   end
 
   defimpl Content.Audio do
+    @announce_platform_later_mins 9
+    @announce_platform_soon_mins 5
+
     def to_params(%Content.Audio.Predictions{prediction: prediction} = audio) do
       destination = Content.Utilities.destination_for_prediction(prediction)
 
@@ -124,8 +127,8 @@ defmodule Content.Audio.Predictions do
 
       cond do
         !platform -> {nil, false, nil}
-        jfk_mezzanine? and minutes > 9 -> {nil, false, :later}
-        jfk_mezzanine? and minutes > 5 -> {nil, false, :soon}
+        jfk_mezzanine? and minutes > @announce_platform_later_mins -> {nil, false, :later}
+        jfk_mezzanine? and minutes > @announce_platform_soon_mins -> {nil, false, :soon}
         minutes == 1 or !jfk_mezzanine? -> {platform, true, nil}
         true -> {platform, false, nil}
       end
