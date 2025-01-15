@@ -41,7 +41,11 @@ defmodule Content.Audio.Passthrough do
     end
 
     defp tts_text(%Content.Audio.Passthrough{} = audio) do
-      train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
+      train =
+        if audio.destination in [:ashmont, :braintree],
+          do: PaEss.Utilities.train_description(:southbound, audio.route_id),
+          else: PaEss.Utilities.train_description(audio.destination, audio.route_id)
+
       "The next #{train} does not take customers. Please stand back from the yellow line."
     end
 
