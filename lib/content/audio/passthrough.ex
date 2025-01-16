@@ -41,11 +41,7 @@ defmodule Content.Audio.Passthrough do
     end
 
     defp tts_text(%Content.Audio.Passthrough{} = audio) do
-      train =
-        if audio.destination in [:ashmont, :braintree],
-          do: PaEss.Utilities.train_description(:southbound, audio.route_id),
-          else: PaEss.Utilities.train_description(audio.destination, audio.route_id)
-
+      train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
       "The next #{train} does not take customers. Please stand back from the yellow line."
     end
 
@@ -60,8 +56,7 @@ defmodule Content.Audio.Passthrough do
 
     @spec destination_var(PaEss.destination(), String.t()) :: String.t() | nil
     defp destination_var(:alewife, _route_id), do: "32114"
-    defp destination_var(:ashmont, "Red"), do: "891"
-    defp destination_var(:braintree, _route_id), do: "891"
+    defp destination_var(:southbound, "Red"), do: "891"
     defp destination_var(:bowdoin, _route_id), do: "32111"
     defp destination_var(:wonderland, _route_id), do: "32110"
     defp destination_var(:forest_hills, _route_id), do: "32113"
