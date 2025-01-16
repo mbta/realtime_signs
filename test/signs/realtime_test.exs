@@ -475,7 +475,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [{:canned, {"115", spaced(["501", "4100", "864", "533", "641", "5008", "534"]), :audio}}],
-        [{"The next Mattapan train is stopped 8 stops away", nil}]
+        [{"The next Mattapan train is stopped 8 stops away.", nil}]
       )
 
       assert {_, %{announced_stalls: [{"1", 8}]}} = Signs.Realtime.handle_info(:run_loop, @sign)
@@ -909,7 +909,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"The next Ashmont train arrives in 2 minutes.", nil},
-          {"The following Ashmont train arrives in 4 minutes", nil}
+          {"The following Ashmont train arrives in 4 minutes.", nil}
         ]
       )
 
@@ -992,7 +992,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"The next Ashmont train arrives in 1 minute.", nil},
-          {"The following Ashmont train arrives in 2 minutes", nil}
+          {"The following Ashmont train arrives in 2 minutes.", nil}
         ]
       )
 
@@ -1048,7 +1048,7 @@ defmodule Signs.RealtimeTest do
         [
           {"Attention passengers: The next Ashmont train is now arriving.",
            [{"Ashmont train", "now arriving", 6}]},
-          {"The following Ashmont train arrives in 2 minutes", nil}
+          {"The following Ashmont train arrives in 2 minutes.", nil}
         ]
       )
 
@@ -1102,7 +1102,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [{:canned, {"115", spaced(["501", "4016", "864", "533", "641", "5003", "534"]), :audio}}],
-        [{"The next Ashmont train is stopped 3 stops away", nil}]
+        [{"The next Ashmont train is stopped 3 stops away.", nil}]
       )
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_stalls: ["1", "2"]})
@@ -1124,7 +1124,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [{:canned, {"115", spaced(["501", "4016", "864", "533", "641", "5003", "534"]), :audio}}],
-        [{"The next Ashmont train is stopped 3 stops away", nil}]
+        [{"The next Ashmont train is stopped 3 stops away.", nil}]
       )
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_stalls: ["1"]})
@@ -1152,7 +1152,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"Southbound trains every 11 to 13 minutes.", nil},
-          {"The next Alewife train arrives in 4 minutes on the ashmont platform", nil}
+          {"The next Alewife train arrives in 4 minutes on the Ashmont platform.", nil}
         ]
       )
 
@@ -1544,6 +1544,54 @@ defmodule Signs.RealtimeTest do
 
       Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
     end
+
+    test "JFK platform" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :alewife, stop_id: "70086", arrival: 240),
+          prediction(destination: :alewife, stop_id: "70086", arrival: 540)
+        ]
+      end)
+
+      expect_messages({"Alewife      4 min", "Alewife      9 min"})
+
+      expect_audios(
+        [
+          {:canned,
+           {"121",
+            spaced(["501", "4000", "864", "851", "4016", "529", "503", "504", "5004", "505"]),
+            :audio}},
+          {:canned,
+           {"121",
+            spaced(["667", "4000", "864", "851", "4016", "529", "503", "504", "5009", "505"]),
+            :audio}}
+        ],
+        [
+          {"The next Alewife train on the Ashmont platform arrives in 4 minutes.", nil},
+          {"The following Alewife train on the Ashmont platform arrives in 9 minutes.", nil}
+        ]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
+    end
+
+    test "track numbers" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :forest_hills, stop_id: "Oak Grove-01", arrival: 240)]
+      end)
+
+      expect_messages({[{"Frst Hills   4 min", 6}, {"Frst Hills   Trk 1", 6}], ""})
+
+      expect_audios(
+        [
+          {:canned,
+           {"117", spaced(["501", "4043", "864", "503", "504", "5004", "505", "541"]), :audio}}
+        ],
+        [{"The next Forest Hills train arrives in 4 minutes on track 1.", nil}]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
+    end
   end
 
   describe "decrement_ticks/1" do
@@ -1689,7 +1737,7 @@ defmodule Signs.RealtimeTest do
           {:canned, {"105", spaced(["787", "882"]), :audio}}
         ],
         [
-          {"The next Mattapan train is stopped 8 stops away", nil},
+          {"The next Mattapan train is stopped 8 stops away.", nil},
           {"Southbound service has ended for the night.", nil}
         ]
       )
@@ -1736,7 +1784,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"Southbound service has ended for the night.", nil},
-          {"The next Alewife train arrives in 4 minutes on the ashmont platform", nil}
+          {"The next Alewife train arrives in 4 minutes on the Ashmont platform.", nil}
         ]
       )
 

@@ -43,14 +43,14 @@ defmodule Signs.Utilities.Audio do
         %Message.StoppedTrain{destination: same} = top,
         %Message.StoppedTrain{destination: same}
       ] ->
-        Audio.StoppedTrain.from_message(top)
+        Audio.Predictions.from_message(top, :next)
 
       [
         %Message.StoppedTrain{destination: same} = top,
         %Message.Predictions{destination: same} = bottom
       ] ->
-        Audio.StoppedTrain.from_message(top) ++
-          Audio.FollowingTrain.from_predictions_message(bottom)
+        Audio.Predictions.from_message(top, :next) ++
+          Audio.Predictions.from_message(bottom, :following)
 
       [
         %Message.Predictions{destination: same} = top,
@@ -63,7 +63,7 @@ defmodule Signs.Utilities.Audio do
         %Message.Predictions{destination: same} = bottom
       ] ->
         get_prediction_readout(top) ++
-          Audio.FollowingTrain.from_predictions_message(bottom)
+          Audio.Predictions.from_message(bottom, :following)
 
       _ ->
         Enum.flat_map(predictions, &get_prediction_readout/1)
@@ -83,7 +83,7 @@ defmodule Signs.Utilities.Audio do
         Audio.TrainIsArriving.from_message(prediction, nil)
 
       minutes when is_integer(minutes) ->
-        Audio.NextTrainCountdown.from_message(prediction)
+        Audio.Predictions.from_message(prediction, :next)
 
       _ ->
         []
@@ -91,7 +91,7 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_prediction_readout(%Message.StoppedTrain{} = prediction) do
-    Audio.StoppedTrain.from_message(prediction)
+    Audio.Predictions.from_message(prediction, :next)
   end
 
   @spec get_announcements(Signs.Realtime.t(), Content.Message.t(), Content.Message.t()) ::
@@ -189,7 +189,7 @@ defmodule Signs.Utilities.Audio do
             # Announce stopped trains
             match?(%Message.StoppedTrain{}, message) && index == 0 &&
                 {message.prediction.trip_id, message.stops_away} not in sign.announced_stalls ->
-              {Audio.StoppedTrain.from_message(message),
+              {Audio.Predictions.from_message(message, :next),
                update_in(
                  sign.announced_stalls,
                  &cache_value(&1, {message.prediction.trip_id, message.stops_away})
@@ -200,7 +200,7 @@ defmodule Signs.Utilities.Audio do
             match?(%Message.Predictions{}, message) && is_integer(message.minutes) && index == 0 &&
               sign.prev_prediction_keys &&
                 {message.prediction.route_id, message.prediction.direction_id} not in sign.prev_prediction_keys ->
-              {Audio.NextTrainCountdown.from_message(message), sign}
+              {Audio.Predictions.from_message(message, :next), sign}
 
             true ->
               {[], sign}
