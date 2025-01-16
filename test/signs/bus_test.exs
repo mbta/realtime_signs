@@ -429,11 +429,11 @@ defmodule Signs.BusTest do
 
   defp prediction(opts) do
     %Predictions.BusPrediction{
-      direction_id: Keyword.get(opts, :direction_id),
-      departure_time: Timex.shift(Timex.now(), minutes: Keyword.get(opts, :departure)),
-      route_id: Keyword.get(opts, :route_id),
-      stop_id: Keyword.get(opts, :stop_id),
-      headsign: Keyword.get(opts, :headsign),
+      direction_id: opts[:direction_id],
+      departure_time: Timex.shift(Timex.now(), minutes: opts[:departure]),
+      route_id: opts[:route_id],
+      stop_id: opts[:stop_id],
+      headsign: opts[:headsign],
       vehicle_id: "a",
       trip_id: "a",
       updated_at: ""

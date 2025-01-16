@@ -83,14 +83,14 @@ defmodule RealtimeSigns do
     end
   end
 
-  def location_engine, do: Application.get_env(:realtime_signs, :location_engine)
-  def config_engine, do: Application.get_env(:realtime_signs, :config_engine)
-  def headway_engine, do: Application.get_env(:realtime_signs, :headway_engine)
-  def prediction_engine, do: Application.get_env(:realtime_signs, :prediction_engine)
-  def alert_engine, do: Application.get_env(:realtime_signs, :alert_engine)
-  def last_trip_engine, do: Application.get_env(:realtime_signs, :last_trip_engine)
-  def bridge_engine, do: Application.get_env(:realtime_signs, :bridge_engine)
-  def route_engine, do: Application.get_env(:realtime_signs, :route_engine)
-  def bus_prediction_engine, do: Application.get_env(:realtime_signs, :bus_prediction_engine)
-  def sign_updater, do: Application.get_env(:realtime_signs, :sign_updater)
+  def location_engine, do: Application.fetch_env!(:realtime_signs, :location_engine)
+  def config_engine, do: Application.fetch_env!(:realtime_signs, :config_engine)
+  def headway_engine, do: Application.fetch_env!(:realtime_signs, :headway_engine)
+  def prediction_engine, do: Application.fetch_env!(:realtime_signs, :prediction_engine)
+  def alert_engine, do: Application.fetch_env!(:realtime_signs, :alert_engine)
+  def last_trip_engine, do: Application.fetch_env!(:realtime_signs, :last_trip_engine)
+  def bridge_engine, do: Application.fetch_env!(:realtime_signs, :bridge_engine)
+  def route_engine, do: Application.fetch_env!(:realtime_signs, :route_engine)
+  def bus_prediction_engine, do: Application.fetch_env!(:realtime_signs, :bus_prediction_engine)
+  def sign_updater, do: Application.fetch_env!(:realtime_signs, :sign_updater)
 end
