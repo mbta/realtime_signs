@@ -2,6 +2,7 @@ defmodule Engine.ChelseaBridge do
   use GenServer
   require Logger
 
+  @callback bridge_status() :: %{raised: boolean() | nil, estimate: DateTime.t() | nil}
   def bridge_status() do
     case :ets.lookup(:bridge_status, :value) do
       [{:value, data}] -> data

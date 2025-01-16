@@ -807,9 +807,9 @@ defmodule PaEss.Utilities do
     |> Enum.map(fn [top, bottom] -> {top, bottom, 3} end)
   end
 
-  @spec prediction_new_cars?(Predictions.Prediction.t(), Signs.Realtime.t()) :: boolean()
-  def prediction_new_cars?(prediction, sign) do
-    case sign.location_engine.for_vehicle(prediction.vehicle_id) do
+  @spec prediction_new_cars?(Predictions.Prediction.t()) :: boolean()
+  def prediction_new_cars?(prediction) do
+    case RealtimeSigns.location_engine().for_vehicle(prediction.vehicle_id) do
       %Locations.Location{route_id: "Red", multi_carriage_details: carriage_details} ->
         Enum.any?(carriage_details, fn carriage ->
           # See http://roster.transithistory.org/ for numbers of new cars

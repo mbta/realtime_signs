@@ -21,13 +21,6 @@ defmodule Signs.Realtime do
     :source_config,
     :current_content_top,
     :current_content_bottom,
-    :prediction_engine,
-    :location_engine,
-    :headway_engine,
-    :config_engine,
-    :alerts_engine,
-    :last_trip_engine,
-    :sign_updater,
     :last_update,
     :tick_read,
     :read_period_seconds
@@ -68,14 +61,7 @@ defmodule Signs.Realtime do
           default_mode: Engine.Config.sign_config(),
           current_content_top: Content.Message.value(),
           current_content_bottom: Content.Message.value(),
-          prediction_engine: module(),
-          location_engine: module(),
-          headway_engine: module(),
-          config_engine: module(),
-          alerts_engine: module(),
-          last_trip_engine: module(),
           current_time_fn: fun(),
-          sign_updater: module(),
           last_update: DateTime.t(),
           tick_read: non_neg_integer(),
           read_period_seconds: non_neg_integer(),
@@ -107,17 +93,10 @@ defmodule Signs.Realtime do
         config |> Map.get("default_mode") |> then(&if(&1 == "auto", do: :auto, else: :off)),
       current_content_top: "",
       current_content_bottom: "",
-      prediction_engine: Engine.Predictions,
-      location_engine: Engine.Locations,
-      headway_engine: Engine.ScheduledHeadways,
-      config_engine: Engine.Config,
-      alerts_engine: Engine.Alerts,
-      last_trip_engine: Engine.LastTrip,
       current_time_fn: fn ->
         time_zone = Application.get_env(:realtime_signs, :time_zone)
         DateTime.utc_now() |> DateTime.shift_zone!(time_zone)
       end,
-      sign_updater: PaEss.Updater,
       last_update: nil,
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       read_period_seconds: 240,
@@ -142,19 +121,21 @@ defmodule Signs.Realtime do
   end
 
   def handle_info(:run_loop, sign) do
-    sign_config = sign.config_engine.sign_config(sign.id, sign.default_mode)
+    sign_config = RealtimeSigns.config_engine().sign_config(sign.id, sign.default_mode)
     current_time = sign.current_time_fn.()
 
     alert_status =
       map_source_config(sign.source_config, fn config ->
         stop_ids = SourceConfig.sign_stop_ids(config)
         routes = SourceConfig.sign_routes(config)
-        sign.alerts_engine.max_stop_status(stop_ids, routes)
+        RealtimeSigns.alert_engine().max_stop_status(stop_ids, routes)
       end)
 
     first_scheduled_departures =
       map_source_config(sign.source_config, fn config ->
-        sign.headway_engine.get_first_scheduled_departure(SourceConfig.sign_stop_ids(config))
+        RealtimeSigns.headway_engine().get_first_scheduled_departure(
+          SourceConfig.sign_stop_ids(config)
+        )
       end)
 
     prev_predictions_lookup =
@@ -165,19 +146,19 @@ defmodule Signs.Realtime do
     {predictions, all_predictions} =
       case sign.source_config do
         {top, bottom} ->
-          top_predictions = fetch_predictions(top, prev_predictions_lookup, sign)
-          bottom_predictions = fetch_predictions(bottom, prev_predictions_lookup, sign)
+          top_predictions = fetch_predictions(top, prev_predictions_lookup)
+          bottom_predictions = fetch_predictions(bottom, prev_predictions_lookup)
           {{top_predictions, bottom_predictions}, top_predictions ++ bottom_predictions}
 
         config ->
-          predictions = fetch_predictions(config, prev_predictions_lookup, sign)
+          predictions = fetch_predictions(config, prev_predictions_lookup)
           {predictions, predictions}
       end
 
     service_end_statuses_per_source =
       map_source_config(
         sign.source_config,
-        &has_service_ended_for_source?(sign, &1, current_time)
+        &has_service_ended_for_source?(&1, current_time)
       )
 
     {new_top, new_bottom} =
@@ -209,21 +190,21 @@ defmodule Signs.Realtime do
     {:noreply, state}
   end
 
-  defp has_service_ended_for_source?(sign, source, current_time) do
+  defp has_service_ended_for_source?(source, current_time) do
     if source.headway_group not in ["red_trunk", "red_ashmont", "red_braintree"] do
       SourceConfig.sign_stop_ids(source)
-      |> Enum.count(&has_last_trip_departed_stop?(&1, sign, current_time)) >= 1
+      |> Enum.count(&has_last_trip_departed_stop?(&1, current_time)) >= 1
     else
       false
     end
   end
 
-  defp has_last_trip_departed_stop?(stop_id, sign, current_time) do
-    sign.last_trip_engine.get_recent_departures(stop_id)
+  defp has_last_trip_departed_stop?(stop_id, current_time) do
+    RealtimeSigns.last_trip_engine().get_recent_departures(stop_id)
     |> Enum.any?(fn {trip_id, departure_time} ->
       # Use a 3 second buffer to make sure trips have fully departed
       DateTime.to_unix(current_time) - DateTime.to_unix(departure_time) > 3 and
-        sign.last_trip_engine.is_last_trip?(trip_id)
+        RealtimeSigns.last_trip_engine().is_last_trip?(trip_id)
     end)
   end
 
@@ -231,9 +212,10 @@ defmodule Signs.Realtime do
     Map.take(prediction, [:stop_id, :route_id, :vehicle_id, :direction_id, :trip_id])
   end
 
-  defp fetch_predictions(%{sources: sources}, prev_predictions_lookup, state) do
+  defp fetch_predictions(%{sources: sources}, prev_predictions_lookup) do
     for source <- sources,
-        prediction <- state.prediction_engine.for_stop(source.stop_id, source.direction_id) do
+        prediction <-
+          RealtimeSigns.prediction_engine().for_stop(source.stop_id, source.direction_id) do
       prev = prev_predictions_lookup[prediction_key(prediction)]
 
       prediction

@@ -1,5 +1,4 @@
 defmodule Engine.LastTrip do
-  @behaviour Engine.LastTripAPI
   use GenServer
   require Logger
 
@@ -16,7 +15,7 @@ defmodule Engine.LastTrip do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  @impl true
+  @callback get_recent_departures(String.t()) :: map()
   def get_recent_departures(recent_departures_table \\ @recent_departures_table, stop_id) do
     case :ets.lookup(recent_departures_table, stop_id) do
       [{^stop_id, departures}] -> departures
@@ -24,7 +23,7 @@ defmodule Engine.LastTrip do
     end
   end
 
-  @impl true
+  @callback is_last_trip?(String.t()) :: boolean()
   def is_last_trip?(last_trips_table \\ @last_trips_table, trip_id) do
     case :ets.lookup(last_trips_table, trip_id) do
       [{^trip_id, _timestamp}] -> true

@@ -1,7 +1,7 @@
 defmodule Predictions.PredictionsTest do
   use ExUnit.Case
   import Predictions.Predictions
-  import Test.Support.Helpers
+  import Mox
 
   @current_time Timex.to_datetime(~N[2017-04-07 09:00:00], "America/New_York")
   @feed_message %{
@@ -62,6 +62,11 @@ defmodule Predictions.PredictionsTest do
   }
 
   describe "get_all/2" do
+    setup do
+      stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
+      :ok
+    end
+
     test "finds predictions for one trip" do
       expected = %{
         {"70261", 0} => [

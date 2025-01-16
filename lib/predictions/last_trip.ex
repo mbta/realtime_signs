@@ -23,7 +23,7 @@ defmodule Predictions.LastTrip do
 
     for {trip_id, predictions, vehicle_id} <- predictions_by_trip,
         prediction <- predictions do
-      vehicle_location = Engine.Locations.for_vehicle(vehicle_id)
+      vehicle_location = RealtimeSigns.location_engine().for_vehicle(vehicle_id)
 
       if vehicle_location &&
            (vehicle_location.stop_id == prediction["stop_id"] and

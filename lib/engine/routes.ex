@@ -2,7 +2,7 @@ defmodule Engine.Routes do
   use GenServer
   require Logger
 
-  @spec route_destination(String.t(), 0 | 1) :: String.t() | nil
+  @callback route_destination(String.t(), 0 | 1) :: String.t() | nil
   def route_destination(route_id, direction_id) do
     case :ets.lookup(:route_destinations, {route_id, direction_id}) do
       [{{^route_id, ^direction_id}, destination}] -> destination

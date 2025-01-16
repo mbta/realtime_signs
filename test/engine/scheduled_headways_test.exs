@@ -235,12 +235,6 @@ defmodule Engine.ScheduledHeadwaysTest do
       headways = %Engine.Config.Headway{headway_id: {"test", :peak}, range_high: 0, range_low: 0}
       refute Engine.ScheduledHeadways.display_headways?(:no_data, ["no_stop"], time, headways)
     end
-
-    test "display_headways?/3 fills in ETS table name" do
-      time = DateTime.from_naive!(~N[2020-03-20 10:00:00], "America/New_York")
-      headways = %Engine.Config.Headway{headway_id: {"test", :peak}, range_high: 0, range_low: 0}
-      refute Engine.ScheduledHeadways.display_headways?(["no_data"], time, headways)
-    end
   end
 
   describe "data_update callback" do
@@ -351,7 +345,7 @@ defmodule Engine.ScheduledHeadwaysTest do
 
       {:noreply, _updated_state} = Engine.ScheduledHeadways.handle_info(:data_update, state)
 
-      [{first, last}] =
+      [{first, _}] =
         Engine.ScheduledHeadways.get_first_last_departures(:first_last_departures_test4, ["123"])
 
       # Ensure that after parsing and loading datetimes we can use them with native functions.

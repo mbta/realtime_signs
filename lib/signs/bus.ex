@@ -25,12 +25,6 @@ defmodule Signs.Bus do
     :chelsea_bridge,
     :read_loop_interval,
     :read_loop_offset,
-    :config_engine,
-    :prediction_engine,
-    :bridge_engine,
-    :alerts_engine,
-    :routes_engine,
-    :sign_updater,
     :prev_predictions,
     :prev_bridge_status,
     :current_messages,
@@ -55,12 +49,6 @@ defmodule Signs.Bus do
           chelsea_bridge: String.t() | nil,
           read_loop_interval: integer(),
           read_loop_offset: integer(),
-          config_engine: module(),
-          prediction_engine: module(),
-          bridge_engine: module(),
-          alerts_engine: module(),
-          routes_engine: module(),
-          sign_updater: module(),
           prev_predictions: list(),
           prev_bridge_status: nil | map(),
           current_messages: tuple(),
@@ -84,12 +72,6 @@ defmodule Signs.Bus do
       chelsea_bridge: sign["chelsea_bridge"],
       read_loop_interval: Map.fetch!(sign, "read_loop_interval"),
       read_loop_offset: Map.fetch!(sign, "read_loop_offset"),
-      config_engine: Engine.Config,
-      prediction_engine: Engine.BusPredictions,
-      bridge_engine: Engine.ChelseaBridge,
-      alerts_engine: Engine.Alerts,
-      routes_engine: Engine.Routes,
-      sign_updater: PaEss.Updater,
       prev_predictions: [],
       prev_bridge_status: nil,
       current_messages: {nil, nil},
@@ -144,28 +126,24 @@ defmodule Signs.Bus do
       id: id,
       default_mode: default_mode,
       configs: configs,
-      config_engine: config_engine,
-      prediction_engine: prediction_engine,
-      bridge_engine: bridge_engine,
-      alerts_engine: alerts_engine,
       prev_predictions: prev_predictions
     } = state
 
     # Fetch the data we need to compute the updated sign content.
-    config = config_engine.sign_config(id, default_mode)
-    bridge_enabled? = config_engine.chelsea_bridge_config() == :auto
-    bridge_status = bridge_engine.bridge_status()
+    config = RealtimeSigns.config_engine().sign_config(id, default_mode)
+    bridge_enabled? = RealtimeSigns.config_engine().chelsea_bridge_config() == :auto
+    bridge_status = RealtimeSigns.bridge_engine().bridge_status()
     current_time = Timex.now()
     all_route_ids = all_route_ids(state)
 
     route_alerts_lookup =
       for route_id <- all_route_ids, into: %{} do
-        {route_id, alerts_engine.route_status(route_id)}
+        {route_id, RealtimeSigns.alert_engine().route_status(route_id)}
       end
 
     stop_alerts_lookup =
       for stop_id <- all_stop_ids(state), into: %{} do
-        {stop_id, alerts_engine.stop_status(stop_id)}
+        {stop_id, RealtimeSigns.alert_engine().stop_status(stop_id)}
       end
 
     prev_predictions_lookup =
@@ -202,7 +180,7 @@ defmodule Signs.Bus do
         # they are predicted there, let people on the lower busway know.
         id == "bus.Harvard_lower" &&
             Enum.any?(
-              prediction_engine.predictions_for_stop("20761"),
+              RealtimeSigns.bus_prediction_engine().predictions_for_stop("20761"),
               &(&1.route_id in ["71", "73"])
             ) ->
           special_harvard_content()
@@ -234,7 +212,7 @@ defmodule Signs.Bus do
     state
     |> then(fn state ->
       if should_update?({top, bottom}, current_time, state) do
-        state.sign_updater.set_background_message(state, top, bottom)
+        RealtimeSigns.sign_updater().set_background_message(state, top, bottom)
         %{state | current_messages: {top, bottom}, last_update: current_time}
       else
         state
@@ -268,10 +246,8 @@ defmodule Signs.Bus do
   end
 
   defp fetch_predictions(prev_predictions_lookup, current_time, state) do
-    %{prediction_engine: prediction_engine} = state
-
     for stop_id <- all_stop_ids(state),
-        prediction <- prediction_engine.predictions_for_stop(stop_id),
+        prediction <- RealtimeSigns.bus_prediction_engine().predictions_for_stop(stop_id),
         prediction.departure_time do
       prev = prev_predictions_lookup[prediction_key(prediction)]
 
@@ -387,14 +363,14 @@ defmodule Signs.Bus do
       messages =
         case content do
           [single] ->
-            format_long_message(single, current_time, state)
+            format_long_message(single, current_time)
 
           list ->
             Stream.chunk_every(list, 2, 2, [nil])
             |> Stream.map(fn [first, second] ->
               [
-                format_message(first, second, current_time, state),
-                format_message(second, first, current_time, state)
+                format_message(first, second, current_time),
+                format_message(second, first, current_time)
               ]
             end)
         end
@@ -413,10 +389,10 @@ defmodule Signs.Bus do
       audios =
         case audio_content do
           [single] ->
-            long_message_audio(single, current_time, state)
+            long_message_audio(single, current_time)
 
           list ->
-            Enum.map(list, &message_audio(&1, current_time, state))
+            Enum.map(list, &message_audio(&1, current_time))
             |> add_preamble()
         end
         |> Stream.intersperse([:","])
@@ -430,10 +406,10 @@ defmodule Signs.Bus do
             []
 
           [single] ->
-            [long_message_tts_audio(single, current_time, state)]
+            [long_message_tts_audio(single, current_time)]
 
           list ->
-            Enum.map(list, &message_tts_audio(&1, current_time, state))
+            Enum.map(list, &message_tts_audio(&1, current_time))
             |> Enum.join(" ")
             |> add_tts_preamble()
             |> List.wrap()
@@ -470,12 +446,12 @@ defmodule Signs.Bus do
     else
       messages =
         for content <- [top_content, bottom_content] do
-          Enum.map(content, &format_message(&1, nil, current_time, state))
+          Enum.map(content, &format_message(&1, nil, current_time))
           |> paginate_message()
         end
 
       audios =
-        Enum.map(top_content ++ bottom_content, &message_audio(&1, current_time, state))
+        Enum.map(top_content ++ bottom_content, &message_audio(&1, current_time))
         |> add_preamble()
         |> Stream.intersperse([:","])
         |> Stream.concat()
@@ -488,7 +464,7 @@ defmodule Signs.Bus do
             []
 
           list ->
-            Enum.map(list, &message_tts_audio(&1, current_time, state))
+            Enum.map(list, &message_tts_audio(&1, current_time))
             |> Enum.join(" ")
             |> add_tts_preamble()
             |> List.wrap()
@@ -713,9 +689,9 @@ defmodule Signs.Bus do
     end
   end
 
-  defp format_message(nil, _, _, _state), do: ""
+  defp format_message(nil, _, _), do: ""
 
-  defp format_message({:predictions, [first | _]}, other, current_time, _state) do
+  defp format_message({:predictions, [first | _]}, other, current_time) do
     other_prediction =
       case other do
         {:predictions, [other_first | _]} -> other_first
@@ -725,7 +701,7 @@ defmodule Signs.Bus do
     format_prediction(first, other_prediction, current_time)
   end
 
-  defp format_message({:alert, config}, _, _, state) do
+  defp format_message({:alert, config}, _, _) do
     %{route_id: route_id, direction_id: direction_id} = config.sources |> List.first()
 
     route =
@@ -737,18 +713,18 @@ defmodule Signs.Bus do
 
     dest =
       headsign_abbreviation(
-        state.routes_engine.route_destination(route_id, direction_id),
+        RealtimeSigns.route_engine().route_destination(route_id, direction_id),
         @line_max - String.length(route) - String.length(no_svc) - 1
       )
 
     Content.Utilities.width_padded_string("#{route}#{dest}", no_svc, @line_max)
   end
 
-  defp format_long_message({:predictions, [single]}, current_time, _state) do
+  defp format_long_message({:predictions, [single]}, current_time) do
     [[format_prediction(single, nil, current_time), ""]]
   end
 
-  defp format_long_message({:predictions, [first, second | _]}, current_time, _state) do
+  defp format_long_message({:predictions, [first, second | _]}, current_time) do
     [
       [
         format_prediction(first, second, current_time),
@@ -757,8 +733,8 @@ defmodule Signs.Bus do
     ]
   end
 
-  defp format_long_message({:alert, _} = message, current_time, state) do
-    [[format_message(message, nil, current_time, state), ""]]
+  defp format_long_message({:alert, _} = message, current_time) do
+    [[format_message(message, nil, current_time), ""]]
   end
 
   # Returns a string representation of a prediction, suitable for displaying on a sign.
@@ -798,8 +774,8 @@ defmodule Signs.Bus do
       else: first.route_id
   end
 
-  defp config_headsign(%{sources: [first | _]}, state) do
-    state.routes_engine.route_destination(first.route_id, first.direction_id)
+  defp config_headsign(%{sources: [first | _]}) do
+    RealtimeSigns.route_engine().route_destination(first.route_id, first.direction_id)
   end
 
   defp headsign_abbreviation(headsign, max_size) do
@@ -846,7 +822,7 @@ defmodule Signs.Bus do
   defp add_tts_preamble(str), do: "Upcoming departures: " <> str
 
   # Returns a list of audio tokens describing the given message.
-  defp message_audio({:predictions, [prediction | _]}, current_time, _state) do
+  defp message_audio({:predictions, [prediction | _]}, current_time) do
     route =
       case PaEss.Utilities.prediction_route_name(prediction) do
         nil -> []
@@ -865,19 +841,19 @@ defmodule Signs.Bus do
     Enum.concat([route, dest, time])
   end
 
-  defp message_audio({:alert, config}, _, state) do
+  defp message_audio({:alert, config}, _) do
     route =
       case config_route_name(config) do
         nil -> []
         str -> [{:route, str}]
       end
 
-    headsign = config_headsign(config, state)
+    headsign = config_headsign(config)
 
     route ++ [{:headsign, headsign}, :no_service]
   end
 
-  defp message_tts_audio({:predictions, [prediction | _]}, current_time, _state) do
+  defp message_tts_audio({:predictions, [prediction | _]}, current_time) do
     route =
       case PaEss.Utilities.prediction_route_name(prediction) do
         nil -> ""
@@ -894,20 +870,20 @@ defmodule Signs.Bus do
     "#{route}#{prediction.headsign}, #{time}."
   end
 
-  defp message_tts_audio({:alert, config}, _, state) do
+  defp message_tts_audio({:alert, config}, _) do
     route =
       case config_route_name(config) do
         nil -> ""
         name -> "Route #{name}, "
       end
 
-    headsign = config_headsign(config, state)
+    headsign = config_headsign(config)
     "#{route}#{headsign}, no service."
   end
 
   # Returns a list of audio tokens representing the special "long form" description of
   # the given prediction.
-  defp long_message_audio({:predictions, predictions}, current_time, _state) do
+  defp long_message_audio({:predictions, predictions}, current_time) do
     Stream.take(predictions, 2)
     |> Enum.zip_with([:next, :following], fn prediction, next_or_following ->
       preamble =
@@ -931,19 +907,19 @@ defmodule Signs.Bus do
     end)
   end
 
-  defp long_message_audio({:alert, config}, _, state) do
+  defp long_message_audio({:alert, config}, _) do
     route =
       case config_route_name(config) do
         nil -> []
         str -> [{:route, str}]
       end
 
-    headsign = config_headsign(config, state)
+    headsign = config_headsign(config)
 
     [Enum.concat([[:there_is_no], route, [:bus_service_to, {:headsign, headsign}]])]
   end
 
-  defp long_message_tts_audio({:predictions, predictions}, current_time, _state) do
+  defp long_message_tts_audio({:predictions, predictions}, current_time) do
     Stream.take(predictions, 2)
     |> Enum.zip_with(["next", "following"], fn prediction, next_or_following ->
       route =
@@ -964,14 +940,14 @@ defmodule Signs.Bus do
     |> Enum.join(" ")
   end
 
-  defp long_message_tts_audio({:alert, config}, _, state) do
+  defp long_message_tts_audio({:alert, config}, _) do
     route =
       case config_route_name(config) do
         nil -> ""
         name -> "route #{name} "
       end
 
-    headsign = config_headsign(config, state)
+    headsign = config_headsign(config)
     "There is no #{route}bus service to #{headsign}."
   end
 
@@ -992,10 +968,10 @@ defmodule Signs.Bus do
   end
 
   defp send_audio(audios, tts_audios, state) do
-    %{audio_zones: audio_zones, sign_updater: sign_updater} = state
+    %{audio_zones: audio_zones} = state
 
     if audios != [] && audio_zones != [] do
-      sign_updater.play_message(
+      RealtimeSigns.sign_updater().play_message(
         state,
         audios,
         tts_audios,

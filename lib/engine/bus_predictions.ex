@@ -2,6 +2,7 @@ defmodule Engine.BusPredictions do
   use GenServer
   require Logger
 
+  @callback predictions_for_stop(String.t()) :: [Predictions.BusPrediction.t()]
   def predictions_for_stop(id) do
     case :ets.lookup(:bus_predictions, id) do
       [{^id, predictions}] -> predictions

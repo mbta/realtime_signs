@@ -1,6 +1,16 @@
 import Config
 
 config :realtime_signs,
+  location_engine: Engine.Locations.Mock,
+  config_engine: Engine.Config.Mock,
+  headway_engine: Engine.ScheduledHeadways.Mock,
+  prediction_engine: Engine.Predictions.Mock,
+  alert_engine: Engine.Alerts.Mock,
+  last_trip_engine: Engine.LastTrip.Mock,
+  bridge_engine: Engine.ChelseaBridge.Mock,
+  route_engine: Engine.Routes.Mock,
+  bus_prediction_engine: Engine.BusPredictions.Mock,
+  sign_updater: PaEss.Updater.Mock,
   http_client: Fake.HTTPoison,
   trip_update_url: "https://fake_update/mbta-gtfs-s3/fake_trip_update.json",
   sign_head_end_host: "signs.example.com",

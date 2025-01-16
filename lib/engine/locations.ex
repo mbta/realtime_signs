@@ -3,8 +3,6 @@ defmodule Engine.Locations do
   Maintains an up-to-date internal state of the realtime locations of vehicles in the system. Fetches
   from the GTFS-rt enhanced JSON file about once per second.
   """
-  @behaviour Engine.LocationsAPI
-
   use GenServer
   require Logger
   alias Signs.Utilities.EtsUtils
@@ -22,7 +20,7 @@ defmodule Engine.Locations do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  @impl true
+  @callback for_vehicle(String.t()) :: Locations.Location.t()
   def for_vehicle(locations_table_id \\ @vehicle_locations_table, vehicle_id) do
     case :ets.lookup(locations_table_id, vehicle_id) do
       [{_, :none}] -> nil
@@ -31,7 +29,7 @@ defmodule Engine.Locations do
     end
   end
 
-  @impl true
+  @callback for_stop(String.t()) :: [Locations.Location.t()]
   def for_stop(stop_id) do
     case :ets.lookup(@stop_locations_table, stop_id) do
       [{^stop_id, locations}] -> locations
