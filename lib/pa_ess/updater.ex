@@ -1,23 +1,24 @@
 defmodule PaEss.Updater do
-  @behaviour PaEss.UpdaterAPI
-
   require Logger
 
-  @impl true
+  @callback set_background_message(
+              Signs.Realtime.t() | Signs.Bus.t(),
+              Content.Message.value(),
+              Content.Message.value()
+            ) :: :ok
   def set_background_message(
         %{
           id: id,
           scu_id: scu_id,
           pa_ess_loc: pa_ess_loc,
           text_zone: text_zone,
-          default_mode: default_mode,
-          config_engine: config_engine
+          default_mode: default_mode
         },
         top,
         bottom
       ) do
     log_config =
-      case config_engine.sign_config(id, default_mode) do
+      case RealtimeSigns.config_engine().sign_config(id, default_mode) do
         mode when is_atom(mode) -> mode
         mode when is_tuple(mode) -> elem(mode, 0)
         _ -> nil
@@ -25,7 +26,7 @@ defmodule PaEss.Updater do
 
     visual = zip_pages(top, bottom) |> format_pages()
     tag = create_tag()
-    scu_migrated? = config_engine.scu_migrated?(scu_id)
+    scu_migrated? = RealtimeSigns.config_engine().scu_migrated?(scu_id)
 
     log_meta = [
       sign_id: id,
@@ -51,21 +52,26 @@ defmodule PaEss.Updater do
     end
   end
 
-  @impl true
+  @callback play_message(
+              Signs.Realtime.t() | Signs.Bus.t(),
+              [Content.Audio.value()],
+              [Content.Audio.tts_value()],
+              [keyword()]
+            ) ::
+              :ok
   def play_message(
         %{
           id: id,
           scu_id: scu_id,
           pa_ess_loc: pa_ess_loc,
-          audio_zones: audio_zones,
-          config_engine: config_engine
+          audio_zones: audio_zones
         },
         audios,
         tts_audios,
         log_metas
       ) do
     tags = Enum.map(audios, fn _ -> create_tag() end)
-    scu_migrated? = config_engine.scu_migrated?(scu_id)
+    scu_migrated? = RealtimeSigns.config_engine().scu_migrated?(scu_id)
 
     log_metas =
       Enum.zip([tts_audios, tags, log_metas])

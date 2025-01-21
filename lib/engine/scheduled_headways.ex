@@ -4,7 +4,6 @@ defmodule Engine.ScheduledHeadways do
   Initially we will quickly update any newly registered stop so that we have something to show,
   then over time we will update every stop once every hour to make sure we stay up to date.
   """
-  @behaviour Engine.ScheduledHeadwaysAPI
   use GenServer
   require Logger
   require Signs.Utilities.SignsConfig
@@ -79,7 +78,7 @@ defmodule Engine.ScheduledHeadways do
     :ets.select(table_name, pattern)
   end
 
-  @impl true
+  @callback get_first_scheduled_departure([binary]) :: nil | DateTime.t()
   def get_first_scheduled_departure(stop_ids) do
     get_first_last_departures(stop_ids)
     |> Enum.map(&elem(&1, 0))
@@ -89,7 +88,7 @@ defmodule Engine.ScheduledHeadways do
   @doc "Checks if the given time is after the first scheduled stop and before the last.
   A buffer of minutes (positive) is subtracted from the first time. so that headways are
   shown for a short time before the first train."
-  @impl true
+  @callback display_headways?([String.t()], DateTime.t(), Engine.Config.Headway.t()) :: boolean()
   def display_headways?(
         table \\ :scheduled_headways_first_last_departures,
         stop_ids,

@@ -2,6 +2,7 @@ defmodule Engine.PredictionsTest do
   use ExUnit.Case
   import ExUnit.CaptureLog
   import Engine.Predictions
+  import Mox
 
   describe "handle_info/2" do
     test "keeps existing states when trip_update url has not been modified" do
@@ -37,6 +38,7 @@ defmodule Engine.PredictionsTest do
     end
 
     test "instead of deleting old predictions, overwrites them with []" do
+      stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
       trip_update_url = Application.get_env(:realtime_signs, :trip_update_url)
       Application.put_env(:realtime_signs, :trip_update_url, "fake_trip_update2.json")
 

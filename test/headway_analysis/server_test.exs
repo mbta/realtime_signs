@@ -7,10 +7,7 @@ defmodule HeadwayAnalysys.ServerTest do
     sign_id: "test_sign",
     headway_group: "test_headway_group",
     stop_ids: ["1"],
-    vehicles_present: MapSet.new(["v-1"]),
-    prediction_engine: Engine.Predictions.Mock,
-    config_engine: Engine.Config.Mock,
-    location_engine: Engine.Locations.Mock
+    vehicles_present: MapSet.new(["v-1"])
   }
 
   setup :verify_on_exit!

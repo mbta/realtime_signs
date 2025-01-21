@@ -42,7 +42,7 @@ defmodule Predictions.Predictions do
             stop_time_update,
             get_destination_stop_id(trip_update),
             vehicle_id,
-            Engine.Locations.for_vehicle(vehicle_id),
+            RealtimeSigns.location_engine().for_vehicle(vehicle_id),
             trip_update["trip"]["route_id"],
             trip_update["trip"]["direction_id"],
             trip_update["trip"]["trip_id"],

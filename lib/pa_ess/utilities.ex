@@ -6,6 +6,7 @@ defmodule PaEss.Utilities do
   require Logger
 
   @space "21000"
+  @stopped_regex ~r/Stopped (\d+) stops? away/
 
   @abbreviation_replacements [
     {~r"\bOL\b", "Orange Line"},
@@ -509,6 +510,46 @@ defmodule PaEss.Utilities do
 
   def prediction_route_name(%{route_id: route_id}), do: route_id
 
+  defp prediction_seconds(prediction, true) do
+    prediction.seconds_until_departure
+  end
+
+  defp prediction_seconds(prediction, false) do
+    prediction.seconds_until_arrival || prediction.seconds_until_departure
+  end
+
+  @spec prediction_minutes(Predictions.Prediction.t(), boolean()) :: {integer(), boolean()}
+  def prediction_minutes(prediction, terminal?) do
+    sec = prediction_seconds(prediction, terminal?)
+    min = round(sec / 60)
+
+    cond do
+      prediction.stopped_at_predicted_stop? and (!terminal? or sec <= 60) -> {:boarding, false}
+      !terminal? and sec <= 30 -> {:arriving, false}
+      min > 60 -> {60, true}
+      prediction.type == :reverse and min > 20 -> {div(min, 10) * 10, true}
+      true -> {max(min, 1), false}
+    end
+  end
+
+  @spec prediction_approaching?(Predictions.Prediction.t(), boolean()) :: boolean()
+  def prediction_approaching?(prediction, terminal?) do
+    !terminal? and !prediction.stopped_at_predicted_stop? and
+      prediction_seconds(prediction, terminal?) in 31..60
+  end
+
+  @spec prediction_stopped?(Predictions.Prediction.t(), boolean()) :: boolean()
+  def prediction_stopped?(%{boarding_status: boarding_status} = prediction, terminal?) do
+    {_, approximate?} = prediction_minutes(prediction, terminal?)
+    !!boarding_status and Regex.match?(@stopped_regex, boarding_status) and !approximate?
+  end
+
+  @spec prediction_stops_away(Predictions.Prediction.t()) :: integer()
+  def prediction_stops_away(%{boarding_status: status}) do
+    [_, str] = Regex.run(@stopped_regex, status)
+    String.to_integer(str)
+  end
+
   @headsign_take_mappings [
     {"Ruggles", "4086"},
     {"Downtown", "563"},
@@ -766,9 +807,9 @@ defmodule PaEss.Utilities do
     |> Enum.map(fn [top, bottom] -> {top, bottom, 3} end)
   end
 
-  @spec prediction_new_cars?(Predictions.Prediction.t(), Signs.Realtime.t()) :: boolean()
-  def prediction_new_cars?(prediction, sign) do
-    case sign.location_engine.for_vehicle(prediction.vehicle_id) do
+  @spec prediction_new_cars?(Predictions.Prediction.t()) :: boolean()
+  def prediction_new_cars?(prediction) do
+    case RealtimeSigns.location_engine().for_vehicle(prediction.vehicle_id) do
       %Locations.Location{route_id: "Red", multi_carriage_details: carriage_details} ->
         Enum.any?(carriage_details, fn carriage ->
           # See http://roster.transithistory.org/ for numbers of new cars

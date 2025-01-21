@@ -9,7 +9,7 @@ defmodule RealtimeSignsWeb.MonitoringController do
         %{"time" => timestamp, "data" => %{"nodes" => nodes}} = _params
       ) do
     Logger.info("Received uptime statuses from ARINC: Node count=#{Enum.count(nodes)}")
-    Uptime.monitor_node_uptime(nodes, timestamp)
+    Uptime.monitor_nodes(nodes, timestamp)
     send_resp(conn, 200, "")
   end
 

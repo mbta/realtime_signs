@@ -4,7 +4,6 @@ defmodule Signs.Utilities.Messages do
   be displaying
   """
 
-  alias Content.Message.Alert
   @early_am_start ~T[03:29:00]
   @early_am_buffer -40
 
@@ -30,145 +29,111 @@ defmodule Signs.Utilities.Messages do
     cond do
       match?({:static_text, {_, _}}, sign_config) ->
         {:static_text, {line1, line2}} = sign_config
-
-        {Content.Message.Custom.new(line1, :top), Content.Message.Custom.new(line2, :bottom)}
+        [%Message.Custom{top: line1, bottom: line2}]
 
       sign_config == :off ->
-        {%Content.Message.Empty{}, %Content.Message.Empty{}}
+        [%Message.Empty{}]
 
-      match?(%{source_config: {_, _}}, sign) ->
-        Enum.zip([
-          Tuple.to_list(sign.source_config),
-          Tuple.to_list(predictions),
-          Tuple.to_list(alert_status),
-          Tuple.to_list(scheduled),
-          Tuple.to_list(service_status)
-        ])
+      true ->
+        if match?(%{source_config: {_, _}}, sign) do
+          Enum.zip([
+            Tuple.to_list(sign.source_config),
+            Tuple.to_list(predictions),
+            Tuple.to_list(alert_status),
+            Tuple.to_list(scheduled),
+            Tuple.to_list(service_status)
+          ])
+        else
+          [{sign.source_config, predictions, alert_status, scheduled, service_status}]
+        end
         |> Enum.map(fn {config, predictions, alert_status, scheduled, service_status} ->
           predictions =
             filter_predictions(predictions, config, sign_config, current_time, scheduled)
 
           alert_status = filter_alert_status(alert_status, sign_config)
 
-          Signs.Utilities.Predictions.prediction_message(predictions, config, sign) ||
+          prediction_message(predictions, config, sign) ||
             service_ended_message(service_status, config) ||
             alert_message(alert_status, sign, config) ||
-            Signs.Utilities.Headways.headway_message(sign, config, current_time) ||
+            Signs.Utilities.Headways.headway_message(config, current_time) ||
             early_am_message(current_time, scheduled, config) ||
-            %Content.Message.Empty{}
+            %Message.Empty{}
         end)
-        |> List.to_tuple()
-        |> transform_messages()
+    end
+    |> transform_messages()
+    |> render_messages()
+  end
+
+  @spec transform_messages([Message.t()]) :: [Message.t()]
+  defp transform_messages([
+         %Message.Headway{range: range} = top,
+         %Message.Headway{range: range} = bottom
+       ]) do
+    [
+      %Message.Headway{
+        destination: nil,
+        route: combine_routes(top.route, bottom.route),
+        range: range
+      }
+    ]
+  end
+
+  defp transform_messages([
+         %Message.Alert{status: status} = top,
+         %Message.Alert{status: status} = bottom
+       ]) do
+    [
+      %Message.Alert{
+        destination: nil,
+        route: combine_routes(top.route, bottom.route),
+        status: status,
+        uses_shuttles?: top.uses_shuttles?,
+        union_square?: top.union_square?
+      }
+    ]
+  end
+
+  defp transform_messages([%Message.ServiceEnded{} = top, %Message.ServiceEnded{} = bottom]) do
+    [%Message.ServiceEnded{destination: nil, route: combine_routes(top.route, bottom.route)}]
+  end
+
+  defp transform_messages(messages), do: messages
+
+  defp render_messages([single]) do
+    Message.to_multi_line(single)
+  end
+
+  defp render_messages([top, bottom]) do
+    cond do
+      fits_on_top_line?(top) ->
+        {Message.to_single_line(top), Message.to_single_line(bottom)}
+
+      fits_on_top_line?(bottom) ->
+        {Message.to_single_line(bottom), Message.to_single_line(top)}
+
+      can_shrink?(top) ->
+        {%{Message.to_single_line(top) | variant: :short}, Message.to_single_line(bottom)}
+
+      can_shrink?(bottom) ->
+        {%{Message.to_single_line(bottom) | variant: :short}, Message.to_single_line(top)}
 
       true ->
-        config = sign.source_config
-
-        predictions =
-          filter_predictions(predictions, config, sign_config, current_time, scheduled)
-
-        alert_status = filter_alert_status(alert_status, sign_config)
-
-        Signs.Utilities.Predictions.prediction_messages(predictions, config, sign) ||
-          service_ended_messages(service_status, config) ||
-          alert_messages(alert_status, sign, config) ||
-          Signs.Utilities.Headways.headway_messages(sign, config, current_time) ||
-          early_am_messages(current_time, scheduled, config) ||
-          {%Content.Message.Empty{}, %Content.Message.Empty{}}
-    end
-  end
-
-  @spec transform_messages(Signs.Realtime.sign_messages()) :: Signs.Realtime.sign_messages()
-  defp transform_messages(
-         {%Content.Message.Headways.Paging{range: range, route: top_route},
-          %Content.Message.Headways.Paging{range: range, route: bottom_route}}
-       ) do
-    {%Content.Message.Headways.Top{route: combine_routes(top_route, bottom_route)},
-     %Content.Message.Headways.Bottom{range: range}}
-  end
-
-  defp transform_messages(
-         {%Content.Message.Alert.DestinationNoService{route: top_route},
-          %Content.Message.Alert.DestinationNoService{route: bottom_route}}
-       ) do
-    {%Content.Message.Alert.NoService{route: combine_routes(top_route, bottom_route)},
-     %Content.Message.Empty{}}
-  end
-
-  defp transform_messages(
-         {%Content.Message.Alert.NoServiceUseShuttle{route: top_route},
-          %Content.Message.Alert.NoServiceUseShuttle{route: bottom_route}}
-       ) do
-    {%Content.Message.Alert.NoService{route: combine_routes(top_route, bottom_route)},
-     %Alert.UseShuttleBus{}}
-  end
-
-  defp transform_messages(
-         {%Content.Message.LastTrip.NoService{route: top_route},
-          %Content.Message.LastTrip.NoService{route: bottom_route}}
-       ) do
-    {%Content.Message.LastTrip.StationClosed{route: combine_routes(top_route, bottom_route)},
-     %Content.Message.LastTrip.ServiceEnded{}}
-  end
-
-  defp transform_messages({top, bottom}) do
-    cond do
-      fits_on_top_line?(top) -> {top, bottom}
-      fits_on_top_line?(bottom) -> {bottom, top}
-      can_shrink?(top) -> {%{top | variant: :short}, bottom}
-      can_shrink?(bottom) -> {%{bottom | variant: :short}, top}
-      true -> paginate(expand_message(top), expand_message(bottom))
+        paginate(Message.to_full_page(top), Message.to_full_page(bottom))
     end
   end
 
   defp fits_on_top_line?(message) do
-    case Content.Message.to_string(message) do
+    case Message.to_single_line(message) |> Content.Message.to_string() do
       list when is_list(list) -> Enum.map(list, &elem(&1, 0))
       single -> [single]
     end
     |> Enum.all?(&(String.length(&1) <= 18))
   end
 
-  defp can_shrink?(message), do: Map.has_key?(message, :variant)
+  defp can_shrink?(message), do: Message.to_single_line(message) |> Map.has_key?(:variant)
 
   defp combine_routes(route, route), do: route
   defp combine_routes(_, _), do: nil
-
-  @spec expand_message(Content.Message.t()) :: Signs.Realtime.sign_messages()
-  defp expand_message(%Content.Message.Headways.Paging{
-         range: range,
-         route: route,
-         destination: destination
-       }) do
-    {%Content.Message.Headways.Top{route: route, destination: destination},
-     %Content.Message.Headways.Bottom{range: range}}
-  end
-
-  defp expand_message(
-         %Content.Message.Predictions{
-           special_sign: :jfk_mezzanine,
-           prediction: %{stop_id: stop_id},
-           minutes: minutes
-         } = prediction
-       ) do
-    {%{prediction | special_sign: nil},
-     %Content.Message.PlatformPredictionBottom{stop_id: stop_id, minutes: minutes}}
-  end
-
-  defp expand_message(%Content.Message.EarlyAm.DestinationScheduledTime{
-         destination: destination,
-         scheduled_time: scheduled_time
-       }) do
-    {%Content.Message.EarlyAm.DestinationTrain{destination: destination},
-     %Content.Message.EarlyAm.ScheduledTime{scheduled_time: scheduled_time}}
-  end
-
-  defp expand_message(%Content.Message.Alert.NoServiceUseShuttle{
-         route: route,
-         destination: destination
-       }) do
-    {%Content.Message.Alert.NoService{destination: destination, route: route},
-     %Alert.UseShuttleBus{}}
-  end
 
   defp paginate({first_top, first_bottom}, {second_top, second_bottom}) do
     {%Content.Message.GenericPaging{messages: [first_top, second_top]},
@@ -276,82 +241,52 @@ defmodule Signs.Utilities.Messages do
     Timex.before?(current_time, Timex.shift(scheduled, minutes: @early_am_buffer))
   end
 
-  defp early_am_message(current_time, scheduled_time, config) do
-    if in_early_am?(current_time, scheduled_time) do
-      %Content.Message.EarlyAm.DestinationScheduledTime{
-        destination: config.headway_destination,
-        scheduled_time: scheduled_time
+  @spec prediction_message(
+          [Predictions.Prediction.t()],
+          Signs.Utilities.SourceConfig.config(),
+          Signs.Realtime.t()
+        ) :: Message.t() | nil
+  defp prediction_message(predictions, %{terminal?: terminal?}, sign) do
+    if predictions != [] do
+      %Message.Predictions{
+        predictions: predictions,
+        terminal?: terminal?,
+        special_sign:
+          case sign do
+            %{pa_ess_loc: "RJFK", text_zone: "m"} -> :jfk_mezzanine
+            %{pa_ess_loc: "BBOW", text_zone: "e"} -> :bowdoin_eastbound
+            _ -> nil
+          end
       }
     end
   end
 
-  defp early_am_messages(current_time, scheduled_time, config) do
+  defp early_am_message(current_time, scheduled_time, config) do
     if in_early_am?(current_time, scheduled_time) do
-      {%Content.Message.EarlyAm.DestinationTrain{destination: config.headway_destination},
-       %Content.Message.EarlyAm.ScheduledTime{scheduled_time: scheduled_time}}
-    end
-  end
-
-  defp alert_messages(alert_status, %{pa_ess_loc: "GUNS"}, config) do
-    route = Signs.Utilities.SourceConfig.single_route(config)
-    destination = config.headway_destination
-
-    if alert_status in [:none, :alert_along_route],
-      do: nil,
-      else: {%Alert.NoService{route: route, destination: destination}, %Alert.UseRoutes{}}
-  end
-
-  defp alert_messages(alert_status, sign, config) do
-    route = Signs.Utilities.SourceConfig.single_route(config)
-    destination = config.headway_destination
-
-    case {alert_status, sign.uses_shuttles} do
-      {:shuttles_transfer_station, _} ->
-        {%Content.Message.Empty{}, %Content.Message.Empty{}}
-
-      {:shuttles_closed_station, true} ->
-        {%Alert.NoService{route: route, destination: destination}, %Alert.UseShuttleBus{}}
-
-      {:shuttles_closed_station, false} ->
-        {%Alert.NoService{route: route, destination: destination}, %Content.Message.Empty{}}
-
-      {:suspension_transfer_station, _} ->
-        {%Content.Message.Empty{}, %Content.Message.Empty{}}
-
-      {:suspension_closed_station, _} ->
-        {%Alert.NoService{route: route, destination: destination}, %Content.Message.Empty{}}
-
-      {:station_closure, _} ->
-        {%Alert.NoService{route: route, destination: destination}, %Content.Message.Empty{}}
-
-      _ ->
-        nil
+      %Message.FirstTrain{destination: config.headway_destination, scheduled: scheduled_time}
     end
   end
 
   defp alert_message(alert_status, sign, config) do
     route = Signs.Utilities.SourceConfig.single_route(config)
+    transfer_alert? = alert_status in [:suspension_transfer_station, :shuttles_transfer_station]
+    union_square? = sign.pa_ess_loc == "GUNS"
 
-    case {alert_status, sign.uses_shuttles} do
-      {:shuttles_transfer_station, _} ->
-        %Content.Message.Empty{}
+    cond do
+      alert_status in [:shuttles_closed_station, :suspension_closed_station, :station_closure] or
+          (union_square? and transfer_alert?) ->
+        %Message.Alert{
+          route: route,
+          destination: config.headway_destination,
+          status: alert_status,
+          uses_shuttles?: sign.uses_shuttles,
+          union_square?: union_square?
+        }
 
-      {:shuttles_closed_station, true} ->
-        %Alert.NoServiceUseShuttle{route: route, destination: config.headway_destination}
+      transfer_alert? ->
+        %Message.Empty{}
 
-      {:shuttles_closed_station, false} ->
-        %Alert.DestinationNoService{route: route, destination: config.headway_destination}
-
-      {:suspension_transfer_station, _} ->
-        %Content.Message.Empty{}
-
-      {:suspension_closed_station, _} ->
-        %Alert.DestinationNoService{route: route, destination: config.headway_destination}
-
-      {:station_closure, _} ->
-        %Alert.DestinationNoService{route: route, destination: config.headway_destination}
-
-      _ ->
+      true ->
         nil
     end
   end
@@ -360,14 +295,7 @@ defmodule Signs.Utilities.Messages do
     route = Signs.Utilities.SourceConfig.single_route(config)
 
     if service_ended? do
-      %Content.Message.LastTrip.NoService{destination: config.headway_destination, route: route}
-    end
-  end
-
-  defp service_ended_messages(service_ended?, config) do
-    if service_ended? do
-      {%Content.Message.LastTrip.PlatformClosed{destination: config.headway_destination},
-       %Content.Message.LastTrip.ServiceEnded{destination: config.headway_destination}}
+      %Message.ServiceEnded{destination: config.headway_destination, route: route}
     end
   end
 end

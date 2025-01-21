@@ -5,8 +5,8 @@ defmodule Signs.Utilities.Crowding do
           | nil
   def crowding_description(_, %{source_config: {_, _}}), do: nil
 
-  def crowding_description(%{route_id: "Orange"} = prediction, sign) do
-    case sign.location_engine.for_vehicle(prediction.vehicle_id) do
+  def crowding_description(%{route_id: "Orange"} = prediction, _sign) do
+    case RealtimeSigns.location_engine().for_vehicle(prediction.vehicle_id) do
       %Locations.Location{
         stop_id: stop_id,
         status: status,

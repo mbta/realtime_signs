@@ -2,8 +2,6 @@ defmodule Engine.Config do
   @moduledoc """
   Manages the dynamic configurable pieces of the signs such as if they are on
   """
-  @behaviour Engine.ConfigAPI
-
   use GenServer
   require Logger
   alias Engine.Config.Headway
@@ -31,7 +29,8 @@ defmodule Engine.Config do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  @impl true
+  @callback sign_config(id :: String.t(), default :: Engine.Config.sign_config()) ::
+              Engine.Config.sign_config()
   def sign_config(table \\ @table_signs, sign_id, default) do
     case :ets.lookup(table, sign_id) do
       [{^sign_id, config}] when not is_nil(config) -> config
@@ -39,13 +38,13 @@ defmodule Engine.Config do
     end
   end
 
-  @impl true
+  @callback headway_config(String.t(), DateTime.t()) :: Engine.Config.Headway.t() | nil
   def headway_config(table_name \\ @table_headways, headway_group, current_time) do
     time_period = Headway.current_time_period(current_time)
     Headways.get_headway(table_name, {headway_group, time_period})
   end
 
-  @impl true
+  @callback scu_migrated?(String.t()) :: boolean()
   def scu_migrated?(table_name \\ @table_scus_migrated, scu_id) do
     case :ets.lookup(table_name, scu_id) do
       [{^scu_id, value}] -> value
@@ -53,7 +52,7 @@ defmodule Engine.Config do
     end
   end
 
-  @spec chelsea_bridge_config(:ets.tab()) :: :off | :auto
+  @callback chelsea_bridge_config() :: :off | :auto
   def chelsea_bridge_config(table_name \\ @table_chelsea_bridge) do
     case :ets.lookup(table_name, :status) do
       [{_, "auto"}] -> :auto

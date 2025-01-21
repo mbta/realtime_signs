@@ -38,14 +38,7 @@ defmodule Signs.RealtimeTest do
     },
     current_content_top: "Southbound trains",
     current_content_bottom: "Every 11 to 13 min",
-    prediction_engine: Engine.Predictions.Mock,
-    location_engine: Engine.Locations.Mock,
-    headway_engine: Engine.ScheduledHeadways.Mock,
-    config_engine: Engine.Config.Mock,
-    alerts_engine: Engine.Alerts.Mock,
-    last_trip_engine: Engine.LastTrip.Mock,
     current_time_fn: &Signs.RealtimeTest.fake_time_fn/0,
-    sign_updater: PaEss.Updater.Mock,
     last_update: @fake_time,
     tick_read: 1,
     read_period_seconds: 100,
@@ -475,7 +468,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [{:canned, {"115", spaced(["501", "4100", "864", "533", "641", "5008", "534"]), :audio}}],
-        [{"The next Mattapan train is stopped 8 stops away", nil}]
+        [{"The next Mattapan train is stopped 8 stops away.", nil}]
       )
 
       assert {_, %{announced_stalls: [{"1", 8}]}} = Signs.Realtime.handle_info(:run_loop, @sign)
@@ -909,7 +902,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"The next Ashmont train arrives in 2 minutes.", nil},
-          {"The following Ashmont train arrives in 4 minutes", nil}
+          {"The following Ashmont train arrives in 4 minutes.", nil}
         ]
       )
 
@@ -992,36 +985,11 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"The next Ashmont train arrives in 1 minute.", nil},
-          {"The following Ashmont train arrives in 2 minutes", nil}
+          {"The following Ashmont train arrives in 2 minutes.", nil}
         ]
       )
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_approachings: ["1"]})
-    end
-
-    test "does not read approaching for following trains" do
-      # Note: This behavior exists because we didn't have recorded audio to cover this case at the
-      # time, but we should fix this so it works the same as other readouts.
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [
-          prediction(destination: :ashmont, arrival: 15, trip_id: "1"),
-          prediction(destination: :ashmont, arrival: 45, trip_id: "2")
-        ]
-      end)
-
-      expect_messages({"Ashmont        ARR", "Ashmont      1 min"})
-
-      expect_audios([{:canned, {"103", ["32107"], :audio_visual}}], [
-        {"Attention passengers: The next Ashmont train is now arriving.",
-         [{"Ashmont train", "now arriving", 6}]}
-      ])
-
-      Signs.Realtime.handle_info(:run_loop, %{
-        @sign
-        | tick_read: 0,
-          announced_arrivals: ["1"],
-          announced_approachings: ["2"]
-      })
     end
 
     test "reads approaching as 1 minute when on the bottom line and a different headsign" do
@@ -1073,7 +1041,7 @@ defmodule Signs.RealtimeTest do
         [
           {"Attention passengers: The next Ashmont train is now arriving.",
            [{"Ashmont train", "now arriving", 6}]},
-          {"The following Ashmont train arrives in 2 minutes", nil}
+          {"The following Ashmont train arrives in 2 minutes.", nil}
         ]
       )
 
@@ -1127,7 +1095,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [{:canned, {"115", spaced(["501", "4016", "864", "533", "641", "5003", "534"]), :audio}}],
-        [{"The next Ashmont train is stopped 3 stops away", nil}]
+        [{"The next Ashmont train is stopped 3 stops away.", nil}]
       )
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_stalls: ["1", "2"]})
@@ -1149,7 +1117,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [{:canned, {"115", spaced(["501", "4016", "864", "533", "641", "5003", "534"]), :audio}}],
-        [{"The next Ashmont train is stopped 3 stops away", nil}]
+        [{"The next Ashmont train is stopped 3 stops away.", nil}]
       )
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_stalls: ["1"]})
@@ -1177,7 +1145,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"Southbound trains every 11 to 13 minutes.", nil},
-          {"The next Alewife train arrives in 4 minutes on the ashmont platform", nil}
+          {"The next Alewife train arrives in 4 minutes on the Ashmont platform.", nil}
         ]
       )
 
@@ -1569,6 +1537,54 @@ defmodule Signs.RealtimeTest do
 
       Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
     end
+
+    test "JFK platform" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :alewife, stop_id: "70086", arrival: 240),
+          prediction(destination: :alewife, stop_id: "70086", arrival: 540)
+        ]
+      end)
+
+      expect_messages({"Alewife      4 min", "Alewife      9 min"})
+
+      expect_audios(
+        [
+          {:canned,
+           {"121",
+            spaced(["501", "4000", "864", "851", "4016", "529", "503", "504", "5004", "505"]),
+            :audio}},
+          {:canned,
+           {"121",
+            spaced(["667", "4000", "864", "851", "4016", "529", "503", "504", "5009", "505"]),
+            :audio}}
+        ],
+        [
+          {"The next Alewife train on the Ashmont platform arrives in 4 minutes.", nil},
+          {"The following Alewife train on the Ashmont platform arrives in 9 minutes.", nil}
+        ]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
+    end
+
+    test "track numbers" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :forest_hills, stop_id: "Oak Grove-01", arrival: 240)]
+      end)
+
+      expect_messages({[{"Frst Hills   4 min", 6}, {"Frst Hills   Trk 1", 6}], ""})
+
+      expect_audios(
+        [
+          {:canned,
+           {"117", spaced(["501", "4043", "864", "503", "504", "5004", "505", "541"]), :audio}}
+        ],
+        [{"The next Forest Hills train arrives in 4 minutes on track 1.", nil}]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
+    end
   end
 
   describe "decrement_ticks/1" do
@@ -1714,7 +1730,7 @@ defmodule Signs.RealtimeTest do
           {:canned, {"105", spaced(["787", "882"]), :audio}}
         ],
         [
-          {"The next Mattapan train is stopped 8 stops away", nil},
+          {"The next Mattapan train is stopped 8 stops away.", nil},
           {"Southbound service has ended for the night.", nil}
         ]
       )
@@ -1761,7 +1777,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"Southbound service has ended for the night.", nil},
-          {"The next Alewife train arrives in 4 minutes on the ashmont platform", nil}
+          {"The next Alewife train arrives in 4 minutes on the Ashmont platform.", nil}
         ]
       )
 
@@ -1810,24 +1826,17 @@ defmodule Signs.RealtimeTest do
     end
 
     test "Plays message if no prior plays" do
-      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}], [
-        {"A PA Message", [{"A PA Message", "", 3}]}
-      ])
-
       pa_message = %PaMessages.PaMessage{
         id: 1,
         visual_text: "A PA Message",
         audio_text: "A PA Message"
       }
 
-      Signs.Realtime.handle_info({:play_pa_message, pa_message}, @sign)
+      assert {:reply, {_, true}, _} =
+               Signs.Realtime.handle_call({:play_pa_message, pa_message}, nil, @sign)
     end
 
     test "Plays message if interval has passed" do
-      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}], [
-        {"A PA Message", [{"A PA Message", "", 3}]}
-      ])
-
       pa_message = %PaMessages.PaMessage{
         id: 1,
         visual_text: "A PA Message",
@@ -1837,7 +1846,8 @@ defmodule Signs.RealtimeTest do
 
       sign = %{@sign | pa_message_plays: %{1 => ~U[2024-06-10 12:00:00.000Z]}}
 
-      Signs.Realtime.handle_info({:play_pa_message, pa_message}, sign)
+      assert {:reply, {_, true}, _} =
+               Signs.Realtime.handle_call({:play_pa_message, pa_message}, nil, sign)
     end
 
     test "Does not play if less than interval has passed" do
@@ -1850,7 +1860,8 @@ defmodule Signs.RealtimeTest do
 
       sign = %{@sign | pa_message_plays: %{1 => DateTime.utc_now()}}
 
-      Signs.Realtime.handle_info({:play_pa_message, pa_message}, sign)
+      assert {:reply, {_, false}, _} =
+               Signs.Realtime.handle_call({:play_pa_message, pa_message}, nil, sign)
     end
   end
 

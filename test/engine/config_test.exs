@@ -3,25 +3,11 @@ defmodule Engine.ConfigTest do
   import ExUnit.CaptureLog
 
   describe "sign_config/2" do
-    test "is auto when the sign is enabled" do
-      Engine.Config.update()
-
-      Process.sleep(50)
-      assert Engine.Config.sign_config("chelsea_inbound", :off) == :auto
-    end
-
-    test "is off when the sign is disabled" do
-      Engine.Config.update()
-
-      Process.sleep(50)
-      assert Engine.Config.sign_config("chelsea_outbound", :auto) == :off
-    end
-
     test "is the provided default value when the sign is unspecified" do
-      Engine.Config.update()
+      state = initialize_test_state(%{})
 
-      Process.sleep(50)
-      assert Engine.Config.sign_config("unspecified_sign", :headway) == :headway
+      assert Engine.Config.sign_config(state.table_name_signs, "unspecified_sign", :headway) ==
+               :headway
     end
 
     test "returns custom text when it's not expired" do
@@ -47,13 +33,6 @@ defmodule Engine.ConfigTest do
         })
 
       assert Engine.Config.sign_config(state.table_name_signs, "custom_text_test", :off) == :auto
-    end
-
-    test "properly returns headway mode" do
-      Engine.Config.update()
-
-      Process.sleep(50)
-      assert Engine.Config.sign_config("headway_test", :off) == :headway
     end
   end
 

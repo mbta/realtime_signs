@@ -1,5 +1,4 @@
 defmodule Engine.Alerts do
-  @behaviour Engine.AlertsAPI
   use GenServer
   require Logger
   alias Engine.Alerts.Fetcher
@@ -25,7 +24,7 @@ defmodule Engine.Alerts do
     GenServer.start_link(__MODULE__, opts, name: name)
   end
 
-  @impl true
+  @callback max_stop_status([Fetcher.stop_id()], [Fetcher.route_id()]) :: Fetcher.stop_status()
   def max_stop_status(
         tables \\ %{stops_table: @stops_table, routes_table: @routes_table},
         stop_ids,
@@ -51,7 +50,7 @@ defmodule Engine.Alerts do
     end
   end
 
-  @spec stop_status(:ets.tab(), Fetcher.stop_id()) :: Fetcher.stop_status()
+  @callback stop_status(Fetcher.stop_id()) :: Fetcher.stop_status()
   def stop_status(ets_table_name \\ @stops_table, stop_id) do
     case :ets.lookup(ets_table_name, stop_id) do
       [{^stop_id, status}] -> status
@@ -59,7 +58,7 @@ defmodule Engine.Alerts do
     end
   end
 
-  @spec route_status(:ets.tab(), Fetcher.route_id()) :: Fetcher.stop_status()
+  @callback route_status(Fetcher.route_id()) :: Fetcher.stop_status()
   def route_status(ets_table_name \\ @routes_table, route_id) do
     case :ets.lookup(ets_table_name, route_id) do
       [{^route_id, status}] -> status

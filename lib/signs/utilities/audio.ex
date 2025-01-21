@@ -43,14 +43,14 @@ defmodule Signs.Utilities.Audio do
         %Message.StoppedTrain{destination: same} = top,
         %Message.StoppedTrain{destination: same}
       ] ->
-        Audio.StoppedTrain.from_message(top)
+        Audio.Predictions.from_message(top, :next)
 
       [
         %Message.StoppedTrain{destination: same} = top,
         %Message.Predictions{destination: same} = bottom
       ] ->
-        Audio.StoppedTrain.from_message(top) ++
-          Audio.FollowingTrain.from_predictions_message(bottom)
+        Audio.Predictions.from_message(top, :next) ++
+          Audio.Predictions.from_message(bottom, :following)
 
       [
         %Message.Predictions{destination: same} = top,
@@ -63,7 +63,7 @@ defmodule Signs.Utilities.Audio do
         %Message.Predictions{destination: same} = bottom
       ] ->
         get_prediction_readout(top) ++
-          Audio.FollowingTrain.from_predictions_message(bottom)
+          Audio.Predictions.from_message(bottom, :following)
 
       _ ->
         Enum.flat_map(predictions, &get_prediction_readout/1)
@@ -82,11 +82,8 @@ defmodule Signs.Utilities.Audio do
       :arriving ->
         Audio.TrainIsArriving.from_message(prediction, nil)
 
-      :approaching ->
-        Audio.NextTrainCountdown.from_message(%{prediction | minutes: 1})
-
       minutes when is_integer(minutes) ->
-        Audio.NextTrainCountdown.from_message(prediction)
+        Audio.Predictions.from_message(prediction, :next)
 
       _ ->
         []
@@ -94,7 +91,7 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp get_prediction_readout(%Message.StoppedTrain{} = prediction) do
-    Audio.StoppedTrain.from_message(prediction)
+    Audio.Predictions.from_message(prediction, :next)
   end
 
   @spec get_announcements(Signs.Realtime.t(), Content.Message.t(), Content.Message.t()) ::
@@ -170,12 +167,13 @@ defmodule Signs.Utilities.Audio do
                update_in(sign.announced_arrivals, &cache_value(&1, message.prediction.trip_id))}
 
             # Announce approaching if configured to
-            match?(%Message.Predictions{minutes: :approaching}, message) &&
+            match?(%Message.Predictions{}, message) &&
+              PaEss.Utilities.prediction_approaching?(message.prediction, message.terminal?) &&
               message.prediction.trip_id not in sign.announced_approachings &&
               announce_arriving?(sign, message) &&
                 message.prediction.route_id in @heavy_rail_routes ->
               crowding = Signs.Utilities.Crowding.crowding_description(message.prediction, sign)
-              new_cars? = PaEss.Utilities.prediction_new_cars?(message.prediction, sign)
+              new_cars? = PaEss.Utilities.prediction_new_cars?(message.prediction)
 
               {Audio.Approaching.from_message(message, crowding, new_cars?),
                sign
@@ -191,7 +189,7 @@ defmodule Signs.Utilities.Audio do
             # Announce stopped trains
             match?(%Message.StoppedTrain{}, message) && index == 0 &&
                 {message.prediction.trip_id, message.stops_away} not in sign.announced_stalls ->
-              {Audio.StoppedTrain.from_message(message),
+              {Audio.Predictions.from_message(message, :next),
                update_in(
                  sign.announced_stalls,
                  &cache_value(&1, {message.prediction.trip_id, message.stops_away})
@@ -202,7 +200,7 @@ defmodule Signs.Utilities.Audio do
             match?(%Message.Predictions{}, message) && is_integer(message.minutes) && index == 0 &&
               sign.prev_prediction_keys &&
                 {message.prediction.route_id, message.prediction.direction_id} not in sign.prev_prediction_keys ->
-              {Audio.NextTrainCountdown.from_message(message), sign}
+              {Audio.Predictions.from_message(message, :next), sign}
 
             true ->
               {[], sign}
@@ -363,7 +361,7 @@ defmodule Signs.Utilities.Audio do
 
   @spec send_audio(Signs.Realtime.t() | Signs.Bus.t(), [Content.Audio.t()]) :: :ok
   def send_audio(sign, audios) do
-    sign.sign_updater.play_message(
+    RealtimeSigns.sign_updater().play_message(
       sign,
       Enum.map(audios, &Content.Audio.to_params(&1)),
       Enum.map(audios, &Content.Audio.to_tts(&1)),
@@ -375,18 +373,17 @@ defmodule Signs.Utilities.Audio do
   end
 
   @spec handle_pa_message_play(PaMessages.PaMessage.t(), Signs.Realtime.t() | Signs.Bus.t()) ::
-          Signs.Realtime.t() | Signs.Bus.t()
+          {Signs.Realtime.t() | Signs.Bus.t(), boolean()}
   def handle_pa_message_play(pa_message, sign) do
     last_sent = sign.pa_message_plays[pa_message.id]
     now = DateTime.utc_now()
 
     if !last_sent || DateTime.diff(now, last_sent, :millisecond) >= pa_message.interval_in_ms do
       Logger.info("pa_message: action=send id=#{pa_message.id} destination=#{sign.id}")
-      send_audio(sign, [pa_message])
-      update_in(sign.pa_message_plays, &Map.put(&1, pa_message.id, now))
+      {update_in(sign.pa_message_plays, &Map.put(&1, pa_message.id, now)), true}
     else
       Logger.warn("pa_message: action=skipped id=#{pa_message.id} destination=#{sign.id}")
-      sign
+      {sign, false}
     end
   end
 end
