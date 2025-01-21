@@ -6,30 +6,14 @@ defmodule Signs.Utilities.Headways do
   alias Signs.Utilities.SourceConfig
   require Logger
 
-  @spec headway_messages(SourceConfig.config(), DateTime.t()) ::
-          Signs.Realtime.sign_messages() | nil
-  def headway_messages(config, current_time) do
-    case fetch_headways(config.headway_group, config.sources, current_time) do
-      nil ->
-        nil
-
-      headways ->
-        {%Content.Message.Headways.Top{
-           destination: config.headway_destination,
-           route: SourceConfig.single_route(config)
-         }, %Content.Message.Headways.Bottom{range: {headways.range_low, headways.range_high}}}
-    end
-  end
-
-  @spec headway_message(SourceConfig.config(), DateTime.t()) ::
-          Signs.Realtime.line_content() | nil
+  @spec headway_message(SourceConfig.config(), DateTime.t()) :: Message.t() | nil
   def headway_message(config, current_time) do
     case fetch_headways(config.headway_group, config.sources, current_time) do
       nil ->
         nil
 
       headways ->
-        %Content.Message.Headways.Paging{
+        %Message.Headway{
           destination: config.headway_destination,
           range: {headways.range_low, headways.range_high},
           route: SourceConfig.single_route(config)

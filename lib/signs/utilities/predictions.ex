@@ -5,50 +5,6 @@ defmodule Signs.Utilities.Predictions do
   for the top and bottom lines.
   """
 
-  require Logger
-  require Content.Utilities
-  alias Signs.Utilities.SourceConfig
-
-  def prediction_message(predictions, config, sign) do
-    case prediction_messages(predictions, config, sign) do
-      nil -> nil
-      {first, _} -> first
-    end
-  end
-
-  @spec prediction_messages(
-          [Predictions.Prediction.t()],
-          SourceConfig.config(),
-          Signs.Realtime.t()
-        ) :: Signs.Realtime.sign_messages() | nil
-  def prediction_messages(predictions, %{terminal?: terminal?}, sign) do
-    special_sign =
-      case sign do
-        %{pa_ess_loc: "RJFK", text_zone: "m"} -> :jfk_mezzanine
-        %{pa_ess_loc: "BBOW", text_zone: "e"} -> :bowdoin_eastbound
-        _ -> nil
-      end
-
-    predictions
-    |> Enum.map(fn prediction ->
-      if PaEss.Utilities.prediction_stopped?(prediction, terminal?) do
-        Content.Message.StoppedTrain.new(prediction, terminal?, special_sign)
-      else
-        Content.Message.Predictions.new(prediction, terminal?, special_sign)
-      end
-    end)
-    |> case do
-      [] ->
-        nil
-
-      [msg] ->
-        {msg, Content.Message.Empty.new()}
-
-      [msg1, msg2] ->
-        {msg1, msg2}
-    end
-  end
-
   @spec get_passthrough_train_audio(Signs.Realtime.predictions()) :: [Content.Audio.t()]
   def get_passthrough_train_audio({top_predictions, bottom_predictions}) do
     prediction_passthrough_audios(top_predictions) ++
