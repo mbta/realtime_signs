@@ -24,9 +24,9 @@ defmodule Signs.Utilities.Predictions do
     |> Enum.sort_by(fn prediction -> prediction.seconds_until_passthrough end)
     |> Enum.flat_map(fn prediction ->
       destination =
-        case Content.Utilities.destination_for_prediction(prediction) do
-          :southbound -> :ashmont
-          destination -> destination
+        case prediction do
+          %{route_id: "Red", direction_id: 0} -> :southbound
+          _ -> Content.Utilities.destination_for_prediction(prediction)
         end
 
       [
