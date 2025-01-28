@@ -1786,6 +1786,28 @@ defmodule Signs.RealtimeTest do
 
       Signs.Realtime.handle_info(:run_loop, sign)
     end
+
+    test "Red line trunk service doesn't end after one last trip" do
+      expect_messages({"", ""})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | source_config: %{@sign.source_config | headway_group: "red_trunk"}
+      })
+    end
+
+    test "Red line trunk service ends after two last trips" do
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn _ ->
+        %{"a" => ~U[2023-01-01 00:00:00.000Z], "b" => ~U[2023-01-01 00:00:00.000Z]}
+      end)
+
+      expect_messages({"Service ended", "No Southbound trains"})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | source_config: %{@sign.source_config | headway_group: "red_trunk"}
+      })
+    end
   end
 
   describe "PA messages" do

@@ -191,21 +191,22 @@ defmodule Signs.Realtime do
   end
 
   defp has_service_ended_for_source?(source, current_time) do
-    if source.headway_group not in ["red_trunk", "red_ashmont", "red_braintree"] do
+    num_last_trips =
       SourceConfig.sign_stop_ids(source)
-      |> Enum.count(&has_last_trip_departed_stop?(&1, current_time)) >= 1
-    else
-      false
-    end
+      |> Stream.flat_map(&RealtimeSigns.last_trip_engine().get_recent_departures(&1))
+      |> Enum.count(fn {trip_id, departure_time} ->
+        trip_departed?(departure_time, current_time) and
+          RealtimeSigns.last_trip_engine().is_last_trip?(trip_id)
+      end)
+
+    # Red line trunk should wait for two last trips, one for each branch
+    threshold = if(source.headway_group == "red_trunk", do: 2, else: 1)
+    num_last_trips >= threshold
   end
 
-  defp has_last_trip_departed_stop?(stop_id, current_time) do
-    RealtimeSigns.last_trip_engine().get_recent_departures(stop_id)
-    |> Enum.any?(fn {trip_id, departure_time} ->
-      # Use a 3 second buffer to make sure trips have fully departed
-      DateTime.to_unix(current_time) - DateTime.to_unix(departure_time) > 3 and
-        RealtimeSigns.last_trip_engine().is_last_trip?(trip_id)
-    end)
+  defp trip_departed?(departure_time, current_time) do
+    # Use a 3 second buffer to make sure trips have fully departed
+    DateTime.to_unix(current_time) - DateTime.to_unix(departure_time) > 3
   end
 
   defp prediction_key(prediction) do
