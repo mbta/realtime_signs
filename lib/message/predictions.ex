@@ -31,6 +31,37 @@ defmodule Message.Predictions do
        prediction_message(bottom, message.terminal?, message.special_sign)}
     end
 
+    def to_audio(%Message.Predictions{} = message, multiple?) do
+      same_destination? =
+        Enum.map(message.predictions, &Content.Utilities.destination_for_prediction(&1))
+        |> Enum.uniq()
+        |> length() == 1
+
+      Enum.take(message.predictions, if(multiple?, do: 1, else: 2))
+      |> Enum.zip(if(same_destination?, do: [:next, :following], else: [:next, :next]))
+      |> Enum.flat_map(fn {prediction, next_or_following} ->
+        {minutes, _} = PaEss.Utilities.prediction_minutes(prediction, message.terminal?)
+
+        case minutes do
+          :boarding ->
+            Content.Audio.TrainIsBoarding.new(prediction, message.special_sign)
+
+          :arriving ->
+            Content.Audio.TrainIsArriving.new(prediction, nil)
+
+          _ ->
+            [
+              %Content.Audio.Predictions{
+                prediction: prediction,
+                special_sign: message.special_sign,
+                terminal?: message.terminal?,
+                next_or_following: next_or_following
+              }
+            ]
+        end
+      end)
+    end
+
     defp prediction_message(prediction, terminal?, special_sign) do
       if PaEss.Utilities.prediction_stopped?(prediction, terminal?) do
         Content.Message.StoppedTrain.new(prediction, terminal?, special_sign)

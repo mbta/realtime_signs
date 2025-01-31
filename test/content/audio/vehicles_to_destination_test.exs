@@ -31,18 +31,4 @@ defmodule Content.Audio.VehiclesToDestinationTest do
       assert Content.Audio.to_params(audio) == {:canned, {"184", ["5505", "5507"], :audio}}
     end
   end
-
-  test "from_messages/2" do
-    assert [
-             %Content.Audio.VehiclesToDestination{
-               destination: :lechmere,
-               route: "Green",
-               headway_range: {5, 7}
-             }
-           ] =
-             from_messages(
-               %Content.Message.Headways.Top{destination: :lechmere, route: "Green"},
-               %Content.Message.Headways.Bottom{range: {5, 7}}
-             )
-  end
 end

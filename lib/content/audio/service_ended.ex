@@ -10,18 +10,6 @@ defmodule Content.Audio.ServiceEnded do
           location: location()
         }
 
-  def from_message(%Content.Message.LastTrip.StationClosed{route: route}) do
-    [%__MODULE__{location: :station, route: route}]
-  end
-
-  def from_message(%Content.Message.LastTrip.PlatformClosed{destination: destination}) do
-    [%__MODULE__{location: :platform, destination: destination}]
-  end
-
-  def from_message(%Content.Message.LastTrip.NoService{destination: destination}) do
-    [%__MODULE__{location: :direction, destination: destination}]
-  end
-
   defimpl Content.Audio do
     @service_ended "882"
     # @station_closed "883"

@@ -16,7 +16,7 @@ defmodule Signs.Utilities.Messages do
           | {Engine.Alerts.Fetcher.stop_status(), Engine.Alerts.Fetcher.stop_status()},
           DateTime.t() | {DateTime.t(), DateTime.t()},
           boolean() | {boolean(), boolean()}
-        ) :: Signs.Realtime.sign_messages()
+        ) :: [Message.t()]
   def get_messages(
         predictions,
         sign,
@@ -61,7 +61,6 @@ defmodule Signs.Utilities.Messages do
         end)
     end
     |> transform_messages()
-    |> render_messages()
   end
 
   @spec transform_messages([Message.t()]) :: [Message.t()]
@@ -99,11 +98,11 @@ defmodule Signs.Utilities.Messages do
 
   defp transform_messages(messages), do: messages
 
-  defp render_messages([single]) do
+  def render_messages([single]) do
     Message.to_multi_line(single)
   end
 
-  defp render_messages([top, bottom]) do
+  def render_messages([top, bottom]) do
     cond do
       fits_on_top_line?(top) ->
         {Message.to_single_line(top), Message.to_single_line(bottom)}

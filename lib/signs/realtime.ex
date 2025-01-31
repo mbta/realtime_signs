@@ -161,7 +161,7 @@ defmodule Signs.Realtime do
         &has_service_ended_for_source?(&1, current_time)
       )
 
-    {new_top, new_bottom} =
+    messages =
       Utilities.Messages.get_messages(
         predictions,
         sign,
@@ -172,12 +172,14 @@ defmodule Signs.Realtime do
         service_end_statuses_per_source
       )
 
+    {new_top, new_bottom} = Utilities.Messages.render_messages(messages)
+
     sign =
       sign
       |> announce_passthrough_trains(predictions)
       |> Utilities.Updater.update_sign(new_top, new_bottom, current_time)
-      |> Utilities.Reader.do_announcements(new_top, new_bottom)
-      |> Utilities.Reader.read_sign(new_top, new_bottom)
+      |> Utilities.Reader.do_announcements(messages)
+      |> Utilities.Reader.read_sign(messages)
       |> decrement_ticks()
       |> Map.put(:prev_predictions, all_predictions)
 

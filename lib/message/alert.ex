@@ -63,5 +63,16 @@ defmodule Message.Alert do
     end
 
     def to_multi_line(%Message.Alert{} = message), do: to_full_page(message)
+
+    def to_audio(%Message.Alert{} = message, _multiple?) do
+      [
+        %Content.Audio.NoService{
+          route: message.route,
+          destination: message.destination,
+          use_shuttle?: message.uses_shuttles? and message.status == :shuttles_closed_station,
+          use_routes?: message.union_square?
+        }
+      ]
+    end
   end
 end

@@ -10,4 +10,8 @@ defprotocol Message do
   @doc "render two lines of content, may include line-level paging"
   @spec to_multi_line(Message.t()) :: {Content.Message.t(), Content.Message.t()}
   def to_multi_line(message)
+
+  @doc "produce a list of audios"
+  @spec to_audio(Message.t(), boolean()) :: [Content.Audio.t()]
+  def to_audio(message, multiple?)
 end

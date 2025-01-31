@@ -23,5 +23,20 @@ defmodule Message.ServiceEnded do
     end
 
     def to_multi_line(%Message.ServiceEnded{} = message), do: to_full_page(message)
+
+    def to_audio(%Message.ServiceEnded{} = message, multiple?) do
+      [
+        %Content.Audio.ServiceEnded{
+          destination: message.destination,
+          route: message.route,
+          location:
+            case {message.destination, multiple?} do
+              {nil, _} -> :station
+              {_, true} -> :direction
+              {_, false} -> :platform
+            end
+        }
+      ]
+    end
   end
 end

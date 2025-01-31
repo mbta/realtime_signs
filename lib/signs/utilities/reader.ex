@@ -1,8 +1,7 @@
 defmodule Signs.Utilities.Reader do
-  @spec read_sign(Signs.Realtime.t(), Content.Message.t(), Content.Message.t()) ::
-          Signs.Realtime.t()
-  def read_sign(%{tick_read: 0} = sign, top_content, bottom_content) do
-    {audios, sign} = Signs.Utilities.Audio.from_sign(sign, top_content, bottom_content)
+  @spec read_sign(Signs.Realtime.t(), [Message.t()]) :: Signs.Realtime.t()
+  def read_sign(%{tick_read: 0} = sign, messages) do
+    audios = Enum.flat_map(messages, &Message.to_audio(&1, length(messages) > 1))
 
     if audios != [] do
       Signs.Utilities.Audio.send_audio(sign, audios)
@@ -11,14 +10,13 @@ defmodule Signs.Utilities.Reader do
     %{sign | tick_read: sign.read_period_seconds}
   end
 
-  def read_sign(sign, _, _) do
+  def read_sign(sign, _) do
     sign
   end
 
-  @spec do_announcements(Signs.Realtime.t(), Content.Message.t(), Content.Message.t()) ::
-          Signs.Realtime.t()
-  def do_announcements(sign, top_content, bottom_content) do
-    {audios, sign} = Signs.Utilities.Audio.get_announcements(sign, top_content, bottom_content)
+  @spec do_announcements(Signs.Realtime.t(), [Message.t()]) :: Signs.Realtime.t()
+  def do_announcements(sign, messages) do
+    {audios, sign} = Signs.Utilities.Audio.get_announcements(sign, messages)
 
     if audios != [] do
       Signs.Utilities.Audio.send_audio(sign, audios)

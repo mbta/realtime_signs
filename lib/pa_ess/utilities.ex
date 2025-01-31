@@ -518,7 +518,8 @@ defmodule PaEss.Utilities do
     prediction.seconds_until_arrival || prediction.seconds_until_departure
   end
 
-  @spec prediction_minutes(Predictions.Prediction.t(), boolean()) :: {integer(), boolean()}
+  @spec prediction_minutes(Predictions.Prediction.t(), boolean()) ::
+          {integer() | :arriving | :boarding, boolean()}
   def prediction_minutes(prediction, terminal?) do
     sec = prediction_seconds(prediction, terminal?)
     min = round(sec / 60)

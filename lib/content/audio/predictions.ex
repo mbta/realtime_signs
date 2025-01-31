@@ -9,16 +9,18 @@ defmodule Content.Audio.Predictions do
           next_or_following: :next | :following
         }
 
-  @spec from_message(
-          Content.Message.Predictions.t() | Content.Message.StoppedTrain.t(),
+  @spec new(
+          Predictions.Prediction.t(),
+          :jfk_mezzanine | :bowdoin_eastbound | nil,
+          boolean(),
           :next | :following
         ) :: [t()]
-  def from_message(message, next_or_following) do
+  def new(%Predictions.Prediction{} = prediction, special_sign, terminal?, next_or_following) do
     [
       %__MODULE__{
-        prediction: message.prediction,
-        special_sign: message.special_sign,
-        terminal?: message.terminal?,
+        prediction: prediction,
+        special_sign: special_sign,
+        terminal?: terminal?,
         next_or_following: next_or_following
       }
     ]
