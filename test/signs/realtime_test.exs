@@ -1876,7 +1876,7 @@ defmodule Signs.RealtimeTest do
   end
 
   defp expect_audios(audios, tts_audios) do
-    expect(PaEss.Updater.Mock, :play_message, fn _, list, tts_list, _ ->
+    expect(PaEss.Updater.Mock, :play_message, fn _, list, tts_list, _, _ ->
       assert audios == list
       assert tts_audios == tts_list
       :ok

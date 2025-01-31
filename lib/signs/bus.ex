@@ -975,6 +975,7 @@ defmodule Signs.Bus do
         state,
         audios,
         tts_audios,
+        2,
         Enum.map(audios, fn _ -> [message_type: "Bus"] end)
       )
     end

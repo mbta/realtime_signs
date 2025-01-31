@@ -56,6 +56,7 @@ defmodule PaEss.Updater do
               Signs.Realtime.t() | Signs.Bus.t(),
               [Content.Audio.value()],
               [Content.Audio.tts_value()],
+              integer(),
               [keyword()]
             ) ::
               :ok
@@ -68,6 +69,7 @@ defmodule PaEss.Updater do
         },
         audios,
         tts_audios,
+        priority,
         log_metas
       ) do
     tags = Enum.map(audios, fn _ -> create_tag() end)
@@ -110,6 +112,7 @@ defmodule PaEss.Updater do
                audio_zones: audio_zones,
                audio_data: [Base.encode64(file)],
                expiration: 30,
+               priority: priority,
                tag: tag
              }, log_meta}
           )

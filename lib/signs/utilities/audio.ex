@@ -365,6 +365,10 @@ defmodule Signs.Utilities.Audio do
       sign,
       Enum.map(audios, &Content.Audio.to_params(&1)),
       Enum.map(audios, &Content.Audio.to_tts(&1)),
+      case audios do
+        [%PaMessages.PaMessage{priority: priority}] -> priority
+        _ -> 2
+      end,
       Enum.map(audios, fn audio ->
         [message_type: Module.split(audio.__struct__) |> List.last()] ++
           Content.Audio.to_logs(audio)
