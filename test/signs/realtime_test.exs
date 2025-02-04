@@ -1038,12 +1038,11 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned, {"103", ["32107"], :audio_visual}},
+          {:canned, {"109", spaced(["501", "4016", "864", "24055"]), :audio}},
           {:canned, {"115", spaced(["667", "4016", "864", "503", "504", "5002", "505"]), :audio}}
         ],
         [
-          {"Attention passengers: The next Ashmont train is now arriving.",
-           [{"Ashmont train", "now arriving", 6}]},
+          {"The next Ashmont train is now arriving.", nil},
           {"The following Ashmont train arrives in 2 minutes.", nil}
         ]
       )
@@ -1065,12 +1064,11 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [
           {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5002", "505"]), :audio}},
-          {:canned, {"103", ["32104"], :audio_visual}}
+          {:canned, {"109", spaced(["501", "4000", "864", "24055"]), :audio}}
         ],
         [
           {"The next Ashmont train arrives in 2 minutes.", nil},
-          {"Attention passengers: The next Alewife train is now arriving.",
-           [{"Alewife train", "now arriving", 6}]}
+          {"The next Alewife train is now arriving.", nil}
         ]
       )
 
