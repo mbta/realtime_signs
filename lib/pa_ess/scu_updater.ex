@@ -41,7 +41,7 @@ defmodule PaEss.ScuUpdater do
 
     if scu_ip_map do
       http_poster.post(
-        "https://#{Map.fetch!(scu_ip_map, scu_id)}#{path}",
+        "http://#{Map.fetch!(scu_ip_map, scu_id)}#{path}",
         body,
         [{"Content-type", "application/json"}, {"x-api-key", scully_api_key}],
         hackney: [pool: :arinc_pool]
@@ -70,7 +70,7 @@ defmodule PaEss.ScuUpdater do
 
     if sign_ui_url do
       http_poster.post(
-        "https://#{sign_ui_url}#{path}",
+        "http://#{sign_ui_url}#{path}",
         body,
         [
           {"Content-type", "application/json"},
