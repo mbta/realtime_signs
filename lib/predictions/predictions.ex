@@ -109,6 +109,7 @@ defmodule Predictions.Predictions do
       boarding_status: stop_time_update["boarding_status"],
       revenue_trip?: revenue_trip?,
       vehicle_id: vehicle_id,
+      multi_carriage_details: if(vehicle_location, do: vehicle_location.multi_carriage_details),
       type: prediction_type
     }
   end

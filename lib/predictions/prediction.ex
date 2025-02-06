@@ -12,6 +12,7 @@ defmodule Predictions.Prediction do
             boarding_status: nil,
             revenue_trip?: true,
             vehicle_id: nil,
+            multi_carriage_details: nil,
             type: nil
 
   @type trip_id :: String.t()
@@ -31,6 +32,7 @@ defmodule Predictions.Prediction do
           boarding_status: String.t() | nil,
           revenue_trip?: boolean(),
           vehicle_id: String.t() | nil,
+          multi_carriage_details: [Locations.CarriageDetails.t()] | nil,
           type: prediction_type()
         }
 end
