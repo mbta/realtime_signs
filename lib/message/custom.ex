@@ -18,5 +18,9 @@ defmodule Message.Custom do
     end
 
     def to_multi_line(%Message.Custom{} = message), do: to_full_page(message)
+
+    def to_audio(%Message.Custom{} = message, _multiple?) do
+      [%Content.Audio.Custom{message: String.trim("#{message.top} #{message.bottom}")}]
+    end
   end
 end

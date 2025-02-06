@@ -4,7 +4,6 @@ defmodule Content.Audio.Approaching do
   """
 
   require Logger
-  alias Content.Message
   alias PaEss.Utilities
 
   @enforce_keys [:destination]
@@ -20,13 +19,13 @@ defmodule Content.Audio.Approaching do
           crowding_description: {atom(), atom()} | nil
         }
 
-  def from_message(%Message.Predictions{} = message, crowding_description, new_cars?) do
+  def new(%Predictions.Prediction{} = prediction, crowding_description, new_cars?) do
     [
       %__MODULE__{
-        destination: message.destination,
-        trip_id: message.prediction.trip_id,
-        platform: Content.Utilities.stop_platform(message.prediction.stop_id),
-        route_id: message.prediction.route_id,
+        destination: Content.Utilities.destination_for_prediction(prediction),
+        trip_id: prediction.trip_id,
+        platform: Content.Utilities.stop_platform(prediction.stop_id),
+        route_id: prediction.route_id,
         new_cars?: new_cars?,
         crowding_description: crowding_description
       }

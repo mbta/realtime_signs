@@ -19,5 +19,15 @@ defmodule Message.Headway do
     end
 
     def to_multi_line(%Message.Headway{} = message), do: to_full_page(message)
+
+    def to_audio(%Message.Headway{} = message, _multiple?) do
+      [
+        %Content.Audio.VehiclesToDestination{
+          destination: message.destination,
+          route: message.route,
+          headway_range: message.range
+        }
+      ]
+    end
   end
 end

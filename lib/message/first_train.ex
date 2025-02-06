@@ -21,5 +21,14 @@ defmodule Message.FirstTrain do
     end
 
     def to_multi_line(%Message.FirstTrain{} = message), do: to_full_page(message)
+
+    def to_audio(%Message.FirstTrain{} = message, _multiple?) do
+      [
+        %Content.Audio.FirstTrainScheduled{
+          destination: message.destination,
+          scheduled_time: message.scheduled
+        }
+      ]
+    end
   end
 end

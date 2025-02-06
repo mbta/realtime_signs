@@ -9,42 +9,6 @@ defmodule Content.Audio.NoService do
           use_routes?: boolean()
         }
 
-  @spec from_messages(Content.Message.t(), Content.Message.t()) :: [t()]
-  def from_messages(
-        %Content.Message.Alert.NoService{route: route, destination: destination},
-        %Content.Message.Alert.UseShuttleBus{}
-      ) do
-    [%__MODULE__{route: route, destination: destination, use_shuttle?: true}]
-  end
-
-  def from_messages(
-        %Content.Message.Alert.NoService{route: route, destination: destination},
-        %Content.Message.Empty{}
-      ) do
-    [%__MODULE__{route: route, destination: destination, use_shuttle?: false}]
-  end
-
-  def from_messages(
-        %Content.Message.Alert.NoService{route: route, destination: destination},
-        %Content.Message.Alert.UseRoutes{}
-      ) do
-    [%__MODULE__{route: route, destination: destination, use_shuttle?: false, use_routes?: true}]
-  end
-
-  def from_messages(
-        %Content.Message.Alert.DestinationNoService{route: route, destination: destination},
-        nil
-      ) do
-    [%__MODULE__{route: route, destination: destination, use_shuttle?: false}]
-  end
-
-  def from_messages(
-        %Content.Message.Alert.NoServiceUseShuttle{route: route, destination: destination},
-        nil
-      ) do
-    [%__MODULE__{route: route, destination: destination, use_shuttle?: true}]
-  end
-
   defimpl Content.Audio do
     @there_is_no "861"
     @service_at_this_station "863"

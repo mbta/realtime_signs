@@ -14,7 +14,7 @@ defmodule Content.Audio.TrackChange do
           berth: String.t()
         }
 
-  @spec park_track_change?(Content.Message.Predictions.t()) :: boolean()
+  @spec park_track_change?(Predictions.Prediction.t()) :: boolean()
   def park_track_change?(%{route_id: "Green-B", stop_id: "70197"}), do: true
   def park_track_change?(%{route_id: "Green-C", stop_id: "70196"}), do: true
   def park_track_change?(%{route_id: "Green-D", stop_id: "70199"}), do: true
