@@ -98,6 +98,7 @@ defmodule Signs.Utilities.Messages do
 
   defp transform_messages(messages), do: messages
 
+  @spec render_messages([Message.t()]) :: Signs.Realtime.sign_messages()
   def render_messages([single]) do
     Message.to_multi_line(single)
   end
