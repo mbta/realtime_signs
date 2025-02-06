@@ -800,7 +800,7 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 45, destination: :forest_hills, trip_id: "1")]
       end)
 
-      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
+      expect(Engine.Locations.Mock, :for_vehicle, 1, fn _ ->
         location(crowding_confidence: :high)
       end)
 
@@ -820,7 +820,7 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 45, destination: :forest_hills)]
       end)
 
-      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
+      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
         location(crowding_confidence: :low)
       end)
 
@@ -1440,21 +1440,22 @@ defmodule Signs.RealtimeTest do
 
     test "Identifies new Red Line Cars" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :ashmont, arrival: 60, trip_id: "1")]
-      end)
-
-      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
-        location(
-          crowding_confidence: :low,
-          carriage_details: [
-            {"1900", "1"},
-            {"1901", "1"},
-            {"1902", "1"},
-            {"1903", "1"},
-            {"1905", "1"},
-            {"1904", "1"}
-          ]
-        )
+        [
+          prediction(
+            destination: :ashmont,
+            arrival: 60,
+            trip_id: "1",
+            multi_carriage_details:
+              make_carriage_details([
+                {"1900", "1"},
+                {"1901", "1"},
+                {"1902", "1"},
+                {"1903", "1"},
+                {"1905", "1"},
+                {"1904", "1"}
+              ])
+          )
+        ]
       end)
 
       expect_messages({"Ashmont      1 min", ""})
@@ -1469,21 +1470,22 @@ defmodule Signs.RealtimeTest do
 
     test "Identifies old Red Line Cars" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :ashmont, arrival: 60, trip_id: "1")]
-      end)
-
-      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
-        location(
-          crowding_confidence: :low,
-          carriage_details: [
-            {"1706", "1"},
-            {"1707", "1"},
-            {"1502", "1"},
-            {"1503", "1"},
-            {"1750", "1"},
-            {"1751", "1"}
-          ]
-        )
+        [
+          prediction(
+            destination: :ashmont,
+            arrival: 60,
+            trip_id: "1",
+            multi_carriage_details:
+              make_carriage_details([
+                {"1706", "1"},
+                {"1707", "1"},
+                {"1502", "1"},
+                {"1503", "1"},
+                {"1750", "1"},
+                {"1751", "1"}
+              ])
+          )
+        ]
       end)
 
       expect_messages({"Ashmont      1 min", ""})
@@ -1934,6 +1936,7 @@ defmodule Signs.RealtimeTest do
       boarding_status: Keyword.get(opts, :boarding_status),
       revenue_trip?: true,
       vehicle_id: "v1",
+      multi_carriage_details: Keyword.get(opts, :multi_carriage_details),
       type: Keyword.get(opts, :type, :mid_trip)
     }
   end
@@ -1948,24 +1951,31 @@ defmodule Signs.RealtimeTest do
         end,
       stop_id: Keyword.get(opts, :stop_id, "1"),
       multi_carriage_details:
-        Keyword.get(opts, :carriage_details, [
-          {"1", "1"},
-          {"2", "1"},
-          {"3", "99"},
-          {"4", "99"},
-          {"5", "99"},
-          {"6", "99"}
-        ])
-        |> Enum.map(fn {vehicle_id, occupancy_percentage} ->
-          %Locations.CarriageDetails{
-            label: vehicle_id,
-            occupancy_percentage: occupancy_percentage
-          }
-        end)
+        Keyword.get(
+          opts,
+          :carriage_details,
+          make_carriage_details([
+            {"1", "1"},
+            {"2", "1"},
+            {"3", "99"},
+            {"4", "99"},
+            {"5", "99"},
+            {"6", "99"}
+          ])
+        )
     }
   end
 
   defp datetime(time), do: DateTime.new!(~D[2023-01-01], time, "America/New_York")
 
   defp spaced(list), do: Enum.intersperse(list, "21000")
+
+  defp make_carriage_details(list) do
+    Enum.map(list, fn {vehicle_id, occupancy_percentage} ->
+      %Locations.CarriageDetails{
+        label: vehicle_id,
+        occupancy_percentage: occupancy_percentage
+      }
+    end)
+  end
 end

@@ -810,18 +810,13 @@ defmodule PaEss.Utilities do
 
   @spec prediction_new_cars?(Predictions.Prediction.t()) :: boolean()
   def prediction_new_cars?(prediction) do
-    case RealtimeSigns.location_engine().for_vehicle(prediction.vehicle_id) do
-      %Locations.Location{route_id: "Red", multi_carriage_details: carriage_details} ->
-        Enum.any?(carriage_details, fn carriage ->
-          # See http://roster.transithistory.org/ for numbers of new cars
-          case Integer.parse(carriage.label) do
-            :error -> false
-            {n, _remaining} -> n in 1900..2151
-          end
-        end)
-
-      _ ->
-        false
-    end
+    prediction.route_id == "Red" and !!prediction.multi_carriage_details and
+      Enum.any?(prediction.multi_carriage_details, fn carriage ->
+        # See http://roster.transithistory.org/ for numbers of new cars
+        case Integer.parse(carriage.label) do
+          :error -> false
+          {n, _remaining} -> n in 1900..2151
+        end
+      end)
   end
 end
