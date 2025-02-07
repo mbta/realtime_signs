@@ -39,26 +39,13 @@ defmodule Message.Predictions do
 
       Enum.take(message.predictions, if(multiple?, do: 1, else: 2))
       |> Enum.zip(if(same_destination?, do: [:next, :following], else: [:next, :next]))
-      |> Enum.flat_map(fn {prediction, next_or_following} ->
-        {minutes, _} = PaEss.Utilities.prediction_minutes(prediction, message.terminal?)
-
-        case minutes do
-          :boarding ->
-            Content.Audio.TrainIsBoarding.new(prediction, message.special_sign)
-
-          :arriving ->
-            Content.Audio.TrainIsArriving.new(prediction, nil)
-
-          _ ->
-            [
-              %Content.Audio.Predictions{
-                prediction: prediction,
-                special_sign: message.special_sign,
-                terminal?: message.terminal?,
-                next_or_following: next_or_following
-              }
-            ]
-        end
+      |> Enum.map(fn {prediction, next_or_following} ->
+        %Content.Audio.Predictions{
+          prediction: prediction,
+          special_sign: message.special_sign,
+          terminal?: message.terminal?,
+          next_or_following: next_or_following
+        }
       end)
     end
 

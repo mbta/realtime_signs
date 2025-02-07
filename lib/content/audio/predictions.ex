@@ -49,7 +49,14 @@ defmodule Content.Audio.Predictions do
         {platform, platform_prefix?, platform_tbd} = platform_status(audio)
         {minutes, _} = PaEss.Utilities.prediction_minutes(prediction, audio.terminal?)
         min_or_mins = if(minutes == 1, do: :minute, else: :minutes)
-        arrives_or_departs = if(audio.terminal?, do: :departs, else: :arrives)
+
+        status =
+          cond do
+            minutes == :arriving -> [:is_now_arriving]
+            minutes == :boarding -> [:is_now_boarding]
+            audio.terminal? -> [:departs, :in, {:number, minutes}, min_or_mins]
+            true -> [:arrives, :in, {:number, minutes}, min_or_mins]
+          end
 
         qualifier =
           cond do
@@ -68,10 +75,7 @@ defmodule Content.Audio.Predictions do
 
         {prefix, suffix} = if(platform_prefix?, do: {qualifier, []}, else: {[], qualifier})
 
-        [the_next_or_following] ++
-          train ++
-          prefix ++
-          [arrives_or_departs, :in, {:number, minutes}, min_or_mins] ++ suffix ++ followup
+        [the_next_or_following] ++ train ++ prefix ++ status ++ suffix ++ followup
       end
       |> PaEss.Utilities.audio_message()
     end
@@ -91,7 +95,14 @@ defmodule Content.Audio.Predictions do
           {platform, platform_prefix?, platform_tbd} = platform_status(audio)
           {minutes, _} = PaEss.Utilities.prediction_minutes(prediction, audio.terminal?)
           min_or_mins = if(minutes == 1, do: "minute", else: "minutes")
-          arrives_or_departs = if(audio.terminal?, do: "departs", else: "arrives")
+
+          status =
+            cond do
+              minutes == :arriving -> "is now arriving"
+              minutes == :boarding -> "is now boarding"
+              audio.terminal? -> "departs in #{minutes} #{min_or_mins}"
+              true -> "arrives in #{minutes} #{min_or_mins}"
+            end
 
           qualifier =
             cond do
@@ -109,7 +120,7 @@ defmodule Content.Audio.Predictions do
               _ -> ""
             end
 
-          "The #{next_or_following} #{train}#{prefix} #{arrives_or_departs} in #{minutes} #{min_or_mins}#{suffix}.#{followup}"
+          "The #{next_or_following} #{train}#{prefix} #{status}#{suffix}.#{followup}"
         end
 
       {text, nil}
