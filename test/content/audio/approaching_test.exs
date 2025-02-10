@@ -6,12 +6,17 @@ defmodule Content.Audio.ApproachingTest do
   describe "to_params/1" do
     test "Returns params when platform is present" do
       audio = %Approaching{destination: :alewife, platform: :braintree, route_id: "Red"}
-      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32126"], :audio_visual}}
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"112", spaced(["896", "892", "920", "910", "901", "21014"]), :audio_visual}}
     end
 
     test "Returns params when platform is not present" do
       audio = %Approaching{destination: :oak_grove, route_id: "Orange"}
-      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32122"], :audio_visual}}
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned, {"110", spaced(["896", "915", "920", "910", "21014"]), :audio_visual}}
     end
 
     test "Returns nil for Green Line trips" do
@@ -28,7 +33,9 @@ defmodule Content.Audio.ApproachingTest do
       audio = %Approaching{destination: :alewife, route_id: "Red", new_cars?: true}
 
       assert Content.Audio.to_params(audio) ==
-               {:canned, {"107", ["783", "21000", "4000", "21000", "786"], :audio_visual}}
+               {:canned,
+                {"113", spaced(["896", "892", "920", "910", "21012", "893", "21014"]),
+                 :audio_visual}}
     end
 
     test "Returns crowding info" do
@@ -39,7 +46,12 @@ defmodule Content.Audio.ApproachingTest do
       }
 
       assert Content.Audio.to_params(audio) ==
-               {:canned, {"105", ["32123", "21000", "876"], :audio_visual}}
+               {:canned,
+                {"112",
+                 ["896", "21000", "907", "21000", "920", "21000", "910", "21014", "21000", "876"],
+                 :audio_visual}}
     end
   end
+
+  defp spaced(list), do: PaEss.Utilities.pad_takes(list)
 end
