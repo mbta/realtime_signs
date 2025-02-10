@@ -35,49 +35,32 @@ defmodule Content.Audio.Approaching do
   defimpl Content.Audio do
     @attention_passengers "783"
     @now_approaching_new_rl_cars "786"
-    @space "21000"
 
     def to_params(%Content.Audio.Approaching{route_id: route_id} = audio)
         when route_id in ["Mattapan", "Green-B", "Green-C", "Green-D", "Green-E"] do
       handle_unknown_destination(audio)
     end
 
-    def to_params(
-          %Content.Audio.Approaching{new_cars?: false, crowding_description: crowding_description} =
-            audio
-        ) do
-      case {destination_var(audio.destination, audio.platform, audio.route_id),
-            crowding_description} do
-        {nil, _} ->
-          {:ad_hoc, {tts_text(audio), :audio_visual}}
+    def to_params(%Content.Audio.Approaching{} = audio) do
+      message =
+        if audio.new_cars? do
+          [
+            @attention_passengers,
+            PaEss.Utilities.destination_var(audio.destination),
+            @now_approaching_new_rl_cars
+          ]
+        else
+          [destination_var(audio.destination, audio.platform, audio.route_id)]
+        end
 
-        {var, nil} ->
-          Utilities.take_message([var], :audio_visual)
+      crowding =
+        if audio.crowding_description do
+          [Content.Utilities.crowding_description_var(audio.crowding_description)]
+        else
+          []
+        end
 
-        {var, crowding_description} ->
-          Utilities.take_message(
-            [var, Content.Utilities.crowding_description_var(crowding_description)],
-            :audio_visual
-          )
-      end
-    end
-
-    def to_params(
-          %Content.Audio.Approaching{
-            new_cars?: true,
-            destination: destination,
-            route_id: route_id
-          } = audio
-        ) do
-      case new_cars_vars(destination, route_id) do
-        nil ->
-          to_params(%Content.Audio.Approaching{audio | new_cars?: false})
-
-        {destination_var, approaching_var} when route_id == "Red" ->
-          # Red Line message, however, requires one space.
-          vars = [@attention_passengers, destination_var, @space, approaching_var]
-          {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio_visual}}
-      end
+      Utilities.take_message(message ++ crowding, :audio_visual)
     end
 
     def to_tts(%Content.Audio.Approaching{} = audio) do
@@ -131,12 +114,5 @@ defmodule Content.Audio.Approaching do
     defp destination_var(:wonderland, nil, _route_id), do: "32120"
     defp destination_var(:forest_hills, nil, _route_id), do: "32123"
     defp destination_var(:oak_grove, nil, _route_id), do: "32122"
-    defp destination_var(_destination, _platform, _route_id), do: nil
-
-    @spec new_cars_vars(PaEss.destination(), String.t()) :: {String.t(), String.t()} | nil
-    defp new_cars_vars(:alewife, "Red"), do: {"4000", @now_approaching_new_rl_cars}
-    defp new_cars_vars(:ashmont, "Red"), do: {"4016", @now_approaching_new_rl_cars}
-    defp new_cars_vars(:braintree, "Red"), do: {"4021", @now_approaching_new_rl_cars}
-    defp new_cars_vars(_destination, _route_id), do: nil
   end
 end

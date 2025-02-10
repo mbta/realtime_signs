@@ -24,23 +24,11 @@ defmodule Content.Audio.ApproachingTest do
       assert Content.Audio.to_params(audio) == nil
     end
 
-    test "No longer returns params for new Orange Line cars" do
-      audio = %Approaching{destination: :oak_grove, route_id: "Orange", new_cars?: true}
-
-      assert Content.Audio.to_params(audio) ==
-               {:canned, {"103", ["32122"], :audio_visual}}
-    end
-
     test "Returns params for new Red Line cars" do
       audio = %Approaching{destination: :alewife, route_id: "Red", new_cars?: true}
 
       assert Content.Audio.to_params(audio) ==
-               {:canned, {"106", ["783", "4000", "21000", "786"], :audio_visual}}
-    end
-
-    test "Falls back on audio without new cars message if needed" do
-      audio = %Approaching{destination: :bowdoin, route_id: "Blue", new_cars?: true}
-      assert Content.Audio.to_params(audio) == {:canned, {"103", ["32121"], :audio_visual}}
+               {:canned, {"107", ["783", "21000", "4000", "21000", "786"], :audio_visual}}
     end
 
     test "Returns crowding info" do

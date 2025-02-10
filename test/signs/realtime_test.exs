@@ -1458,7 +1458,7 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Ashmont      1 min", ""})
 
-      expect_audios([{:canned, {"106", ["783", "4016", "21000", "786"], :audio_visual}}], [
+      expect_audios([{:canned, {"107", spaced(["783", "4016", "786"]), :audio_visual}}], [
         {"Attention passengers: The next Ashmont train is now approaching, with all new Red Line cars.",
          [{"Ashmont train", "now approaching", 6}, {"with all new Red Line", "cars", 3}]}
       ])
