@@ -117,4 +117,10 @@ defmodule Content.Audio.UtilitiesTest do
     assert [{"fits", "", 3}] = paginate_text("fits", 24)
     assert [] = paginate_text("")
   end
+
+  test "pad_takes" do
+    assert ["1", "21000", "2", "21000", "3"] = pad_takes(["1", "2", "3"])
+    assert ["1", "21012", "21000", "2"] = pad_takes(["1", "21012", "2"])
+    assert ["1", "21000", "2", "21014"] = pad_takes(["1", "2", "21014"])
+  end
 end

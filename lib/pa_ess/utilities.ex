@@ -6,6 +6,8 @@ defmodule PaEss.Utilities do
   require Logger
 
   @space "21000"
+  @comma "21012"
+  @period "21014"
   @stopped_regex ~r/Stopped (\d+) stops? away/
 
   @abbreviation_replacements [
@@ -161,8 +163,18 @@ defmodule PaEss.Utilities do
   @doc "Constructs message from TAKE variables"
   @spec take_message([String.t()], Content.Audio.av_type()) :: Content.Audio.canned_message()
   def take_message(vars, av_type) do
-    vars_with_spaces = Enum.intersperse(vars, @space)
+    vars_with_spaces = pad_takes(vars)
     {:canned, {take_message_id(vars_with_spaces), vars_with_spaces, av_type}}
+  end
+
+  @doc "Intersperse spaces in a list of takes, accounting for punctuation"
+  @spec pad_takes([String.t()]) :: [String.t()]
+  def pad_takes(vars) do
+    Enum.chunk_every(vars, 2, 1, [nil])
+    |> Enum.flat_map(fn
+      [var, next] when next in [nil, @comma, @period] -> [var]
+      [var, _] -> [var, @space]
+    end)
   end
 
   @spec take_message_id([String.t()]) :: String.t()
