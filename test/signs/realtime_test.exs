@@ -589,12 +589,6 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Clvlnd Cir     ARR", "Riverside      ARR"})
-
-      expect_audios([{:canned, {"103", ["90007"], :audio_visual}}], [
-        {"Attention passengers: The next C train to Cleveland Circle is now arriving.",
-         [{"C train to Clvlnd Cir", "now arriving", 6}]}
-      ])
-
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
@@ -697,28 +691,6 @@ defmodule Signs.RealtimeTest do
       })
     end
 
-    test "doesn't announce arrivals if disabled in the config" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :alewife, arrival: 10)]
-      end)
-
-      expect_messages({"Alewife        ARR", ""})
-
-      Signs.Realtime.handle_info(:run_loop, %{
-        @sign
-        | source_config: %{@sign.source_config | sources: [%{@src | announce_arriving?: false}]}
-      })
-    end
-
-    test "doesn't announce arrivals if already announced previously" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :alewife, arrival: 10, trip_id: "1")]
-      end)
-
-      expect_messages({"Alewife        ARR", ""})
-      Signs.Realtime.handle_info(:run_loop, %{@sign | announced_arrivals: ["1"]})
-    end
-
     test "announces approaching" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :ashmont, arrival: 45, trip_id: "1")]
@@ -746,12 +718,21 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, %{@sign | announced_approachings: ["1"]})
     end
 
-    test "doesn't announce approaching for light rail" do
+    test "announces approaching for Green Line" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :cleveland_circle, arrival: 45)]
       end)
 
       expect_messages({"Clvlnd Cir   1 min", ""})
+
+      expect_audios(
+        [{:canned, {"112", spaced(["896", "903", "919", "904", "910", "21014"]), :audio_visual}}],
+        [
+          {"Attention passengers: The next C train to Cleveland Circle is now approaching.",
+           [{"C train to Clvlnd Cir is", "now approaching.", 3}]}
+        ]
+      )
+
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
@@ -820,8 +801,9 @@ defmodule Signs.RealtimeTest do
         ]
       )
 
-      assert {_, %{announced_approachings_with_crowding: ["1"]}} =
+      assert capture_log(fn ->
                Signs.Realtime.handle_info(:run_loop, @sign)
+             end) =~ "crowding_description={:train_level, :crowded}"
     end
 
     test "Announce approaching without crowding when condfidence low" do
@@ -843,61 +825,9 @@ defmodule Signs.RealtimeTest do
         ]
       )
 
-      assert {_, %{announced_approachings_with_crowding: []}} =
+      assert capture_log(fn ->
                Signs.Realtime.handle_info(:run_loop, @sign)
-    end
-
-    test "Announce arrival with crowding if not already announced" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(arrival: 15, destination: :forest_hills)]
-      end)
-
-      expect(Engine.Locations.Mock, :for_vehicle, 1, fn _ ->
-        location(crowding_confidence: :high)
-      end)
-
-      expect_messages({"Frst Hills     ARR", ""})
-
-      expect_audios([{:canned, {"103", ["32103"], :audio_visual}}], [
-        {"Attention passengers: The next Forest Hills train is now arriving.",
-         [{"Frst Hills train", "now arriving", 6}]}
-      ])
-
-      Signs.Realtime.handle_info(:run_loop, @sign)
-    end
-
-    test "Don't announce arrival with crowding if confidence low" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(arrival: 15, destination: :forest_hills)]
-      end)
-
-      expect(Engine.Locations.Mock, :for_vehicle, 1, fn _ ->
-        location(crowding_confidence: :low)
-      end)
-
-      expect_messages({"Frst Hills     ARR", ""})
-
-      expect_audios([{:canned, {"103", ["32103"], :audio_visual}}], [
-        {"Attention passengers: The next Forest Hills train is now arriving.",
-         [{"Frst Hills train", "now arriving", 6}]}
-      ])
-
-      Signs.Realtime.handle_info(:run_loop, @sign)
-    end
-
-    test "Don't announce arrival with crowding if already announced with approaching" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(arrival: 15, destination: :forest_hills, trip_id: "1")]
-      end)
-
-      expect_messages({"Frst Hills     ARR", ""})
-
-      expect_audios([{:canned, {"103", ["32103"], :audio_visual}}], [
-        {"Attention passengers: The next Forest Hills train is now arriving.",
-         [{"Frst Hills train", "now arriving", 6}]}
-      ])
-
-      Signs.Realtime.handle_info(:run_loop, %{@sign | announced_approachings_with_crowding: ["1"]})
+             end) =~ "crowding_description=nil"
     end
 
     test "reads predictions" do
@@ -1033,8 +963,7 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
         | tick_read: 0,
-          announced_arrivals: ["1"],
-          announced_approachings: ["2"]
+          announced_approachings: ["1", "2"]
       })
     end
 
@@ -1059,7 +988,7 @@ defmodule Signs.RealtimeTest do
         ]
       )
 
-      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_arrivals: ["1"]})
+      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
     end
 
     test "reads both lines when the bottom line is arriving on a multi_source sign for heavy rail" do
@@ -1084,11 +1013,7 @@ defmodule Signs.RealtimeTest do
         ]
       )
 
-      Signs.Realtime.handle_info(:run_loop, %{
-        @mezzanine_sign
-        | tick_read: 0,
-          announced_arrivals: ["1"]
-      })
+      Signs.Realtime.handle_info(:run_loop, %{@mezzanine_sign | tick_read: 0})
     end
 
     test "doesn't read stopped message for following trains" do
@@ -1453,7 +1378,7 @@ defmodule Signs.RealtimeTest do
         [
           prediction(
             destination: :ashmont,
-            arrival: 60,
+            arrival: 45,
             trip_id: "1",
             multi_carriage_details:
               make_carriage_details([
@@ -1489,7 +1414,7 @@ defmodule Signs.RealtimeTest do
         [
           prediction(
             destination: :ashmont,
-            arrival: 60,
+            arrival: 45,
             trip_id: "1",
             multi_carriage_details:
               make_carriage_details([

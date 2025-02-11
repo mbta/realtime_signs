@@ -42,11 +42,6 @@ defmodule Content.Audio.Approaching do
     @comma "21012"
     @period "21014"
 
-    def to_params(%Content.Audio.Approaching{route_id: route_id} = audio)
-        when route_id in ["Mattapan", "Green-B", "Green-C", "Green-D", "Green-E"] do
-      handle_unknown_destination(audio)
-    end
-
     def to_params(%Content.Audio.Approaching{} = audio) do
       train =
         if branch = Content.Utilities.route_branch_letter(audio.route_id),
@@ -89,15 +84,6 @@ defmodule Content.Audio.Approaching do
       new_cars = new_cars_string(audio.new_cars?)
 
       "Attention passengers: The next #{train} is now approaching#{platform}#{new_cars}.#{crowding}"
-    end
-
-    @spec handle_unknown_destination(Content.Audio.Approaching.t()) :: nil
-    defp handle_unknown_destination(audio) do
-      Logger.info(
-        "unknown_approaching_audio: destination=#{audio.destination} route_id=#{audio.route_id} platform=#{audio.platform}"
-      )
-
-      nil
     end
 
     defp destination_var(:alewife), do: "892"
