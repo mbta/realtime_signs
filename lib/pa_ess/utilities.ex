@@ -568,9 +568,13 @@ defmodule PaEss.Utilities do
   end
 
   @spec prediction_four_cars?(Predictions.Prediction.t()) :: boolean()
-  def prediction_four_cars?(prediction) do
-    prediction.route_id == "Red" and match?([_, _, _, _], prediction.multi_carriage_details)
-  end
+  def prediction_four_cars?(%Predictions.Prediction{
+        route_id: "Red",
+        multi_carriage_details: [_, _, _, _]
+      }),
+      do: true
+
+  def prediction_four_cars?(_), do: false
 
   @headsign_take_mappings [
     {"Ruggles", "4086"},

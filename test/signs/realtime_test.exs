@@ -1514,6 +1514,31 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, %{@terminal_sign | tick_read: 0})
     end
 
+    test "doesn't show four-car messages at mezzanines" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :braintree, seconds_until_departure: 130, four_cars?: true)]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :alewife, seconds_until_departure: 430, four_cars?: true)]
+      end)
+
+      expect_messages({"Braintree    2 min", "Alewife      7 min"})
+
+      expect_audios(
+        [
+          {:canned, {"115", spaced(["501", "4021", "864", "503", "504", "5002", "505"]), :audio}},
+          {:canned, {"115", spaced(["501", "4000", "864", "503", "504", "5007", "505"]), :audio}}
+        ],
+        [
+          {"The next Braintree train arrives in 2 minutes.", nil},
+          {"The next Alewife train arrives in 7 minutes.", nil}
+        ]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@mezzanine_sign | tick_read: 0})
+    end
+
     test "mezzanine sign, headways and shuttle alert" do
       expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)

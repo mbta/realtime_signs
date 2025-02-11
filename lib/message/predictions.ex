@@ -57,7 +57,7 @@ defmodule Message.Predictions do
           prediction: prediction,
           special_sign: message.special_sign,
           terminal?: message.terminal?,
-          multiple?: multiple?,
+          multiple_messages?: multiple?,
           next_or_following: next_or_following
         }
       end)
