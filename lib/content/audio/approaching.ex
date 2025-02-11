@@ -8,7 +8,14 @@ defmodule Content.Audio.Approaching do
 
   @enforce_keys [:destination]
   defstruct @enforce_keys ++
-              [:trip_id, :platform, :route_id, new_cars?: false, crowding_description: nil]
+              [
+                :trip_id,
+                :platform,
+                :route_id,
+                new_cars?: false,
+                four_cars?: false,
+                crowding_description: nil
+              ]
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
@@ -16,6 +23,7 @@ defmodule Content.Audio.Approaching do
           platform: Content.platform() | nil,
           route_id: String.t() | nil,
           new_cars?: boolean,
+          four_cars?: boolean(),
           crowding_description: {atom(), atom()} | nil
         }
 
@@ -27,6 +35,7 @@ defmodule Content.Audio.Approaching do
         platform: Content.Utilities.stop_platform(prediction.stop_id),
         route_id: prediction.route_id,
         new_cars?: new_cars?,
+        four_cars?: PaEss.Utilities.prediction_four_cars?(prediction),
         crowding_description: crowding_description
       }
     ]
@@ -35,41 +44,56 @@ defmodule Content.Audio.Approaching do
   defimpl Content.Audio do
     # audio: "Attention passengers, the next", visual: ""
     @attention_passengers_the_next "896"
+    # audio: "Attention passengers, the next", visual: "Shorter 4 car"
+    @shorter_4_car "923"
     @train_to "919"
     @train "920"
     @is_now_approaching "910"
+    # audio: "is now approaching", visual: "now approaching"
+    @now_approaching "924"
     @with_all_new_red_line_cars "893"
+    # audio: "It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.", visual: "Please move to front of the train to board."
+    @four_car_train_message "922"
     @comma "21012"
     @period "21014"
 
     def to_params(%Content.Audio.Approaching{} = audio) do
+      prefix = if audio.four_cars?, do: [@shorter_4_car], else: [@attention_passengers_the_next]
+
       train =
         if branch = Content.Utilities.route_branch_letter(audio.route_id),
           do: [branch_var(branch), @train_to, destination_var(audio.destination)],
           else: [destination_var(audio.destination), @train]
 
+      approaching = if audio.four_cars?, do: [@now_approaching], else: [@is_now_approaching]
       platform = if audio.platform, do: [platform_var(audio.platform)], else: []
       new_cars = if audio.new_cars?, do: [@comma, @with_all_new_red_line_cars], else: []
+      four_cars = if audio.four_cars?, do: [@four_car_train_message], else: []
 
       crowding =
         if audio.crowding_description,
           do: [Content.Utilities.crowding_description_var(audio.crowding_description)],
           else: []
 
-      ([@attention_passengers_the_next] ++
-         train ++ [@is_now_approaching] ++ platform ++ new_cars ++ [@period] ++ crowding)
+      (prefix ++
+         train ++ approaching ++ platform ++ new_cars ++ [@period] ++ four_cars ++ crowding)
       |> Utilities.take_message(:audio_visual)
     end
 
     def to_tts(%Content.Audio.Approaching{} = audio) do
+      prefix = if audio.four_cars?, do: "Shorter 4 car ", else: ""
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id, :visual)
+      approaching = if audio.four_cars?, do: "now approaching", else: "is now approaching"
       crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
       platform = platform_string(audio.platform)
       new_cars = new_cars_string(audio.new_cars?)
 
+      four_cars =
+        if audio.four_cars?, do: " Please move to front of the train to board.", else: ""
+
       {tts_text(audio),
        PaEss.Utilities.paginate_text(
-         "#{train} is now approaching#{platform}#{new_cars}.#{crowding}"
+         "#{prefix}#{train} #{approaching}#{platform}#{new_cars}.#{four_cars}#{crowding}"
        )}
     end
 
@@ -82,8 +106,9 @@ defmodule Content.Audio.Approaching do
       crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
       platform = platform_string(audio.platform)
       new_cars = new_cars_string(audio.new_cars?)
+      four_cars = if audio.four_cars?, do: PaEss.Utilities.four_cars_text(), else: ""
 
-      "Attention passengers: The next #{train} is now approaching#{platform}#{new_cars}.#{crowding}"
+      "Attention passengers: The next #{train} is now approaching#{platform}#{new_cars}.#{four_cars}#{crowding}"
     end
 
     defp destination_var(:alewife), do: "892"

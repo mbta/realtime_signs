@@ -1442,6 +1442,78 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
+    test "announces four-car trains" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :braintree, arrival: 45, four_cars?: true),
+          prediction(destination: :ashmont, arrival: 180)
+        ]
+      end)
+
+      expect_messages({"Braintree    1 min", "4 cars     Move to front"})
+
+      expect_audios(
+        [{:canned, {"112", spaced(["923", "902", "920", "924", "21014", "922"]), :audio_visual}}],
+        [
+          {"Attention passengers: The next Braintree train is now approaching. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
+           [
+             {"Shorter 4 car Braintree", "train now approaching.", 3},
+             {"Please move to front of", "the train to board.", 3}
+           ]}
+        ]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "shows four-car messages" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :braintree, arrival: 130, four_cars?: true),
+          prediction(destination: :ashmont, arrival: 180)
+        ]
+      end)
+
+      expect_messages({"Braintree    2 min", "4 cars     Move to front"})
+
+      expect_audios(
+        [
+          {:canned,
+           {"117", spaced(["501", "4021", "864", "503", "504", "5002", "505", "922"]), :audio}}
+        ],
+        [
+          {"The next Braintree train arrives in 2 minutes. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
+           nil}
+        ]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
+    end
+
+    test "doesn't show four-car messages at terminals" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :braintree, seconds_until_departure: 130, four_cars?: true),
+          prediction(destination: :braintree, seconds_until_departure: 180)
+        ]
+      end)
+
+      expect_messages({"Braintree    2 min", "Braintree    3 min"})
+
+      expect_audios(
+        [
+          {:canned, {"115", spaced(["501", "4021", "864", "502", "504", "5002", "505"]), :audio}},
+          {:canned, {"115", spaced(["667", "4021", "864", "502", "504", "5003", "505"]), :audio}}
+        ],
+        [
+          {"The next Braintree train departs in 2 minutes.", nil},
+          {"The following Braintree train departs in 3 minutes.", nil}
+        ]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@terminal_sign | tick_read: 0})
+    end
+
     test "mezzanine sign, headways and shuttle alert" do
       expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
@@ -1864,6 +1936,17 @@ defmodule Signs.RealtimeTest do
 
           stops ->
             [stopped_at_predicted_stop: false, boarding_status: "Stopped #{stops} stop away"]
+        end
+
+    opts =
+      opts ++
+        if Keyword.get(opts, :four_cars?) do
+          [
+            multi_carriage_details:
+              make_carriage_details([{"1706", "1"}, {"1707", "1"}, {"1502", "1"}, {"1503", "1"}])
+          ]
+        else
+          []
         end
 
     %Predictions.Prediction{
