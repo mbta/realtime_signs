@@ -1,11 +1,12 @@
 defmodule Content.Audio.Predictions do
-  @enforce_keys [:prediction, :special_sign, :terminal?, :next_or_following]
+  @enforce_keys [:prediction, :special_sign, :terminal?, :multiple_messages?, :next_or_following]
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
           prediction: Predictions.Prediction.t(),
           special_sign: :jfk_mezzanine | :bowdoin_eastbound | nil,
           terminal?: boolean(),
+          multiple_messages?: boolean(),
           next_or_following: :next | :following
         }
 
@@ -13,14 +14,22 @@ defmodule Content.Audio.Predictions do
           Predictions.Prediction.t(),
           :jfk_mezzanine | :bowdoin_eastbound | nil,
           boolean(),
+          boolean(),
           :next | :following
         ) :: [t()]
-  def new(%Predictions.Prediction{} = prediction, special_sign, terminal?, next_or_following) do
+  def new(
+        %Predictions.Prediction{} = prediction,
+        special_sign,
+        terminal?,
+        multiple_messages?,
+        next_or_following
+      ) do
     [
       %__MODULE__{
         prediction: prediction,
         special_sign: special_sign,
         terminal?: terminal?,
+        multiple_messages?: multiple_messages?,
         next_or_following: next_or_following
       }
     ]
@@ -74,8 +83,9 @@ defmodule Content.Audio.Predictions do
           end
 
         {prefix, suffix} = if(platform_prefix?, do: {qualifier, []}, else: {[], qualifier})
+        four_cars = if four_cars?(audio), do: [:four_car_train_message], else: []
 
-        [the_next_or_following] ++ train ++ prefix ++ status ++ suffix ++ followup
+        [the_next_or_following] ++ train ++ prefix ++ status ++ suffix ++ followup ++ four_cars
       end
       |> PaEss.Utilities.audio_message()
     end
@@ -120,7 +130,9 @@ defmodule Content.Audio.Predictions do
               _ -> ""
             end
 
-          "The #{next_or_following} #{train}#{prefix} #{status}#{suffix}.#{followup}"
+          four_cars = if four_cars?(audio), do: PaEss.Utilities.four_cars_text(), else: ""
+
+          "The #{next_or_following} #{train}#{prefix} #{status}#{suffix}.#{followup}#{four_cars}"
         end
 
       {text, nil}
@@ -145,6 +157,11 @@ defmodule Content.Audio.Predictions do
         minutes == 1 or !jfk_mezzanine? -> {platform, true, nil}
         true -> {platform, false, nil}
       end
+    end
+
+    defp four_cars?(audio) do
+      PaEss.Utilities.prediction_four_cars?(audio.prediction) and !audio.terminal? and
+        !audio.multiple_messages?
     end
 
     defp platform_string(:ashmont), do: "Ashmont"

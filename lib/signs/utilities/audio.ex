@@ -85,7 +85,13 @@ defmodule Signs.Utilities.Audio do
             # Announce stopped trains
             PaEss.Utilities.prediction_stopped?(prediction, message.terminal?) && index == 0 &&
                 prediction_stopped_key(prediction) not in sign.announced_stalls ->
-              {Audio.Predictions.new(prediction, message.special_sign, message.terminal?, :next),
+              {Audio.Predictions.new(
+                 prediction,
+                 message.special_sign,
+                 message.terminal?,
+                 length(messages) > 1,
+                 :next
+               ),
                update_in(
                  sign.announced_stalls,
                  &cache_value(&1, prediction_stopped_key(prediction))
@@ -95,8 +101,13 @@ defmodule Signs.Utilities.Audio do
             # now we do, announce the next prediction.
             is_integer(minutes) && index == 0 && sign.prev_prediction_keys &&
                 prediction_key(prediction) not in sign.prev_prediction_keys ->
-              {Audio.Predictions.new(prediction, message.special_sign, message.terminal?, :next),
-               sign}
+              {Audio.Predictions.new(
+                 prediction,
+                 message.special_sign,
+                 message.terminal?,
+                 length(messages) > 1,
+                 :next
+               ), sign}
 
             true ->
               {[], sign}
