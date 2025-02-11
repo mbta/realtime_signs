@@ -19,14 +19,12 @@ defmodule Content.Audio.ApproachingTest do
                {:canned, {"110", spaced(["896", "915", "920", "910", "21014"]), :audio_visual}}
     end
 
-    test "Returns nil for Green Line trips" do
+    test "Returns params for Green Line trips" do
       audio = %Approaching{destination: :riverside, route_id: "Green-D"}
-      assert Content.Audio.to_params(audio) == nil
-    end
 
-    test "Returns nil when destination is Ashmont on the Mattapan line" do
-      audio = %Approaching{destination: :ashmont, route_id: "Mattapan"}
-      assert Content.Audio.to_params(audio) == nil
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"112", spaced(["896", "905", "919", "918", "910", "21014"]), :audio_visual}}
     end
 
     test "Returns params for new Red Line cars" do

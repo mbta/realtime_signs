@@ -8,7 +8,6 @@ defmodule Signs.Utilities.Audio do
   require Logger
 
   @announced_history_length 5
-  @heavy_rail_routes ["Red", "Orange", "Blue"]
 
   @spec get_announcements(Signs.Realtime.t(), [Message.t()]) ::
           {[Content.Audio.t()], Signs.Realtime.t()}
@@ -65,27 +64,14 @@ defmodule Signs.Utilities.Audio do
               prediction.trip_id not in sign.announced_boardings &&
                 (announce_boarding?(sign, prediction) ||
                    (announce_arriving?(sign, prediction) &&
-                      prediction.trip_id not in sign.announced_arrivals)) ->
+                      prediction.trip_id not in sign.announced_approachings)) ->
               {Audio.TrainIsBoarding.new(prediction, message.special_sign),
                update_in(sign.announced_boardings, &cache_value(&1, prediction.trip_id))}
-
-            # Announce arriving if configured to
-            minutes == :arriving &&
-              prediction.trip_id not in sign.announced_arrivals &&
-                announce_arriving?(sign, prediction) ->
-              crowding =
-                if prediction.trip_id not in sign.announced_approachings_with_crowding do
-                  Signs.Utilities.Crowding.crowding_description(prediction, sign)
-                end
-
-              {Audio.TrainIsArriving.new(prediction, crowding),
-               update_in(sign.announced_arrivals, &cache_value(&1, prediction.trip_id))}
 
             # Announce approaching if configured to
             PaEss.Utilities.prediction_approaching?(prediction, message.terminal?) &&
               prediction.trip_id not in sign.announced_approachings &&
-              announce_arriving?(sign, prediction) &&
-                prediction.route_id in @heavy_rail_routes ->
+                announce_arriving?(sign, prediction) ->
               crowding = Signs.Utilities.Crowding.crowding_description(prediction, sign)
               new_cars? = PaEss.Utilities.prediction_new_cars?(prediction)
 
@@ -94,10 +80,6 @@ defmodule Signs.Utilities.Audio do
                |> update_in(
                  [Access.key!(:announced_approachings)],
                  &cache_value(&1, prediction.trip_id)
-               )
-               |> update_in(
-                 [Access.key!(:announced_approachings_with_crowding)],
-                 &if(!!crowding, do: cache_value(&1, prediction.trip_id), else: &1)
                )}
 
             # Announce stopped trains
@@ -136,12 +118,9 @@ defmodule Signs.Utilities.Audio do
 
     # Disable crowding messages for now
     new_audios =
-      Enum.map(new_audios, fn %{__struct__: audio_type} = audio ->
-        if audio_type in [Audio.Approaching, Audio.TrainIsArriving] and sign.id not in [] do
-          %{audio | crowding_description: nil}
-        else
-          audio
-        end
+      Enum.map(new_audios, fn
+        %Audio.Approaching{} = audio -> %{audio | crowding_description: nil}
+        audio -> audio
       end)
 
     {audios ++ new_audios, sign}
@@ -179,21 +158,13 @@ defmodule Signs.Utilities.Audio do
 
   defp log_crowding(new_audios, sign_id) do
     Enum.each(new_audios, fn
-      %{
+      %Audio.Approaching{
         trip_id: trip_id,
         crowding_description: crowding_description,
-        route_id: "Orange",
-        __struct__: audio_type
-      }
-      when audio_type in [Audio.Approaching, Audio.TrainIsArriving] ->
-        announcement_type =
-          case audio_type do
-            Audio.Approaching -> "approaching"
-            Audio.TrainIsArriving -> "arrival"
-          end
-
+        route_id: "Orange"
+      } ->
         Logger.info(
-          "crowding_log: announcement_type=#{announcement_type} trip_id=#{trip_id} sign_id=#{sign_id} crowding_description=#{inspect(crowding_description)}"
+          "crowding_log: announcement_type=approaching trip_id=#{trip_id} sign_id=#{sign_id} crowding_description=#{inspect(crowding_description)}"
         )
 
       _ ->

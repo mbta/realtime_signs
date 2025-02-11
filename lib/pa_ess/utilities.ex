@@ -548,7 +548,7 @@ defmodule PaEss.Utilities do
   @spec prediction_approaching?(Predictions.Prediction.t(), boolean()) :: boolean()
   def prediction_approaching?(prediction, terminal?) do
     !terminal? and !prediction.stopped_at_predicted_stop? and
-      prediction_seconds(prediction, terminal?) in 31..60
+      prediction_seconds(prediction, terminal?) in 31..45
   end
 
   @spec prediction_stopped?(Predictions.Prediction.t(), boolean()) :: boolean()
