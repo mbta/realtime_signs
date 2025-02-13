@@ -22,6 +22,15 @@ defmodule Message.Predictions do
        %Content.Message.PlatformPredictionBottom{stop_id: top.stop_id, minutes: minutes}}
     end
 
+    def to_multi_line(
+          %Message.Predictions{
+            terminal?: false,
+            predictions: [%{route_id: "Red", multi_carriage_details: [_, _, _, _]} = top | _]
+          } = message
+        ) do
+      {prediction_message(top, message.terminal?, nil), %Content.Message.FourCars{}}
+    end
+
     def to_multi_line(%Message.Predictions{predictions: [top]} = message) do
       {prediction_message(top, message.terminal?, message.special_sign), %Content.Message.Empty{}}
     end
@@ -37,13 +46,18 @@ defmodule Message.Predictions do
         |> Enum.uniq()
         |> length() == 1
 
-      Enum.take(message.predictions, if(multiple?, do: 1, else: 2))
+      four_cars? =
+        hd(message.predictions) |> PaEss.Utilities.prediction_four_cars?() and !multiple? and
+          !message.terminal?
+
+      Enum.take(message.predictions, if(multiple? or four_cars?, do: 1, else: 2))
       |> Enum.zip(if(same_destination?, do: [:next, :following], else: [:next, :next]))
       |> Enum.map(fn {prediction, next_or_following} ->
         %Content.Audio.Predictions{
           prediction: prediction,
           special_sign: message.special_sign,
           terminal?: message.terminal?,
+          multiple_messages?: multiple?,
           next_or_following: next_or_following
         }
       end)

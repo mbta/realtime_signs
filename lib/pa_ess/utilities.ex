@@ -368,6 +368,10 @@ defmodule PaEss.Utilities do
     end
   end
 
+  def four_cars_text() do
+    " It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge."
+  end
+
   @spec green_line_branch_var(Content.Utilities.green_line_branch()) :: String.t()
   def green_line_branch_var(:b), do: "536"
   def green_line_branch_var(:c), do: "537"
@@ -563,6 +567,15 @@ defmodule PaEss.Utilities do
     String.to_integer(str)
   end
 
+  @spec prediction_four_cars?(Predictions.Prediction.t()) :: boolean()
+  def prediction_four_cars?(%Predictions.Prediction{
+        route_id: "Red",
+        multi_carriage_details: [_, _, _, _]
+      }),
+      do: true
+
+  def prediction_four_cars?(_), do: false
+
   @headsign_take_mappings [
     {"Ruggles", "4086"},
     {"Downtown", "563"},
@@ -732,6 +745,7 @@ defmodule PaEss.Utilities do
     board_routes_71_and_73_on_upper_level: "618",
     will_announce_platform_soon: "849",
     will_announce_platform_later: "857",
+    four_car_train_message: "922",
     departing: "530",
     arriving: "531",
     on_track_1: "541",
