@@ -11,55 +11,48 @@ defmodule Message.Alert do
         }
 
   defimpl Message do
-    def to_single_line(
-          %Message.Alert{status: :shuttles_closed_station, uses_shuttles?: true} = message
-        ) do
-      %Content.Message.Alert.NoServiceUseShuttle{
-        route: message.route,
-        destination: message.destination
-      }
+    @width 24
+
+    defguardp use_shuttle?(message)
+              when message.status == :shuttles_closed_station and message.uses_shuttles?
+
+    def to_single_line(%Message.Alert{} = message, :long) when use_shuttle?(message) do
+      headsign = PaEss.Utilities.destination_to_sign_string(message.destination)
+
+      [
+        {Content.Utilities.width_padded_string(headsign, "no service", @width), 6},
+        {Content.Utilities.width_padded_string(headsign, "use shuttle", @width), 6}
+      ]
     end
 
-    def to_single_line(
-          %Message.Alert{status: :shuttles_closed_station, uses_shuttles?: false} = message
-        ) do
-      %Content.Message.Alert.DestinationNoService{
-        route: message.route,
-        destination: message.destination
-      }
+    def to_single_line(%Message.Alert{} = message, :short) when use_shuttle?(message), do: nil
+
+    def to_single_line(%Message.Alert{} = message, :long) do
+      headsign = PaEss.Utilities.destination_to_sign_string(message.destination)
+      Content.Utilities.width_padded_string(headsign, "no service", 24)
     end
 
-    def to_single_line(%Message.Alert{status: status} = message)
-        when status in [:suspension_closed_station, :station_closure] do
-      %Content.Message.Alert.DestinationNoService{
-        route: message.route,
-        destination: message.destination
-      }
+    def to_single_line(%Message.Alert{} = message, :short) do
+      headsign = PaEss.Utilities.destination_to_sign_string(message.destination)
+      Content.Utilities.width_padded_string(headsign, "no svc", 18)
     end
 
-    def to_full_page(%Message.Alert{union_square?: true} = message) do
-      {%Content.Message.Alert.NoService{route: message.route, destination: message.destination},
-       %Content.Message.Alert.UseRoutes{}}
-    end
+    def to_full_page(%Message.Alert{} = message) do
+      top =
+        case {message.route, message.destination} do
+          {nil, nil} -> "No train service"
+          {route, nil} -> "No #{route} Line"
+          {_, destination} -> "No #{PaEss.Utilities.destination_to_sign_string(destination)} svc"
+        end
 
-    def to_full_page(
-          %Message.Alert{status: :shuttles_closed_station, uses_shuttles?: true} = message
-        ) do
-      {%Content.Message.Alert.NoService{route: message.route, destination: message.destination},
-       %Content.Message.Alert.UseShuttleBus{}}
-    end
+      bottom =
+        cond do
+          message.union_square? -> "Use Routes 87, 91 or 109"
+          use_shuttle?(message) -> "Use shuttle bus"
+          true -> ""
+        end
 
-    def to_full_page(
-          %Message.Alert{status: :shuttles_closed_station, uses_shuttles?: false} = message
-        ) do
-      {%Content.Message.Alert.NoService{route: message.route, destination: message.destination},
-       %Content.Message.Empty{}}
-    end
-
-    def to_full_page(%Message.Alert{status: status} = message)
-        when status in [:suspension_closed_station, :station_closure] do
-      {%Content.Message.Alert.NoService{route: message.route, destination: message.destination},
-       %Content.Message.Empty{}}
+      {top, bottom}
     end
 
     def to_multi_line(%Message.Alert{} = message), do: to_full_page(message)
@@ -69,7 +62,7 @@ defmodule Message.Alert do
         %Content.Audio.NoService{
           route: message.route,
           destination: message.destination,
-          use_shuttle?: message.uses_shuttles? and message.status == :shuttles_closed_station,
+          use_shuttle?: use_shuttle?(message),
           use_routes?: message.union_square?
         }
       ]

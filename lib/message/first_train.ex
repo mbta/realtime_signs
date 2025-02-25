@@ -8,16 +8,16 @@ defmodule Message.FirstTrain do
         }
 
   defimpl Message do
-    def to_single_line(%Message.FirstTrain{destination: destination, scheduled: scheduled}) do
-      %Content.Message.EarlyAm.DestinationScheduledTime{
-        destination: destination,
-        scheduled_time: scheduled
-      }
+    def to_single_line(%Message.FirstTrain{destination: destination, scheduled: scheduled}, :long) do
+      headsign = PaEss.Utilities.destination_to_sign_string(destination)
+      "#{headsign} due #{Content.Utilities.render_datetime_as_time(scheduled)}"
     end
 
+    def to_single_line(%Message.FirstTrain{}, :short), do: nil
+
     def to_full_page(%Message.FirstTrain{destination: destination, scheduled: scheduled}) do
-      {%Content.Message.EarlyAm.DestinationTrain{destination: destination},
-       %Content.Message.EarlyAm.ScheduledTime{scheduled_time: scheduled}}
+      headsign = PaEss.Utilities.destination_to_sign_string(destination)
+      {"#{headsign} train", "due #{Content.Utilities.render_datetime_as_time(scheduled)}"}
     end
 
     def to_multi_line(%Message.FirstTrain{} = message), do: to_full_page(message)

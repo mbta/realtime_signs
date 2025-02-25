@@ -43,8 +43,6 @@ defmodule Signs.Realtime do
                 pa_message_plays: %{}
               ]
 
-  @type line_content :: Content.Message.t()
-  @type sign_messages :: {line_content(), line_content()}
   @type predictions ::
           {[Predictions.Prediction.t()], [Predictions.Prediction.t()]}
           | [Predictions.Prediction.t()]

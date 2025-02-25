@@ -8,7 +8,7 @@ defmodule Content.Utilities do
     "#{new_left} #{right}"
   end
 
-  @spec content_duration({Content.Message.t(), Content.Message.t()}) :: integer()
+  @spec content_duration({Content.Message.value(), Content.Message.value()}) :: integer()
   def content_duration({top, bottom}) do
     for message <- [top, bottom] do
       case message do

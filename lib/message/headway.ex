@@ -9,13 +9,33 @@ defmodule Message.Headway do
         }
 
   defimpl Message do
-    def to_single_line(%Message.Headway{destination: destination, range: range, route: route}) do
-      %Content.Message.Headways.Paging{destination: destination, range: range, route: route}
+    @width 24
+
+    def to_single_line(%Message.Headway{destination: nil, range: {x, y}}, :long) do
+      [{"Trains every", 6}, {"#{x} to #{y} min", 6}]
     end
 
-    def to_full_page(%Message.Headway{destination: destination, range: range, route: route}) do
-      {%Content.Message.Headways.Top{destination: destination, route: route},
-       %Content.Message.Headways.Bottom{range: range}}
+    def to_single_line(%Message.Headway{destination: destination, range: {x, y}}, :long) do
+      headsign = PaEss.Utilities.destination_to_sign_string(destination)
+
+      [
+        {Content.Utilities.width_padded_string(headsign, "trains every", @width), 6},
+        {Content.Utilities.width_padded_string(headsign, "#{x} to #{y} min", @width), 6}
+      ]
+    end
+
+    def to_single_line(%Message.Headway{}, :short), do: nil
+
+    def to_full_page(%Message.Headway{destination: destination, range: {x, y}, route: route}) do
+      top =
+        case {destination, route} do
+          {nil, nil} -> "Trains"
+          {nil, "Mattapan"} -> "Mattapan trains"
+          {nil, route} -> "#{route} line trains"
+          {destination, _} -> "#{PaEss.Utilities.destination_to_sign_string(destination)} trains"
+        end
+
+      {top, "Every #{x} to #{y} min"}
     end
 
     def to_multi_line(%Message.Headway{} = message), do: to_full_page(message)
