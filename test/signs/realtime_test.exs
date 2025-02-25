@@ -589,6 +589,15 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Clvlnd Cir     ARR", "Riverside      ARR"})
+
+      expect_audios(
+        [{:canned, {"112", spaced(["896", "903", "919", "904", "910", "21014"]), :audio_visual}}],
+        [
+          {"Attention passengers: The next C train to Cleveland Circle is now approaching.",
+           [{"C train to Clvlnd Cir is", "now approaching.", 3}]}
+        ]
+      )
+
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
@@ -988,7 +997,11 @@ defmodule Signs.RealtimeTest do
         ]
       )
 
-      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | tick_read: 0,
+          announced_approachings: ["1"]
+      })
     end
 
     test "reads both lines when the bottom line is arriving on a multi_source sign for heavy rail" do
