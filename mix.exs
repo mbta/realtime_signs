@@ -12,11 +12,6 @@ defmodule RealtimeSigns.Mixfile do
       deps: deps(),
       test_coverage: [tool: LcovEx],
       elixirc_paths: elixirc_paths(Mix.env()),
-      dialyzer: [
-        plt_add_apps: [:mix, :hackney, :httpd, :inets],
-        plt_add_deps: :app_tree,
-        ignore_warnings: ".dialyzer.ignore-warnings"
-      ],
       releases: [
         linux: [
           include_executables_for: [:unix]
