@@ -9,17 +9,25 @@ defmodule Message.Predictions do
         }
 
   defimpl Message do
-    def to_single_line(%Message.Predictions{predictions: [top | _]} = message) do
+    @width 18
+
+    def to_single_line(%Message.Predictions{predictions: [top | _]} = message, :long) do
       prediction_message(top, message.terminal?, message.special_sign)
     end
+
+    def to_single_line(%Message.Predictions{}, :short), do: nil
 
     def to_full_page(
           %Message.Predictions{predictions: [top | _], special_sign: :jfk_mezzanine} = message
         ) do
       {minutes, _} = PaEss.Utilities.prediction_minutes(top, message.terminal?)
+      platform_name = Content.Utilities.stop_platform_name(top.stop_id)
 
       {prediction_message(top, message.terminal?, nil),
-       %Content.Message.PlatformPredictionBottom{stop_id: top.stop_id, minutes: minutes}}
+       if(is_integer(minutes) and minutes > 5,
+         do: "platform TBD",
+         else: "on #{platform_name} platform"
+       )}
     end
 
     def to_multi_line(
@@ -28,11 +36,12 @@ defmodule Message.Predictions do
             predictions: [%{route_id: "Red", multi_carriage_details: [_, _, _, _]} = top | _]
           } = message
         ) do
-      {prediction_message(top, message.terminal?, nil), %Content.Message.FourCars{}}
+      {prediction_message(top, message.terminal?, nil),
+       Content.Utilities.width_padded_string("4 cars", "Move to front", 24)}
     end
 
     def to_multi_line(%Message.Predictions{predictions: [top]} = message) do
-      {prediction_message(top, message.terminal?, message.special_sign), %Content.Message.Empty{}}
+      {prediction_message(top, message.terminal?, message.special_sign), ""}
     end
 
     def to_multi_line(%Message.Predictions{predictions: [top, bottom]} = message) do
@@ -64,10 +73,55 @@ defmodule Message.Predictions do
     end
 
     defp prediction_message(prediction, terminal?, special_sign) do
+      destination = Content.Utilities.destination_for_prediction(prediction)
+      headsign = PaEss.Utilities.destination_to_sign_string(destination)
+
       if PaEss.Utilities.prediction_stopped?(prediction, terminal?) do
-        Content.Message.StoppedTrain.new(prediction, terminal?, special_sign)
+        num = PaEss.Utilities.prediction_stops_away(prediction)
+        stops = if(num == 1, do: "stop", else: "stops")
+
+        [
+          {Content.Utilities.width_padded_string(headsign, "Stopped", @width), 6},
+          {Content.Utilities.width_padded_string(headsign, "#{num} #{stops}", @width), 6},
+          {Content.Utilities.width_padded_string(headsign, "away", @width), 6}
+        ]
       else
-        Content.Message.Predictions.new(prediction, terminal?, special_sign)
+        {minutes, approximate?} = PaEss.Utilities.prediction_minutes(prediction, terminal?)
+
+        duration =
+          case minutes do
+            :boarding -> "BRD"
+            :arriving -> "ARR"
+            n -> "#{n}#{if approximate?, do: "+", else: ""} min"
+          end
+
+        track_number = Content.Utilities.stop_track_number(prediction.stop_id)
+
+        cond do
+          special_sign == :jfk_mezzanine and destination == :alewife ->
+            platform_name = Content.Utilities.stop_platform_name(prediction.stop_id)
+
+            {headsign_message, platform_message} =
+              if is_integer(minutes) and minutes > 5 do
+                {headsign, " (Platform TBD)"}
+              else
+                {"#{headsign} (#{String.slice(platform_name, 0..0)})", " (#{platform_name} plat)"}
+              end
+
+            [
+              {Content.Utilities.width_padded_string(headsign_message, duration, @width), 6},
+              {headsign <> platform_message, 6}
+            ]
+
+          track_number ->
+            [
+              {Content.Utilities.width_padded_string(headsign, duration, @width), 6},
+              {Content.Utilities.width_padded_string(headsign, "Trk #{track_number}", @width), 6}
+            ]
+
+          true ->
+            Content.Utilities.width_padded_string(headsign, duration, @width)
+        end
       end
     end
   end

@@ -98,46 +98,37 @@ defmodule Signs.Utilities.Messages do
 
   defp transform_messages(messages), do: messages
 
-  @spec render_messages([Message.t()]) :: Signs.Realtime.sign_messages()
+  @spec render_messages([Message.t()]) :: {Content.Message.value(), Content.Message.value()}
   def render_messages([single]) do
     Message.to_multi_line(single)
   end
 
   def render_messages([top, bottom]) do
+    long_top = Message.to_single_line(top, :long)
+    long_bottom = Message.to_single_line(bottom, :long)
+
     cond do
-      fits_on_top_line?(top) ->
-        {Message.to_single_line(top), Message.to_single_line(bottom)}
-
-      fits_on_top_line?(bottom) ->
-        {Message.to_single_line(bottom), Message.to_single_line(top)}
-
-      can_shrink?(top) ->
-        {%{Message.to_single_line(top) | variant: :short}, Message.to_single_line(bottom)}
-
-      can_shrink?(bottom) ->
-        {%{Message.to_single_line(bottom) | variant: :short}, Message.to_single_line(top)}
-
-      true ->
-        paginate(Message.to_full_page(top), Message.to_full_page(bottom))
+      fits_on_top_line?(long_top) -> {long_top, long_bottom}
+      fits_on_top_line?(long_bottom) -> {long_bottom, long_top}
+      short_top = Message.to_single_line(top, :short) -> {short_top, long_bottom}
+      short_bottom = Message.to_single_line(bottom, :short) -> {short_bottom, long_top}
+      true -> paginate(Message.to_full_page(top), Message.to_full_page(bottom))
     end
   end
 
-  defp fits_on_top_line?(message) do
-    case Message.to_single_line(message) |> Content.Message.to_string() do
+  defp fits_on_top_line?(content) do
+    case content do
       list when is_list(list) -> Enum.map(list, &elem(&1, 0))
       single -> [single]
     end
     |> Enum.all?(&(String.length(&1) <= 18))
   end
 
-  defp can_shrink?(message), do: Message.to_single_line(message) |> Map.has_key?(:variant)
-
   defp combine_routes(route, route), do: route
   defp combine_routes(_, _), do: nil
 
   defp paginate({first_top, first_bottom}, {second_top, second_bottom}) do
-    {%Content.Message.GenericPaging{messages: [first_top, second_top]},
-     %Content.Message.GenericPaging{messages: [first_bottom, second_bottom]}}
+    {[{first_top, 6}, {second_top, 6}], [{first_bottom, 6}, {second_bottom, 6}]}
   end
 
   defp filter_alert_status(:shuttles_transfer_station, :temporary_terminal), do: :none

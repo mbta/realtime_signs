@@ -10,14 +10,11 @@ defmodule Signs.Utilities.Updater do
 
   @spec update_sign(
           Signs.Realtime.t(),
-          Signs.Realtime.line_content(),
-          Signs.Realtime.line_content(),
+          Content.Message.value(),
+          Content.Message.value(),
           DateTime.t()
         ) :: Signs.Realtime.t()
-  def update_sign(sign, top_msg, bottom_msg, current_time) do
-    new_top = Content.Message.to_string(top_msg)
-    new_bottom = Content.Message.to_string(bottom_msg)
-
+  def update_sign(sign, new_top, new_bottom, current_time) do
     if !sign.last_update ||
          Timex.after?(current_time, Timex.shift(sign.last_update, seconds: 130)) ||
          sign.current_content_top != new_top ||

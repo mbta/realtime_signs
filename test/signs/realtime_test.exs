@@ -432,6 +432,15 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
     end
 
+    test "multi-route mezzanine, same headways" do
+      expect(Engine.Config.Mock, :headway_config, 2, fn _, _ ->
+        %{@headway_config | range_high: 14}
+      end)
+
+      expect_messages({"Trains", "Every 11 to 14 min"})
+      Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
+    end
+
     test "when given two source lists, returns earliest result from each" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :ashmont, arrival: 130)]
@@ -911,6 +920,20 @@ defmodule Signs.RealtimeTest do
       })
     end
 
+    test "invalid custom messages" do
+      expect(Engine.Config.Mock, :sign_config, fn _, _ ->
+        {:static_text, {"bad^", "long long long long message"}}
+      end)
+
+      expect_messages({"bad", "long long long long mess"})
+
+      expect_audios([{:ad_hoc, {"bad long long long long mess", :audio}}], [
+        {"bad long long long long mess", nil}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
     test "reads alerts" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
       expect_messages({"No Southbound svc", "Use shuttle bus"})
@@ -1097,6 +1120,35 @@ defmodule Signs.RealtimeTest do
         [
           {"Southbound trains every 11 to 13 minutes.", nil},
           {"The next Alewife train arrives in 4 minutes on the Ashmont platform.", nil}
+        ]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@jfk_mezzanine_sign | tick_read: 0})
+    end
+
+    test "JFK mezzanine platform TBD" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :ashmont, arrival: 120)]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :alewife, arrival: 440, stop_id: "70086")]
+      end)
+
+      expect_messages(
+        {"Ashmont      2 min", [{"Alewife      7 min", 6}, {"Alewife (Platform TBD)", 6}]}
+      )
+
+      expect_audios(
+        [
+          {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5002", "505"]), :audio}},
+          {:canned,
+           {"117", spaced(["501", "4000", "864", "503", "504", "5007", "505", "849"]), :audio}}
+        ],
+        [
+          {"The next Ashmont train arrives in 2 minutes.", nil},
+          {"The next Alewife train arrives in 7 minutes. We will announce the platform for boarding soon.",
+           nil}
         ]
       )
 
@@ -1595,6 +1647,27 @@ defmodule Signs.RealtimeTest do
       )
 
       Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
+    end
+
+    test "mezzanine sign, shuttle alert flips to bottom" do
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
+      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :alewife, arrival: 240)]
+      end)
+
+      expect_messages(
+        {"Alewife      4 min", [{"Northbound    no service", 6}, {"Northbound   use shuttle", 6}]}
+      )
+
+      expect_audios([{:ad_hoc, {"No Northbound service. Use shuttle.", :audio}}], [
+        {"No Northbound service. Use shuttle.", nil}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
     end
 
     test "JFK platform" do
