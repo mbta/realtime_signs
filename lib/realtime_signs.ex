@@ -48,7 +48,6 @@ defmodule RealtimeSigns do
         ]
 
     opts = [strategy: :one_for_one, name: __MODULE__]
-    {:ok, _} = Logger.add_backend(Sentry.LoggerBackend)
     Supervisor.start_link(children, opts)
   end
 
