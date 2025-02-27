@@ -1636,7 +1636,7 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
     end
 
-    test "mezzzanine sign, shuttle alert flips to bottom" do
+    test "mezzanine sign, shuttle alert flips to bottom" do
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
       expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
 
