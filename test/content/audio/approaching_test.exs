@@ -9,14 +9,16 @@ defmodule Content.Audio.ApproachingTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"112", spaced(["896", "892", "920", "910", "901", "21014"]), :audio_visual}}
+                {"114", spaced(["896", "892", "920", "910", "901", "21014", "925"]),
+                 :audio_visual}}
     end
 
     test "Returns params when platform is not present" do
       audio = %Approaching{destination: :oak_grove, route_id: "Orange"}
 
       assert Content.Audio.to_params(audio) ==
-               {:canned, {"110", spaced(["896", "915", "920", "910", "21014"]), :audio_visual}}
+               {:canned,
+                {"112", spaced(["896", "915", "920", "910", "21014", "925"]), :audio_visual}}
     end
 
     test "Returns params for Green Line trips" do
@@ -24,7 +26,8 @@ defmodule Content.Audio.ApproachingTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"112", spaced(["896", "905", "919", "918", "910", "21014"]), :audio_visual}}
+                {"114", spaced(["896", "905", "919", "918", "910", "21014", "925"]),
+                 :audio_visual}}
     end
 
     test "Returns params for new Red Line cars" do
@@ -32,7 +35,7 @@ defmodule Content.Audio.ApproachingTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"113", spaced(["896", "892", "920", "910", "21012", "893", "21014"]),
+                {"115", spaced(["896", "892", "920", "910", "21012", "893", "21014", "925"]),
                  :audio_visual}}
     end
 
@@ -45,8 +48,7 @@ defmodule Content.Audio.ApproachingTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"112",
-                 ["896", "21000", "907", "21000", "920", "21000", "910", "21014", "21000", "876"],
+                {"114", spaced(["896", "907", "920", "910", "21014", "925", "876"]),
                  :audio_visual}}
     end
   end

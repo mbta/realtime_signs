@@ -600,10 +600,16 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Clvlnd Cir     ARR", "Riverside      ARR"})
 
       expect_audios(
-        [{:canned, {"112", spaced(["896", "903", "919", "904", "910", "21014"]), :audio_visual}}],
         [
-          {"Attention passengers: The next C train to Cleveland Circle is now approaching.",
-           [{"C train to Clvlnd Cir is", "now approaching.", 3}]}
+          {:canned,
+           {"114", spaced(["896", "903", "919", "904", "910", "21014", "925"]), :audio_visual}}
+        ],
+        [
+          {"Attention passengers: The next C train to Cleveland Circle is now approaching. Please stand back from the platform edge.",
+           [
+             {"C train to Clvlnd Cir is", "now approaching. Please", 3},
+             {"stand back from the", "platform edge.", 3}
+           ]}
         ]
       )
 
@@ -717,10 +723,13 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Ashmont      1 min", ""})
 
       expect_audios(
-        [{:canned, {"110", spaced(["896", "895", "920", "910", "21014"]), :audio_visual}}],
+        [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
         [
-          {"Attention passengers: The next Ashmont train is now approaching.",
-           [{"Ashmont train is now", "approaching.", 3}]}
+          {"Attention passengers: The next Ashmont train is now approaching. Please stand back from the platform edge.",
+           [
+             {"Ashmont train is now", "approaching. Please", 3},
+             {"stand back from the", "platform edge.", 3}
+           ]}
         ]
       )
 
@@ -744,10 +753,16 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Clvlnd Cir   1 min", ""})
 
       expect_audios(
-        [{:canned, {"112", spaced(["896", "903", "919", "904", "910", "21014"]), :audio_visual}}],
         [
-          {"Attention passengers: The next C train to Cleveland Circle is now approaching.",
-           [{"C train to Clvlnd Cir is", "now approaching.", 3}]}
+          {:canned,
+           {"114", spaced(["896", "903", "919", "904", "910", "21014", "925"]), :audio_visual}}
+        ],
+        [
+          {"Attention passengers: The next C train to Cleveland Circle is now approaching. Please stand back from the platform edge.",
+           [
+             {"C train to Clvlnd Cir is", "now approaching. Please", 3},
+             {"stand back from the", "platform edge.", 3}
+           ]}
         ]
       )
 
@@ -789,10 +804,13 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Ashmont      1 min", ""})
 
       expect_audios(
-        [{:canned, {"110", spaced(["896", "895", "920", "910", "21014"]), :audio_visual}}],
+        [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
         [
-          {"Attention passengers: The next Ashmont train is now approaching.",
-           [{"Ashmont train is now", "approaching.", 3}]}
+          {"Attention passengers: The next Ashmont train is now approaching. Please stand back from the platform edge.",
+           [
+             {"Ashmont train is now", "approaching. Please", 3},
+             {"stand back from the", "platform edge.", 3}
+           ]}
         ]
       )
 
@@ -812,10 +830,13 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Frst Hills   1 min", ""})
 
       expect_audios(
-        [{:canned, {"110", spaced(["896", "907", "920", "910", "21014"]), :audio_visual}}],
+        [{:canned, {"112", spaced(["896", "907", "920", "910", "21014", "925"]), :audio_visual}}],
         [
-          {"Attention passengers: The next Forest Hills train is now approaching.",
-           [{"Frst Hills train is now", "approaching.", 3}]}
+          {"Attention passengers: The next Forest Hills train is now approaching. Please stand back from the platform edge.",
+           [
+             {"Frst Hills train is now", "approaching. Please", 3},
+             {"stand back from the", "platform edge.", 3}
+           ]}
         ]
       )
 
@@ -836,10 +857,13 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Frst Hills   1 min", ""})
 
       expect_audios(
-        [{:canned, {"110", spaced(["896", "907", "920", "910", "21014"]), :audio_visual}}],
+        [{:canned, {"112", spaced(["896", "907", "920", "910", "21014", "925"]), :audio_visual}}],
         [
-          {"Attention passengers: The next Forest Hills train is now approaching.",
-           [{"Frst Hills train is now", "approaching.", 3}]}
+          {"Attention passengers: The next Forest Hills train is now approaching. Please stand back from the platform edge.",
+           [
+             {"Frst Hills train is now", "approaching. Please", 3},
+             {"stand back from the", "platform edge.", 3}
+           ]}
         ]
       )
 
@@ -1463,11 +1487,16 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [
           {:canned,
-           {"113", spaced(["896", "895", "920", "910", "21012", "893", "21014"]), :audio_visual}}
+           {"115", spaced(["896", "895", "920", "910", "21012", "893", "21014", "925"]),
+            :audio_visual}}
         ],
         [
-          {"Attention passengers: The next Ashmont train is now approaching, with all new Red Line cars.",
-           [{"Ashmont train is now", "approaching, with all", 3}, {"new Red Line cars.", "", 3}]}
+          {"Attention passengers: The next Ashmont train is now approaching, with all new Red Line cars. Please stand back from the platform edge.",
+           [
+             {"Ashmont train is now", "approaching, with all", 3},
+             {"new Red Line cars.", "Please stand back from", 3},
+             {"the platform edge.", "", 3}
+           ]}
         ]
       )
 
@@ -1497,10 +1526,13 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Ashmont      1 min", ""})
 
       expect_audios(
-        [{:canned, {"110", spaced(["896", "895", "920", "910", "21014"]), :audio_visual}}],
+        [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
         [
-          {"Attention passengers: The next Ashmont train is now approaching.",
-           [{"Ashmont train is now", "approaching.", 3}]}
+          {"Attention passengers: The next Ashmont train is now approaching. Please stand back from the platform edge.",
+           [
+             {"Ashmont train is now", "approaching. Please", 3},
+             {"stand back from the", "platform edge.", 3}
+           ]}
         ]
       )
 

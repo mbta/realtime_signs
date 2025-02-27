@@ -54,6 +54,8 @@ defmodule Content.Audio.Approaching do
     @with_all_new_red_line_cars "893"
     # audio: "It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.", visual: "Please move to front of the train to board."
     @four_car_train_message "922"
+    # "Please stand back from the platform edge."
+    @stand_back_message "925"
     @comma "21012"
     @period "21014"
 
@@ -68,7 +70,7 @@ defmodule Content.Audio.Approaching do
       approaching = if audio.four_cars?, do: [@now_approaching], else: [@is_now_approaching]
       platform = if audio.platform, do: [platform_var(audio.platform)], else: []
       new_cars = if audio.new_cars?, do: [@comma, @with_all_new_red_line_cars], else: []
-      four_cars = if audio.four_cars?, do: [@four_car_train_message], else: []
+      followup = if audio.four_cars?, do: [@four_car_train_message], else: [@stand_back_message]
 
       crowding =
         if audio.crowding_description,
@@ -76,7 +78,7 @@ defmodule Content.Audio.Approaching do
           else: []
 
       (prefix ++
-         train ++ approaching ++ platform ++ new_cars ++ [@period] ++ four_cars ++ crowding)
+         train ++ approaching ++ platform ++ new_cars ++ [@period] ++ followup ++ crowding)
       |> Utilities.take_message(:audio_visual)
     end
 
@@ -88,12 +90,14 @@ defmodule Content.Audio.Approaching do
       platform = platform_string(audio.platform)
       new_cars = new_cars_string(audio.new_cars?)
 
-      four_cars =
-        if audio.four_cars?, do: " Please move to front of the train to board.", else: ""
+      followup =
+        if audio.four_cars?,
+          do: " Please move to front of the train to board.",
+          else: " Please stand back from the platform edge."
 
       {tts_text(audio),
        PaEss.Utilities.paginate_text(
-         "#{prefix}#{train} #{approaching}#{platform}#{new_cars}.#{four_cars}#{crowding}"
+         "#{prefix}#{train} #{approaching}#{platform}#{new_cars}.#{followup}#{crowding}"
        )}
     end
 
@@ -106,9 +110,13 @@ defmodule Content.Audio.Approaching do
       crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
       platform = platform_string(audio.platform)
       new_cars = new_cars_string(audio.new_cars?)
-      four_cars = if audio.four_cars?, do: PaEss.Utilities.four_cars_text(), else: ""
 
-      "Attention passengers: The next #{train} is now approaching#{platform}#{new_cars}.#{four_cars}#{crowding}"
+      followup =
+        if audio.four_cars?,
+          do: PaEss.Utilities.four_cars_text(),
+          else: " Please stand back from the platform edge."
+
+      "Attention passengers: The next #{train} is now approaching#{platform}#{new_cars}.#{followup}#{crowding}"
     end
 
     defp destination_var(:alewife), do: "892"
