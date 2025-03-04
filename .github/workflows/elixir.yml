@@ -8,10 +8,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       # cache the ASDF directory, using the values from .tool-versions
       - name: ASDF cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.asdf
           key: ${{ runner.os }}-asdf-v2-${{ hashFiles('.tool-versions') }}
@@ -32,7 +32,7 @@ jobs:
           $ASDF_DIR/bin/asdf reshim
       - name: Restore dependencies cache
         id: deps-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: deps
           key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
