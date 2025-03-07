@@ -160,13 +160,6 @@ defmodule PaEss.Utilities do
     Integer.to_string(5000 + n)
   end
 
-  @doc "Constructs message from TAKE variables"
-  @spec take_message([String.t()], Content.Audio.av_type()) :: Content.Audio.canned_message()
-  def take_message(vars, av_type) do
-    vars_with_spaces = pad_takes(vars)
-    {:canned, {take_message_id(vars_with_spaces), vars_with_spaces, av_type}}
-  end
-
   @doc "Intersperse spaces in a list of takes, accounting for punctuation"
   @spec pad_takes([String.t()]) :: [String.t()]
   def pad_takes(vars) do
@@ -188,37 +181,6 @@ defmodule PaEss.Utilities do
     end
     |> Integer.to_string()
   end
-
-  @doc "Take ID for terminal destinations"
-  @spec destination_var(PaEss.destination()) :: String.t()
-  def destination_var(:alewife), do: "4000"
-  def destination_var(:ashmont), do: "4016"
-  def destination_var(:braintree), do: "4021"
-  def destination_var(:mattapan), do: "4100"
-  def destination_var(:bowdoin), do: "4055"
-  def destination_var(:wonderland), do: "4044"
-  def destination_var(:oak_grove), do: "4022"
-  def destination_var(:forest_hills), do: "4043"
-  def destination_var(:chelsea), do: "860"
-  def destination_var(:south_station), do: "4089"
-  def destination_var(:lechmere), do: "4056"
-  def destination_var(:north_station), do: "4027"
-  def destination_var(:government_center), do: "4061"
-  def destination_var(:park_street), do: "4007"
-  def destination_var(:kenmore), do: "4070"
-  def destination_var(:boston_college), do: "4202"
-  def destination_var(:cleveland_circle), do: "4203"
-  def destination_var(:reservoir), do: "4076"
-  def destination_var(:riverside), do: "4084"
-  def destination_var(:heath_street), do: "4204"
-  def destination_var(:union_square), do: "695"
-  def destination_var(:medford_tufts), do: "852"
-  def destination_var(:southbound), do: "787"
-  def destination_var(:northbound), do: "788"
-  def destination_var(:eastbound), do: "867"
-  def destination_var(:westbound), do: "868"
-  def destination_var(:inbound), do: "33003"
-  def destination_var(:outbound), do: "33004"
 
   @doc """
   Used for parsing headway_direction_name from the source config to a PaEss.destination
@@ -316,13 +278,6 @@ defmodule PaEss.Utilities do
   def destination_to_ad_hoc_string(:outbound), do: "Outbound"
   def destination_to_ad_hoc_string(:medford_tufts), do: "Medford/Tufts"
 
-  def line_to_var("Red"), do: "3005"
-  def line_to_var("Orange"), do: "3006"
-  def line_to_var("Blue"), do: "3007"
-  def line_to_var("Green"), do: "3008"
-  def line_to_var("Mattapan"), do: "3009"
-  def line_to_var(_), do: "864"
-
   def directional_destination?(destination),
     do: destination in [:eastbound, :westbound, :southbound, :northbound, :inbound, :outbound]
 
@@ -349,12 +304,7 @@ defmodule PaEss.Utilities do
 
   def train_description_tokens(destination, route_id) do
     branch = Content.Utilities.route_branch_letter(route_id)
-
-    if branch do
-      [branch, :train_to, {:destination, destination}]
-    else
-      [{:destination, destination}, :train]
-    end
+    if branch, do: [branch, :train_to, destination], else: [destination, :train]
   end
 
   def crowding_text(crowding_description) do
@@ -371,12 +321,6 @@ defmodule PaEss.Utilities do
   def four_cars_text() do
     " It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge."
   end
-
-  @spec green_line_branch_var(Content.Utilities.green_line_branch()) :: String.t()
-  def green_line_branch_var(:b), do: "536"
-  def green_line_branch_var(:c), do: "537"
-  def green_line_branch_var(:d), do: "538"
-  def green_line_branch_var(:e), do: "539"
 
   def time_hour_var(hour) when hour >= 0 and hour < 24 do
     adjusted_hour = rem(hour, 12)
@@ -661,110 +605,124 @@ defmodule PaEss.Utilities do
     {"Linden Sq", "889"}
   ]
 
-  @route_take_lookup %{
-    "SL5" => "587",
-    "SL4" => "586",
-    "1" => "573",
-    "8" => "574",
-    "14" => "575",
-    "15" => "576",
-    "19" => "577",
-    "23" => "578",
-    "24" => "622",
-    "27" => "623",
-    "2427" => "629",
-    "28" => "579",
-    "29" => "624",
-    "30" => "625",
-    "31" => "626",
-    "33" => "627",
-    "34" => "678",
-    "34E" => "679",
-    "35" => "680",
-    "36" => "681",
-    "37" => "682",
-    "38" => "683",
-    "39" => "684",
-    "40" => "685",
-    "41" => "580",
-    "42" => "581",
-    "44" => "582",
-    "45" => "583",
-    "47" => "584",
-    "50" => "686",
-    "51" => "687",
-    "66" => "585",
-    "69" => "590",
-    "71" => "591",
-    "72" => "592",
-    "73" => "594",
-    "74" => "595",
-    "75" => "596",
-    "77" => "597",
-    "77A" => "598",
-    "78" => "599",
-    "80" => "600",
-    "86" => "601",
-    "87" => "602",
-    "88" => "603",
-    "89" => "688",
-    "90" => "689",
-    "94" => "690",
-    "96" => "604",
-    "109" => "890",
-    "170" => "588",
-    "171" => "589",
-    "226" => "809",
-    "230" => "810",
-    "236" => "811",
-    "245" => "628",
-    "716" => "888"
-  }
+  @spec audio_take(term()) :: String.t() | nil
+  def audio_take(:alewife), do: "4000"
+  def audio_take(:alewife_), do: "892"
+  def audio_take(:ashmont), do: "4016"
+  def audio_take(:ashmont_), do: "895"
+  def audio_take(:braintree), do: "4021"
+  def audio_take(:braintree_), do: "902"
+  def audio_take(:mattapan), do: "4100"
+  def audio_take(:mattapan_), do: "913"
+  def audio_take(:bowdoin), do: "4055"
+  def audio_take(:bowdoin_), do: "900"
+  def audio_take(:wonderland), do: "4044"
+  def audio_take(:wonderland_), do: "921"
+  def audio_take(:oak_grove), do: "4022"
+  def audio_take(:oak_grove_), do: "915"
+  def audio_take(:forest_hills), do: "4043"
+  def audio_take(:forest_hills_), do: "907"
+  def audio_take(:chelsea), do: "860"
+  def audio_take(:south_station), do: "4089"
+  def audio_take(:lechmere), do: "4056"
+  def audio_take(:lechmere_), do: "912"
+  def audio_take(:north_station), do: "4027"
+  def audio_take(:north_station_), do: "914"
+  def audio_take(:government_center), do: "4061"
+  def audio_take(:government_center_), do: "908"
+  def audio_take(:park_street), do: "4007"
+  def audio_take(:park_street_), do: "916"
+  def audio_take(:kenmore), do: "4070"
+  def audio_take(:kenmore_), do: "911"
+  def audio_take(:boston_college), do: "4202"
+  def audio_take(:boston_college_), do: "899"
+  def audio_take(:cleveland_circle), do: "4203"
+  def audio_take(:cleveland_circle_), do: "904"
+  def audio_take(:reservoir), do: "4076"
+  def audio_take(:reservoir_), do: "917"
+  def audio_take(:riverside), do: "4084"
+  def audio_take(:riverside_), do: "918"
+  def audio_take(:heath_street), do: "4204"
+  def audio_take(:heath_street_), do: "909"
+  def audio_take(:union_square), do: "695"
+  def audio_take(:medford_tufts), do: "852"
+  def audio_take(:southbound), do: "787"
+  def audio_take(:northbound), do: "788"
+  def audio_take(:eastbound), do: "867"
+  def audio_take(:westbound), do: "868"
+  def audio_take(:inbound), do: "33003"
+  def audio_take(:outbound), do: "33004"
+  def audio_take(:the_next_bus_to), do: "543"
+  def audio_take(:the_following_bus_to), do: "858"
+  def audio_take(:the_next), do: "501"
+  def audio_take(:the_following), do: "667"
+  def audio_take(:train), do: "864"
+  def audio_take(:train_), do: "920"
+  def audio_take(:bus_to), do: "859"
+  def audio_take(:train_to), do: "507"
+  def audio_take(:train_to_), do: "919"
+  def audio_take(:departs), do: "502"
+  def audio_take(:arrives), do: "503"
+  def audio_take(:track_change), do: "540"
+  def audio_take(:is_now_boarding), do: "544"
+  def audio_take(:in), do: "504"
+  def audio_take(:is), do: "533"
+  def audio_take(:stopped), do: "641"
+  def audio_take(:stop_away), do: "535"
+  def audio_take(:stops_away), do: "534"
+  def audio_take(:the_first), do: "866"
+  def audio_take(:scheduled_to_arrive_at), do: "865"
+  def audio_take(:upcoming_departures), do: "548"
+  def audio_take(:upcoming_arrivals), do: "550"
+  def audio_take(:is_now_arriving), do: "24055"
+  def audio_take(:upper_level_departures), do: "616"
+  def audio_take(:lower_level_departures), do: "617"
+  def audio_take(:board_routes_71_and_73_on_upper_level), do: "618"
+  def audio_take(:will_announce_platform_soon), do: "849"
+  def audio_take(:will_announce_platform_later), do: "857"
+  def audio_take(:departing), do: "530"
+  def audio_take(:arriving), do: "531"
+  def audio_take(:on_track_1), do: "541"
+  def audio_take(:on_track_2), do: "542"
+  def audio_take(:on_the), do: "851"
+  def audio_take(:platform), do: "529"
+  def audio_take(:on_the_ashmont_platform), do: "894"
+  def audio_take(:on_the_braintree_platform), do: "901"
+  def audio_take(:_), do: "21000"
+  def audio_take(:","), do: "21012"
+  def audio_take(:.), do: "21014"
+  def audio_take(:minute), do: "532"
+  def audio_take(:minutes), do: "505"
+  def audio_take(:no_service), do: "879"
+  def audio_take(:there_is_no), do: "880"
+  def audio_take(:there_is_no_), do: "861"
+  def audio_take(:bus_service_to), do: "877"
+  def audio_take(:no_bus_service), do: "878"
+  def audio_take(:service_at_this_station), do: "863"
+  def audio_take(:service_ended), do: "882"
+  def audio_take(:platform_closed), do: "884"
+  def audio_take(:boarding_button_message), do: "869"
+  # audio: "Attention passengers, the next", visual: ""
+  def audio_take(:attention_passengers_the_next), do: "896"
+  # audio: "Attention passengers, the next", visual: "Shorter 4 car"
+  def audio_take(:shorter_4_car), do: "923"
+  def audio_take(:is_now_approaching), do: "910"
+  # audio: "is now approaching", visual: "now approaching"
+  def audio_take(:now_approaching), do: "924"
+  def audio_take(:with_all_new_red_line_cars), do: "893"
 
-  @atom_take_lookup %{
-    the_next_bus_to: "543",
-    the_following_bus_to: "858",
-    the_next: "501",
-    the_following: "667",
-    train: "864",
-    bus_to: "859",
-    train_to: "507",
-    departs: "502",
-    arrives: "503",
-    is_now_boarding: "544",
-    in: "504",
-    is: "533",
-    stopped: "641",
-    stop_away: "535",
-    stops_away: "534",
-    upcoming_departures: "548",
-    upcoming_arrivals: "550",
-    is_now_arriving: "24055",
-    upper_level_departures: "616",
-    lower_level_departures: "617",
-    board_routes_71_and_73_on_upper_level: "618",
-    will_announce_platform_soon: "849",
-    will_announce_platform_later: "857",
-    four_car_train_message: "922",
-    departing: "530",
-    arriving: "531",
-    on_track_1: "541",
-    on_track_2: "542",
-    on_the: "851",
-    platform: "529",
-    _: "21000",
-    ",": "21012",
-    minute: "532",
-    minutes: "505",
-    no_service: "879",
-    there_is_no: "880",
-    bus_service_to: "877",
-    no_bus_service: "878",
-    b: "536",
-    c: "537",
-    d: "538",
-    e: "539"
-  }
+  # audio: "It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.", visual: "Please move to front of the train to board."
+  def audio_take(:four_car_train_message), do: "922"
+  # "Please stand back from the platform edge."
+  def audio_take(:stand_back_message), do: "925"
+  def audio_take(:b), do: "536"
+  def audio_take(:b_), do: "897"
+  def audio_take(:c), do: "537"
+  def audio_take(:c_), do: "903"
+  def audio_take(:d), do: "538"
+  def audio_take(:d_), do: "905"
+  def audio_take(:e), do: "539"
+  def audio_take(:e_), do: "906"
 
   def audio_take({:minutes, minutes}) do
     number_var(minutes, :english) || generic_number_var(minutes)
@@ -782,18 +740,104 @@ defmodule PaEss.Utilities do
     end)
   end
 
-  def audio_take({:destination, destination}) do
-    destination_var(destination)
-  end
+  def audio_take({:hour, hour}), do: time_hour_var(hour)
+  def audio_take({:minute, minute}), do: time_minutes_var(minute)
 
-  def audio_take({:route, route}), do: @route_take_lookup[route]
-  def audio_take(atom) when is_atom(atom), do: @atom_take_lookup[atom]
+  def audio_take({:route, "SL5"}), do: "587"
+  def audio_take({:route, "SL4"}), do: "586"
+  def audio_take({:route, "1"}), do: "573"
+  def audio_take({:route, "8"}), do: "574"
+  def audio_take({:route, "14"}), do: "575"
+  def audio_take({:route, "15"}), do: "576"
+  def audio_take({:route, "19"}), do: "577"
+  def audio_take({:route, "23"}), do: "578"
+  def audio_take({:route, "24"}), do: "622"
+  def audio_take({:route, "27"}), do: "623"
+  def audio_take({:route, "2427"}), do: "629"
+  def audio_take({:route, "28"}), do: "579"
+  def audio_take({:route, "29"}), do: "624"
+  def audio_take({:route, "30"}), do: "625"
+  def audio_take({:route, "31"}), do: "626"
+  def audio_take({:route, "33"}), do: "627"
+  def audio_take({:route, "34"}), do: "678"
+  def audio_take({:route, "34E"}), do: "679"
+  def audio_take({:route, "35"}), do: "680"
+  def audio_take({:route, "36"}), do: "681"
+  def audio_take({:route, "37"}), do: "682"
+  def audio_take({:route, "38"}), do: "683"
+  def audio_take({:route, "39"}), do: "684"
+  def audio_take({:route, "40"}), do: "685"
+  def audio_take({:route, "41"}), do: "580"
+  def audio_take({:route, "42"}), do: "581"
+  def audio_take({:route, "44"}), do: "582"
+  def audio_take({:route, "45"}), do: "583"
+  def audio_take({:route, "47"}), do: "584"
+  def audio_take({:route, "50"}), do: "686"
+  def audio_take({:route, "51"}), do: "687"
+  def audio_take({:route, "66"}), do: "585"
+  def audio_take({:route, "69"}), do: "590"
+  def audio_take({:route, "71"}), do: "591"
+  def audio_take({:route, "72"}), do: "592"
+  def audio_take({:route, "73"}), do: "594"
+  def audio_take({:route, "74"}), do: "595"
+  def audio_take({:route, "75"}), do: "596"
+  def audio_take({:route, "77"}), do: "597"
+  def audio_take({:route, "77A"}), do: "598"
+  def audio_take({:route, "78"}), do: "599"
+  def audio_take({:route, "80"}), do: "600"
+  def audio_take({:route, "86"}), do: "601"
+  def audio_take({:route, "87"}), do: "602"
+  def audio_take({:route, "88"}), do: "603"
+  def audio_take({:route, "89"}), do: "688"
+  def audio_take({:route, "90"}), do: "689"
+  def audio_take({:route, "94"}), do: "690"
+  def audio_take({:route, "96"}), do: "604"
+  def audio_take({:route, "109"}), do: "890"
+  def audio_take({:route, "170"}), do: "588"
+  def audio_take({:route, "171"}), do: "589"
+  def audio_take({:route, "226"}), do: "809"
+  def audio_take({:route, "230"}), do: "810"
+  def audio_take({:route, "236"}), do: "811"
+  def audio_take({:route, "245"}), do: "628"
+  def audio_take({:route, "716"}), do: "888"
+
+  def audio_take({:boarding, "Green-B", "70197", :boston_college}), do: "813"
+  def audio_take({:boarding, "Green-B", "70197", :kenmore}), do: "820"
+  def audio_take({:boarding, "Green-C", "70196", :cleveland_circle}), do: "814"
+  def audio_take({:boarding, "Green-C", "70196", :kenmore}), do: "823"
+  def audio_take({:boarding, "Green-D", "70199", :reservoir}), do: "815"
+  def audio_take({:boarding, "Green-D", "70199", :riverside}), do: "818"
+  def audio_take({:boarding, "Green-D", "70199", :kenmore}), do: "822"
+  def audio_take({:boarding, "Green-E", "70198", :heath_street}), do: "816"
+  def audio_take({:boarding, "Green-E", "70198", :kenmore}), do: "821"
+
+  def audio_take({:crowding, {:front, _}}), do: "870"
+  def audio_take({:crowding, {:back, _}}), do: "871"
+  def audio_take({:crowding, {:middle, _}}), do: "872"
+  def audio_take({:crowding, {:front_and_back, _}}), do: "873"
+  def audio_take({:crowding, {:train_level, :crowded}}), do: "876"
+  def audio_take({:crowding, _}), do: "21000"
+
+  def audio_take({:line, "Red"}), do: "3005"
+  def audio_take({:line, "Orange"}), do: "3006"
+  def audio_take({:line, "Blue"}), do: "3007"
+  def audio_take({:line, "Green"}), do: "3008"
+  def audio_take({:line, "Mattapan"}), do: "3009"
+  def audio_take({:line, _}), do: audio_take(:train)
+
+  def audio_take({:passthrough, :alewife, _}), do: "32114"
+  def audio_take({:passthrough, :southbound, "Red"}), do: "891"
+  def audio_take({:passthrough, :bowdoin, _}), do: "32111"
+  def audio_take({:passthrough, :wonderland, _}), do: "32110"
+  def audio_take({:passthrough, :forest_hills, _}), do: "32113"
+  def audio_take({:passthrough, :oak_grove, _}), do: "32112"
+
+  def audio_take(_), do: nil
 
   @spec audio_message([term()]) :: Content.Audio.canned_message()
-  def audio_message(items) do
+  def audio_message(items, av \\ :audio) do
     vars =
-      Enum.intersperse(items, :_)
-      |> Enum.map(fn item ->
+      Enum.map(items, fn item ->
         case audio_take(item) do
           nil ->
             Logger.error("No audio for: #{inspect(item)}")
@@ -803,8 +847,9 @@ defmodule PaEss.Utilities do
             take
         end
       end)
+      |> pad_takes()
 
-    {:canned, {take_message_id(vars), vars, :audio}}
+    {:canned, {take_message_id(vars), vars, av}}
   end
 
   @spec paginate_text(String.t(), integer()) :: Content.Message.pages()

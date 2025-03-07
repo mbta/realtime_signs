@@ -71,7 +71,7 @@ defmodule Content.Audio.Predictions do
           cond do
             track_number == 1 -> [:on_track_1]
             track_number == 2 -> [:on_track_2]
-            platform -> [:on_the, {:destination, platform}, :platform]
+            platform -> [:on_the, platform, :platform]
             true -> []
           end
 

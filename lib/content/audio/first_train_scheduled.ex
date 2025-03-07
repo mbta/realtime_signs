@@ -7,28 +7,19 @@ defmodule Content.Audio.FirstTrainScheduled do
         }
 
   defimpl Content.Audio do
-    @the_first "866"
-    @train "864"
-    @is "533"
-    @scheduled_to_arrive_at "865"
-
     def to_params(%Content.Audio.FirstTrainScheduled{
           destination: destination,
           scheduled_time: scheduled_time
         }) do
-      destination = PaEss.Utilities.destination_var(destination)
-
-      vars = [
-        @the_first,
+      PaEss.Utilities.audio_message([
+        :the_first,
         destination,
-        @train,
-        @is,
-        @scheduled_to_arrive_at,
-        PaEss.Utilities.time_hour_var(scheduled_time.hour),
-        PaEss.Utilities.time_minutes_var(scheduled_time.minute)
-      ]
-
-      PaEss.Utilities.take_message(vars, :audio)
+        :train,
+        :is,
+        :scheduled_to_arrive_at,
+        {:hour, scheduled_time.hour},
+        {:minute, scheduled_time.minute}
+      ])
     end
 
     def to_tts(%Content.Audio.FirstTrainScheduled{} = audio) do
