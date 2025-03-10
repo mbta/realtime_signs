@@ -954,13 +954,7 @@ defmodule Signs.Bus do
   # Turns a list of audio tokens into a list of audio messages, chunking as needed to stay under
   # the max var limit.
   defp paginate_audio(items) do
-    for item <- items do
-      PaEss.Utilities.audio_take(item) ||
-        (
-          Logger.error("No audio for: #{inspect(item)}")
-          PaEss.Utilities.audio_take(:",")
-        )
-    end
+    Stream.map(items, &PaEss.Utilities.audio_take/1)
     |> Stream.chunk_every(@var_max)
     |> Enum.map(fn vars ->
       {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio}}
