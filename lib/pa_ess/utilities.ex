@@ -606,6 +606,7 @@ defmodule PaEss.Utilities do
   ]
 
   @spec audio_take(term()) :: String.t() | nil
+  # Tokens ending in underscores are newer Polly-generated clips
   def audio_take(:alewife), do: "4000"
   def audio_take(:alewife_), do: "892"
   def audio_take(:ashmont), do: "4016"
@@ -832,23 +833,14 @@ defmodule PaEss.Utilities do
   def audio_take({:passthrough, :forest_hills, _route}), do: "32113"
   def audio_take({:passthrough, :oak_grove, _route}), do: "32112"
 
-  def audio_take(_), do: nil
+  def audio_take(item) do
+    Logger.error("No audio for: #{inspect(item)}")
+    "21000"
+  end
 
   @spec audio_message([term()]) :: Content.Audio.canned_message()
   def audio_message(items, av \\ :audio) do
-    vars =
-      Enum.map(items, fn item ->
-        case audio_take(item) do
-          nil ->
-            Logger.error("No audio for: #{inspect(item)}")
-            audio_take(:_)
-
-          take ->
-            take
-        end
-      end)
-      |> pad_takes()
-
+    vars = Enum.map(items, &audio_take/1) |> pad_takes()
     {:canned, {take_message_id(vars), vars, av}}
   end
 
