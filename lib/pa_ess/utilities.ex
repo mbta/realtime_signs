@@ -605,7 +605,7 @@ defmodule PaEss.Utilities do
     {"Linden Sq", "889"}
   ]
 
-  @spec audio_take(term()) :: String.t() | nil
+  @spec audio_take(term()) :: String.t()
   # Tokens ending in underscores are newer Polly-generated clips
   def audio_take(:alewife), do: "4000"
   def audio_take(:alewife_), do: "892"
