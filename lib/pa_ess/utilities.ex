@@ -811,26 +811,26 @@ defmodule PaEss.Utilities do
   def audio_take({:boarding, "Green-E", "70198", :heath_street}), do: "816"
   def audio_take({:boarding, "Green-E", "70198", :kenmore}), do: "821"
 
-  def audio_take({:crowding, {:front, _}}), do: "870"
-  def audio_take({:crowding, {:back, _}}), do: "871"
-  def audio_take({:crowding, {:middle, _}}), do: "872"
-  def audio_take({:crowding, {:front_and_back, _}}), do: "873"
+  def audio_take({:crowding, {:front, _status}}), do: "870"
+  def audio_take({:crowding, {:back, _status}}), do: "871"
+  def audio_take({:crowding, {:middle, _status}}), do: "872"
+  def audio_take({:crowding, {:front_and_back, _status}}), do: "873"
   def audio_take({:crowding, {:train_level, :crowded}}), do: "876"
-  def audio_take({:crowding, _}), do: "21000"
+  def audio_take({:crowding, _crowding_description}), do: "21000"
 
   def audio_take({:line, "Red"}), do: "3005"
   def audio_take({:line, "Orange"}), do: "3006"
   def audio_take({:line, "Blue"}), do: "3007"
   def audio_take({:line, "Green"}), do: "3008"
   def audio_take({:line, "Mattapan"}), do: "3009"
-  def audio_take({:line, _}), do: audio_take(:train)
+  def audio_take({:line, _name}), do: audio_take(:train)
 
-  def audio_take({:passthrough, :alewife, _}), do: "32114"
+  def audio_take({:passthrough, :alewife, _route}), do: "32114"
   def audio_take({:passthrough, :southbound, "Red"}), do: "891"
-  def audio_take({:passthrough, :bowdoin, _}), do: "32111"
-  def audio_take({:passthrough, :wonderland, _}), do: "32110"
-  def audio_take({:passthrough, :forest_hills, _}), do: "32113"
-  def audio_take({:passthrough, :oak_grove, _}), do: "32112"
+  def audio_take({:passthrough, :bowdoin, _route}), do: "32111"
+  def audio_take({:passthrough, :wonderland, _route}), do: "32110"
+  def audio_take({:passthrough, :forest_hills, _route}), do: "32113"
+  def audio_take({:passthrough, :oak_grove, _route}), do: "32112"
 
   def audio_take(_), do: nil
 
