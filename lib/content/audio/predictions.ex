@@ -161,7 +161,7 @@ defmodule Content.Audio.Predictions do
 
     defp four_cars?(audio) do
       PaEss.Utilities.prediction_four_cars?(audio.prediction) and !audio.terminal? and
-        !audio.multiple_messages?
+        !audio.multiple_messages? and audio.next_or_following == :next
     end
 
     defp platform_string(:ashmont), do: "Ashmont"
