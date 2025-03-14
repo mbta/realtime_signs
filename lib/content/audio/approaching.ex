@@ -22,7 +22,7 @@ defmodule Content.Audio.Approaching do
           trip_id: Predictions.Prediction.trip_id() | nil,
           platform: Content.platform() | nil,
           route_id: String.t() | nil,
-          new_cars?: boolean,
+          new_cars?: boolean(),
           four_cars?: boolean(),
           crowding_description: {atom(), atom()} | nil
         }
@@ -52,7 +52,12 @@ defmodule Content.Audio.Approaching do
 
       approaching = if audio.four_cars?, do: [:now_approaching], else: [:is_now_approaching]
       platform = if audio.platform, do: [platform_token(audio.platform)], else: []
-      new_cars = if audio.new_cars?, do: [:",", :with_all_new_red_line_cars], else: []
+
+      new_cars =
+        if audio.new_cars? and not audio.four_cars?,
+          do: [:",", :with_all_new_red_line_cars],
+          else: []
+
       followup = if audio.four_cars?, do: [:four_car_train_message], else: [:stand_back_message]
 
       crowding =
@@ -69,7 +74,7 @@ defmodule Content.Audio.Approaching do
       approaching = if audio.four_cars?, do: "now approaching", else: "is now approaching"
       crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
       platform = platform_string(audio.platform)
-      new_cars = new_cars_string(audio.new_cars?)
+      new_cars = new_cars_string(audio.new_cars? and not audio.four_cars?)
 
       followup =
         if audio.four_cars?,
@@ -90,7 +95,7 @@ defmodule Content.Audio.Approaching do
       train = Utilities.train_description(audio.destination, audio.route_id)
       crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
       platform = platform_string(audio.platform)
-      new_cars = new_cars_string(audio.new_cars?)
+      new_cars = new_cars_string(audio.new_cars? and not audio.four_cars?)
 
       followup =
         if audio.four_cars?,
