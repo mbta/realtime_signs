@@ -142,7 +142,7 @@ defmodule Engine.Config do
         Logger.info("active_headend_ip: current: #{active_headend_ip}")
 
       {:error, e} ->
-        Logger.warn("active_headend_ip: unable to fetch: #{inspect(e)}")
+        Logger.warning("active_headend_ip: unable to fetch: #{inspect(e)}")
     end
 
     {:noreply, state}

@@ -72,7 +72,7 @@ defmodule MessageQueue do
   def handle_call({:queue_update, msg}, _from, state) do
     {queue, length} =
       if state.length >= @max_size do
-        Logger.warn(["Message queue too full; dropping ", inspect(@too_full_drop)])
+        Logger.warning(["Message queue too full; dropping ", inspect(@too_full_drop)])
         {_, queue} = :queue.split(@too_full_drop, state.queue)
         {queue, state.length - @too_full_drop}
       else

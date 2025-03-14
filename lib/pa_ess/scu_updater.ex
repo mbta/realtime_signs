@@ -51,11 +51,11 @@ defmodule PaEss.ScuUpdater do
           :ok
 
         {:ok, %HTTPoison.Response{status_code: status}} ->
-          Logger.warn("scu_error: status=#{inspect(status)}")
+          Logger.warning("scu_error: status=#{inspect(status)}")
           :error
 
         {:error, %HTTPoison.Error{reason: reason}} ->
-          Logger.warn("scu_error: #{inspect(reason)}")
+          Logger.warning("scu_error: #{inspect(reason)}")
           :error
       end
     else
@@ -84,10 +84,10 @@ defmodule PaEss.ScuUpdater do
           nil
 
         {:ok, %HTTPoison.Response{status_code: status}} ->
-          Logger.warn("signs_ui_error: status=#{inspect(status)}")
+          Logger.warning("signs_ui_error: status=#{inspect(status)}")
 
         {:error, %HTTPoison.Error{reason: reason}} ->
-          Logger.warn("signs_ui_error: #{inspect(reason)}")
+          Logger.warning("signs_ui_error: #{inspect(reason)}")
       end
     end
   end

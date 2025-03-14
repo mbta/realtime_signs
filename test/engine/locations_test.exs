@@ -18,7 +18,7 @@ defmodule Engine.LocationsTest do
       end)
 
       log =
-        capture_log([level: :warn], fn ->
+        capture_log([level: :warning], fn ->
           {:noreply, updated_state} = Engine.Locations.handle_info(:update, @state)
           assert @state == updated_state
         end)

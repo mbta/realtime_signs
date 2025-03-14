@@ -7,7 +7,7 @@ defmodule Headway.RequestTest do
   describe "get_schedules/1" do
     test "gracefully handles bad responses and logs warning" do
       log =
-        capture_log([level: :warn], fn ->
+        capture_log([level: :warning], fn ->
           assert get_schedules(["500_error"]) == :error
           assert get_schedules(["unknown_error"]) == :error
         end)
@@ -30,7 +30,7 @@ defmodule Headway.RequestTest do
 
   test "Logs warning when json data cannot be parsed" do
     log =
-      capture_log([level: :warn], fn ->
+      capture_log([level: :warning], fn ->
         assert get_schedules(["parse_error"]) == []
       end)
 

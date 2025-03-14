@@ -51,7 +51,7 @@ defmodule Engine.ChelseaBridge do
   end
 
   def handle_info(msg, state) do
-    Logger.warn("Engine.ChelseaBridge unknown_message: #{inspect(msg)}")
+    Logger.warning("Engine.ChelseaBridge unknown_message: #{inspect(msg)}")
     {:noreply, state}
   end
 end
