@@ -103,7 +103,7 @@ defmodule Engine.Locations do
         :error
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("Could not fetch file from #{inspect(full_url)}: #{inspect(reason)}")
+        Logger.warning("Could not fetch file from #{inspect(full_url)}: #{inspect(reason)}")
         :error
     end
   end

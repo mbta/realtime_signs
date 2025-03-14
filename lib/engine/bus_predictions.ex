@@ -131,7 +131,7 @@ defmodule Engine.BusPredictions do
   end
 
   def handle_info(msg, state) do
-    Logger.warn("Engine.BusPredictions unknown_message: #{inspect(msg)}")
+    Logger.warning("Engine.BusPredictions unknown_message: #{inspect(msg)}")
     {:noreply, state}
   end
 

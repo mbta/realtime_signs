@@ -253,11 +253,11 @@ defmodule PaEss.HttpUpdater do
           {:ok, :sent}
 
         {:ok, %HTTPoison.Response{status_code: status}} ->
-          Logger.warn("head_end_post_error: response had status code: #{inspect(status)}")
+          Logger.warning("head_end_post_error: response had status code: #{inspect(status)}")
           {:error, :bad_status}
 
         {:error, %HTTPoison.Error{reason: reason}} ->
-          Logger.warn("head_end_post_error: #{inspect(reason)}")
+          Logger.warning("head_end_post_error: #{inspect(reason)}")
           {:error, :post_error}
       end
     else
@@ -284,7 +284,7 @@ defmodule PaEss.HttpUpdater do
           {:ok, :sent}
 
         {:ok, %HTTPoison.Response{status_code: status}} ->
-          Logger.warn("sign_ui_post_error: response had status code: #{inspect(status)}")
+          Logger.warning("sign_ui_post_error: response had status code: #{inspect(status)}")
           {:error, :bad_status}
 
         {:error, %HTTPoison.Error{reason: reason}} ->

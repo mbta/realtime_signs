@@ -140,7 +140,7 @@ defmodule Signs.RealtimeTest do
       assert {:ok, pid} = GenServer.start_link(Signs.Realtime, @sign)
 
       log =
-        capture_log([level: :warn], fn ->
+        capture_log([level: :warning], fn ->
           send(pid, :foo)
           Process.sleep(50)
         end)

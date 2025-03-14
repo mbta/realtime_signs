@@ -109,7 +109,7 @@ defmodule Engine.Alerts do
         )
 
       {:error, e} ->
-        Logger.warn("Engine.Alerts could not fetch stop statuses: #{inspect(e)}")
+        Logger.warning("Engine.Alerts could not fetch stop statuses: #{inspect(e)}")
     end
 
     {:noreply, state}

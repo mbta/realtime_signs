@@ -182,7 +182,7 @@ defmodule Signs.Realtime do
   end
 
   def handle_info(msg, state) do
-    Logger.warn("Signs.Realtime unknown_message: #{inspect(msg)}")
+    Logger.warning("Signs.Realtime unknown_message: #{inspect(msg)}")
     {:noreply, state}
   end
 

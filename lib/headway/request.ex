@@ -41,14 +41,14 @@ defmodule Headway.Request do
         parse_body(body)
 
       {:ok, %HTTPoison.Response{status_code: status}} ->
-        Logger.warn(
+        Logger.warning(
           "Could not load schedules. Response returned with status code #{inspect(status)}"
         )
 
         :error
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warn("Could not load schedules: #{inspect(reason)}")
+        Logger.warning("Could not load schedules: #{inspect(reason)}")
         :error
     end
   end
@@ -60,7 +60,7 @@ defmodule Headway.Request do
         Map.get(response, "data")
 
       {:error, reason} ->
-        Logger.warn("Could not decode response for scheduled headways: #{inspect(reason)}")
+        Logger.warning("Could not decode response for scheduled headways: #{inspect(reason)}")
         []
     end
   end
