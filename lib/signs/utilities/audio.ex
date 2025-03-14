@@ -90,7 +90,8 @@ defmodule Signs.Utilities.Audio do
                  message.special_sign,
                  message.terminal?,
                  length(messages) > 1,
-                 :next
+                 :next,
+                 true
                ),
                update_in(
                  sign.announced_stalls,
@@ -106,7 +107,8 @@ defmodule Signs.Utilities.Audio do
                  message.special_sign,
                  message.terminal?,
                  length(messages) > 1,
-                 :next
+                 :next,
+                 true
                ), sign}
 
             true ->

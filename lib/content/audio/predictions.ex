@@ -1,5 +1,12 @@
 defmodule Content.Audio.Predictions do
-  @enforce_keys [:prediction, :special_sign, :terminal?, :multiple_messages?, :next_or_following]
+  @enforce_keys [
+    :prediction,
+    :special_sign,
+    :terminal?,
+    :multiple_messages?,
+    :next_or_following,
+    :is_first?
+  ]
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
@@ -7,7 +14,8 @@ defmodule Content.Audio.Predictions do
           special_sign: :jfk_mezzanine | :bowdoin_eastbound | nil,
           terminal?: boolean(),
           multiple_messages?: boolean(),
-          next_or_following: :next | :following
+          next_or_following: :next | :following,
+          is_first?: boolean()
         }
 
   @spec new(
@@ -15,14 +23,16 @@ defmodule Content.Audio.Predictions do
           :jfk_mezzanine | :bowdoin_eastbound | nil,
           boolean(),
           boolean(),
-          :next | :following
+          :next | :following,
+          boolean()
         ) :: [t()]
   def new(
         %Predictions.Prediction{} = prediction,
         special_sign,
         terminal?,
         multiple_messages?,
-        next_or_following
+        next_or_following,
+        is_first?
       ) do
     [
       %__MODULE__{
@@ -30,7 +40,8 @@ defmodule Content.Audio.Predictions do
         special_sign: special_sign,
         terminal?: terminal?,
         multiple_messages?: multiple_messages?,
-        next_or_following: next_or_following
+        next_or_following: next_or_following,
+        is_first?: is_first?
       }
     ]
   end
@@ -161,7 +172,8 @@ defmodule Content.Audio.Predictions do
 
     defp four_cars?(audio) do
       PaEss.Utilities.prediction_four_cars?(audio.prediction) and !audio.terminal? and
-        !audio.multiple_messages?
+        !audio.multiple_messages? and audio.next_or_following == :next and
+        audio.is_first?
     end
 
     defp platform_string(:ashmont), do: "Ashmont"
