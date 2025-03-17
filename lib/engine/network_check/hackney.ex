@@ -18,7 +18,7 @@ defmodule Engine.NetworkCheck.Hackney do
         :ok
 
       _ ->
-        Logger.warn("#{__MODULE__} check_network result=failure resp=#{inspect(response)}")
+        Logger.warning("#{__MODULE__} check_network result=failure resp=#{inspect(response)}")
         :error
     end
   end

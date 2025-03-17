@@ -241,7 +241,7 @@ defmodule Signs.Bus do
   end
 
   def handle_info(msg, state) do
-    Logger.warn("Signs.Bus unknown_message: #{inspect(msg)}")
+    Logger.warning("Signs.Bus unknown_message: #{inspect(msg)}")
     {:noreply, state}
   end
 
@@ -782,7 +782,7 @@ defmodule Signs.Bus do
     [headsign | PaEss.Utilities.headsign_abbreviations(headsign)]
     |> Enum.filter(&(String.length(&1) <= max_size))
     |> Enum.max_by(&String.length/1, fn ->
-      Logger.warn("No abbreviation for headsign: #{inspect(headsign)}")
+      Logger.warning("No abbreviation for headsign: #{inspect(headsign)}")
       headsign
     end)
   end

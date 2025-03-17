@@ -8,7 +8,7 @@ defmodule Monitoring.Headend do
 
     cond do
       not valid? ->
-        Logger.warn("active_headend_ip: invalid ip provided: #{ip}")
+        Logger.warning("active_headend_ip: invalid ip provided: #{ip}")
         {:bad_request, "bad request"}
 
       change? ->

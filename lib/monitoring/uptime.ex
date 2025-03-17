@@ -11,7 +11,7 @@ defmodule Monitoring.Uptime do
           log([date_time: date_time] ++ log_fields)
 
         :error ->
-          Logger.warn("unknown_node: #{inspect(node)}")
+          Logger.warning("unknown_node: #{inspect(node)}")
       end
     end)
   end
