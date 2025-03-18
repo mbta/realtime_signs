@@ -172,8 +172,8 @@ defmodule Signs.RealtimeTest do
         {"The next Southbound train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Southbound", "train does not take", 3},
-           {"customers. Please stand", "back from the yellow", 3},
-           {"line.", "", 3}
+           {"customers. Please stand", "back from the platform", 3},
+           {"edge.", "", 3}
          ]}
       ])
 
@@ -194,8 +194,8 @@ defmodule Signs.RealtimeTest do
         {"The next Southbound train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Southbound", "train does not take", 3},
-           {"customers. Please stand", "back from the yellow", 3},
-           {"line.", "", 3}
+           {"customers. Please stand", "back from the platform", 3},
+           {"edge.", "", 3}
          ]}
       ])
 
@@ -219,8 +219,8 @@ defmodule Signs.RealtimeTest do
         {"The next Southbound train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Southbound", "train does not take", 3},
-           {"customers. Please stand", "back from the yellow", 3},
-           {"line.", "", 3}
+           {"customers. Please stand", "back from the platform", 3},
+           {"edge.", "", 3}
          ]}
       ])
 
