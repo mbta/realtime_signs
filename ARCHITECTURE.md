@@ -7,7 +7,7 @@ is to provide a useful orientation to a new contributor to the codebase.
 
 RTS is a core part of the larger PA/ESS (Public Address and Electronic Signage System) and is the app that drives subway and bus countdown predictions and announcements on the countdown signs and speakers in and around stations. It does this by continually downloading data from multiple sources (primarily GTFS-rt and V3 API), applying some transformations and logic, and sending commands to the servers in each station that tell the signs what to display or the speakers to play at any given time.
 
-## Architecture Overview
+## Architecture overview
 
 The core of the application is the `Signs.Realtime` GenServer which typically represents a subgroup of physical signs and speakers that RTS sends content to. There is also the bus equivalent `Signs.Bus` GenServer which fills the same role but currently uses different logic for historical reasons. Within the context of RTS and the broader PA/ESS, we often refer to each of these subgroups as a single "sign" for simplicity. Each of these conceptual signs is defined at start-up and configured via `priv/signs.json`. See `Signs.Utilities.SourceConfig` for documentation of the format of the `signs.json` file.
 
@@ -15,7 +15,7 @@ These sign processes are independent and run a roughly 1 second loop during whic
 
 Once the desired content has been rendered, the `Signs.Realtime` or `Signs.Bus` process will add it as messages to a queue (via `PaEss.Updater`) which will be polled by a pool of processes dedicated to encoding content as HTTP requests and sending them to the servers located in each station, often referred to as SCUs (Station Control Units).
 
-## Code Organization
+## Code organization
 
 ### Engines
 Found in the `lib/engine` directory, the "Engine" processes are responsible for keeping track of state to be used by other processes. Some of the key Engines and what they maintain are listed below:
