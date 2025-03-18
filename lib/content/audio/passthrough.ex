@@ -42,7 +42,7 @@ defmodule Content.Audio.Passthrough do
 
     defp tts_text(%Content.Audio.Passthrough{} = audio) do
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
-      "The next #{train} does not take customers. Please stand back from the yellow line."
+      "The next #{train} does not take customers. Please stand back from the platform edge."
     end
 
     @spec handle_unknown_destination(Content.Audio.Passthrough.t()) :: nil
