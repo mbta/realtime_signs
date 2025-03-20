@@ -44,13 +44,14 @@ defmodule Message.Predictions do
     def to_multi_line(
           %Message.Predictions{
             terminal?: true,
-            predictions: [%{route_id: "Red", stop_id: "70094", multi_carriage_details: [_, _, _, _]} = top | _]
+            predictions: [
+              %{route_id: "Red", stop_id: "70094", multi_carriage_details: [_, _, _, _]} = top | _
+            ]
           } = message
         ) do
       {prediction_message(top, message.terminal?, nil),
        Content.Utilities.width_padded_string("4 cars", "Move to front", 24)}
     end
-
 
     def to_multi_line(%Message.Predictions{predictions: [top]} = message) do
       {prediction_message(top, message.terminal?, message.special_sign), ""}
