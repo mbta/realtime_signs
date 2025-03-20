@@ -172,7 +172,7 @@ defmodule Content.Audio.Predictions do
 
     defp four_cars?(audio) do
       PaEss.Utilities.prediction_four_cars?(audio.prediction) and
-        (!audio.terminal? or audio.prediction.stop_id === "70094") and
+        (!audio.terminal? or PaEss.Utilities.prediction_ashmont?(audio.prediction)) and
         !audio.multiple_messages? and audio.next_or_following == :next and
         audio.is_first?
     end
