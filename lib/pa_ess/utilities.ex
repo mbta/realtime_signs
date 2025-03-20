@@ -520,6 +520,12 @@ defmodule PaEss.Utilities do
 
   def prediction_four_cars?(_), do: false
 
+  def prediction_ashmont?(%Predictions.Prediction{
+    stop_id: "70094"
+  }), do: true
+
+  def prediction_ashmont?(_), do: false
+
   @headsign_take_mappings [
     {"Ruggles", "4086"},
     {"Downtown", "563"},

@@ -119,16 +119,16 @@ defmodule Signs.RealtimeTest do
   @ashmont_sign %{
     @sign
     | source_config: %{
-        headway_group: "red_ashmont",
-        headway_destination: :southbound,
-        headway_direction_name: :alewife,
+        headway_group: "group",
+        headway_destination: :alewife,
         terminal?: true,
         sources: [
-          %{@src |
+          %{
             stop_id: "70094",
             direction_id: 1,
             announce_arriving?: false,
             announce_boarding?: true,
+            routes: ["Red"]
           }
         ]
       }
@@ -1630,28 +1630,27 @@ defmodule Signs.RealtimeTest do
     end
 
     test "shows four-car messages at Ashmont northbound terminal specifically" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
-          prediction(destination: :alewife, seconds_until_departure: 130, four_cars?: true)
+          prediction(
+            stop_id: "70094",
+            destination: :alewife,
+            seconds_until_departure: 130,
+            four_cars?: true
+          )
         ]
       end)
 
-      expect_messages({"Alewife     2 min", "4 cars     Move to front"})
+      expect_messages({"Alewife      2 min", "4 cars     Move to front"})
 
       expect_audios(
         [
           {:canned,
-           {:canned,
-            {"117", spaced(["501", "4021", "864", "503", "504", "5002", "505", "922"]),
-             :audio}}}
+           {"117", spaced(["501", "4000", "864", "502", "504", "5002", "505", "922"]), :audio}}
         ],
         [
-          {"Attention passengers: The next Alewife train is now approaching. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
-           [
-             {"Shorter 4 car Alewife", "train now approaching.", 3},
-             {"Please move to front of", "the train to board.", 3}
-           ]}
+          {"The next Alewife train departs in 2 minutes. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
+           nil}
         ]
       )
 

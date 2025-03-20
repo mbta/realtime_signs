@@ -69,7 +69,7 @@ defmodule Message.Predictions do
 
       four_cars? =
         hd(message.predictions) |> PaEss.Utilities.prediction_four_cars?() and !multiple? and
-          !message.terminal?
+          (!message.terminal? or hd(message.predictions) |> PaEss.Utilities.prediction_ashmont?())
 
       Enum.take(message.predictions, if(multiple? or four_cars?, do: 1, else: 2))
       |> Enum.zip(if(same_destination?, do: [:next, :following], else: [:next, :next]))
