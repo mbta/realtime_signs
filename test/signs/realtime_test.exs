@@ -169,11 +169,11 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_audios([{:canned, {"103", ["891"], :audio_visual}}], [
-        {"The next Southbound train does not take customers. Please stand back from the yellow line.",
+        {"The next Southbound train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Southbound", "train does not take", 3},
-           {"customers. Please stand", "back from the yellow", 3},
-           {"line.", "", 3}
+           {"customers. Please stand", "back from the platform", 3},
+           {"edge.", "", 3}
          ]}
       ])
 
@@ -191,19 +191,19 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_audios([{:canned, {"103", ["891"], :audio_visual}}], [
-        {"The next Southbound train does not take customers. Please stand back from the yellow line.",
+        {"The next Southbound train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Southbound", "train does not take", 3},
-           {"customers. Please stand", "back from the yellow", 3},
-           {"line.", "", 3}
+           {"customers. Please stand", "back from the platform", 3},
+           {"edge.", "", 3}
          ]}
       ])
 
       expect_audios([{:canned, {"103", ["32114"], :audio_visual}}], [
-        {"The next Alewife train does not take customers. Please stand back from the yellow line.",
+        {"The next Alewife train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Alewife train", "does not take customers.", 3},
-           {"Please stand back from", "the yellow line.", 3}
+           {"Please stand back from", "the platform edge.", 3}
          ]}
       ])
 
@@ -216,11 +216,11 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_audios([{:canned, {"103", ["891"], :audio_visual}}], [
-        {"The next Southbound train does not take customers. Please stand back from the yellow line.",
+        {"The next Southbound train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Southbound", "train does not take", 3},
-           {"customers. Please stand", "back from the yellow", 3},
-           {"line.", "", 3}
+           {"customers. Please stand", "back from the platform", 3},
+           {"edge.", "", 3}
          ]}
       ])
 
