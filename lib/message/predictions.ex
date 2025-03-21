@@ -40,6 +40,19 @@ defmodule Message.Predictions do
        Content.Utilities.width_padded_string("4 cars", "Move to front", 24)}
     end
 
+    # Don't suppress 4-car messages at Ashmont even though it's a terminal
+    def to_multi_line(
+          %Message.Predictions{
+            terminal?: true,
+            predictions: [
+              %{route_id: "Red", stop_id: "70094", multi_carriage_details: [_, _, _, _]} = top | _
+            ]
+          } = message
+        ) do
+      {prediction_message(top, message.terminal?, nil),
+       Content.Utilities.width_padded_string("4 cars", "Move to front", 24)}
+    end
+
     def to_multi_line(%Message.Predictions{predictions: [top]} = message) do
       {prediction_message(top, message.terminal?, message.special_sign), ""}
     end
@@ -57,7 +70,7 @@ defmodule Message.Predictions do
 
       four_cars? =
         hd(message.predictions) |> PaEss.Utilities.prediction_four_cars?() and !multiple? and
-          !message.terminal?
+          (!message.terminal? or hd(message.predictions) |> PaEss.Utilities.prediction_ashmont?())
 
       Enum.take(message.predictions, if(multiple? or four_cars?, do: 1, else: 2))
       |> Enum.zip(if(same_destination?, do: [:next, :following], else: [:next, :next]))
