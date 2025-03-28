@@ -168,7 +168,7 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_audios([{:canned, {"103", ["891"], :audio_visual}}], [
+      expect_audios([{:canned, {"103", ["1010"], :audio_visual}}], [
         {"The next Southbound train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Southbound", "train does not take", 3},
@@ -190,7 +190,7 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :alewife, seconds_until_passthrough: 30, trip_id: "124")]
       end)
 
-      expect_audios([{:canned, {"103", ["891"], :audio_visual}}], [
+      expect_audios([{:canned, {"103", ["1010"], :audio_visual}}], [
         {"The next Southbound train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Southbound", "train does not take", 3},
@@ -199,7 +199,7 @@ defmodule Signs.RealtimeTest do
          ]}
       ])
 
-      expect_audios([{:canned, {"103", ["32114"], :audio_visual}}], [
+      expect_audios([{:canned, {"103", ["1006"], :audio_visual}}], [
         {"The next Alewife train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Alewife train", "does not take customers.", 3},
@@ -215,7 +215,7 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :southbound, seconds_until_passthrough: 30)]
       end)
 
-      expect_audios([{:canned, {"103", ["891"], :audio_visual}}], [
+      expect_audios([{:canned, {"103", ["1010"], :audio_visual}}], [
         {"The next Southbound train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Southbound", "train does not take", 3},
