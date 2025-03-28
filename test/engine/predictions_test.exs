@@ -29,7 +29,7 @@ defmodule Engine.PredictionsTest do
       existing_state = %Engine.Predictions{}
 
       log =
-        capture_log([level: :warn], fn ->
+        capture_log([level: :warning], fn ->
           {:noreply, ^existing_state} = handle_info(:update, existing_state)
         end)
 

@@ -72,7 +72,7 @@ defmodule HTTPLogs do
   defp sign_updates_from_command("t" <> rest, _, _, _) do
     # Currently we never use this feature, so unsure if RTD_OK would be logged at the time the
     # message is received, or the time it is first displayed
-    Logger.warn("not handling command with effective time: t#{rest}")
+    Logger.warning("not handling command with effective time: t#{rest}")
     []
   end
 
@@ -127,7 +127,7 @@ defmodule SCULogs do
     end
   rescue
     error ->
-      Logger.warn(
+      Logger.warning(
         [
           "failed to parse SCU log line, skipping",
           "line: #{inspect(log_line)}",
@@ -253,7 +253,7 @@ defmodule Analyze do
           timings
 
         %{signs_received_at: %{^number => _}} ->
-          Logger.warn("sign #{number} received update more than once: #{inspect(update)}")
+          Logger.warning("sign #{number} received update more than once: #{inspect(update)}")
           timings
 
         %{signs_received_at: signs_received_at} = timing ->
@@ -276,7 +276,7 @@ defmodule Analyze do
         true
 
       {update, _timestamps} ->
-        Logger.warn("skipping multiple updates with same fields: #{inspect(update)}")
+        Logger.warning("skipping multiple updates with same fields: #{inspect(update)}")
         false
     end)
     |> Stream.map(fn {update, [timestamp]} -> {update, timestamp} end)

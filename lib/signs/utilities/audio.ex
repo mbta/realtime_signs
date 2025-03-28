@@ -90,7 +90,8 @@ defmodule Signs.Utilities.Audio do
                  message.special_sign,
                  message.terminal?,
                  length(messages) > 1,
-                 :next
+                 :next,
+                 true
                ),
                update_in(
                  sign.announced_stalls,
@@ -106,7 +107,8 @@ defmodule Signs.Utilities.Audio do
                  message.special_sign,
                  message.terminal?,
                  length(messages) > 1,
-                 :next
+                 :next,
+                 true
                ), sign}
 
             true ->
@@ -210,7 +212,7 @@ defmodule Signs.Utilities.Audio do
       Logger.info("pa_message: action=send id=#{pa_message.id} destination=#{sign.id}")
       {update_in(sign.pa_message_plays, &Map.put(&1, pa_message.id, now)), true}
     else
-      Logger.warn("pa_message: action=skipped id=#{pa_message.id} destination=#{sign.id}")
+      Logger.warning("pa_message: action=skipped id=#{pa_message.id} destination=#{sign.id}")
       {sign, false}
     end
   end

@@ -61,13 +61,15 @@ defmodule Message.Predictions do
 
       Enum.take(message.predictions, if(multiple? or four_cars?, do: 1, else: 2))
       |> Enum.zip(if(same_destination?, do: [:next, :following], else: [:next, :next]))
-      |> Enum.map(fn {prediction, next_or_following} ->
+      |> Enum.with_index()
+      |> Enum.map(fn {{prediction, next_or_following}, index} ->
         %Content.Audio.Predictions{
           prediction: prediction,
           special_sign: message.special_sign,
           terminal?: message.terminal?,
           multiple_messages?: multiple?,
-          next_or_following: next_or_following
+          next_or_following: next_or_following,
+          is_first?: index == 0
         }
       end)
     end

@@ -241,7 +241,7 @@ defmodule Signs.Bus do
   end
 
   def handle_info(msg, state) do
-    Logger.warn("Signs.Bus unknown_message: #{inspect(msg)}")
+    Logger.warning("Signs.Bus unknown_message: #{inspect(msg)}")
     {:noreply, state}
   end
 
@@ -782,7 +782,7 @@ defmodule Signs.Bus do
     [headsign | PaEss.Utilities.headsign_abbreviations(headsign)]
     |> Enum.filter(&(String.length(&1) <= max_size))
     |> Enum.max_by(&String.length/1, fn ->
-      Logger.warn("No abbreviation for headsign: #{inspect(headsign)}")
+      Logger.warning("No abbreviation for headsign: #{inspect(headsign)}")
       headsign
     end)
   end
@@ -954,13 +954,7 @@ defmodule Signs.Bus do
   # Turns a list of audio tokens into a list of audio messages, chunking as needed to stay under
   # the max var limit.
   defp paginate_audio(items) do
-    for item <- items do
-      PaEss.Utilities.audio_take(item) ||
-        (
-          Logger.error("No audio for: #{inspect(item)}")
-          PaEss.Utilities.audio_take(:",")
-        )
-    end
+    Stream.map(items, &PaEss.Utilities.audio_take/1)
     |> Stream.chunk_every(@var_max)
     |> Enum.map(fn vars ->
       {:canned, {PaEss.Utilities.take_message_id(vars), vars, :audio}}

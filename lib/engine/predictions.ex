@@ -80,7 +80,7 @@ defmodule Engine.Predictions do
           last_modified
 
         {_, response} ->
-          Logger.warn("Could not fetch predictions: #{inspect(response)}")
+          Logger.warning("Could not fetch predictions: #{inspect(response)}")
           last_modified
       end
 

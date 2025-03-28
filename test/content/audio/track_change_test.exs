@@ -165,10 +165,11 @@ defmodule Content.Audio.TrackChangeTest do
 
       log =
         capture_log([level: :error], fn ->
-          assert Content.Audio.to_params(audio) == nil
+          assert Content.Audio.to_params(audio) ==
+                   {:canned, {"105", ["540", "21000", "21000"], :audio_visual}}
         end)
 
-      assert log =~ "unknown route, berth, destination"
+      assert log =~ "No audio for"
     end
   end
 end

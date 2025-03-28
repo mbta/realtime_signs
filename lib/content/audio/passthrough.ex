@@ -21,13 +21,10 @@ defmodule Content.Audio.Passthrough do
     end
 
     def to_params(audio) do
-      case destination_var(audio.destination, audio.route_id) do
-        nil ->
-          {:ad_hoc, {tts_text(audio), :audio_visual}}
-
-        var ->
-          {:canned, {"103", [var], :audio_visual}}
-      end
+      PaEss.Utilities.audio_message(
+        [{:passthrough, audio.destination, audio.route_id}],
+        :audio_visual
+      )
     end
 
     def to_tts(%Content.Audio.Passthrough{} = audio) do
@@ -53,14 +50,5 @@ defmodule Content.Audio.Passthrough do
 
       nil
     end
-
-    @spec destination_var(PaEss.destination(), String.t()) :: String.t() | nil
-    defp destination_var(:alewife, _route_id), do: "32114"
-    defp destination_var(:southbound, "Red"), do: "891"
-    defp destination_var(:bowdoin, _route_id), do: "32111"
-    defp destination_var(:wonderland, _route_id), do: "32110"
-    defp destination_var(:forest_hills, _route_id), do: "32113"
-    defp destination_var(:oak_grove, _route_id), do: "32112"
-    defp destination_var(_destination, _route_id), do: nil
   end
 end

@@ -138,7 +138,7 @@ defmodule Engine.ScheduledHeadways do
   end
 
   def handle_info(msg, state) do
-    Logger.warn("#{__MODULE__} unknown message: #{inspect(msg)}")
+    Logger.warning("#{__MODULE__} unknown message: #{inspect(msg)}")
     {:noreply, state}
   end
 

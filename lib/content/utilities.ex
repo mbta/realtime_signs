@@ -136,15 +136,4 @@ defmodule Content.Utilities do
 
   def render_datetime_as_time(time),
     do: Calendar.strftime(time, "%I:%M") |> String.replace_leading("0", "")
-
-  def crowding_description_var(crowding_description) do
-    case crowding_description do
-      {:front, _} -> "870"
-      {:back, _} -> "871"
-      {:middle, _} -> "872"
-      {:front_and_back, _} -> "873"
-      {:train_level, :crowded} -> "876"
-      _ -> "21000"
-    end
-  end
 end
