@@ -826,12 +826,12 @@ defmodule PaEss.Utilities do
   def audio_take({:line, "Mattapan"}), do: "3009"
   def audio_take({:line, _name}), do: audio_take(:train)
 
-  def audio_take({:passthrough, :alewife, _route}), do: "32114"
-  def audio_take({:passthrough, :southbound, "Red"}), do: "891"
-  def audio_take({:passthrough, :bowdoin, _route}), do: "32111"
-  def audio_take({:passthrough, :wonderland, _route}), do: "32110"
-  def audio_take({:passthrough, :forest_hills, _route}), do: "32113"
-  def audio_take({:passthrough, :oak_grove, _route}), do: "32112"
+  def audio_take({:passthrough, :alewife, _route}), do: "1006"
+  def audio_take({:passthrough, :southbound, "Red"}), do: "1010"
+  def audio_take({:passthrough, :bowdoin, _route}), do: "1007"
+  def audio_take({:passthrough, :wonderland, _route}), do: "1011"
+  def audio_take({:passthrough, :forest_hills, _route}), do: "1008"
+  def audio_take({:passthrough, :oak_grove, _route}), do: "1009"
 
   def audio_take(item) do
     Logger.error("No audio for: #{inspect(item)}")
