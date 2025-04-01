@@ -36,7 +36,7 @@ defmodule Message.Predictions do
             predictions: [%{route_id: "Red", multi_carriage_details: [_, _, _, _]} = top | _]
           } = message
         )
-        when (message.terminal? and top.stop_id == "70094") or not message.terminal? do
+        when top.stop_id == "70094" or not message.terminal? do
       {prediction_message(top, message.terminal?, nil),
        Content.Utilities.width_padded_string("4 cars", "Move to front", 24)}
     end
