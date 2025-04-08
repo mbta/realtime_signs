@@ -121,8 +121,7 @@ defmodule Signs.Realtime do
     alert_status =
       map_source_config(sign.source_config, fn config ->
         stop_ids = SourceConfig.sign_stop_ids(config)
-        routes = SourceConfig.sign_routes(config)
-        RealtimeSigns.alert_engine().max_stop_status(stop_ids, routes)
+        RealtimeSigns.alert_engine().min_stop_status(stop_ids)
       end)
 
     first_scheduled_departures =
