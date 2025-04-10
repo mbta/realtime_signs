@@ -7,13 +7,14 @@ defmodule Content.Audio.TrainIsBoarding do
   alias Content.Audio
 
   @enforce_keys [:destination, :route_id, :track_number]
-  defstruct @enforce_keys ++ [:trip_id]
+  defstruct @enforce_keys ++ [:trip_id, :four_cars_boarding?]
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
           trip_id: Predictions.Prediction.trip_id() | nil,
           route_id: String.t(),
-          track_number: Content.Utilities.track_number()
+          track_number: Content.Utilities.track_number(),
+          four_cars_boarding?: boolean()
         }
 
   def new(%Predictions.Prediction{} = prediction, special_sign) do
@@ -31,7 +32,10 @@ defmodule Content.Audio.TrainIsBoarding do
           destination: Content.Utilities.destination_for_prediction(prediction),
           trip_id: prediction.trip_id,
           route_id: prediction.route_id,
-          track_number: Content.Utilities.stop_track_number(prediction.stop_id)
+          track_number: Content.Utilities.stop_track_number(prediction.stop_id),
+          four_cars_boarding?:
+            PaEss.Utilities.prediction_four_cars?(prediction) &&
+              PaEss.Utilities.prediction_alewife_braintree?(prediction)
         }
       ] ++
         if special_sign == :bowdoin_eastbound do
@@ -51,10 +55,15 @@ defmodule Content.Audio.TrainIsBoarding do
           nil -> []
         end
 
+      four_cars_boarding =
+        if audio.four_cars_boarding?,
+          do: [:four_car_train_boarding_message],
+          else: []
+
       PaEss.Utilities.audio_message(
         [:the_next] ++
           PaEss.Utilities.train_description_tokens(audio.destination, audio.route_id) ++
-          [:is_now_boarding] ++ track
+          [:is_now_boarding] ++ track ++ four_cars_boarding
       )
     end
 
@@ -69,7 +78,13 @@ defmodule Content.Audio.TrainIsBoarding do
     defp tts_text(%Content.Audio.TrainIsBoarding{} = audio) do
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
       track = if(audio.track_number, do: " on track #{audio.track_number}", else: ".")
-      "The next #{train} is now boarding#{track}"
+
+      four_cars_boarding =
+        if audio.four_cars_boarding?,
+          do: PaEss.Utilities.four_cars_boarding_text(),
+          else: ""
+
+      "The next #{train} is now boarding#{track}#{four_cars_boarding}"
     end
   end
 end

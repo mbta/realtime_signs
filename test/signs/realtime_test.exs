@@ -116,6 +116,17 @@ defmodule Signs.RealtimeTest do
       }
   }
 
+  @alewife_sign %{
+    @terminal_sign
+    | source_config: %{
+        @sign.source_config
+        | terminal?: true,
+          sources: [
+            %{@src | announce_arriving?: false, announce_boarding?: true, stop_id: "70061"}
+          ]
+      }
+  }
+
   @ashmont_sign %{
     @sign
     | source_config: %{
@@ -1605,10 +1616,15 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
     end
 
-    test "doesn't show four-car messages at terminals" do
+    test "doesn't show four-car messages at terminals when not boarding" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
-          prediction(destination: :braintree, seconds_until_departure: 130, four_cars?: true),
+          prediction(
+            stop_id: "70061",
+            destination: :braintree,
+            seconds_until_departure: 130,
+            four_cars?: true
+          ),
           prediction(destination: :braintree, seconds_until_departure: 180)
         ]
       end)
@@ -1626,7 +1642,37 @@ defmodule Signs.RealtimeTest do
         ]
       )
 
-      Signs.Realtime.handle_info(:run_loop, %{@terminal_sign | tick_read: 0})
+      Signs.Realtime.handle_info(:run_loop, %{@alewife_sign | tick_read: 0})
+    end
+
+    test "announces special four car train boarding message at Braintree/Alewife" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(
+            stop_id: "70061",
+            destination: :braintree,
+            stopped: 0,
+            seconds_until_arrival: -1,
+            seconds_until_departure: 60,
+            four_cars?: true
+          ),
+          prediction(destination: :braintree, seconds_until_departure: 180)
+        ]
+      end)
+
+      expect_messages({"Braintree      BRD", "Braintree    3 min"})
+
+      expect_audios(
+        [
+          {:canned, {"111", spaced(["501", "4021", "864", "544", "926"]), :audio}}
+        ],
+        [
+          {"The next Braintree train is now boarding. It is a shorter 4-car train. You may have to move to a different part of the platform to board.",
+           nil}
+        ]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@alewife_sign | tick_read: 0})
     end
 
     test "shows four-car messages at Ashmont northbound terminal specifically" do
