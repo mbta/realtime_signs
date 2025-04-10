@@ -39,5 +39,31 @@ defmodule Content.Audio.TrainIsBoardingTest do
                 {"111", ["501", "21000", "4016", "21000", "864", "21000", "544", "21000", "542"],
                  :audio}}
     end
+
+    test "Braintree/Alewife announces special boarding message for four car trains" do
+      audio = %Content.Audio.TrainIsBoarding{
+        destination: :alewife,
+        route_id: "Red",
+        track_number: 2,
+        four_cars_boarding?: true
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"113",
+                 [
+                   "501",
+                   "21000",
+                   "4000",
+                   "21000",
+                   "864",
+                   "21000",
+                   "544",
+                   "21000",
+                   "542",
+                   "21000",
+                   "placeholder"
+                 ], :audio}}
+    end
   end
 end
