@@ -25,13 +25,9 @@ defmodule Engine.Alerts.Fetcher do
     shuttles_closed_station: 5
   }
 
-  @spec lower_priority_status(stop_status(), stop_status()) :: stop_status()
-  def lower_priority_status(status1, status2) do
-    if @alert_priority_map[status1] <= @alert_priority_map[status2] do
-      status1
-    else
-      status2
-    end
+  @spec get_priority_level(stop_status()) :: number()
+  def get_priority_level(status) do
+    @alert_priority_map[status]
   end
 
   @spec higher_priority_status(stop_status(), stop_status()) :: stop_status()

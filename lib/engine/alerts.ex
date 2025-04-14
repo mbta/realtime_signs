@@ -31,9 +31,7 @@ defmodule Engine.Alerts do
       ) do
     stop_ids
     |> Enum.map(&stop_status(tables.stops_table, &1))
-    |> Enum.reduce(fn current_status, overall_status ->
-      Fetcher.lower_priority_status(current_status, overall_status)
-    end)
+    |> Enum.min_by(&Fetcher.get_priority_level/1)
   end
 
   @callback stop_status(Fetcher.stop_id()) :: Fetcher.stop_status()
