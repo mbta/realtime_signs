@@ -24,30 +24,14 @@ defmodule Engine.Alerts do
     GenServer.start_link(__MODULE__, opts, name: name)
   end
 
-  @callback max_stop_status([Fetcher.stop_id()], [Fetcher.route_id()]) :: Fetcher.stop_status()
-  def max_stop_status(
+  @callback min_stop_status([Fetcher.stop_id()]) :: Fetcher.stop_status()
+  def min_stop_status(
         tables \\ %{stops_table: @stops_table, routes_table: @routes_table},
-        stop_ids,
-        route_ids
+        stop_ids
       ) do
-    overall_stop_status =
-      Enum.reduce(stop_ids, :none, fn stop_id, overall_status ->
-        stop_status(tables.stops_table, stop_id)
-        |> Fetcher.higher_priority_status(overall_status)
-      end)
-
-    route_states = Enum.map(route_ids, &route_status(tables.routes_table, &1))
-
-    overall_route_status =
-      Enum.reduce(route_states, :none, fn route_state, overall_status ->
-        Fetcher.higher_priority_status(route_state, overall_status)
-      end)
-
-    if Enum.all?(route_states, fn s -> s == overall_route_status end) do
-      Fetcher.higher_priority_status(overall_stop_status, overall_route_status)
-    else
-      overall_stop_status
-    end
+    stop_ids
+    |> Enum.map(&stop_status(tables.stops_table, &1))
+    |> Enum.min_by(&Fetcher.get_priority_level/1)
   end
 
   @callback stop_status(Fetcher.stop_id()) :: Fetcher.stop_status()
