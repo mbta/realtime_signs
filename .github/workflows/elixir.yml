@@ -48,4 +48,4 @@ jobs:
         run: mix format --check-formatted
       - name: Run tests
         run: mix test
-      - uses: mbta/actions/dialyzer@v1
+      - uses: mbta/actions/dialyzer@v2
