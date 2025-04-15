@@ -174,7 +174,7 @@ defmodule PaEss.Updater do
 
     http_poster.post(
       "#{watts_url}/tts",
-      %{text: text, voice_id: voice_id, output_format: "pcm"} |> Jason.encode!(),
+      Jason.encode!(%{text: text, voice_id: voice_id, output_format: "pcm"}),
       [
         {"Content-type", "application/json"},
         {"x-api-key", watts_api_key}
