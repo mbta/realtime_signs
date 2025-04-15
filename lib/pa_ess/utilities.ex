@@ -322,6 +322,10 @@ defmodule PaEss.Utilities do
     " It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge."
   end
 
+  def four_cars_boarding_text() do
+    " It is a shorter 4-car train. You may have to move to a different part of the platform to board."
+  end
+
   def time_hour_var(hour) when hour >= 0 and hour < 24 do
     adjusted_hour = rem(hour, 12)
 
@@ -519,6 +523,14 @@ defmodule PaEss.Utilities do
       do: true
 
   def prediction_four_cars?(_), do: false
+
+  def prediction_alewife_braintree?(%Predictions.Prediction{
+        stop_id: stop_id
+      })
+      when stop_id in ["70105", "70061"],
+      do: true
+
+  def prediction_alewife_braintree?(_), do: false
 
   def prediction_ashmont?(%Predictions.Prediction{
         stop_id: "70094"
@@ -721,6 +733,9 @@ defmodule PaEss.Utilities do
 
   # audio: "It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.", visual: "Please move to front of the train to board."
   def audio_take(:four_car_train_message), do: "922"
+
+  # audio: "It is a shorter 4-car train. You may have to move to a different part of the platform to board."
+  def audio_take(:four_car_train_boarding_message), do: "926"
   # "Please stand back from the platform edge."
   def audio_take(:stand_back_message), do: "925"
   def audio_take(:b), do: "536"
