@@ -95,7 +95,8 @@ defmodule Signs.Bus do
               route_id: Map.fetch!(source, "route_id"),
               direction_id: Map.fetch!(source, "direction_id")
             }
-          end
+          end,
+        consolidate?: Map.get(config, "consolidate", false)
       }
     end
   end
@@ -496,6 +497,20 @@ defmodule Signs.Bus do
 
   defp configs_content(configs, predictions_lookup, route_alerts_lookup) do
     Enum.flat_map(configs, fn config ->
+      expanded_sources =
+        for source <- config.sources,
+            child_stop_id <-
+              RealtimeSigns.bus_prediction_engine().get_child_stops_if_parent(source.stop_id),
+            route_id <- List.wrap(source.route_id),
+            direction_id <- List.wrap(source.direction_id) do
+          %{stop_id: child_stop_id, route_id: route_id, direction_id: direction_id}
+        end
+
+      if config.consolidate?,
+        do: [%{sources: expanded_sources}],
+        else: Enum.map(expanded_sources, &%{sources: [&1]})
+    end)
+    |> Enum.flat_map(fn config ->
       content =
         Stream.flat_map(config.sources, fn source ->
           Map.get(predictions_lookup, {source.stop_id, source.route_id, source.direction_id}, [])
@@ -506,8 +521,12 @@ defmodule Signs.Bus do
         end)
 
       if content == [] &&
-           Enum.all?(config.sources, fn source ->
-             Map.get(route_alerts_lookup, source.route_id) in @alert_levels
+           Enum.all?(config.sources, fn %{route_id: routes} ->
+             routes
+             |> List.wrap()
+             |> Enum.all?(fn route ->
+               Map.get(route_alerts_lookup, route) in @alert_levels
+             end)
            end) do
         [{:alert, config}]
       else
@@ -537,11 +556,18 @@ defmodule Signs.Bus do
   end
 
   defp all_stop_ids(state) do
-    for source <- all_sources(state), uniq: true, do: source.stop_id
+    for source <- all_sources(state),
+        stop_id <-
+          RealtimeSigns.bus_prediction_engine().get_child_stops_if_parent(source.stop_id),
+        uniq: true,
+        do: stop_id
   end
 
   defp all_route_ids(state) do
-    for source <- all_sources(state), uniq: true, do: source.route_id
+    for %{route_id: route_id} <- all_sources(state),
+        route_id <- List.wrap(route_id),
+        uniq: true,
+        do: route_id
   end
 
   # Update the sign if:
