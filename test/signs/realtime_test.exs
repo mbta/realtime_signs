@@ -116,13 +116,42 @@ defmodule Signs.RealtimeTest do
       }
   }
 
+  @alewife_sign %{
+    @terminal_sign
+    | source_config: %{
+        @sign.source_config
+        | terminal?: true,
+          sources: [
+            %{@src | announce_arriving?: false, announce_boarding?: true, stop_id: "70061"}
+          ]
+      }
+  }
+
+  @ashmont_sign %{
+    @sign
+    | source_config: %{
+        headway_group: "group",
+        headway_destination: :alewife,
+        terminal?: true,
+        sources: [
+          %{
+            stop_id: "70094",
+            direction_id: 1,
+            announce_arriving?: false,
+            announce_boarding?: true,
+            routes: ["Red"]
+          }
+        ]
+      }
+  }
+
   setup :verify_on_exit!
 
   describe "run loop" do
     setup do
       stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
       stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
-      stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+      stub(Engine.Alerts.Mock, :min_stop_status, fn _ -> :none end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
       stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
@@ -168,12 +197,12 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_audios([{:canned, {"103", ["891"], :audio_visual}}], [
-        {"The next Southbound train does not take customers. Please stand back from the yellow line.",
+      expect_audios([{:canned, {"103", ["1010"], :audio_visual}}], [
+        {"The next Southbound train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Southbound", "train does not take", 3},
-           {"customers. Please stand", "back from the yellow", 3},
-           {"line.", "", 3}
+           {"customers. Please stand", "back from the platform", 3},
+           {"edge.", "", 3}
          ]}
       ])
 
@@ -190,20 +219,20 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :alewife, seconds_until_passthrough: 30, trip_id: "124")]
       end)
 
-      expect_audios([{:canned, {"103", ["891"], :audio_visual}}], [
-        {"The next Southbound train does not take customers. Please stand back from the yellow line.",
+      expect_audios([{:canned, {"103", ["1010"], :audio_visual}}], [
+        {"The next Southbound train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Southbound", "train does not take", 3},
-           {"customers. Please stand", "back from the yellow", 3},
-           {"line.", "", 3}
+           {"customers. Please stand", "back from the platform", 3},
+           {"edge.", "", 3}
          ]}
       ])
 
-      expect_audios([{:canned, {"103", ["32114"], :audio_visual}}], [
-        {"The next Alewife train does not take customers. Please stand back from the yellow line.",
+      expect_audios([{:canned, {"103", ["1006"], :audio_visual}}], [
+        {"The next Alewife train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Alewife train", "does not take customers.", 3},
-           {"Please stand back from", "the yellow line.", 3}
+           {"Please stand back from", "the platform edge.", 3}
          ]}
       ])
 
@@ -215,12 +244,12 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :southbound, seconds_until_passthrough: 30)]
       end)
 
-      expect_audios([{:canned, {"103", ["891"], :audio_visual}}], [
-        {"The next Southbound train does not take customers. Please stand back from the yellow line.",
+      expect_audios([{:canned, {"103", ["1010"], :audio_visual}}], [
+        {"The next Southbound train does not take customers. Please stand back from the platform edge.",
          [
            {"The next Southbound", "train does not take", 3},
-           {"customers. Please stand", "back from the yellow", 3},
-           {"line.", "", 3}
+           {"customers. Please stand", "back from the platform", 3},
+           {"edge.", "", 3}
          ]}
       ])
 
@@ -232,7 +261,7 @@ defmodule Signs.RealtimeTest do
         {:static_text, {"custom", "message"}}
       end)
 
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :suspension_closed_station end)
       expect_messages({"custom", "message"})
       expect_audios([{:ad_hoc, {"custom message", :audio}}], [{"custom message", nil}])
 
@@ -256,19 +285,19 @@ defmodule Signs.RealtimeTest do
     end
 
     test "when sign is at a transfer station from a shuttle, and there are no predictions it's empty" do
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_transfer_station end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :shuttles_transfer_station end)
       expect_messages({"", ""})
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "when sign is at a transfer station from a suspension, and there are no predictions it's empty" do
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_transfer_station end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :suspension_transfer_station end)
       expect_messages({"", ""})
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "when sign is at a station closed by shuttles and there are no predictions, it says so" do
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :shuttles_closed_station end)
       expect_messages({"No Southbound svc", "Use shuttle bus"})
 
       expect_audios([{:ad_hoc, {"No Southbound service. Use shuttle.", :audio}}], [
@@ -279,7 +308,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "when sign is at a station closed and there are no predictions, but shuttles do not run at this station" do
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :shuttles_closed_station end)
       expect_messages({"No Southbound svc", ""})
 
       expect_audios([{:ad_hoc, {"No Southbound service.", :audio}}], [
@@ -290,7 +319,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "when sign is at a station closed due to suspension and there are no predictions, it says so" do
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :suspension_closed_station end)
       expect_messages({"No Southbound svc", ""})
 
       expect_audios([{:ad_hoc, {"No Southbound service.", :audio}}], [
@@ -301,7 +330,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "when sign is at a closed station and there are no predictions, it says so" do
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
       expect_messages({"No Southbound svc", ""})
 
       expect_audios([{:ad_hoc, {"No Southbound service.", :audio}}], [
@@ -312,8 +341,8 @@ defmodule Signs.RealtimeTest do
     end
 
     test "mezzanine sign with alert" do
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
       expect_messages({"No Red Line", ""})
 
       expect_audios([{:canned, {"107", spaced(["861", "3005", "863"]), :audio}}], [
@@ -324,8 +353,8 @@ defmodule Signs.RealtimeTest do
     end
 
     test "multi-route mezzanine sign with alert" do
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
       expect_messages({"No train service", ""})
 
       expect_audios([{:canned, {"107", spaced(["861", "864", "863"]), :audio}}], [
@@ -336,7 +365,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "predictions take precedence over alerts" do
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :suspension_closed_station end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :ashmont, arrival: 120)]
@@ -401,7 +430,7 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :ashmont, arrival: 120)]
       end)
 
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :station_closure end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
       expect_messages({"No Southbound svc", ""})
 
       expect_audios([{:ad_hoc, {"No Southbound service.", :audio}}], [
@@ -959,7 +988,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "reads alerts" do
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :shuttles_closed_station end)
       expect_messages({"No Southbound svc", "Use shuttle bus"})
 
       expect_audios([{:ad_hoc, {"No Southbound service. Use shuttle.", :audio}}], [
@@ -1587,10 +1616,15 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
     end
 
-    test "doesn't show four-car messages at terminals" do
+    test "doesn't show four-car messages at terminals when not boarding" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
-          prediction(destination: :braintree, seconds_until_departure: 130, four_cars?: true),
+          prediction(
+            stop_id: "70061",
+            destination: :braintree,
+            seconds_until_departure: 130,
+            four_cars?: true
+          ),
           prediction(destination: :braintree, seconds_until_departure: 180)
         ]
       end)
@@ -1608,7 +1642,65 @@ defmodule Signs.RealtimeTest do
         ]
       )
 
-      Signs.Realtime.handle_info(:run_loop, %{@terminal_sign | tick_read: 0})
+      Signs.Realtime.handle_info(:run_loop, %{@alewife_sign | tick_read: 0})
+    end
+
+    test "announces special four car train boarding message at Braintree/Alewife" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(
+            stop_id: "70061",
+            destination: :braintree,
+            stopped: 0,
+            seconds_until_arrival: -1,
+            seconds_until_departure: 60,
+            four_cars?: true
+          ),
+          prediction(destination: :braintree, seconds_until_departure: 180)
+        ]
+      end)
+
+      expect_messages({"Braintree      BRD", "Braintree    3 min"})
+
+      expect_audios(
+        [
+          {:canned, {"111", spaced(["501", "4021", "864", "544", "926"]), :audio}}
+        ],
+        [
+          {"The next Braintree train is now boarding. It is a shorter 4-car train. You may have to move to a different part of the platform to board.",
+           nil}
+        ]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@alewife_sign | tick_read: 0})
+    end
+
+    test "shows four-car messages at Ashmont northbound terminal specifically" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(
+            stop_id: "70094",
+            destination: :alewife,
+            seconds_until_departure: 130,
+            four_cars?: true
+          )
+        ]
+      end)
+
+      expect_messages({"Alewife      2 min", "4 cars     Move to front"})
+
+      expect_audios(
+        [
+          {:canned,
+           {"117", spaced(["501", "4000", "864", "502", "504", "5002", "505", "922"]), :audio}}
+        ],
+        [
+          {"The next Alewife train departs in 2 minutes. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
+           nil}
+        ]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@ashmont_sign | tick_read: 0})
     end
 
     test "doesn't show four-car messages at mezzanines" do
@@ -1638,8 +1730,8 @@ defmodule Signs.RealtimeTest do
 
     test "mezzanine sign, headways and shuttle alert" do
       expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :none end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :shuttles_closed_station end)
 
       expect_messages({
         [{"Northbound trains", 6}, {"No Southbound svc", 6}],
@@ -1654,8 +1746,8 @@ defmodule Signs.RealtimeTest do
     end
 
     test "mezzanine sign, non-shuttle alert and headways" do
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :suspension_closed_station end)
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :suspension_closed_station end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :none end)
 
       expect_messages(
         {"Northbound  no svc", [{"Southbound  trains every", 6}, {"Southbound  11 to 13 min", 6}]}
@@ -1682,8 +1774,8 @@ defmodule Signs.RealtimeTest do
     end
 
     test "mezzanine sign, shuttle alert flips to bottom" do
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_closed_station end)
-      expect(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :shuttles_closed_station end)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :none end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
 
@@ -1767,7 +1859,7 @@ defmodule Signs.RealtimeTest do
   describe "Union Sq alert messaging" do
     setup do
       stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
-      stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :shuttles_transfer_station end)
+      stub(Engine.Alerts.Mock, :min_stop_status, fn _ -> :shuttles_transfer_station end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> false end)
       stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ -> %{} end)
@@ -1799,7 +1891,7 @@ defmodule Signs.RealtimeTest do
   describe "Last Trip of the Day" do
     setup do
       stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
-      stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+      stub(Engine.Alerts.Mock, :min_stop_status, fn _ -> :none end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> true end)
 
@@ -1975,7 +2067,7 @@ defmodule Signs.RealtimeTest do
     setup do
       stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
       stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
-      stub(Engine.Alerts.Mock, :max_stop_status, fn _, _ -> :none end)
+      stub(Engine.Alerts.Mock, :min_stop_status, fn _ -> :none end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
       stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)

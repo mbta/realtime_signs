@@ -30,12 +30,13 @@ defmodule Message.Predictions do
        )}
     end
 
+    # Show 4-car messages at non-terminal Red Line stops with the exception of Ashmont
     def to_multi_line(
           %Message.Predictions{
-            terminal?: false,
             predictions: [%{route_id: "Red", multi_carriage_details: [_, _, _, _]} = top | _]
           } = message
-        ) do
+        )
+        when top.stop_id == "70094" or not message.terminal? do
       {prediction_message(top, message.terminal?, nil),
        Content.Utilities.width_padded_string("4 cars", "Move to front", 24)}
     end
@@ -57,7 +58,7 @@ defmodule Message.Predictions do
 
       four_cars? =
         hd(message.predictions) |> PaEss.Utilities.prediction_four_cars?() and !multiple? and
-          !message.terminal?
+          (!message.terminal? or hd(message.predictions) |> PaEss.Utilities.prediction_ashmont?())
 
       Enum.take(message.predictions, if(multiple? or four_cars?, do: 1, else: 2))
       |> Enum.zip(if(same_destination?, do: [:next, :following], else: [:next, :next]))

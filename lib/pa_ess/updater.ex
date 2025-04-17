@@ -172,10 +172,14 @@ defmodule PaEss.Updater do
 
     text = ~s(<speak><amazon:effect name="drc">#{text}</amazon:effect></speak>)
 
-    http_poster.post("#{watts_url}/tts", %{text: text, voice_id: voice_id} |> Jason.encode!(), [
-      {"Content-type", "application/json"},
-      {"x-api-key", watts_api_key}
-    ])
+    http_poster.post(
+      "#{watts_url}/tts",
+      Jason.encode!(%{text: text, voice_id: voice_id, output_format: "pcm"}),
+      [
+        {"Content-type", "application/json"},
+        {"x-api-key", watts_api_key}
+      ]
+    )
     |> case do
       {:ok, %HTTPoison.Response{status_code: status, body: body}} when status in 200..299 ->
         body

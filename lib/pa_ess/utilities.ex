@@ -322,6 +322,10 @@ defmodule PaEss.Utilities do
     " It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge."
   end
 
+  def four_cars_boarding_text() do
+    " It is a shorter 4-car train. You may have to move to a different part of the platform to board."
+  end
+
   def time_hour_var(hour) when hour >= 0 and hour < 24 do
     adjusted_hour = rem(hour, 12)
 
@@ -520,6 +524,21 @@ defmodule PaEss.Utilities do
 
   def prediction_four_cars?(_), do: false
 
+  def prediction_alewife_braintree?(%Predictions.Prediction{
+        stop_id: stop_id
+      })
+      when stop_id in ["70105", "70061"],
+      do: true
+
+  def prediction_alewife_braintree?(_), do: false
+
+  def prediction_ashmont?(%Predictions.Prediction{
+        stop_id: "70094"
+      }),
+      do: true
+
+  def prediction_ashmont?(_), do: false
+
   @headsign_take_mappings [
     {"Ruggles", "4086"},
     {"Downtown", "563"},
@@ -714,6 +733,9 @@ defmodule PaEss.Utilities do
 
   # audio: "It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.", visual: "Please move to front of the train to board."
   def audio_take(:four_car_train_message), do: "922"
+
+  # audio: "It is a shorter 4-car train. You may have to move to a different part of the platform to board."
+  def audio_take(:four_car_train_boarding_message), do: "926"
   # "Please stand back from the platform edge."
   def audio_take(:stand_back_message), do: "925"
   def audio_take(:b), do: "536"
@@ -826,12 +848,12 @@ defmodule PaEss.Utilities do
   def audio_take({:line, "Mattapan"}), do: "3009"
   def audio_take({:line, _name}), do: audio_take(:train)
 
-  def audio_take({:passthrough, :alewife, _route}), do: "32114"
-  def audio_take({:passthrough, :southbound, "Red"}), do: "891"
-  def audio_take({:passthrough, :bowdoin, _route}), do: "32111"
-  def audio_take({:passthrough, :wonderland, _route}), do: "32110"
-  def audio_take({:passthrough, :forest_hills, _route}), do: "32113"
-  def audio_take({:passthrough, :oak_grove, _route}), do: "32112"
+  def audio_take({:passthrough, :alewife, _route}), do: "1006"
+  def audio_take({:passthrough, :southbound, "Red"}), do: "1010"
+  def audio_take({:passthrough, :bowdoin, _route}), do: "1007"
+  def audio_take({:passthrough, :wonderland, _route}), do: "1011"
+  def audio_take({:passthrough, :forest_hills, _route}), do: "1008"
+  def audio_take({:passthrough, :oak_grove, _route}), do: "1009"
 
   def audio_take(item) do
     Logger.error("No audio for: #{inspect(item)}")

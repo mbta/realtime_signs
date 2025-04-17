@@ -16,38 +16,26 @@ defmodule Engine.Alerts.Fetcher do
                }}
               | {:error, any()}
 
+  @alert_priority_map %{
+    none: 0,
+    suspension_transfer_station: 1,
+    shuttles_transfer_station: 2,
+    station_closure: 3,
+    suspension_closed_station: 4,
+    shuttles_closed_station: 5
+  }
+
+  @spec get_priority_level(stop_status()) :: number()
+  def get_priority_level(status) do
+    @alert_priority_map[status]
+  end
+
   @spec higher_priority_status(stop_status(), stop_status()) :: stop_status()
-  def higher_priority_status(status1, status2)
-      when status1 == :suspension_closed_station or status2 == :suspension_closed_station do
-    :suspension_closed_station
-  end
-
-  def higher_priority_status(status1, status2)
-      when status1 == :shuttles_closed_station or status2 == :shuttles_closed_station do
-    :shuttles_closed_station
-  end
-
-  def higher_priority_status(status1, status2)
-      when status1 == :suspension_transfer_station or status2 == :suspension_transfer_station do
-    :suspension_transfer_station
-  end
-
-  def higher_priority_status(status1, status2)
-      when status1 == :shuttles_transfer_station or status2 == :shuttles_transfer_station do
-    :shuttles_transfer_station
-  end
-
-  def higher_priority_status(status1, status2)
-      when status1 == :station_closure or status2 == :station_closure do
-    :station_closure
-  end
-
-  def higher_priority_status(status1, status2)
-      when status1 == :alert_along_route or status2 == :alert_along_route do
-    :alert_along_route
-  end
-
-  def higher_priority_status(_status1, _status2) do
-    :none
+  def higher_priority_status(status1, status2) do
+    if @alert_priority_map[status1] >= @alert_priority_map[status2] do
+      status1
+    else
+      status2
+    end
   end
 end
