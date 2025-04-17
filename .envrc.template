@@ -12,10 +12,10 @@
 export API_V3_URL=https://api-dev-green.mbtace.com
 #export API_V3_KEY=
 
-# URL and auth key for the Chelsea bridge API. Required. These values can be found in the shared
-# 1Password vault, in the "Chelsea Street Bridge Application" entry, in fields `url` and `auth`.
-#export CHELSEA_BRIDGE_URL=
-#export CHELSEA_BRIDGE_AUTH=
+# Username and password for the Chelsea bridge API. Required. These values can be found in the shared
+# 1Password vault, in the "Cheslea St Drawbridge API" entry, in fields `username` and `password`.
+#export CHELSEA_BRIDGE_USERNAME=
+#export CHELSEA_BRIDGE_PASSWORD=
 
 # URLs of the enhanced trip-update and vehicle-position feeds.
 #export TRIP_UPDATE_URL="https://s3.amazonaws.com/mbta-gtfs-s3/concentrate/TripUpdates_enhanced.json"
