@@ -3,6 +3,8 @@ defmodule Engine.ChelseaBridge do
   require Logger
 
   @base_api_url "https://www.chelseabridgesys.com/api/api/"
+  @api_status_endpoint "BridgeRealTime"
+  @api_token_endpoint "token"
 
   @callback bridge_status() :: %{raised: boolean() | nil, estimate: DateTime.t() | nil}
   def bridge_status() do
@@ -28,7 +30,7 @@ defmodule Engine.ChelseaBridge do
     now = Timex.now()
 
     with {:ok, %{status_code: 200, body: body}} <-
-           http_client.get("#{@base_api_url}BridgeRealTime", [
+           http_client.get("#{@base_api_url}#{@api_status_endpoint}", [
              {"Authorization", "Bearer #{get_cached_or_new_token(now)}"}
            ]),
          {:ok, data} <- Jason.decode(body) do
@@ -85,7 +87,7 @@ defmodule Engine.ChelseaBridge do
       })
 
     with {:ok, %{status_code: 200, body: body}} <-
-           http_poster.post("#{@base_api_url}token", body, [
+           http_poster.post("#{@base_api_url}#{@api_token_endpoint}", body, [
              {"Content-Type", "application/x-www-form-urlencoded"}
            ]),
          {:ok, data} <- Jason.decode(body) do

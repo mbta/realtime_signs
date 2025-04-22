@@ -56,6 +56,14 @@ defmodule Fake.HTTPoison do
       body =~
           ~r/MsgType=AdHoc&uid=[0-9]+&msg=Custom\+Orange\+Line\+Message&typ=1&sta=MCAP001000&pri=5&tim=60/ ->
         {:ok, %HTTPoison.Response{status_code: 200}}
+
+      body =~ "grant_type" ->
+        {:ok,
+         %HTTPoison.Response{
+           status_code: 200,
+           body:
+             Jason.encode!(%{"access_token" => "test_access_token", "expires_in" => 2_591_999})
+         }}
     end
   end
 
@@ -683,5 +691,16 @@ defmodule Fake.HTTPoison do
     {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(%{data: []})}}
   end
 
-  def mock_response(_), do: {:ok, %HTTPoison.Response{status_code: 200, body: ""}}
+  def mock_response("https://www.chelseabridgesys.com/api/api/BridgeRealTime" <> _) do
+    {:ok,
+     %HTTPoison.Response{
+       status_code: 200,
+       body: Jason.encode!(%{"liftInProgress" => false, "estimatedDurationInMinutes" => 0})
+     }}
+  end
+
+  def mock_response(flag) do
+    IO.inspect(flag)
+    {:ok, %HTTPoison.Response{status_code: 200, body: ""}}
+  end
 end
