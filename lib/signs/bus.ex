@@ -497,7 +497,7 @@ defmodule Signs.Bus do
 
   defp configs_content(configs, predictions_lookup, route_alerts_lookup) do
     Enum.flat_map(configs, fn config ->
-      expanded_sources =
+      normalized_sources =
         for source <- config.sources,
             child_stop_id <- get_child_stops_if_parent(source.stop_id),
             route_id <- List.wrap(source.route_id),
@@ -506,8 +506,8 @@ defmodule Signs.Bus do
         end
 
       if config.consolidate_sources?,
-        do: [%{sources: expanded_sources}],
-        else: Enum.map(expanded_sources, &%{sources: [&1]})
+        do: [%{sources: normalized_sources}],
+        else: Enum.map(normalized_sources, &%{sources: [&1]})
     end)
     |> Enum.flat_map(fn config ->
       content =
