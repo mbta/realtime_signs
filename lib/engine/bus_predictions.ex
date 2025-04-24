@@ -43,7 +43,7 @@ defmodule Engine.BusPredictions do
            timeout: 2000,
            recv_timeout: 2000,
            params: %{
-             "include" => "trip,vehicle,stop",
+             "include" => "trip,vehicle",
              "fields[prediction]" => "departure_time,direction_id",
              "fields[trip]" => "headsign",
              "fields[vehicle]" => "updated_at",

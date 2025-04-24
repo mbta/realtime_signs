@@ -24,7 +24,7 @@ defmodule Engine.BusStops do
     {:ok,
      %{
        last_modified: nil,
-       all_bus_stop_ids: Signs.Utilities.SignsConfig.all_bus_stop_ids()
+       all_bus_stop_ids: SignsConfig.all_bus_stop_ids()
      }}
   end
 
