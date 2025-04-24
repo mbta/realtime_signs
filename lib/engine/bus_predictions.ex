@@ -2,25 +2,11 @@ defmodule Engine.BusPredictions do
   use GenServer
   require Logger
 
-  @bus_route_type 3
-
   @callback predictions_for_stop(String.t()) :: [Predictions.BusPrediction.t()]
   def predictions_for_stop(id) do
     case :ets.lookup(:bus_predictions, id) do
       [{^id, predictions}] -> predictions
       _ -> []
-    end
-  end
-
-  @callback get_child_stops_if_parent(String.t()) ::
-              [String.t()]
-  def get_child_stops_if_parent(stop_id) do
-    case :ets.lookup(
-           :child_stops_by_parent,
-           stop_id
-         ) do
-      [{^stop_id, child_stop_ids}] -> child_stop_ids
-      _ -> [stop_id]
     end
   end
 
@@ -30,7 +16,6 @@ defmodule Engine.BusPredictions do
 
   def init(_) do
     :ets.new(:bus_predictions, [:named_table, read_concurrency: true])
-    :ets.new(:child_stops_by_parent, [:named_table, read_concurrency: true])
     schedule_update(self())
 
     {:ok,
@@ -62,8 +47,7 @@ defmodule Engine.BusPredictions do
              "fields[prediction]" => "departure_time,direction_id",
              "fields[trip]" => "headsign",
              "fields[vehicle]" => "updated_at",
-             "filter[stop]" => Enum.join(all_bus_stop_ids, ","),
-             "filter[route_type]" => @bus_route_type
+             "filter[stop]" => Enum.join(all_bus_stop_ids, ",")
            }
          ) do
       {:ok, %{status_code: 200, body: body, headers: headers}} ->
@@ -92,22 +76,6 @@ defmodule Engine.BusPredictions do
               into: %{} do
             {id, %{id: id, headsign: headsign, route_id: route_id}}
           end
-
-        for %{
-              "type" => "stop",
-              "id" => child_id,
-              "relationships" => %{
-                "parent_station" => %{"data" => %{"id" => parent_id}}
-              }
-            } <- included,
-            parent_id in all_bus_stop_ids do
-          {parent_id, child_id}
-        end
-        |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
-        |> Map.to_list()
-        |> then(fn records ->
-          :ets.insert(:child_stops_by_parent, records)
-        end)
 
         new_predictions =
           for %{

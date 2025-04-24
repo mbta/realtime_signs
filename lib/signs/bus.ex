@@ -96,7 +96,7 @@ defmodule Signs.Bus do
               direction_id: Map.fetch!(source, "direction_id")
             }
           end,
-        consolidate?: Map.get(config, "consolidate", false)
+        consolidate_sources?: Map.get(config, "consolidate_sources", false)
       }
     end
   end
@@ -499,14 +499,13 @@ defmodule Signs.Bus do
     Enum.flat_map(configs, fn config ->
       expanded_sources =
         for source <- config.sources,
-            child_stop_id <-
-              RealtimeSigns.bus_prediction_engine().get_child_stops_if_parent(source.stop_id),
+            child_stop_id <- get_child_stops_if_parent(source.stop_id),
             route_id <- List.wrap(source.route_id),
             direction_id <- List.wrap(source.direction_id) do
           %{stop_id: child_stop_id, route_id: route_id, direction_id: direction_id}
         end
 
-      if config.consolidate?,
+      if config.consolidate_sources?,
         do: [%{sources: expanded_sources}],
         else: Enum.map(expanded_sources, &%{sources: [&1]})
     end)
@@ -557,10 +556,16 @@ defmodule Signs.Bus do
 
   defp all_stop_ids(state) do
     for source <- all_sources(state),
-        stop_id <-
-          RealtimeSigns.bus_prediction_engine().get_child_stops_if_parent(source.stop_id),
+        stop_id <- get_child_stops_if_parent(source.stop_id),
         uniq: true,
         do: stop_id
+  end
+
+  defp get_child_stops_if_parent(stop_id) do
+    case RealtimeSigns.bus_stop_engine().get_child_stops_for_parent(stop_id) do
+      [] -> [stop_id]
+      child_stops -> child_stops
+    end
   end
 
   defp all_route_ids(state) do

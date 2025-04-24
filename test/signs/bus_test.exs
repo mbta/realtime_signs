@@ -76,7 +76,7 @@ defmodule Signs.BusTest do
           []
       end)
 
-      stub(Engine.BusPredictions.Mock, :get_child_stops_if_parent, fn stop_id -> [stop_id] end)
+      stub(Engine.BusStops.Mock, :get_child_stops_for_parent, fn stop_id -> [stop_id] end)
 
       stub(Engine.Config.Mock, :sign_config, fn
         "auto_sign", _default -> :auto
@@ -141,7 +141,7 @@ defmodule Signs.BusTest do
           configs: [
             %{
               sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}],
-              consolidate?: false
+              consolidate_sources?: false
             }
           ]
         })
@@ -188,15 +188,15 @@ defmodule Signs.BusTest do
           configs: [
             %{
               sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}],
-              consolidate?: false
+              consolidate_sources?: false
             },
             %{
               sources: [%{stop_id: "stop1", route_id: "34", direction_id: 1}],
-              consolidate?: false
+              consolidate_sources?: false
             },
             %{
               sources: [%{stop_id: "stop1", route_id: "741", direction_id: 1}],
-              consolidate?: false
+              consolidate_sources?: false
             }
           ]
         })
@@ -225,13 +225,13 @@ defmodule Signs.BusTest do
           top_configs: [
             %{
               sources: [%{stop_id: "stop2", route_id: "749", direction_id: 0}],
-              consolidate?: false
+              consolidate_sources?: false
             }
           ],
           bottom_configs: [
             %{
               sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}],
-              consolidate?: false
+              consolidate_sources?: false
             }
           ]
         })
@@ -336,7 +336,7 @@ defmodule Signs.BusTest do
           configs: [
             %{
               sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}],
-              consolidate?: false
+              consolidate_sources?: false
             }
           ],
           chelsea_bridge: "audio_visual"
@@ -381,7 +381,7 @@ defmodule Signs.BusTest do
           configs: [
             %{
               sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}],
-              consolidate?: false
+              consolidate_sources?: false
             }
           ],
           chelsea_bridge: "audio",
@@ -403,7 +403,7 @@ defmodule Signs.BusTest do
           configs: [
             %{
               sources: [%{stop_id: "stop3", route_id: "99", direction_id: 0}],
-              consolidate?: false
+              consolidate_sources?: false
             }
           ]
         })
@@ -431,11 +431,11 @@ defmodule Signs.BusTest do
         | configs: [
             %{
               sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}],
-              consolidate?: false
+              consolidate_sources?: false
             },
             %{
               sources: [%{stop_id: "stop1", route_id: "51", direction_id: 0}],
-              consolidate?: false
+              consolidate_sources?: false
             }
           ]
       }
@@ -455,7 +455,7 @@ defmodule Signs.BusTest do
         | configs: [
             %{
               sources: [%{stop_id: "stop1", route_id: "51", direction_id: 0}],
-              consolidate?: false
+              consolidate_sources?: false
             }
           ]
       }

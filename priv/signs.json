@@ -8331,7 +8331,7 @@
             "direction_id": 1
           }
         ],
-        "consolidate": true
+        "consolidate_sources": true
       }
     ],
     "chelsea_bridge": "audio",
@@ -8424,7 +8424,7 @@
             "direction_id": 1
           }
         ],
-        "consolidate": true
+        "consolidate_sources": true
       }
     ],
     "chelsea_bridge": "audio",
@@ -8465,7 +8465,7 @@
             "direction_id": 1
           }
         ],
-        "consolidate": true
+        "consolidate_sources": true
       }
     ],
     "chelsea_bridge": "audio",
@@ -8558,7 +8558,7 @@
             "direction_id": 1
           }
         ],
-        "consolidate": true
+        "consolidate_sources": true
       }
     ],
     "bottom_configs": [
@@ -8797,7 +8797,7 @@
             "direction_id": 1
           }
         ],
-        "consolidate" : true
+        "consolidate_sources" : true
       }
     ],
     "max_minutes": 60
