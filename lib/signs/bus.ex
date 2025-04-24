@@ -520,12 +520,8 @@ defmodule Signs.Bus do
         end)
 
       if content == [] &&
-           Enum.all?(config.sources, fn %{route_id: routes} ->
-             routes
-             |> List.wrap()
-             |> Enum.all?(fn route ->
-               Map.get(route_alerts_lookup, route) in @alert_levels
-             end)
+           Enum.all?(config.sources, fn source ->
+             Map.get(route_alerts_lookup, source.route_id) in @alert_levels
            end) do
         [{:alert, config}]
       else
