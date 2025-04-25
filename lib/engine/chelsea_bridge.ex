@@ -2,26 +2,53 @@ defmodule Engine.ChelseaBridge do
   use GenServer
   require Logger
 
+  alias Signs.Utilities.EtsUtils
+
+  # API constants
   @base_api_url "https://www.chelseabridgesys.com/api/api/"
   @api_status_endpoint "BridgeRealTime"
   @api_token_endpoint "token"
 
+  @bridge_table_name :bridge_status
+
+  @type token :: %{
+          value: String.t() | nil,
+          expiration: DateTime.t() | nil
+        }
+
+  @type state :: %{
+          table: :ets.tab(),
+          token: token
+        }
+
   @callback bridge_status() :: %{raised: boolean() | nil, estimate: DateTime.t() | nil}
-  def bridge_status() do
-    case :ets.lookup(:bridge_status, :value) do
+  def bridge_status(ets_table_name \\ @bridge_table_name) do
+    case :ets.lookup(ets_table_name, :value) do
       [{:value, data}] -> data
       _ -> %{raised?: nil, estimate: nil}
     end
   end
 
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+  def start_link(opts \\ []) do
+    name = opts[:gen_server_name] || __MODULE__
+    GenServer.start_link(__MODULE__, opts, name: name)
   end
 
-  def init(_) do
+  def init(opts) do
+    bridge_ets_table =
+      :ets.new(opts[:bridge_ets_table_name] || @bridge_table_name, [
+        :named_table,
+        read_concurrency: true
+      ])
+
+    state = %{
+      table: bridge_ets_table,
+      token: %{value: nil, expiration: nil}
+    }
+
     send(self(), :update)
-    :ets.new(:bridge_status, [:named_table, read_concurrency: true])
-    {:ok, %{}}
+
+    {:ok, state}
   end
 
   def handle_info(:update, state) do
@@ -29,22 +56,30 @@ defmodule Engine.ChelseaBridge do
     http_client = Application.get_env(:realtime_signs, :http_client)
     now = Timex.now()
 
+    token =
+      if(state.token.expiration == nil or DateTime.compare(state.token.expiration, now) == :lt) do
+        update_api_token(now)
+      else
+        state.token
+      end
+
     with {:ok, %{status_code: 200, body: body}} <-
            http_client.get("#{@base_api_url}#{@api_status_endpoint}", [
-             {"Authorization", "Bearer #{get_cached_or_new_token(now)}"}
+             {"Authorization", "Bearer #{token.value}"}
            ]),
          {:ok, data} <- Jason.decode(body) do
-      # TODO: Estimate maybe should be nil in cases when estimatedDurationInMinutes is 0
-      :ets.insert(
-        :bridge_status,
-        {:value,
-         %{
-           raised?: Map.get(data, "liftInProgress"),
-           estimate: DateTime.add(now, Map.get(data, "estimatedDurationInMinutes"), :minute)
-         }}
+      EtsUtils.write_ets(
+        state.table,
+        %{
+          :value => %{
+            raised?: Map.get(data, "liftInProgress"),
+            estimate: DateTime.add(now, Map.get(data, "estimatedDurationInMinutes"), :minute)
+          }
+        },
+        :none
       )
 
-      {:noreply, state}
+      {:noreply, %{state | token: token}}
     else
       err ->
         Logger.error("Error getting bridge status: #{inspect(err)}")
@@ -56,21 +91,7 @@ defmodule Engine.ChelseaBridge do
     {:noreply, state}
   end
 
-  defp get_cached_or_new_token(now) do
-    case :ets.lookup(:bridge_status, :auth) do
-      [auth: %{access_token: access_token, expiration: expiration}] ->
-        # If token found, only return if still before expiration date
-        if DateTime.compare(expiration, now) == :gt do
-          access_token
-        else
-          update_api_token(now)
-        end
-
-      _ ->
-        update_api_token(now)
-    end
-  end
-
+  @spec update_api_token(DateTime.t()) :: token
   def update_api_token(now) do
     # Calls a token granting endpoint with a username and password from our environment variables.
     # This token grants Bridge Data API access, and must be refreshed at least every month
@@ -95,12 +116,10 @@ defmodule Engine.ChelseaBridge do
         now
         |> DateTime.add(Map.get(data, "expires_in"), :second)
 
-      :ets.insert(
-        :bridge_status,
-        {:auth, %{access_token: Map.get(data, "access_token"), expiration: expiration}}
-      )
-
-      Map.get(data, "access_token")
+      %{
+        value: Map.get(data, "access_token"),
+        expiration: expiration
+      }
     else
       err ->
         Logger.error("Error getting bridge access_token: #{inspect(err)}")

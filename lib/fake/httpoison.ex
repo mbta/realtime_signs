@@ -700,7 +700,6 @@ defmodule Fake.HTTPoison do
   end
 
   def mock_response(flag) do
-    IO.inspect(flag)
     {:ok, %HTTPoison.Response{status_code: 200, body: ""}}
   end
 end
