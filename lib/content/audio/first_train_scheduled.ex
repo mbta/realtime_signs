@@ -15,8 +15,7 @@ defmodule Content.Audio.FirstTrainScheduled do
         :the_first,
         destination,
         :train,
-        :is,
-        :scheduled_to_arrive_at,
+        :departs_at,
         {:hour, scheduled_time.hour},
         {:minute, scheduled_time.minute}
       ])
@@ -25,7 +24,7 @@ defmodule Content.Audio.FirstTrainScheduled do
     def to_tts(%Content.Audio.FirstTrainScheduled{} = audio) do
       train = PaEss.Utilities.train_description(audio.destination, nil)
       time = Content.Utilities.render_datetime_as_time(audio.scheduled_time)
-      {"The first #{train} is scheduled to arrive at #{time}", nil}
+      {"The first #{train} departs at #{time}", nil}
     end
 
     def to_logs(%Content.Audio.FirstTrainScheduled{}) do

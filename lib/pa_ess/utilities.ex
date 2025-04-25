@@ -691,7 +691,7 @@ defmodule PaEss.Utilities do
   def audio_take(:stop_away), do: "535"
   def audio_take(:stops_away), do: "534"
   def audio_take(:the_first), do: "866"
-  def audio_take(:scheduled_to_arrive_at), do: "865"
+  def audio_take(:departs_at), do: "927"
   def audio_take(:upcoming_departures), do: "548"
   def audio_take(:upcoming_arrivals), do: "550"
   def audio_take(:is_now_arriving), do: "24055"
