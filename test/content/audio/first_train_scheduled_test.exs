@@ -2,7 +2,7 @@ defmodule Content.Audio.FirstTrainScheduledTest do
   use ExUnit.Case, async: true
 
   describe "Content.Audio.to_params protocol" do
-    test "First train to Ashmont scheduled to arrive at 5 o'clock" do
+    test "First train to Ashmont departs at 5 o'clock" do
       audio = %Content.Audio.FirstTrainScheduled{
         destination: :ashmont,
         scheduled_time: ~U[2023-07-19 05:00:00Z]
@@ -10,7 +10,7 @@ defmodule Content.Audio.FirstTrainScheduledTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"115",
+                {"113",
                  [
                    "866",
                    "21000",
@@ -18,9 +18,7 @@ defmodule Content.Audio.FirstTrainScheduledTest do
                    "21000",
                    "864",
                    "21000",
-                   "533",
-                   "21000",
-                   "865",
+                   "927",
                    "21000",
                    "8004",
                    "21000",
@@ -28,7 +26,7 @@ defmodule Content.Audio.FirstTrainScheduledTest do
                  ], :audio}}
     end
 
-    test "First train to Ashmont scheduled to arrive at 5 oh 5" do
+    test "First train to Ashmont departs at 5 oh 5" do
       audio = %Content.Audio.FirstTrainScheduled{
         destination: :ashmont,
         scheduled_time: ~U[2023-07-19 05:05:00Z]
@@ -36,7 +34,7 @@ defmodule Content.Audio.FirstTrainScheduledTest do
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"115",
+                {"113",
                  [
                    "866",
                    "21000",
@@ -44,9 +42,7 @@ defmodule Content.Audio.FirstTrainScheduledTest do
                    "21000",
                    "864",
                    "21000",
-                   "533",
-                   "21000",
-                   "865",
+                   "927",
                    "21000",
                    "8004",
                    "21000",
