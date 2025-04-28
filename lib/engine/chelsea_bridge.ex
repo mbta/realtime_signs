@@ -67,8 +67,6 @@ defmodule Engine.ChelseaBridge do
            ]),
          {:ok, %{"liftInProgress" => raised, "estimatedDurationInMinutes" => estimate}} <-
            Jason.decode(body) do
-      IO.inspect(raised)
-
       :ets.insert(
         state.table,
         {
