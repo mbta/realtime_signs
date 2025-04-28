@@ -2,8 +2,6 @@ defmodule Engine.ChelseaBridge do
   use GenServer
   require Logger
 
-  alias Signs.Utilities.EtsUtils
-
   # API constants
   @base_api_url "https://www.chelseabridgesys.com/api/api/"
   @api_status_endpoint "BridgeRealTime"
@@ -57,7 +55,7 @@ defmodule Engine.ChelseaBridge do
     now = Timex.now()
 
     token =
-      if(state.token.expiration == nil or DateTime.compare(state.token.expiration, now) == :lt) do
+      if(state.token.expiration == nil or Timex.before?(state.token.expiration, now)) do
         update_api_token(now)
       else
         state.token
@@ -67,22 +65,26 @@ defmodule Engine.ChelseaBridge do
            http_client.get("#{@base_api_url}#{@api_status_endpoint}", [
              {"Authorization", "Bearer #{token.value}"}
            ]),
-         {:ok, data} <- Jason.decode(body) do
-      EtsUtils.write_ets(
+         {:ok, %{"liftInProgress" => raised, "estimatedDurationInMinutes" => estimate}} <-
+           Jason.decode(body) do
+      IO.inspect(raised)
+
+      :ets.insert(
         state.table,
-        %{
-          :value => %{
-            raised?: Map.get(data, "liftInProgress"),
-            estimate: DateTime.add(now, Map.get(data, "estimatedDurationInMinutes"), :minute)
+        {
+          :value,
+          %{
+            raised?: raised,
+            estimate: Timex.shift(now, minutes: estimate)
           }
-        },
-        :none
+        }
       )
 
       {:noreply, %{state | token: token}}
     else
       err ->
         Logger.error("Error getting bridge status: #{inspect(err)}")
+        {:noreply, state}
     end
   end
 
@@ -114,7 +116,8 @@ defmodule Engine.ChelseaBridge do
          {:ok, data} <- Jason.decode(body) do
       expiration =
         now
-        |> DateTime.add(Map.get(data, "expires_in"), :second)
+        # Give 60 second buffer on expiration time so we don't run into issues with trying expiring token
+        |> Timex.shift(seconds: Map.get(data, "expires_in") - 60)
 
       %{
         value: Map.get(data, "access_token"),
@@ -123,6 +126,7 @@ defmodule Engine.ChelseaBridge do
     else
       err ->
         Logger.error("Error getting bridge access_token: #{inspect(err)}")
+        %{value: nil, expiration: nil}
     end
   end
 end
