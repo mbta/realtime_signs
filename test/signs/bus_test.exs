@@ -138,9 +138,7 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          configs: [
-            %{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}
-          ]
+          configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}]
         })
 
       Signs.Bus.handle_info(:run_loop, state)
@@ -210,12 +208,8 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          top_configs: [
-            %{sources: [%{stop_id: "stop2", route_id: "749", direction_id: 0}]}
-          ],
-          bottom_configs: [
-            %{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}
-          ]
+          top_configs: [%{sources: [%{stop_id: "stop2", route_id: "749", direction_id: 0}]}],
+          bottom_configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}]
         })
 
       Signs.Bus.handle_info(:run_loop, state)
@@ -315,9 +309,7 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          configs: [
-            %{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}
-          ],
+          configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}],
           chelsea_bridge: "audio_visual"
         })
 
@@ -357,9 +349,7 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          configs: [
-            %{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}
-          ],
+          configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}],
           chelsea_bridge: "audio",
           prev_bridge_status: %{raised?: false, estimate: nil},
           current_messages: {"14 WakfldAv  2 min", "14 WakfldAv 11 min"},
@@ -376,9 +366,7 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          configs: [
-            %{sources: [%{stop_id: "stop3", route_id: "99", direction_id: 0}]}
-          ]
+          configs: [%{sources: [%{stop_id: "stop3", route_id: "99", direction_id: 0}]}]
         })
 
       Signs.Bus.handle_info(:run_loop, state)
@@ -419,9 +407,7 @@ defmodule Signs.BusTest do
 
       state = %{
         @sign_state
-        | configs: [
-            %{sources: [%{stop_id: "stop1", route_id: "51", direction_id: 0}]}
-          ]
+        | configs: [%{sources: [%{stop_id: "stop1", route_id: "51", direction_id: 0}]}]
       }
 
       Signs.Bus.handle_info(:run_loop, state)
