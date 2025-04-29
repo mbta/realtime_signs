@@ -76,7 +76,7 @@ defmodule Signs.BusTest do
           []
       end)
 
-      stub(Engine.BusStops.Mock, :get_child_stops_for_parent, fn stop_id -> [stop_id] end)
+      stub(Engine.BusStops.Mock, :get_child_stop, fn stop_id, _, _ -> stop_id end)
 
       stub(Engine.Config.Mock, :sign_config, fn
         "auto_sign", _default -> :auto
@@ -139,10 +139,7 @@ defmodule Signs.BusTest do
       state =
         Map.merge(@sign_state, %{
           configs: [
-            %{
-              sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}],
-              consolidate_sources?: false
-            }
+            %{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}
           ]
         })
 
@@ -186,18 +183,9 @@ defmodule Signs.BusTest do
       state =
         Map.merge(@sign_state, %{
           configs: [
-            %{
-              sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}],
-              consolidate_sources?: false
-            },
-            %{
-              sources: [%{stop_id: "stop1", route_id: "34", direction_id: 1}],
-              consolidate_sources?: false
-            },
-            %{
-              sources: [%{stop_id: "stop1", route_id: "741", direction_id: 1}],
-              consolidate_sources?: false
-            }
+            %{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]},
+            %{sources: [%{stop_id: "stop1", route_id: "34", direction_id: 1}]},
+            %{sources: [%{stop_id: "stop1", route_id: "741", direction_id: 1}]}
           ]
         })
 
@@ -223,16 +211,10 @@ defmodule Signs.BusTest do
       state =
         Map.merge(@sign_state, %{
           top_configs: [
-            %{
-              sources: [%{stop_id: "stop2", route_id: "749", direction_id: 0}],
-              consolidate_sources?: false
-            }
+            %{sources: [%{stop_id: "stop2", route_id: "749", direction_id: 0}]}
           ],
           bottom_configs: [
-            %{
-              sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}],
-              consolidate_sources?: false
-            }
+            %{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}
           ]
         })
 
@@ -334,10 +316,7 @@ defmodule Signs.BusTest do
       state =
         Map.merge(@sign_state, %{
           configs: [
-            %{
-              sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}],
-              consolidate_sources?: false
-            }
+            %{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}
           ],
           chelsea_bridge: "audio_visual"
         })
@@ -379,10 +358,7 @@ defmodule Signs.BusTest do
       state =
         Map.merge(@sign_state, %{
           configs: [
-            %{
-              sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}],
-              consolidate_sources?: false
-            }
+            %{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}
           ],
           chelsea_bridge: "audio",
           prev_bridge_status: %{raised?: false, estimate: nil},
@@ -401,10 +377,7 @@ defmodule Signs.BusTest do
       state =
         Map.merge(@sign_state, %{
           configs: [
-            %{
-              sources: [%{stop_id: "stop3", route_id: "99", direction_id: 0}],
-              consolidate_sources?: false
-            }
+            %{sources: [%{stop_id: "stop3", route_id: "99", direction_id: 0}]}
           ]
         })
 
@@ -429,14 +402,8 @@ defmodule Signs.BusTest do
       state = %{
         @sign_state
         | configs: [
-            %{
-              sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}],
-              consolidate_sources?: false
-            },
-            %{
-              sources: [%{stop_id: "stop1", route_id: "51", direction_id: 0}],
-              consolidate_sources?: false
-            }
+            %{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]},
+            %{sources: [%{stop_id: "stop1", route_id: "51", direction_id: 0}]}
           ]
       }
 
@@ -453,10 +420,7 @@ defmodule Signs.BusTest do
       state = %{
         @sign_state
         | configs: [
-            %{
-              sources: [%{stop_id: "stop1", route_id: "51", direction_id: 0}],
-              consolidate_sources?: false
-            }
+            %{sources: [%{stop_id: "stop1", route_id: "51", direction_id: 0}]}
           ]
       }
 

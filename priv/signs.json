@@ -8330,8 +8330,7 @@
             "route_id": "746",
             "direction_id": 1
           }
-        ],
-        "consolidate_sources": true
+        ]
       }
     ],
     "chelsea_bridge": "audio",
@@ -8423,8 +8422,7 @@
             "route_id": "746",
             "direction_id": 1
           }
-        ],
-        "consolidate_sources": true
+        ]
       }
     ],
     "chelsea_bridge": "audio",
@@ -8464,8 +8462,7 @@
             "route_id": "746",
             "direction_id": 1
           }
-        ],
-        "consolidate_sources": true
+        ]
       }
     ],
     "chelsea_bridge": "audio",
@@ -8557,8 +8554,7 @@
             "route_id": "746",
             "direction_id": 1
           }
-        ],
-        "consolidate_sources": true
+        ]
       }
     ],
     "bottom_configs": [
@@ -8793,11 +8789,30 @@
         "sources": [
           {
             "stop_id": "place-nubn",
-            "route_id": ["15", "23", "28", "44", "45"],
+            "route_id": "15",
+            "direction_id": 1
+          },
+          {
+            "stop_id": "place-nubn",
+            "route_id": "23",
+            "direction_id": 1
+          },
+          {
+            "stop_id": "place-nubn",
+            "route_id": "28",
+            "direction_id": 1
+          },
+          {
+            "stop_id": "place-nubn",
+            "route_id": "44",
+            "direction_id": 1
+          },
+          {
+            "stop_id": "place-nubn",
+            "route_id": "45",
             "direction_id": 1
           }
-        ],
-        "consolidate_sources" : true
+        ]
       }
     ],
     "max_minutes": 60
@@ -8827,7 +8842,25 @@
         "sources": [
           {
             "stop_id": "place-nubn",
-            "route_id": ["41", "42", "66"],
+            "route_id": "41",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "42",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "66",
             "direction_id": 0
           }
         ]
@@ -8851,7 +8884,7 @@
         "sources": [
           {
             "stop_id": "place-nubn",
-            "route_id": ["15", "45"],
+            "route_id": "15",
             "direction_id": 0
           }
         ]
@@ -8862,6 +8895,15 @@
             "stop_id": "place-nubn",
             "route_id": "41",
             "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "45",
+            "direction_id": 0
           }
         ]
       }
@@ -8884,7 +8926,7 @@
         "sources": [
           {
             "stop_id": "place-nubn",
-            "route_id": ["170", "171"],
+            "route_id": "170",
             "direction_id": 0
           }
         ]
@@ -8893,7 +8935,25 @@
         "sources": [
           {
             "stop_id": "place-nubn",
-            "route_id": ["749", "751"],
+            "route_id": "171",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "749",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "751",
             "direction_id": 1
           }
         ]
@@ -8904,7 +8964,43 @@
         "sources": [
           {
             "stop_id": "place-nubn",
-            "route_id": ["14", "19", "23", "28", "44"],
+            "route_id": "14",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "19",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "23",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "28",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "44",
             "direction_id": 0
           }
         ]
@@ -8926,7 +9022,43 @@
         "sources": [
           {
             "stop_id": "place-nubn",
-            "route_id": ["14", "19", "23", "28", "44"],
+            "route_id": "14",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "19",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "23",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "28",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "44",
             "direction_id": 0
           }
         ]
@@ -8950,7 +9082,7 @@
         "sources": [
           {
             "stop_id": "place-nubn",
-            "route_id": ["1", "47", "8"],
+            "route_id": "1",
             "direction_id": 0
           }
         ]
@@ -8959,7 +9091,43 @@
         "sources": [
           {
             "stop_id": "place-nubn",
-            "route_id": ["19", "47", "8"],
+            "route_id": "19",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "47",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "47",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "8",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-nubn",
+            "route_id": "8",
             "direction_id": 1
           }
         ]
@@ -8983,7 +9151,16 @@
         "sources": [
           {
             "stop_id": "place-lech",
-            "route_id": ["69", "80"],
+            "route_id": "69",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-lech",
+            "route_id": "80",
             "direction_id": 0
           }
         ]
@@ -8994,7 +9171,16 @@
         "sources": [
           {
             "stop_id": "place-lech",
-            "route_id": ["87", "88"],
+            "route_id": "87",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-lech",
+            "route_id": "88",
             "direction_id": 0
           }
         ]
@@ -9016,7 +9202,16 @@
         "sources": [
           {
             "stop_id": "place-lech",
-            "route_id": ["87", "88"],
+            "route_id": "87",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-lech",
+            "route_id": "88",
             "direction_id": 0
           }
         ]
@@ -9040,7 +9235,79 @@
         "sources": [
           {
             "stop_id": "place-harsq",
-            "route_id": ["71", "73", "74", "75", "109", "77", "78", "86", "96"],
+            "route_id": "71",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-harsq",
+            "route_id": "73",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-harsq",
+            "route_id": "74",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-harsq",
+            "route_id": "75",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-harsq",
+            "route_id": "109",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-harsq",
+            "route_id": "77",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-harsq",
+            "route_id": "78",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-harsq",
+            "route_id": "86",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-harsq",
+            "route_id": "96",
             "direction_id": 0
           }
         ]
@@ -9097,7 +9364,7 @@
         "sources": [
           {
             "stop_id": "place-matt",
-            "route_id": ["24", "2427", "245", "33", "716"],
+            "route_id": "24",
             "direction_id": 0
           }
         ]
@@ -9106,8 +9373,71 @@
         "sources": [
           {
             "stop_id": "place-matt",
-            "route_id": ["24", "2427", "27", "30"],
+            "route_id": "24",
             "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-matt",
+            "route_id": "2427",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-matt",
+            "route_id": "2427",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-matt",
+            "route_id": "245",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-matt",
+            "route_id": "27",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-matt",
+            "route_id": "30",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-matt",
+            "route_id": "33",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-matt",
+            "route_id": "716",
+            "direction_id": 0
           }
         ]
       }
@@ -9130,7 +9460,25 @@
         "sources": [
           {
             "stop_id": "place-matt",
-            "route_id": ["28", "29", "31"],
+            "route_id": "28",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-matt",
+            "route_id": "29",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-matt",
+            "route_id": "31",
             "direction_id": 1
           }
         ]
@@ -9154,7 +9502,7 @@
         "sources": [
           {
             "stop_id": "place-davis",
-            "route_id": ["87", "88", "89", "94", "96"],
+            "route_id": "87",
             "direction_id": 0
           }
         ]
@@ -9163,8 +9511,53 @@
         "sources": [
           {
             "stop_id": "place-davis",
-            "route_id": ["89", "90"],
+            "route_id": "88",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-davis",
+            "route_id": "89",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-davis",
+            "route_id": "89",
             "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-davis",
+            "route_id": "90",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-davis",
+            "route_id": "94",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-davis",
+            "route_id": "96",
+            "direction_id": 0
           }
         ]
       }
@@ -9187,7 +9580,43 @@
         "sources": [
           {
             "stop_id": "place-forhl",
-            "route_id": ["30", "35", "36", "37", "51"],
+            "route_id": "30",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-forhl",
+            "route_id": "35",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-forhl",
+            "route_id": "36",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-forhl",
+            "route_id": "37",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-forhl",
+            "route_id": "51",
             "direction_id": 0
           }
         ]
@@ -9211,7 +9640,25 @@
         "sources": [
           {
             "stop_id": "place-forhl",
-            "route_id": ["34","34E","38","40","50"],
+            "route_id": "34",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-forhl",
+            "route_id": "34E",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-forhl",
+            "route_id": "38",
             "direction_id": 0
           }
         ]
@@ -9222,6 +9669,24 @@
             "stop_id": "place-forhl",
             "route_id": "39",
             "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-forhl",
+            "route_id": "40",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-forhl",
+            "route_id": "50",
+            "direction_id": 0
           }
         ]
       }
@@ -9244,7 +9709,7 @@
         "sources": [
           {
             "stop_id": "place-brntn",
-            "route_id": ["226", "230", "236"],
+            "route_id": "226",
             "direction_id": 0
           }
         ]
@@ -9253,7 +9718,34 @@
         "sources": [
           {
             "stop_id": "place-brntn",
-            "route_id": ["230", "236"],
+            "route_id": "230",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-brntn",
+            "route_id": "230",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-brntn",
+            "route_id": "236",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-brntn",
+            "route_id": "236",
             "direction_id": 1
           }
         ]

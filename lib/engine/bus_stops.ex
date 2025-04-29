@@ -5,11 +5,11 @@ defmodule Engine.BusStops do
 
   @bus_vehicle_type 3
 
-  @callback get_child_stops_for_parent(String.t()) :: [String.t()]
-  def get_child_stops_for_parent(parent_stop_id) do
-    case :ets.lookup(:child_stops, parent_stop_id) do
-      [{^parent_stop_id, child_stops}] -> child_stops
-      _ -> []
+  @callback get_child_stop(String.t(), String.t(), String.t()) :: String.t()
+  def get_child_stop(parent_stop_id, route_id, direction_id) do
+    case :ets.lookup(:child_stops, {parent_stop_id, route_id, direction_id}) do
+      [{{^parent_stop_id, ^route_id, ^direction_id}, child_stop}] -> child_stop
+      _ -> nil
     end
   end
 
@@ -81,12 +81,9 @@ defmodule Engine.BusStops do
               }
             } <- data,
             parent_stop_id = Map.get(child_to_parent, stop_id),
-            {parent_stop_id, route_id, direction_id} in parent_route_directions,
-            uniq: true do
-          {parent_stop_id, stop_id}
+            {parent_stop_id, route_id, direction_id} in parent_route_directions do
+          {{parent_stop_id, route_id, direction_id}, stop_id}
         end
-        |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
-        |> Map.to_list()
         |> then(fn records ->
           :ets.insert(:child_stops, records)
         end)

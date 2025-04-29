@@ -95,8 +95,7 @@ defmodule Signs.Bus do
               route_id: Map.fetch!(source, "route_id"),
               direction_id: Map.fetch!(source, "direction_id")
             }
-          end,
-        consolidate_sources?: Map.get(config, "consolidate_sources", false)
+          end
       }
     end
   end
@@ -497,22 +496,11 @@ defmodule Signs.Bus do
 
   defp configs_content(configs, predictions_lookup, route_alerts_lookup) do
     Enum.flat_map(configs, fn config ->
-      normalized_sources =
-        for source <- config.sources,
-            child_stop_id <- get_child_stops_if_parent(source.stop_id),
-            route_id <- List.wrap(source.route_id),
-            direction_id <- List.wrap(source.direction_id) do
-          %{stop_id: child_stop_id, route_id: route_id, direction_id: direction_id}
-        end
-
-      if config.consolidate_sources?,
-        do: [%{sources: normalized_sources}],
-        else: Enum.map(normalized_sources, &%{sources: [&1]})
-    end)
-    |> Enum.flat_map(fn config ->
       content =
         Stream.flat_map(config.sources, fn source ->
-          Map.get(predictions_lookup, {source.stop_id, source.route_id, source.direction_id}, [])
+          child_stop_id = get_child_stop(source.stop_id, source.route_id, source.direction_id)
+
+          Map.get(predictions_lookup, {child_stop_id, source.route_id, source.direction_id}, [])
         end)
         |> Enum.group_by(&PaEss.Utilities.headsign_key(&1.headsign))
         |> Enum.map(fn {_, list} ->
@@ -552,23 +540,23 @@ defmodule Signs.Bus do
 
   defp all_stop_ids(state) do
     for source <- all_sources(state),
-        stop_id <- get_child_stops_if_parent(source.stop_id),
         uniq: true,
-        do: stop_id
+        do: get_child_stop(source.stop_id, source.route_id, source.direction_id)
   end
 
-  defp get_child_stops_if_parent(stop_id) do
-    case RealtimeSigns.bus_stop_engine().get_child_stops_for_parent(stop_id) do
-      [] -> [stop_id]
-      child_stops -> child_stops
+  defp get_child_stop(stop_id, route_id, direciton_id) do
+    case RealtimeSigns.bus_stop_engine().get_child_stop(
+           stop_id,
+           route_id,
+           direciton_id
+         ) do
+      nil -> stop_id
+      child_stop -> child_stop
     end
   end
 
   defp all_route_ids(state) do
-    for %{route_id: route_id} <- all_sources(state),
-        route_id <- List.wrap(route_id),
-        uniq: true,
-        do: route_id
+    for source <- all_sources(state), uniq: true, do: source.route_id
   end
 
   # Update the sign if:

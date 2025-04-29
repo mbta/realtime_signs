@@ -41,9 +41,7 @@ defmodule Signs.Utilities.SignsConfig do
         config_list <- [sign["configs"], sign["top_configs"], sign["bottom_configs"]],
         config_list,
         %{"sources" => sources} <- config_list,
-        %{"stop_id" => stop_id, "route_id" => route_id, "direction_id" => direction_id} <-
-          sources,
-        route_id <- List.wrap(route_id) do
+        %{"stop_id" => stop_id, "route_id" => route_id, "direction_id" => direction_id} <- sources do
       {stop_id, route_id, direction_id}
     end
   end
@@ -67,8 +65,6 @@ defmodule Signs.Utilities.SignsConfig do
           %{"route_id" => route_id} <- sources do
         route_id
       end
-      |> List.flatten()
-      |> Enum.uniq()
 
     Enum.uniq(train_routes ++ bus_routes)
   end
