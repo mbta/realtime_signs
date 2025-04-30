@@ -36,6 +36,16 @@ defmodule Signs.Utilities.SignsConfig do
     end
   end
 
+  def all_bus_stop_route_direction_ids do
+    for %{"type" => "bus"} = sign <- children_config(),
+        config_list <- [sign["configs"], sign["top_configs"], sign["bottom_configs"]],
+        config_list,
+        %{"sources" => sources} <- config_list,
+        %{"stop_id" => stop_id, "route_id" => route_id, "direction_id" => direction_id} <- sources do
+      {stop_id, route_id, direction_id}
+    end
+  end
+
   def all_route_ids do
     config = children_config()
 

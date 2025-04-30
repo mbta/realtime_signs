@@ -76,6 +76,8 @@ defmodule Signs.BusTest do
           []
       end)
 
+      stub(Engine.BusStops.Mock, :get_child_stop, fn stop_id, _, _ -> stop_id end)
+
       stub(Engine.Config.Mock, :sign_config, fn
         "auto_sign", _default -> :auto
         "off_sign", _default -> :off

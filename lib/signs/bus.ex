@@ -498,7 +498,9 @@ defmodule Signs.Bus do
     Enum.flat_map(configs, fn config ->
       content =
         Stream.flat_map(config.sources, fn source ->
-          Map.get(predictions_lookup, {source.stop_id, source.route_id, source.direction_id}, [])
+          child_stop_id = get_child_stop(source.stop_id, source.route_id, source.direction_id)
+
+          Map.get(predictions_lookup, {child_stop_id, source.route_id, source.direction_id}, [])
         end)
         |> Enum.group_by(&PaEss.Utilities.headsign_key(&1.headsign))
         |> Enum.map(fn {_, list} ->
@@ -537,7 +539,20 @@ defmodule Signs.Bus do
   end
 
   defp all_stop_ids(state) do
-    for source <- all_sources(state), uniq: true, do: source.stop_id
+    for source <- all_sources(state),
+        uniq: true,
+        do: get_child_stop(source.stop_id, source.route_id, source.direction_id)
+  end
+
+  defp get_child_stop(stop_id, route_id, direciton_id) do
+    case RealtimeSigns.bus_stop_engine().get_child_stop(
+           stop_id,
+           route_id,
+           direciton_id
+         ) do
+      nil -> stop_id
+      child_stop -> child_stop
+    end
   end
 
   defp all_route_ids(state) do
