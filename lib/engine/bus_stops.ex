@@ -5,7 +5,7 @@ defmodule Engine.BusStops do
 
   @bus_vehicle_type 3
 
-  @callback get_child_stop(String.t(), String.t(), String.t()) :: String.t()
+  @callback get_child_stop(String.t(), String.t(), String.t()) :: String.t() | nil
   def get_child_stop(parent_stop_id, route_id, direction_id) do
     case :ets.lookup(:child_stops, {parent_stop_id, route_id, direction_id}) do
       [{{^parent_stop_id, ^route_id, ^direction_id}, child_stop}] -> child_stop
@@ -36,8 +36,8 @@ defmodule Engine.BusStops do
     api_url = Application.get_env(:realtime_signs, :api_v3_url)
     api_key = Application.get_env(:realtime_signs, :api_v3_key)
     http_client = Application.get_env(:realtime_signs, :http_client)
-    parent_route_directions = SignsConfig.all_bus_stop_route_direction_ids() |> MapSet.new()
-    bus_routes = Enum.map(parent_route_directions, &elem(&1, 1)) |> Enum.uniq()
+    stop_route_directions = SignsConfig.all_bus_stop_route_direction_ids() |> MapSet.new()
+    bus_routes = Enum.map(stop_route_directions, &elem(&1, 1)) |> Enum.uniq()
 
     case http_client.get(
            api_url <> "/schedules",
@@ -81,7 +81,8 @@ defmodule Engine.BusStops do
               }
             } <- data,
             parent_stop_id = Map.get(child_to_parent, stop_id),
-            {parent_stop_id, route_id, direction_id} in parent_route_directions do
+            {parent_stop_id, route_id, direction_id} in stop_route_directions,
+            uniq: true do
           {{parent_stop_id, route_id, direction_id}, stop_id}
         end
         |> then(fn records ->
