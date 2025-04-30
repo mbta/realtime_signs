@@ -36,8 +36,8 @@ defmodule Engine.BusStops do
     api_url = Application.get_env(:realtime_signs, :api_v3_url)
     api_key = Application.get_env(:realtime_signs, :api_v3_key)
     http_client = Application.get_env(:realtime_signs, :http_client)
-    parent_route_directions = SignsConfig.all_bus_stop_route_direction_ids()
-    bus_routes = Enum.map(parent_route_directions, &elem(&1, 1))
+    parent_route_directions = SignsConfig.all_bus_stop_route_direction_ids() |> MapSet.new()
+    bus_routes = Enum.map(parent_route_directions, &elem(&1, 1)) |> Enum.uniq()
 
     case http_client.get(
            api_url <> "/schedules",
