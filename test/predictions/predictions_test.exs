@@ -373,16 +373,4 @@ defmodule Predictions.PredictionsTest do
               }, _} = get_all(feed_message, @current_time)
     end
   end
-
-  describe "parse_pb_response/1" do
-    test "decodes a pb file" do
-      assert @feed_message
-             |> Jason.encode!()
-             |> parse_json_response == @feed_message
-    end
-
-    test "Gracefully handles an empty (e.g. 304) response" do
-      assert %{} = parse_json_response("")
-    end
-  end
 end

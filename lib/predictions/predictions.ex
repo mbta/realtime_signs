@@ -114,14 +114,6 @@ defmodule Predictions.Predictions do
     }
   end
 
-  def parse_json_response("") do
-    %{"entity" => []}
-  end
-
-  def parse_json_response(body) do
-    Jason.decode!(body)
-  end
-
   def relevant_rail_route?(route_id) do
     route_id in [
       "Red",
