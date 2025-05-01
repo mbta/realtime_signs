@@ -96,7 +96,7 @@ defmodule Engine.BusStops do
 
       err ->
         Logger.error("Error getting bus schedules: #{inspect(err)}")
-        []
+        {:noreply, state}
     end
   end
 
