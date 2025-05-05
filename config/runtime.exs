@@ -27,8 +27,8 @@ if config_env() != :test do
     watts_url: System.get_env("WATTS_URL"),
     watts_api_key: System.get_env("WATTS_API_KEY"),
     scu_ip_map: System.get_env("SCU_IP_MAP", "null") |> Jason.decode!(),
-    chelsea_bridge_url: System.get_env("CHELSEA_BRIDGE_URL"),
-    chelsea_bridge_auth: System.get_env("CHELSEA_BRIDGE_AUTH"),
+    chelsea_bridge_password: System.get_env("CHELSEA_BRIDGE_PASSWORD"),
+    chelsea_bridge_username: System.get_env("CHELSEA_BRIDGE_USERNAME"),
     number_of_http_updaters:
       System.get_env("NUMBER_OF_HTTP_UPDATERS", "4") |> String.to_integer(),
     message_log_zip_url: System.get_env("MESSAGE_LOG_ZIP_URL"),
