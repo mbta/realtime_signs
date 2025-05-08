@@ -19,6 +19,22 @@ defmodule Engine.Alerts do
   @stops_table :alerts_by_stop
   @routes_table :alerts_by_route
 
+  # Platfrom stop IDs that don't receive Alerts
+  @platform_stop_ids MapSet.new([
+                       "Alewife-01",
+                       "Alewife-02",
+                       "Braintree-01",
+                       "Braintree-02",
+                       "Forest Hills-01",
+                       "Forest Hills-02",
+                       "Oak Grove-01",
+                       "Oak Grove-02",
+                       "Government Center-Brattle",
+                       "71199",
+                       "Union Square-01",
+                       "Union Square-02"
+                     ])
+
   def start_link(opts \\ []) do
     name = opts[:gen_server_name] || __MODULE__
     GenServer.start_link(__MODULE__, opts, name: name)
@@ -30,6 +46,7 @@ defmodule Engine.Alerts do
         stop_ids
       ) do
     stop_ids
+    |> Enum.reject(&MapSet.member?(@platform_stop_ids, &1))
     |> Enum.map(&stop_status(tables.stops_table, &1))
     |> Enum.min_by(&Fetcher.get_priority_level/1)
   end
