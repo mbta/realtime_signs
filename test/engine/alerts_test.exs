@@ -35,7 +35,10 @@ defmodule Engine.AlertsTest do
          %{
            :stop_statuses => %{
              "123" => :shuttles_closed_station,
-             "234" => :shuttles_transfer_station
+             "234" => :shuttles_transfer_station,
+             "70036" => :station_closure,
+             "Oak Grove-01" => :none,
+             "Oak Grove-02" => :none
            },
            :route_statuses => %{
              "Red" => :suspension_closed_station,
@@ -130,6 +133,38 @@ defmodule Engine.AlertsTest do
       assert log =~ "could not fetch"
       assert Engine.Alerts.stop_status(stops_ets_table_name, "abc") == :shuttles_closed_station
       assert Engine.Alerts.route_status(routes_ets_table_name, "Red") == :suspension
+    end
+
+    test "filters out platform stop ids when finding min alert for terminal station" do
+      stops_ets_table_name = :engine_alerts_test_happy_path_stops
+      routes_ets_table_name = :engine_alerts_test_happy_path_routes
+
+      ^stops_ets_table_name =
+        :ets.new(stops_ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+
+      ^routes_ets_table_name =
+        :ets.new(routes_ets_table_name, [:set, :protected, :named_table, read_concurrency: true])
+
+      tables = %{
+        stops_table: stops_ets_table_name,
+        routes_table: routes_ets_table_name
+      }
+
+      state = %{
+        tables: tables,
+        fetcher: FakeAlertsFetcherHappy,
+        fetch_ms: 30_000,
+        all_route_ids: []
+      }
+
+      {:noreply, _state} = Engine.Alerts.handle_info(:fetch, state)
+
+      assert Engine.Alerts.stop_status(stops_ets_table_name, "70036") == :station_closure
+      assert Engine.Alerts.stop_status(stops_ets_table_name, "Oak Grove-01") == :none
+      assert Engine.Alerts.stop_status(stops_ets_table_name, "Oak Grove-02") == :none
+
+      assert Engine.Alerts.min_stop_status(tables, ["70036", "Oak Grove-01", "Oak Grove-02"]) ==
+               :station_closure
     end
   end
 end
