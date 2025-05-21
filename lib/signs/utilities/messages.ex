@@ -3,9 +3,11 @@ defmodule Signs.Utilities.Messages do
   Helper functions for deciding which message a sign should
   be displaying
   """
+  alias Signs.Utilities.SourceConfig
 
   @early_am_start ~T[03:29:00]
   @early_am_buffer -40
+  @overnight_buffer -30
 
   @spec get_messages(
           Signs.Realtime.predictions(),
@@ -52,12 +54,19 @@ defmodule Signs.Utilities.Messages do
 
           alert_status = filter_alert_status(alert_status, sign_config)
 
-          prediction_message(predictions, config, sign) ||
-            service_ended_message(service_status, config) ||
-            alert_message(alert_status, sign, config) ||
-            Signs.Utilities.Headways.headway_message(config, current_time) ||
-            early_am_message(current_time, scheduled, config) ||
-            %Message.Empty{}
+          if overnight_period?(current_time, sign.source_config, service_status) do
+            prediction_message(predictions, config, sign) ||
+              service_ended_message(service_status, config) ||
+              early_am_message(current_time, scheduled, config) ||
+              %Message.Empty{}
+          else
+            prediction_message(predictions, config, sign) ||
+              service_ended_message(service_status, config) ||
+              alert_message(alert_status, sign, config) ||
+              Signs.Utilities.Headways.headway_message(config, current_time) ||
+              early_am_message(current_time, scheduled, config) ||
+              %Message.Empty{}
+          end
         end)
     end
     |> transform_messages()
@@ -256,6 +265,42 @@ defmodule Signs.Utilities.Messages do
     if in_early_am?(current_time, scheduled_time) do
       %Message.FirstTrain{destination: config.headway_destination, scheduled: scheduled_time}
     end
+  end
+
+  defp overnight_period?(current_time, config, service_ended) do
+    first_departure =
+      RealtimeSigns.headway_engine().get_first_scheduled_departure(
+        SourceConfig.sign_stop_ids(config)
+      )
+
+    last_scheduled_departure =
+      RealtimeSigns.headway_engine().get_last_scheduled_departure(
+        SourceConfig.sign_stop_ids(config)
+      )
+
+    last_actual_departure =
+      if service_ended do
+        SourceConfig.sign_stop_ids(config)
+        |> Stream.flat_map(&RealtimeSigns.last_trip_engine().get_recent_departures(&1))
+        |> Enum.max_by(fn {_key, datetime} -> datetime end, fn -> nil end)
+        |> case do
+          {_key, dt} -> dt
+          nil -> nil
+        end
+      else
+        nil
+      end
+
+    last_time_to_check =
+      if last_actual_departure != nil &&
+           Timex.after?(last_actual_departure, last_scheduled_departure) do
+        last_actual_departure
+      else
+        last_scheduled_departure
+      end
+
+    Timex.after?(Timex.shift(current_time, minutes: @overnight_buffer), last_time_to_check) ||
+      before_early_am_threshold?(current_time, first_departure)
   end
 
   defp alert_message(alert_status, sign, config) do
