@@ -85,6 +85,13 @@ defmodule Engine.ScheduledHeadways do
     |> min_time()
   end
 
+  @callback get_last_scheduled_departure([binary]) :: nil | DateTime.t()
+  def get_last_scheduled_departure(stop_ids) do
+    get_first_last_departures(stop_ids)
+    |> Enum.map(&elem(&1, 1))
+    |> min_time()
+  end
+
   @doc "Checks if the given time is after the first scheduled stop and before the last.
   A buffer of minutes (positive) is subtracted from the first time. so that headways are
   shown for a short time before the first train."
