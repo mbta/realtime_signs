@@ -1334,7 +1334,7 @@ defmodule Signs.RealtimeTest do
 
       expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
 
-      expect(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, 3, fn _ ->
+      expect(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
         datetime(~T[05:00:00])
       end)
 
@@ -1474,14 +1474,6 @@ defmodule Signs.RealtimeTest do
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
-      end)
-
-      expect(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
-        datetime(~T[04:30:00])
-      end)
-
-      expect(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
-        datetime(~T[05:00:00])
       end)
 
       expect(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->

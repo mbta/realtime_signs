@@ -17,6 +17,8 @@ defmodule Signs.Utilities.Messages do
           Engine.Alerts.Fetcher.stop_status()
           | {Engine.Alerts.Fetcher.stop_status(), Engine.Alerts.Fetcher.stop_status()},
           DateTime.t() | {DateTime.t(), DateTime.t()},
+          DateTime.t() | {DateTime.t(), DateTime.t()},
+          [{String.t(), DateTime.t()}],
           boolean() | {boolean(), boolean()}
         ) :: [Message.t()]
   def get_messages(
@@ -25,7 +27,9 @@ defmodule Signs.Utilities.Messages do
         sign_config,
         current_time,
         alert_status,
-        scheduled,
+        first_scheduled_departures,
+        last_scheduled_departures,
+        recent_departures,
         service_status
       ) do
     cond do
@@ -42,29 +46,46 @@ defmodule Signs.Utilities.Messages do
             Tuple.to_list(sign.source_config),
             Tuple.to_list(predictions),
             Tuple.to_list(alert_status),
-            Tuple.to_list(scheduled),
+            Tuple.to_list(first_scheduled_departures),
+            Tuple.to_list(last_scheduled_departures),
             Tuple.to_list(service_status)
           ])
         else
-          [{sign.source_config, predictions, alert_status, scheduled, service_status}]
+          [
+            {sign.source_config, predictions, alert_status, first_scheduled_departures,
+             last_scheduled_departures, service_status}
+          ]
         end
-        |> Enum.map(fn {config, predictions, alert_status, scheduled, service_status} ->
+        |> Enum.map(fn {config, predictions, alert_status, first_scheduled_departures,
+                        last_scheduled_departures, service_status} ->
           predictions =
-            filter_predictions(predictions, config, sign_config, current_time, scheduled)
+            filter_predictions(
+              predictions,
+              config,
+              sign_config,
+              current_time,
+              first_scheduled_departures
+            )
 
           alert_status = filter_alert_status(alert_status, sign_config)
 
-          if overnight_period?(current_time, sign.source_config, service_status) do
+          if overnight_period?(
+               current_time,
+               first_scheduled_departures,
+               last_scheduled_departures,
+               recent_departures,
+               service_status
+             ) do
             prediction_message(predictions, config, sign) ||
               service_ended_message(service_status, config) ||
-              early_am_message(current_time, scheduled, config) ||
+              early_am_message(current_time, first_scheduled_departures, config) ||
               %Message.Empty{}
           else
             prediction_message(predictions, config, sign) ||
               service_ended_message(service_status, config) ||
               alert_message(alert_status, sign, config) ||
               Signs.Utilities.Headways.headway_message(config, current_time) ||
-              early_am_message(current_time, scheduled, config) ||
+              early_am_message(current_time, first_scheduled_departures, config) ||
               %Message.Empty{}
           end
         end)
@@ -267,32 +288,24 @@ defmodule Signs.Utilities.Messages do
     end
   end
 
-  defp overnight_period?(current_time, config, service_ended) do
-    first_departure =
-      RealtimeSigns.headway_engine().get_first_scheduled_departure(
-        SourceConfig.sign_stop_ids(config)
-      )
-
-    last_scheduled_departure =
-      RealtimeSigns.headway_engine().get_last_scheduled_departure(
-        SourceConfig.sign_stop_ids(config)
-      )
-
+  defp overnight_period?(
+         current_time,
+         first_scheduled_departure,
+         last_scheduled_departure,
+         recent_departures,
+         service_ended
+       ) do
     last_actual_departure =
       if service_ended do
-        SourceConfig.sign_stop_ids(config)
-        |> Stream.flat_map(&RealtimeSigns.last_trip_engine().get_recent_departures(&1))
-        |> Enum.max_by(fn {_key, datetime} -> datetime end, fn -> nil end)
-        |> case do
-          {_key, dt} -> dt
-          nil -> nil
-        end
+        recent_departures
+        |> Enum.max_by(fn {_key, datetime} -> datetime end, fn -> {nil, nil} end)
+        |> elem(1)
       else
         nil
       end
 
     last_time_to_check =
-      if last_actual_departure != nil &&
+      if last_actual_departure &&
            Timex.after?(last_actual_departure, last_scheduled_departure) do
         last_actual_departure
       else
@@ -300,7 +313,7 @@ defmodule Signs.Utilities.Messages do
       end
 
     Timex.after?(Timex.shift(current_time, minutes: @overnight_buffer), last_time_to_check) ||
-      before_early_am_threshold?(current_time, first_departure)
+      before_early_am_threshold?(current_time, first_scheduled_departure)
   end
 
   defp alert_message(alert_status, sign, config) do

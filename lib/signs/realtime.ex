@@ -131,10 +131,21 @@ defmodule Signs.Realtime do
         )
       end)
 
+    last_scheduled_departures =
+      map_source_config(sign.source_config, fn config ->
+        RealtimeSigns.headway_engine().get_last_scheduled_departure(
+          SourceConfig.sign_stop_ids(config)
+        )
+      end)
+
     prev_predictions_lookup =
       for prediction <- sign.prev_predictions, into: %{} do
         {prediction_key(prediction), prediction}
       end
+
+    recent_departures =
+      SourceConfig.sign_stop_ids(sign.source_config)
+      |> Enum.flat_map(&RealtimeSigns.last_trip_engine().get_recent_departures(&1))
 
     {predictions, all_predictions} =
       case sign.source_config do
@@ -162,6 +173,8 @@ defmodule Signs.Realtime do
         current_time,
         alert_status,
         first_scheduled_departures,
+        last_scheduled_departures,
+        recent_departures,
         service_end_statuses_per_source
       )
 
