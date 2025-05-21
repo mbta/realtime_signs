@@ -3,7 +3,6 @@ defmodule Signs.Utilities.Messages do
   Helper functions for deciding which message a sign should
   be displaying
   """
-  alias Signs.Utilities.SourceConfig
 
   @early_am_start ~T[03:29:00]
   @early_am_buffer -40
