@@ -38,7 +38,7 @@ defmodule RealtimeSigns.Mixfile do
       {:ex_aws_s3, "~> 2.0"},
       {:ex_aws, "~> 2.0"},
       {:lcov_ex, "~> 0.2", only: [:dev, :test], runtime: false},
-      {:hackney, "== 1.23.0"},
+      {:hackney, "== 1.24.0"},
       {:gen_stage, "~> 1.2"},
       {:httpoison, "~> 1.0"},
       {:jason, "~> 1.4.0"},
