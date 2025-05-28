@@ -17,7 +17,7 @@ defmodule Signs.Utilities.Messages do
           | {Engine.Alerts.Fetcher.stop_status(), Engine.Alerts.Fetcher.stop_status()},
           DateTime.t() | {DateTime.t(), DateTime.t()},
           DateTime.t() | {DateTime.t(), DateTime.t()},
-          [{String.t(), DateTime.t()}],
+          DateTime.t() | {DateTime.t(), DateTime.t()},
           boolean() | {boolean(), boolean()}
         ) :: [Message.t()]
   def get_messages(
@@ -47,16 +47,17 @@ defmodule Signs.Utilities.Messages do
             Tuple.to_list(alert_status),
             Tuple.to_list(first_scheduled_departures),
             Tuple.to_list(last_scheduled_departures),
+            Tuple.to_list(recent_departures),
             Tuple.to_list(service_status)
           ])
         else
           [
             {sign.source_config, predictions, alert_status, first_scheduled_departures,
-             last_scheduled_departures, service_status}
+             last_scheduled_departures, recent_departures, service_status}
           ]
         end
         |> Enum.map(fn {config, predictions, alert_status, first_scheduled_departures,
-                        last_scheduled_departures, service_status} ->
+                        last_scheduled_departures, recent_departures, service_status} ->
           predictions =
             filter_predictions(
               predictions,
@@ -77,6 +78,7 @@ defmodule Signs.Utilities.Messages do
              ) do
             prediction_message(predictions, config, sign) ||
               service_ended_message(service_status, config) ||
+              Signs.Utilities.Headways.headway_message(config, current_time) ||
               early_am_message(current_time, first_scheduled_departures, config) ||
               %Message.Empty{}
           else
@@ -297,10 +299,17 @@ defmodule Signs.Utilities.Messages do
     last_actual_departure =
       if service_ended do
         recent_departures
-        |> Enum.max_by(fn {_key, datetime} -> datetime end, fn -> {nil, nil} end)
-        |> elem(1)
-      else
-        nil
+        |> Map.values()
+        |> case do
+          [] ->
+            nil
+
+          [only_departure] ->
+            only_departure
+
+          [first_departure, second_departure] ->
+            if first_departure < second_departure, do: second_departure, else: first_departure
+        end
       end
 
     last_time_to_check =

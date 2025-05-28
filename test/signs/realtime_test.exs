@@ -1231,7 +1231,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Southbound train", "due 5:00"})
-      expect(Engine.ScheduledHeadways.Mock, :display_headways?, 0, fn _, _, _ -> false end)
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
@@ -1309,7 +1309,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
-      expect(Engine.ScheduledHeadways.Mock, :display_headways?, 0, fn _, _, _ -> false end)
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, 2, fn _, _, _ -> false end)
 
       expect_messages(
         {[{"Northbound train", 6}, {"Southbound train", 6}], [{"due 5:00", 6}, {"due 5:00", 6}]}
@@ -2176,21 +2176,8 @@ defmodule Signs.RealtimeTest do
 
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
 
-      expect_messages({"", ""})
+      expect_messages({"Southbound trains", "Every 11 to 13 min"})
       expect(PaEss.Updater.Mock, :play_message, 0, fn _, _, _, _, _ -> :ok end)
-
-      Signs.Realtime.handle_info(:run_loop, %{
-        @sign
-        | current_time_fn: fn -> datetime(~D[2023-01-02], ~T[03:00:00]) end
-      })
-    end
-
-    test "does not show headways when in the overnight period" do
-      expect(Engine.Config.Mock, :headway_config, 0, fn _, _ ->
-        %{@headway_config | range_high: 14}
-      end)
-
-      expect_messages({"", ""})
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
