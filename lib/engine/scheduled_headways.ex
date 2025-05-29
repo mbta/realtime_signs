@@ -89,7 +89,7 @@ defmodule Engine.ScheduledHeadways do
   def get_last_scheduled_departure(stop_ids) do
     get_first_last_departures(stop_ids)
     |> Enum.map(&elem(&1, 1))
-    |> min_time()
+    |> max_time()
   end
 
   @doc "Checks if the given time is after the first scheduled stop and before the last.
@@ -135,6 +135,16 @@ defmodule Engine.ScheduledHeadways do
     datetimes
     |> Enum.filter(& &1)
     |> Enum.min_by(&DateTime.to_unix/1, fn -> nil end)
+  end
+
+  @spec max_time([DateTime.t() | nil]) :: DateTime.t() | nil
+  defp max_time([]), do: nil
+  defp max_time([%DateTime{} = dt]), do: dt
+
+  defp max_time(datetimes) do
+    datetimes
+    |> Enum.filter(& &1)
+    |> Enum.max_by(&DateTime.to_unix/1, fn -> nil end)
   end
 
   @impl true
