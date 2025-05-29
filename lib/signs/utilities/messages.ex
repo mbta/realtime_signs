@@ -296,21 +296,7 @@ defmodule Signs.Utilities.Messages do
          recent_departures,
          service_ended
        ) do
-    last_actual_departure =
-      if service_ended do
-        recent_departures
-        |> Map.values()
-        |> case do
-          [] ->
-            nil
-
-          [only_departure] ->
-            only_departure
-
-          [first_departure, second_departure] ->
-            if first_departure < second_departure, do: second_departure, else: first_departure
-        end
-      end
+    last_actual_departure = if service_ended, do: recent_departures
 
     last_time_to_check =
       if last_actual_departure &&
