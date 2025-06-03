@@ -85,7 +85,7 @@ if config_env() == :prod and splunk_token != "" do
 
   config :logger, :splunk,
     connector: Logger.Backend.Splunk.Output.Http,
-    host: 'https://http-inputs-mbta.splunkcloud.com/services/collector/event',
+    host: "https://http-inputs-mbta.splunkcloud.com/services/collector/event",
     token: splunk_token,
     format: "$dateT$time [$level] node=$node $metadata$message\n",
     metadata: [:request_id],

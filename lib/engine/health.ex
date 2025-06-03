@@ -7,7 +7,7 @@ defmodule Engine.Health do
   @type t :: %__MODULE__{
           failed_requests: integer(),
           network_check_mod: module(),
-          restart_fn: (() -> :ok)
+          restart_fn: (-> :ok)
         }
 
   @hackney_pools [:default, :arinc_pool]
@@ -53,7 +53,7 @@ defmodule Engine.Health do
     |> Stream.map(&process_metrics/1)
     |> Enum.each(fn {name, supervisor, metrics} ->
       Logger.info([
-        'realtime_signs_process_health name="#{inspect(name)}" supervisor="#{inspect(supervisor)}" ',
+        "realtime_signs_process_health name=#{inspect(name)} supervisor=#{inspect(supervisor)} ",
         metrics
       ])
     end)

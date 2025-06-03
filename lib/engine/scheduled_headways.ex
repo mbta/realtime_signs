@@ -16,7 +16,7 @@ defmodule Engine.ScheduledHeadways do
           fetch_chunk_size: integer(),
           headway_calc_ms: integer(),
           stop_ids: [String.t()],
-          time_fetcher: (() -> DateTime.t())
+          time_fetcher: (-> DateTime.t())
         }
 
   def start_link(opts \\ []) do

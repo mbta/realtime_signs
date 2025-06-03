@@ -7,7 +7,7 @@ defmodule RealtimeSigns.Mixfile do
     [
       app: :realtime_signs,
       version: @version,
-      elixir: "~> 1.14",
+      elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: LcovEx],
@@ -22,10 +22,16 @@ defmodule RealtimeSigns.Mixfile do
 
   # Run "mix help compile.app" to learn about applications.
   def application do
+    apps = [:logger]
+
+    apps =
+      case Mix.env() do
+        :test -> [:inets | apps]
+        _ -> apps
+      end
+
     [
-      extra_applications: [
-        :logger
-      ],
+      extra_applications: apps,
       mod: {RealtimeSigns, []}
     ]
   end

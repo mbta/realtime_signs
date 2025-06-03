@@ -14,7 +14,7 @@ defmodule Engine.Config do
           table_name_headways: term(),
           table_name_chelsea_bridge: term(),
           current_version: version_id,
-          time_fetcher: (() -> DateTime.t())
+          time_fetcher: (-> DateTime.t())
         }
 
   @type sign_config ::

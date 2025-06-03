@@ -1,4 +1,6 @@
 defmodule Test.Support.Helpers do
+  require :httpd
+
   defmacro reassign_env(var) do
     quote do
       old_value = Application.get_env(:realtime_signs, unquote(var))
@@ -25,9 +27,9 @@ defmodule Test.Support.Helpers do
   def start_server(module) do
     {:ok, pid} =
       :inets.start(:httpd,
-        server_name: 'TmpServer',
-        server_root: '/tmp',
-        document_root: '/tmp',
+        server_name: ~c"TmpServer",
+        server_root: ~c"/tmp",
+        document_root: ~c"/tmp",
         port: 0,
         modules: [module]
       )
