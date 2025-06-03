@@ -87,8 +87,8 @@ defmodule Engine.HealthTest do
 
     assert log =~ ~r/
       realtime_signs_process_health
-      \ name="Engine.Config"
-      \ supervisor="RealtimeSigns"
+      \ name=Engine.Config
+      \ supervisor=RealtimeSigns
       \ memory=\d+
       \ binary_memory=\d+
       \ heap_size=\d+

@@ -1,4 +1,3 @@
-Application.ensure_all_started(:inets)
 ExUnit.start(capture_log: true)
 
 Mox.defmock(Engine.NetworkCheck.Mock, for: Engine.NetworkCheck)

@@ -1,9 +1,9 @@
-ARG ELIXIR_VERSION=1.14.0
-ARG ERLANG_VERSION=25.0.4
-ARG ALPINE_VERSION=3.18.0
+ARG ALPINE_VERSION=3.21.3
+ARG ELIXIR_VERSION=1.17.3
+ARG ERLANG_VERSION=27.3.4
 # See also: ERTS_VERSION in the from image below
 
-FROM hexpm/elixir:${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION} as build
+FROM hexpm/elixir:${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION} AS build
 
 ENV MIX_ENV=prod
 
@@ -29,11 +29,12 @@ COPY config/runtime.exs config/runtime.exs
 RUN mix release linux
 
 # The one the elixir image was built with
-FROM alpine:${ALPINE_VERSION}
+FROM hexpm/erlang:${ERLANG_VERSION}-alpine-${ALPINE_VERSION}
 
-RUN apk add --no-cache libssl1.1 dumb-init libstdc++ libgcc ncurses-libs && \
+RUN apk add --no-cache dumb-init && \
     mkdir /work /realtime_signs && \
-    adduser -D realtime_signs && chown realtime_signs /work
+    adduser -D realtime_signs && \
+    chown realtime_signs /work
 
 COPY --from=build /realtime_signs/_build/prod/rel/linux /realtime_signs
 

@@ -3,15 +3,15 @@ defmodule Engine.NetworkCheck.HackneyTest do
   alias Test.Support.Helpers
 
   defmodule MockBadNetwork do
-    def unquote(:do)(_data), do: {:proceed, [response: {500, 'Not OK'}]}
+    def unquote(:do)(_data), do: {:proceed, [response: {500, ~c"Not OK"}]}
   end
 
   defmodule MockGoodNetwork200 do
-    def unquote(:do)(_data), do: {:proceed, [response: {200, 'OK'}]}
+    def unquote(:do)(_data), do: {:proceed, [response: {200, ~c"OK"}]}
   end
 
   defmodule MockGoodNetwork204 do
-    def unquote(:do)(_data), do: {:proceed, [response: {204, 'OK'}]}
+    def unquote(:do)(_data), do: {:proceed, [response: {204, ~c"OK"}]}
   end
 
   describe "check/0" do
