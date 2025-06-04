@@ -824,16 +824,6 @@ defmodule PaEss.Utilities do
   def audio_take({:route, "245"}), do: "628"
   def audio_take({:route, "716"}), do: "888"
 
-  def audio_take({:boarding, "Green-B", "70197", :boston_college}), do: "813"
-  def audio_take({:boarding, "Green-B", "70197", :kenmore}), do: "820"
-  def audio_take({:boarding, "Green-C", "70196", :cleveland_circle}), do: "814"
-  def audio_take({:boarding, "Green-C", "70196", :kenmore}), do: "823"
-  def audio_take({:boarding, "Green-D", "70199", :reservoir}), do: "815"
-  def audio_take({:boarding, "Green-D", "70199", :riverside}), do: "818"
-  def audio_take({:boarding, "Green-D", "70199", :kenmore}), do: "822"
-  def audio_take({:boarding, "Green-E", "70198", :heath_street}), do: "816"
-  def audio_take({:boarding, "Green-E", "70198", :kenmore}), do: "821"
-
   def audio_take({:crowding, {:front, _status}}), do: "870"
   def audio_take({:crowding, {:back, _status}}), do: "871"
   def audio_take({:crowding, {:middle, _status}}), do: "872"
