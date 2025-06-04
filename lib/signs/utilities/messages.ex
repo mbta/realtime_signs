@@ -28,7 +28,7 @@ defmodule Signs.Utilities.Messages do
         alert_status,
         first_scheduled_departures,
         last_scheduled_departures,
-        recent_departures,
+        most_recent_departure,
         service_status
       ) do
     cond do
@@ -47,17 +47,17 @@ defmodule Signs.Utilities.Messages do
             Tuple.to_list(alert_status),
             Tuple.to_list(first_scheduled_departures),
             Tuple.to_list(last_scheduled_departures),
-            Tuple.to_list(recent_departures),
+            Tuple.to_list(most_recent_departure),
             Tuple.to_list(service_status)
           ])
         else
           [
             {sign.source_config, predictions, alert_status, first_scheduled_departures,
-             last_scheduled_departures, recent_departures, service_status}
+             last_scheduled_departures, most_recent_departure, service_status}
           ]
         end
         |> Enum.map(fn {config, predictions, alert_status, first_scheduled_departures,
-                        last_scheduled_departures, recent_departures, service_status} ->
+                        last_scheduled_departures, most_recent_departure, service_status} ->
           predictions =
             filter_predictions(
               predictions,
@@ -73,7 +73,7 @@ defmodule Signs.Utilities.Messages do
                current_time,
                first_scheduled_departures,
                last_scheduled_departures,
-               recent_departures,
+               most_recent_departure,
                service_status
              ) do
             prediction_message(predictions, config, sign) ||
@@ -293,10 +293,10 @@ defmodule Signs.Utilities.Messages do
          current_time,
          first_scheduled_departure,
          last_scheduled_departure,
-         recent_departures,
+         most_recent_departure,
          service_ended
        ) do
-    last_actual_departure = if service_ended, do: recent_departures
+    last_actual_departure = if service_ended, do: most_recent_departure
 
     last_time_to_check =
       if last_actual_departure &&
