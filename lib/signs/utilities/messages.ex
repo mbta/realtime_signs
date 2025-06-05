@@ -1,4 +1,6 @@
 defmodule Signs.Utilities.Messages do
+  require Logger
+
   @moduledoc """
   Helper functions for deciding which message a sign should
   be displaying
@@ -76,6 +78,10 @@ defmodule Signs.Utilities.Messages do
                most_recent_departure,
                service_status
              ) do
+            Logger.info("Within the overnight period")
+            Logger.info(last_scheduled_departures)
+            Logger.info(most_recent_departure)
+
             prediction_message(predictions, config, sign) ||
               service_ended_message(service_status, config) ||
               Signs.Utilities.Headways.headway_message(config, current_time) ||
