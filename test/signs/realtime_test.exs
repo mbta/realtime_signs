@@ -162,6 +162,10 @@ defmodule Signs.RealtimeTest do
         datetime(~T[05:00:00])
       end)
 
+      stub(Engine.ScheduledHeadways.Mock, :get_last_scheduled_departure, fn _ ->
+        datetime(~D[2023-01-02], ~T[02:00:00])
+      end)
+
       :ok
     end
 
@@ -1893,6 +1897,10 @@ defmodule Signs.RealtimeTest do
         datetime(~T[05:00:00])
       end)
 
+      stub(Engine.ScheduledHeadways.Mock, :get_last_scheduled_departure, fn _ ->
+        datetime(~D[2023-01-02], ~T[02:00:00])
+      end)
+
       :ok
     end
 
@@ -1929,6 +1937,10 @@ defmodule Signs.RealtimeTest do
 
       stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
         datetime(~T[05:00:00])
+      end)
+
+      stub(Engine.ScheduledHeadways.Mock, :get_last_scheduled_departure, fn _ ->
+        datetime(~T[02:00:00])
       end)
 
       :ok
@@ -1997,6 +2009,14 @@ defmodule Signs.RealtimeTest do
         %{"b" => ~U[2023-01-01 00:00:00.000Z]}
       end)
 
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "1" ->
+        %{"a" => ~U[2023-01-01 00:00:00.000Z]}
+      end)
+
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "2" ->
+        %{"b" => ~U[2023-01-01 00:00:00.000Z]}
+      end)
+
       expect(Engine.LastTrip.Mock, :is_last_trip?, fn "a" -> false end)
       expect(Engine.LastTrip.Mock, :is_last_trip?, fn "b" -> true end)
 
@@ -2041,6 +2061,14 @@ defmodule Signs.RealtimeTest do
         %{"b" => ~U[2023-01-01 00:00:00.000Z]}
       end)
 
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "1" ->
+        %{"a" => ~U[2023-01-01 00:00:00.000Z]}
+      end)
+
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn "70086" ->
+        %{"b" => ~U[2023-01-01 00:00:00.000Z]}
+      end)
+
       expect(Engine.LastTrip.Mock, :is_last_trip?, fn "a" -> true end)
       expect(Engine.LastTrip.Mock, :is_last_trip?, fn "b" -> false end)
 
@@ -2075,7 +2103,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "Red line trunk service ends after two last trips" do
-      expect(Engine.LastTrip.Mock, :get_recent_departures, fn _ ->
+      expect(Engine.LastTrip.Mock, :get_recent_departures, 2, fn _ ->
         %{"a" => ~U[2023-01-01 00:00:00.000Z], "b" => ~U[2023-01-01 00:00:00.000Z]}
       end)
 
@@ -2100,7 +2128,7 @@ defmodule Signs.RealtimeTest do
       stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ -> %{} end)
 
       stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
-        datetime(~T[05:00:00])
+        DateTime.new!(~D[2022-12-31], ~T[05:00:00], "Etc/UTC")
       end)
 
       :ok
@@ -2143,6 +2171,56 @@ defmodule Signs.RealtimeTest do
 
       assert {:reply, {_, false}, _} =
                Signs.Realtime.handle_call({:play_pa_message, pa_message}, nil, sign)
+    end
+  end
+
+  describe "Overnight Period" do
+    setup do
+      stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
+      stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
+      stub(Engine.Alerts.Mock, :min_stop_status, fn _ -> :none end)
+      stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
+      stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
+      stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> false end)
+      stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ -> %{} end)
+
+      stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
+        datetime(~T[05:00:00])
+      end)
+
+      stub(Engine.ScheduledHeadways.Mock, :get_last_scheduled_departure, fn _ ->
+        datetime(~D[2023-01-02], ~T[02:00:00])
+      end)
+
+      :ok
+    end
+
+    test "does not play alerts when in the overnight period" do
+      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
+
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
+
+      expect_messages({"Southbound trains", "Every 11 to 13 min"})
+      expect(PaEss.Updater.Mock, :play_message, 0, fn _, _, _, _, _ -> :ok end)
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | current_time_fn: fn -> datetime(~D[2023-01-02], ~T[03:00:00]) end
+      })
+    end
+
+    test "still shows predictions if they exist during overnight period" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 180, destination: :ashmont)]
+      end)
+
+      expect_messages({"Ashmont      3 min", ""})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | current_time_fn: fn -> datetime(~D[2023-01-02], ~T[03:00:00]) end
+      })
     end
   end
 
@@ -2254,6 +2332,7 @@ defmodule Signs.RealtimeTest do
   end
 
   defp datetime(time), do: DateTime.new!(~D[2023-01-01], time, "America/New_York")
+  defp datetime(date, time), do: DateTime.new!(date, time, "America/New_York")
 
   defp spaced(list), do: PaEss.Utilities.pad_takes(list)
 
