@@ -15,16 +15,29 @@ defmodule Content.Audio.TrackChange do
         }
 
   @spec park_track_change?(Predictions.Prediction.t()) :: boolean()
-  def park_track_change?(%{route_id: "Green-B", stop_id: "70197"}), do: true
-  def park_track_change?(%{route_id: "Green-C", stop_id: "70196"}), do: true
-  def park_track_change?(%{route_id: "Green-D", stop_id: "70199"}), do: true
-  def park_track_change?(%{route_id: "Green-E", stop_id: "70198"}), do: true
+  def park_track_change?(%{route_id: "Green-B", stop_id: "70198"}), do: true
+  def park_track_change?(%{route_id: "Green-C", stop_id: "70199"}), do: true
+  def park_track_change?(%{route_id: "Green-D", stop_id: "70196"}), do: true
+  def park_track_change?(%{route_id: "Green-E", stop_id: "70197"}), do: true
   def park_track_change?(_prediction), do: false
 
   defimpl Content.Audio do
     def to_params(%{route_id: route_id, berth: berth, destination: destination}) do
+      platform =
+        case berth do
+          "70196" -> :b
+          "70197" -> :c
+          "70198" -> :d
+          "70199" -> :e
+        end
+
       PaEss.Utilities.audio_message(
-        [:track_change, {:boarding, route_id, berth, destination}],
+        [
+          :track_change,
+          :the_next
+        ] ++
+          PaEss.Utilities.train_description_tokens(destination, route_id) ++
+          [:is_now_boarding, :on_the, platform, :platform],
         :audio_visual
       )
     end

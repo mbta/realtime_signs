@@ -1,175 +1,284 @@
 defmodule Content.Audio.TrackChangeTest do
   use ExUnit.Case, async: true
-  import ExUnit.CaptureLog
 
   describe "to_params/1" do
-    test "correctly changes berths from b to c" do
+    test "correctly changes berths from b to d" do
       audio = %Content.Audio.TrackChange{
         destination: :boston_college,
         route_id: "Green-B",
-        berth: "70197"
+        berth: "70198"
       }
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"105",
+                {"119",
                  [
                    "540",
                    "21000",
-                   "813"
+                   "501",
+                   "21000",
+                   "536",
+                   "21000",
+                   "507",
+                   "21000",
+                   "4202",
+                   "21000",
+                   "544",
+                   "21000",
+                   "851",
+                   "21000",
+                   "538",
+                   "21000",
+                   "529"
                  ], :audio_visual}}
     end
 
-    test "correctly changes berths from c to b" do
+    test "correctly changes berths from c to e" do
       audio = %Content.Audio.TrackChange{
         destination: :cleveland_circle,
         route_id: "Green-C",
+        berth: "70199"
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"119",
+                 [
+                   "540",
+                   "21000",
+                   "501",
+                   "21000",
+                   "537",
+                   "21000",
+                   "507",
+                   "21000",
+                   "4203",
+                   "21000",
+                   "544",
+                   "21000",
+                   "851",
+                   "21000",
+                   "539",
+                   "21000",
+                   "529"
+                 ], :audio_visual}}
+    end
+
+    test "correctly changes berths from d to b (reservoir)" do
+      audio = %Content.Audio.TrackChange{
+        destination: :reservoir,
+        route_id: "Green-D",
         berth: "70196"
       }
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"105",
+                {"119",
                  [
                    "540",
                    "21000",
-                   "814"
-                 ], :audio_visual}}
-    end
-
-    test "correctly changes berths from d to e (reservoir)" do
-      audio = %Content.Audio.TrackChange{
-        destination: :reservoir,
-        route_id: "Green-D",
-        berth: "70199"
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:canned,
-                {"105",
-                 [
-                   "540",
+                   "501",
                    "21000",
-                   "815"
+                   "538",
+                   "21000",
+                   "507",
+                   "21000",
+                   "4076",
+                   "21000",
+                   "544",
+                   "21000",
+                   "851",
+                   "21000",
+                   "536",
+                   "21000",
+                   "529"
                  ], :audio_visual}}
     end
 
-    test "correctly changes berths from d to e (riverside)" do
+    test "correctly changes berths from d to b (riverside)" do
       audio = %Content.Audio.TrackChange{
         destination: :riverside,
         route_id: "Green-D",
-        berth: "70199"
+        berth: "70196"
       }
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"105",
+                {"119",
                  [
                    "540",
                    "21000",
-                   "818"
+                   "501",
+                   "21000",
+                   "538",
+                   "21000",
+                   "507",
+                   "21000",
+                   "4084",
+                   "21000",
+                   "544",
+                   "21000",
+                   "851",
+                   "21000",
+                   "536",
+                   "21000",
+                   "529"
                  ], :audio_visual}}
     end
 
-    test "correctly changes berths from e to d" do
+    test "correctly changes berths from e to c" do
       audio = %Content.Audio.TrackChange{
         destination: :heath_street,
         route_id: "Green-E",
-        berth: "70198"
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:canned,
-                {"105",
-                 [
-                   "540",
-                   "21000",
-                   "816"
-                 ], :audio_visual}}
-    end
-
-    test "correctly announces Kenmore B track changes to the C platform" do
-      audio = %Content.Audio.TrackChange{
-        destination: :kenmore,
-        route_id: "Green-B",
         berth: "70197"
       }
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"105",
+                {"119",
                  [
                    "540",
                    "21000",
-                   "820"
-                 ], :audio_visual}}
-    end
-
-    test "correctly announces Kenmore C track changes to the B platform" do
-      audio = %Content.Audio.TrackChange{
-        destination: :kenmore,
-        route_id: "Green-C",
-        berth: "70196"
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:canned,
-                {"105",
-                 [
-                   "540",
+                   "501",
                    "21000",
-                   "823"
-                 ], :audio_visual}}
-    end
-
-    test "correctly announces Kenmore D track changes to the E platform" do
-      audio = %Content.Audio.TrackChange{
-        destination: :kenmore,
-        route_id: "Green-D",
-        berth: "70199"
-      }
-
-      assert Content.Audio.to_params(audio) ==
-               {:canned,
-                {"105",
-                 [
-                   "540",
+                   "539",
                    "21000",
-                   "822"
+                   "507",
+                   "21000",
+                   "4204",
+                   "21000",
+                   "544",
+                   "21000",
+                   "851",
+                   "21000",
+                   "537",
+                   "21000",
+                   "529"
                  ], :audio_visual}}
     end
 
-    test "correctly announces Kenmore E track changes to the D platform" do
+    test "correctly announces Kenmore B track changes to the D platform" do
       audio = %Content.Audio.TrackChange{
         destination: :kenmore,
-        route_id: "Green-E",
+        route_id: "Green-B",
         berth: "70198"
       }
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
-                {"105",
+                {"119",
                  [
                    "540",
                    "21000",
-                   "821"
+                   "501",
+                   "21000",
+                   "536",
+                   "21000",
+                   "507",
+                   "21000",
+                   "4070",
+                   "21000",
+                   "544",
+                   "21000",
+                   "851",
+                   "21000",
+                   "538",
+                   "21000",
+                   "529"
                  ], :audio_visual}}
     end
 
-    test "Handles unknown destination gracefully" do
+    test "correctly announces Kenmore C track changes to the E platform" do
       audio = %Content.Audio.TrackChange{
-        destination: :unknown,
-        route_id: "Green-E",
-        berth: "00000"
+        destination: :kenmore,
+        route_id: "Green-C",
+        berth: "70199"
       }
 
-      log =
-        capture_log([level: :error], fn ->
-          assert Content.Audio.to_params(audio) ==
-                   {:canned, {"105", ["540", "21000", "21000"], :audio_visual}}
-        end)
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"119",
+                 [
+                   "540",
+                   "21000",
+                   "501",
+                   "21000",
+                   "537",
+                   "21000",
+                   "507",
+                   "21000",
+                   "4070",
+                   "21000",
+                   "544",
+                   "21000",
+                   "851",
+                   "21000",
+                   "539",
+                   "21000",
+                   "529"
+                 ], :audio_visual}}
+    end
 
-      assert log =~ "No audio for"
+    test "correctly announces Kenmore D track changes to the B platform" do
+      audio = %Content.Audio.TrackChange{
+        destination: :kenmore,
+        route_id: "Green-D",
+        berth: "70196"
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"119",
+                 [
+                   "540",
+                   "21000",
+                   "501",
+                   "21000",
+                   "538",
+                   "21000",
+                   "507",
+                   "21000",
+                   "4070",
+                   "21000",
+                   "544",
+                   "21000",
+                   "851",
+                   "21000",
+                   "536",
+                   "21000",
+                   "529"
+                 ], :audio_visual}}
+    end
+
+    test "correctly announces Kenmore E track changes to the C platform" do
+      audio = %Content.Audio.TrackChange{
+        destination: :kenmore,
+        route_id: "Green-E",
+        berth: "70197"
+      }
+
+      assert Content.Audio.to_params(audio) ==
+               {:canned,
+                {"119",
+                 [
+                   "540",
+                   "21000",
+                   "501",
+                   "21000",
+                   "539",
+                   "21000",
+                   "507",
+                   "21000",
+                   "4070",
+                   "21000",
+                   "544",
+                   "21000",
+                   "851",
+                   "21000",
+                   "537",
+                   "21000",
+                   "529"
+                 ], :audio_visual}}
     end
   end
 end
