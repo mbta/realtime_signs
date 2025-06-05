@@ -1841,6 +1841,31 @@ defmodule Signs.RealtimeTest do
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
     end
+
+    test "When train is stopped at a non-terminal and we are very close to the departure time, show BRD regardless of stopped_at_predicted_stop" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(
+            destination: :forest_hills,
+            seconds_until_arrival: -1,
+            seconds_until_departure: 9,
+            trip_id: "3",
+            stopped_at_predicted_stop?: false
+          )
+        ]
+      end)
+
+      expect_messages({"Frst Hills     BRD", ""})
+
+      expect_audios(
+        [
+          {:canned, {"109", spaced(["501", "4043", "864", "544"]), :audio}}
+        ],
+        [{"The next Forest Hills train is now boarding.", nil}]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
+    end
   end
 
   describe "decrement_ticks/1" do

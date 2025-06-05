@@ -489,11 +489,26 @@ defmodule PaEss.Utilities do
     min = round(sec / 60)
 
     cond do
-      prediction.stopped_at_predicted_stop? and (!terminal? or sec <= 60) -> {:boarding, false}
-      !terminal? and sec <= 30 -> {:arriving, false}
-      min > 60 -> {60, true}
-      prediction.type == :reverse and min > 20 -> {div(min, 10) * 10, true}
-      true -> {max(min, 1), false}
+      # The condition on departure seconds < 10 is a temporary stop-gap for an issue where
+      # when a train's location status changes to `IN_TRANSIT_TO` but the predictions feed
+      # hasn't updated, we may briefly flip back to showing ARR. The stop-gap is intended
+      # to make sure we keep showing BRD whenever we are very close to the departure time.
+      # Once we have a definitive way of knowing when a train is boarding, we can remove this.
+      (prediction.stopped_at_predicted_stop? or prediction.seconds_until_departure < 10) and
+          (!terminal? or sec <= 60) ->
+        {:boarding, false}
+
+      !terminal? and sec <= 30 ->
+        {:arriving, false}
+
+      min > 60 ->
+        {60, true}
+
+      prediction.type == :reverse and min > 20 ->
+        {div(min, 10) * 10, true}
+
+      true ->
+        {max(min, 1), false}
     end
   end
 
