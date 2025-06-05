@@ -23,8 +23,6 @@ defmodule Content.Audio.TrackChange do
 
   defimpl Content.Audio do
     def to_params(%{route_id: route_id, berth: berth, destination: destination}) do
-      branch = Content.Utilities.route_branch_letter(route_id)
-
       platform =
         case berth do
           "70196" -> :b
