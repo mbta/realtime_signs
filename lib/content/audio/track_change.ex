@@ -36,15 +36,10 @@ defmodule Content.Audio.TrackChange do
       PaEss.Utilities.audio_message(
         [
           :track_change,
-          :the_next,
-          branch,
-          :train_to,
-          destination,
-          :is_now_boarding,
-          :on_the,
-          platform,
-          :platform
-        ],
+          :the_next
+        ] ++
+          PaEss.Utilities.train_description_tokens(destination, route_id) ++
+          [:is_now_boarding, :on_the, platform, :platform],
         :audio_visual
       )
     end
