@@ -8774,6 +8774,20 @@
     "max_minutes": 60
   },
   {
+    "id": "Silver_Line.Chelsea_OB",
+    "pa_ess_loc": "SCHS",
+    "scu_id": "SCHSSCU001",
+    "read_loop_interval": 360,
+    "read_loop_offset": 120,
+    "text_zone": "e",
+    "audio_zones": [
+      "e"
+    ],
+    "type": "bus",
+    "configs": [],
+    "max_minutes": 60
+  },
+  {
     "id": "bus.Nubian_Platform_A",
     "pa_ess_loc": "SDUD",
     "scu_id": "SDUDSCU001",
