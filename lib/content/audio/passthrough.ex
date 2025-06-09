@@ -32,9 +32,8 @@ defmodule Content.Audio.Passthrough do
       {text, PaEss.Utilities.paginate_text(text)}
     end
 
-    def to_logs(%Content.Audio.Passthrough{trip_id: trip_id}) do
-      # trip_id for debugging RTR/Contentrate differences
-      [trip_id: trip_id]
+    def to_logs(%Content.Audio.Passthrough{}) do
+      []
     end
 
     defp tts_text(%Content.Audio.Passthrough{} = audio) do
