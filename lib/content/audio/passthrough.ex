@@ -15,14 +15,11 @@ defmodule Content.Audio.Passthrough do
         }
 
   defimpl Content.Audio do
-    def to_params(%Content.Audio.Passthrough{route_id: route_id} = audio)
-        when route_id in ["Mattapan", "Green-B", "Green-C", "Green-D", "Green-E"] do
-      handle_unknown_destination(audio)
-    end
+    def to_params(%Content.Audio.Passthrough{} = audio) do
+      train = PaEss.Utilities.train_description_tokens(audio.destination, audio.route_id, true)
 
-    def to_params(audio) do
       PaEss.Utilities.audio_message(
-        [{:passthrough, audio.destination, audio.route_id}],
+        [:the_next] ++ train ++ [:does_not_take_customers, :., :stand_back_message],
         :audio_visual
       )
     end
@@ -39,15 +36,6 @@ defmodule Content.Audio.Passthrough do
     defp tts_text(%Content.Audio.Passthrough{} = audio) do
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
       "The next #{train} does not take customers. Please stand back from the platform edge."
-    end
-
-    @spec handle_unknown_destination(Content.Audio.Passthrough.t()) :: nil
-    defp handle_unknown_destination(audio) do
-      Logger.info(
-        "unknown_passthrough_audio: destination=#{audio.destination} route_id=#{audio.route_id}"
-      )
-
-      nil
     end
   end
 end

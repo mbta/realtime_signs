@@ -192,19 +192,25 @@ defmodule Signs.RealtimeTest do
     test "announces train passing through station" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
-          prediction(destination: :braintree, seconds_until_passthrough: 30, trip_id: "123"),
-          prediction(destination: :braintree, seconds_until_passthrough: 30, trip_id: "124")
+          prediction(destination: :riverside, seconds_until_passthrough: 30, trip_id: "123"),
+          prediction(destination: :riverside, seconds_until_passthrough: 30, trip_id: "124")
         ]
       end)
 
-      expect_audios([{:canned, {"103", ["1010"], :audio_visual}}], [
-        {"The next Southbound train does not take customers. Please stand back from the platform edge.",
-         [
-           {"The next Southbound", "train does not take", 3},
-           {"customers. Please stand", "back from the platform", 3},
-           {"edge.", "", 3}
-         ]}
-      ])
+      expect_audios(
+        [
+          {:canned,
+           {"114", spaced(["501", "905", "919", "918", "929", "21014", "925"]), :audio_visual}}
+        ],
+        [
+          {"The next D train to Riverside does not take customers. Please stand back from the platform edge.",
+           [
+             {"The next D train to", "Riverside does not take", 3},
+             {"customers. Please stand", "back from the platform", 3},
+             {"edge.", "", 3}
+           ]}
+        ]
+      )
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, @sign)
       assert sign.announced_passthroughs == ["123"]
@@ -219,22 +225,32 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :alewife, seconds_until_passthrough: 30, trip_id: "124")]
       end)
 
-      expect_audios([{:canned, {"103", ["1010"], :audio_visual}}], [
-        {"The next Southbound train does not take customers. Please stand back from the platform edge.",
-         [
-           {"The next Southbound", "train does not take", 3},
-           {"customers. Please stand", "back from the platform", 3},
-           {"edge.", "", 3}
-         ]}
-      ])
+      expect_audios(
+        [
+          {:canned, {"112", spaced(["501", "787", "920", "929", "21014", "925"]), :audio_visual}}
+        ],
+        [
+          {"The next Southbound train does not take customers. Please stand back from the platform edge.",
+           [
+             {"The next Southbound", "train does not take", 3},
+             {"customers. Please stand", "back from the platform", 3},
+             {"edge.", "", 3}
+           ]}
+        ]
+      )
 
-      expect_audios([{:canned, {"103", ["1006"], :audio_visual}}], [
-        {"The next Alewife train does not take customers. Please stand back from the platform edge.",
-         [
-           {"The next Alewife train", "does not take customers.", 3},
-           {"Please stand back from", "the platform edge.", 3}
-         ]}
-      ])
+      expect_audios(
+        [
+          {:canned, {"112", spaced(["501", "892", "920", "929", "21014", "925"]), :audio_visual}}
+        ],
+        [
+          {"The next Alewife train does not take customers. Please stand back from the platform edge.",
+           [
+             {"The next Alewife train", "does not take customers.", 3},
+             {"Please stand back from", "the platform edge.", 3}
+           ]}
+        ]
+      )
 
       Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
     end
@@ -244,14 +260,19 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :southbound, seconds_until_passthrough: 30)]
       end)
 
-      expect_audios([{:canned, {"103", ["1010"], :audio_visual}}], [
-        {"The next Southbound train does not take customers. Please stand back from the platform edge.",
-         [
-           {"The next Southbound", "train does not take", 3},
-           {"customers. Please stand", "back from the platform", 3},
-           {"edge.", "", 3}
-         ]}
-      ])
+      expect_audios(
+        [
+          {:canned, {"112", spaced(["501", "787", "920", "929", "21014", "925"]), :audio_visual}}
+        ],
+        [
+          {"The next Southbound train does not take customers. Please stand back from the platform edge.",
+           [
+             {"The next Southbound", "train does not take", 3},
+             {"customers. Please stand", "back from the platform", 3},
+             {"edge.", "", 3}
+           ]}
+        ]
+      )
 
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
