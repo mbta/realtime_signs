@@ -44,12 +44,7 @@ defmodule Content.Audio.Approaching do
   defimpl Content.Audio do
     def to_params(%Content.Audio.Approaching{} = audio) do
       prefix = if audio.four_cars?, do: [:shorter_4_car], else: [:attention_passengers_the_next]
-
-      train =
-        if branch = Content.Utilities.route_branch_letter(audio.route_id),
-          do: [branch_token(branch), :train_to_, destination_token(audio.destination)],
-          else: [destination_token(audio.destination), :train_]
-
+      train = PaEss.Utilities.train_description_tokens(audio.destination, audio.route_id, true)
       approaching = if audio.four_cars?, do: [:now_approaching], else: [:is_now_approaching]
       platform = if audio.platform, do: [platform_token(audio.platform)], else: []
 
@@ -63,8 +58,7 @@ defmodule Content.Audio.Approaching do
       crowding =
         if audio.crowding_description, do: [{:crowding, audio.crowding_description}], else: []
 
-      (prefix ++
-         train ++ approaching ++ platform ++ new_cars ++ [:.] ++ followup ++ crowding)
+      (prefix ++ train ++ approaching ++ platform ++ new_cars ++ [:.] ++ followup ++ crowding)
       |> Utilities.audio_message(:audio_visual)
     end
 
@@ -105,34 +99,8 @@ defmodule Content.Audio.Approaching do
       "Attention passengers: The next #{train} is now approaching#{platform}#{new_cars}.#{followup}#{crowding}"
     end
 
-    defp destination_token(:alewife), do: :alewife_
-    defp destination_token(:ashmont), do: :ashmont_
-    defp destination_token(:braintree), do: :braintree_
-    defp destination_token(:mattapan), do: :mattapan_
-    defp destination_token(:bowdoin), do: :bowdoin_
-    defp destination_token(:wonderland), do: :wonderland_
-    defp destination_token(:oak_grove), do: :oak_grove_
-    defp destination_token(:forest_hills), do: :forest_hills_
-    defp destination_token(:lechmere), do: :lechmere_
-    defp destination_token(:north_station), do: :north_station_
-    defp destination_token(:government_center), do: :government_center_
-    defp destination_token(:park_street), do: :park_street_
-    defp destination_token(:kenmore), do: :kenmore_
-    defp destination_token(:boston_college), do: :boston_college_
-    defp destination_token(:cleveland_circle), do: :cleveland_circle_
-    defp destination_token(:reservoir), do: :reservoir_
-    defp destination_token(:riverside), do: :riverside_
-    defp destination_token(:heath_street), do: :heath_street_
-    # Fall back to original takes
-    defp destination_token(destination), do: destination
-
     defp platform_token(:ashmont), do: :on_the_ashmont_platform
     defp platform_token(:braintree), do: :on_the_braintree_platform
-
-    defp branch_token(:b), do: :b_
-    defp branch_token(:c), do: :c_
-    defp branch_token(:d), do: :d_
-    defp branch_token(:e), do: :e_
 
     defp platform_string(:ashmont), do: " on the Ashmont platform"
     defp platform_string(:braintree), do: " on the Braintree platform"

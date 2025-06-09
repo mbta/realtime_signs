@@ -302,10 +302,41 @@ defmodule PaEss.Utilities do
     end
   end
 
-  def train_description_tokens(destination, route_id) do
+  @spec train_description_tokens(PaEss.destination(), String.t()) :: [atom()]
+  @spec train_description_tokens(PaEss.destination(), String.t(), boolean()) :: [atom()]
+  def train_description_tokens(destination, route_id, use_polly_takes? \\ false) do
     branch = Content.Utilities.route_branch_letter(route_id)
-    if branch, do: [branch, :train_to, destination], else: [destination, :train]
+    tokens = if branch, do: [branch, :train_to, destination], else: [destination, :train]
+    if use_polly_takes?, do: Enum.map(tokens, &to_polly_take/1), else: tokens
   end
+
+  defp to_polly_take(:alewife), do: :alewife_
+  defp to_polly_take(:ashmont), do: :ashmont_
+  defp to_polly_take(:braintree), do: :braintree_
+  defp to_polly_take(:mattapan), do: :mattapan_
+  defp to_polly_take(:bowdoin), do: :bowdoin_
+  defp to_polly_take(:wonderland), do: :wonderland_
+  defp to_polly_take(:oak_grove), do: :oak_grove_
+  defp to_polly_take(:forest_hills), do: :forest_hills_
+  defp to_polly_take(:lechmere), do: :lechmere_
+  defp to_polly_take(:north_station), do: :north_station_
+  defp to_polly_take(:government_center), do: :government_center_
+  defp to_polly_take(:park_street), do: :park_street_
+  defp to_polly_take(:kenmore), do: :kenmore_
+  defp to_polly_take(:boston_college), do: :boston_college_
+  defp to_polly_take(:cleveland_circle), do: :cleveland_circle_
+  defp to_polly_take(:reservoir), do: :reservoir_
+  defp to_polly_take(:riverside), do: :riverside_
+  defp to_polly_take(:heath_street), do: :heath_street_
+  defp to_polly_take(:b), do: :b_
+  defp to_polly_take(:c), do: :c_
+  defp to_polly_take(:d), do: :d_
+  defp to_polly_take(:e), do: :e_
+  defp to_polly_take(:train), do: :train_
+  defp to_polly_take(:train_to), do: :train_to_
+  defp to_polly_take(:there_is_no), do: :there_is_no_
+  # Use token as-is when there is no Polly take or the Polly take is the only one
+  defp to_polly_take(token), do: token
 
   def crowding_text(crowding_description) do
     case crowding_description do
@@ -710,6 +741,7 @@ defmodule PaEss.Utilities do
   def audio_take(:upcoming_departures), do: "548"
   def audio_take(:upcoming_arrivals), do: "550"
   def audio_take(:is_now_arriving), do: "24055"
+  def audio_take(:does_not_take_customers), do: "929"
   def audio_take(:upper_level_departures), do: "616"
   def audio_take(:lower_level_departures), do: "617"
   def audio_take(:board_routes_71_and_73_on_upper_level), do: "618"
@@ -852,13 +884,6 @@ defmodule PaEss.Utilities do
   def audio_take({:line, "Green"}), do: "3008"
   def audio_take({:line, "Mattapan"}), do: "3009"
   def audio_take({:line, _name}), do: audio_take(:train)
-
-  def audio_take({:passthrough, :alewife, _route}), do: "1006"
-  def audio_take({:passthrough, :southbound, "Red"}), do: "1010"
-  def audio_take({:passthrough, :bowdoin, _route}), do: "1007"
-  def audio_take({:passthrough, :wonderland, _route}), do: "1011"
-  def audio_take({:passthrough, :forest_hills, _route}), do: "1008"
-  def audio_take({:passthrough, :oak_grove, _route}), do: "1009"
 
   def audio_take(item) do
     Logger.error("No audio for: #{inspect(item)}")
