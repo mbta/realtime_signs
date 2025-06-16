@@ -16,9 +16,7 @@ defmodule Engine.Alerts.ApiFetcherTest do
                    "74636" => :station_closure
                  },
                  :route_statuses => %{
-                   "Green-B" => :alert_along_route,
                    "Red" => :suspension_closed_station,
-                   "Orange" => :alert_along_route,
                    "Mattapan" => :shuttles_closed_station
                  }
                }
