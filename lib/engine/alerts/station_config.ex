@@ -1,6 +1,17 @@
 defmodule Engine.Alerts.StationConfig do
   defstruct [:stop_to_station, :station_to_stops, :station_neighbors]
 
+  # Identifier for a "station" as expressed in `stops.json`, really a subset of the child stops
+  # at a parent station (for example "Green Line westbound stops at Park Street").
+  @typep station :: String.t()
+
+  @type t :: %__MODULE__{
+          stop_to_station: %{(stop_id :: String.t()) => station()},
+          station_to_stops: %{station() => [stop_id :: String.t()]},
+          station_neighbors: %{station() => [station()]}
+        }
+
+  @spec load_config() :: t()
   def load_config do
     stops_data =
       :realtime_signs
