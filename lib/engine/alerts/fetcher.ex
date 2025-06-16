@@ -1,6 +1,9 @@
 defmodule Engine.Alerts.Fetcher do
-  @type stop_id :: String.t()
   @type route_id :: String.t()
+  @type route_statuses :: %{route_id() => stop_status()}
+  @type stop_id :: String.t()
+  @type stop_statuses :: %{stop_id() => stop_status()}
+
   @type stop_status ::
           :shuttles_closed_station
           | :shuttles_transfer_station
@@ -8,12 +11,8 @@ defmodule Engine.Alerts.Fetcher do
           | :station_closure
           | :none
 
-  @callback get_statuses([String.t()]) ::
-              {:ok,
-               %{
-                 :stop_statuses => %{stop_id() => stop_status()},
-                 :route_statuses => %{route_id() => stop_status()}
-               }}
+  @callback get_statuses([route_id()]) ::
+              {:ok, %{:stop_statuses => stop_statuses(), :route_statuses => route_statuses()}}
               | {:error, any()}
 
   @alert_priority_map %{

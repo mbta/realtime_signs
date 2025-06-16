@@ -1,21 +1,13 @@
 defmodule Engine.Alerts.ApiFetcher do
-  @behaviour Engine.Alerts.Fetcher
+  alias Engine.Alerts.{Fetcher, StationConfig}
 
-  alias Engine.Alerts.StationConfig
+  @behaviour Fetcher
 
-  @impl Engine.Alerts.Fetcher
+  @typep alert :: json_object()
+  @typep json_object :: %{String.t() => json_value()}
+  @typep json_value :: nil | number() | String.t() | [json_value()] | json_object()
 
-  @spec get_statuses([String.t()]) ::
-          {:ok,
-           %{
-             :stop_statuses => %{
-               Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()
-             },
-             :route_statuses => %{
-               Engine.Alerts.Fetcher.route_id() => Engine.Alerts.Fetcher.stop_status()
-             }
-           }}
-          | {:error, any()}
+  @impl Fetcher
   def get_statuses(route_ids) do
     case get_alerts(route_ids) do
       {:ok, data} ->
@@ -30,7 +22,7 @@ defmodule Engine.Alerts.ApiFetcher do
     end
   end
 
-  @spec get_alerts([String.t()]) :: {:ok, [%{}]} | {:error, atom()}
+  @spec get_alerts([Fetcher.route_id()]) :: {:ok, [alert()]} | {:error, term()}
   defp get_alerts(route_ids) do
     alerts_url = Application.get_env(:realtime_signs, :api_v3_url) <> "/alerts"
 
@@ -57,8 +49,7 @@ defmodule Engine.Alerts.ApiFetcher do
     end
   end
 
-  @spec determine_stop_statuses([%{}]) ::
-          %{Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()}
+  @spec determine_stop_statuses([alert()]) :: Fetcher.stop_statuses()
   defp determine_stop_statuses(alert_data) do
     station_config = StationConfig.load_config()
 
@@ -71,7 +62,7 @@ defmodule Engine.Alerts.ApiFetcher do
     end)
   end
 
-  @spec determine_route_statuses([%{}]) :: %{Engine.Alerts.Fetcher.stop_id() => any()}
+  @spec determine_route_statuses([alert()]) :: Fetcher.route_statuses()
   defp determine_route_statuses(alert_data) do
     Enum.reduce(alert_data, %{}, fn alert, acc ->
       statuses = process_alert_for_routes(alert)
@@ -82,8 +73,7 @@ defmodule Engine.Alerts.ApiFetcher do
     end)
   end
 
-  @spec process_alert_for_stations(%{}, %StationConfig{}) ::
-          %{Engine.Alerts.Fetcher.stop_id() => Engine.Alerts.Fetcher.stop_status()}
+  @spec process_alert_for_stations(alert(), StationConfig.t()) :: Fetcher.stop_statuses()
   defp process_alert_for_stations(alert, station_config) do
     stops = stops_for_alert(alert)
 
@@ -111,7 +101,7 @@ defmodule Engine.Alerts.ApiFetcher do
     end
   end
 
-  @spec stops_for_alert(%{}) :: [Engine.Alerts.Fetcher.stop_id()]
+  @spec stops_for_alert(alert()) :: [Fetcher.stop_id()]
   defp stops_for_alert(alert) do
     alert["attributes"]["informed_entity"]
     |> Enum.flat_map(fn ie ->
@@ -123,9 +113,7 @@ defmodule Engine.Alerts.ApiFetcher do
     end)
   end
 
-  @spec process_alert_for_routes(%{}) :: %{
-          Engine.Alerts.Fetcher.route_id() => Engine.Alerts.Fetcher.stop_status()
-        }
+  @spec process_alert_for_routes(alert()) :: Fetcher.route_statuses()
   defp process_alert_for_routes(alert) do
     alert["attributes"]["informed_entity"]
     |> Enum.flat_map(fn ie ->
@@ -153,9 +141,9 @@ defmodule Engine.Alerts.ApiFetcher do
     |> Enum.into(%{})
   end
 
-  @spec get_alert_statuses([String.t()], %Engine.Alerts.StationConfig{}, :shuttle | :suspension) ::
-          %{}
-  def get_alert_statuses(stop_ids, station_config, alert_type) do
+  @spec get_alert_statuses([Fetcher.stop_id()], StationConfig.t(), :shuttle | :suspension) ::
+          Fetcher.stop_statuses()
+  defp get_alert_statuses(stop_ids, station_config, alert_type) do
     stop_ids
     |> Enum.flat_map(fn stop_id ->
       case station_config.stop_to_station[stop_id] do
