@@ -47,21 +47,16 @@ defmodule Content.Audio.VehiclesToDestination do
            destination: destination,
            route: route
          }) do
-      trains =
-        case {destination, route} do
-          {nil, nil} ->
-            "Trains"
-
-          {nil, route} ->
-            "#{route} line trains"
-
-          {destination, _} ->
-            destination_text = PaEss.Utilities.destination_to_ad_hoc_string(destination)
-            "#{destination_text} trains"
-        end
-
-      "#{trains} every #{range_low} to #{range_high} minutes."
+      service_description = describe_service(destination, route)
+      "#{service_description} every #{range_low} to #{range_high} minutes."
     end
+
+    @spec describe_service(PaEss.destination() | nil, String.t() | nil) :: String.t()
+    defp describe_service(nil, nil), do: "Trains"
+    defp describe_service(nil, route), do: "#{route} line trains"
+
+    defp describe_service(destination, _route),
+      do: "#{PaEss.Utilities.destination_to_ad_hoc_string(destination)} trains"
 
     @spec message_id(Content.Audio.VehiclesToDestination.t()) :: String.t()
     defp message_id(%{destination: :alewife}), do: "175"
