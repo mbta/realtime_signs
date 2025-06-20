@@ -8263,7 +8263,9 @@
             "route_id": "741",
             "direction_id": 0
           }
-        ]
+        ],
+        "headway_group": "silver_seaport",
+        "headway_direction_name": "Seaport"
       },
       {
         "sources": [
@@ -8330,7 +8332,9 @@
             "route_id": "746",
             "direction_id": 1
           }
-        ]
+        ],
+        "headway_group": "silver_seaport",
+        "headway_direction_name": "South Station"
       }
     ],
     "chelsea_bridge": "audio",
@@ -8355,7 +8359,9 @@
             "route_id": "741",
             "direction_id": 0
           }
-        ]
+        ],
+        "headway_group": "silver_seaport",
+        "headway_direction_name": "Seaport"
       },
       {
         "sources": [
@@ -8422,7 +8428,9 @@
             "route_id": "746",
             "direction_id": 1
           }
-        ]
+        ],
+        "headway_group": "silver_seaport",
+        "headway_direction_name": "South Station"
       }
     ],
     "chelsea_bridge": "audio",
@@ -8462,7 +8470,9 @@
             "route_id": "746",
             "direction_id": 1
           }
-        ]
+        ],
+        "headway_group": "silver_seaport",
+        "headway_direction_name": "South Station"
       }
     ],
     "chelsea_bridge": "audio",
@@ -8487,7 +8497,9 @@
             "route_id": "741",
             "direction_id": 0
           }
-        ]
+        ],
+        "headway_group": "silver_seaport",
+        "headway_direction_name": "Seaport"
       },
       {
         "sources": [
@@ -8554,7 +8566,9 @@
             "route_id": "746",
             "direction_id": 1
           }
-        ]
+        ],
+        "headway_group": "silver_seaport",
+        "headway_direction_name": "South Station"
       }
     ],
     "bottom_configs": [
@@ -8565,7 +8579,9 @@
             "route_id": "741",
             "direction_id": 0
           }
-        ]
+        ],
+        "headway_group": "silver_seaport",
+        "headway_direction_name": "Seaport"
       },
       {
         "sources": [
@@ -8617,7 +8633,9 @@
             "route_id": "743",
             "direction_id": 0
           }
-        ]
+        ],
+        "headway_group": "silver_chelsea",
+        "headway_direction_name": "Chelsea"
       }
     ],
     "chelsea_bridge": "audio_visual",
@@ -8642,7 +8660,9 @@
             "route_id": "743",
             "direction_id": 1
           }
-        ]
+        ],
+        "headway_group": "silver_chelsea",
+        "headway_direction_name": "South Station"
       }
     ],
     "chelsea_bridge": "audio_visual",
@@ -8667,7 +8687,9 @@
             "route_id": "743",
             "direction_id": 0
           }
-        ]
+        ],
+        "headway_group": "silver_chelsea",
+        "headway_direction_name": "Chelsea"
       }
     ],
     "chelsea_bridge": "audio_visual",
@@ -8692,7 +8714,9 @@
             "route_id": "743",
             "direction_id": 1
           }
-        ]
+        ],
+        "headway_group": "silver_chelsea",
+        "headway_direction_name": "South Station"
       }
     ],
     "chelsea_bridge": "audio_visual",
@@ -8717,7 +8741,9 @@
             "route_id": "743",
             "direction_id": 0
           }
-        ]
+        ],
+        "headway_group": "silver_chelsea",
+        "headway_direction_name": "Chelsea"
       }
     ],
     "chelsea_bridge": "audio_visual",
@@ -8742,7 +8768,9 @@
             "route_id": "743",
             "direction_id": 1
           }
-        ]
+        ],
+        "headway_group": "silver_chelsea",
+        "headway_direction_name": "South Station"
       }
     ],
     "chelsea_bridge": "audio_visual",
@@ -8767,7 +8795,9 @@
             "route_id": "743",
             "direction_id": 1
           }
-        ]
+        ],
+        "headway_group": "silver_chelsea",
+        "headway_direction_name": "South Station"
       }
     ],
     "chelsea_bridge": "audio_visual",

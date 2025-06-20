@@ -247,6 +247,7 @@ defmodule PaEss.Utilities do
   def destination_to_sign_string(:inbound), do: "Inbound"
   def destination_to_sign_string(:outbound), do: "Outbound"
   def destination_to_sign_string(:medford_tufts), do: "Medfd/Tufts"
+  def destination_to_sign_string(:silver_line), do: "Silver Line"
 
   @spec destination_to_ad_hoc_string(PaEss.destination()) :: String.t()
   def destination_to_ad_hoc_string(:alewife), do: "Alewife"
@@ -277,6 +278,7 @@ defmodule PaEss.Utilities do
   def destination_to_ad_hoc_string(:inbound), do: "Inbound"
   def destination_to_ad_hoc_string(:outbound), do: "Outbound"
   def destination_to_ad_hoc_string(:medford_tufts), do: "Medford/Tufts"
+  def destination_to_ad_hoc_string(:silver_line), do: "Silver Line"
 
   def directional_destination?(destination),
     do: destination in [:eastbound, :westbound, :southbound, :northbound, :inbound, :outbound]
@@ -783,6 +785,10 @@ defmodule PaEss.Utilities do
   # audio: "is now approaching", visual: "now approaching"
   def audio_take(:now_approaching), do: "924"
   def audio_take(:with_all_new_red_line_cars), do: "893"
+  def audio_take(:arrives_every), do: "666"
+  def audio_take(:to), do: "511"
+  def audio_take(:silver_line), do: "931"
+  def audio_take(:buses), do: "932"
 
   # audio: "It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.", visual: "Please move to front of the train to board."
   def audio_take(:four_car_train_message), do: "922"
