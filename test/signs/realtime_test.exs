@@ -2217,6 +2217,42 @@ defmodule Signs.RealtimeTest do
       :ok
     end
 
+    test "is not overnight period if last scheduled departure or first scheduled departure is nil" do
+      stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
+        nil
+      end)
+
+      stub(Engine.ScheduledHeadways.Mock, :get_last_scheduled_departure, fn _ ->
+        nil
+      end)
+
+      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
+
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
+
+      expect_messages({"No Southbound svc", ""})
+      expect(PaEss.Updater.Mock, :play_message, 1, fn _, _, _, _, _ -> :ok end)
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | current_time_fn: fn -> datetime(~D[2023-01-02], ~T[03:00:00]) end
+      })
+    end
+
+    test "is not overnight period if in the thirty minute buffer" do
+      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
+
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
+
+      expect_messages({"No Southbound svc", ""})
+      expect(PaEss.Updater.Mock, :play_message, 1, fn _, _, _, _, _ -> :ok end)
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | current_time_fn: fn -> datetime(~D[2023-01-02], ~T[02:30:00]) end
+      })
+    end
+
     test "does not play alerts when in the overnight period" do
       expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
 
@@ -2253,7 +2289,7 @@ defmodule Signs.RealtimeTest do
       expect(PaEss.Updater.Mock, :play_message, 0, fn _, _, _, _, _ -> :ok end)
 
       Signs.Realtime.handle_info(:run_loop, %{
-        @sign
+        @mezzanine_sign
         | current_time_fn: fn -> datetime(~D[2023-01-02], ~T[03:00:00]) end
       })
     end
