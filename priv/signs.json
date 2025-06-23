@@ -8247,7 +8247,7 @@
     "id": "Silver_Line.South_Station_EB",
     "pa_ess_loc": "SSOU",
     "scu_id": "RSOUSCU001",
-    "read_loop_interval": 360,
+    "read_loop_interval": 240,
     "read_loop_offset": 0,
     "text_zone": "e",
     "audio_zones": [
@@ -8300,8 +8300,8 @@
     "id": "Silver_Line.Courthouse_WB",
     "pa_ess_loc": "SCOU",
     "scu_id": "SCOUSCU001",
-    "read_loop_interval": 360,
-    "read_loop_offset": 60,
+    "read_loop_interval": 240,
+    "read_loop_offset": 0,
     "text_zone": "w",
     "audio_zones": [
       "w"
@@ -8340,8 +8340,8 @@
     "id": "Silver_Line.Courthouse_EB",
     "pa_ess_loc": "SCOU",
     "scu_id": "SCOUSCU001",
-    "read_loop_interval": 360,
-    "read_loop_offset": 60,
+    "read_loop_interval": 240,
+    "read_loop_offset": 80,
     "text_zone": "e",
     "audio_zones": [
       "e"
@@ -8392,8 +8392,8 @@
     "id": "Silver_Line.Courthouse_mezz",
     "pa_ess_loc": "SCOU",
     "scu_id": "SCOUSCU001",
-    "read_loop_interval": 360,
-    "read_loop_offset": 60,
+    "read_loop_interval": 240,
+    "read_loop_offset": 160,
     "text_zone": "m",
     "audio_zones": [
       "m"
@@ -8432,7 +8432,7 @@
     "id": "Silver_Line.World_Trade_Ctr_WB",
     "pa_ess_loc": "SWTC",
     "scu_id": "SWTCSCU001",
-    "read_loop_interval": 360,
+    "read_loop_interval": 240,
     "read_loop_offset": 120,
     "text_zone": "w",
     "audio_zones": [
@@ -8472,8 +8472,8 @@
     "id": "Silver_Line.World_Trade_Ctr_EB",
     "pa_ess_loc": "SWTC",
     "scu_id": "SWTCSCU001",
-    "read_loop_interval": 360,
-    "read_loop_offset": 120,
+    "read_loop_interval": 240,
+    "read_loop_offset": 200,
     "text_zone": "e",
     "audio_zones": [
       "e"
@@ -8524,8 +8524,8 @@
     "id": "Silver_Line.World_Trade_Ctr_mezz",
     "pa_ess_loc": "SWTC",
     "scu_id": "SWTCSCU001",
-    "read_loop_interval": 360,
-    "read_loop_offset": 120,
+    "read_loop_interval": 240,
+    "read_loop_offset": 40,
     "text_zone": "m",
     "audio_zones": [
       "m"
@@ -8602,7 +8602,7 @@
     "id": "Silver_Line.Eastern_Ave_OB",
     "pa_ess_loc": "SEAV",
     "scu_id": "SEAVSCU001",
-    "read_loop_interval": 360,
+    "read_loop_interval": 240,
     "read_loop_offset": 60,
     "text_zone": "e",
     "audio_zones": [
@@ -8627,8 +8627,8 @@
     "id": "Silver_Line.Eastern_Ave_IB",
     "pa_ess_loc": "SEAV",
     "scu_id": "SEAVSCU001",
-    "read_loop_interval": 360,
-    "read_loop_offset": 60,
+    "read_loop_interval": 240,
+    "read_loop_offset": 180,
     "text_zone": "w",
     "audio_zones": [
       "w"
@@ -8652,7 +8652,7 @@
     "id": "Silver_Line.Box_District_OB",
     "pa_ess_loc": "SBOX",
     "scu_id": "SBOXSCU001",
-    "read_loop_interval": 360,
+    "read_loop_interval": 240,
     "read_loop_offset": 120,
     "text_zone": "e",
     "audio_zones": [
@@ -8677,8 +8677,8 @@
     "id": "Silver_Line.Box_District_IB",
     "pa_ess_loc": "SBOX",
     "scu_id": "SBOXSCU001",
-    "read_loop_interval": 360,
-    "read_loop_offset": 120,
+    "read_loop_interval": 240,
+    "read_loop_offset": 0,
     "text_zone": "w",
     "audio_zones": [
       "w"
@@ -8702,7 +8702,7 @@
     "id": "Silver_Line.Bellingham_Square_OB",
     "pa_ess_loc": "SBSQ",
     "scu_id": "SBSQSCU001",
-    "read_loop_interval": 360,
+    "read_loop_interval": 240,
     "read_loop_offset": 180,
     "text_zone": "e",
     "audio_zones": [
@@ -8727,8 +8727,8 @@
     "id": "Silver_Line.Bellingham_Square_IB",
     "pa_ess_loc": "SBSQ",
     "scu_id": "SBSQSCU001",
-    "read_loop_interval": 360,
-    "read_loop_offset": 180,
+    "read_loop_interval": 240,
+    "read_loop_offset": 60,
     "text_zone": "w",
     "audio_zones": [
       "w"
@@ -8752,8 +8752,8 @@
     "id": "Silver_Line.Chelsea_IB",
     "pa_ess_loc": "SCHS",
     "scu_id": "SCHSSCU001",
-    "read_loop_interval": 360,
-    "read_loop_offset": 240,
+    "read_loop_interval": 240,
+    "read_loop_offset": 0,
     "text_zone": "w",
     "audio_zones": [
       "w"
@@ -8777,7 +8777,7 @@
     "id": "Silver_Line.Chelsea_OB",
     "pa_ess_loc": "SCHS",
     "scu_id": "SCHSSCU001",
-    "read_loop_interval": 360,
+    "read_loop_interval": 240,
     "read_loop_offset": 120,
     "text_zone": "e",
     "audio_zones": [
@@ -8791,8 +8791,8 @@
     "id": "bus.Nubian_Platform_A",
     "pa_ess_loc": "SDUD",
     "scu_id": "SDUDSCU001",
-    "read_loop_interval": 420,
-    "read_loop_offset": 180,
+    "read_loop_interval": 240,
+    "read_loop_offset": 0,
     "text_zone": "w",
     "audio_zones": [
       "c"
@@ -8835,8 +8835,8 @@
     "id": "bus.Nubian_Platform_C",
     "pa_ess_loc": "SDUD",
     "scu_id": "SDUDSCU001",
-    "read_loop_interval": 420,
-    "read_loop_offset": 240,
+    "read_loop_interval": 240,
+    "read_loop_offset": 90,
     "text_zone": "s",
     "audio_zones": [
       "c"
@@ -8886,8 +8886,8 @@
     "id": "bus.Nubian_Platform_D",
     "pa_ess_loc": "SDUD",
     "scu_id": "SDUDSCU001",
-    "read_loop_interval": 420,
-    "read_loop_offset": 0,
+    "read_loop_interval": 240,
+    "read_loop_offset": 45,
     "text_zone": "e",
     "audio_zones": [
       "n"
@@ -8928,8 +8928,8 @@
     "id": "bus.Nubian_Platform_E_east",
     "pa_ess_loc": "SDUD",
     "scu_id": "SDUDSCU001",
-    "read_loop_interval": 420,
-    "read_loop_offset": 60,
+    "read_loop_interval": 240,
+    "read_loop_offset": 135,
     "text_zone": "c",
     "audio_zones": [
       "w"
@@ -9026,8 +9026,8 @@
     "id": "bus.Nubian_Platform_E_west",
     "pa_ess_loc": "SDUD",
     "scu_id": "SDUDSCU001",
-    "read_loop_interval": 420,
-    "read_loop_offset": 60,
+    "read_loop_interval": 240,
+    "read_loop_offset": 0,
     "text_zone": "m",
     "audio_zones": [],
     "type": "bus",
@@ -9084,8 +9084,8 @@
     "id": "bus.Nubian_Platform_F",
     "pa_ess_loc": "SDUD",
     "scu_id": "SDUDSCU001",
-    "read_loop_interval": 420,
-    "read_loop_offset": 120,
+    "read_loop_interval": 240,
+    "read_loop_offset": 180,
     "text_zone": "n",
     "audio_zones": [
       "e"
@@ -9153,7 +9153,7 @@
     "id": "bus.Lechmere_inner",
     "pa_ess_loc": "SLEC",
     "scu_id": "GLECSCU001",
-    "read_loop_interval": 360,
+    "read_loop_interval": 240,
     "read_loop_offset": 180,
     "text_zone": "m",
     "audio_zones": [
@@ -9206,8 +9206,8 @@
     "id": "bus.Lechmere_outer",
     "pa_ess_loc": "SLEC",
     "scu_id": "GLECSCU001",
-    "read_loop_interval": 360,
-    "read_loop_offset": 0,
+    "read_loop_interval": 240,
+    "read_loop_offset": 60,
     "text_zone": "c",
     "audio_zones": [],
     "type": "bus",
@@ -9237,8 +9237,8 @@
     "id": "bus.Harvard_upper",
     "pa_ess_loc": "SHAR",
     "scu_id": "RHARSCU001",
-    "read_loop_interval": 360,
-    "read_loop_offset": 240,
+    "read_loop_interval": 240,
+    "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
       "n"
@@ -9333,8 +9333,8 @@
     "id": "bus.Harvard_lower",
     "pa_ess_loc": "SHAR",
     "scu_id": "RHARSCU001",
-    "read_loop_interval": 360,
-    "read_loop_offset": 60,
+    "read_loop_interval": 240,
+    "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
       "m"
@@ -9366,7 +9366,7 @@
     "id": "bus.Mattapan_north",
     "pa_ess_loc": "MMAT",
     "scu_id": "MMATSCU001",
-    "read_loop_interval": 420,
+    "read_loop_interval": 240,
     "read_loop_offset": 60,
     "text_zone": "s",
     "audio_zones": [
@@ -9462,8 +9462,8 @@
     "id": "bus.Mattapan_south",
     "pa_ess_loc": "MMAT",
     "scu_id": "MMATSCU001",
-    "read_loop_interval": 420,
-    "read_loop_offset": 0,
+    "read_loop_interval": 240,
+    "read_loop_offset": 180,
     "text_zone": "n",
     "audio_zones": [
       "n"
@@ -9504,7 +9504,7 @@
     "id": "bus.Davis",
     "pa_ess_loc": "SDAV",
     "scu_id": "RDAVSCU001",
-    "read_loop_interval": 360,
+    "read_loop_interval": 240,
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -9582,7 +9582,7 @@
     "id": "bus.Forest_Hills_upper_island",
     "pa_ess_loc": "SFOR",
     "scu_id": "OFORSCU001",
-    "read_loop_interval": 420,
+    "read_loop_interval": 240,
     "read_loop_offset": 180,
     "text_zone": "s",
     "audio_zones": [
@@ -9642,8 +9642,8 @@
     "id": "bus.Forest_Hills_upper_fence",
     "pa_ess_loc": "SFOR",
     "scu_id": "OFORSCU001",
-    "read_loop_interval": 420,
-    "read_loop_offset": 0,
+    "read_loop_interval": 240,
+    "read_loop_offset": 60,
     "text_zone": "n",
     "audio_zones": [
       "n"
@@ -9711,8 +9711,8 @@
     "id": "bus.Braintree",
     "pa_ess_loc": "RBRA",
     "scu_id": "RBRASCU001",
-    "read_loop_interval": 360,
-    "read_loop_offset": 240,
+    "read_loop_interval": 240,
+    "read_loop_offset": 0,
     "text_zone": "n",
     "audio_zones": [
       "n"
