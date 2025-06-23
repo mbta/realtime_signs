@@ -6,7 +6,7 @@ defmodule Signs.Utilities.Messages do
 
   @early_am_start ~T[03:29:00]
   @early_am_buffer -40
-  @overnight_buffer -30
+  @overnight_buffer 30
 
   @spec get_messages(
           Signs.Realtime.predictions(),
@@ -31,15 +31,37 @@ defmodule Signs.Utilities.Messages do
         most_recent_departure,
         service_status
       ) do
+    config =
+      if match?(%{source_config: {_, _}}, sign) do
+        Enum.zip([
+          Tuple.to_list(sign.source_config),
+          Tuple.to_list(predictions),
+          Tuple.to_list(alert_status),
+          Tuple.to_list(first_scheduled_departures),
+          Tuple.to_list(last_scheduled_departures),
+          Tuple.to_list(most_recent_departure),
+          Tuple.to_list(service_status)
+        ])
+      else
+        [
+          {sign.source_config, predictions, alert_status, first_scheduled_departures,
+           last_scheduled_departures, most_recent_departure, service_status}
+        ]
+      end
+
     cond do
       match?({:static_text, {_, _}}, sign_config) ->
-        if overnight_period?(
-             current_time,
-             first_scheduled_departures,
-             last_scheduled_departures,
-             most_recent_departure,
-             service_status
-           ) do
+        if Enum.all?(config, fn {_config, _predictions, _alert_status, first_scheduled_departures,
+                                 last_scheduled_departures, most_recent_departure,
+                                 service_status} ->
+             overnight_period?(
+               current_time,
+               first_scheduled_departures,
+               last_scheduled_departures,
+               most_recent_departure,
+               service_status
+             )
+           end) do
           [%Message.Empty{}]
         else
           {:static_text, {line1, line2}} = sign_config
@@ -50,24 +72,8 @@ defmodule Signs.Utilities.Messages do
         [%Message.Empty{}]
 
       true ->
-        if match?(%{source_config: {_, _}}, sign) do
-          Enum.zip([
-            Tuple.to_list(sign.source_config),
-            Tuple.to_list(predictions),
-            Tuple.to_list(alert_status),
-            Tuple.to_list(first_scheduled_departures),
-            Tuple.to_list(last_scheduled_departures),
-            Tuple.to_list(most_recent_departure),
-            Tuple.to_list(service_status)
-          ])
-        else
-          [
-            {sign.source_config, predictions, alert_status, first_scheduled_departures,
-             last_scheduled_departures, most_recent_departure, service_status}
-          ]
-        end
-        |> Enum.map(fn {config, predictions, alert_status, first_scheduled_departures,
-                        last_scheduled_departures, most_recent_departure, service_status} ->
+        Enum.map(config, fn {config, predictions, alert_status, first_scheduled_departures,
+                             last_scheduled_departures, most_recent_departure, service_status} ->
           predictions =
             filter_predictions(
               predictions,
@@ -298,24 +304,70 @@ defmodule Signs.Utilities.Messages do
     end
   end
 
+  @spec overnight_period?(
+          DateTime.t(),
+          DateTime.t(),
+          DateTime.t(),
+          DateTime.t(),
+          boolean()
+        ) :: boolean()
+  defp overnight_period?(
+         _current_time,
+         first_scheduled_departure,
+         last_scheduled_departure,
+         _most_recent_departure,
+         false
+       )
+       when first_scheduled_departure == nil or last_scheduled_departure == nil,
+       do: false
+
+  defp overnight_period?(
+         current_time,
+         first_scheduled_departure,
+         last_scheduled_departure,
+         _most_recent_departure,
+         false
+       ),
+       do:
+         calculate_overnight_period(
+           last_scheduled_departure,
+           current_time,
+           first_scheduled_departure
+         )
+
   defp overnight_period?(
          current_time,
          first_scheduled_departure,
          last_scheduled_departure,
          most_recent_departure,
-         service_ended
+         true
        ) do
-    last_actual_departure = if service_ended, do: most_recent_departure
+    if Timex.after?(most_recent_departure, last_scheduled_departure) do
+      most_recent_departure
+    else
+      last_scheduled_departure
+    end
+    |> calculate_overnight_period(
+      current_time,
+      first_scheduled_departure
+    )
+  end
 
-    last_time_to_check =
-      if last_actual_departure &&
-           Timex.after?(last_actual_departure, last_scheduled_departure) do
-        last_actual_departure
-      else
-        last_scheduled_departure
-      end
+  defp calculate_overnight_period(
+         nil,
+         _current_time,
+         _first_scheduled_departure
+       ),
+       do: false
 
-    Timex.after?(current_time, Timex.shift(last_time_to_check, minutes: @overnight_buffer)) &&
+  defp calculate_overnight_period(
+         last_time_to_check,
+         current_time,
+         first_scheduled_departure
+       ) do
+    # Overnight, schedules might switch to the next day
+    # so we just check if we're before the AM period, or if we're after the last time we need to check
+    Timex.after?(current_time, Timex.shift(last_time_to_check, minutes: @overnight_buffer)) ||
       before_early_am_threshold?(current_time, first_scheduled_departure)
   end
 
