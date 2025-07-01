@@ -275,7 +275,7 @@ defmodule Signs.BusTest do
     end
 
     test "SL headway mode with headways set" do
-      expect_messages(["Chelsea buses", "Every 11 to 13 min"])
+      expect_messages(["Buses to Chelsea", "Every 11 to 13 min"])
 
       expect_audios(
         [{:canned, {"133", ["5511", "5513"], :audio}}],
@@ -290,6 +290,36 @@ defmodule Signs.BusTest do
               sources: [%{stop_id: "stop1", route_id: "741", direction_id: 0}],
               headway_group: "silver_chelsea",
               headway_direction_name: "Chelsea"
+            }
+          ]
+        })
+
+      Signs.Bus.handle_info(:run_loop, state)
+    end
+
+    test "SL dual headway mode with headways set on mezzanine sign" do
+      expect_messages(["Silver Line buses", "Every 11 to 13 min"])
+
+      expect_audios(
+        [{:canned, {"silver_line", ["5511", "5513"], :audio}}],
+        [{"Silver Line buses every 11 to 13 minutes.", nil}]
+      )
+
+      state =
+        Map.merge(@sign_state, %{
+          id: "headway",
+          top_configs: [
+            %{
+              sources: [%{stop_id: "stop1", route_id: "741", direction_id: 0}],
+              headway_group: "silver_chelsea",
+              headway_direction_name: "Chelsea"
+            }
+          ],
+          bottom_configs: [
+            %{
+              sources: [%{stop_id: "stop2", route_id: "742", direction_id: 1}],
+              headway_group: "silver_seaport",
+              headway_direction_name: "Seaport"
             }
           ]
         })

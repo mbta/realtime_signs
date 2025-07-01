@@ -61,7 +61,7 @@ defmodule Message.Headway do
             "#{route} line trains"
 
           {destination, "Silver"} ->
-            "#{PaEss.Utilities.destination_to_sign_string(destination)} buses"
+            "Buses to #{PaEss.Utilities.destination_to_sign_string(destination)}"
 
           {destination, _} ->
             "#{PaEss.Utilities.destination_to_sign_string(destination)} trains"

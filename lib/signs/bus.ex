@@ -374,11 +374,15 @@ defmodule Signs.Bus do
 
           [] ->
             case headway_message do
-              nil ->
+              [] ->
                 []
 
-              _ ->
-                [Tuple.to_list(Message.to_full_page(headway_message))]
+              [message] ->
+                [
+                  message
+                  |> Message.to_full_page()
+                  |> Tuple.to_list()
+                ]
             end
 
           list ->
@@ -412,8 +416,13 @@ defmodule Signs.Bus do
 
           [] ->
             case headway_message do
-              nil -> []
-              _ -> [headway_audio(headway_message)]
+              [] ->
+                []
+
+              [message] ->
+                [headway_audio(message)]
+                |> Stream.intersperse([:","])
+                |> Stream.concat()
             end
 
           list ->
@@ -429,11 +438,11 @@ defmodule Signs.Bus do
         case audio_content do
           [] ->
             case headway_message do
-              nil ->
+              [] ->
                 []
 
-              _ ->
-                headway_tts(headway_message)
+              [message] ->
+                [headway_tts(message)]
             end
 
           [single] ->
@@ -465,34 +474,78 @@ defmodule Signs.Bus do
          state
        ) do
     %{top_configs: top_configs, bottom_configs: bottom_configs} = state
+    stop_ids = all_stop_ids(state)
     top_content = configs_content(top_configs, predictions_lookup, route_alerts_lookup)
     bottom_content = configs_content(bottom_configs, predictions_lookup, route_alerts_lookup)
 
     if !Enum.any?(top_content ++ bottom_content, &match?({:predictions, _}, &1)) &&
-         all_stop_ids(state)
+         stop_ids
          |> Enum.all?(fn stop_id ->
            Map.get(stop_alerts_lookup, stop_id) in @alert_levels
          end) do
       no_service_content()
     else
+      silver_line_headway = silver_line_headway_message(top_configs, stop_ids, current_time)
+
       messages =
-        for content <- [top_content, bottom_content] do
-          Enum.map(content, &format_message(&1, nil, current_time))
-          |> paginate_message()
+        if top_content ++ bottom_content == [] do
+          case silver_line_headway do
+            [] ->
+              []
+
+            [message] ->
+              message |> Message.to_full_page() |> Tuple.to_list()
+          end
+        else
+          for {content, config} <- [{top_content, top_configs}, {bottom_content, bottom_configs}] do
+            if content == [] do
+              headway_message = headway_message_for_configs(config, stop_ids, current_time)
+
+              case headway_message do
+                [] ->
+                  []
+
+                [message] ->
+                  message |> Message.to_full_page() |> Tuple.to_list()
+              end
+            else
+              Enum.map(content, &format_message(&1, nil, current_time))
+              |> paginate_message()
+            end
+          end
         end
 
       audios =
-        Enum.map(top_content ++ bottom_content, &message_audio(&1, current_time))
-        |> add_preamble()
-        |> Stream.intersperse([:","])
-        |> Stream.concat()
-        |> paginate_audio()
+        if top_content ++ bottom_content == [] do
+          case silver_line_headway do
+            [] ->
+              []
+
+            [message] ->
+              [headway_audio(message)]
+              |> Stream.intersperse([:","])
+              |> Stream.concat()
+          end
+        else
+          (top_content ++ bottom_content)
+          |> Enum.map(&message_audio(&1, current_time))
+          |> add_preamble()
+          |> Stream.intersperse([:","])
+          |> Stream.concat()
+          |> paginate_audio()
+        end
         |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
 
       tts_audios =
         case top_content ++ bottom_content do
           [] ->
-            []
+            case silver_line_headway do
+              [] ->
+                []
+
+              [message] ->
+                [headway_tts(message)]
+            end
 
           list ->
             Enum.map(list, &message_tts_audio(&1, current_time))
@@ -524,33 +577,65 @@ defmodule Signs.Bus do
   end
 
   @spec headway_message_for_configs([map()], [String.t()], DateTime.t()) ::
-          Message.Headway.t() | nil
+          [Message.Headway.t()]
   defp headway_message_for_configs(configs, stop_ids, current_time) do
-    case Enum.find(
-           configs,
-           &(!is_nil(Map.get(&1, :headway_group)) and
-               !is_nil(Map.get(&1, :headway_direction_name)))
-         ) do
+    configs
+    |> Enum.find(fn item ->
+      item[:headway_group] && item[:headway_direction_name]
+    end)
+    |> case do
       %{headway_group: group, headway_direction_name: name} ->
-        Headways.headway_message_sl(
-          group,
-          PaEss.Utilities.headsign_to_destination(name),
-          stop_ids,
-          current_time
-        )
+        message =
+          Headways.headway_message_sl(
+            group,
+            silver_line_destination(name),
+            stop_ids,
+            current_time
+          )
+
+        case message do
+          nil -> []
+          _ -> [message]
+        end
 
       _ ->
-        nil
+        []
     end
   end
 
-  @spec headway_audio(Message.Headway.t()) :: Content.Audio.value()
-  defp headway_audio(
-         %Message.Headway{
-           range: {range_low, range_high},
-           destination: destination
-         } = audio
-       ) do
+  defp silver_line_headway_message(configs, stop_ids, current_time) do
+    configs
+    |> Enum.find(fn item ->
+      item[:headway_group]
+    end)
+    |> case do
+      %{headway_group: group} ->
+        message =
+          Headways.headway_message_sl(
+            group,
+            nil,
+            stop_ids,
+            current_time
+          )
+
+        case message do
+          nil -> []
+          _ -> [message]
+        end
+
+      _ ->
+        []
+    end
+  end
+
+  defp silver_line_destination("Seaport"), do: nil
+  defp silver_line_destination(name), do: PaEss.Utilities.headsign_to_destination(name)
+
+  @spec headway_audio(Message.Headway.t()) :: [Content.Audio.value()]
+  defp headway_audio(%Message.Headway{
+         range: {range_low, range_high},
+         destination: destination
+       }) do
     low_var = Utilities.number_var(range_low, :english)
     high_var = Utilities.number_var(range_high, :english)
 
@@ -564,28 +649,24 @@ defmodule Signs.Bus do
           "134"
 
         _ ->
-          nil
+          "silver_line"
       end
 
-    if low_var && high_var && destination_message_id do
-      {:canned, {destination_message_id, [low_var, high_var], :audio}}
-    else
-      {:ad_hoc, {headway_tts(audio), :audio}}
-    end
+    [{:canned, {destination_message_id, [low_var, high_var], :audio}}]
   end
 
   defp headway_tts(%Message.Headway{
          range: {range_low, range_high},
          destination: destination,
-         route: route
+         route: _route
        }) do
     service_description =
       case destination do
-        nil -> "Silver line buses"
+        nil -> "Silver Line buses"
         destination -> "#{PaEss.Utilities.destination_to_ad_hoc_string(destination)} buses"
       end
 
-    ["#{service_description} every #{range_low} to #{range_high} minutes."]
+    "#{service_description} every #{range_low} to #{range_high} minutes."
   end
 
   defp configs_content(nil, _, _), do: []
