@@ -1,6 +1,8 @@
 defmodule Signs.Bus do
   use GenServer
   require Logger
+  alias PaEss.Utilities
+  alias Signs.Utilities.Headways
 
   @line_max 18
   @var_max 45
@@ -9,7 +11,6 @@ defmodule Signs.Bus do
   @drawbridge_minutes_spanish "152"
   @drawbridge_soon_spanish "157"
   @alert_levels [:station_closure, :suspension_closed_station]
-  @sl_waterfront_route_ids MapSet.new(["741", "742", "743", "746"])
 
   @enforce_keys [
     :id,
@@ -95,7 +96,9 @@ defmodule Signs.Bus do
               route_id: Map.fetch!(source, "route_id"),
               direction_id: Map.fetch!(source, "direction_id")
             }
-          end
+          end,
+        headway_group: Map.get(config, "headway_group"),
+        headway_direction_name: Map.get(config, "headway_direction_name")
       }
     end
   end
@@ -156,13 +159,14 @@ defmodule Signs.Bus do
 
     predictions_lookup =
       all_predictions
+      |> then(fn predictions -> if(config == :headway, do: [], else: predictions) end)
       |> filter_predictions(current_time, state)
       |> Enum.group_by(&{&1.stop_id, &1.route_id, &1.direction_id})
 
     # Compute new sign text and audio
     {[top, bottom], audios, tts_audios} =
       cond do
-        config_off?(config, all_route_ids) ->
+        config_off?(config) ->
           {_messages = ["", ""], _audios = [], _tts_audios = []}
 
         match?({:static_text, _}, config) ->
@@ -196,6 +200,7 @@ defmodule Signs.Bus do
             state
           )
 
+        # Only reach here if top_configs and bottom_configs are defined, indicating a mezz. sign
         true ->
           mezzanine_mode_content(
             predictions_lookup,
@@ -346,6 +351,8 @@ defmodule Signs.Bus do
          state
        ) do
     %{configs: configs, extra_audio_configs: extra_audio_configs} = state
+    stop_ids = all_stop_ids(state)
+    headway_message = headway_message_for_configs(configs, stop_ids, current_time)
     content = configs_content(configs, predictions_lookup, route_alerts_lookup)
     # Special case: Nubian platform E has two separate text zones, but only one audio zone due
     # to close proximity. One sign process is configured to read out the other sign's prediction
@@ -354,7 +361,7 @@ defmodule Signs.Bus do
       content ++ configs_content(extra_audio_configs, predictions_lookup, route_alerts_lookup)
 
     if !Enum.any?(audio_content, &match?({:predictions, _}, &1)) &&
-         all_stop_ids(state)
+         stop_ids
          |> Enum.all?(fn stop_id ->
            Map.get(stop_alerts_lookup, stop_id) in @alert_levels
          end) do
@@ -364,6 +371,15 @@ defmodule Signs.Bus do
         case content do
           [single] ->
             format_long_message(single, current_time)
+
+          [] ->
+            case headway_message do
+              nil ->
+                []
+
+              _ ->
+                [Tuple.to_list(Message.to_full_page(headway_message))]
+            end
 
           list ->
             Stream.chunk_every(list, 2, 2, [nil])
@@ -390,20 +406,35 @@ defmodule Signs.Bus do
         case audio_content do
           [single] ->
             long_message_audio(single, current_time)
+            |> Stream.intersperse([:","])
+            |> Stream.concat()
+            |> paginate_audio()
+
+          [] ->
+            case headway_message do
+              nil -> []
+              _ -> [headway_audio(headway_message)]
+            end
 
           list ->
             Enum.map(list, &message_audio(&1, current_time))
             |> add_preamble()
+            |> Stream.intersperse([:","])
+            |> Stream.concat()
+            |> paginate_audio()
         end
-        |> Stream.intersperse([:","])
-        |> Stream.concat()
-        |> paginate_audio()
         |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
 
       tts_audios =
         case audio_content do
           [] ->
-            []
+            case headway_message do
+              nil ->
+                []
+
+              _ ->
+                headway_tts(headway_message)
+            end
 
           [single] ->
             [long_message_tts_audio(single, current_time)]
@@ -490,6 +521,71 @@ defmodule Signs.Bus do
     audios = paginate_audio([:no_bus_service])
     tts_audios = [{"No bus service", nil}]
     {messages, audios, tts_audios}
+  end
+
+  @spec headway_message_for_configs([map()], [String.t()], DateTime.t()) ::
+          Message.Headway.t() | nil
+  defp headway_message_for_configs(configs, stop_ids, current_time) do
+    case Enum.find(
+           configs,
+           &(!is_nil(Map.get(&1, :headway_group)) and
+               !is_nil(Map.get(&1, :headway_direction_name)))
+         ) do
+      %{headway_group: group, headway_direction_name: name} ->
+        Headways.headway_message_sl(
+          group,
+          PaEss.Utilities.headsign_to_destination(name),
+          stop_ids,
+          current_time
+        )
+
+      _ ->
+        nil
+    end
+  end
+
+  @spec headway_audio(Message.Headway.t()) :: Content.Audio.value()
+  defp headway_audio(
+         %Message.Headway{
+           range: {range_low, range_high},
+           destination: destination
+         } = audio
+       ) do
+    low_var = Utilities.number_var(range_low, :english)
+    high_var = Utilities.number_var(range_high, :english)
+
+    # TODO: Is there an existing message ID for "Silver Line Buses"?
+    destination_message_id =
+      case destination do
+        :chelsea ->
+          "133"
+
+        :south_station ->
+          "134"
+
+        _ ->
+          nil
+      end
+
+    if low_var && high_var && destination_message_id do
+      {:canned, {destination_message_id, [low_var, high_var], :audio}}
+    else
+      {:ad_hoc, {headway_tts(audio), :audio}}
+    end
+  end
+
+  defp headway_tts(%Message.Headway{
+         range: {range_low, range_high},
+         destination: destination,
+         route: route
+       }) do
+    service_description =
+      case destination do
+        nil -> "Silver line buses"
+        destination -> "#{PaEss.Utilities.destination_to_ad_hoc_string(destination)} buses"
+      end
+
+    ["#{service_description} every #{range_low} to #{range_high} minutes."]
   end
 
   defp configs_content(nil, _, _), do: []
@@ -990,10 +1086,7 @@ defmodule Signs.Bus do
     end
   end
 
-  # If a Silver Line sign is in headway mode, SignsUI will flag its predictions but RTS needs to treat it as off
-  defp config_off?(:headway, route_ids),
-    do: route_ids |> MapSet.new() |> MapSet.subset?(@sl_waterfront_route_ids)
-
-  defp config_off?(:off, _), do: true
-  defp config_off?(_, _), do: false
+  @spec config_off?(Engine.Config.sign_config()) :: boolean()
+  defp config_off?(:off), do: true
+  defp config_off?(_), do: false
 end
