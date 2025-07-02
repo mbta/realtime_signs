@@ -158,10 +158,13 @@ defmodule Signs.Bus do
     all_predictions = fetch_predictions(prev_predictions_lookup, current_time, state)
 
     predictions_lookup =
-      all_predictions
-      |> then(fn predictions -> if(config == :headway, do: [], else: predictions) end)
-      |> filter_predictions(current_time, state)
-      |> Enum.group_by(&{&1.stop_id, &1.route_id, &1.direction_id})
+      if config == :headway do
+        %{}
+      else
+        all_predictions
+        |> filter_predictions(current_time, state)
+        |> Enum.group_by(&{&1.stop_id, &1.route_id, &1.direction_id})
+      end
 
     # Compute new sign text and audio
     {[top, bottom], audios, tts_audios} =
@@ -373,17 +376,7 @@ defmodule Signs.Bus do
             format_long_message(single, current_time)
 
           [] ->
-            case headway_message do
-              [] ->
-                []
-
-              [message] ->
-                [
-                  message
-                  |> Message.to_full_page()
-                  |> Tuple.to_list()
-                ]
-            end
+            [format_message(headway_message, current_time)]
 
           list ->
             Stream.chunk_every(list, 2, 2, [nil])
@@ -415,15 +408,9 @@ defmodule Signs.Bus do
             |> paginate_audio()
 
           [] ->
-            case headway_message do
-              [] ->
-                []
-
-              [message] ->
-                [headway_audio(message)]
-                |> Stream.intersperse([:","])
-                |> Stream.concat()
-            end
+            [message_audio(headway_message)]
+            |> Stream.intersperse([:","])
+            |> Stream.concat()
 
           list ->
             Enum.map(list, &message_audio(&1, current_time))
@@ -437,13 +424,7 @@ defmodule Signs.Bus do
       tts_audios =
         case audio_content do
           [] ->
-            case headway_message do
-              [] ->
-                []
-
-              [message] ->
-                [headway_tts(message)]
-            end
+            [message_tts_audio(headway_message)]
 
           [single] ->
             [long_message_tts_audio(single, current_time)]
@@ -485,29 +466,20 @@ defmodule Signs.Bus do
          end) do
       no_service_content()
     else
-      silver_line_headway = silver_line_headway_message(top_configs, stop_ids, current_time)
+      silver_line_headway =
+        combine_silver_line_headway_messages(
+          silver_line_headway_message(top_configs, stop_ids, current_time),
+          silver_line_headway_message(bottom_configs, stop_ids, current_time)
+        )
 
       messages =
         if top_content ++ bottom_content == [] do
-          case silver_line_headway do
-            [] ->
-              []
-
-            [message] ->
-              message |> Message.to_full_page() |> Tuple.to_list()
-          end
+          format_message(silver_line_headway, current_time)
         else
           for {content, config} <- [{top_content, top_configs}, {bottom_content, bottom_configs}] do
             if content == [] do
-              headway_message = headway_message_for_configs(config, stop_ids, current_time)
-
-              case headway_message do
-                [] ->
-                  []
-
-                [message] ->
-                  message |> Message.to_full_page() |> Tuple.to_list()
-              end
+              headway_message_for_configs(config, stop_ids, current_time)
+              |> format_message(current_time)
             else
               Enum.map(content, &format_message(&1, nil, current_time))
               |> paginate_message()
@@ -517,15 +489,9 @@ defmodule Signs.Bus do
 
       audios =
         if top_content ++ bottom_content == [] do
-          case silver_line_headway do
-            [] ->
-              []
-
-            [message] ->
-              [headway_audio(message)]
-              |> Stream.intersperse([:","])
-              |> Stream.concat()
-          end
+          [message_audio(silver_line_headway)]
+          |> Stream.intersperse([:","])
+          |> Stream.concat()
         else
           (top_content ++ bottom_content)
           |> Enum.map(&message_audio(&1, current_time))
@@ -539,13 +505,7 @@ defmodule Signs.Bus do
       tts_audios =
         case top_content ++ bottom_content do
           [] ->
-            case silver_line_headway do
-              [] ->
-                []
-
-              [message] ->
-                [headway_tts(message)]
-            end
+            [message_tts_audio(silver_line_headway)]
 
           list ->
             Enum.map(list, &message_tts_audio(&1, current_time))
@@ -577,11 +537,11 @@ defmodule Signs.Bus do
   end
 
   @spec headway_message_for_configs([map()], [String.t()], DateTime.t()) ::
-          [Message.Headway.t()]
+          {:headway, [Message.Headway.t()]}
   defp headway_message_for_configs(configs, stop_ids, current_time) do
     configs
-    |> Enum.find(fn item ->
-      item[:headway_group] && item[:headway_direction_name]
+    |> Enum.find(fn config ->
+      config[:headway_group] && config[:headway_direction_name]
     end)
     |> case do
       %{headway_group: group, headway_direction_name: name} ->
@@ -594,19 +554,19 @@ defmodule Signs.Bus do
           )
 
         case message do
-          nil -> []
-          _ -> [message]
+          nil -> {:headway, []}
+          _ -> {:headway, [message]}
         end
 
       _ ->
-        []
+        {:headway, []}
     end
   end
 
   defp silver_line_headway_message(configs, stop_ids, current_time) do
     configs
-    |> Enum.find(fn item ->
-      item[:headway_group]
+    |> Enum.find(fn config ->
+      config[:headway_group]
     end)
     |> case do
       %{headway_group: group} ->
@@ -619,47 +579,50 @@ defmodule Signs.Bus do
           )
 
         case message do
-          nil -> []
-          _ -> [message]
+          nil -> {:headway, []}
+          _ -> {:headway, [message]}
         end
 
       _ ->
-        []
+        {:headway, []}
     end
   end
+
+  defp combine_silver_line_headway_messages(
+         {:headway, [%Message.Headway{range: range}]},
+         {:headway, [%Message.Headway{range: range}]}
+       ) do
+    {:headway,
+     [
+       %Message.Headway{
+         destination: nil,
+         route: "Silver",
+         range: range
+       }
+     ]}
+  end
+
+  defp combine_silver_line_headway_messages(
+         _,
+         _
+       ),
+       do: {:headway, []}
 
   defp silver_line_destination("Seaport"), do: nil
   defp silver_line_destination(name), do: PaEss.Utilities.headsign_to_destination(name)
 
-  @spec headway_audio(Message.Headway.t()) :: [Content.Audio.value()]
-  defp headway_audio(%Message.Headway{
-         range: {range_low, range_high},
-         destination: destination
-       }) do
-    low_var = Utilities.number_var(range_low, :english)
-    high_var = Utilities.number_var(range_high, :english)
+  defp message_tts_audio({:headway, []}), do: []
 
-    # TODO: Is there an existing message ID for "Silver Line Buses"?
-    destination_message_id =
-      case destination do
-        :chelsea ->
-          "133"
-
-        :south_station ->
-          "134"
-
-        _ ->
-          "silver_line"
-      end
-
-    [{:canned, {destination_message_id, [low_var, high_var], :audio}}]
-  end
-
-  defp headway_tts(%Message.Headway{
-         range: {range_low, range_high},
-         destination: destination,
-         route: _route
-       }) do
+  defp message_tts_audio(
+         {:headway,
+          [
+            %Message.Headway{
+              range: {range_low, range_high},
+              destination: destination,
+              route: _route
+            }
+          ]}
+       ) do
     service_description =
       case destination do
         nil -> "Silver Line buses"
@@ -912,6 +875,14 @@ defmodule Signs.Bus do
     Content.Utilities.width_padded_string("#{route}#{dest}", no_svc, @line_max)
   end
 
+  defp format_message({:headway, []}, _current_time), do: ["", ""]
+
+  defp format_message({:headway, [message]}, _current_time),
+    do:
+      message
+      |> Message.to_full_page()
+      |> Tuple.to_list()
+
   defp format_long_message({:predictions, [single]}, current_time) do
     [[format_prediction(single, nil, current_time), ""]]
   end
@@ -1043,6 +1014,36 @@ defmodule Signs.Bus do
     headsign = config_headsign(config)
 
     route ++ [{:headsign, headsign}, :no_service]
+  end
+
+  defp message_audio({:headway, []}), do: []
+
+  defp message_audio(
+         {:headway,
+          [
+            %Message.Headway{
+              range: {range_low, range_high},
+              destination: destination
+            }
+          ]}
+       ) do
+    low_var = Utilities.number_var(range_low, :english)
+    high_var = Utilities.number_var(range_high, :english)
+
+    # TODO: Is there an existing message ID for "Silver Line Buses"?
+    destination_message_id =
+      case destination do
+        :chelsea ->
+          "133"
+
+        :south_station ->
+          "134"
+
+        _ ->
+          "silver_line"
+      end
+
+    [{:canned, {destination_message_id, [low_var, high_var], :audio}}]
   end
 
   defp message_tts_audio({:predictions, [prediction | _]}, current_time) do
