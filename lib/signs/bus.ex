@@ -482,8 +482,8 @@ defmodule Signs.Bus do
               |> format_message(current_time)
             else
               Enum.map(content, &format_message(&1, nil, current_time))
-              |> paginate_message()
             end
+            |> paginate_message()
           end
         end
 
