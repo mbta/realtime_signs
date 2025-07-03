@@ -875,7 +875,7 @@ defmodule Signs.Bus do
     Content.Utilities.width_padded_string("#{route}#{dest}", no_svc, @line_max)
   end
 
-  defp format_message({:headway, []}, _current_time), do: ["", ""]
+  defp format_message({:headway, []}, _current_time), do: [""]
 
   defp format_message({:headway, [message]}, _current_time),
     do:
