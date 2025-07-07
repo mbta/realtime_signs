@@ -275,10 +275,10 @@ defmodule Signs.BusTest do
     end
 
     test "SL headway mode with headways set" do
-      expect_messages(["Buses to Chelsea", "Every 11 to 13 min"])
+      expect_messages(["Chelsea buses", "Every 11 to 13 min"])
 
       expect_audios(
-        [{:canned, {"133", ["5511", "5513"], :audio}}],
+        [canned: {"109", ["860", "buses", "666", "5011", "511", "5013", "505"], :audio}],
         [{"Chelsea buses every 11 to 13 minutes.", nil}]
       )
 
@@ -301,8 +301,12 @@ defmodule Signs.BusTest do
       expect_messages(["Silver Line buses", "Every 11 to 13 min"])
 
       expect_audios(
-        [{:canned, {"silver_line", ["5511", "5513"], :audio}}],
-        [{"Silver Line buses every 11 to 13 minutes.", nil}]
+        [
+          canned:
+            {"111", ["548", "21012", "silver_line", "buses", "666", "5011", "511", "5013", "505"],
+             :audio}
+        ],
+        [{"Upcoming departures: Silver Line buses every 11 to 13 minutes.", nil}]
       )
 
       state =
@@ -322,6 +326,55 @@ defmodule Signs.BusTest do
               headway_direction_name: "Seaport"
             }
           ]
+        })
+
+      Signs.Bus.handle_info(:run_loop, state)
+    end
+
+    test "SL predictions and headway mode on mezzanine sign" do
+      expect_messages([
+        [{"Chelsea      buses every", 6}, {"Chelsea     11 to 13 min", 6}],
+        "14 WakefldAv 2 min"
+      ])
+
+      expect_audios(
+        [
+          canned:
+            {"116",
+             [
+               "548",
+               "21012",
+               "860",
+               "buses",
+               "666",
+               "5011",
+               "511",
+               "5013",
+               "505",
+               "21012",
+               "575",
+               "621",
+               "5502",
+               "505"
+             ], :audio}
+        ],
+        [
+          {"Upcoming departures: Chelsea buses every 11 to 13 minutes. Route 14, Wakefield Ave, 2 minutes.",
+           nil}
+        ]
+      )
+
+      state =
+        Map.merge(@sign_state, %{
+          id: "headway",
+          top_configs: [
+            %{
+              sources: [%{stop_id: "stop1", route_id: "741", direction_id: 0}],
+              headway_group: "silver_chelsea",
+              headway_direction_name: "Chelsea"
+            }
+          ],
+          bottom_configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}]
         })
 
       Signs.Bus.handle_info(:run_loop, state)
