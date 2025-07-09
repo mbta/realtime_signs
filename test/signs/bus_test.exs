@@ -278,7 +278,7 @@ defmodule Signs.BusTest do
       expect_messages(["Chelsea buses", "Every 11 to 13 min"])
 
       expect_audios(
-        [canned: {"109", ["860", "buses", "666", "5011", "511", "5013", "505"], :audio}],
+        [canned: {"109", ["860", "932", "666", "5011", "511", "5013", "505"], :audio}],
         [{"Chelsea buses every 11 to 13 minutes.", nil}]
       )
 
@@ -303,8 +303,7 @@ defmodule Signs.BusTest do
       expect_audios(
         [
           canned:
-            {"111", ["548", "21012", "silver_line", "buses", "666", "5011", "511", "5013", "505"],
-             :audio}
+            {"111", ["548", "21012", "931", "932", "666", "5011", "511", "5013", "505"], :audio}
         ],
         [{"Upcoming departures: Silver Line buses every 11 to 13 minutes.", nil}]
       )
@@ -345,7 +344,7 @@ defmodule Signs.BusTest do
                "548",
                "21012",
                "860",
-               "buses",
+               "932",
                "666",
                "5011",
                "511",

@@ -781,8 +781,8 @@ defmodule PaEss.Utilities do
   def audio_take(:with_all_new_red_line_cars), do: "893"
   def audio_take(:arrives_every), do: "666"
   def audio_take(:to), do: "511"
-  def audio_take(:silver_line), do: "silver_line"
-  def audio_take(:buses), do: "buses"
+  def audio_take(:silver_line), do: "931"
+  def audio_take(:buses), do: "932"
 
   # audio: "It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.", visual: "Please move to front of the train to board."
   def audio_take(:four_car_train_message), do: "922"
