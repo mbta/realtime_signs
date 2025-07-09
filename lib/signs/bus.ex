@@ -404,17 +404,14 @@ defmodule Signs.Bus do
         case audio_content do
           [single] ->
             long_message_audio(single, current_time)
-            |> Stream.intersperse([:","])
-            |> Stream.concat()
-            |> paginate_audio()
 
           list ->
             Enum.map(list, &message_audio(&1, current_time))
             |> add_preamble()
-            |> Stream.intersperse([:","])
-            |> Stream.concat()
-            |> paginate_audio()
         end
+        |> Stream.intersperse([:","])
+        |> Stream.concat()
+        |> paginate_audio()
         |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
 
       tts_audios =
@@ -1125,24 +1122,10 @@ defmodule Signs.Bus do
   end
 
   defp long_message_tts_audio(
-         {:headway,
-          %Message.Headway{
-            range: {range_low, range_high},
-            destination: destination,
-            route: route
-          }},
-         _current_time
+         {:headway, %Message.Headway{}} = message,
+         current_time
        ) do
-    buses =
-      case {destination, route} do
-        {destination, "Silver"} ->
-          "#{PaEss.Utilities.destination_to_ad_hoc_string(destination)} buses"
-
-        {_, _} ->
-          "Buses"
-      end
-
-    "#{buses} every #{range_low} to #{range_high} minutes."
+    message_tts_audio(message, current_time)
   end
 
   # Turns a list of audio tokens into a list of audio messages, chunking as needed to stay under
