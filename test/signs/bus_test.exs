@@ -24,6 +24,12 @@ defmodule Signs.BusTest do
     pa_message_plays: %{}
   }
 
+  @headway_config_chelsea %Engine.Config.Headway{
+    headway_id: "chelsea_hw",
+    range_low: 11,
+    range_high: 13
+  }
+
   setup :verify_on_exit!
 
   describe "run loop" do
@@ -74,6 +80,24 @@ defmodule Signs.BusTest do
 
         "stop3" ->
           []
+
+        "silver_1" ->
+          [
+            prediction(
+              departure: 5,
+              stop_id: "silver_1",
+              direction_id: 0,
+              route_id: "silver_route_1",
+              headsign: "SL1"
+            ),
+            prediction(
+              departure: 10,
+              stop_id: "silver_1",
+              direction_id: 0,
+              route_id: "silver_route_1",
+              headsign: "SL1"
+            )
+          ]
       end)
 
       stub(Engine.BusStops.Mock, :get_child_stop, fn stop_id, _, _ -> stop_id end)
@@ -99,6 +123,8 @@ defmodule Signs.BusTest do
 
       stub(Engine.ChelseaBridge.Mock, :bridge_status, fn -> %{raised?: false, estimate: nil} end)
       stub(Engine.Routes.Mock, :route_destination, fn "51", 0 -> "Reservoir Station" end)
+      stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config_chelsea end)
+      stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
 
       :ok
     end
@@ -243,6 +269,111 @@ defmodule Signs.BusTest do
         Map.merge(@sign_state, %{
           id: "headway",
           configs: [%{sources: [%{stop_id: "stop1", route_id: "741", direction_id: 0}]}]
+        })
+
+      Signs.Bus.handle_info(:run_loop, state)
+    end
+
+    test "SL headway mode with headways set" do
+      expect_messages(["Chelsea buses", "Every 11 to 13 min"])
+
+      expect_audios(
+        [canned: {"109", ["860", "932", "666", "5011", "511", "5013", "505"], :audio}],
+        [{"Chelsea buses every 11 to 13 minutes.", nil}]
+      )
+
+      state =
+        Map.merge(@sign_state, %{
+          id: "headway",
+          configs: [
+            %{
+              sources: [%{stop_id: "stop1", route_id: "741", direction_id: 0}],
+              headway_group: "silver_chelsea",
+              headway_direction_name: "Chelsea"
+            }
+          ]
+        })
+
+      Signs.Bus.handle_info(:run_loop, state)
+    end
+
+    test "SL dual headway mode with headways set on mezzanine sign" do
+      expect_messages(["Silver Line buses", "Every 11 to 13 min"])
+
+      expect_audios(
+        [
+          canned:
+            {"111", ["548", "21012", "931", "932", "666", "5011", "511", "5013", "505"], :audio}
+        ],
+        [{"Upcoming departures: Silver Line buses every 11 to 13 minutes.", nil}]
+      )
+
+      state =
+        Map.merge(@sign_state, %{
+          id: "headway",
+          top_configs: [
+            %{
+              sources: [%{stop_id: "stop1", route_id: "741", direction_id: 0}],
+              headway_group: "silver_chelsea",
+              headway_direction_name: "Chelsea"
+            }
+          ],
+          bottom_configs: [
+            %{
+              sources: [%{stop_id: "stop2", route_id: "742", direction_id: 1}],
+              headway_group: "silver_seaport",
+              headway_direction_name: "Seaport"
+            }
+          ]
+        })
+
+      Signs.Bus.handle_info(:run_loop, state)
+    end
+
+    test "SL predictions and headway mode on mezzanine sign" do
+      expect_messages([
+        "14 WakefldAv 2 min",
+        [{"Chelsea      buses every", 6}, {"Chelsea     11 to 13 min", 6}]
+      ])
+
+      expect_audios(
+        [
+          canned:
+            {"116",
+             [
+               "548",
+               "21012",
+               "860",
+               "932",
+               "666",
+               "5011",
+               "511",
+               "5013",
+               "505",
+               "21012",
+               "575",
+               "621",
+               "5502",
+               "505"
+             ], :audio}
+        ],
+        [
+          {"Upcoming departures: Chelsea buses every 11 to 13 minutes. Route 14, Wakefield Ave, 2 minutes.",
+           nil}
+        ]
+      )
+
+      state =
+        Map.merge(@sign_state, %{
+          id: "headway",
+          top_configs: [
+            %{
+              sources: [%{stop_id: "stop1", route_id: "741", direction_id: 0}],
+              headway_group: "silver_chelsea",
+              headway_direction_name: "Chelsea"
+            }
+          ],
+          bottom_configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}]
         })
 
       Signs.Bus.handle_info(:run_loop, state)
