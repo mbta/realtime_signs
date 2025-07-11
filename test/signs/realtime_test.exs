@@ -1953,7 +1953,7 @@ defmodule Signs.RealtimeTest do
       stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> true end)
 
       stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ ->
-        %{"a" => ~U[2023-01-01 00:00:00.000Z]}
+        %{"a" => datetime(~D[2022-12-31], ~T[23:55:00])}
       end)
 
       stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
@@ -2033,19 +2033,19 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect(Engine.LastTrip.Mock, :get_recent_departures, fn "1" ->
-        %{"a" => ~U[2023-01-01 00:00:00.000Z]}
+        %{"a" => datetime(~D[2022-12-31], ~T[23:55:00])}
       end)
 
       expect(Engine.LastTrip.Mock, :get_recent_departures, fn "2" ->
-        %{"b" => ~U[2023-01-01 00:00:00.000Z]}
+        %{"b" => datetime(~D[2022-12-31], ~T[23:55:00])}
       end)
 
       expect(Engine.LastTrip.Mock, :get_recent_departures, fn "1" ->
-        %{"a" => ~U[2023-01-01 00:00:00.000Z]}
+        %{"a" => datetime(~D[2022-12-31], ~T[23:55:00])}
       end)
 
       expect(Engine.LastTrip.Mock, :get_recent_departures, fn "2" ->
-        %{"b" => ~U[2023-01-01 00:00:00.000Z]}
+        %{"b" => datetime(~D[2022-12-31], ~T[23:55:00])}
       end)
 
       expect(Engine.LastTrip.Mock, :is_last_trip?, fn "a" -> false end)
@@ -2086,19 +2086,19 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect(Engine.LastTrip.Mock, :get_recent_departures, fn "1" ->
-        %{"a" => ~U[2023-01-01 00:00:00.000Z]}
+        %{"a" => datetime(~D[2022-12-31], ~T[23:55:00])}
       end)
 
       expect(Engine.LastTrip.Mock, :get_recent_departures, fn "70086" ->
-        %{"b" => ~U[2023-01-01 00:00:00.000Z]}
+        %{"b" => datetime(~D[2022-12-31], ~T[23:55:00])}
       end)
 
       expect(Engine.LastTrip.Mock, :get_recent_departures, fn "1" ->
-        %{"a" => ~U[2023-01-01 00:00:00.000Z]}
+        %{"a" => datetime(~D[2022-12-31], ~T[23:55:00])}
       end)
 
       expect(Engine.LastTrip.Mock, :get_recent_departures, fn "70086" ->
-        %{"b" => ~U[2023-01-01 00:00:00.000Z]}
+        %{"b" => datetime(~D[2022-12-31], ~T[23:55:00])}
       end)
 
       expect(Engine.LastTrip.Mock, :is_last_trip?, fn "a" -> true end)
@@ -2136,7 +2136,10 @@ defmodule Signs.RealtimeTest do
 
     test "Red line trunk service ends after two last trips" do
       expect(Engine.LastTrip.Mock, :get_recent_departures, 2, fn _ ->
-        %{"a" => ~U[2023-01-01 00:00:00.000Z], "b" => ~U[2023-01-01 00:00:00.000Z]}
+        %{
+          "a" => datetime(~D[2022-12-31], ~T[23:55:00]),
+          "b" => datetime(~D[2022-12-31], ~T[23:55:00])
+        }
       end)
 
       expect_messages({"Service ended", "No Southbound trains"})
