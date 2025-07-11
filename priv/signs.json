@@ -1031,7 +1031,7 @@
     "id": "state_blue_eastbound",
     "type": "realtime",
     "pa_ess_loc": "BSTA",
-    "scu_id": "OSTASCU001",
+    "scu_id": "BSTASCU001",
     "read_loop_offset": 30,
     "text_zone": "e",
     "audio_zones": [
@@ -1058,7 +1058,7 @@
     "id": "state_blue_mezzanine",
     "type": "realtime",
     "pa_ess_loc": "BSTA",
-    "scu_id": "OSTASCU001",
+    "scu_id": "BSTASCU001",
     "read_loop_offset": 120,
     "text_zone": "m",
     "audio_zones": [
@@ -1103,7 +1103,7 @@
     "id": "state_blue_westbound",
     "type": "realtime",
     "pa_ess_loc": "BSTA",
-    "scu_id": "OSTASCU001",
+    "scu_id": "BSTASCU001",
     "read_loop_offset": 90,
     "text_zone": "w",
     "audio_zones": [
