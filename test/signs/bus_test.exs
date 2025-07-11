@@ -332,8 +332,8 @@ defmodule Signs.BusTest do
 
     test "SL predictions and headway mode on mezzanine sign" do
       expect_messages([
-        [{"Chelsea      buses every", 6}, {"Chelsea     11 to 13 min", 6}],
-        "14 WakefldAv 2 min"
+        "14 WakefldAv 2 min",
+        [{"Chelsea      buses every", 6}, {"Chelsea     11 to 13 min", 6}]
       ])
 
       expect_audios(

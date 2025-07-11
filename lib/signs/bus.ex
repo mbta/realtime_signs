@@ -349,10 +349,9 @@ defmodule Signs.Bus do
          state
        ) do
     %{configs: configs, extra_audio_configs: extra_audio_configs} = state
-    stop_ids = all_stop_ids(state)
 
     content =
-      configs_content(configs, predictions_lookup, route_alerts_lookup, stop_ids, current_time)
+      configs_content(configs, predictions_lookup, route_alerts_lookup, current_time)
 
     # Special case: Nubian platform E has two separate text zones, but only one audio zone due
     # to close proximity. One sign process is configured to read out the other sign's prediction
@@ -363,12 +362,11 @@ defmodule Signs.Bus do
           extra_audio_configs,
           predictions_lookup,
           route_alerts_lookup,
-          stop_ids,
           current_time
         )
 
     if !Enum.any?(audio_content, &match?({:predictions, _}, &1)) &&
-         stop_ids
+         all_stop_ids(state)
          |> Enum.all?(fn stop_id ->
            Map.get(stop_alerts_lookup, stop_id) in @alert_levels
          end) do
@@ -402,6 +400,9 @@ defmodule Signs.Bus do
 
       audios =
         case audio_content do
+          [] ->
+            []
+
           [single] ->
             long_message_audio(single, current_time)
 
@@ -445,14 +446,12 @@ defmodule Signs.Bus do
          state
        ) do
     %{top_configs: top_configs, bottom_configs: bottom_configs} = state
-    stop_ids = all_stop_ids(state)
 
     top_content =
       configs_content(
         top_configs,
         predictions_lookup,
         route_alerts_lookup,
-        stop_ids,
         current_time
       )
 
@@ -461,12 +460,11 @@ defmodule Signs.Bus do
         bottom_configs,
         predictions_lookup,
         route_alerts_lookup,
-        stop_ids,
         current_time
       )
 
     if !Enum.any?(top_content ++ bottom_content, &match?({:predictions, _}, &1)) &&
-         stop_ids
+         all_stop_ids(state)
          |> Enum.all?(fn stop_id ->
            Map.get(stop_alerts_lookup, stop_id) in @alert_levels
          end) do
@@ -478,15 +476,16 @@ defmodule Signs.Bus do
       messages =
         if silver_line_headway != nil do
           format_long_message(silver_line_headway, current_time)
-          |> Enum.flat_map(& &1)
+          |> paginate_pairs()
         else
           [top_content, bottom_content]
-          |> Enum.map(fn content ->
+          |> Enum.flat_map(fn content ->
             Enum.map(content, fn message ->
               format_message(message, nil, current_time)
             end)
-            |> paginate_message()
           end)
+          |> handle_content_length()
+          |> Tuple.to_list()
         end
 
       audios =
@@ -508,15 +507,43 @@ defmodule Signs.Bus do
         else
           top_content ++ bottom_content
         end
-        |> Enum.map(&message_tts_audio(&1, current_time))
-        |> Enum.join(" ")
-        |> add_tts_preamble()
-        |> List.wrap()
-        |> Enum.map(&{&1, nil})
-        |> Enum.concat(bridge_tts_audio(bridge_status, bridge_enabled?, current_time, state))
+        |> case do
+          [] ->
+            []
+
+          content ->
+            content
+            |> Enum.map(&message_tts_audio(&1, current_time))
+            |> Enum.join(" ")
+            |> add_tts_preamble()
+            |> List.wrap()
+            |> Enum.map(&{&1, nil})
+            |> Enum.concat(bridge_tts_audio(bridge_status, bridge_enabled?, current_time, state))
+        end
 
       {messages, audios, tts_audios}
     end
+  end
+
+  # Logic from Messages.render_messages() but for bus content
+  def handle_content_length([long_top, long_bottom]) do
+    cond do
+      fits_on_top_line?(long_top) -> {long_top, long_bottom}
+      fits_on_top_line?(long_bottom) -> {long_bottom, long_top}
+      true -> paginate(long_top, long_bottom)
+    end
+  end
+
+  defp fits_on_top_line?(content) do
+    case content do
+      list when is_list(list) -> Enum.map(list, &elem(&1, 0))
+      single -> [single]
+    end
+    |> Enum.all?(&(String.length(&1) <= 18))
+  end
+
+  defp paginate({first_top, first_bottom}, {second_top, second_bottom}) do
+    {[{first_top, 6}, {second_top, 6}], [{first_bottom, 6}, {second_bottom, 6}]}
   end
 
   @spec special_harvard_content() :: content_values()
@@ -550,9 +577,9 @@ defmodule Signs.Bus do
   defp combine_silver_line_headway_messages(_, _),
     do: nil
 
-  defp configs_content(nil, _, _, _, _), do: []
+  defp configs_content(nil, _, _, _), do: []
 
-  defp configs_content(configs, predictions_lookup, route_alerts_lookup, stop_ids, current_time) do
+  defp configs_content(configs, predictions_lookup, route_alerts_lookup, current_time) do
     Enum.flat_map(configs, fn config ->
       content =
         Stream.flat_map(config.sources, fn source ->
@@ -565,16 +592,21 @@ defmodule Signs.Bus do
           {:predictions, Enum.sort_by(list, & &1.departure_time, DateTime)}
         end)
 
-      message =
+      headway_message =
         Enum.find(configs, fn config ->
           config[:headway_group] && config[:headway_direction_name]
         end)
         |> case do
           %{headway_group: group, headway_direction_name: name} ->
+            config_stop_ids =
+              Enum.map(config.sources, fn source ->
+                source.stop_id
+              end)
+
             Headways.headway_message_sl(
               group,
               silver_line_destination(name),
-              stop_ids,
+              config_stop_ids,
               current_time
             )
 
@@ -589,8 +621,8 @@ defmodule Signs.Bus do
             end) ->
           [{:alert, config}]
 
-        message ->
-          [{:headway, message}]
+        content == [] && headway_message ->
+          [{:headway, headway_message}]
 
         true ->
           content
@@ -720,7 +752,6 @@ defmodule Signs.Bus do
     if bridge_enabled? && chelsea_bridge == "audio_visual" &&
          bridge_status_raised?(bridge_status, current_time) do
       mins = bridge_status_minutes(bridge_status, current_time)
-      stop_ids = all_stop_ids(state)
 
       line2 =
         case {mins > 0,
@@ -728,7 +759,6 @@ defmodule Signs.Bus do
                 configs,
                 predictions_lookup,
                 route_alerts_lookup,
-                stop_ids,
                 current_time
               ) != []} do
           {true, true} -> "SL3 delays #{mins} more min"

@@ -26,17 +26,6 @@ defmodule Signs.Utilities.Headways do
   end
 
   # Process headways for Silver Line differently b/c of its different config shape
-  @spec headway_message_sl(
-          String.t(),
-          PaEss.destination() | nil,
-          [String.t()] | nil,
-          DateTime.t()
-        ) ::
-          Message.t() | nil
-  def headway_message_sl(_headway_group, _headway_destination, stop_ids, _current_time)
-      when stop_ids == nil or stop_ids == [],
-      do: nil
-
   def headway_message_sl(headway_group, headway_destination, stop_ids, current_time) do
     case fetch_headways(headway_group, stop_ids, current_time) do
       nil ->
