@@ -195,6 +195,7 @@ defmodule Signs.Utilities.Messages do
     |> then(fn predictions -> if(sign_config == :headway, do: [], else: predictions) end)
     |> filter_early_am_predictions(current_time, scheduled)
     |> filter_large_red_line_gaps()
+    |> filter_jfk_predictions_to_alewife()
     |> get_unique_destination_predictions(Signs.Utilities.SourceConfig.single_route(config))
   end
 
@@ -235,6 +236,21 @@ defmodule Signs.Utilities.Messages do
   end
 
   defp filter_large_red_line_gaps(predictions), do: predictions
+
+  # This helps us identify if there are only predictions for one of the two platforms at JFK
+  defp filter_jfk_predictions_to_alewife([first | rest])
+       when first.direction_id == 1 and first.stop_id in ["70086", "70096"] do
+    second =
+      Enum.find(rest, &(&1.stop_id != first.stop_id)) ||
+        Enum.at(rest, 0)
+
+    case second do
+      nil -> [first]
+      _ -> [first, second]
+    end
+  end
+
+  defp filter_jfk_predictions_to_alewife(predictions), do: predictions
 
   # Take next two predictions, but if the list has multiple destinations, prefer showing
   # distinct ones. This helps e.g. the red line trunk where people may need to know about
@@ -284,12 +300,25 @@ defmodule Signs.Utilities.Messages do
         terminal?: terminal?,
         special_sign:
           case sign do
-            %{pa_ess_loc: "RJFK", text_zone: "m"} -> :jfk_mezzanine
-            %{pa_ess_loc: "BBOW", text_zone: "e"} -> :bowdoin_eastbound
-            _ -> nil
+            %{pa_ess_loc: "BBOW", text_zone: "e"} ->
+              :bowdoin_eastbound
+
+            %{pa_ess_loc: "RJFK", text_zone: "m"} ->
+              case jfk_to_alewife_is_single_platform?(predictions) do
+                false -> :jfk_mezzanine
+                true -> :jfk_mezzanine_single_platform
+              end
+
+            _ ->
+              nil
           end
       }
     end
+  end
+
+  @spec jfk_to_alewife_is_single_platform?([Predictions.Prediction.t()]) :: boolean()
+  defp jfk_to_alewife_is_single_platform?([first_prediction | later_predictions]) do
+    !Enum.any?(later_predictions, &(&1.stop_id != first_prediction.stop_id))
   end
 
   defp early_am_message(current_time, scheduled_time, config) do

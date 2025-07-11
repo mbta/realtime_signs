@@ -1204,13 +1204,17 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, %{@jfk_mezzanine_sign | tick_read: 0})
     end
 
-    test "JFK mezzanine platform TBD" do
+    test "JFK mezzanine platform TBD soon" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :ashmont, arrival: 120)]
       end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :alewife, arrival: 440, stop_id: "70086")]
+        [
+          prediction(destination: :alewife, arrival: 440, stop_id: "70086"),
+          prediction(destination: :alewife, arrival: 650, stop_id: "70096"),
+          prediction(destination: :alewife, arrival: 1000, stop_id: "70096")
+        ]
       end)
 
       expect_messages(
@@ -1227,6 +1231,74 @@ defmodule Signs.RealtimeTest do
           {"The next Ashmont train arrives in 2 minutes.", nil},
           {"The next Alewife train arrives in 7 minutes. We will announce the platform for boarding soon.",
            nil}
+        ]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@jfk_mezzanine_sign | tick_read: 0})
+    end
+
+    test "JFK mezzanine platform TBD later" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :ashmont, arrival: 120)]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :alewife, arrival: 650, stop_id: "70086"),
+          prediction(destination: :alewife, arrival: 1000, stop_id: "70096")
+        ]
+      end)
+
+      expect_messages(
+        {"Ashmont      2 min", [{"Alewife     11 min", 6}, {"Alewife (Platform TBD)", 6}]}
+      )
+
+      expect_audios(
+        [
+          {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5002", "505"]), :audio}},
+          {:canned,
+           {"117", spaced(["501", "4000", "864", "503", "504", "5011", "505", "857"]), :audio}}
+        ],
+        [
+          {"The next Ashmont train arrives in 2 minutes.", nil},
+          {"The next Alewife train arrives in 11 minutes. We will announce the platform for boarding when the train is closer.",
+           nil}
+        ]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@jfk_mezzanine_sign | tick_read: 0})
+    end
+
+    test "JFK mezzanine shows platform when all predictions to Alewife use same platform" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :ashmont, arrival: 120)]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :alewife, arrival: 380, stop_id: "70086"),
+          prediction(destination: :alewife, arrival: 650, stop_id: "70086"),
+          prediction(destination: :alewife, arrival: 750, stop_id: "70086"),
+          prediction(destination: :alewife, arrival: 660, stop_id: "70086"),
+          prediction(destination: :alewife, arrival: 760, stop_id: "70086")
+        ]
+      end)
+
+      expect_messages(
+        {"Ashmont      2 min", [{"Alewife (A)  6 min", 6}, {"Alewife (Ashmont plat)", 6}]}
+      )
+
+      expect_audios(
+        [
+          {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5002", "505"]), :audio}},
+          {:canned,
+           {"121",
+            spaced(["501", "4000", "864", "503", "504", "5006", "505", "851", "4016", "529"]),
+            :audio}}
+        ],
+        [
+          {"The next Ashmont train arrives in 2 minutes.", nil},
+          {"The next Alewife train arrives in 6 minutes on the Ashmont platform.", nil}
         ]
       )
 

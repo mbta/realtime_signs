@@ -5,7 +5,7 @@ defmodule Message.Predictions do
   @type t :: %__MODULE__{
           predictions: [Predictions.Prediction.t()],
           terminal?: boolean(),
-          special_sign: :jfk_mezzanine | :bowdoin_eastbound | nil
+          special_sign: :jfk_mezzanine | :jfk_mezzanine_single_platform | :bowdoin_eastbound | nil
         }
 
   defimpl Message do
@@ -101,11 +101,12 @@ defmodule Message.Predictions do
         track_number = Content.Utilities.stop_track_number(prediction.stop_id)
 
         cond do
-          special_sign == :jfk_mezzanine and destination == :alewife ->
+          special_sign in [:jfk_mezzanine, :jfk_mezzanine_single_platform] and
+              destination == :alewife ->
             platform_name = Content.Utilities.stop_platform_name(prediction.stop_id)
 
             {headsign_message, platform_message} =
-              if is_integer(minutes) and minutes > 5 do
+              if is_integer(minutes) and minutes > 5 and special_sign == :jfk_mezzanine do
                 {headsign, " (Platform TBD)"}
               else
                 {"#{headsign} (#{String.slice(platform_name, 0..0)})", " (#{platform_name} plat)"}
