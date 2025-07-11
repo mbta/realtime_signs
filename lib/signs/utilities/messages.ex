@@ -338,16 +338,12 @@ defmodule Signs.Utilities.Messages do
   defp overnight_period?(
          current_time,
          first_scheduled_departure,
-         last_scheduled_departure,
+         _last_scheduled_departure,
          most_recent_departure,
          true
        ) do
-    if Timex.after?(most_recent_departure, last_scheduled_departure) do
-      most_recent_departure
-    else
-      last_scheduled_departure
-    end
-    |> calculate_overnight_period(
+    calculate_overnight_period(
+      most_recent_departure,
       current_time,
       first_scheduled_departure
     )
