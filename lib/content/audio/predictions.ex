@@ -160,13 +160,23 @@ defmodule Content.Audio.Predictions do
       {minutes, _} = PaEss.Utilities.prediction_minutes(audio.prediction, audio.terminal?)
       platform = Content.Utilities.stop_platform(audio.prediction.stop_id)
       jfk_mezzanine? = audio.special_sign == :jfk_mezzanine
+      jfk_mezzanine_single_platform? = audio.special_sign == :jfk_mezzanine_single_platform
 
       cond do
-        !platform -> {nil, false, nil}
-        jfk_mezzanine? and minutes > @announce_platform_later_mins -> {nil, false, :later}
-        jfk_mezzanine? and minutes > @announce_platform_soon_mins -> {nil, false, :soon}
-        minutes == 1 or !jfk_mezzanine? -> {platform, true, nil}
-        true -> {platform, false, nil}
+        !platform ->
+          {nil, false, nil}
+
+        jfk_mezzanine? and minutes > @announce_platform_later_mins ->
+          {nil, false, :later}
+
+        jfk_mezzanine? and minutes > @announce_platform_soon_mins ->
+          {nil, false, :soon}
+
+        minutes == 1 or (!jfk_mezzanine? and !jfk_mezzanine_single_platform?) ->
+          {platform, true, nil}
+
+        true ->
+          {platform, false, nil}
       end
     end
 
