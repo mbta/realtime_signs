@@ -41,7 +41,7 @@ defmodule PaEss.Updater do
         scu_id,
         {:background, scu_id,
          %{
-           visual_zones: [text_zone],
+           zones: ["#{pa_ess_loc}-#{text_zone}"],
            visual_data: visual,
            expiration: 180,
            tag: tag
@@ -107,9 +107,8 @@ defmodule PaEss.Updater do
             scu_id,
             {:message, scu_id,
              %{
-               visual_zones: audio_zones,
+               zones: Enum.map(audio_zones, &"#{pa_ess_loc}-#{&1}"),
                visual_data: format_pages(pages),
-               audio_zones: audio_zones,
                audio_data: [Base.encode64(file)],
                expiration: 30,
                priority: priority,

@@ -131,25 +131,10 @@ defmodule Signs.Realtime do
         )
       end)
 
-    last_scheduled_departures =
-      map_source_config(sign.source_config, fn config ->
-        RealtimeSigns.headway_engine().get_last_scheduled_departure(
-          SourceConfig.sign_stop_ids(config)
-        )
-      end)
-
     prev_predictions_lookup =
       for prediction <- sign.prev_predictions, into: %{} do
         {prediction_key(prediction), prediction}
       end
-
-    recent_departures =
-      map_source_config(sign.source_config, fn config ->
-        SourceConfig.sign_stop_ids(config)
-        |> Stream.flat_map(&RealtimeSigns.last_trip_engine().get_recent_departures(&1))
-        |> Enum.max_by(fn {_, dt} -> dt end, fn -> {nil, nil} end)
-        |> elem(1)
-      end)
 
     {predictions, all_predictions} =
       case sign.source_config do
@@ -177,8 +162,6 @@ defmodule Signs.Realtime do
         current_time,
         alert_status,
         first_scheduled_departures,
-        last_scheduled_departures,
-        recent_departures,
         service_end_statuses_per_source
       )
 
@@ -225,7 +208,7 @@ defmodule Signs.Realtime do
     Map.take(prediction, [:stop_id, :route_id, :vehicle_id, :direction_id, :trip_id])
   end
 
-  defp fetch_predictions(%{sources: sources}, prev_predictions_lookup) do
+  defp fetch_predictions(%{sources: sources} = config, prev_predictions_lookup) do
     for source <- sources,
         prediction <-
           RealtimeSigns.prediction_engine().for_stop(source.stop_id, source.direction_id) do
@@ -234,7 +217,21 @@ defmodule Signs.Realtime do
       prediction
       |> prevent_countup(prev, :seconds_until_arrival)
       |> prevent_countup(prev, :seconds_until_departure)
+      |> log_brd_to_arr(prev, config)
     end
+  end
+
+  # This is some temporary logging to check the prevalence of predictions going from BRD to ARR
+  defp log_brd_to_arr(prediction, nil, _), do: prediction
+
+  defp log_brd_to_arr(prediction, prev, %{terminal?: terminal?}) do
+    if prediction.seconds_until_departure && prev.seconds_until_departure &&
+         PaEss.Utilities.prediction_minutes(prediction, terminal?) == {:arriving, false} &&
+         PaEss.Utilities.prediction_minutes(prev, terminal?) == {:boarding, false} do
+      Logger.info("brd_to_arr: prediction=#{inspect(prediction)} prev=#{inspect(prev)}")
+    end
+
+    prediction
   end
 
   defp prevent_countup(prediction, nil, _), do: prediction
