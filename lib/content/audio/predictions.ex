@@ -11,16 +11,20 @@ defmodule Content.Audio.Predictions do
 
   @type t :: %__MODULE__{
           prediction: Predictions.Prediction.t(),
-          special_sign: :jfk_mezzanine | :bowdoin_eastbound | nil,
+          special_sign: special_sign(),
           terminal?: boolean(),
           multiple_messages?: boolean(),
           next_or_following: :next | :following,
           is_first?: boolean()
         }
 
+  # To track signs with special audio conditions
+  # For JFK platform, track if Alewife-bound trains are using a single platform, indicated by true.
+  @type special_sign :: {:jfk_mezzanine, true | false} | :bowdoin_eastbound | nil
+
   @spec new(
           Predictions.Prediction.t(),
-          :jfk_mezzanine | :bowdoin_eastbound | nil,
+          special_sign(),
           boolean(),
           boolean(),
           :next | :following,
@@ -159,8 +163,8 @@ defmodule Content.Audio.Predictions do
     defp platform_status(audio) do
       {minutes, _} = PaEss.Utilities.prediction_minutes(audio.prediction, audio.terminal?)
       platform = Content.Utilities.stop_platform(audio.prediction.stop_id)
-      jfk_mezzanine? = audio.special_sign == :jfk_mezzanine
-      jfk_mezzanine_single_platform? = audio.special_sign == :jfk_mezzanine_single_platform
+      jfk_mezzanine? = audio.special_sign == {:jfk_mezzanine, false}
+      jfk_mezzanine_single_platform? = audio.special_sign == {:jfk_mezzanine, true}
 
       cond do
         !platform ->

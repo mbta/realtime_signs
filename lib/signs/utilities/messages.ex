@@ -68,7 +68,7 @@ defmodule Signs.Utilities.Messages do
         end
         |> Enum.map(fn {config, predictions, alert_status, first_scheduled_departures,
                         last_scheduled_departures, most_recent_departure, service_status} ->
-          predictions =
+          filtered_predictions =
             filter_predictions(
               predictions,
               config,
@@ -86,12 +86,12 @@ defmodule Signs.Utilities.Messages do
                most_recent_departure,
                service_status
              ) do
-            prediction_message(predictions, config, sign) ||
+            prediction_message(filtered_predictions, config, sign, predictions) ||
               Signs.Utilities.Headways.headway_message(config, current_time) ||
               early_am_message(current_time, first_scheduled_departures, config) ||
               %Message.Empty{}
           else
-            prediction_message(predictions, config, sign) ||
+            prediction_message(filtered_predictions, config, sign, predictions) ||
               service_ended_message(service_status, config) ||
               alert_message(alert_status, sign, config) ||
               Signs.Utilities.Headways.headway_message(config, current_time) ||
@@ -195,7 +195,6 @@ defmodule Signs.Utilities.Messages do
     |> then(fn predictions -> if(sign_config == :headway, do: [], else: predictions) end)
     |> filter_early_am_predictions(current_time, scheduled)
     |> filter_large_red_line_gaps()
-    |> filter_jfk_predictions_to_alewife()
     |> get_unique_destination_predictions(Signs.Utilities.SourceConfig.single_route(config))
   end
 
@@ -237,21 +236,6 @@ defmodule Signs.Utilities.Messages do
 
   defp filter_large_red_line_gaps(predictions), do: predictions
 
-  # This helps us identify if there are only predictions for one of the two platforms at JFK
-  defp filter_jfk_predictions_to_alewife([first | rest])
-       when first.direction_id == 1 and first.stop_id in ["70086", "70096"] do
-    second =
-      Enum.find(rest, &(&1.stop_id != first.stop_id)) ||
-        Enum.at(rest, 0)
-
-    case second do
-      nil -> [first]
-      _ -> [first, second]
-    end
-  end
-
-  defp filter_jfk_predictions_to_alewife(predictions), do: predictions
-
   # Take next two predictions, but if the list has multiple destinations, prefer showing
   # distinct ones. This helps e.g. the red line trunk where people may need to know about
   # a particular branch.
@@ -291,9 +275,10 @@ defmodule Signs.Utilities.Messages do
   @spec prediction_message(
           [Predictions.Prediction.t()],
           Signs.Utilities.SourceConfig.config(),
-          Signs.Realtime.t()
+          Signs.Realtime.t(),
+          [Predictions.Prediction.t()]
         ) :: Message.t() | nil
-  defp prediction_message(predictions, %{terminal?: terminal?}, sign) do
+  defp prediction_message(predictions, %{terminal?: terminal?}, sign, all_predictions) do
     if predictions != [] do
       %Message.Predictions{
         predictions: predictions,
@@ -304,10 +289,7 @@ defmodule Signs.Utilities.Messages do
               :bowdoin_eastbound
 
             %{pa_ess_loc: "RJFK", text_zone: "m"} ->
-              case jfk_to_alewife_is_single_platform?(predictions) do
-                false -> :jfk_mezzanine
-                true -> :jfk_mezzanine_single_platform
-              end
+              {:jfk_mezzanine, jfk_to_alewife_is_single_platform?(all_predictions)}
 
             _ ->
               nil
@@ -317,8 +299,8 @@ defmodule Signs.Utilities.Messages do
   end
 
   @spec jfk_to_alewife_is_single_platform?([Predictions.Prediction.t()]) :: boolean()
-  defp jfk_to_alewife_is_single_platform?([first_prediction | later_predictions]) do
-    !Enum.any?(later_predictions, &(&1.stop_id != first_prediction.stop_id))
+  defp jfk_to_alewife_is_single_platform?(all_predictions) do
+    length(Enum.uniq_by(all_predictions, & &1.stop_id)) == 1
   end
 
   defp early_am_message(current_time, scheduled_time, config) do
