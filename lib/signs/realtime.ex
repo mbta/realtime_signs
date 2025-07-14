@@ -208,7 +208,7 @@ defmodule Signs.Realtime do
     Map.take(prediction, [:stop_id, :route_id, :vehicle_id, :direction_id, :trip_id])
   end
 
-  defp fetch_predictions(%{sources: sources}, prev_predictions_lookup) do
+  defp fetch_predictions(%{sources: sources} = config, prev_predictions_lookup) do
     for source <- sources,
         prediction <-
           RealtimeSigns.prediction_engine().for_stop(source.stop_id, source.direction_id) do
@@ -217,7 +217,21 @@ defmodule Signs.Realtime do
       prediction
       |> prevent_countup(prev, :seconds_until_arrival)
       |> prevent_countup(prev, :seconds_until_departure)
+      |> log_brd_to_arr(prev, config)
     end
+  end
+
+  # This is some temporary logging to check the prevalence of predictions going from BRD to ARR
+  defp log_brd_to_arr(prediction, nil, _), do: prediction
+
+  defp log_brd_to_arr(prediction, prev, %{terminal?: terminal?}) do
+    if prediction.seconds_until_departure && prev.seconds_until_departure &&
+         PaEss.Utilities.prediction_minutes(prediction, terminal?) == {:arriving, false} &&
+         PaEss.Utilities.prediction_minutes(prev, terminal?) == {:boarding, false} do
+      Logger.info("brd_to_arr: prediction=#{inspect(prediction)} prev=#{inspect(prev)}")
+    end
+
+    prediction
   end
 
   defp prevent_countup(prediction, nil, _), do: prediction
