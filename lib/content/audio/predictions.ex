@@ -11,16 +11,20 @@ defmodule Content.Audio.Predictions do
 
   @type t :: %__MODULE__{
           prediction: Predictions.Prediction.t(),
-          special_sign: :jfk_mezzanine | :bowdoin_eastbound | nil,
+          special_sign: special_sign(),
           terminal?: boolean(),
           multiple_messages?: boolean(),
           next_or_following: :next | :following,
           is_first?: boolean()
         }
 
+  # To track signs with special audio conditions
+  # For JFK platform, track if Alewife-bound trains are using a single platform, indicated by true.
+  @type special_sign :: {:jfk_mezzanine, true | false} | :bowdoin_eastbound | nil
+
   @spec new(
           Predictions.Prediction.t(),
-          :jfk_mezzanine | :bowdoin_eastbound | nil,
+          special_sign(),
           boolean(),
           boolean(),
           :next | :following,
@@ -159,14 +163,24 @@ defmodule Content.Audio.Predictions do
     defp platform_status(audio) do
       {minutes, _} = PaEss.Utilities.prediction_minutes(audio.prediction, audio.terminal?)
       platform = Content.Utilities.stop_platform(audio.prediction.stop_id)
-      jfk_mezzanine? = audio.special_sign == :jfk_mezzanine
+      jfk_mezzanine? = audio.special_sign == {:jfk_mezzanine, false}
+      jfk_mezzanine_single_platform? = audio.special_sign == {:jfk_mezzanine, true}
 
       cond do
-        !platform -> {nil, false, nil}
-        jfk_mezzanine? and minutes > @announce_platform_later_mins -> {nil, false, :later}
-        jfk_mezzanine? and minutes > @announce_platform_soon_mins -> {nil, false, :soon}
-        minutes == 1 or !jfk_mezzanine? -> {platform, true, nil}
-        true -> {platform, false, nil}
+        !platform ->
+          {nil, false, nil}
+
+        jfk_mezzanine? and minutes > @announce_platform_later_mins ->
+          {nil, false, :later}
+
+        jfk_mezzanine? and minutes > @announce_platform_soon_mins ->
+          {nil, false, :soon}
+
+        minutes == 1 or (!jfk_mezzanine? and !jfk_mezzanine_single_platform?) ->
+          {platform, true, nil}
+
+        true ->
+          {platform, false, nil}
       end
     end
 

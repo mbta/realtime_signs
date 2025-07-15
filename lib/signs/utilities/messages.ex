@@ -47,12 +47,12 @@ defmodule Signs.Utilities.Messages do
           [{sign.source_config, predictions, alert_status, scheduled, service_status}]
         end
         |> Enum.map(fn {config, predictions, alert_status, scheduled, service_status} ->
-          predictions =
+          filtered_predictions =
             filter_predictions(predictions, config, sign_config, current_time, scheduled)
 
           alert_status = filter_alert_status(alert_status, sign_config)
 
-          prediction_message(predictions, config, sign) ||
+          prediction_message(filtered_predictions, config, sign, predictions) ||
             service_ended_message(service_status, config) ||
             alert_message(alert_status, sign, config) ||
             Signs.Utilities.Headways.headway_message(config, current_time) ||
@@ -235,21 +235,32 @@ defmodule Signs.Utilities.Messages do
   @spec prediction_message(
           [Predictions.Prediction.t()],
           Signs.Utilities.SourceConfig.config(),
-          Signs.Realtime.t()
+          Signs.Realtime.t(),
+          [Predictions.Prediction.t()]
         ) :: Message.t() | nil
-  defp prediction_message(predictions, %{terminal?: terminal?}, sign) do
+  defp prediction_message(predictions, %{terminal?: terminal?}, sign, all_predictions) do
     if predictions != [] do
       %Message.Predictions{
         predictions: predictions,
         terminal?: terminal?,
         special_sign:
           case sign do
-            %{pa_ess_loc: "RJFK", text_zone: "m"} -> :jfk_mezzanine
-            %{pa_ess_loc: "BBOW", text_zone: "e"} -> :bowdoin_eastbound
-            _ -> nil
+            %{pa_ess_loc: "BBOW", text_zone: "e"} ->
+              :bowdoin_eastbound
+
+            %{pa_ess_loc: "RJFK", text_zone: "m"} ->
+              {:jfk_mezzanine, all_same_stop_id?(all_predictions)}
+
+            _ ->
+              nil
           end
       }
     end
+  end
+
+  @spec all_same_stop_id?([Predictions.Prediction.t()]) :: boolean()
+  defp all_same_stop_id?(all_predictions) do
+    length(Enum.uniq_by(all_predictions, & &1.stop_id)) == 1
   end
 
   defp early_am_message(current_time, scheduled_time, config) do
