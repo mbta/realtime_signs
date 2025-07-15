@@ -249,7 +249,7 @@ defmodule Signs.Utilities.Messages do
               :bowdoin_eastbound
 
             %{pa_ess_loc: "RJFK", text_zone: "m"} ->
-              {:jfk_mezzanine, jfk_to_alewife_is_single_platform?(all_predictions)}
+              {:jfk_mezzanine, all_same_stop_id?(all_predictions)}
 
             _ ->
               nil
@@ -258,8 +258,8 @@ defmodule Signs.Utilities.Messages do
     end
   end
 
-  @spec jfk_to_alewife_is_single_platform?([Predictions.Prediction.t()]) :: boolean()
-  defp jfk_to_alewife_is_single_platform?(all_predictions) do
+  @spec all_same_stop_id?([Predictions.Prediction.t()]) :: boolean()
+  defp all_same_stop_id?(all_predictions) do
     length(Enum.uniq_by(all_predictions, & &1.stop_id)) == 1
   end
 

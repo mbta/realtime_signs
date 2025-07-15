@@ -1202,7 +1202,7 @@ defmodule Signs.RealtimeTest do
 
     test "JFK mezzanine platform TBD soon" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :ashmont, arrival: 120)]
+        [prediction(destination: :ashmont, arrival: 380)]
       end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
@@ -1214,17 +1214,17 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages(
-        {"Ashmont      2 min", [{"Alewife      7 min", 6}, {"Alewife (Platform TBD)", 6}]}
+        {"Ashmont      6 min", [{"Alewife      7 min", 6}, {"Alewife (Platform TBD)", 6}]}
       )
 
       expect_audios(
         [
-          {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5002", "505"]), :audio}},
+          {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5006", "505"]), :audio}},
           {:canned,
            {"117", spaced(["501", "4000", "864", "503", "504", "5007", "505", "849"]), :audio}}
         ],
         [
-          {"The next Ashmont train arrives in 2 minutes.", nil},
+          {"The next Ashmont train arrives in 6 minutes.", nil},
           {"The next Alewife train arrives in 7 minutes. We will announce the platform for boarding soon.",
            nil}
         ]

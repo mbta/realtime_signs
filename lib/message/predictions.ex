@@ -105,6 +105,8 @@ defmodule Message.Predictions do
           match?({:jfk_mezzanine, _}, special_sign) and destination == :alewife ->
             platform_name = Content.Utilities.stop_platform_name(prediction.stop_id)
 
+            # {_, false} in special_sign indicates both stop_ids for Alewife-bound trains are active
+            # In this case, predicted platform is still subject to change when it's 5+ minutes away
             {headsign_message, platform_message} =
               if is_integer(minutes) and minutes > 5 and special_sign == {:jfk_mezzanine, false} do
                 {headsign, " (Platform TBD)"}
