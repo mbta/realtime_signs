@@ -545,8 +545,15 @@ defmodule PaEss.Utilities do
 
   @spec prediction_approaching?(Predictions.Prediction.t(), boolean()) :: boolean()
   def prediction_approaching?(prediction, terminal?) do
+    secs_to_announce = secs_to_announce_approaching(prediction.route_id)
+
     !terminal? and !prediction.stopped_at_predicted_stop? and
-      prediction_seconds(prediction, terminal?) in 0..45
+      prediction_seconds(prediction, terminal?) in 0..secs_to_announce
+  end
+
+  @spec secs_to_announce_approaching(String.t()) :: integer()
+  defp secs_to_announce_approaching(route_id) do
+    if String.starts_with?(route_id, "Green"), do: 30, else: 45
   end
 
   @spec prediction_stopped?(Predictions.Prediction.t(), boolean()) :: boolean()

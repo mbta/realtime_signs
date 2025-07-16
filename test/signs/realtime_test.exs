@@ -797,10 +797,10 @@ defmodule Signs.RealtimeTest do
 
     test "announces approaching for Green Line" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :cleveland_circle, arrival: 45)]
+        [prediction(destination: :cleveland_circle, arrival: 30)]
       end)
 
-      expect_messages({"Clvlnd Cir   1 min", ""})
+      expect_messages({"Clvlnd Cir     ARR", ""})
 
       expect_audios(
         [
@@ -815,6 +815,16 @@ defmodule Signs.RealtimeTest do
            ]}
         ]
       )
+
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "does not announce approaching for Green Line when >30 secs away" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :cleveland_circle, arrival: 31)]
+      end)
+
+      expect_messages({"Clvlnd Cir   1 min", ""})
 
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
