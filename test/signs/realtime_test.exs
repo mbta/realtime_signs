@@ -216,6 +216,15 @@ defmodule Signs.RealtimeTest do
       assert sign.announced_passthroughs == ["123"]
     end
 
+    test "does not announce train passing through when arrival is above threshold" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :riverside, seconds_until_passthrough: 31, trip_id: "123")]
+      end)
+
+      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, @sign)
+      assert sign.announced_passthroughs == []
+    end
+
     test "announces passthrough trains for mezzanine signs" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :braintree, seconds_until_passthrough: 30, trip_id: "123")]
