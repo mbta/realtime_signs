@@ -552,9 +552,8 @@ defmodule PaEss.Utilities do
   end
 
   @spec secs_to_announce_approaching(String.t()) :: integer()
-  defp secs_to_announce_approaching(route_id) do
-    if String.starts_with?(route_id, "Green"), do: 30, else: 45
-  end
+  defp secs_to_announce_approaching("Green-" <> _), do: 30
+  defp secs_to_announce_approaching(_other), do: 45
 
   @spec prediction_stopped?(Predictions.Prediction.t(), boolean()) :: boolean()
   def prediction_stopped?(%{boarding_status: boarding_status} = prediction, terminal?) do

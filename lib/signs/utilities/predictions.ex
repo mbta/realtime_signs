@@ -43,7 +43,6 @@ defmodule Signs.Utilities.Predictions do
   end
 
   @spec secs_to_announce_passthrough(String.t()) :: integer()
-  defp secs_to_announce_passthrough(route_id) do
-    if String.starts_with?(route_id, "Green"), do: 30, else: 45
-  end
+  defp secs_to_announce_passthrough("Green-" <> _), do: 30
+  defp secs_to_announce_passthrough(_other), do: 60
 end
