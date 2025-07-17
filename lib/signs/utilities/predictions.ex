@@ -19,7 +19,9 @@ defmodule Signs.Utilities.Predictions do
   defp prediction_passthrough_audios(predictions) do
     predictions
     |> Enum.filter(fn prediction ->
-      prediction.seconds_until_passthrough && prediction.seconds_until_passthrough <= 60
+      prediction.seconds_until_passthrough &&
+        prediction.seconds_until_passthrough <=
+          secs_to_announce_passthrough(prediction.route_id)
     end)
     |> Enum.sort_by(fn prediction -> prediction.seconds_until_passthrough end)
     |> Enum.flat_map(fn prediction ->
@@ -39,4 +41,8 @@ defmodule Signs.Utilities.Predictions do
     end)
     |> Enum.take(1)
   end
+
+  @spec secs_to_announce_passthrough(String.t()) :: integer()
+  defp secs_to_announce_passthrough("Green-" <> _), do: 30
+  defp secs_to_announce_passthrough(_other), do: 60
 end
