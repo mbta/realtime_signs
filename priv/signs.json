@@ -8405,7 +8405,7 @@
       "m"
     ],
     "type": "bus",
-    "configs": [
+    "top_configs": [
       {
         "sources": [
           {
@@ -8431,6 +8431,34 @@
         ],
         "headway_group": "silver_seaport",
         "headway_direction_name": "South Station"
+      }
+    ],
+    "bottom_configs": [
+      {
+        "sources": [
+          {
+            "stop_id": "74612",
+            "route_id": "741",
+            "direction_id": 0
+          },
+          {
+            "stop_id": "74612",
+            "route_id": "742",
+            "direction_id": 0
+          },
+          {
+            "stop_id": "74612",
+            "route_id": "743",
+            "direction_id": 0
+          },
+          {
+            "stop_id": "74612",
+            "route_id": "746",
+            "direction_id": 0
+          }
+        ],
+        "headway_group": "silver_seaport",
+        "headway_direction_name": "Seaport"
       }
     ],
     "chelsea_bridge": "audio",
