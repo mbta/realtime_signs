@@ -5,41 +5,34 @@ defmodule Signs.Utilities.Predictions do
   for the top and bottom lines.
   """
 
-  @spec get_passthrough_train_audio(Signs.Realtime.predictions()) :: [Content.Audio.t()]
-  def get_passthrough_train_audio({top_predictions, bottom_predictions}) do
-    prediction_passthrough_audios(top_predictions) ++
-      prediction_passthrough_audios(bottom_predictions)
-  end
+  @spec get_passthrough_train_audio(Signs.Realtime.predictions(), Signs.Realtime.t()) ::
+          [Content.Audio.t()]
+  def get_passthrough_train_audio(predictions, sign) do
+    case {sign.source_config, predictions} do
+      {{top_config, bottom_config}, {top_predictions, bottom_predictions}} ->
+        [{top_config, top_predictions}, {bottom_config, bottom_predictions}]
 
-  def get_passthrough_train_audio(predictions) do
-    prediction_passthrough_audios(predictions)
-  end
-
-  @spec prediction_passthrough_audios([Predictions.Prediction.t()]) :: [Content.Audio.t()]
-  defp prediction_passthrough_audios(predictions) do
-    predictions
-    |> Enum.filter(fn prediction ->
-      prediction.seconds_until_passthrough &&
-        prediction.seconds_until_passthrough <=
-          secs_to_announce_passthrough(prediction.route_id)
+      {config, predictions} ->
+        [{config, predictions}]
+    end
+    |> Enum.flat_map(fn {config, predictions} ->
+      Enum.filter(predictions, fn prediction ->
+        prediction.seconds_until_passthrough &&
+          prediction.seconds_until_passthrough <=
+            secs_to_announce_passthrough(prediction.route_id)
+      end)
+      |> Enum.sort_by(fn prediction -> prediction.seconds_until_passthrough end)
+      |> Enum.flat_map(fn prediction ->
+        [
+          %Content.Audio.Passthrough{
+            destination: config.headway_destination,
+            trip_id: prediction.trip_id,
+            route_id: prediction.route_id
+          }
+        ]
+      end)
+      |> Enum.take(1)
     end)
-    |> Enum.sort_by(fn prediction -> prediction.seconds_until_passthrough end)
-    |> Enum.flat_map(fn prediction ->
-      destination =
-        case prediction do
-          %{route_id: "Red", direction_id: 0} -> :southbound
-          _ -> Content.Utilities.destination_for_prediction(prediction)
-        end
-
-      [
-        %Content.Audio.Passthrough{
-          destination: destination,
-          trip_id: prediction.trip_id,
-          route_id: prediction.route_id
-        }
-      ]
-    end)
-    |> Enum.take(1)
   end
 
   @spec secs_to_announce_passthrough(String.t()) :: integer()

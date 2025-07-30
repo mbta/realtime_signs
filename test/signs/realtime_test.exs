@@ -205,14 +205,11 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_audios(
+        [{:canned, {"112", spaced(["501", "787", "920", "929", "21014", "925"]), :audio_visual}}],
         [
-          {:canned,
-           {"114", spaced(["501", "905", "919", "918", "929", "21014", "925"]), :audio_visual}}
-        ],
-        [
-          {"The next D train to Riverside does not take customers. Please stand back from the platform edge.",
+          {"The next Southbound train does not take customers. Please stand back from the platform edge.",
            [
-             {"The next D train to", "Riverside does not take", 3},
+             {"The next Southbound", "train does not take", 3},
              {"customers. Please stand", "back from the platform", 3},
              {"edge.", "", 3}
            ]}
@@ -268,7 +265,11 @@ defmodule Signs.RealtimeTest do
         ]
       )
 
-      Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
+      Signs.Realtime.handle_info(:run_loop, %{
+        @jfk_mezzanine_sign
+        | current_content_top: "Red line trains",
+          current_content_bottom: "Every 11 to 13 min"
+      })
     end
 
     test "announces passthrough audio for 'Southbound' headsign" do

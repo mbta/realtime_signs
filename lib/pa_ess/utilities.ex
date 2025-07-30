@@ -304,8 +304,8 @@ defmodule PaEss.Utilities do
     end
   end
 
-  @spec train_description_tokens(PaEss.destination(), String.t()) :: [atom()]
-  @spec train_description_tokens(PaEss.destination(), String.t(), boolean()) :: [atom()]
+  @spec train_description_tokens(PaEss.destination(), String.t() | nil) :: [atom()]
+  @spec train_description_tokens(PaEss.destination(), String.t() | nil, boolean()) :: [atom()]
   def train_description_tokens(destination, route_id, use_polly_takes? \\ false) do
     branch = Content.Utilities.route_branch_letter(route_id)
     tokens = if branch, do: [branch, :train_to, destination], else: [destination, :train]

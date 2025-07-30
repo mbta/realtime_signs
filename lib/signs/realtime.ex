@@ -266,7 +266,7 @@ defmodule Signs.Realtime do
 
   @spec announce_passthrough_trains(Signs.Realtime.t(), predictions()) :: Signs.Realtime.t()
   defp announce_passthrough_trains(sign, predictions) do
-    Utilities.Predictions.get_passthrough_train_audio(predictions)
+    Utilities.Predictions.get_passthrough_train_audio(predictions, sign)
     |> Enum.reduce(sign, fn audio, sign ->
       if audio.trip_id not in sign.announced_passthroughs do
         Signs.Utilities.Audio.send_audio(sign, [audio])
