@@ -4,7 +4,7 @@ defmodule Signs.Utilities.Messages do
   be displaying
   """
 
-  @early_am_start ~T[03:29:00]
+  @early_am_start ~T[04:00:00]
   @early_am_buffer -40
   @overnight_buffer 30
 
@@ -269,7 +269,12 @@ defmodule Signs.Utilities.Messages do
   defp in_early_am?(_, nil), do: false
 
   defp in_early_am?(current_time, scheduled) do
-    Timex.between?(DateTime.to_time(current_time), @early_am_start, DateTime.to_time(scheduled))
+    Timex.between?(
+      DateTime.to_time(current_time),
+      @early_am_start,
+      DateTime.to_time(scheduled),
+      inclusive: :start
+    )
   end
 
   defp before_early_am_threshold?(_, nil), do: false
