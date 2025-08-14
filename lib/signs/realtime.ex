@@ -147,7 +147,7 @@ defmodule Signs.Realtime do
       map_source_config(sign.source_config, fn config ->
         SourceConfig.sign_stop_ids(config)
         |> Stream.flat_map(&RealtimeSigns.last_trip_engine().get_recent_departures(&1))
-        |> Enum.max_by(fn {_, dt} -> dt end, fn -> {nil, nil} end)
+        |> Enum.max_by(fn {_, dt} -> dt end, DateTime, fn -> {nil, nil} end)
         |> elem(1)
       end)
 
