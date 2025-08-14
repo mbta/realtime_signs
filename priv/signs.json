@@ -7021,18 +7021,6 @@
       "terminal": false,
       "sources": [
         {
-          "stop_id": "71199",
-          "direction_id": 1,
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
-          "announce_arriving": true,
-          "announce_boarding": false
-        },
-        {
           "stop_id": "70200",
           "direction_id": 1,
           "routes": [
@@ -7062,18 +7050,6 @@
       "headway_direction_name": "Eastbound",
       "terminal": false,
       "sources": [
-        {
-          "stop_id": "71199",
-          "direction_id": 1,
-          "routes": [
-            "Green-B",
-            "Green-C",
-            "Green-D",
-            "Green-E"
-          ],
-          "announce_arriving": true,
-          "announce_boarding": false
-        },
         {
           "stop_id": "70200",
           "direction_id": 1,
