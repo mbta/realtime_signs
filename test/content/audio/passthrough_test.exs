@@ -15,7 +15,7 @@ defmodule Content.Audio.PassthroughTest do
                    "21000",
                    "920",
                    "21000",
-                   "929",
+                   "933",
                    "21014",
                    "21000",
                    "925"

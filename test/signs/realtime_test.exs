@@ -207,13 +207,13 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [
           {:canned,
-           {"114", spaced(["501", "905", "919", "918", "929", "21014", "925"]), :audio_visual}}
+           {"114", spaced(["501", "905", "919", "918", "933", "21014", "925"]), :audio_visual}}
         ],
         [
-          {"The next D train to Riverside does not take customers. Please stand back from the platform edge.",
+          {"The next D train to Riverside does not take passengers. Please stand back from the platform edge.",
            [
              {"The next D train to", "Riverside does not take", 3},
-             {"customers. Please stand", "back from the platform", 3},
+             {"passengers. Please stand", "back from the platform", 3},
              {"edge.", "", 3}
            ]}
         ]
@@ -243,13 +243,13 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned, {"112", spaced(["501", "787", "920", "929", "21014", "925"]), :audio_visual}}
+          {:canned, {"112", spaced(["501", "787", "920", "933", "21014", "925"]), :audio_visual}}
         ],
         [
-          {"The next Southbound train does not take customers. Please stand back from the platform edge.",
+          {"The next Southbound train does not take passengers. Please stand back from the platform edge.",
            [
              {"The next Southbound", "train does not take", 3},
-             {"customers. Please stand", "back from the platform", 3},
+             {"passengers. Please stand", "back from the platform", 3},
              {"edge.", "", 3}
            ]}
         ]
@@ -257,13 +257,14 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned, {"112", spaced(["501", "892", "920", "929", "21014", "925"]), :audio_visual}}
+          {:canned, {"112", spaced(["501", "892", "920", "933", "21014", "925"]), :audio_visual}}
         ],
         [
-          {"The next Alewife train does not take customers. Please stand back from the platform edge.",
+          {"The next Alewife train does not take passengers. Please stand back from the platform edge.",
            [
-             {"The next Alewife train", "does not take customers.", 3},
-             {"Please stand back from", "the platform edge.", 3}
+             {"The next Alewife train", "does not take", 3},
+             {"passengers. Please stand", "back from the platform", 3},
+             {"edge.", "", 3}
            ]}
         ]
       )
@@ -278,13 +279,13 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [
-          {:canned, {"112", spaced(["501", "787", "920", "929", "21014", "925"]), :audio_visual}}
+          {:canned, {"112", spaced(["501", "787", "920", "933", "21014", "925"]), :audio_visual}}
         ],
         [
-          {"The next Southbound train does not take customers. Please stand back from the platform edge.",
+          {"The next Southbound train does not take passengers. Please stand back from the platform edge.",
            [
              {"The next Southbound", "train does not take", 3},
-             {"customers. Please stand", "back from the platform", 3},
+             {"passengers. Please stand", "back from the platform", 3},
              {"edge.", "", 3}
            ]}
         ]

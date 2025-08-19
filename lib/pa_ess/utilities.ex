@@ -749,7 +749,7 @@ defmodule PaEss.Utilities do
   def audio_take(:upcoming_departures), do: "548"
   def audio_take(:upcoming_arrivals), do: "550"
   def audio_take(:is_now_arriving), do: "24055"
-  def audio_take(:does_not_take_customers), do: "929"
+  def audio_take(:does_not_take_passengers), do: "933"
   def audio_take(:upper_level_departures), do: "616"
   def audio_take(:lower_level_departures), do: "617"
   def audio_take(:board_routes_71_and_73_on_upper_level), do: "618"

@@ -1,6 +1,6 @@
 defmodule Content.Audio.Passthrough do
   @moduledoc """
-  The next [line] train to [destination] does not take customers
+  The next [line] train to [destination] does not take passengers
   """
 
   require Logger
@@ -19,7 +19,7 @@ defmodule Content.Audio.Passthrough do
       train = PaEss.Utilities.train_description_tokens(audio.destination, audio.route_id, true)
 
       PaEss.Utilities.audio_message(
-        [:the_next] ++ train ++ [:does_not_take_customers, :., :stand_back_message],
+        [:the_next] ++ train ++ [:does_not_take_passengers, :., :stand_back_message],
         :audio_visual
       )
     end
@@ -35,7 +35,7 @@ defmodule Content.Audio.Passthrough do
 
     defp tts_text(%Content.Audio.Passthrough{} = audio) do
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
-      "The next #{train} does not take customers. Please stand back from the platform edge."
+      "The next #{train} does not take passengers. Please stand back from the platform edge."
     end
   end
 end
