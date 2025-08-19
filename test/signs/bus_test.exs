@@ -105,7 +105,6 @@ defmodule Signs.BusTest do
       stub(Engine.Config.Mock, :sign_config, fn
         "auto_sign", _default -> :auto
         "off_sign", _default -> :off
-        "headway", _default -> :headway
         "static_sign", _default -> {:static_text, {"custom", "message"}}
       end)
 
@@ -267,7 +266,7 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          id: "headway",
+          id: "auto_sign",
           configs: [%{sources: [%{stop_id: "stop1", route_id: "741", direction_id: 0}]}]
         })
 
@@ -284,7 +283,7 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          id: "headway",
+          id: "auto_sign",
           configs: [
             %{
               sources: [%{stop_id: "stop1", route_id: "741", direction_id: 0}],
@@ -311,7 +310,7 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          id: "headway",
+          id: "auto_sign",
           top_configs: [
             %{
               sources: [%{stop_id: "stop1", route_id: "741", direction_id: 0}],
@@ -366,7 +365,7 @@ defmodule Signs.BusTest do
 
       state =
         Map.merge(@sign_state, %{
-          id: "headway",
+          id: "auto_sign",
           top_configs: [
             %{
               sources: [%{stop_id: "stop1", route_id: "741", direction_id: 0}],

@@ -18,7 +18,7 @@ defmodule Engine.Config do
         }
 
   @type sign_config ::
-          :auto | :headway | :off | :temporary_terminal | {:static_text, {String.t(), String.t()}}
+          :auto | :off | :temporary_terminal | {:static_text, {String.t(), String.t()}}
 
   @table_signs :config_engine_signs
   @table_headways :config_engine_headways
@@ -191,9 +191,6 @@ defmodule Engine.Config do
 
       config_json["mode"] == "auto" ->
         :auto
-
-      config_json["mode"] == "headway" ->
-        :headway
 
       config_json["mode"] == "temporary_terminal" ->
         :temporary_terminal

@@ -6,8 +6,7 @@ defmodule Engine.ConfigTest do
     test "is the provided default value when the sign is unspecified" do
       state = initialize_test_state(%{})
 
-      assert Engine.Config.sign_config(state.table_name_signs, "unspecified_sign", :headway) ==
-               :headway
+      assert Engine.Config.sign_config(state.table_name_signs, "unspecified_sign", :off) == :off
     end
 
     test "returns custom text when it's not expired" do
@@ -75,12 +74,6 @@ defmodule Engine.ConfigTest do
       initialize_test_state(%{table_name_signs: :config_test_auto})
 
       assert Engine.Config.sign_config(:config_test_auto, "auto_test", :off) == :auto
-    end
-
-    test "correctly loads config for a sign with a mode of \"headway\"" do
-      initialize_test_state(%{table_name_signs: :config_test_headway})
-
-      assert Engine.Config.sign_config(:config_test_headway, "headway_test", :off) == :headway
     end
 
     test "loads chelsea bridge config" do

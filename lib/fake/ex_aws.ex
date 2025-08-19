@@ -27,7 +27,7 @@ defmodule Fake.ExAws do
   def request({_bucket, _path, _opts}) do
     {:ok,
      %{
-       body: "{\"chelsea_inbound\":{\"mode\":\"headway\"}}",
+       body: "{\"chelsea_inbound\":{\"mode\":\"auto\"}}",
        headers: [
          {"x-amz-id-2", "id1235"},
          {"x-amz-request-id", "REQUEST1235"},

@@ -4,18 +4,17 @@ defmodule ExternalConfig.LocalTest do
   describe "get/1" do
     test "loads config from a local json file" do
       assert ExternalConfig.Local.get("version") ==
-               {"29027168",
+               {"92201010",
                 %{
                   "signs" => %{
-                    "chelsea_inbound" => %{"mode" => "headway"},
-                    "chelsea_outbound" => %{"mode" => "off"},
-                    "MVAL0" => %{"mode" => "auto"}
+                    "chelsea_inbound" => %{"mode" => "auto"},
+                    "chelsea_outbound" => %{"mode" => "off"}
                   }
                 }}
     end
 
     test "if the file is unchanged, returns :unchanged" do
-      assert ExternalConfig.Local.get("29027168") == :unchanged
+      assert ExternalConfig.Local.get("92201010") == :unchanged
     end
   end
 end
