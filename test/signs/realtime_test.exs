@@ -446,38 +446,6 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
-    test "when sign is forced into headway mode but no alerts are present, displays headways" do
-      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
-
-      expect(Engine.Config.Mock, :headway_config, fn _, _ ->
-        %{@headway_config | range_high: 14}
-      end)
-
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :ashmont, arrival: 120)]
-      end)
-
-      expect_messages({"Southbound trains", "Every 11 to 14 min"})
-      Signs.Realtime.handle_info(:run_loop, @sign)
-    end
-
-    test "when sign is forced into headway mode but alerts are present, alert takes precedence" do
-      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
-
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :ashmont, arrival: 120)]
-      end)
-
-      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
-      expect_messages({"No Southbound svc", ""})
-
-      expect_audios([{:ad_hoc, {"No Southbound service.", :audio}}], [
-        {"No Southbound service.", nil}
-      ])
-
-      Signs.Realtime.handle_info(:run_loop, @sign)
-    end
-
     test "generates empty messages if no headway is configured for some reason" do
       expect(Engine.Config.Mock, :headway_config, fn _, _ -> nil end)
       expect_messages({"", ""})
@@ -1849,7 +1817,6 @@ defmodule Signs.RealtimeTest do
     end
 
     test "mezzanine sign, headways and shuttle alert" do
-      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :none end)
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :shuttles_closed_station end)
 
@@ -2333,8 +2300,6 @@ defmodule Signs.RealtimeTest do
         nil
       end)
 
-      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
-
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
 
       expect_messages({"No Southbound svc", ""})
@@ -2347,8 +2312,6 @@ defmodule Signs.RealtimeTest do
     end
 
     test "is not overnight period if in the thirty minute buffer" do
-      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
-
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
 
       expect_messages({"No Southbound svc", ""})
@@ -2361,8 +2324,6 @@ defmodule Signs.RealtimeTest do
     end
 
     test "does not play alerts when in the overnight period" do
-      expect(Engine.Config.Mock, :sign_config, fn _, _ -> :headway end)
-
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
 
       expect_messages({"Southbound trains", "Every 11 to 13 min"})

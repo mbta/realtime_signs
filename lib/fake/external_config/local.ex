@@ -44,9 +44,7 @@ defmodule Fake.ExternalConfig.Local do
            "expires" => "2017-07-04T12:00:00Z"
          },
          "off_test" => %{"mode" => "off"},
-         "auto_test" => %{"mode" => "auto"},
-         "headway_test" => %{"mode" => "headway"},
-         "MVAL0" => %{"mode" => "auto"}
+         "auto_test" => %{"mode" => "auto"}
        }
      }}
   end

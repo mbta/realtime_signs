@@ -49,8 +49,8 @@ defmodule Signs.Utilities.SourceConfig do
     ranges, and must match the values set by signs-ui. Most mezzanine signs show both directions
     of the same headway group, and so will have the same value for both configs. A notable
     exception is Ashmont, which handles both the Ashmont and Mattapan headway groups.
-  * headway_direction_name: The headsign used to generate the "trains every X minutes" message in
-    headway mode. Must be a value recognized by `PaEss.Utilities.headsign_to_destination/1`.
+  * headway_direction_name: The headsign used to generate the "trains every X minutes" headway
+    message. Must be a value recognized by `PaEss.Utilities.headsign_to_destination/1`.
   * terminal: whether this is a "terminal", and should use arrival or departure times in its
     countdown.
   * sources: A list of source objects (see below for details). The sources determine which
