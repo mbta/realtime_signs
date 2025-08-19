@@ -1008,15 +1008,19 @@ defmodule Signs.Bus do
           }},
          _
        ) do
-    [
-      destination,
-      :buses,
-      :arrives_every,
-      {:number, range_low},
-      :to,
-      {:number, range_high},
-      :minutes
-    ]
+    if destination == :silver_line do
+      [destination, :outbound]
+    else
+      [destination]
+    end ++
+      [
+        :buses,
+        :arrives_every,
+        {:number, range_low},
+        :to,
+        {:number, range_high},
+        :minutes
+      ]
   end
 
   defp message_tts_audio({:predictions, [prediction | _]}, current_time) do

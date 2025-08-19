@@ -247,7 +247,7 @@ defmodule PaEss.Utilities do
   def destination_to_sign_string(:inbound), do: "Inbound"
   def destination_to_sign_string(:outbound), do: "Outbound"
   def destination_to_sign_string(:medford_tufts), do: "Medfd/Tufts"
-  def destination_to_sign_string(:silver_line), do: "Silver Line"
+  def destination_to_sign_string(:silver_line), do: "SL Outbound"
 
   @spec destination_to_ad_hoc_string(PaEss.destination()) :: String.t()
   def destination_to_ad_hoc_string(:alewife), do: "Alewife"
@@ -278,7 +278,7 @@ defmodule PaEss.Utilities do
   def destination_to_ad_hoc_string(:inbound), do: "Inbound"
   def destination_to_ad_hoc_string(:outbound), do: "Outbound"
   def destination_to_ad_hoc_string(:medford_tufts), do: "Medford/Tufts"
-  def destination_to_ad_hoc_string(:silver_line), do: "Silver Line"
+  def destination_to_ad_hoc_string(:silver_line), do: "Silver Line Outbound"
 
   def directional_destination?(destination),
     do: destination in [:eastbound, :westbound, :southbound, :northbound, :inbound, :outbound]
