@@ -127,7 +127,7 @@ defmodule Content.Utilities do
   def stop_platform_name("70086"), do: "Ashmont"
   def stop_platform_name("70096"), do: "Braintree"
 
-  @spec route_branch_letter(String.t()) :: green_line_branch() | nil
+  @spec route_branch_letter(String.t() | nil) :: green_line_branch() | nil
   def route_branch_letter("Green-B"), do: :b
   def route_branch_letter("Green-C"), do: :c
   def route_branch_letter("Green-D"), do: :d

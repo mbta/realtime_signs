@@ -16,7 +16,7 @@ defmodule Content.Audio.Passthrough do
 
   defimpl Content.Audio do
     def to_params(%Content.Audio.Passthrough{} = audio) do
-      train = PaEss.Utilities.train_description_tokens(audio.destination, audio.route_id, true)
+      train = PaEss.Utilities.train_description_tokens(audio.destination, nil, true)
 
       PaEss.Utilities.audio_message(
         [:the_next] ++ train ++ [:does_not_take_passengers, :., :stand_back_message],
@@ -34,7 +34,7 @@ defmodule Content.Audio.Passthrough do
     end
 
     defp tts_text(%Content.Audio.Passthrough{} = audio) do
-      train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
+      train = PaEss.Utilities.train_description(audio.destination, nil)
       "The next #{train} does not take passengers. Please stand back from the platform edge."
     end
   end

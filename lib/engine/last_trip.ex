@@ -94,7 +94,7 @@ defmodule Engine.LastTrip do
 
     {:ok, current_time_est} = DateTime.utc_now() |> DateTime.shift_zone(@timezone)
 
-    if current_time_est.hour == 3 and current_time_est.minute >= 30 do
+    if current_time_est.hour == 4 and current_time_est.minute == 0 do
       clean_tables(state)
     end
 

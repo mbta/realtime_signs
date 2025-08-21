@@ -4,7 +4,7 @@ defmodule Signs.Utilities.Messages do
   be displaying
   """
 
-  @early_am_start ~T[03:29:00]
+  @early_am_start ~T[04:00:00]
   @early_am_buffer -40
   @overnight_buffer 30
 
@@ -75,13 +75,7 @@ defmodule Signs.Utilities.Messages do
         Enum.map(config, fn {config, predictions, alert_status, first_scheduled_departures,
                              last_scheduled_departures, most_recent_departure, service_status} ->
           filtered_predictions =
-            filter_predictions(
-              predictions,
-              config,
-              sign_config,
-              current_time,
-              first_scheduled_departures
-            )
+            filter_predictions(predictions, config, current_time, first_scheduled_departures)
 
           alert_status = filter_alert_status(alert_status, sign_config)
 
@@ -184,11 +178,10 @@ defmodule Signs.Utilities.Messages do
   @spec filter_predictions(
           [Predictions.Prediction.t()],
           Signs.Utilities.SourceConfig.config(),
-          Engine.Config.sign_config(),
           DateTime.t(),
           DateTime.t()
         ) :: [Predictions.Prediction.t()]
-  defp filter_predictions(predictions, config, sign_config, current_time, scheduled) do
+  defp filter_predictions(predictions, config, current_time, scheduled) do
     predictions
     |> Enum.filter(fn p -> p.seconds_until_departure && p.schedule_relationship != :skipped end)
     |> Enum.sort_by(fn prediction ->
@@ -198,7 +191,6 @@ defmodule Signs.Utilities.Messages do
          true -> 1
        end, prediction.seconds_until_departure, prediction.seconds_until_arrival}
     end)
-    |> then(fn predictions -> if(sign_config == :headway, do: [], else: predictions) end)
     |> filter_early_am_predictions(current_time, scheduled)
     |> filter_large_red_line_gaps()
     |> get_unique_destination_predictions(Signs.Utilities.SourceConfig.single_route(config))
@@ -269,7 +261,12 @@ defmodule Signs.Utilities.Messages do
   defp in_early_am?(_, nil), do: false
 
   defp in_early_am?(current_time, scheduled) do
-    Timex.between?(DateTime.to_time(current_time), @early_am_start, DateTime.to_time(scheduled))
+    Timex.between?(
+      DateTime.to_time(current_time),
+      @early_am_start,
+      DateTime.to_time(scheduled),
+      inclusive: :start
+    )
   end
 
   defp before_early_am_threshold?(_, nil), do: false

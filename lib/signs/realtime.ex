@@ -147,7 +147,7 @@ defmodule Signs.Realtime do
       map_source_config(sign.source_config, fn config ->
         SourceConfig.sign_stop_ids(config)
         |> Stream.flat_map(&RealtimeSigns.last_trip_engine().get_recent_departures(&1))
-        |> Enum.max_by(fn {_, dt} -> dt end, fn -> {nil, nil} end)
+        |> Enum.max_by(fn {_, dt} -> dt end, DateTime, fn -> {nil, nil} end)
         |> elem(1)
       end)
 
@@ -266,7 +266,7 @@ defmodule Signs.Realtime do
 
   @spec announce_passthrough_trains(Signs.Realtime.t(), predictions()) :: Signs.Realtime.t()
   defp announce_passthrough_trains(sign, predictions) do
-    Utilities.Predictions.get_passthrough_train_audio(predictions)
+    Utilities.Predictions.get_passthrough_train_audio(predictions, sign)
     |> Enum.reduce(sign, fn audio, sign ->
       if audio.trip_id not in sign.announced_passthroughs do
         Signs.Utilities.Audio.send_audio(sign, [audio])

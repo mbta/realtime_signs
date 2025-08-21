@@ -247,7 +247,7 @@ defmodule PaEss.Utilities do
   def destination_to_sign_string(:inbound), do: "Inbound"
   def destination_to_sign_string(:outbound), do: "Outbound"
   def destination_to_sign_string(:medford_tufts), do: "Medfd/Tufts"
-  def destination_to_sign_string(:silver_line), do: "Silver Line"
+  def destination_to_sign_string(:silver_line), do: "SL Outbound"
 
   @spec destination_to_ad_hoc_string(PaEss.destination()) :: String.t()
   def destination_to_ad_hoc_string(:alewife), do: "Alewife"
@@ -278,7 +278,7 @@ defmodule PaEss.Utilities do
   def destination_to_ad_hoc_string(:inbound), do: "Inbound"
   def destination_to_ad_hoc_string(:outbound), do: "Outbound"
   def destination_to_ad_hoc_string(:medford_tufts), do: "Medford/Tufts"
-  def destination_to_ad_hoc_string(:silver_line), do: "Silver Line"
+  def destination_to_ad_hoc_string(:silver_line), do: "Silver Line Outbound"
 
   def directional_destination?(destination),
     do: destination in [:eastbound, :westbound, :southbound, :northbound, :inbound, :outbound]
@@ -304,8 +304,8 @@ defmodule PaEss.Utilities do
     end
   end
 
-  @spec train_description_tokens(PaEss.destination(), String.t()) :: [atom()]
-  @spec train_description_tokens(PaEss.destination(), String.t(), boolean()) :: [atom()]
+  @spec train_description_tokens(PaEss.destination(), String.t() | nil) :: [atom()]
+  @spec train_description_tokens(PaEss.destination(), String.t() | nil, boolean()) :: [atom()]
   def train_description_tokens(destination, route_id, use_polly_takes? \\ false) do
     branch = Content.Utilities.route_branch_letter(route_id)
     tokens = if branch, do: [branch, :train_to, destination], else: [destination, :train]
