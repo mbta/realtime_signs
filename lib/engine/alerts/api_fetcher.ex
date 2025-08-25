@@ -75,7 +75,7 @@ defmodule Engine.Alerts.ApiFetcher do
 
   @spec process_alert_for_stations(alert(), StationConfig.t()) :: Fetcher.stop_statuses()
   defp process_alert_for_stations(alert, station_config) do
-    stops = stops_for_alert(alert)
+    stops = stops_for_alert(alert, station_config)
 
     case get_in(alert, ["attributes", "effect"]) do
       "SHUTTLE" ->
@@ -101,14 +101,19 @@ defmodule Engine.Alerts.ApiFetcher do
     end
   end
 
-  @spec stops_for_alert(alert()) :: [Fetcher.stop_id()]
-  defp stops_for_alert(alert) do
+  @spec stops_for_alert(alert(), StationConfig.t()) :: [Fetcher.stop_id()]
+  defp stops_for_alert(alert, station_config) do
     alert["attributes"]["informed_entity"]
     |> Enum.flat_map(fn ie ->
       if ie["stop"] do
         [ie["stop"]]
       else
-        []
+        case ie["route"] do
+          # Mattapan route-level alerts are not associated with a specific stop_id,
+          # but should be applied to every stop_id on the route
+          "Mattapan" -> Map.get(station_config.route_to_stops, ie["route"], [])
+          _ -> []
+        end
       end
     end)
   end

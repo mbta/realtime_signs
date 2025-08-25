@@ -1,5 +1,5 @@
 defmodule Engine.Alerts.StationConfig do
-  defstruct [:stop_to_station, :station_to_stops, :station_neighbors]
+  defstruct [:stop_to_station, :station_to_stops, :station_neighbors, :route_to_stops]
 
   # Identifier for a "station" as expressed in `stops.json`, really a subset of the child stops
   # at a parent station (for example "Green Line westbound stops at Park Street").
@@ -8,7 +8,8 @@ defmodule Engine.Alerts.StationConfig do
   @type t :: %__MODULE__{
           stop_to_station: %{(stop_id :: String.t()) => station()},
           station_to_stops: %{station() => [stop_id :: String.t()]},
-          station_neighbors: %{station() => [station()]}
+          station_neighbors: %{station() => [station()]},
+          route_to_stops: %{String.t() => [stop_id :: String.t()]}
         }
 
   @spec load_config() :: t()
@@ -20,6 +21,13 @@ defmodule Engine.Alerts.StationConfig do
       |> File.read!()
       |> Jason.decode!()
 
+    route_to_stops =
+      stops_data
+      |> Enum.map(fn {line, station_details} ->
+        {line, Enum.flat_map(station_details, & &1["stop_ids"])}
+      end)
+      |> Enum.into(%{})
+
     {stop_to_station, station_to_stops, station_neighbors} =
       Enum.reduce(stops_data, {%{}, %{}, %{}}, fn {_segment, stops},
                                                   {stop_to_station, station_to_stops,
@@ -30,7 +38,8 @@ defmodule Engine.Alerts.StationConfig do
     %__MODULE__{
       stop_to_station: stop_to_station,
       station_to_stops: station_to_stops,
-      station_neighbors: station_neighbors
+      station_neighbors: station_neighbors,
+      route_to_stops: route_to_stops
     }
   end
 

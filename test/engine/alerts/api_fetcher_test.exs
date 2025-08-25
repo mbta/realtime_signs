@@ -13,7 +13,22 @@ defmodule Engine.Alerts.ApiFetcherTest do
                    "70033" => :suspension_transfer_station,
                    "70032" => :suspension_transfer_station,
                    "70063" => :station_closure,
-                   "74636" => :station_closure
+                   "74636" => :station_closure,
+                   "70261" => :shuttles_closed_station,
+                   "70263" => :shuttles_closed_station,
+                   "70264" => :shuttles_closed_station,
+                   "70265" => :shuttles_closed_station,
+                   "70266" => :shuttles_closed_station,
+                   "70267" => :shuttles_closed_station,
+                   "70268" => :shuttles_closed_station,
+                   "70269" => :shuttles_closed_station,
+                   "70270" => :shuttles_closed_station,
+                   "70271" => :shuttles_closed_station,
+                   "70272" => :shuttles_closed_station,
+                   "70273" => :shuttles_closed_station,
+                   "70274" => :shuttles_closed_station,
+                   "70275" => :shuttles_closed_station,
+                   "70276" => :shuttles_closed_station
                  },
                  :route_statuses => %{
                    "Red" => :suspension_closed_station,
