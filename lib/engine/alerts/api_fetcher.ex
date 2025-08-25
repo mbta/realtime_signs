@@ -108,14 +108,20 @@ defmodule Engine.Alerts.ApiFetcher do
       if ie["stop"] do
         [ie["stop"]]
       else
+        # Route-level alerts aren't associated w/ a specific stop_id,
+        # but should apply to every stop_id on the route
         case ie["route"] do
-          # Route-level alerts aren't associated w/ a specific stop_id,
-          # but should apply to every stop_id on the route
           "Red" ->
-            Enum.flat_map(
-              ["Red-Ashmont", "Red-Braintree", "Red-Trunk"],
-              &Map.get(station_config.route_to_stops, &1, [])
+            stop_ids_for_routes(["Red-Ashmont", "Red-Braintree", "Red-Trunk"], station_config)
+
+          "Green" ->
+            stop_ids_for_routes(
+              ["Green-B", "Green-D", "Green-E", "Green-E-glx", "Green-Trunk"],
+              station_config
             )
+
+          "Green-E" ->
+            stop_ids_for_routes(["Green-E", "Green-E-glx"], station_config)
 
           nil ->
             []
@@ -125,6 +131,11 @@ defmodule Engine.Alerts.ApiFetcher do
         end
       end
     end)
+  end
+
+  @spec stop_ids_for_routes([String.t()], StationConfig.t()) :: [String.t()]
+  defp stop_ids_for_routes(route_ids, station_config) do
+    route_ids |> Enum.flat_map(&Map.get(station_config.route_to_stops, &1, []))
   end
 
   @spec process_alert_for_routes(alert()) :: Fetcher.route_statuses()
