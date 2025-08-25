@@ -109,10 +109,19 @@ defmodule Engine.Alerts.ApiFetcher do
         [ie["stop"]]
       else
         case ie["route"] do
-          # Mattapan route-level alerts are not associated with a specific stop_id,
-          # but should be applied to every stop_id on the route
-          "Mattapan" -> Map.get(station_config.route_to_stops, ie["route"], [])
-          _ -> []
+          # Route-level alerts aren't associated w/ a specific stop_id,
+          # but should apply to every stop_id on the route
+          "Red" ->
+            Enum.flat_map(
+              ["Red-Ashmont", "Red-Braintree", "Red-Trunk"],
+              &Map.get(station_config.route_to_stops, &1, [])
+            )
+
+          nil ->
+            []
+
+          route ->
+            Map.get(station_config.route_to_stops, route, [])
         end
       end
     end)
