@@ -103,33 +103,38 @@ defmodule Engine.Alerts.ApiFetcher do
 
   @spec stops_for_alert(alert(), StationConfig.t()) :: [Fetcher.stop_id()]
   defp stops_for_alert(alert, station_config) do
-    alert["attributes"]["informed_entity"]
-    |> Enum.flat_map(fn ie ->
-      if ie["stop"] do
-        [ie["stop"]]
-      else
-        # Route-level alerts aren't associated w/ a specific stop_id,
-        # but should apply to every stop_id on the route
-        case ie["route"] do
-          nil ->
-            []
+    informed_entities = alert["attributes"]["informed_entity"]
 
-          route ->
-            stop_ids_for_route(route, station_config)
-        end
+    {all_stops, all_routes} =
+      Enum.reduce(informed_entities, {[], []}, fn
+        %{"stop" => stop}, {stops, routes} ->
+          {[stop | stops], routes}
+
+        # If an informed entity does not contain a stop_id,
+        # then(the(entire(route and all(associated(stop_ids(are(affected)))))))
+        %{"route" => route}, {stops, routes} ->
+          {stops, [route | routes]}
+      end)
+
+    # When the full green line is affected by an alert, it contains an informed entity
+    # for each branch. In this case, we want to include all stops on GL trunk as well.
+    all_affected_routes =
+      case(includes_all_gl_branches?(all_routes)) do
+        true -> ["Green-Trunk" | all_routes]
+        false -> all_routes
       end
-    end)
+
+    all_affected_routes
+    |> Enum.flat_map(&stop_ids_for_route(&1, station_config))
+    |> Enum.concat(all_stops)
   end
 
-  @spec stop_ids_for_route(String.t(), StationConfig.t()) :: [String.t()]
+  @spec stop_ids_for_route(String.t(), StationConfig.t()) :: [Fetcher.stop_id()]
   defp stop_ids_for_route(route_id, station_config) do
     route_ids =
       case route_id do
         "Green-E" ->
           ["Green-E", "Green-E-glx"]
-
-        "Green" ->
-          ["Green-B", "Green-D", "Green-E", "Green-E-glx", "Green-Trunk"]
 
         "Red" ->
           ["Red-Ashmont", "Red-Braintree", "Red-Trunk"]
@@ -139,6 +144,11 @@ defmodule Engine.Alerts.ApiFetcher do
       end
 
     route_ids |> Enum.flat_map(&Map.get(station_config.route_to_stops, &1, []))
+  end
+
+  @spec includes_all_gl_branches?([String.t()]) :: boolean()
+  defp includes_all_gl_branches?(routes) do
+    MapSet.subset?(MapSet.new(["Green-B", "Green-C", "Green-D", "Green-E"]), MapSet.new(routes))
   end
 
   @spec process_alert_for_routes(alert()) :: Fetcher.route_statuses()
