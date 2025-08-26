@@ -586,7 +586,16 @@ defmodule Fake.HTTPoison do
             "effect" => "SUSPENSION",
             "informed_entity" => [
               %{
-                "route" => "Red"
+                "route" => "Green-B"
+              },
+              %{
+                "route" => "Green-C,"
+              },
+              %{
+                "route" => "Green-D,"
+              },
+              %{
+                "route" => "Green-E,"
               }
             ]
           }
