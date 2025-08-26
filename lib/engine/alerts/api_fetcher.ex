@@ -110,8 +110,8 @@ defmodule Engine.Alerts.ApiFetcher do
         %{"stop" => stop}, {stops, routes} ->
           {[stop | stops], routes}
 
-        # If an informed entity does not contain a stop_id,
-        # then(the(entire(route and all(associated(stop_ids(are(affected)))))))
+        # If an informed entity does not contain a stop,
+        # then the entire route and all associated stop_ids are affected
         %{"route" => route}, {stops, routes} ->
           {stops, [route | routes]}
       end)
