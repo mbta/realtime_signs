@@ -116,39 +116,26 @@ defmodule Engine.Alerts.ApiFetcher do
           {stops, [route | routes]}
       end)
 
-    # When the full green line is affected by an alert, it contains an informed entity
-    # for each branch. In this case, we want to include all stops on GL trunk as well.
-    all_affected_routes =
-      case(includes_all_gl_branches?(all_routes)) do
-        true -> ["Green-Trunk" | all_routes]
-        false -> all_routes
-      end
-
-    all_affected_routes
-    |> Enum.flat_map(&stop_ids_for_route(&1, station_config))
+    all_routes
+    |> affected_segments(station_config)
+    |> stop_ids_for_segments(station_config)
     |> Enum.concat(all_stops)
   end
 
-  @spec stop_ids_for_route(String.t(), StationConfig.t()) :: [Fetcher.stop_id()]
-  defp stop_ids_for_route(route_id, station_config) do
-    route_ids =
-      case route_id do
-        "Green-E" ->
-          ["Green-E", "Green-E-glx"]
-
-        "Red" ->
-          ["Red-Ashmont", "Red-Braintree", "Red-Trunk"]
-
-        _ ->
-          [route_id]
-      end
-
-    route_ids |> Enum.flat_map(&Map.get(station_config.route_to_stops, &1, []))
+  @spec affected_segments([String.t()], StationConfig.t()) :: [String.t()]
+  defp affected_segments(affected_route_ids, station_config) do
+    # A segment is only considered "affected" by an alert if
+    # all route_ids that compose the segment are affected by the alert
+    station_config.segment_to_route_ids
+    |> Map.filter(fn {_segment, route_ids} ->
+      MapSet.subset?(MapSet.new(route_ids), MapSet.new(affected_route_ids))
+    end)
+    |> Enum.map(fn {segment, _route_ids} -> segment end)
   end
 
-  @spec includes_all_gl_branches?([String.t()]) :: boolean()
-  defp includes_all_gl_branches?(routes) do
-    MapSet.subset?(MapSet.new(["Green-B", "Green-C", "Green-D", "Green-E"]), MapSet.new(routes))
+  @spec stop_ids_for_segments(String.t(), StationConfig.t()) :: [Fetcher.stop_id()]
+  defp stop_ids_for_segments(segments, station_config) do
+    Enum.flat_map(segments, &Map.get(station_config.segment_to_stops, &1, []))
   end
 
   @spec process_alert_for_routes(alert()) :: Fetcher.route_statuses()

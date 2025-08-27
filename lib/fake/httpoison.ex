@@ -589,13 +589,13 @@ defmodule Fake.HTTPoison do
                 "route" => "Green-B"
               },
               %{
-                "route" => "Green-C,"
+                "route" => "Green-C"
               },
               %{
-                "route" => "Green-D,"
+                "route" => "Green-D"
               },
               %{
-                "route" => "Green-E,"
+                "route" => "Green-E"
               }
             ]
           }

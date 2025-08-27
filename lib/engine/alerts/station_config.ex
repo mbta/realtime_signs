@@ -1,15 +1,22 @@
 defmodule Engine.Alerts.StationConfig do
-  defstruct [:stop_to_station, :station_to_stops, :station_neighbors, :route_to_stops]
+  defstruct [
+    :segment_to_route_ids,
+    :segment_to_stops,
+    :station_neighbors,
+    :station_to_stops,
+    :stop_to_station
+  ]
 
   # Identifier for a "station" as expressed in `stops.json`, really a subset of the child stops
   # at a parent station (for example "Green Line westbound stops at Park Street").
   @typep station :: String.t()
 
   @type t :: %__MODULE__{
-          stop_to_station: %{(stop_id :: String.t()) => station()},
-          station_to_stops: %{station() => [stop_id :: String.t()]},
+          segment_to_route_ids: %{String.t() => [String.t()]},
+          segment_to_stops: %{String.t() => [stop_id :: String.t()]},
           station_neighbors: %{station() => [station()]},
-          route_to_stops: %{String.t() => [stop_id :: String.t()]}
+          station_to_stops: %{station() => [stop_id :: String.t()]},
+          stop_to_station: %{(stop_id :: String.t()) => station()}
         }
 
   @spec load_config() :: t()
@@ -21,25 +28,37 @@ defmodule Engine.Alerts.StationConfig do
       |> File.read!()
       |> Jason.decode!()
 
-    route_to_stops =
+    {segment_to_stops, segment_to_route_ids} =
       stops_data
-      |> Enum.map(fn {line, station_details} ->
-        {line, Enum.flat_map(station_details, & &1["stop_ids"])}
+      |> Enum.map(fn {segment, segment_details} ->
+        stop_ids = Enum.flat_map(segment_details["stations"], & &1["stop_ids"])
+        route_ids = segment_details["route_ids"]
+        {{segment, stop_ids}, {segment, route_ids}}
       end)
-      |> Enum.into(%{})
+      |> Enum.unzip()
+      |> then(fn {stops_list, routes_list} ->
+        {Enum.into(stops_list, %{}), Enum.into(routes_list, %{})}
+      end)
 
     {stop_to_station, station_to_stops, station_neighbors} =
       Enum.reduce(stops_data, {%{}, %{}, %{}}, fn {_segment, stops},
                                                   {stop_to_station, station_to_stops,
                                                    station_neighbors} ->
-        do_load_config(stops, stop_to_station, station_to_stops, station_neighbors, nil)
+        do_load_config(
+          stops["stations"],
+          stop_to_station,
+          station_to_stops,
+          station_neighbors,
+          nil
+        )
       end)
 
     %__MODULE__{
       stop_to_station: stop_to_station,
       station_to_stops: station_to_stops,
       station_neighbors: station_neighbors,
-      route_to_stops: route_to_stops
+      segment_to_route_ids: segment_to_route_ids,
+      segment_to_stops: segment_to_stops
     }
   end
 
