@@ -133,7 +133,7 @@ defmodule Engine.Alerts.ApiFetcher do
     |> Enum.map(fn {segment, _route_ids} -> segment end)
   end
 
-  @spec stop_ids_for_segments(String.t(), StationConfig.t()) :: [Fetcher.stop_id()]
+  @spec stop_ids_for_segments([String.t()], StationConfig.t()) :: [Fetcher.stop_id()]
   defp stop_ids_for_segments(segments, station_config) do
     Enum.flat_map(segments, &Map.get(station_config.segment_to_stops, &1, []))
   end
