@@ -89,7 +89,7 @@ defmodule Signs.Utilities.Messages do
             prediction_message(filtered_predictions, config, sign, predictions) ||
               Signs.Utilities.Headways.headway_message(config, current_time) ||
               early_am_message(current_time, first_scheduled_departures, config) ||
-              %Message.Empty{}
+              overnight_period_message(config)
           else
             prediction_message(filtered_predictions, config, sign, predictions) ||
               service_ended_message(service_status, config) ||
@@ -133,6 +133,14 @@ defmodule Signs.Utilities.Messages do
   end
 
   defp transform_messages([%Message.ServiceEnded{} = top, %Message.ServiceEnded{} = bottom]) do
+    [%Message.ServiceEnded{destination: nil, route: combine_routes(top.route, bottom.route)}]
+  end
+
+  defp transform_messages([%Message.OvernightPeriod{} = top, %Message.ServiceEnded{} = bottom]) do
+    [%Message.ServiceEnded{destination: nil, route: combine_routes(top.route, bottom.route)}]
+  end
+
+  defp transform_messages([%Message.ServiceEnded{} = top, %Message.OvernightPeriod{} = bottom]) do
     [%Message.ServiceEnded{destination: nil, route: combine_routes(top.route, bottom.route)}]
   end
 
@@ -405,5 +413,11 @@ defmodule Signs.Utilities.Messages do
     if service_ended? do
       %Message.ServiceEnded{destination: config.headway_destination, route: route}
     end
+  end
+
+  defp overnight_period_message(config) do
+    route = Signs.Utilities.SourceConfig.single_route(config)
+
+    %Message.OvernightPeriod{route: route}
   end
 end
