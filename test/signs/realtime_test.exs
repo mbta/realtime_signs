@@ -2362,6 +2362,49 @@ defmodule Signs.RealtimeTest do
         | current_time_fn: fn -> datetime(~D[2023-01-02], ~T[03:00:00]) end
       })
     end
+
+    test "service ended shows if mezzanine sign, one config in overnight period and one has service ended" do
+      in_overnight_period =
+        %{"a" => datetime(~D[2023-01-02], ~T[02:00:00])}
+
+      out_of_overnight_period =
+        %{"a" => datetime(~D[2023-01-02], ~T[02:55:00])}
+
+      stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
+      stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> true end)
+
+      stub(Engine.ScheduledHeadways.Mock, :get_last_scheduled_departure, fn _ ->
+        in_overnight_period
+      end)
+
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn _ ->
+        in_overnight_period
+      end)
+
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn _ ->
+        out_of_overnight_period
+      end)
+
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn _ ->
+        in_overnight_period
+      end)
+
+      expect(Engine.LastTrip.Mock, :get_recent_departures, fn _ ->
+        out_of_overnight_period
+      end)
+
+      expect_messages({"No Red Line", "Service ended for night"})
+
+      expect_audios([{:canned, {"105", spaced(["3005", "882"]), :audio}}], [
+        {"Red line service has ended for the night.", nil}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @mezzanine_sign
+        | tick_read: 0,
+          current_time_fn: fn -> datetime(~D[2023-01-02], ~T[03:00:00]) end
+      })
+    end
   end
 
   defp expect_messages(messages) do
