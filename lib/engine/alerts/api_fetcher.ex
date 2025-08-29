@@ -75,7 +75,7 @@ defmodule Engine.Alerts.ApiFetcher do
 
   @spec process_alert_for_stations(alert(), StationConfig.t()) :: Fetcher.stop_statuses()
   defp process_alert_for_stations(alert, station_config) do
-    stops = stops_for_alert(alert)
+    stops = stops_for_alert(alert, station_config)
 
     case get_in(alert, ["attributes", "effect"]) do
       "SHUTTLE" ->
@@ -101,16 +101,41 @@ defmodule Engine.Alerts.ApiFetcher do
     end
   end
 
-  @spec stops_for_alert(alert()) :: [Fetcher.stop_id()]
-  defp stops_for_alert(alert) do
-    alert["attributes"]["informed_entity"]
-    |> Enum.flat_map(fn ie ->
-      if ie["stop"] do
-        [ie["stop"]]
-      else
-        []
-      end
+  @spec stops_for_alert(alert(), StationConfig.t()) :: [Fetcher.stop_id()]
+  defp stops_for_alert(alert, station_config) do
+    informed_entities = alert["attributes"]["informed_entity"]
+
+    {all_stops, all_routes} =
+      Enum.reduce(informed_entities, {[], []}, fn
+        %{"stop" => stop}, {stops, routes} ->
+          {[stop | stops], routes}
+
+        # If an informed entity does not contain a stop,
+        # then the entire route and all associated stop_ids are affected
+        %{"route" => route}, {stops, routes} ->
+          {stops, [route | routes]}
+      end)
+
+    all_routes
+    |> affected_segments(station_config)
+    |> stop_ids_for_segments(station_config)
+    |> Enum.concat(all_stops)
+  end
+
+  @spec affected_segments([String.t()], StationConfig.t()) :: [String.t()]
+  defp affected_segments(affected_route_ids, station_config) do
+    # A segment is only considered "affected" by an alert if
+    # all route_ids that compose the segment are affected by the alert
+    station_config.segment_to_route_ids
+    |> Map.filter(fn {_segment, route_ids} ->
+      MapSet.subset?(MapSet.new(route_ids), MapSet.new(affected_route_ids))
     end)
+    |> Enum.map(fn {segment, _route_ids} -> segment end)
+  end
+
+  @spec stop_ids_for_segments([String.t()], StationConfig.t()) :: [Fetcher.stop_id()]
+  defp stop_ids_for_segments(segments, station_config) do
+    Enum.flat_map(segments, &Map.get(station_config.segment_to_stops, &1, []))
   end
 
   @spec process_alert_for_routes(alert()) :: Fetcher.route_statuses()
