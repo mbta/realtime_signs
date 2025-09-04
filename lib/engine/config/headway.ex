@@ -33,8 +33,8 @@ defmodule Engine.Config.Headway do
 
   @spec current_time_period(DateTime.t()) :: time_period()
   def current_time_period(dt) do
-    # Subtract 3 hours, since the service day ends at 3 AM
-    day_of_week = DateTime.add(dt, -3, :hour) |> Date.day_of_week()
+    # Subtract 4 hours, since the service day ends at 4 AM
+    day_of_week = DateTime.add(dt, -4, :hour) |> Date.day_of_week()
 
     rush_hour? =
       (dt.hour >= 7 and dt.hour < 9) or (dt.hour >= 16 and dt.hour < 18) or
