@@ -605,13 +605,16 @@ defmodule Signs.Bus do
         end)
         |> case do
           %{headway_group: group, headway_direction_name: name, sources: sources} ->
+            # Headways uses local timezone rather than UTC
+            current_time_shifted = DateTime.shift_zone!(current_time, "America/New_York")
+
             Headways.headway_message_sl(
               group,
               silver_line_destination(name),
               Enum.map(sources, fn source ->
                 source.stop_id
               end),
-              current_time
+              current_time_shifted
             )
             |> case do
               nil ->
