@@ -89,16 +89,11 @@ defmodule Predictions.Predictions do
       stop_time_update["departure"] &&
         stop_time_update["departure"]["time"] - current_time_seconds
 
-    seconds_until_passthrough =
-      stop_time_update["passthrough_time"] &&
-        stop_time_update["passthrough_time"] - current_time_seconds
-
     %Prediction{
       stop_id: stop_time_update["stop_id"],
       direction_id: direction_id,
       seconds_until_arrival: max(0, seconds_until_arrival),
       seconds_until_departure: seconds_until_departure,
-      seconds_until_passthrough: max(0, seconds_until_passthrough),
       schedule_relationship: schedule_relationship,
       route_id: route_id,
       trip_id: trip_id,
@@ -154,8 +149,7 @@ defmodule Predictions.Predictions do
   end
 
   defp is_valid_prediction?(stop_time_update) do
-    not (is_nil(stop_time_update["arrival"]) and is_nil(stop_time_update["departure"]) and
-           is_nil(stop_time_update["passthrough_time"]))
+    not (is_nil(stop_time_update["arrival"]) and is_nil(stop_time_update["departure"]))
   end
 
   @spec is_excluded_prediction_type?(Prediction.t()) :: boolean()

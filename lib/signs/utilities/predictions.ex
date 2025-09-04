@@ -17,11 +17,12 @@ defmodule Signs.Utilities.Predictions do
     end
     |> Enum.flat_map(fn {config, predictions} ->
       Enum.filter(predictions, fn prediction ->
-        prediction.seconds_until_passthrough &&
-          prediction.seconds_until_passthrough <=
+        prediction.schedule_relationship == :skipped &&
+          prediction.seconds_until_arrival &&
+          prediction.seconds_until_arrival <=
             secs_to_announce_passthrough(prediction.route_id)
       end)
-      |> Enum.sort_by(fn prediction -> prediction.seconds_until_passthrough end)
+      |> Enum.sort_by(fn prediction -> prediction.seconds_until_arrival end)
       |> Enum.flat_map(fn prediction ->
         [
           %Content.Audio.Passthrough{

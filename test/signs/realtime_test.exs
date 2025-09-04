@@ -199,8 +199,8 @@ defmodule Signs.RealtimeTest do
     test "announces train passing through station" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
-          prediction(destination: :riverside, seconds_until_passthrough: 30, trip_id: "123"),
-          prediction(destination: :riverside, seconds_until_passthrough: 30, trip_id: "124")
+          prediction(destination: :riverside, passthrough: 30, trip_id: "123"),
+          prediction(destination: :riverside, passthrough: 30, trip_id: "124")
         ]
       end)
 
@@ -222,7 +222,7 @@ defmodule Signs.RealtimeTest do
 
     test "does not announce train passing through when arrival is above threshold" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :riverside, seconds_until_passthrough: 31, trip_id: "123")]
+        [prediction(destination: :riverside, passthrough: 31, trip_id: "123")]
       end)
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, @sign)
@@ -231,11 +231,11 @@ defmodule Signs.RealtimeTest do
 
     test "announces passthrough trains for mezzanine signs" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :braintree, seconds_until_passthrough: 30, trip_id: "123")]
+        [prediction(destination: :braintree, passthrough: 30, trip_id: "123")]
       end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :alewife, seconds_until_passthrough: 30, trip_id: "124")]
+        [prediction(destination: :alewife, passthrough: 30, trip_id: "124")]
       end)
 
       expect_audios(
@@ -275,7 +275,7 @@ defmodule Signs.RealtimeTest do
 
     test "announces passthrough audio for 'Southbound' headsign" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :southbound, seconds_until_passthrough: 30)]
+        [prediction(destination: :southbound, passthrough: 30)]
       end)
 
       expect_audios(
@@ -431,7 +431,7 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
           prediction(destination: :alewife, seconds_until_departure: nil),
-          prediction(destination: :alewife, arrival: 1, schedule_relationship: :skipped)
+          prediction(destination: :alewife, arrival: 90, schedule_relationship: :skipped)
         ]
       end)
 
@@ -2448,6 +2448,13 @@ defmodule Signs.RealtimeTest do
 
     opts =
       opts ++
+        case Keyword.get(opts, :passthrough) do
+          nil -> []
+          sec -> [seconds_until_arrival: sec, schedule_relationship: :skipped]
+        end
+
+    opts =
+      opts ++
         case Keyword.get(opts, :stopped) do
           nil ->
             []
@@ -2474,7 +2481,6 @@ defmodule Signs.RealtimeTest do
       stop_id: Keyword.get(opts, :stop_id, "1"),
       seconds_until_arrival: Keyword.get(opts, :seconds_until_arrival),
       seconds_until_departure: Keyword.get(opts, :seconds_until_departure),
-      seconds_until_passthrough: Keyword.get(opts, :seconds_until_passthrough),
       direction_id: Keyword.get(opts, :direction_id, 0),
       schedule_relationship: Keyword.get(opts, :schedule_relationship),
       route_id: Keyword.get(opts, :route_id),
