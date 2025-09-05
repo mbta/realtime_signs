@@ -5,6 +5,7 @@ defmodule Engine.Config.Headway do
   @type headway_group :: String.t()
   @type time_period :: :peak | :off_peak | :saturday | :sunday
   @type headway_id :: {headway_group(), time_period()}
+  @time_zone Application.compile_env!(:realtime_signs, :time_zone)
 
   @type t :: %__MODULE__{
           headway_id: headway_id(),
@@ -32,15 +33,15 @@ defmodule Engine.Config.Headway do
   def from_map(_, _, _), do: :error
 
   @spec current_time_period(DateTime.t()) :: time_period()
-  def current_time_period(dt_to_shift) do
-    dt = DateTime.shift_zone!(dt_to_shift, Application.get_env(:realtime_signs, :time_zone))
+  def current_time_period(dt) do
+    local_dt = DateTime.shift_zone!(dt, @time_zone)
 
     # Subtract 4 hours, since the service day ends at 4 AM
-    day_of_week = DateTime.add(dt, -4, :hour) |> Date.day_of_week()
+    day_of_week = DateTime.add(local_dt, -4, :hour) |> Date.day_of_week()
 
     rush_hour? =
-      (dt.hour >= 7 and dt.hour < 9) or (dt.hour >= 16 and dt.hour < 18) or
-        (dt.hour == 18 and dt.minute <= 30)
+      (local_dt.hour >= 7 and local_dt.hour < 9) or (local_dt.hour >= 16 and local_dt.hour < 18) or
+        (local_dt.hour == 18 and local_dt.minute <= 30)
 
     case {day_of_week, rush_hour?} do
       {6, _} -> :saturday
