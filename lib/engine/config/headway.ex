@@ -32,8 +32,10 @@ defmodule Engine.Config.Headway do
   def from_map(_, _, _), do: :error
 
   @spec current_time_period(DateTime.t()) :: time_period()
-  def current_time_period(dt) do
+  def current_time_period(dt_to_shift) do
     # Subtract 4 hours, since the service day ends at 4 AM
+    dt = DateTime.shift_zone!(dt_to_shift, "America/New_York")
+
     day_of_week = DateTime.add(dt, -4, :hour) |> Date.day_of_week()
 
     rush_hour? =
