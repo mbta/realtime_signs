@@ -412,7 +412,6 @@ defmodule Fake.HTTPoison do
                 %{
                   "arrival" => nil,
                   "departure" => nil,
-                  "passthrough_time" => 1_491_570_180,
                   "schedule_relationship" => "SKIPPED",
                   "stop_id" => "70261",
                   "stop_sequence" => 2,
