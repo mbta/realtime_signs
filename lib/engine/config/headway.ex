@@ -33,9 +33,9 @@ defmodule Engine.Config.Headway do
 
   @spec current_time_period(DateTime.t()) :: time_period()
   def current_time_period(dt_to_shift) do
-    # Subtract 4 hours, since the service day ends at 4 AM
-    dt = DateTime.shift_zone!(dt_to_shift, "America/New_York")
+    dt = DateTime.shift_zone!(dt_to_shift, Application.get_env(:realtime_signs, :time_zone))
 
+    # Subtract 4 hours, since the service day ends at 4 AM
     day_of_week = DateTime.add(dt, -4, :hour) |> Date.day_of_week()
 
     rush_hour? =
