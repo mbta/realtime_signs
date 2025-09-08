@@ -28,7 +28,7 @@ defmodule Engine.Config.HeadwayTest do
       assert DateTime.new!(~D[2020-03-21], ~T[08:00:00], "America/New_York")
              |> Headway.current_time_period() == :saturday
 
-      assert DateTime.new!(~D[2020-03-22], ~T[12:00:00], "America/New_York")
+      assert DateTime.new!(~D[2020-03-23], ~T[03:30:00], "America/New_York")
              |> Headway.current_time_period() == :sunday
     end
   end
