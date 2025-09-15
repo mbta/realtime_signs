@@ -458,7 +458,8 @@ defmodule PaEss.Utilities do
     {"Adams & Gallivan", ["Gallivn", "Gallivan"]},
     {"Waltham", ["Waltham"]},
     {"Haymarket", ["Haymrkt", "Haymarkt", "Haymarket"]},
-    {"Silver Line Way", ["Slvr Ln Way"]},
+    {"Design Center", ["Design Ctr"]},
+    {"Silver Line Way", ["SL Way"]},
     {"Gallivan Blvd", ["Gallivn", "Gallivan"]},
     {"Cobbs Corner Canton", ["Canton"]},
     {"Linden Square", ["Linden", "Linden Sq"]}
