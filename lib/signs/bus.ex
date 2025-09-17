@@ -11,6 +11,8 @@ defmodule Signs.Bus do
   @drawbridge_soon_spanish "157"
   @alert_levels [:station_closure, :suspension_closed_station]
   @width 24
+  @short_width 18
+  @short_sign_scu_ids ["SCOUSCU001"]
 
   @enforce_keys [
     :id,
@@ -347,12 +349,18 @@ defmodule Signs.Bus do
          current_time,
          bridge_status,
          bridge_enabled?,
-         state
+         %{scu_id: scu_id} = state
        ) do
     %{configs: configs, extra_audio_configs: extra_audio_configs} = state
 
     content =
-      configs_content(configs, predictions_lookup, route_alerts_lookup, current_time)
+      configs_content(
+        configs,
+        predictions_lookup,
+        route_alerts_lookup,
+        current_time,
+        scu_id
+      )
 
     # Special case: Nubian platform E has two separate text zones, but only one audio zone due
     # to close proximity. One sign process is configured to read out the other sign's prediction
@@ -363,7 +371,8 @@ defmodule Signs.Bus do
           extra_audio_configs,
           predictions_lookup,
           route_alerts_lookup,
-          current_time
+          current_time,
+          scu_id
         )
 
     if !Enum.any?(audio_content, &match?({:predictions, _}, &1)) &&
@@ -444,7 +453,7 @@ defmodule Signs.Bus do
          current_time,
          bridge_status,
          bridge_enabled?,
-         state
+         %{scu_id: scu_id} = state
        ) do
     %{top_configs: top_configs, bottom_configs: bottom_configs} = state
 
@@ -453,7 +462,8 @@ defmodule Signs.Bus do
         top_configs,
         predictions_lookup,
         route_alerts_lookup,
-        current_time
+        current_time,
+        scu_id
       )
 
     bottom_content =
@@ -461,7 +471,8 @@ defmodule Signs.Bus do
         bottom_configs,
         predictions_lookup,
         route_alerts_lookup,
-        current_time
+        current_time,
+        scu_id
       )
 
     if !Enum.any?(top_content ++ bottom_content, &match?({:predictions, _}, &1)) &&
@@ -560,23 +571,23 @@ defmodule Signs.Bus do
   end
 
   defp combine_silver_line_headway_messages(
-         [{:headway, %Message.Headway{range: range}}],
-         [{:headway, %Message.Headway{range: range}}]
+         [{:headway, %Message.Headway{range: range}, _length_top}],
+         [{:headway, %Message.Headway{range: range}, _length_bottom}]
        ) do
     {:headway,
      %Message.Headway{
        destination: :silver_line,
        route: "Silver",
        range: range
-     }}
+     }, :long}
   end
 
   defp combine_silver_line_headway_messages(_, _),
     do: nil
 
-  defp configs_content(nil, _, _, _), do: []
+  defp configs_content(nil, _, _, _, _), do: []
 
-  defp configs_content(configs, predictions_lookup, route_alerts_lookup, current_time) do
+  defp configs_content(configs, predictions_lookup, route_alerts_lookup, current_time, scu_id) do
     Enum.flat_map(configs, fn config ->
       content =
         Stream.flat_map(config.sources, fn source ->
@@ -618,7 +629,18 @@ defmodule Signs.Bus do
                 []
 
               headway_message ->
-                [{:headway, headway_message}]
+                # Currently, Courthouse has PA/ESS signs that are shorter
+                # We generate a shorter headway message for these signs
+                # with the format (SL Outbound) Every/(SL Outbound) (x-y)m
+
+                length =
+                  if scu_id in @short_sign_scu_ids do
+                    :short
+                  else
+                    :long
+                  end
+
+                [{:headway, headway_message, length}]
             end
 
           _ ->
@@ -631,7 +653,7 @@ defmodule Signs.Bus do
     |> Enum.sort_by(fn
       {:predictions, [first | _]} -> {0, DateTime.to_unix(first.departure_time)}
       {:alert, _} -> {1, nil}
-      {:headway, _} -> {2, nil}
+      {:headway, _, _} -> {2, nil}
     end)
   end
 
@@ -745,7 +767,7 @@ defmodule Signs.Bus do
          current_time,
          predictions_lookup,
          route_alerts_lookup,
-         state
+         %{scu_id: scu_id} = state
        ) do
     %{chelsea_bridge: chelsea_bridge, configs: configs} = state
 
@@ -759,7 +781,8 @@ defmodule Signs.Bus do
                 configs,
                 predictions_lookup,
                 route_alerts_lookup,
-                current_time
+                current_time,
+                scu_id
               ) != []} do
           {true, true} -> "SL3 delays #{mins} more min"
           {true, false} -> "for #{mins} more minutes"
@@ -858,8 +881,8 @@ defmodule Signs.Bus do
     Content.Utilities.width_padded_string("#{route}#{dest}", no_svc, @line_max)
   end
 
-  defp format_message({:headway, message}, _, _) do
-    headway_message(message)
+  defp format_message({:headway, message, length}, _, _) do
+    headway_message(message, length)
   end
 
   defp format_long_message({:predictions, [single]}, current_time) do
@@ -879,7 +902,7 @@ defmodule Signs.Bus do
     [[format_message(message, nil, current_time), ""]]
   end
 
-  defp format_long_message({:headway, message}, _current_time),
+  defp format_long_message({:headway, message, _length}, _current_time),
     do: [
       long_headway_message(message)
     ]
@@ -1005,7 +1028,7 @@ defmodule Signs.Bus do
           %Message.Headway{
             range: {range_low, range_high},
             destination: destination
-          }},
+          }, _length},
          _
        ) do
     if destination == :silver_line do
@@ -1057,7 +1080,7 @@ defmodule Signs.Bus do
             range: {range_low, range_high},
             destination: destination,
             route: route
-          }},
+          }, _length},
          _
        ) do
     buses =
@@ -1115,7 +1138,7 @@ defmodule Signs.Bus do
           %Message.Headway{
             range: {_, _},
             destination: _
-          }} = message,
+          }, _length} = message,
          current_time
        ) do
     [message_audio(message, current_time)]
@@ -1154,7 +1177,7 @@ defmodule Signs.Bus do
   end
 
   defp long_message_tts_audio(
-         {:headway, %Message.Headway{}} = message,
+         {:headway, %Message.Headway{}, _length} = message,
          current_time
        ) do
     message_tts_audio(message, current_time)
@@ -1185,19 +1208,30 @@ defmodule Signs.Bus do
   end
 
   # Copied from Message.Headway, but due to how bus.ex handles pagination we pass regular strings here
-  def headway_message(%Message.Headway{destination: nil, range: range, route: "Silver"}) do
-    create_headway_message("Silver Line", range)
+  def headway_message(%Message.Headway{destination: nil, range: range, route: "Silver"}, length) do
+    create_headway_message("Silver Line", range, length)
   end
 
-  def headway_message(%Message.Headway{destination: destination, range: range, route: "Silver"}) do
+  def headway_message(
+        %Message.Headway{destination: destination, range: range, route: "Silver"},
+        length
+      ) do
     headsign = PaEss.Utilities.destination_to_sign_string(destination)
-    create_headway_message(headsign, range)
+
+    create_headway_message(headsign, range, length)
   end
 
-  def create_headway_message(destination, {x, y}) do
+  def create_headway_message(destination, {x, y}, :long) do
     [
       Content.Utilities.width_padded_string(destination, "buses every", @width),
       Content.Utilities.width_padded_string(destination, "#{x} to #{y} min", @width)
+    ]
+  end
+
+  def create_headway_message(destination, {x, y}, :short) do
+    [
+      Content.Utilities.width_padded_string(destination, "Every", @short_width),
+      Content.Utilities.width_padded_string(destination, "#{x}-#{y}m", @short_width)
     ]
   end
 
