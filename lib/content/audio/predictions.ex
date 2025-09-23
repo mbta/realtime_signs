@@ -105,7 +105,7 @@ defmodule Content.Audio.Predictions do
       |> PaEss.Utilities.audio_message()
     end
 
-    def to_tts(%Content.Audio.Predictions{prediction: prediction} = audio) do
+    def to_tts(%Content.Audio.Predictions{prediction: prediction} = audio, _max_text_length) do
       destination = Content.Utilities.destination_for_prediction(prediction)
       next_or_following = if(audio.next_or_following == :next, do: "next", else: "following")
       train = PaEss.Utilities.train_description(destination, prediction.route_id)

@@ -12,7 +12,6 @@ defmodule Signs.Bus do
   @alert_levels [:station_closure, :suspension_closed_station]
   @width 24
   @short_width 18
-  @short_sign_scu_ids ["SCOUSCU001"]
 
   @enforce_keys [
     :id,
@@ -633,14 +632,7 @@ defmodule Signs.Bus do
                 # We generate a shorter headway message for these signs
                 # with the format (SL Outbound) Every/(SL Outbound) (x-y)m
 
-                length =
-                  if scu_id in @short_sign_scu_ids do
-                    :short
-                  else
-                    :long
-                  end
-
-                [{:headway, headway_message, length}]
+                [{:headway, headway_message, PaEss.Utilities.sign_length(scu_id)}]
             end
 
           _ ->
@@ -820,9 +812,12 @@ defmodule Signs.Bus do
     end
   end
 
-  defp bridge_tts_audio(bridge_status, bridge_enabled?, current_time, state) do
-    %{chelsea_bridge: chelsea_bridge} = state
-
+  defp bridge_tts_audio(
+         bridge_status,
+         bridge_enabled?,
+         current_time,
+         %{scu_id: scu_id, chelsea_bridge: chelsea_bridge}
+       ) do
     if bridge_enabled? && chelsea_bridge &&
          bridge_status_raised?(bridge_status, current_time) do
       {duration, duration_spanish} =
@@ -841,9 +836,11 @@ defmodule Signs.Bus do
       spanish_text =
         "El puente levadizo de Chelsea está abierto. #{duration_spanish} Autobuses S.L. tres pueden experimentar retrasos, ser desviados o devueltos."
 
+      max_text_length = PaEss.Utilities.max_text_length(scu_id)
+
       [
-        {english_text, PaEss.Utilities.paginate_text(english_text)},
-        {{:spanish, spanish_text}, PaEss.Utilities.paginate_text(spanish_text)}
+        {english_text, PaEss.Utilities.paginate_text(english_text, max_text_length)},
+        {{:spanish, spanish_text}, PaEss.Utilities.paginate_text(spanish_text, max_text_length)}
       ]
     else
       []
