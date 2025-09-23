@@ -21,7 +21,7 @@ defmodule Content.Audio.FirstTrainScheduled do
       ])
     end
 
-    def to_tts(%Content.Audio.FirstTrainScheduled{} = audio) do
+    def to_tts(%Content.Audio.FirstTrainScheduled{} = audio, _max_text_length) do
       train = PaEss.Utilities.train_description(audio.destination, nil)
       time = Content.Utilities.render_datetime_as_time(audio.scheduled_time)
       {"The first #{train} departs at #{time}", nil}

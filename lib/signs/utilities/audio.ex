@@ -5,6 +5,7 @@ defmodule Signs.Utilities.Audio do
 
   alias Content.Audio
   alias Signs.Utilities.SourceConfig
+  alias Signs.Utilities.SignText
   require Logger
 
   @announced_history_length 5
@@ -187,10 +188,12 @@ defmodule Signs.Utilities.Audio do
 
   @spec send_audio(Signs.Realtime.t() | Signs.Bus.t(), [Content.Audio.t()]) :: :ok
   def send_audio(sign, audios) do
+    max_text_length = SignText.max_text_length(sign.scu_id)
+
     RealtimeSigns.sign_updater().play_message(
       sign,
       Enum.map(audios, &Content.Audio.to_params(&1)),
-      Enum.map(audios, &Content.Audio.to_tts(&1)),
+      Enum.map(audios, &Content.Audio.to_tts(&1, max_text_length)),
       case audios do
         [%PaMessages.PaMessage{priority: priority}] -> priority
         _ -> 2

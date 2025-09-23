@@ -67,7 +67,7 @@ defmodule Content.Audio.TrainIsBoarding do
       )
     end
 
-    def to_tts(%Content.Audio.TrainIsBoarding{} = audio) do
+    def to_tts(%Content.Audio.TrainIsBoarding{} = audio, _max_text_length) do
       {tts_text(audio), nil}
     end
 

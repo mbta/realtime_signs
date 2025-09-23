@@ -42,7 +42,7 @@ defmodule Content.Audio.TrackChange do
       )
     end
 
-    def to_tts(%Content.Audio.TrackChange{} = audio) do
+    def to_tts(%Content.Audio.TrackChange{} = audio, max_text_length) do
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
 
       platform =
@@ -54,7 +54,8 @@ defmodule Content.Audio.TrackChange do
         end
 
       text = "Track change: The next #{train} is now boarding on the #{platform} platform"
-      {text, PaEss.Utilities.paginate_text(text)}
+
+      {text, PaEss.Utilities.paginate_text(text, max_text_length)}
     end
 
     def to_logs(%Content.Audio.TrackChange{}) do
