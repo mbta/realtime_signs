@@ -30,6 +30,7 @@ defmodule Signs.BusTest do
     range_high: 13
   }
 
+  @courthouse_stop_id "74612"
   setup :verify_on_exit!
 
   describe "run loop" do
@@ -96,6 +97,24 @@ defmodule Signs.BusTest do
               direction_id: 0,
               route_id: "silver_route_1",
               headsign: "SL1"
+            )
+          ]
+
+        @courthouse_stop_id ->
+          [
+            prediction(
+              departure: 5,
+              stop_id: @courthouse_stop_id,
+              direction_id: 0,
+              route_id: "741",
+              headsign: "South Station"
+            ),
+            prediction(
+              departure: 10,
+              stop_id: @courthouse_stop_id,
+              direction_id: 0,
+              route_id: "741",
+              headsign: "South Station"
             )
           ]
       end)
@@ -374,6 +393,61 @@ defmodule Signs.BusTest do
             }
           ],
           bottom_configs: [%{sources: [%{stop_id: "stop1", route_id: "14", direction_id: 0}]}]
+        })
+
+      Signs.Bus.handle_info(:run_loop, state)
+    end
+
+    test "SL predictions and headway mode on mezzanine sign for short sign" do
+      expect_messages([
+        "South Sta    5 min",
+        [{"SL Outbound  Every", 6}, {"SL Outbound 11-13m", 6}]
+      ])
+
+      expect_audios(
+        [
+          canned:
+            {"116",
+             [
+               "548",
+               "21012",
+               "4089",
+               "5505",
+               "505",
+               "21012",
+               "931",
+               "33004",
+               "932",
+               "666",
+               "5011",
+               "511",
+               "5013",
+               "505"
+             ], :audio}
+        ],
+        [
+          {"Upcoming departures: South Station, 5 minutes. Silver Line Outbound buses every 11 to 13 minutes.",
+           nil}
+        ]
+      )
+
+      state =
+        Map.merge(@sign_state, %{
+          scu_id: "SCOUSCU001",
+          top_configs: [
+            %{
+              sources: [%{stop_id: @courthouse_stop_id, route_id: "741", direction_id: 0}],
+              headway_group: "silver_chelsea",
+              headway_direction_name: "Chelsea"
+            }
+          ],
+          bottom_configs: [
+            %{
+              sources: [%{stop_id: @courthouse_stop_id, route_id: "741", direction_id: 1}],
+              headway_group: "silver_seaport",
+              headway_direction_name: "Seaport"
+            }
+          ]
         })
 
       Signs.Bus.handle_info(:run_loop, state)
