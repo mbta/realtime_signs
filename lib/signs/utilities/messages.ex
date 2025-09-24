@@ -191,7 +191,6 @@ defmodule Signs.Utilities.Messages do
        end, prediction.seconds_until_departure, prediction.seconds_until_arrival}
     end)
     |> filter_early_am_predictions(current_time, scheduled)
-    |> filter_large_red_line_gaps()
     |> get_unique_destination_predictions(Signs.Utilities.SourceConfig.single_route(config))
   end
 
@@ -214,24 +213,6 @@ defmodule Signs.Utilities.Messages do
         )
     end
   end
-
-  # This is a temporary fix for a situation where spotty train sheet data can
-  # cause some predictions to not show up until right before they leave the
-  # terminal. This makes it appear that the next train will be much later than
-  # it is. At stations near Ashmont and Braintree, we're discarding any
-  # predictions following a gap of more than 21 minutes from the previous one,
-  # since this is a reasonable indicator of this problem.
-  defp filter_large_red_line_gaps([first | _] = predictions)
-       when first.stop_id in ~w(70105 Braintree-01 Braintree-02 70104 70102 70100 70094 70092 70090 70088 70098 70086 70096) do
-    [%{seconds_until_departure: 0} | predictions]
-    |> Enum.chunk_every(2, 1, :discard)
-    |> Enum.take_while(fn [prev, current] ->
-      current.seconds_until_departure - prev.seconds_until_departure < 21 * 60
-    end)
-    |> Enum.map(&List.last/1)
-  end
-
-  defp filter_large_red_line_gaps(predictions), do: predictions
 
   # Take next two predictions, but if the list has multiple destinations, prefer showing
   # distinct ones. This helps e.g. the red line trunk where people may need to know about
