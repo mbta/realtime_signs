@@ -23,7 +23,7 @@ defmodule Content.Audio.ServiceEnded do
       Utilities.audio_message([destination, :service_ended])
     end
 
-    def to_tts(%Content.Audio.ServiceEnded{} = audio) do
+    def to_tts(%Content.Audio.ServiceEnded{} = audio, _max_text_length) do
       {tts_text(audio), nil}
     end
 

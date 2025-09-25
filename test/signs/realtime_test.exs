@@ -220,6 +220,32 @@ defmodule Signs.RealtimeTest do
       assert sign.announced_passthroughs == ["123"]
     end
 
+    test "announces train passing through station on short sign" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :riverside, passthrough: 30, trip_id: "123"),
+          prediction(destination: :riverside, passthrough: 30, trip_id: "124")
+        ]
+      end)
+
+      expect_audios(
+        [{:canned, {"112", spaced(["501", "787", "920", "933", "21014", "925"]), :audio_visual}}],
+        [
+          {"The next Southbound train does not take passengers. Please stand back from the platform edge.",
+           [
+             {"The next", "Southbound train", 3},
+             {"does not take", "passengers. Please", 3},
+             {"stand back from", "the platform edge.", 3}
+           ]}
+        ]
+      )
+
+      assert {:noreply, sign} =
+               Signs.Realtime.handle_info(:run_loop, %{@sign | scu_id: "SCOUSCU001"})
+
+      assert sign.announced_passthroughs == ["123"]
+    end
+
     test "does not announce train passing through when arrival is above threshold" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :riverside, passthrough: 31, trip_id: "123")]
@@ -770,6 +796,29 @@ defmodule Signs.RealtimeTest do
       )
 
       assert {_, %{announced_approachings: ["1"]}} = Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "announces approaching on short signs" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :ashmont, arrival: 45, trip_id: "1")]
+      end)
+
+      expect_messages({"Ashmont      1 min", ""})
+
+      expect_audios(
+        [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
+        [
+          {"Attention passengers: The next Ashmont train is now approaching. Please stand back from the platform edge.",
+           [
+             {"Ashmont train is", "now approaching.", 3},
+             {"Please stand back", "from the platform", 3},
+             {"edge.", "", 3}
+           ]}
+        ]
+      )
+
+      assert {_, %{announced_approachings: ["1"]}} =
+               Signs.Realtime.handle_info(:run_loop, %{@sign | scu_id: "SCOUSCU001"})
     end
 
     test "doesn't announce approaching if already announced previously" do

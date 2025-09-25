@@ -34,7 +34,7 @@ defmodule Content.Audio.VehiclesToDestination do
       end
     end
 
-    def to_tts(%Content.Audio.VehiclesToDestination{} = audio) do
+    def to_tts(%Content.Audio.VehiclesToDestination{} = audio, _max_text_length) do
       {tts_text(audio), nil}
     end
 

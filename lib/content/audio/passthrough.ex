@@ -24,9 +24,10 @@ defmodule Content.Audio.Passthrough do
       )
     end
 
-    def to_tts(%Content.Audio.Passthrough{} = audio) do
+    def to_tts(%Content.Audio.Passthrough{} = audio, max_text_length) do
       text = tts_text(audio)
-      {text, PaEss.Utilities.paginate_text(text)}
+
+      {text, PaEss.Utilities.paginate_text(text, max_text_length)}
     end
 
     def to_logs(%Content.Audio.Passthrough{}) do
