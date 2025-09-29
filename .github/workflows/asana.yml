@@ -10,5 +10,5 @@ jobs:
       attach-pr: true
       trigger-phrase: "\\*\\*Asana Ticket:\\*\\*"
     secrets:
-      asana-token: ${{ secrets.ASANA_SECRET_FOR_INSURIFY_ACTION }}
-      github-secret: ${{ secrets.ASANA_GITHUB_INTEGRATION_SECRET }}
+      asana-token: ${{ secrets.ASANA_SECRET_FOR_INSURIFY_ACTION_TEST }}
+      github-secret: ${{ secrets.ASANA_GITHUB_INTEGRATION_SECRET_TEST }}
