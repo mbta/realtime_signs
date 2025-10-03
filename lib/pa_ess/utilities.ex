@@ -9,6 +9,9 @@ defmodule PaEss.Utilities do
   @comma "21012"
   @period "21014"
   @stopped_regex ~r/Stopped (\d+) stops? away/
+  @short_sign_scu_ids ["SCOUSCU001"]
+  @width 24
+  @short_width 18
 
   @abbreviation_replacements [
     {~r"\bOL\b", "Orange Line"},
@@ -947,4 +950,10 @@ defmodule PaEss.Utilities do
         end
       end)
   end
+
+  def sign_length(scu_id) when scu_id in @short_sign_scu_ids, do: :short
+  def sign_length(_), do: :long
+
+  def max_text_length(scu_id) when scu_id in @short_sign_scu_ids, do: @short_width
+  def max_text_length(_), do: @width
 end

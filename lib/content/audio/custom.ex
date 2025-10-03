@@ -17,7 +17,7 @@ defmodule Content.Audio.Custom do
       {:ad_hoc, {message, :audio}}
     end
 
-    def to_tts(%Content.Audio.Custom{} = audio) do
+    def to_tts(%Content.Audio.Custom{} = audio, _max_text_length) do
       {audio.message, nil}
     end
 
