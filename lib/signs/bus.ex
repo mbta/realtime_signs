@@ -1209,6 +1209,18 @@ defmodule Signs.Bus do
     create_headway_message("Silver Line", range, length)
   end
 
+  # Fix for signs not accepting `-` as a value
+  # For Silver Line headways on short signs, we will show 
+  # `Outbound    Every`, `Outbound  10 to 12m`
+  def headway_message(
+        %Message.Headway{destination: :silver_line, range: range, route: "Silver"},
+        :short
+      ) do
+    headsign = PaEss.Utilities.destination_to_sign_string(:outbound)
+
+    create_headway_message(headsign, range, :short)
+  end
+
   def headway_message(
         %Message.Headway{destination: destination, range: range, route: "Silver"},
         length
@@ -1228,7 +1240,7 @@ defmodule Signs.Bus do
   def create_headway_message(destination, {x, y}, :short) do
     [
       Content.Utilities.width_padded_string(destination, "Every", @short_width),
-      Content.Utilities.width_padded_string(destination, "#{x}-#{y}m", @short_width)
+      Content.Utilities.width_padded_string(destination, "#{x} to #{y}m", @short_width)
     ]
   end
 
