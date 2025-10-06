@@ -77,32 +77,53 @@ defmodule PaEss.Updater do
 
     log_metas =
       Enum.zip([tts_audios, tags, log_metas])
-      |> Enum.map(fn {{text, pages}, tag, log_meta} ->
-        [
-          sign_id: id,
-          audio:
-            case text do
-              {:spanish, text} -> text
-              text -> text
-            end
-            |> inspect(),
-          visual: format_pages(pages) |> Jason.encode!(),
-          tag: inspect(tag),
-          legacy: !scu_migrated?
-        ] ++
+      |> Enum.map(fn {tts_audio, tag, log_meta} ->
+        case tts_audio do
+          {:audio_url, audio_url, pages} ->
+            [
+              audio_url: audio_url,
+              visual: format_pages(pages) |> Jason.encode!()
+            ]
+
+          {text, pages} ->
+            [
+              audio:
+                case text do
+                  {:spanish, text} -> text
+                  text -> text
+                end
+                |> inspect(),
+              visual: format_pages(pages) |> Jason.encode!()
+            ]
+        end ++
+          [
+            sign_id: id,
+            tag: inspect(tag),
+            legacy: !scu_migrated?
+          ] ++
           log_meta
       end)
 
     if scu_migrated? do
       Task.Supervisor.start_child(PaEss.TaskSupervisor, fn ->
         files =
-          Enum.map(tts_audios, fn {text, _} ->
-            Task.async(fn -> fetch_tts(text) end)
+          Enum.map(tts_audios, fn
+            {:audio_url, audio_url, _pages} ->
+              Task.async(fn -> fetch_from_url(audio_url) end)
+
+            {text, _pages} ->
+              Task.async(fn -> fetch_tts(text) end)
           end)
           |> Task.await_many()
 
         Enum.zip([files, tts_audios, tags, log_metas])
-        |> Enum.each(fn {file, {_, pages}, tag, log_meta} ->
+        |> Enum.each(fn {file, tts_audio, tag, log_meta} ->
+          pages =
+            case tts_audio do
+              {_text, pages} -> pages
+              {:audio_url, _audio_url, pages} -> pages
+            end
+
           PaEss.ScuQueue.enqueue_message(
             scu_id,
             {:message, scu_id,
@@ -182,6 +203,16 @@ defmodule PaEss.Updater do
     |> case do
       {:ok, %HTTPoison.Response{status_code: status, body: body}} when status in 200..299 ->
         body
+    end
+  end
+
+  defp fetch_from_url(audio_url) do
+    http_client = Application.get_env(:realtime_signs, :http_client)
+
+    with {:ok, pcm_file} <- http_client.get(audio_url) do
+      {:ok, pcm_file}
+    else
+      {:error, error} -> Logger.info("Error getting PCM file: #{error}")
     end
   end
 
