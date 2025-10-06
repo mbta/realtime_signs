@@ -77,27 +77,31 @@ defmodule PaEss.Updater do
 
     log_metas =
       Enum.zip([tts_audios, tags, log_metas])
-      |> Enum.map(fn {{text, pages}, tag, log_meta} ->
-        [
-          sign_id: id,
-          audio:
-            case text do
-              {:spanish, text} -> text
-              text -> text
-            end
-            |> inspect(),
-          visual: format_pages(pages) |> Jason.encode!(),
-          tag: inspect(tag),
-          legacy: !scu_migrated?
-        ] ++
+      |> Enum.map(fn {{tts_audio, pages}, tag, log_meta} ->
+        case tts_audio do
+          {:url, url} ->
+            [audio_url: url]
+
+          {:spanish, text} ->
+            [audio: text]
+
+          text ->
+            [audio: text]
+        end ++
+          [
+            sign_id: id,
+            tag: inspect(tag),
+            legacy: !scu_migrated?,
+            visual: format_pages(pages) |> Jason.encode!()
+          ] ++
           log_meta
       end)
 
     if scu_migrated? do
       Task.Supervisor.start_child(PaEss.TaskSupervisor, fn ->
         files =
-          Enum.map(tts_audios, fn {text, _} ->
-            Task.async(fn -> fetch_tts(text) end)
+          Enum.map(tts_audios, fn {tts_audio, _} ->
+            Task.async(fn -> fetch_audio_file(tts_audio) end)
           end)
           |> Task.await_many()
 
@@ -158,7 +162,16 @@ defmodule PaEss.Updater do
     }
   end
 
-  defp fetch_tts(text) do
+  defp fetch_audio_file({:url, url}) do
+    http_client = Application.get_env(:realtime_signs, :http_client)
+
+    case http_client.get(url) do
+      {:ok, %HTTPoison.Response{status_code: status, body: body}} when status == 200 ->
+        body
+    end
+  end
+
+  defp fetch_audio_file(text) do
     http_poster = Application.get_env(:realtime_signs, :http_poster_mod)
     watts_url = Application.get_env(:realtime_signs, :watts_url)
     watts_api_key = Application.get_env(:realtime_signs, :watts_api_key)

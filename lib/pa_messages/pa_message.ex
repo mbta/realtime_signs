@@ -2,6 +2,7 @@ defmodule PaMessages.PaMessage do
   defstruct id: nil,
             visual_text: nil,
             audio_text: nil,
+            audio_url: nil,
             priority: nil,
             sign_ids: [],
             interval_in_ms: nil
@@ -10,14 +11,26 @@ defmodule PaMessages.PaMessage do
           id: integer(),
           visual_text: String.t(),
           audio_text: String.t(),
+          audio_url: String.t(),
           priority: integer(),
           sign_ids: [String.t()],
           interval_in_ms: non_neg_integer()
         }
 
   defimpl Content.Audio do
+    def to_params(%PaMessages.PaMessage{audio_url: audio_url}) when not is_nil(audio_url) do
+      nil
+    end
+
     def to_params(%PaMessages.PaMessage{visual_text: visual_text}) do
       {:ad_hoc, {visual_text, :audio_visual}}
+    end
+
+    def to_tts(
+          %PaMessages.PaMessage{visual_text: visual_text, audio_url: audio_url},
+          max_text_length
+        ) do
+      {{:url, audio_url}, PaEss.Utilities.paginate_text(visual_text, max_text_length)}
     end
 
     def to_tts(
