@@ -12,14 +12,12 @@ defprotocol Content.Audio do
   @type message_vars :: [String.t()]
   @type canned_message :: {:canned, {message_id(), message_vars(), av_type()}}
   @type ad_hoc_message :: {:ad_hoc, {String.t(), av_type()}}
-  @type audio_text_message ::
-          {audio :: String.t() | {:spanish, String.t()}, visual :: Content.Message.pages() | nil}
-  @type audio_url_message ::
-          {:audio_url, audio_url :: String.t(), visual :: Content.Message.pages() | nil}
 
   @type language :: :english | :spanish
   @type value :: canned_message() | ad_hoc_message() | nil
-  @type tts_value :: audio_text_message() | audio_url_message()
+  @type tts_value ::
+          {audio :: String.t() | {:spanish, String.t()} | {:url, String.t()},
+           visual :: Content.Message.pages() | nil}
 
   @doc "Converts an audio struct to the mid/vars params for the PA system"
   @spec to_params(Content.Audio.t()) :: value()

@@ -26,7 +26,7 @@ defmodule PaMessages.PaMessage do
           %PaMessages.PaMessage{visual_text: visual_text, audio_url: audio_url},
           max_text_length
         ) do
-      {:audio_url, audio_url, PaEss.Utilities.paginate_text(visual_text, max_text_length)}
+      {{:url, audio_url}, PaEss.Utilities.paginate_text(visual_text, max_text_length)}
     end
 
     def to_tts(
