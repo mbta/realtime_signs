@@ -101,7 +101,7 @@ defmodule PaEss.Updater do
       Task.Supervisor.start_child(PaEss.TaskSupervisor, fn ->
         files =
           Enum.map(tts_audios, fn {tts_audio, _} ->
-            Task.async(fn -> fetch_audio_file(tts_value) end)
+            Task.async(fn -> fetch_audio_file(tts_audio) end)
           end)
           |> Task.await_many()
 
