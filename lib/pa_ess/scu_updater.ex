@@ -39,9 +39,11 @@ defmodule PaEss.ScuUpdater do
     scu_ip_map = Application.get_env(:realtime_signs, :scu_ip_map)
     scully_api_key = Application.get_env(:realtime_signs, :scully_api_key)
 
-    if scu_ip_map do
+    address = scu_ip_map[scu_id] || scu_ip_map["*"]
+
+    if address do
       http_poster.post(
-        "http://#{Map.fetch!(scu_ip_map, scu_id)}#{path}",
+        "http://#{address}#{path}",
         body,
         [{"Content-type", "application/json"}, {"x-api-key", scully_api_key}],
         hackney: [pool: :arinc_pool]

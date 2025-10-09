@@ -26,7 +26,7 @@ if config_env() != :test do
     scully_api_key: System.get_env("SCULLY_API_KEY"),
     watts_url: System.get_env("WATTS_URL"),
     watts_api_key: System.get_env("WATTS_API_KEY"),
-    scu_ip_map: System.get_env("SCU_IP_MAP", "null") |> Jason.decode!(),
+    scu_ip_map: System.get_env("SCU_IP_MAP", "{}") |> Jason.decode!(),
     chelsea_bridge_password: System.get_env("CHELSEA_BRIDGE_PASSWORD"),
     chelsea_bridge_username: System.get_env("CHELSEA_BRIDGE_USERNAME"),
     number_of_http_updaters:
@@ -43,7 +43,12 @@ end
 
 if config_env() == :dev do
   config :realtime_signs,
-    sign_config_file: System.get_env("SIGN_CONFIG_FILE")
+    sign_config_file: System.get_env("SIGN_CONFIG_FILE"),
+    only_sign_ids:
+      (case System.get_env("ONLY_SIGN_IDS") do
+         nil -> nil
+         string -> String.split(string, ",")
+       end)
 end
 
 message_log_job =

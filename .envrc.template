@@ -17,6 +17,21 @@ export API_V3_URL=https://api-dev-green.mbtace.com
 #export CHELSEA_BRIDGE_USERNAME=
 #export CHELSEA_BRIDGE_PASSWORD=
 
+# URL and access key for Watts. Required. The staging key can be found in the shared 1Password vault,
+# in the "Watts Staging API key" entry.
+export WATTS_URL=https://watts-staging.mbtace.com
+#export WATTS_API_KEY=
+
+# URL and access key for Screenplay. Required. API keys can be found in the shared 1Password vault,
+# search for "Screenplay"
+export SCREENPLAY_BASE_URL=https://screenplay-dev.mbtace.com
+#export SCREENPLAY_API_KEY=
+
+# Mapping of SCU names to hosts. Optional. Leave unset to skip sending messages to Scully, or uncomment
+# to use a locally running instance.
+#export SCU_IP_MAP="{\"*\": \"localhost:4010\"}"
+#export SCULLY_API_KEY=
+
 # URLs of the enhanced trip-update and vehicle-position feeds.
 #export TRIP_UPDATE_URL="https://s3.amazonaws.com/mbta-gtfs-s3/concentrate/TripUpdates_enhanced.json"
 #export VEHICLE_POSITIONS_URL="https://s3.amazonaws.com/mbta-gtfs-s3/concentrate/VehiclePositions_enhanced.json"
