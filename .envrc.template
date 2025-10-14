@@ -35,3 +35,7 @@ export SCREENPLAY_BASE_URL=https://screenplay-dev.mbtace.com
 # URLs of the enhanced trip-update and vehicle-position feeds.
 #export TRIP_UPDATE_URL="https://s3.amazonaws.com/mbta-gtfs-s3/concentrate/TripUpdates_enhanced.json"
 #export VEHICLE_POSITIONS_URL="https://s3.amazonaws.com/mbta-gtfs-s3/concentrate/VehiclePositions_enhanced.json"
+
+# Comma seprated list of sign ids to run for debugging purposes. If specified, these signs processes
+# will be run in isolation to reduce log noise.
+#export ONLY_SIGN_IDS=lab_test_1
