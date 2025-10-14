@@ -8,7 +8,10 @@ defmodule Signs.Supervisor do
 
   @impl true
   def init(_init_arg) do
-    for sign_config <- Signs.Utilities.SignsConfig.children_config() do
+    only_sign_ids = Application.get_env(:realtime_signs, :only_sign_ids)
+
+    for sign_config <- Signs.Utilities.SignsConfig.children_config(),
+        !only_sign_ids or sign_config["id"] in only_sign_ids do
       sign_module =
         case sign_config do
           %{"type" => "realtime"} -> Signs.Realtime
