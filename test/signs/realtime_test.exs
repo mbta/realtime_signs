@@ -45,7 +45,8 @@ defmodule Signs.RealtimeTest do
     last_update: @fake_time,
     tick_read: 1,
     read_period_seconds: 100,
-    pa_message_plays: %{}
+    pa_message_plays: %{},
+    last_message_log_time: @fake_time
   }
 
   @mezzanine_sign %{

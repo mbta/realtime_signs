@@ -23,7 +23,8 @@ defmodule Signs.Realtime do
     :current_content_bottom,
     :last_update,
     :tick_read,
-    :read_period_seconds
+    :read_period_seconds,
+    :last_message_log_time
   ]
 
   defstruct @enforce_keys ++
@@ -70,11 +71,17 @@ defmodule Signs.Realtime do
           announced_alert: boolean(),
           prev_predictions: [Predictions.Prediction.t()],
           uses_shuttles: boolean(),
-          pa_message_plays: %{integer() => DateTime.t()}
+          pa_message_plays: %{integer() => DateTime.t()},
+          last_message_log_time: DateTime.t()
         }
 
   def start_link(%{"type" => "realtime"} = config) do
     source_config = config |> Map.fetch!("source_config") |> SourceConfig.parse!()
+
+    current_time_fn = fn ->
+      time_zone = Application.fetch_env!(:realtime_signs, :time_zone)
+      DateTime.utc_now() |> DateTime.shift_zone!(time_zone)
+    end
 
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
@@ -87,16 +94,14 @@ defmodule Signs.Realtime do
         config |> Map.get("default_mode") |> then(&if(&1 == "auto", do: :auto, else: :off)),
       current_content_top: "",
       current_content_bottom: "",
-      current_time_fn: fn ->
-        time_zone = Application.get_env(:realtime_signs, :time_zone)
-        DateTime.utc_now() |> DateTime.shift_zone!(time_zone)
-      end,
+      current_time_fn: current_time_fn,
       last_update: nil,
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       read_period_seconds: 240,
       headway_stop_id: Map.get(config, "headway_stop_id"),
       uses_shuttles: Map.get(config, "uses_shuttles", true),
-      pa_message_plays: %{}
+      pa_message_plays: %{},
+      last_message_log_time: current_time_fn.()
     }
 
     GenServer.start_link(__MODULE__, sign, name: :"Signs/#{sign.id}")
@@ -191,6 +196,7 @@ defmodule Signs.Realtime do
       |> Utilities.Reader.do_announcements(messages)
       |> Utilities.Reader.read_sign(messages)
       |> decrement_ticks()
+      |> log_sign_messages(messages)
       |> Map.put(:prev_predictions, all_predictions)
 
     Process.send_after(self(), :run_loop, 1000)
@@ -278,6 +284,34 @@ defmodule Signs.Realtime do
         sign
       end
     end)
+  end
+
+  # This is some temporary logging to assist with headway accuracy analysis
+  defp log_sign_messages(%{source_config: {_, _}} = sign, _messages), do: sign
+
+  defp log_sign_messages(sign, messages) do
+    now = sign.current_time_fn.()
+
+    if DateTime.after?(now, DateTime.shift(sign.last_message_log_time, minute: 1)) do
+      Enum.each(messages, fn
+        %Message.Headway{} = message ->
+          Logger.info(
+            "sign_headway_message: sign_id=#{inspect(sign.id)} destination=#{message.destination |> to_string() |> inspect()} route=#{inspect(message.route)}"
+          )
+
+        %Message.Alert{} = message ->
+          Logger.info(
+            "sign_alert_message: sign_id=#{inspect(sign.id)} destination=#{message.destination |> to_string() |> inspect()} route=#{inspect(message.route)}"
+          )
+
+        _ ->
+          nil
+      end)
+
+      %{sign | last_message_log_time: now}
+    else
+      sign
+    end
   end
 
   @spec decrement_ticks(Signs.Realtime.t()) :: Signs.Realtime.t()
