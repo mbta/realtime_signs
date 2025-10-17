@@ -107,6 +107,7 @@ defmodule Engine.PaMessages do
               "id" => pa_id,
               "visual_text" => visual_text,
               "audio_text" => audio_text,
+              "audio_url" => audio_url,
               "interval_in_minutes" => interval_in_minutes,
               "priority" => priority,
               "sign_ids" => sign_ids
@@ -115,6 +116,7 @@ defmodule Engine.PaMessages do
             id: pa_id,
             visual_text: visual_text,
             audio_text: audio_text,
+            audio_url: audio_url,
             priority: priority,
             sign_ids: sign_ids,
             interval_in_ms: interval_in_minutes * @minute_in_ms

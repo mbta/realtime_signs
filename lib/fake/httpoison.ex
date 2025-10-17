@@ -135,6 +135,7 @@ defmodule Fake.HTTPoison do
         "alert_id" => nil,
         "audio_text" =>
           "This is an example of a PA message that will be played at an MBTA station",
+        "audio_url" => nil,
         "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
         "end_time" => "2033-12-05T23:53:23Z",
         "id" => 4,
@@ -153,6 +154,7 @@ defmodule Fake.HTTPoison do
       %{
         "alert_id" => nil,
         "audio_text" => "This is another PA message that will play at MBTA stations",
+        "audio_url" => nil,
         "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
         "end_time" => "2027-08-05T05:41:10Z",
         "id" => 5,
@@ -177,6 +179,7 @@ defmodule Fake.HTTPoison do
       %{
         "alert_id" => nil,
         "audio_text" => "This is another PA message that will play at MBTA stations",
+        "audio_url" => nil,
         "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
         "end_time" => "2027-08-05T05:41:10Z",
         "id" => 5,
@@ -202,6 +205,7 @@ defmodule Fake.HTTPoison do
         "alert_id" => nil,
         "audio_text" =>
           "This is an example of a PA message that will be played at an MBTA station",
+        "audio_url" => nil,
         "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
         "end_time" => "2033-12-05T23:53:23Z",
         "id" => 4,
@@ -220,6 +224,7 @@ defmodule Fake.HTTPoison do
       %{
         "alert_id" => nil,
         "audio_text" => "This is another PA message that will play at MBTA stations",
+        "audio_url" => nil,
         "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
         "end_time" => "2027-08-05T05:41:10Z",
         "id" => 5,
