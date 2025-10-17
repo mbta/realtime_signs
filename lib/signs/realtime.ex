@@ -79,7 +79,7 @@ defmodule Signs.Realtime do
     source_config = config |> Map.fetch!("source_config") |> SourceConfig.parse!()
 
     current_time_fn = fn ->
-      time_zone = Application.get_env(:realtime_signs, :time_zone)
+      time_zone = Application.fetch_env!(:realtime_signs, :time_zone)
       DateTime.utc_now() |> DateTime.shift_zone!(time_zone)
     end
 

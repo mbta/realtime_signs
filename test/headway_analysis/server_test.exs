@@ -7,8 +7,7 @@ defmodule HeadwayAnalysys.ServerTest do
     sign_id: "test_sign",
     headway_group: "test_headway_group",
     stop_ids: ["1"],
-    vehicles_present: MapSet.new(["v-1"]),
-    trip_lookup: %{"v-1" => "trip-1"}
+    vehicle_trips: %{"v-1" => "trip-1"}
   }
 
   setup :verify_on_exit!
