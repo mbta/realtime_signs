@@ -80,13 +80,13 @@ defmodule PaEss.Updater do
       |> Enum.map(fn {{tts_audio, pages}, tag, log_meta} ->
         case tts_audio do
           {:url, url} ->
-            [audio_url: url]
+            [audio_url: inspect(url)]
 
           {:spanish, text} ->
-            [audio: text]
+            [audio: inspect(text)]
 
           text ->
-            [audio: text]
+            [audio: inspect(text)]
         end ++
           [
             sign_id: id,
