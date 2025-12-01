@@ -15,9 +15,9 @@ defprotocol Content.Audio do
 
   @type language :: :english | :spanish
   @type value :: canned_message() | ad_hoc_message() | nil
+  @type audio_item :: String.t() | {:spanish, String.t()} | {:url, String.t()}
   @type tts_value ::
-          {audio :: String.t() | {:spanish, String.t()} | {:url, String.t()},
-           visual :: Content.Message.pages() | nil}
+          {audio :: audio_item() | [audio_item()], visual :: Content.Message.pages() | nil}
 
   @doc "Converts an audio struct to the mid/vars params for the PA system"
   @spec to_params(Content.Audio.t()) :: value()

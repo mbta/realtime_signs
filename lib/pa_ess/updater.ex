@@ -85,6 +85,9 @@ defmodule PaEss.Updater do
           {:spanish, text} ->
             [audio: inspect(text)]
 
+          list when is_list(list) ->
+            [audio: Enum.join(list, " ") |> inspect()]
+
           text ->
             [audio: inspect(text)]
         end ++
@@ -99,21 +102,24 @@ defmodule PaEss.Updater do
 
     if scu_migrated? do
       Task.Supervisor.start_child(PaEss.TaskSupervisor, fn ->
-        files =
-          Enum.map(tts_audios, fn {tts_audio, _} ->
-            Task.async(fn -> fetch_audio_file(tts_audio) end)
-          end)
-          |> Task.await_many()
+        async_map = fn list, fun ->
+          Task.async_stream(list, fun) |> Enum.map(fn {:ok, value} -> value end)
+        end
 
-        Enum.zip([files, tts_audios, tags, log_metas])
-        |> Enum.each(fn {file, {_, pages}, tag, log_meta} ->
+        file_lists =
+          async_map.(tts_audios, fn {tts_audio, _} ->
+            List.wrap(tts_audio) |> async_map.(&fetch_audio_file/1)
+          end)
+
+        Enum.zip([file_lists, tts_audios, tags, log_metas])
+        |> Enum.each(fn {file_list, {_, pages}, tag, log_meta} ->
           PaEss.ScuQueue.enqueue_message(
             scu_id,
             {:message, scu_id,
              %{
                zones: Enum.map(audio_zones, &"#{pa_ess_loc}-#{&1}"),
                visual_data: format_pages(pages),
-               audio_data: [Base.encode64(file)],
+               audio_data: Enum.map(file_list, &Base.encode64(&1)),
                expiration: 30,
                priority: priority,
                tag: tag
