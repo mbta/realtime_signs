@@ -1,7 +1,7 @@
 defmodule RealtimeSignsWeb do
   def controller do
     quote do
-      use Phoenix.Controller, namespace: RealtimeSignsWeb
+      use Phoenix.Controller, formats: []
       import Plug.Conn
       import RealtimeSignsWeb.Router.Helpers
     end
