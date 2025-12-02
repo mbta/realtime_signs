@@ -430,10 +430,7 @@ defmodule Signs.Bus do
             [long_message_tts_audio(single, current_time)]
 
           list ->
-            Enum.map(list, &message_tts_audio(&1, current_time))
-            |> Enum.join(" ")
-            |> add_tts_preamble()
-            |> List.wrap()
+            [Enum.map(list, &message_tts_audio(&1, current_time)) |> add_tts_preamble()]
         end
         |> Enum.map(&{&1, nil})
         |> Enum.concat(bridge_tts_audio(bridge_status, bridge_enabled?, current_time, state))
@@ -523,12 +520,8 @@ defmodule Signs.Bus do
           [] ->
             []
 
-          content ->
-            content
-            |> Enum.map(&message_tts_audio(&1, current_time))
-            |> Enum.join(" ")
-            |> add_tts_preamble()
-            |> List.wrap()
+          list ->
+            [Enum.map(list, &message_tts_audio(&1, current_time)) |> add_tts_preamble()]
         end
         |> Enum.map(&{&1, nil})
         |> Enum.concat(bridge_tts_audio(bridge_status, bridge_enabled?, current_time, state))
@@ -986,7 +979,8 @@ defmodule Signs.Bus do
   defp add_preamble([]), do: []
   defp add_preamble(items), do: [[:upcoming_departures] | items]
 
-  defp add_tts_preamble(str), do: "Upcoming departures: " <> str
+  defp add_tts_preamble([]), do: []
+  defp add_tts_preamble(items), do: ["Upcoming departures:" | items]
 
   # Returns a list of audio tokens describing the given message.
   defp message_audio({:predictions, [prediction | _]}, current_time) do
@@ -1159,7 +1153,6 @@ defmodule Signs.Bus do
 
       "The #{next_or_following} #{route}bus to #{prediction.headsign} #{time}."
     end)
-    |> Enum.join(" ")
   end
 
   defp long_message_tts_audio({:alert, config}, _) do
@@ -1210,7 +1203,7 @@ defmodule Signs.Bus do
   end
 
   # Fix for signs not accepting `-` as a value
-  # For Silver Line headways on short signs, we will show 
+  # For Silver Line headways on short signs, we will show
   # `Outbound    Every`, `Outbound  10 to 12m`
   def headway_message(
         %Message.Headway{destination: :silver_line, range: range, route: "Silver"},

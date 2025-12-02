@@ -175,8 +175,10 @@ defmodule Signs.BusTest do
             ], :audio}}
         ],
         [
-          {"The next route 14 bus to Wakefield Ave arrives in 2 minutes. The following route 14 bus to Wakefield Ave arrives in 11 minutes.",
-           nil}
+          {[
+             "The next route 14 bus to Wakefield Ave arrives in 2 minutes.",
+             "The following route 14 bus to Wakefield Ave arrives in 11 minutes."
+           ], nil}
         ]
       )
 
@@ -217,8 +219,12 @@ defmodule Signs.BusTest do
             ], :audio}}
         ],
         [
-          {"Upcoming departures: Route 14, Wakefield Ave, 2 minutes. Chelsea, 4 minutes. Route 34, Clarendon Hill, 7 minutes.",
-           nil}
+          {[
+             "Upcoming departures:",
+             "Route 14, Wakefield Ave, 2 minutes.",
+             "Chelsea, 4 minutes.",
+             "Route 34, Clarendon Hill, 7 minutes."
+           ], nil}
         ]
       )
 
@@ -245,8 +251,11 @@ defmodule Signs.BusTest do
             :audio}}
         ],
         [
-          {"Upcoming departures: Route SL5, Nubian, 8 minutes. Route 14, Wakefield Ave, 2 minutes.",
-           nil}
+          {[
+             "Upcoming departures:",
+             "Route SL5, Nubian, 8 minutes.",
+             "Route 14, Wakefield Ave, 2 minutes."
+           ], nil}
         ]
       )
 
@@ -324,7 +333,7 @@ defmodule Signs.BusTest do
             {"112", ["548", "21012", "931", "33004", "932", "666", "5011", "511", "5013", "505"],
              :audio}
         ],
-        [{"Upcoming departures: Silver Line Outbound buses every 11 to 13 minutes.", nil}]
+        [{["Upcoming departures:", "Silver Line Outbound buses every 11 to 13 minutes."], nil}]
       )
 
       state =
@@ -377,8 +386,11 @@ defmodule Signs.BusTest do
              ], :audio}
         ],
         [
-          {"Upcoming departures: Chelsea buses every 11 to 13 minutes. Route 14, Wakefield Ave, 2 minutes.",
-           nil}
+          {[
+             "Upcoming departures:",
+             "Chelsea buses every 11 to 13 minutes.",
+             "Route 14, Wakefield Ave, 2 minutes."
+           ], nil}
         ]
       )
 
@@ -426,8 +438,11 @@ defmodule Signs.BusTest do
              ], :audio}
         ],
         [
-          {"Upcoming departures: South Station, 5 minutes. Silver Line Outbound buses every 11 to 13 minutes.",
-           nil}
+          {[
+             "Upcoming departures:",
+             "South Station, 5 minutes.",
+             "Silver Line Outbound buses every 11 to 13 minutes."
+           ], nil}
         ]
       )
 
@@ -490,8 +505,10 @@ defmodule Signs.BusTest do
           {:canned, {"152", ["37004"], :audio_visual}}
         ],
         [
-          {"The next route 14 bus to Wakefield Ave arrives in 2 minutes. The following route 14 bus to Wakefield Ave arrives in 11 minutes.",
-           nil},
+          {[
+             "The next route 14 bus to Wakefield Ave arrives in 2 minutes.",
+             "The following route 14 bus to Wakefield Ave arrives in 11 minutes."
+           ], nil},
           {"The Chelsea Street bridge is raised. We expect this to last for at least 4 more minutes. SL3 buses may be delayed, detoured, or turned back.",
            [
              {"The Chelsea Street", "bridge is raised. We", 3},
@@ -587,8 +604,11 @@ defmodule Signs.BusTest do
             :audio}}
         ],
         [
-          {"Upcoming departures: Route 14, Wakefield Ave, 2 minutes. Route 51, Reservoir Station, no service.",
-           nil}
+          {[
+             "Upcoming departures:",
+             "Route 14, Wakefield Ave, 2 minutes.",
+             "Route 51, Reservoir Station, no service."
+           ], nil}
         ]
       )
 
