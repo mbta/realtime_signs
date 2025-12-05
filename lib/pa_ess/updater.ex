@@ -188,7 +188,7 @@ defmodule PaEss.Updater do
         text -> {"Matthew", text}
       end
 
-    text = ~s(<speak><amazon:effect name="drc">#{text}</amazon:effect></speak>)
+    text = ~s(<speak><amazon:effect name="drc">#{xml_escape(text)}</amazon:effect></speak>)
 
     http_poster.post(
       "#{watts_url}/tts",
@@ -206,5 +206,15 @@ defmodule PaEss.Updater do
 
   defp create_tag() do
     :rand.bytes(16) |> Base.encode64(padding: false)
+  end
+
+  defp xml_escape(text) do
+    String.replace(text, ~w(" ' < > &), fn
+      "\"" -> "&quot;"
+      "'" -> "&apos;"
+      "<" -> "&lt;"
+      ">" -> "&gt;"
+      "&" -> "&amp;"
+    end)
   end
 end
