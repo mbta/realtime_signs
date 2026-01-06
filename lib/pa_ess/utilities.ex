@@ -120,7 +120,8 @@ defmodule PaEss.Utilities do
     {~r"\bMalden Ctr\b", "Malden Center"},
     {~r"\bNorth Sta\b", "North Station"},
     {~r"\bGov'?t Ctr\b", "Government Center"},
-    {~r/\bSVC\b/i, "Service"}
+    {~r/\bSVC\b/i, "Service"},
+    {~r/\bCol\b/i, "College"}
   ]
 
   @spec valid_range?(integer(), Content.Audio.language()) :: boolean()
