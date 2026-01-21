@@ -184,11 +184,12 @@ defmodule PaEss.Updater do
 
     {voice_id, text} =
       case text do
-        {:spanish, text} -> {"Mia", ~s(<prosody rate="90%">#{text}</prosody>)}
+        {:spanish, text} -> {"Mia", text}
         text -> {"Matthew", text}
       end
 
-    text = ~s(<speak><amazon:effect name="drc">#{xml_escape(text)}</amazon:effect></speak>)
+    text =
+      ~s(<speak><amazon:effect name="drc"><prosody rate="90%">#{xml_escape(text)}</prosody></amazon:effect></speak>)
 
     http_poster.post(
       "#{watts_url}/tts",
