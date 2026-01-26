@@ -114,6 +114,13 @@ defmodule Engine.Alerts.ApiFetcher do
         # then the entire route and all associated stop_ids are affected
         %{"route" => route}, {stops, routes} ->
           {stops, [route | routes]}
+
+        # It's possible to have neither a route nor a stop specified, which technically means the
+        # alert applies to an entire mode. This is rare, but we've seen it occur in the context
+        # of system-wide delays like snowstorms. We ignore it, since we don't really support
+        # system-wide alert messaging.
+        _, {stops, routes} ->
+          {stops, routes}
       end)
 
     all_routes
