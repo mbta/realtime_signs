@@ -72,47 +72,60 @@ defmodule PaEss.Updater do
         priority,
         log_metas
       ) do
-    tags = Enum.map(audios, fn _ -> create_tag() end)
     scu_migrated? = RealtimeSigns.config_engine().scu_migrated?(scu_id)
+    tts_audios = Enum.map(tts_audios, fn {audio, pages} -> {List.wrap(audio), pages} end)
 
-    log_metas =
-      Enum.zip([tts_audios, tags, log_metas])
-      |> Enum.map(fn {{tts_audio, pages}, tag, log_meta} ->
-        case tts_audio do
-          {:url, url} ->
-            [audio_url: inspect(url)]
+    log_data = fn {audio, pages} ->
+      tag = create_tag()
 
-          {:spanish, text} ->
-            [audio: inspect(text)]
-
-          list when is_list(list) ->
-            [audio: Enum.join(list, " ") |> inspect()]
-
-          text ->
-            [audio: inspect(text)]
-        end ++
-          [
-            sign_id: id,
-            tag: inspect(tag),
-            legacy: !scu_migrated?,
-            visual: format_pages(pages) |> Jason.encode!()
-          ] ++
-          log_meta
-      end)
+      {[
+         audio:
+           Enum.map_join(audio, " ", fn
+             {:url, url} -> "[#{url}]"
+             {:spanish, text} -> text
+             text -> text
+           end)
+           |> inspect(),
+         sign_id: id,
+         tag: inspect(tag),
+         legacy: !scu_migrated?,
+         visual: format_pages(pages) |> Jason.encode!()
+       ], tag}
+    end
 
     if scu_migrated? do
       Task.Supervisor.start_child(PaEss.TaskSupervisor, fn ->
+        tts_items =
+          Enum.zip(tts_audios, log_metas)
+          |> Enum.chunk_while(
+            nil,
+            fn
+              value, nil ->
+                {:cont, value}
+
+              {{audio, nil}, log_meta}, {{acc_audio, nil}, acc_log_meta} ->
+                {:cont, {{acc_audio ++ audio, nil}, Keyword.merge(acc_log_meta, log_meta)}}
+
+              value, acc ->
+                {:cont, acc, value}
+            end,
+            fn
+              nil -> {:cont, nil}
+              acc -> {:cont, acc, nil}
+            end
+          )
+
         async_map = fn list, fun ->
           Task.async_stream(list, fun) |> Enum.map(fn {:ok, value} -> value end)
         end
 
-        file_lists =
-          async_map.(tts_audios, fn {tts_audio, _} ->
-            List.wrap(tts_audio) |> async_map.(&fetch_audio_file/1)
-          end)
+        async_map.(tts_items, fn {{audio, _pages}, _log_meta} ->
+          async_map.(audio, &fetch_audio_file/1)
+        end)
+        |> Enum.zip(tts_items)
+        |> Enum.each(fn {file_list, {{_audio, pages} = tts_audio, log_meta}} ->
+          {logs, tag} = log_data.(tts_audio)
 
-        Enum.zip([file_lists, tts_audios, tags, log_metas])
-        |> Enum.each(fn {file_list, {_, pages}, tag, log_meta} ->
           PaEss.ScuQueue.enqueue_message(
             scu_id,
             {:message, scu_id,
@@ -123,12 +136,19 @@ defmodule PaEss.Updater do
                expiration: 30,
                priority: priority,
                tag: tag
-             }, log_meta}
+             }, Keyword.merge(logs, log_meta)}
           )
         end)
       end)
     else
-      MessageQueue.send_audio({pa_ess_loc, audio_zones}, audios, 5, 60, log_metas)
+      log_list =
+        Enum.zip(tts_audios, log_metas)
+        |> Enum.map(fn {tts_audio, log_meta} ->
+          {logs, _tag} = log_data.(tts_audio)
+          Keyword.merge(logs, log_meta)
+        end)
+
+      MessageQueue.send_audio({pa_ess_loc, audio_zones}, audios, 5, 60, log_list)
     end
   end
 
