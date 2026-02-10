@@ -9439,6 +9439,24 @@
         "sources": [
           {
             "stop_id": "place-matt",
+            "route_id": "15",
+            "direction_id": 0
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-matt",
+            "route_id": "15",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-matt",
             "route_id": "24",
             "direction_id": 0
           }
