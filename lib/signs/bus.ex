@@ -1187,7 +1187,13 @@ defmodule Signs.Bus do
     %{audio_zones: audio_zones} = state
 
     if audios != [] && audio_zones != [] do
-      RealtimeSigns.sign_updater().play_message(state, audios, tts_audios, 2, [])
+      RealtimeSigns.sign_updater().play_message(
+        state,
+        audios,
+        tts_audios,
+        2,
+        Enum.map(audios, fn _ -> [] end)
+      )
     end
   end
 
