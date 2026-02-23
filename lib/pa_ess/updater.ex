@@ -80,11 +80,14 @@ defmodule PaEss.Updater do
 
       {[
          audio:
-           Enum.map_join(audio, " ", fn
-             {:url, url} -> "[#{url}]"
-             {:spanish, text} -> text
-             text -> text
+           Enum.flat_map(audio, fn
+             {:silence, _} -> []
+             :chime -> []
+             {:url, url} -> ["[#{url}]"]
+             {:spanish, text} -> [text]
+             text -> [text]
            end)
+           |> Enum.join(" ")
            |> inspect(),
          sign_id: id,
          tag: inspect(tag),
@@ -104,7 +107,9 @@ defmodule PaEss.Updater do
                 {:cont, value}
 
               {{audio, nil}, log_meta}, {{acc_audio, nil}, acc_log_meta} ->
-                {:cont, {{acc_audio ++ audio, nil}, Keyword.merge(acc_log_meta, log_meta)}}
+                {:cont,
+                 {{acc_audio ++ [{:silence, 1000}] ++ audio, nil},
+                  Keyword.merge(acc_log_meta, log_meta)}}
 
               value, acc ->
                 {:cont, acc, value}
@@ -114,6 +119,9 @@ defmodule PaEss.Updater do
               acc -> {:cont, acc, nil}
             end
           )
+          |> Enum.map(fn {{audio, visual}, log_meta} ->
+            {{[:chime] ++ audio ++ [{:silence, 1000}], visual}, log_meta}
+          end)
 
         async_map = fn list, fun ->
           Task.async_stream(list, fun) |> Enum.map(fn {:ok, value} -> value end)
@@ -186,6 +194,17 @@ defmodule PaEss.Updater do
           %{top: top, bottom: bottom, duration: duration}
         end)
     }
+  end
+
+  @sample_rate 16000
+  @sample_bits 16
+  defp fetch_audio_file({:silence, ms}) do
+    <<0::size(trunc(ms / 1000 * @sample_rate) * @sample_bits)>>
+  end
+
+  @chime :code.priv_dir(:realtime_signs) |> Path.join("chime.pcm") |> File.read!()
+  defp fetch_audio_file(:chime) do
+    @chime
   end
 
   defp fetch_audio_file({:url, url}) do
