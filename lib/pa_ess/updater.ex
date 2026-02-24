@@ -202,7 +202,9 @@ defmodule PaEss.Updater do
     <<0::size(trunc(ms / 1000 * @sample_rate) * @sample_bits)>>
   end
 
-  @chime :code.priv_dir(:realtime_signs) |> Path.join("chime.pcm") |> File.read!()
+  @chime_path :code.priv_dir(:realtime_signs) |> Path.join("chime.pcm")
+  @chime File.read!(@chime_path)
+  @external_resource @chime_path
   defp fetch_audio_file(:chime) do
     @chime
   end
