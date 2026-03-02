@@ -124,7 +124,9 @@ defmodule PaEss.Updater do
           end)
 
         async_map = fn list, fun ->
-          Task.async_stream(list, fun) |> Enum.map(fn {:ok, value} -> value end)
+          # Note: temporarily increasing the timeout to work around some issues with large PA
+          # messages targeting many stations.
+          Task.async_stream(list, fun, timeout: 10000) |> Enum.map(fn {:ok, value} -> value end)
         end
 
         async_map.(tts_items, fn {{audio, _pages}, _log_meta} ->
