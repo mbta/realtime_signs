@@ -5,7 +5,7 @@ defmodule Content.Audio.ApproachingTest do
 
   describe "to_params/1" do
     test "Returns params when platform is present" do
-      audio = %Approaching{destination: :alewife, platform: :braintree, route_id: "Red"}
+      audio = %Approaching{destination: :"place-alfcl", platform: :braintree, route_id: "Red"}
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
@@ -14,7 +14,7 @@ defmodule Content.Audio.ApproachingTest do
     end
 
     test "Returns params when platform is not present" do
-      audio = %Approaching{destination: :oak_grove, route_id: "Orange"}
+      audio = %Approaching{destination: :"place-ogmnl", route_id: "Orange"}
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
@@ -22,7 +22,7 @@ defmodule Content.Audio.ApproachingTest do
     end
 
     test "Returns params for Green Line trips" do
-      audio = %Approaching{destination: :riverside, route_id: "Green-D"}
+      audio = %Approaching{destination: :"place-river", route_id: "Green-D"}
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
@@ -31,7 +31,7 @@ defmodule Content.Audio.ApproachingTest do
     end
 
     test "Returns params for new Red Line cars" do
-      audio = %Approaching{destination: :alewife, route_id: "Red", new_cars?: true}
+      audio = %Approaching{destination: :"place-alfcl", route_id: "Red", new_cars?: true}
 
       assert Content.Audio.to_params(audio) ==
                {:canned,
@@ -41,7 +41,7 @@ defmodule Content.Audio.ApproachingTest do
 
     test "Returns crowding info" do
       audio = %Approaching{
-        destination: :forest_hills,
+        destination: :"place-forhl",
         route_id: "Orange",
         crowding_description: {:train_level, :crowded}
       }

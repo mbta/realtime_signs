@@ -20,91 +20,10 @@ defmodule Content.Utilities do
   end
 
   @spec destination_for_prediction(Predictions.Prediction.t()) :: PaEss.destination()
-  def destination_for_prediction(%{route_id: "Mattapan", direction_id: 0}), do: :mattapan
-  def destination_for_prediction(%{route_id: "Mattapan", direction_id: 1}), do: :ashmont
-  def destination_for_prediction(%{route_id: "Orange", direction_id: 0}), do: :forest_hills
-  def destination_for_prediction(%{route_id: "Orange", direction_id: 1}), do: :oak_grove
-  def destination_for_prediction(%{route_id: "Blue", direction_id: 0}), do: :bowdoin
-  def destination_for_prediction(%{route_id: "Blue", direction_id: 1}), do: :wonderland
-  def destination_for_prediction(%{route_id: "Red", direction_id: 1}), do: :alewife
-
-  def destination_for_prediction(%{route_id: "Red", direction_id: 0, destination_stop_id: stop_id})
-      when stop_id in ["70085", "70086", "70087", "70089", "70091", "70093"],
-      do: :ashmont
-
-  def destination_for_prediction(%{route_id: "Red", direction_id: 0, destination_stop_id: stop_id})
-      when stop_id in [
-             "70095",
-             "70096",
-             "70097",
-             "70099",
-             "70101",
-             "70103",
-             "70105",
-             "Braintree-01",
-             "Braintree-02"
-           ],
-      do: :braintree
-
-  def destination_for_prediction(%{route_id: "Red", direction_id: 0}), do: :southbound
-
-  def destination_for_prediction(%{direction_id: 0, destination_stop_id: "70151"}), do: :kenmore
-  def destination_for_prediction(%{direction_id: 0, destination_stop_id: "71151"}), do: :kenmore
-
-  def destination_for_prediction(%{direction_id: 0, destination_stop_id: "70202"}),
-    do: :government_center
-
-  def destination_for_prediction(%{direction_id: 0, destination_stop_id: "70201"}),
-    do: :government_center
-
-  def destination_for_prediction(%{direction_id: 0, destination_stop_id: "70175"}), do: :reservoir
-
-  def destination_for_prediction(%{direction_id: 0, destination_stop_id: "70107"}),
-    do: :boston_college
-
-  def destination_for_prediction(%{direction_id: 0, destination_stop_id: "70237"}),
-    do: :cleveland_circle
-
-  def destination_for_prediction(%{direction_id: 0, destination_stop_id: "70161"}), do: :riverside
-
-  def destination_for_prediction(%{direction_id: 0, destination_stop_id: "70260"}),
-    do: :heath_street
-
-  def destination_for_prediction(%{direction_id: 1, destination_stop_id: "70205"}),
-    do: :north_station
-
-  def destination_for_prediction(%{direction_id: 1, destination_stop_id: "70511"}),
-    do: :medford_tufts
-
-  def destination_for_prediction(%{direction_id: 1, destination_stop_id: "70503"}),
-    do: :union_square
-
-  def destination_for_prediction(%{direction_id: 1, destination_stop_id: "70501"}), do: :lechmere
-
-  def destination_for_prediction(%{direction_id: 1, destination_stop_id: "70201"}),
-    do: :government_center
-
-  def destination_for_prediction(%{direction_id: 1, destination_stop_id: "70200"}),
-    do: :park_street
-
-  def destination_for_prediction(%{direction_id: 1, destination_stop_id: "71199"}),
-    do: :park_street
-
-  def destination_for_prediction(%{direction_id: 1, destination_stop_id: "70150"}), do: :kenmore
-  def destination_for_prediction(%{direction_id: 1, destination_stop_id: "71150"}), do: :kenmore
-  def destination_for_prediction(%{direction_id: 1, destination_stop_id: "70174"}), do: :reservoir
-
-  def destination_for_prediction(%{destination_stop_id: "Government Center-Brattle"}),
-    do: :government_center
-
-  def destination_for_prediction(%{route_id: "Green-B", direction_id: 0}), do: :boston_college
-  def destination_for_prediction(%{route_id: "Green-C", direction_id: 0}), do: :cleveland_circle
-  def destination_for_prediction(%{route_id: "Green-D", direction_id: 0}), do: :riverside
-  def destination_for_prediction(%{route_id: "Green-E", direction_id: 0}), do: :heath_street
-  def destination_for_prediction(%{route_id: "Green-B", direction_id: 1}), do: :government_center
-  def destination_for_prediction(%{route_id: "Green-C", direction_id: 1}), do: :government_center
-  def destination_for_prediction(%{route_id: "Green-D", direction_id: 1}), do: :union_square
-  def destination_for_prediction(%{route_id: "Green-E", direction_id: 1}), do: :medford_tufts
+  def destination_for_prediction(prediction) do
+    RealtimeSigns.station_stop_engine().get_parent_stop(prediction.destination_stop_id)
+    |> String.to_atom()
+  end
 
   @spec stop_track_number(String.t()) :: track_number() | nil
   def stop_track_number("Alewife-01"), do: 1

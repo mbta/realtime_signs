@@ -102,7 +102,7 @@ defmodule Message.Predictions do
         track_number = Content.Utilities.stop_track_number(prediction.stop_id)
 
         cond do
-          match?({:jfk_mezzanine, _}, special_sign) and destination == :alewife ->
+          match?({:jfk_mezzanine, _}, special_sign) and destination == :"place-alfcl" ->
             platform_name = Content.Utilities.stop_platform_name(prediction.stop_id)
 
             # {_, false} in special_sign indicates both stop_ids for Alewife-bound trains are active

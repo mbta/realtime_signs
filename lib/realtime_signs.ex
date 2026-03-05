@@ -37,6 +37,7 @@ defmodule RealtimeSigns do
         Engine.Routes,
         Engine.PaMessages,
         Engine.BusStops,
+        Engine.StationStops,
         MessageQueue,
         RealtimeSigns.Scheduler,
         RealtimeSignsWeb.Endpoint,
@@ -93,5 +94,6 @@ defmodule RealtimeSigns do
   def route_engine, do: Application.fetch_env!(:realtime_signs, :route_engine)
   def bus_prediction_engine, do: Application.fetch_env!(:realtime_signs, :bus_prediction_engine)
   def bus_stop_engine, do: Application.fetch_env!(:realtime_signs, :bus_stop_engine)
+  def station_stop_engine, do: Application.fetch_env!(:realtime_signs, :station_stop_engine)
   def sign_updater, do: Application.fetch_env!(:realtime_signs, :sign_updater)
 end

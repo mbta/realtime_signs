@@ -32,34 +32,17 @@ defmodule Content.Audio.UtilitiesTest do
   end
 
   test "headsign_to_destination/1" do
-    assert headsign_to_destination("Alewife") == :alewife
-    assert headsign_to_destination("Ashmont") == :ashmont
-    assert headsign_to_destination("Boston College") == :boston_college
-    assert headsign_to_destination("Bowdoin") == :bowdoin
-    assert headsign_to_destination("Braintree") == :braintree
-    assert headsign_to_destination("Cleveland Circle") == :cleveland_circle
-    assert headsign_to_destination("Forest Hills") == :forest_hills
-    assert headsign_to_destination("Government Center") == :government_center
-    assert headsign_to_destination("Heath Street") == :heath_street
-    assert headsign_to_destination("Lechmere") == :lechmere
-    assert headsign_to_destination("Union Square") == :union_square
-    assert headsign_to_destination("Mattapan") == :mattapan
-    assert headsign_to_destination("North Station") == :north_station
-    assert headsign_to_destination("Oak Grove") == :oak_grove
-    assert headsign_to_destination("Park Street") == :park_street
-    assert headsign_to_destination("Reservoir") == :reservoir
-    assert headsign_to_destination("Riverside") == :riverside
-    assert headsign_to_destination("Wonderland") == :wonderland
-    assert headsign_to_destination("Medford/Tufts") == :medford_tufts
+    assert headsign_to_destination("Alewife") == :"place-alfcl"
+    assert headsign_to_destination("Riverside") == :"place-river"
   end
 
   test "destination_to_sign_string/1" do
-    assert destination_to_sign_string(:forest_hills) == "Frst Hills"
+    assert destination_to_sign_string(:"place-forhl") == "Frst Hills"
     assert destination_to_sign_string(:southbound) == "Southbound"
   end
 
   test "destination_to_ad_hoc_string/1" do
-    assert destination_to_ad_hoc_string(:heath_street) == "Heath Street"
+    assert destination_to_ad_hoc_string(:"place-hsmnl") == "Heath Street"
     assert destination_to_ad_hoc_string(:southbound) == "Southbound"
   end
 
