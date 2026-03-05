@@ -363,30 +363,45 @@
   },
   {
     "id": "mattapan_inbound",
-    "type": "realtime",
     "pa_ess_loc": "MMAT",
     "scu_id": "MMATSCU001",
+    "read_loop_interval": 240,
     "read_loop_offset": 180,
     "text_zone": "n",
     "audio_zones": [
       "n"
     ],
-    "source_config": {
-      "headway_group": "mattapan_trunk",
-      "headway_direction_name": "Ashmont",
-      "terminal": true,
-      "sources": [
-        {
-          "stop_id": "70276",
-          "routes": [
-            "Mattapan"
-          ],
-          "direction_id": 1,
-          "announce_arriving": false,
-          "announce_boarding": true
-        }
-      ]
-    }
+    "type": "bus",
+    "configs": [
+      {
+        "sources": [
+          {
+            "stop_id": "place-matt",
+            "route_id": "28",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-matt",
+            "route_id": "29",
+            "direction_id": 1
+          }
+        ]
+      },
+      {
+        "sources": [
+          {
+            "stop_id": "place-matt",
+            "route_id": "31",
+            "direction_id": 1
+          }
+        ]
+      }
+    ],
+    "max_minutes": 60
   },
   {
     "id": "wonderland_westbound",
