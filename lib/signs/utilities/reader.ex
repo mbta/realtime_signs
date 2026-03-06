@@ -4,7 +4,7 @@ defmodule Signs.Utilities.Reader do
     audios = Enum.flat_map(messages, &Message.to_audio(&1, length(messages) > 1))
 
     if audios != [] do
-      Signs.Utilities.Audio.send_audio(sign, audios)
+      Signs.Utilities.Audio.send_audio([sign], audios)
     end
 
     %{sign | tick_read: sign.read_period_seconds}
@@ -19,7 +19,7 @@ defmodule Signs.Utilities.Reader do
     {audios, sign} = Signs.Utilities.Audio.get_announcements(sign, messages)
 
     if audios != [] do
-      Signs.Utilities.Audio.send_audio(sign, audios)
+      Signs.Utilities.Audio.send_audio([sign], audios)
       update_in(sign.tick_read, &if(&1 < 120, do: &1 + sign.read_period_seconds, else: &1))
     else
       sign

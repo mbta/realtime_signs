@@ -809,7 +809,7 @@ defmodule Signs.Bus do
          bridge_status,
          bridge_enabled?,
          current_time,
-         %{scu_id: scu_id, chelsea_bridge: chelsea_bridge}
+         %{chelsea_bridge: chelsea_bridge}
        ) do
     if bridge_enabled? && chelsea_bridge &&
          bridge_status_raised?(bridge_status, current_time) do
@@ -829,11 +829,9 @@ defmodule Signs.Bus do
       spanish_text =
         "El puente levadizo de Chelsea está abierto. #{duration_spanish} Autobuses S.L. tres pueden experimentar retrasos, ser desviados o devueltos."
 
-      max_text_length = PaEss.Utilities.max_text_length(scu_id)
-
       [
-        {english_text, PaEss.Utilities.paginate_text(english_text, max_text_length)},
-        {{:spanish, spanish_text}, PaEss.Utilities.paginate_text(spanish_text, max_text_length)}
+        {english_text, english_text},
+        {{:spanish, spanish_text}, spanish_text}
       ]
     else
       []
@@ -1188,7 +1186,7 @@ defmodule Signs.Bus do
 
     if audios != [] && audio_zones != [] do
       RealtimeSigns.sign_updater().play_message(
-        state,
+        [state],
         audios,
         tts_audios,
         2,

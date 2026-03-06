@@ -16,14 +16,13 @@ defprotocol Content.Audio do
   @type language :: :english | :spanish
   @type value :: canned_message() | ad_hoc_message() | nil
   @type audio_item :: String.t() | {:spanish, String.t()} | {:url, String.t()}
-  @type tts_value ::
-          {audio :: audio_item() | [audio_item()], visual :: Content.Message.pages() | nil}
+  @type tts_value :: {audio :: audio_item() | [audio_item()], visual :: String.t() | nil}
 
   @doc "Converts an audio struct to the mid/vars params for the PA system"
   @spec to_params(Content.Audio.t()) :: value()
   def to_params(audio)
-  @spec to_tts(Content.Audio.t(), integer()) :: tts_value()
-  def to_tts(audio, max_text_length \\ 24)
+  @spec to_tts(Content.Audio.t()) :: tts_value()
+  def to_tts(audio)
   @spec to_logs(Content.Audio.t()) :: keyword()
   def to_logs(audio)
 end

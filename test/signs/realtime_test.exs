@@ -225,11 +225,7 @@ defmodule Signs.RealtimeTest do
         [{:canned, {"112", spaced(["501", "787", "920", "933", "21014", "925"]), :audio_visual}}],
         [
           {"The next Southbound train does not take passengers. Please stand back from the platform edge.",
-           [
-             {"The next Southbound", "train does not take", 3},
-             {"passengers. Please stand", "back from the platform", 3},
-             {"edge.", "", 3}
-           ]}
+           "The next Southbound train does not take passengers. Please stand back from the platform edge."}
         ]
       )
 
@@ -249,11 +245,7 @@ defmodule Signs.RealtimeTest do
         [{:canned, {"112", spaced(["501", "787", "920", "933", "21014", "925"]), :audio_visual}}],
         [
           {"The next Southbound train does not take passengers. Please stand back from the platform edge.",
-           [
-             {"The next", "Southbound train", 3},
-             {"does not take", "passengers. Please", 3},
-             {"stand back from", "the platform edge.", 3}
-           ]}
+           "The next Southbound train does not take passengers. Please stand back from the platform edge."}
         ]
       )
 
@@ -287,11 +279,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"The next Southbound train does not take passengers. Please stand back from the platform edge.",
-           [
-             {"The next Southbound", "train does not take", 3},
-             {"passengers. Please stand", "back from the platform", 3},
-             {"edge.", "", 3}
-           ]}
+           "The next Southbound train does not take passengers. Please stand back from the platform edge."}
         ]
       )
 
@@ -301,11 +289,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"The next Alewife train does not take passengers. Please stand back from the platform edge.",
-           [
-             {"The next Alewife train", "does not take", 3},
-             {"passengers. Please stand", "back from the platform", 3},
-             {"edge.", "", 3}
-           ]}
+           "The next Alewife train does not take passengers. Please stand back from the platform edge."}
         ]
       )
 
@@ -327,11 +311,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"The next Southbound train does not take passengers. Please stand back from the platform edge.",
-           [
-             {"The next Southbound", "train does not take", 3},
-             {"passengers. Please stand", "back from the platform", 3},
-             {"edge.", "", 3}
-           ]}
+           "The next Southbound train does not take passengers. Please stand back from the platform edge."}
         ]
       )
 
@@ -685,10 +665,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"Attention passengers: The next C train to Cleveland Circle is now approaching. Please stand back from the platform edge.",
-           [
-             {"C train to Clvlnd Cir is", "now approaching. Please", 3},
-             {"stand back from the", "platform edge.", 3}
-           ]}
+           "C train to Clvlnd Cir is now approaching. Please stand back from the platform edge."}
         ]
       )
 
@@ -776,11 +753,7 @@ defmodule Signs.RealtimeTest do
         [
           {"The next Wonderland train is now boarding.", nil},
           {"Attention Passengers: To board the next train, please push the button on either side of the door.",
-           [
-             {"Attention Passengers: To", "board the next train,", 3},
-             {"please push the button", "on either side of the", 3},
-             {"door.", "", 3}
-           ]}
+           "Attention Passengers: To board the next train, please push the button on either side of the door."}
         ]
       )
 
@@ -805,10 +778,7 @@ defmodule Signs.RealtimeTest do
         [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
         [
           {"Attention passengers: The next Ashmont train is now approaching. Please stand back from the platform edge.",
-           [
-             {"Ashmont train is now", "approaching. Please", 3},
-             {"stand back from the", "platform edge.", 3}
-           ]}
+           "Ashmont train is now approaching. Please stand back from the platform edge."}
         ]
       )
 
@@ -826,11 +796,7 @@ defmodule Signs.RealtimeTest do
         [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
         [
           {"Attention passengers: The next Ashmont train is now approaching. Please stand back from the platform edge.",
-           [
-             {"Ashmont train is", "now approaching.", 3},
-             {"Please stand back", "from the platform", 3},
-             {"edge.", "", 3}
-           ]}
+           "Ashmont train is now approaching. Please stand back from the platform edge."}
         ]
       )
 
@@ -861,10 +827,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"Attention passengers: The next C train to Cleveland Circle is now approaching. Please stand back from the platform edge.",
-           [
-             {"C train to Clvlnd Cir is", "now approaching. Please", 3},
-             {"stand back from the", "platform edge.", 3}
-           ]}
+           "C train to Clvlnd Cir is now approaching. Please stand back from the platform edge."}
         ]
       )
 
@@ -919,10 +882,7 @@ defmodule Signs.RealtimeTest do
         [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
         [
           {"Attention passengers: The next Ashmont train is now approaching. Please stand back from the platform edge.",
-           [
-             {"Ashmont train is now", "approaching. Please", 3},
-             {"stand back from the", "platform edge.", 3}
-           ]}
+           "Ashmont train is now approaching. Please stand back from the platform edge."}
         ]
       )
 
@@ -945,10 +905,7 @@ defmodule Signs.RealtimeTest do
         [{:canned, {"112", spaced(["896", "907", "920", "910", "21014", "925"]), :audio_visual}}],
         [
           {"Attention passengers: The next Forest Hills train is now approaching. Please stand back from the platform edge.",
-           [
-             {"Frst Hills train is now", "approaching. Please", 3},
-             {"stand back from the", "platform edge.", 3}
-           ]}
+           "Frst Hills train is now approaching. Please stand back from the platform edge."}
         ]
       )
 
@@ -972,10 +929,7 @@ defmodule Signs.RealtimeTest do
         [{:canned, {"112", spaced(["896", "907", "920", "910", "21014", "925"]), :audio_visual}}],
         [
           {"Attention passengers: The next Forest Hills train is now approaching. Please stand back from the platform edge.",
-           [
-             {"Frst Hills train is now", "approaching. Please", 3},
-             {"stand back from the", "platform edge.", 3}
-           ]}
+           "Frst Hills train is now approaching. Please stand back from the platform edge."}
         ]
       )
 
@@ -1676,11 +1630,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"Attention passengers: The next Ashmont train is now approaching, with all new Red Line cars. Please stand back from the platform edge.",
-           [
-             {"Ashmont train is now", "approaching, with all", 3},
-             {"new Red Line cars.", "Please stand back from", 3},
-             {"the platform edge.", "", 3}
-           ]}
+           "Ashmont train is now approaching, with all new Red Line cars. Please stand back from the platform edge."}
         ]
       )
 
@@ -1713,10 +1663,7 @@ defmodule Signs.RealtimeTest do
         [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
         [
           {"Attention passengers: The next Ashmont train is now approaching. Please stand back from the platform edge.",
-           [
-             {"Ashmont train is now", "approaching. Please", 3},
-             {"stand back from the", "platform edge.", 3}
-           ]}
+           "Ashmont train is now approaching. Please stand back from the platform edge."}
         ]
       )
 
@@ -1737,10 +1684,7 @@ defmodule Signs.RealtimeTest do
         [{:canned, {"112", spaced(["923", "902", "920", "924", "21014", "922"]), :audio_visual}}],
         [
           {"Attention passengers: The next Braintree train is now approaching. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
-           [
-             {"Shorter 4 car Braintree", "train now approaching.", 3},
-             {"Please move to front of", "the train to board.", 3}
-           ]}
+           "Shorter 4 car Braintree train now approaching. Please move to front of the train to board."}
         ]
       )
 

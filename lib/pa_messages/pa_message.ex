@@ -26,14 +26,14 @@ defmodule PaMessages.PaMessage do
       {:ad_hoc, {visual_text, :audio_visual}}
     end
 
-    def to_tts(%PaMessages.PaMessage{visual_text: visual_text} = message, max_text_length) do
+    def to_tts(%PaMessages.PaMessage{visual_text: visual_text} = message) do
       audio =
         case message do
           %{audio_url: nil, audio_text: audio_text} -> audio_text
           %{audio_url: audio_url} -> {:url, audio_url}
         end
 
-      {audio, PaEss.Utilities.paginate_text(visual_text, max_text_length)}
+      {audio, visual_text}
     end
 
     def to_logs(%PaMessages.PaMessage{id: id, priority: priority, interval_in_ms: interval_in_ms}) do

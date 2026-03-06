@@ -53,29 +53,20 @@ defmodule PaEss.Updater do
   end
 
   @callback play_message(
-              Signs.Realtime.t() | Signs.Bus.t(),
+              [Signs.Realtime.t() | Signs.Bus.t()],
               [Content.Audio.value()],
               [Content.Audio.tts_value()],
               integer(),
               [keyword()]
             ) ::
               :ok
-  def play_message(
-        %{
-          id: id,
-          scu_id: scu_id,
-          pa_ess_loc: pa_ess_loc,
-          audio_zones: audio_zones
-        },
-        audios,
-        tts_audios,
-        priority,
-        log_metas
-      ) do
-    scu_migrated? = RealtimeSigns.config_engine().scu_migrated?(scu_id)
-    tts_audios = Enum.map(tts_audios, fn {audio, pages} -> {List.wrap(audio), pages} end)
+  def play_message(signs, audios, tts_audios, priority, log_metas) do
+    {migrated_signs, legacy_signs} =
+      Enum.split_with(signs, &RealtimeSigns.config_engine().scu_migrated?(&1.scu_id))
 
-    log_data = fn {audio, pages} ->
+    tts_audios = Enum.map(tts_audios, fn {audio, visual} -> {List.wrap(audio), visual} end)
+
+    log_data = fn {audio, visual}, sign, legacy? ->
       tag = create_tag()
 
       {[
@@ -89,14 +80,14 @@ defmodule PaEss.Updater do
            end)
            |> Enum.join(" ")
            |> inspect(),
-         sign_id: id,
+         sign_id: sign.id,
          tag: inspect(tag),
-         legacy: !scu_migrated?,
-         visual: format_pages(pages) |> Jason.encode!()
+         legacy: legacy?,
+         visual: paginate(visual, sign) |> format_pages() |> Jason.encode!()
        ], tag}
     end
 
-    if scu_migrated? do
+    if migrated_signs != [] do
       Task.Supervisor.start_child(PaEss.TaskSupervisor, fn ->
         tts_items =
           Enum.zip(tts_audios, log_metas)
@@ -124,42 +115,53 @@ defmodule PaEss.Updater do
           end)
 
         async_map = fn list, fun ->
-          # Note: temporarily increasing the timeout to work around some issues with large PA
-          # messages targeting many stations.
-          Task.async_stream(list, fun, timeout: 10000) |> Enum.map(fn {:ok, value} -> value end)
+          Task.async_stream(list, fun) |> Enum.map(fn {:ok, value} -> value end)
         end
 
-        async_map.(tts_items, fn {{audio, _pages}, _log_meta} ->
-          async_map.(audio, &fetch_audio_file/1)
-        end)
-        |> Enum.zip(tts_items)
-        |> Enum.each(fn {file_list, {{_audio, pages} = tts_audio, log_meta}} ->
-          {logs, tag} = log_data.(tts_audio)
+        file_lists =
+          async_map.(tts_items, fn {{audio, _visual}, _log_meta} ->
+            async_map.(audio, &fetch_audio_file/1)
+          end)
 
-          PaEss.ScuQueue.enqueue_message(
-            scu_id,
-            {:message, scu_id,
-             %{
-               zones: Enum.map(audio_zones, &"#{pa_ess_loc}-#{&1}"),
-               visual_data: format_pages(pages),
-               audio_data: Enum.map(file_list, &Base.encode64(&1)),
-               expiration: 30,
-               priority: priority,
-               tag: tag
-             }, Keyword.merge(logs, log_meta)}
-          )
+        Enum.each(migrated_signs, fn sign ->
+          Enum.zip(file_lists, tts_items)
+          |> Enum.each(fn {file_list, {{_audio, visual} = tts_audio, log_meta}} ->
+            {logs, tag} = log_data.(tts_audio, sign, false)
+
+            PaEss.ScuQueue.enqueue_message(
+              sign.scu_id,
+              {:message, sign.scu_id,
+               %{
+                 zones: Enum.map(sign.audio_zones, &"#{sign.pa_ess_loc}-#{&1}"),
+                 visual_data: paginate(visual, sign) |> format_pages(),
+                 audio_data: Enum.map(file_list, &Base.encode64(&1)),
+                 expiration: 30,
+                 priority: priority,
+                 tag: tag
+               }, Keyword.merge(logs, log_meta)}
+            )
+          end)
         end)
       end)
-    else
+    end
+
+    Enum.each(legacy_signs, fn sign ->
       log_list =
         Enum.zip(tts_audios, log_metas)
         |> Enum.map(fn {tts_audio, log_meta} ->
-          {logs, _tag} = log_data.(tts_audio)
+          {logs, _tag} = log_data.(tts_audio, sign, true)
           Keyword.merge(logs, log_meta)
         end)
 
-      MessageQueue.send_audio({pa_ess_loc, audio_zones}, audios, 5, 60, log_list)
-    end
+      MessageQueue.send_audio({sign.pa_ess_loc, sign.audio_zones}, audios, 5, 60, log_list)
+    end)
+  end
+
+  defp paginate(nil, _sign), do: nil
+
+  defp paginate(text, sign) do
+    max_text_length = PaEss.Utilities.max_text_length(sign.scu_id)
+    PaEss.Utilities.paginate_text(text, max_text_length)
   end
 
   defp zip_pages(top, bottom) do

@@ -63,7 +63,7 @@ defmodule Engine.PaMessages do
   end
 
   defp play_pa_messages(pa_messages) do
-    Enum.flat_map(pa_messages, fn message ->
+    Enum.each(pa_messages, fn message ->
       for sign_id <- message.sign_ids,
           {sign, should_play?} = GenServer.call(:"Signs/#{sign_id}", {:play_pa_message, message}),
           should_play? do
@@ -71,16 +71,13 @@ defmodule Engine.PaMessages do
       end
       |> Enum.group_by(& &1.pa_ess_loc)
       |> Enum.map(fn {_, [first | _] = signs} ->
-        {message,
-         %{
-           first
-           | audio_zones: Enum.flat_map(signs, & &1.audio_zones) |> Enum.uniq(),
-             id: Enum.map_join(signs, ",", & &1.id)
-         }}
+        %{
+          first
+          | audio_zones: Enum.flat_map(signs, & &1.audio_zones) |> Enum.uniq(),
+            id: Enum.map_join(signs, ",", & &1.id)
+        }
       end)
-    end)
-    |> Enum.each(fn {message, sign} ->
-      Signs.Utilities.Audio.send_audio(sign, [message])
+      |> Signs.Utilities.Audio.send_audio([message])
     end)
   end
 
