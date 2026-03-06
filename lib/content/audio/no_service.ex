@@ -30,7 +30,7 @@ defmodule Content.Audio.NoService do
       {:ad_hoc, {tts_text(audio), :audio}}
     end
 
-    def to_tts(%Content.Audio.NoService{} = audio, _max_text_length) do
+    def to_tts(%Content.Audio.NoService{} = audio) do
       {tts_text(audio), nil}
     end
 

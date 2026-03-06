@@ -62,7 +62,7 @@ defmodule Content.Audio.Approaching do
       |> Utilities.audio_message(:audio_visual)
     end
 
-    def to_tts(%Content.Audio.Approaching{} = audio, max_text_length) do
+    def to_tts(%Content.Audio.Approaching{} = audio) do
       prefix = if audio.four_cars?, do: "Shorter 4 car ", else: ""
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id, :visual)
       approaching = if audio.four_cars?, do: "now approaching", else: "is now approaching"
@@ -76,10 +76,7 @@ defmodule Content.Audio.Approaching do
           else: " Please stand back from the platform edge."
 
       {tts_text(audio),
-       PaEss.Utilities.paginate_text(
-         "#{prefix}#{train} #{approaching}#{platform}#{new_cars}.#{followup}#{crowding}",
-         max_text_length
-       )}
+       "#{prefix}#{train} #{approaching}#{platform}#{new_cars}.#{followup}#{crowding}"}
     end
 
     def to_logs(%Content.Audio.Approaching{}) do
