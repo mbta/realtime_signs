@@ -12,5 +12,5 @@ defmodule PaEss do
   @type audio_zones :: [String.t()]
   @type text_id :: {sign_loc_code(), text_zone()}
   @type audio_id :: {sign_loc_code(), audio_zones()}
-  @type destination :: atom() | nil
+  @type destination :: atom() | String.t() | nil
 end

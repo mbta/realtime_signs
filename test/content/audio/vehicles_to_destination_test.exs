@@ -6,7 +6,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
   describe "to_params/1" do
     test "Buses to Chelsea in English" do
       audio = %Content.Audio.VehiclesToDestination{
-        destination: :"place-chels",
+        destination: "place-chels",
         headway_range: {7, 10}
       }
 
@@ -15,7 +15,7 @@ defmodule Content.Audio.VehiclesToDestinationTest do
 
     test "Buses to South Station in English" do
       audio = %Content.Audio.VehiclesToDestination{
-        destination: :"place-sstat",
+        destination: "place-sstat",
         headway_range: {7, 10}
       }
 

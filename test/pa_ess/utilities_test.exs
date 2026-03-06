@@ -32,17 +32,17 @@ defmodule Content.Audio.UtilitiesTest do
   end
 
   test "headsign_to_destination/1" do
-    assert headsign_to_destination("Alewife") == :"place-alfcl"
-    assert headsign_to_destination("Riverside") == :"place-river"
+    assert headsign_to_destination("Alewife") == "place-alfcl"
+    assert headsign_to_destination("Riverside") == "place-river"
   end
 
   test "destination_to_sign_string/1" do
-    assert destination_to_sign_string(:"place-forhl") == "Frst Hills"
+    assert destination_to_sign_string("place-forhl") == "Frst Hills"
     assert destination_to_sign_string(:southbound) == "Southbound"
   end
 
   test "destination_to_ad_hoc_string/1" do
-    assert destination_to_ad_hoc_string(:"place-hsmnl") == "Heath Street"
+    assert destination_to_ad_hoc_string("place-hsmnl") == "Heath Street"
     assert destination_to_ad_hoc_string(:southbound) == "Southbound"
   end
 

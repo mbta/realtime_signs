@@ -121,7 +121,7 @@ end)
   id =
     case id_lookup[name] do
       nil -> String.downcase(name) |> String.to_atom()
-      id -> String.to_atom(id)
+      id -> id
     end
 
   ~s[  def headsign_to_destination(#{inspect(name)}), do: #{inspect(id)}]
@@ -131,12 +131,12 @@ end)
 # destination_to_sign_string
 
 Enum.map(data, fn stop ->
-  id = stop["id"] |> String.to_atom()
+  id = stop["id"]
   abbrev = abbrev_lookup[normalize_name.(stop["attributes"]["name"])]
   {id, abbrev}
 end)
 |> Enum.concat([
-  {:"place-chels", "Chelsea"},
+  {"place-chels", "Chelsea"},
   {:northbound, "Northbound"},
   {:southbound, "Southbound"},
   {:eastboound, "Eastbound"},
@@ -154,13 +154,13 @@ end)
 # audio_take
 
 Enum.map(data, fn stop ->
-  id = stop["id"] |> String.to_atom()
+  id = stop["id"]
   name = stop["attributes"]["name"]
   take_id = take_lookup[normalize_name.(name)]
   {id, take_id}
 end)
 |> Enum.concat([
-  {:"place-chels", "860"},
+  {"place-chels", "860"},
   {:northbound, "788"},
   {:southbound, "787"},
   {:eastbound, "867"},
@@ -178,12 +178,12 @@ end)
 # destination_to_ad_hoc_string
 
 Enum.map(data, fn stop ->
-  id = stop["id"] |> String.to_atom()
+  id = stop["id"]
   name = stop["attributes"]["name"]
   {id, name}
 end)
 |> Enum.concat([
-  {:"place-chels", "Chelsea"},
+  {"place-chels", "Chelsea"},
   {:northbound, "Northbound"},
   {:southbound, "Southbound"},
   {:eastboound, "Eastbound"},

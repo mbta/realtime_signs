@@ -103,7 +103,7 @@ defmodule Signs.RealtimeTest do
         %{
           sources: [%{@src | stop_id: "70086", direction_id: 1}],
           headway_group: "group",
-          headway_destination: :"place-alfcl",
+          headway_destination: "place-alfcl",
           terminal?: false
         }
       }
@@ -135,7 +135,7 @@ defmodule Signs.RealtimeTest do
     @sign
     | source_config: %{
         headway_group: "group",
-        headway_destination: :"place-alfcl",
+        headway_destination: "place-alfcl",
         terminal?: true,
         sources: [
           %{

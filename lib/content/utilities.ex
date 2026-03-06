@@ -22,7 +22,6 @@ defmodule Content.Utilities do
   @spec destination_for_prediction(Predictions.Prediction.t()) :: PaEss.destination()
   def destination_for_prediction(prediction) do
     RealtimeSigns.station_stop_engine().get_parent_stop(prediction.destination_stop_id)
-    |> String.to_atom()
   end
 
   @spec stop_track_number(String.t()) :: track_number() | nil

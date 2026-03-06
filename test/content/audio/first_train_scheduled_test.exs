@@ -4,7 +4,7 @@ defmodule Content.Audio.FirstTrainScheduledTest do
   describe "Content.Audio.to_params protocol" do
     test "First train to Ashmont departs at 5 o'clock" do
       audio = %Content.Audio.FirstTrainScheduled{
-        destination: :"place-asmnl",
+        destination: "place-asmnl",
         scheduled_time: ~U[2023-07-19 05:00:00Z]
       }
 
@@ -28,7 +28,7 @@ defmodule Content.Audio.FirstTrainScheduledTest do
 
     test "First train to Ashmont departs at 5 oh 5" do
       audio = %Content.Audio.FirstTrainScheduled{
-        destination: :"place-asmnl",
+        destination: "place-asmnl",
         scheduled_time: ~U[2023-07-19 05:05:00Z]
       }
 
