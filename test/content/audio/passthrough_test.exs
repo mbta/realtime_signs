@@ -5,7 +5,7 @@ defmodule Content.Audio.PassthroughTest do
 
   describe "to_params/1" do
     test "Returns params" do
-      assert Content.Audio.to_params(%Passthrough{destination: :alewife, route_id: "Red"}) ==
+      assert Content.Audio.to_params(%Passthrough{destination: "place-alfcl", route_id: "Red"}) ==
                {:canned,
                 {"112",
                  [

@@ -12,33 +12,5 @@ defmodule PaEss do
   @type audio_zones :: [String.t()]
   @type text_id :: {sign_loc_code(), text_zone()}
   @type audio_id :: {sign_loc_code(), audio_zones()}
-  @type destination ::
-          :alewife
-          | :ashmont
-          | :braintree
-          | :mattapan
-          | :bowdoin
-          | :wonderland
-          | :oak_grove
-          | :forest_hills
-          | :chelsea
-          | :south_station
-          | :lechmere
-          | :union_square
-          | :north_station
-          | :government_center
-          | :park_street
-          | :kenmore
-          | :boston_college
-          | :cleveland_circle
-          | :reservoir
-          | :riverside
-          | :heath_street
-          | :northbound
-          | :southbound
-          | :eastbound
-          | :westbound
-          | :inbound
-          | :outbound
-          | :medford_tufts
+  @type destination :: atom() | String.t() | nil
 end

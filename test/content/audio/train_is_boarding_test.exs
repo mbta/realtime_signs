@@ -4,7 +4,7 @@ defmodule Content.Audio.TrainIsBoardingTest do
   describe "Content.Audio.to_params protocol" do
     test "Next D train to Riverside is now boarding" do
       audio = %Content.Audio.TrainIsBoarding{
-        destination: :riverside,
+        destination: "place-river",
         route_id: "Green-D",
         track_number: nil
       }
@@ -17,7 +17,7 @@ defmodule Content.Audio.TrainIsBoardingTest do
 
     test "Next train to Alewife is now boarding (works on Heavy Rail)" do
       audio = %Content.Audio.TrainIsBoarding{
-        destination: :alewife,
+        destination: "place-alfcl",
         route_id: "Red",
         track_number: nil
       }
@@ -29,7 +29,7 @@ defmodule Content.Audio.TrainIsBoardingTest do
 
     test "announces track number at terminal with multiple boarding tracks" do
       audio = %Content.Audio.TrainIsBoarding{
-        destination: :ashmont,
+        destination: "place-asmnl",
         route_id: "Red",
         track_number: 2
       }

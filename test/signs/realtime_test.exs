@@ -103,7 +103,7 @@ defmodule Signs.RealtimeTest do
         %{
           sources: [%{@src | stop_id: "70086", direction_id: 1}],
           headway_group: "group",
-          headway_destination: :alewife,
+          headway_destination: "place-alfcl",
           terminal?: false
         }
       }
@@ -135,7 +135,7 @@ defmodule Signs.RealtimeTest do
     @sign
     | source_config: %{
         headway_group: "group",
-        headway_destination: :alewife,
+        headway_destination: "place-alfcl",
         terminal?: true,
         sources: [
           %{
@@ -150,6 +150,22 @@ defmodule Signs.RealtimeTest do
   }
 
   setup :verify_on_exit!
+
+  setup do
+    stub(Engine.StationStops.Mock, :get_parent_stop, fn
+      "alewife" -> "place-alfcl"
+      "ashmont" -> "place-asmnl"
+      "braintree" -> "place-brntn"
+      "mattapan" -> "place-matt"
+      "boston_college" -> "place-lake"
+      "cleveland_circle" -> "place-clmnl"
+      "riverside" -> "place-river"
+      "wonderland" -> "place-wondl"
+      "forest_hills" -> "place-forhl"
+    end)
+
+    :ok
+  end
 
   describe "run loop" do
     setup do
@@ -642,7 +658,7 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_messages({"Clvlnd Cir     BRD", "Boston Col   3 min"})
+      expect_messages({"Clvlnd Cir     BRD", "Boston Coll  3 min"})
 
       expect_audios(
         [{:canned, {"111", spaced(["501", "537", "507", "4203", "544"]), :audio}}],
@@ -687,7 +703,7 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_messages({"Boston Col   4 min", "Clvlnd Cir   5 min"})
+      expect_messages({"Boston Coll  4 min", "Clvlnd Cir   5 min"})
       Signs.Realtime.handle_info(:run_loop, @terminal_sign)
     end
 
@@ -718,7 +734,7 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_messages({"Riverside      BRD", "Boston Col     BRD"})
+      expect_messages({"Riverside      BRD", "Boston Coll    BRD"})
 
       expect_audios(
         [
@@ -2476,17 +2492,38 @@ defmodule Signs.RealtimeTest do
     opts =
       opts ++
         case Keyword.get(opts, :destination) do
-          :alewife -> [route_id: "Red", direction_id: 1]
-          :ashmont -> [route_id: "Red", direction_id: 0, destination_stop_id: "70085"]
-          :braintree -> [route_id: "Red", direction_id: 0, destination_stop_id: "70095"]
-          :southbound -> [route_id: "Red", direction_id: 0, destination_stop_id: "70083"]
-          :mattapan -> [route_id: "Mattapan", direction_id: 0]
-          :boston_college -> [route_id: "Green-B", direction_id: 0]
-          :cleveland_circle -> [route_id: "Green-C", direction_id: 0]
-          :riverside -> [route_id: "Green-D", direction_id: 0]
-          :wonderland -> [route_id: "Blue", direction_id: 1]
-          :forest_hills -> [route_id: "Orange", direction_id: 0]
-          nil -> []
+          :alewife ->
+            [route_id: "Red", direction_id: 1, destination_stop_id: "alewife"]
+
+          :ashmont ->
+            [route_id: "Red", direction_id: 0, destination_stop_id: "ashmont"]
+
+          :braintree ->
+            [route_id: "Red", direction_id: 0, destination_stop_id: "braintree"]
+
+          :southbound ->
+            [route_id: "Red", direction_id: 0, destination_stop_id: "southbound"]
+
+          :mattapan ->
+            [route_id: "Mattapan", direction_id: 0, destination_stop_id: "mattapan"]
+
+          :boston_college ->
+            [route_id: "Green-B", direction_id: 0, destination_stop_id: "boston_college"]
+
+          :cleveland_circle ->
+            [route_id: "Green-C", direction_id: 0, destination_stop_id: "cleveland_circle"]
+
+          :riverside ->
+            [route_id: "Green-D", direction_id: 0, destination_stop_id: "riverside"]
+
+          :wonderland ->
+            [route_id: "Blue", direction_id: 1, destination_stop_id: "wonderland"]
+
+          :forest_hills ->
+            [route_id: "Orange", direction_id: 0, destination_stop_id: "forest_hills"]
+
+          nil ->
+            []
         end
 
     opts =
