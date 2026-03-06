@@ -186,8 +186,6 @@ defmodule Signs.Utilities.Audio do
   end
 
   @spec send_audio([Signs.Realtime.t() | Signs.Bus.t()], [Content.Audio.t()]) :: :ok
-  def send_audio([], _audios), do: nil
-
   def send_audio(signs, audios) do
     RealtimeSigns.sign_updater().play_message(
       signs,

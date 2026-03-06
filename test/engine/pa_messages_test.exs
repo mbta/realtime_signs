@@ -1,5 +1,6 @@
 defmodule Engine.PaMessagesTest do
   use ExUnit.Case
+  import Mox
 
   @state %{
     pa_messages_last_sent: %{}
@@ -22,6 +23,8 @@ defmodule Engine.PaMessagesTest do
   end
 
   setup do
+    stub(PaEss.Updater.Mock, :play_message, fn [], _, _, _, _ -> nil end)
+
     Application.put_env(
       :realtime_signs,
       :active_pa_messages_path,
