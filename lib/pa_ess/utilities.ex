@@ -216,7 +216,7 @@ defmodule PaEss.Utilities do
   Used to translate a PaEss.destination to a string to post to countdown clocks
   """
   @spec destination_to_sign_string(PaEss.destination()) :: String.t()
-  def destination_to_sign_string(:eastboound), do: "Eastbound"
+  def destination_to_sign_string(:eastbound), do: "Eastbound"
   def destination_to_sign_string(:inbound), do: "Inbound"
   def destination_to_sign_string(:northbound), do: "Northbound"
   def destination_to_sign_string(:outbound), do: "Outbound"
@@ -356,7 +356,7 @@ defmodule PaEss.Utilities do
   end
 
   @spec destination_to_ad_hoc_string(PaEss.destination()) :: String.t()
-  def destination_to_ad_hoc_string(:eastboound), do: "Eastbound"
+  def destination_to_ad_hoc_string(:eastbound), do: "Eastbound"
   def destination_to_ad_hoc_string(:inbound), do: "Inbound"
   def destination_to_ad_hoc_string(:northbound), do: "Northbound"
   def destination_to_ad_hoc_string(:outbound), do: "Outbound"
