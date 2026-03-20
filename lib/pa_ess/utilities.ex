@@ -677,6 +677,7 @@ defmodule PaEss.Utilities do
     {"Silver Line Way", ["SL Way"]},
     {"Gallivan Blvd", ["Gallivn", "Gallivan"]},
     {"Cobbs Corner Canton", ["Canton"]},
+    {"Canton Village", ["Canton"]},
     {"Linden Square", ["Linden", "Linden Sq"]}
   ]
 
