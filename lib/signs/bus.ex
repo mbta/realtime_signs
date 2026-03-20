@@ -954,7 +954,7 @@ defmodule Signs.Bus do
 
   defp format_time(prediction, current_time) do
     case prediction_minutes(prediction, current_time) do
-      0 -> "ARR"
+      0 -> "NOW"
       minutes -> "#{minutes} min"
     end
   end
@@ -992,7 +992,7 @@ defmodule Signs.Bus do
 
     time =
       case prediction_minutes(prediction, current_time) do
-        0 -> [:arriving]
+        0 -> [:now_arriving]
         1 -> [{:minutes, 1}, :minute]
         m -> [{:minutes, m}, :minutes]
       end
@@ -1044,7 +1044,7 @@ defmodule Signs.Bus do
 
     time =
       case prediction_minutes(prediction, current_time) do
-        0 -> "arriving"
+        0 -> "now arriving"
         1 -> "1 minute"
         m -> "#{m} minutes"
       end

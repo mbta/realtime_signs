@@ -65,6 +65,13 @@ defmodule Signs.BusTest do
               direction_id: 1,
               route_id: "741",
               headsign: "Chelsea"
+            ),
+            prediction(
+              departure: 0,
+              stop_id: "stop1",
+              direction_id: 0,
+              route_id: "74",
+              headsign: "Belmont"
             )
           ]
 
@@ -614,6 +621,56 @@ defmodule Signs.BusTest do
         @sign_state
         | configs: [%{sources: [%{stop_id: "stop1", route_id: "51", direction_id: 0}]}]
       }
+
+      Signs.Bus.handle_info(:run_loop, state)
+    end
+
+    test "arriving prediction" do
+      expect_messages([
+        [{"74 Belmont     NOW", 6}, {"34 Clarendon 7 min", 6}],
+        [{"Chelsea      4 min", 6}, {"", 6}]
+      ])
+
+      expect_audios(
+        [
+          {:canned,
+           {"116",
+            [
+              "548",
+              "21012",
+              "595",
+              "609",
+              "934",
+              "21012",
+              "860",
+              "5504",
+              "505",
+              "21012",
+              "678",
+              "605",
+              "5507",
+              "505"
+            ], :audio}}
+        ],
+        [
+          {[
+             "Upcoming departures:",
+             "Route 74, Belmont, now arriving.",
+             "Chelsea, 4 minutes.",
+             "Route 34, Clarendon Hill, 7 minutes."
+           ], nil}
+        ]
+      )
+
+      state =
+        %{
+          @sign_state
+          | configs: [
+              %{sources: [%{stop_id: "stop1", route_id: "74", direction_id: 0}]},
+              %{sources: [%{stop_id: "stop1", route_id: "34", direction_id: 1}]},
+              %{sources: [%{stop_id: "stop1", route_id: "741", direction_id: 1}]}
+            ]
+        }
 
       Signs.Bus.handle_info(:run_loop, state)
     end
