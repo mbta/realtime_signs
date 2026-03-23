@@ -10,10 +10,10 @@ updates:
     default-days: 7
   open-pull-requests-limit: 10
   groups:
-  mix-minor:
-    update-types:
-      - "patch"
-      - "minor"
+    mix-minor:
+      update-types:
+        - "patch"
+        - "minor"
   ignore:
   - dependency-name: ex_aws
     versions:
