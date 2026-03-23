@@ -3,9 +3,17 @@ updates:
 - package-ecosystem: mix
   directory: "/"
   schedule:
-    interval: daily
+    interval: "weekly"
+    day: "monday"
     time: "10:00"
+  cooldown:
+    default-days: 7
   open-pull-requests-limit: 10
+  groups:
+  mix-minor:
+    update-types:
+      - "patch"
+      - "minor"
   ignore:
   - dependency-name: ex_aws
     versions:
