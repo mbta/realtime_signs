@@ -163,7 +163,7 @@
     "route_ids": ["Red"],
     "stations":  [
       {"station": "R Andrew southbound", "stop_ids": ["70083"]},
-      {"station": "R JFK/Umass-Ashmont southbound", "stop_ids": ["70085"]},
+      {"station": "R JFK/UMass-Ashmont southbound", "stop_ids": ["70085"]},
       {"station": "R Savin Hill southbound", "stop_ids": ["70087"]},
       {"station": "R Fields Corner southbound", "stop_ids": ["70089"]},
       {"station": "R Shawmut southbound", "stop_ids": ["70091"]},
@@ -171,7 +171,7 @@
       {"station": "R Shawmut northbound", "stop_ids": ["70092"]},
       {"station": "R Fields Corner northbound", "stop_ids": ["70090"]},
       {"station": "R Savin Hill northbound", "stop_ids": ["70088"]},
-      {"station": "R JFK/Umass-Ashmont northbound", "stop_ids": ["70086"]},
+      {"station": "R JFK/UMass-Ashmont northbound", "stop_ids": ["70086"]},
       {"station": "R Andrew northbound", "stop_ids": ["70084"]}
     ]
   },
@@ -179,7 +179,7 @@
     "route_ids": ["Red"],
     "stations": [
       {"station": "R Andrew southbound", "stop_ids": ["70083"]},
-      {"station": "R JFK/Umass-Braintree southbound", "stop_ids": ["70095"]},
+      {"station": "R JFK/UMass-Braintree southbound", "stop_ids": ["70095"]},
       {"station": "R North Quincy southbound", "stop_ids": ["70097"]},
       {"station": "R Wollaston southbound", "stop_ids": ["70099"]},
       {"station": "R Quincy Center southbound", "stop_ids": ["70101"]},
@@ -189,7 +189,7 @@
       {"station": "R Quincy Center northbound", "stop_ids": ["70102"]},
       {"station": "R Wollaston northbound", "stop_ids": ["70100"]},
       {"station": "R North Quincy northbound", "stop_ids": ["70098"]},
-      {"station": "R JFK/Umass-Braintree northbound", "stop_ids": ["70096"]}
+      {"station": "R JFK/UMass-Braintree northbound", "stop_ids": ["70096"]}
     ]
   },
   "Orange":{

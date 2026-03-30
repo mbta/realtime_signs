@@ -114,7 +114,7 @@ defmodule PaEss.Utilities do
     {~r"\bDownt'?n Xng\b", "Downtown Crossing"},
     {~r"\bSouth Sta\b", "South Station"},
     {~r"\bPark St\b", "Park Street"},
-    {~r"\bJFK/Umass\b", "JFK Umass"},
+    {~r"\bJFK/UMass\b", "JFK UMass"},
     {~r"\bQuincy Ctr\b", "Quincy Center"},
     {~r"\bTufts Med\b", "Tufts Medical Center"},
     {~r"\bMalden Ctr\b", "Malden Center"},
@@ -288,7 +288,7 @@ defmodule PaEss.Utilities do
   def destination_to_sign_string("place-hwsst"), do: "Hawes St"
   def destination_to_sign_string("place-hymnl"), do: "Hynes"
   def destination_to_sign_string("place-jaksn"), do: "Jackson Sq"
-  def destination_to_sign_string("place-jfk"), do: "JFK/Umass"
+  def destination_to_sign_string("place-jfk"), do: "JFK/UMass"
   def destination_to_sign_string("place-kencl"), do: "Kenmore"
   def destination_to_sign_string("place-knncl"), do: "Kendall/MIT"
   def destination_to_sign_string("place-kntst"), do: "Kent St"
