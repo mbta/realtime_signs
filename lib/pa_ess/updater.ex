@@ -88,59 +88,47 @@ defmodule PaEss.Updater do
     end
 
     if migrated_signs != [] do
-      Task.Supervisor.start_child(PaEss.TaskSupervisor, fn ->
-        tts_items =
-          Enum.zip(tts_audios, log_metas)
-          |> Enum.chunk_while(
-            nil,
-            fn
-              value, nil ->
-                {:cont, value}
+      tts_items =
+        Enum.zip(tts_audios, log_metas)
+        |> Enum.chunk_while(
+          nil,
+          fn
+            value, nil ->
+              {:cont, value}
 
-              {{audio, nil}, log_meta}, {{acc_audio, nil}, acc_log_meta} ->
-                {:cont,
-                 {{acc_audio ++ [{:silence, 1000}] ++ audio, nil},
-                  Keyword.merge(acc_log_meta, log_meta)}}
+            {{audio, nil}, log_meta}, {{acc_audio, nil}, acc_log_meta} ->
+              {:cont,
+               {{acc_audio ++ [{:silence, 1000}] ++ audio, nil},
+                Keyword.merge(acc_log_meta, log_meta)}}
 
-              value, acc ->
-                {:cont, acc, value}
-            end,
-            fn
-              nil -> {:cont, nil}
-              acc -> {:cont, acc, nil}
-            end
+            value, acc ->
+              {:cont, acc, value}
+          end,
+          fn
+            nil -> {:cont, nil}
+            acc -> {:cont, acc, nil}
+          end
+        )
+        |> Enum.map(fn {{audio, visual}, log_meta} ->
+          {{[:chime] ++ audio ++ [{:silence, 1000}], visual}, log_meta}
+        end)
+
+      Enum.each(migrated_signs, fn sign ->
+        Enum.each(tts_items, fn {{audio, visual} = tts_audio, log_meta} ->
+          {logs, tag} = log_data.(tts_audio, sign, false)
+
+          PaEss.ScuQueue.enqueue_message(
+            sign.scu_id,
+            {:message, sign.scu_id,
+             %{
+               zones: Enum.map(sign.audio_zones, &"#{sign.pa_ess_loc}-#{&1}"),
+               visual_data: paginate(visual, sign) |> format_pages(),
+               audio_data: Enum.map(audio, &format_audio/1),
+               expiration: 30,
+               priority: priority,
+               tag: tag
+             }, Keyword.merge(logs, log_meta)}
           )
-          |> Enum.map(fn {{audio, visual}, log_meta} ->
-            {{[:chime] ++ audio ++ [{:silence, 1000}], visual}, log_meta}
-          end)
-
-        async_map = fn list, fun ->
-          Task.async_stream(list, fun) |> Enum.map(fn {:ok, value} -> value end)
-        end
-
-        file_lists =
-          async_map.(tts_items, fn {{audio, _visual}, _log_meta} ->
-            async_map.(audio, &fetch_audio_file/1)
-          end)
-
-        Enum.each(migrated_signs, fn sign ->
-          Enum.zip(file_lists, tts_items)
-          |> Enum.each(fn {file_list, {{_audio, visual} = tts_audio, log_meta}} ->
-            {logs, tag} = log_data.(tts_audio, sign, false)
-
-            PaEss.ScuQueue.enqueue_message(
-              sign.scu_id,
-              {:message, sign.scu_id,
-               %{
-                 zones: Enum.map(sign.audio_zones, &"#{sign.pa_ess_loc}-#{&1}"),
-                 visual_data: paginate(visual, sign) |> format_pages(),
-                 audio_data: Enum.map(file_list, &Base.encode64(&1)),
-                 expiration: 30,
-                 priority: priority,
-                 tag: tag
-               }, Keyword.merge(logs, log_meta)}
-            )
-          end)
         end)
       end)
     end
@@ -200,54 +188,14 @@ defmodule PaEss.Updater do
     }
   end
 
-  @sample_rate 16000
-  @sample_bits 16
-  defp fetch_audio_file({:silence, ms}) do
-    <<0::size(trunc(ms / 1000 * @sample_rate) * @sample_bits)>>
-  end
+  defp format_audio(:chime), do: %{type: "chime"}
+  defp format_audio({:silence, duration}), do: %{type: "silence", duration: duration}
+  defp format_audio({:url, url}), do: %{type: "url", url: url}
+  defp format_audio({:spanish, text}), do: %{type: "tts", text: ssml(text), voice_id: "Mia"}
+  defp format_audio(text), do: %{type: "tts", text: ssml(text), voice_id: "Matthew"}
 
-  @chime_path :code.priv_dir(:realtime_signs) |> Path.join("chime.pcm")
-  @chime File.read!(@chime_path)
-  @external_resource @chime_path
-  defp fetch_audio_file(:chime) do
-    @chime
-  end
-
-  defp fetch_audio_file({:url, url}) do
-    http_client = Application.get_env(:realtime_signs, :http_client)
-
-    case http_client.get(url) do
-      {:ok, %HTTPoison.Response{status_code: status, body: body}} when status == 200 ->
-        body
-    end
-  end
-
-  defp fetch_audio_file(text) do
-    http_poster = Application.get_env(:realtime_signs, :http_poster_mod)
-    watts_url = Application.get_env(:realtime_signs, :watts_url)
-    watts_api_key = Application.get_env(:realtime_signs, :watts_api_key)
-
-    {voice_id, text} =
-      case text do
-        {:spanish, text} -> {"Mia", text}
-        text -> {"Matthew", text}
-      end
-
-    text =
-      ~s(<speak><amazon:effect name="drc"><prosody rate="90%">#{xml_escape(text)}</prosody></amazon:effect></speak>)
-
-    http_poster.post(
-      "#{watts_url}/tts",
-      Jason.encode!(%{text: text, voice_id: voice_id, output_format: "pcm"}),
-      [
-        {"Content-type", "application/json"},
-        {"x-api-key", watts_api_key}
-      ]
-    )
-    |> case do
-      {:ok, %HTTPoison.Response{status_code: status, body: body}} when status in 200..299 ->
-        body
-    end
+  defp ssml(text) do
+    ~s(<speak><amazon:effect name="drc"><prosody rate="90%">#{xml_escape(text)}</prosody></amazon:effect></speak>)
   end
 
   defp create_tag() do
