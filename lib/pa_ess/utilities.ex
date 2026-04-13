@@ -9,7 +9,7 @@ defmodule PaEss.Utilities do
   @comma "21012"
   @period "21014"
   @stopped_regex ~r/Stopped (\d+) stops? away/
-  @short_sign_scu_ids ["SCOUSCU001"]
+  @short_sign_scu_ids ["SCOUSCU001", "GAMOSCU001", "GBABSCU001"]
   @width 24
   @short_width 18
 

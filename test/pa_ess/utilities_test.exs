@@ -59,7 +59,7 @@ defmodule Content.Audio.UtilitiesTest do
       assert replace_abbreviations("OL, OK") == "Orange Line, OK"
     end
 
-    test "case insenstive replacement of 'SVC' with 'Service'" do
+    test "case insensitive replacement of 'SVC' with 'Service'" do
       assert replace_abbreviations("SvC, OK") == "Service, OK"
     end
   end
@@ -77,5 +77,22 @@ defmodule Content.Audio.UtilitiesTest do
     assert ["1", "21000", "2", "21000", "3"] = pad_takes(["1", "2", "3"])
     assert ["1", "21012", "21000", "2"] = pad_takes(["1", "21012", "2"])
     assert ["1", "21000", "2", "21014"] = pad_takes(["1", "2", "21014"])
+  end
+
+  describe "sign_length/1" do
+    test "returns :short for stations with shorter signs" do
+      assert :short = sign_length("SCOUSCU001")
+      assert :short = sign_length("GAMOSCU001")
+      assert :short = sign_length("GBABSCU001")
+    end
+  end
+
+  describe "max_text_length/1" do
+    test "returns a smaller character count for stations with shorter signs" do
+      short_width = 18
+      assert ^short_width = max_text_length("SCOUSCU001")
+      assert ^short_width = max_text_length("GAMOSCU001")
+      assert ^short_width = max_text_length("GBABSCU001")
+    end
   end
 end
