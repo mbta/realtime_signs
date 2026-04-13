@@ -59,7 +59,7 @@ defmodule Content.Audio.UtilitiesTest do
       assert replace_abbreviations("OL, OK") == "Orange Line, OK"
     end
 
-    test "case insenstive replacement of 'SVC' with 'Service'" do
+    test "case insensitive replacement of 'SVC' with 'Service'" do
       assert replace_abbreviations("SvC, OK") == "Service, OK"
     end
   end
