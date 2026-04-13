@@ -17,11 +17,6 @@ export API_V3_URL=https://api-dev-green.mbtace.com
 #export CHELSEA_BRIDGE_USERNAME=
 #export CHELSEA_BRIDGE_PASSWORD=
 
-# URL and access key for Watts. Required. The staging key can be found in the shared 1Password vault,
-# in the "Watts Staging API key" entry.
-export WATTS_URL=https://watts-staging.mbtace.com
-#export WATTS_API_KEY=
-
 # URL and access key for Screenplay. Required. API keys can be found in the shared 1Password vault,
 # search for "Screenplay"
 export SCREENPLAY_BASE_URL=https://screenplay-dev.mbtace.com
