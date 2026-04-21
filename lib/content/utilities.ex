@@ -24,6 +24,30 @@ defmodule Content.Utilities do
     RealtimeSigns.station_stop_engine().get_parent_stop(prediction.destination_stop_id)
   end
 
+  @canonical_destinations [
+    {"Red", 0, "place-asmnl"},
+    {"Red", 0, "place-brntn"},
+    {"Red", 1, "place-alfcl"},
+    {"Mattapan", 0, "place-matt"},
+    {"Mattapan", 1, "place-asmnl"},
+    {"Orange", 0, "place-forhl"},
+    {"Orange", 1, "place-ogmnl"},
+    {"Green-B", 0, "place-lake"},
+    {"Green-B", 1, "place-gover"},
+    {"Green-C", 0, "place-clmnl"},
+    {"Green-C", 1, "place-gover"},
+    {"Green-D", 0, "place-river"},
+    {"Green-D", 1, "place-unsqu"},
+    {"Green-E", 0, "place-hsmnl"},
+    {"Green-E", 1, "place-mdftf"},
+    {"Blue", 0, "place-bomnl"},
+    {"Blue", 1, "place-wondl"}
+  ]
+
+  def canonical_destination?(prediction) do
+    {prediction.route_id, prediction.direction_id, destination_for_prediction(prediction)} in @canonical_destinations
+  end
+
   @spec stop_track_number(String.t()) :: track_number() | nil
   def stop_track_number("Alewife-01"), do: 1
   def stop_track_number("Alewife-02"), do: 2

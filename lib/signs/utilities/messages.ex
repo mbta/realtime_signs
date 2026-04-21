@@ -227,7 +227,8 @@ defmodule Signs.Utilities.Messages do
         first_destination = Content.Utilities.destination_for_prediction(msg1)
 
         case Enum.find([msg2 | rest], fn x ->
-               Content.Utilities.destination_for_prediction(x) != first_destination
+               Content.Utilities.destination_for_prediction(x) != first_destination and
+                 Content.Utilities.canonical_destination?(x)
              end) do
           nil -> [msg1, msg2]
           preferred -> [msg1, preferred]
