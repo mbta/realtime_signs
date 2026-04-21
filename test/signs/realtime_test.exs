@@ -155,6 +155,7 @@ defmodule Signs.RealtimeTest do
     stub(Engine.StationStops.Mock, :get_parent_stop, fn
       "alewife" -> "place-alfcl"
       "ashmont" -> "place-asmnl"
+      "shawmut" -> "place-smmnl"
       "braintree" -> "place-brntn"
       "mattapan" -> "place-matt"
       "boston_college" -> "place-lake"
@@ -737,6 +738,19 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Ashmont      2 min", "Braintree   12 min"})
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
+    test "does not promote non-canonical destinations" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :ashmont, arrival: 120),
+          prediction(destination: :ashmont, arrival: 500),
+          prediction(destination: :shawmut, arrival: 700)
+        ]
+      end)
+
+      expect_messages({"Ashmont      2 min", "Ashmont      8 min"})
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
@@ -2441,6 +2455,9 @@ defmodule Signs.RealtimeTest do
 
           :ashmont ->
             [route_id: "Red", direction_id: 0, destination_stop_id: "ashmont"]
+
+          :shawmut ->
+            [route_id: "Red", direction_id: 0, destination_stop_id: "shawmut"]
 
           :braintree ->
             [route_id: "Red", direction_id: 0, destination_stop_id: "braintree"]
