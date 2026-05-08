@@ -125,8 +125,8 @@ defmodule Content.Audio.Predictions do
             cond do
               minutes == :arriving -> "is now arriving"
               minutes == :boarding -> "is now boarding"
-              audio.terminal? -> "departs in #{minutes} #{min_or_mins}"
-              true -> "arrives in #{minutes} #{min_or_mins}"
+              audio.terminal? -> "departs in [pause] #{minutes} [pause] #{min_or_mins}"
+              true -> "arrives in [pause] #{minutes} [pause] #{min_or_mins}"
             end
 
           qualifier =

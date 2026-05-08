@@ -512,10 +512,18 @@ defmodule PaEss.Utilities do
         :visual -> destination_to_sign_string(destination)
       end
 
-    if route_text do
-      "#{route_text} train to #{destination_text}"
-    else
-      "#{destination_text} train"
+    case {route_text, av} do
+      {nil, :audio} ->
+        "[pause] #{destination_text} [pause] train"
+
+      {nil, :visual} ->
+        "#{destination_text} train"
+
+      {route_text, :audio} ->
+        "[pause] #{route_text} [pause] train to [pause] #{destination_text} [pause]"
+
+      {route_text, :visual} ->
+        "#{route_text} train to #{destination_text}"
     end
   end
 

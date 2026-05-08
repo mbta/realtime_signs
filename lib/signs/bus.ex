@@ -1139,17 +1139,17 @@ defmodule Signs.Bus do
       route =
         case PaEss.Utilities.prediction_route_name(prediction) do
           nil -> ""
-          name -> "route #{name} "
+          name -> "[pause] route #{name} [pause] "
         end
 
       time =
         case prediction_minutes(prediction, current_time) do
           0 -> "is now arriving"
-          1 -> "arrives in 1 minute"
-          m -> "arrives in #{m} minutes"
+          1 -> "arrives in [pause] 1 [pause] minute"
+          m -> "arrives in [pause] #{m} [pause] minutes"
         end
 
-      "The #{next_or_following} #{route}bus to #{prediction.headsign} #{time}."
+      "The #{next_or_following} #{route}bus to [pause] #{prediction.headsign} [pause] #{time}."
     end)
   end
 
