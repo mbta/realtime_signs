@@ -54,8 +54,8 @@ defmodule Content.Audio.TrackChange do
           "70199" -> "E"
         end
 
-      {"Track change: The next #{train} is now boarding on the [pause] #{platform} [pause] platform",
-       "Track change: The next #{train_visual} is now boarding on the [pause] #{platform} [pause] platform"}
+      {"Track change: The next#{train} is now boarding on the, #{platform}, platform",
+       "Track change: The next #{train_visual} is now boarding on the, #{platform}, platform"}
     end
 
     def to_logs(%Content.Audio.TrackChange{}) do

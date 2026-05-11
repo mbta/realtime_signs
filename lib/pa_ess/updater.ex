@@ -195,7 +195,7 @@ defmodule PaEss.Updater do
   defp format_audio(text), do: %{type: "tts", text: ssml(text), voice_id: "Matthew"}
 
   defp ssml(text) do
-    content = xml_escape(text) |> String.replace("[pause]", "<break />")
+    content = xml_escape(text)
 
     ~s(<speak><amazon:effect name="drc"><prosody rate="90%">#{content}</prosody></amazon:effect></speak>)
   end

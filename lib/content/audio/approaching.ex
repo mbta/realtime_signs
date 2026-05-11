@@ -94,7 +94,7 @@ defmodule Content.Audio.Approaching do
           do: PaEss.Utilities.four_cars_text(),
           else: " Please stand back from the platform edge."
 
-      "Attention passengers: The next #{train} is now approaching#{platform}#{new_cars}.#{followup}#{crowding}"
+      "Attention passengers: The next#{train}; is now approaching#{platform}#{new_cars}.#{followup}#{crowding}"
     end
 
     defp platform_token(:ashmont), do: :on_the_ashmont_platform

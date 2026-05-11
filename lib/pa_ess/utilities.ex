@@ -514,13 +514,13 @@ defmodule PaEss.Utilities do
 
     case {route_text, av} do
       {nil, :audio} ->
-        "[pause] #{destination_text} [pause] train"
+        ", #{destination_text}, train"
 
       {nil, :visual} ->
         "#{destination_text} train"
 
       {route_text, :audio} ->
-        "[pause] #{route_text} [pause] train to [pause] #{destination_text} [pause]"
+        ", #{route_text}, train to, #{destination_text}"
 
       {route_text, :visual} ->
         "#{route_text} train to #{destination_text}"

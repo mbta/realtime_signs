@@ -225,7 +225,7 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [{:canned, {"112", spaced(["501", "787", "920", "933", "21014", "925"]), :audio_visual}}],
         [
-          {"The next [pause] Southbound [pause] train does not take passengers. Please stand back from the platform edge.",
+          {"The next, Southbound, train; does not take passengers. Please stand back from the platform edge.",
            "The next Southbound train does not take passengers. Please stand back from the platform edge."}
         ]
       )
@@ -245,7 +245,7 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [{:canned, {"112", spaced(["501", "787", "920", "933", "21014", "925"]), :audio_visual}}],
         [
-          {"The next [pause] Southbound [pause] train does not take passengers. Please stand back from the platform edge.",
+          {"The next, Southbound, train; does not take passengers. Please stand back from the platform edge.",
            "The next Southbound train does not take passengers. Please stand back from the platform edge."}
         ]
       )
@@ -279,7 +279,7 @@ defmodule Signs.RealtimeTest do
           {:canned, {"112", spaced(["501", "787", "920", "933", "21014", "925"]), :audio_visual}}
         ],
         [
-          {"The next [pause] Southbound [pause] train does not take passengers. Please stand back from the platform edge.",
+          {"The next, Southbound, train; does not take passengers. Please stand back from the platform edge.",
            "The next Southbound train does not take passengers. Please stand back from the platform edge."}
         ]
       )
@@ -289,7 +289,7 @@ defmodule Signs.RealtimeTest do
           {:canned, {"112", spaced(["501", "892", "920", "933", "21014", "925"]), :audio_visual}}
         ],
         [
-          {"The next [pause] Alewife [pause] train does not take passengers. Please stand back from the platform edge.",
+          {"The next, Alewife, train; does not take passengers. Please stand back from the platform edge.",
            "The next Alewife train does not take passengers. Please stand back from the platform edge."}
         ]
       )
@@ -311,7 +311,7 @@ defmodule Signs.RealtimeTest do
           {:canned, {"112", spaced(["501", "787", "920", "933", "21014", "925"]), :audio_visual}}
         ],
         [
-          {"The next [pause] Southbound [pause] train does not take passengers. Please stand back from the platform edge.",
+          {"The next, Southbound, train; does not take passengers. Please stand back from the platform edge.",
            "The next Southbound train does not take passengers. Please stand back from the platform edge."}
         ]
       )
@@ -540,7 +540,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [{:canned, {"115", spaced(["501", "4100", "864", "533", "641", "5008", "534"]), :audio}}],
-        [{"The next [pause] Mattapan [pause] train is stopped 8 stops away.", nil}]
+        [{"The next, Mattapan, train; is stopped, 8, stops away.", nil}]
       )
 
       assert {_, %{announced_stalls: [{"1", 8}]}} = Signs.Realtime.handle_info(:run_loop, @sign)
@@ -581,7 +581,7 @@ defmodule Signs.RealtimeTest do
         [
           {:canned, {"109", ["501", "21000", "4100", "21000", "864", "21000", "544"], :audio}}
         ],
-        [{"The next [pause] Mattapan [pause] train is now boarding.", nil}]
+        [{"The next, Mattapan, train; is now boarding.", nil}]
       )
 
       Signs.Realtime.handle_info(:run_loop, @terminal_sign)
@@ -625,7 +625,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [{:canned, {"109", spaced(["501", "4100", "864", "544"]), :audio}}],
-        [{"The next [pause] Mattapan [pause] train is now boarding.", nil}]
+        [{"The next, Mattapan, train; is now boarding.", nil}]
       )
 
       assert {_, %{announced_boardings: ["1"]}} = Signs.Realtime.handle_info(:run_loop, @sign)
@@ -644,8 +644,7 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [{:canned, {"111", spaced(["501", "537", "507", "4203", "544"]), :audio}}],
         [
-          {"The next [pause] C [pause] train to [pause] Cleveland Circle [pause] is now boarding.",
-           nil}
+          {"The next, C, train to, Cleveland Circle; is now boarding.", nil}
         ]
       )
 
@@ -668,7 +667,7 @@ defmodule Signs.RealtimeTest do
            {"114", spaced(["896", "903", "919", "904", "910", "21014", "925"]), :audio_visual}}
         ],
         [
-          {"Attention passengers: The next [pause] C [pause] train to [pause] Cleveland Circle [pause] is now approaching. Please stand back from the platform edge.",
+          {"Attention passengers: The next, C, train to, Cleveland Circle; is now approaching. Please stand back from the platform edge.",
            "C train to Clvlnd Cir is now approaching. Please stand back from the platform edge."}
         ]
       )
@@ -723,9 +722,8 @@ defmodule Signs.RealtimeTest do
           {:canned, {"111", spaced(["501", "536", "507", "4202", "544"]), :audio}}
         ],
         [
-          {"The next [pause] D [pause] train to [pause] Riverside [pause] is now boarding.", nil},
-          {"The next [pause] B [pause] train to [pause] Boston College [pause] is now boarding.",
-           nil}
+          {"The next, D, train to, Riverside; is now boarding.", nil},
+          {"The next, B, train to, Boston College; is now boarding.", nil}
         ]
       )
 
@@ -769,7 +767,7 @@ defmodule Signs.RealtimeTest do
           {:canned, {"103", ["869"], :audio_visual}}
         ],
         [
-          {"The next [pause] Wonderland [pause] train is now boarding.", nil},
+          {"The next, Wonderland, train; is now boarding.", nil},
           {"Attention Passengers: To board the next train, please push the button on either side of the door.",
            "Attention Passengers: To board the next train, please push the button on either side of the door."}
         ]
@@ -795,7 +793,7 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
         [
-          {"Attention passengers: The next [pause] Ashmont [pause] train is now approaching. Please stand back from the platform edge.",
+          {"Attention passengers: The next, Ashmont, train; is now approaching. Please stand back from the platform edge.",
            "Ashmont train is now approaching. Please stand back from the platform edge."}
         ]
       )
@@ -813,7 +811,7 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
         [
-          {"Attention passengers: The next [pause] Ashmont [pause] train is now approaching. Please stand back from the platform edge.",
+          {"Attention passengers: The next, Ashmont, train; is now approaching. Please stand back from the platform edge.",
            "Ashmont train is now approaching. Please stand back from the platform edge."}
         ]
       )
@@ -844,7 +842,7 @@ defmodule Signs.RealtimeTest do
            {"114", spaced(["896", "903", "919", "904", "910", "21014", "925"]), :audio_visual}}
         ],
         [
-          {"Attention passengers: The next [pause] C [pause] train to [pause] Cleveland Circle [pause] is now approaching. Please stand back from the platform edge.",
+          {"Attention passengers: The next, C, train to, Cleveland Circle; is now approaching. Please stand back from the platform edge.",
            "C train to Clvlnd Cir is now approaching. Please stand back from the platform edge."}
         ]
       )
@@ -874,7 +872,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [{:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5002", "505"]), :audio}}],
-        [{"The next [pause] Ashmont [pause] train arrives in [pause] 2 [pause] minutes.", nil}]
+        [{"The next, Ashmont, train; arrives in, 2, minutes.", nil}]
       )
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | prev_prediction_keys: []})
@@ -899,7 +897,7 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
         [
-          {"Attention passengers: The next [pause] Ashmont [pause] train is now approaching. Please stand back from the platform edge.",
+          {"Attention passengers: The next, Ashmont, train; is now approaching. Please stand back from the platform edge.",
            "Ashmont train is now approaching. Please stand back from the platform edge."}
         ]
       )
@@ -922,7 +920,7 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [{:canned, {"112", spaced(["896", "907", "920", "910", "21014", "925"]), :audio_visual}}],
         [
-          {"Attention passengers: The next [pause] Forest Hills [pause] train is now approaching. Please stand back from the platform edge.",
+          {"Attention passengers: The next, Forest Hills, train; is now approaching. Please stand back from the platform edge.",
            "Frst Hills train is now approaching. Please stand back from the platform edge."}
         ]
       )
@@ -946,7 +944,7 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [{:canned, {"112", spaced(["896", "907", "920", "910", "21014", "925"]), :audio_visual}}],
         [
-          {"Attention passengers: The next [pause] Forest Hills [pause] train is now approaching. Please stand back from the platform edge.",
+          {"Attention passengers: The next, Forest Hills, train; is now approaching. Please stand back from the platform edge.",
            "Frst Hills train is now approaching. Please stand back from the platform edge."}
         ]
       )
@@ -972,9 +970,8 @@ defmodule Signs.RealtimeTest do
           {:canned, {"115", spaced(["667", "4016", "864", "503", "504", "5004", "505"]), :audio}}
         ],
         [
-          {"The next [pause] Ashmont [pause] train arrives in [pause] 2 [pause] minutes.", nil},
-          {"The following [pause] Ashmont [pause] train arrives in [pause] 4 [pause] minutes.",
-           nil}
+          {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
+          {"The following, Ashmont, train; arrives in, 4, minutes.", nil}
         ]
       )
 
@@ -1006,7 +1003,7 @@ defmodule Signs.RealtimeTest do
           {:canned, {"184", ["5511", "5513"], :audio}}
         ],
         [
-          {"The next [pause] Ashmont [pause] train arrives in [pause] 2 [pause] minutes.", nil},
+          {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
           {"Southbound trains every 11 to 13 minutes.", nil}
         ]
       )
@@ -1070,9 +1067,8 @@ defmodule Signs.RealtimeTest do
           {:canned, {"115", spaced(["667", "4016", "864", "503", "504", "5002", "505"]), :audio}}
         ],
         [
-          {"The next [pause] Ashmont [pause] train arrives in [pause] 1 [pause] minute.", nil},
-          {"The following [pause] Ashmont [pause] train arrives in [pause] 2 [pause] minutes.",
-           nil}
+          {"The next, Ashmont, train; arrives in, 1, minute.", nil},
+          {"The following, Ashmont, train; arrives in, 2, minutes.", nil}
         ]
       )
 
@@ -1097,8 +1093,8 @@ defmodule Signs.RealtimeTest do
           {:canned, {"115", spaced(["501", "4021", "864", "503", "504", "5001", "532"]), :audio}}
         ],
         [
-          {"The next [pause] Ashmont [pause] train is now boarding.", nil},
-          {"The next [pause] Braintree [pause] train arrives in [pause] 1 [pause] minute.", nil}
+          {"The next, Ashmont, train; is now boarding.", nil},
+          {"The next, Braintree, train; arrives in, 1, minute.", nil}
         ]
       )
 
@@ -1125,9 +1121,8 @@ defmodule Signs.RealtimeTest do
           {:canned, {"115", spaced(["667", "4016", "864", "503", "504", "5002", "505"]), :audio}}
         ],
         [
-          {"The next [pause] Ashmont [pause] train is now arriving.", nil},
-          {"The following [pause] Ashmont [pause] train arrives in [pause] 2 [pause] minutes.",
-           nil}
+          {"The next, Ashmont, train; is now arriving.", nil},
+          {"The following, Ashmont, train; arrives in, 2, minutes.", nil}
         ]
       )
 
@@ -1155,8 +1150,8 @@ defmodule Signs.RealtimeTest do
           {:canned, {"109", spaced(["501", "4000", "864", "24055"]), :audio}}
         ],
         [
-          {"The next [pause] Ashmont [pause] train arrives in [pause] 2 [pause] minutes.", nil},
-          {"The next [pause] Alewife [pause] train is now arriving.", nil}
+          {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
+          {"The next, Alewife, train; is now arriving.", nil}
         ]
       )
 
@@ -1180,7 +1175,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [{:canned, {"115", spaced(["501", "4016", "864", "533", "641", "5003", "534"]), :audio}}],
-        [{"The next [pause] Ashmont [pause] train is stopped 3 stops away.", nil}]
+        [{"The next, Ashmont, train; is stopped, 3, stops away.", nil}]
       )
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_stalls: ["1", "2"]})
@@ -1202,7 +1197,7 @@ defmodule Signs.RealtimeTest do
 
       expect_audios(
         [{:canned, {"115", spaced(["501", "4016", "864", "533", "641", "5003", "534"]), :audio}}],
-        [{"The next [pause] Ashmont [pause] train is stopped 3 stops away.", nil}]
+        [{"The next, Ashmont, train; is stopped, 3, stops away.", nil}]
       )
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_stalls: ["1"]})
@@ -1230,8 +1225,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"Southbound trains every 11 to 13 minutes.", nil},
-          {"The next [pause] Alewife [pause] train arrives in [pause] 4 [pause] minutes on the Ashmont platform.",
-           nil}
+          {"The next, Alewife, train; arrives in, 4, minutes; on the Ashmont platform.", nil}
         ]
       )
 
@@ -1262,8 +1256,8 @@ defmodule Signs.RealtimeTest do
            {"117", spaced(["501", "4000", "864", "503", "504", "5007", "505", "849"]), :audio}}
         ],
         [
-          {"The next [pause] Ashmont [pause] train arrives in [pause] 6 [pause] minutes.", nil},
-          {"The next [pause] Alewife [pause] train arrives in [pause] 7 [pause] minutes. We will announce the platform for boarding soon.",
+          {"The next, Ashmont, train; arrives in, 6, minutes.", nil},
+          {"The next, Alewife, train; arrives in, 7, minutes. We will announce the platform for boarding soon.",
            nil}
         ]
       )
@@ -1294,8 +1288,8 @@ defmodule Signs.RealtimeTest do
            {"117", spaced(["501", "4000", "864", "503", "504", "5011", "505", "857"]), :audio}}
         ],
         [
-          {"The next [pause] Ashmont [pause] train arrives in [pause] 2 [pause] minutes.", nil},
-          {"The next [pause] Alewife [pause] train arrives in [pause] 11 [pause] minutes. We will announce the platform for boarding when the train is closer.",
+          {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
+          {"The next, Alewife, train; arrives in, 11, minutes. We will announce the platform for boarding when the train is closer.",
            nil}
         ]
       )
@@ -1331,9 +1325,8 @@ defmodule Signs.RealtimeTest do
             :audio}}
         ],
         [
-          {"The next [pause] Ashmont [pause] train arrives in [pause] 2 [pause] minutes.", nil},
-          {"The next [pause] Alewife [pause] train arrives in [pause] 6 [pause] minutes on the Ashmont platform.",
-           nil}
+          {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
+          {"The next, Alewife, train; arrives in, 6, minutes; on the Ashmont platform.", nil}
         ]
       )
 
@@ -1652,7 +1645,7 @@ defmodule Signs.RealtimeTest do
             :audio_visual}}
         ],
         [
-          {"Attention passengers: The next [pause] Ashmont [pause] train is now approaching, with all new Red Line cars. Please stand back from the platform edge.",
+          {"Attention passengers: The next, Ashmont, train; is now approaching, with all new Red Line cars. Please stand back from the platform edge.",
            "Ashmont train is now approaching, with all new Red Line cars. Please stand back from the platform edge."}
         ]
       )
@@ -1685,7 +1678,7 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
         [
-          {"Attention passengers: The next [pause] Ashmont [pause] train is now approaching. Please stand back from the platform edge.",
+          {"Attention passengers: The next, Ashmont, train; is now approaching. Please stand back from the platform edge.",
            "Ashmont train is now approaching. Please stand back from the platform edge."}
         ]
       )
@@ -1706,7 +1699,7 @@ defmodule Signs.RealtimeTest do
       expect_audios(
         [{:canned, {"112", spaced(["923", "902", "920", "924", "21014", "922"]), :audio_visual}}],
         [
-          {"Attention passengers: The next [pause] Braintree [pause] train is now approaching. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
+          {"Attention passengers: The next, Braintree, train; is now approaching. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
            "Shorter 4 car Braintree train now approaching. Please move to front of the train to board."}
         ]
       )
@@ -1730,7 +1723,7 @@ defmodule Signs.RealtimeTest do
            {"117", spaced(["501", "4021", "864", "503", "504", "5002", "505", "922"]), :audio}}
         ],
         [
-          {"The next [pause] Braintree [pause] train arrives in [pause] 2 [pause] minutes. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
+          {"The next, Braintree, train; arrives in, 2, minutes. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
            nil}
         ]
       )
@@ -1759,9 +1752,8 @@ defmodule Signs.RealtimeTest do
           {:canned, {"115", spaced(["667", "4021", "864", "502", "504", "5003", "505"]), :audio}}
         ],
         [
-          {"The next [pause] Braintree [pause] train departs in [pause] 2 [pause] minutes.", nil},
-          {"The following [pause] Braintree [pause] train departs in [pause] 3 [pause] minutes.",
-           nil}
+          {"The next, Braintree, train; departs in, 2, minutes.", nil},
+          {"The following, Braintree, train; departs in, 3, minutes.", nil}
         ]
       )
 
@@ -1790,7 +1782,7 @@ defmodule Signs.RealtimeTest do
           {:canned, {"111", spaced(["501", "4021", "864", "544", "926"]), :audio}}
         ],
         [
-          {"The next [pause] Braintree [pause] train is now boarding. It is a shorter 4-car train. You may have to move to a different part of the platform to board.",
+          {"The next, Braintree, train; is now boarding. It is a shorter 4-car train. You may have to move to a different part of the platform to board.",
            nil}
         ]
       )
@@ -1818,7 +1810,7 @@ defmodule Signs.RealtimeTest do
            {"117", spaced(["501", "4000", "864", "502", "504", "5002", "505", "922"]), :audio}}
         ],
         [
-          {"The next [pause] Alewife [pause] train departs in [pause] 2 [pause] minutes. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
+          {"The next, Alewife, train; departs in, 2, minutes. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
            nil}
         ]
       )
@@ -1843,8 +1835,8 @@ defmodule Signs.RealtimeTest do
           {:canned, {"115", spaced(["501", "4000", "864", "503", "504", "5007", "505"]), :audio}}
         ],
         [
-          {"The next [pause] Braintree [pause] train arrives in [pause] 2 [pause] minutes.", nil},
-          {"The next [pause] Alewife [pause] train arrives in [pause] 7 [pause] minutes.", nil}
+          {"The next, Braintree, train; arrives in, 2, minutes.", nil},
+          {"The next, Alewife, train; arrives in, 7, minutes.", nil}
         ]
       )
 
@@ -1938,10 +1930,8 @@ defmodule Signs.RealtimeTest do
             :audio}}
         ],
         [
-          {"The next [pause] Alewife [pause] train on the Ashmont platform arrives in [pause] 4 [pause] minutes.",
-           nil},
-          {"The following [pause] Alewife [pause] train on the Ashmont platform arrives in [pause] 9 [pause] minutes.",
-           nil}
+          {"The next, Alewife, train; on the Ashmont platform; arrives in, 4, minutes.", nil},
+          {"The following, Alewife, train; on the Ashmont platform; arrives in, 9, minutes.", nil}
         ]
       )
 
@@ -1961,8 +1951,7 @@ defmodule Signs.RealtimeTest do
            {"117", spaced(["501", "4043", "864", "503", "504", "5004", "505", "541"]), :audio}}
         ],
         [
-          {"The next [pause] Forest Hills [pause] train arrives in [pause] 4 [pause] minutes on track 1.",
-           nil}
+          {"The next, Forest Hills, train; arrives in, 4, minutes; on track 1.", nil}
         ]
       )
 
@@ -1988,7 +1977,7 @@ defmodule Signs.RealtimeTest do
         [
           {:canned, {"109", spaced(["501", "4043", "864", "544"]), :audio}}
         ],
-        [{"The next [pause] Forest Hills [pause] train is now boarding.", nil}]
+        [{"The next, Forest Hills, train; is now boarding.", nil}]
       )
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
@@ -2161,7 +2150,7 @@ defmodule Signs.RealtimeTest do
           {:canned, {"105", spaced(["787", "882"]), :audio}}
         ],
         [
-          {"The next [pause] Mattapan [pause] train is stopped 8 stops away.", nil},
+          {"The next, Mattapan, train; is stopped, 8, stops away.", nil},
           {"Southbound service has ended for the night.", nil}
         ]
       )
@@ -2217,8 +2206,7 @@ defmodule Signs.RealtimeTest do
         ],
         [
           {"Southbound service has ended for the night.", nil},
-          {"The next [pause] Alewife [pause] train arrives in [pause] 4 [pause] minutes on the Ashmont platform.",
-           nil}
+          {"The next, Alewife, train; arrives in, 4, minutes; on the Ashmont platform.", nil}
         ]
       )
 

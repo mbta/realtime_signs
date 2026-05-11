@@ -84,7 +84,7 @@ defmodule Content.Audio.TrainIsBoarding do
           do: PaEss.Utilities.four_cars_boarding_text(),
           else: ""
 
-      "The next #{train} is now boarding#{track}#{four_cars_boarding}"
+      "The next#{train}; is now boarding#{track}#{four_cars_boarding}"
     end
   end
 end

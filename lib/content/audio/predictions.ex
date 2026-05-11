@@ -114,7 +114,8 @@ defmodule Content.Audio.Predictions do
         if PaEss.Utilities.prediction_stopped?(prediction, audio.terminal?) do
           num_stops_away = PaEss.Utilities.prediction_stops_away(prediction)
           stop_or_stops = if(num_stops_away == 1, do: "stop", else: "stops")
-          "The #{next_or_following} #{train} is stopped #{num_stops_away} #{stop_or_stops} away."
+
+          "The #{next_or_following}#{train}; is stopped, #{num_stops_away}, #{stop_or_stops} away."
         else
           track_number = Content.Utilities.stop_track_number(prediction.stop_id)
           {platform, platform_prefix?, platform_tbd} = platform_status(audio)
@@ -125,18 +126,19 @@ defmodule Content.Audio.Predictions do
             cond do
               minutes == :arriving -> "is now arriving"
               minutes == :boarding -> "is now boarding"
-              audio.terminal? -> "departs in [pause] #{minutes} [pause] #{min_or_mins}"
-              true -> "arrives in [pause] #{minutes} [pause] #{min_or_mins}"
+              audio.terminal? -> "departs in, #{minutes}, #{min_or_mins}"
+              true -> "arrives in, #{minutes}, #{min_or_mins}"
             end
 
           qualifier =
             cond do
-              track_number -> " on track #{track_number}"
-              platform -> " on the #{platform_string(platform)} platform"
-              true -> ""
+              track_number -> "on track #{track_number}"
+              platform -> "on the #{platform_string(platform)} platform"
+              true -> nil
             end
 
-          {prefix, suffix} = if(platform_prefix?, do: {qualifier, ""}, else: {"", qualifier})
+          {prefix, suffix} =
+            if(platform_prefix?, do: {qualifier, nil}, else: {nil, qualifier})
 
           followup =
             case platform_tbd do
@@ -147,7 +149,12 @@ defmodule Content.Audio.Predictions do
 
           four_cars = if four_cars?(audio), do: PaEss.Utilities.four_cars_text(), else: ""
 
-          "The #{next_or_following} #{train}#{prefix} #{status}#{suffix}.#{followup}#{four_cars}"
+          main_sentence =
+            ["The #{next_or_following}#{train}", prefix, status, suffix]
+            |> Enum.reject(&is_nil/1)
+            |> Enum.join("; ")
+
+          "#{main_sentence}.#{followup}#{four_cars}"
         end
 
       {text, nil}
