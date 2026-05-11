@@ -109,13 +109,15 @@ defmodule Content.Audio.Predictions do
       destination = Content.Utilities.destination_for_prediction(prediction)
       next_or_following = if(audio.next_or_following == :next, do: "next", else: "following")
       train = PaEss.Utilities.train_description(destination, prediction.route_id)
+      the_train = "The #{next_or_following}, #{train}"
 
       text =
         if PaEss.Utilities.prediction_stopped?(prediction, audio.terminal?) do
           num_stops_away = PaEss.Utilities.prediction_stops_away(prediction)
           stop_or_stops = if(num_stops_away == 1, do: "stop", else: "stops")
 
-          "The #{next_or_following}#{train}; is stopped, #{num_stops_away}, #{stop_or_stops} away."
+          [the_train, "is stopped, #{num_stops_away}, #{stop_or_stops} away"]
+          |> PaEss.Utilities.tts_sentence()
         else
           track_number = Content.Utilities.stop_track_number(prediction.stop_id)
           {platform, platform_prefix?, platform_tbd} = platform_status(audio)
@@ -137,8 +139,7 @@ defmodule Content.Audio.Predictions do
               true -> nil
             end
 
-          {prefix, suffix} =
-            if(platform_prefix?, do: {qualifier, nil}, else: {nil, qualifier})
+          {prefix, suffix} = if(platform_prefix?, do: {qualifier, nil}, else: {nil, qualifier})
 
           followup =
             case platform_tbd do
@@ -149,12 +150,8 @@ defmodule Content.Audio.Predictions do
 
           four_cars = if four_cars?(audio), do: PaEss.Utilities.four_cars_text(), else: ""
 
-          main_sentence =
-            ["The #{next_or_following}#{train}", prefix, status, suffix]
-            |> Enum.reject(&is_nil/1)
-            |> Enum.join("; ")
-
-          "#{main_sentence}.#{followup}#{four_cars}"
+          main_sentence = [the_train, prefix, status, suffix] |> PaEss.Utilities.tts_sentence()
+          "#{main_sentence}#{followup}#{four_cars}"
         end
 
       {text, nil}

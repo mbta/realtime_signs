@@ -195,9 +195,7 @@ defmodule PaEss.Updater do
   defp format_audio(text), do: %{type: "tts", text: ssml(text), voice_id: "Matthew"}
 
   defp ssml(text) do
-    content = xml_escape(text)
-
-    ~s(<speak><amazon:effect name="drc"><prosody rate="90%">#{content}</prosody></amazon:effect></speak>)
+    ~s(<speak><amazon:effect name="drc"><prosody rate="90%">#{xml_escape(text)}</prosody></amazon:effect></speak>)
   end
 
   defp create_tag() do

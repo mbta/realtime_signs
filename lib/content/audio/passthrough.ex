@@ -28,7 +28,7 @@ defmodule Content.Audio.Passthrough do
       train = PaEss.Utilities.train_description(audio.destination, nil)
       train_visual = PaEss.Utilities.train_description(audio.destination, nil, :visual)
 
-      {"The next#{train}; does not take passengers. Please stand back from the platform edge.",
+      {"The next, #{train}; does not take passengers. Please stand back from the platform edge.",
        "The next #{train_visual} does not take passengers. Please stand back from the platform edge."}
     end
 

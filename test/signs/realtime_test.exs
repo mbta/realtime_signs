@@ -149,6 +149,16 @@ defmodule Signs.RealtimeTest do
       }
   }
 
+  @park_st_sign %{
+    @sign
+    | source_config: %{
+        @sign.source_config
+        | sources: [
+            %{@src | announce_arriving?: false, announce_boarding?: true, stop_id: "70198"}
+          ]
+      }
+  }
+
   setup :verify_on_exit!
 
   setup do
@@ -783,6 +793,36 @@ defmodule Signs.RealtimeTest do
       })
     end
 
+    test "Park St track change announcement" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(
+            seconds_until_departure: 15,
+            stop_id: "70198",
+            route_id: "Green-B",
+            destination: :boston_college,
+            stopped: 0
+          )
+        ]
+      end)
+
+      expect_messages({"Boston Coll    BRD", ""})
+
+      expect_audios(
+        [
+          {:canned,
+           {"119", spaced(["540", "501", "536", "507", "4202", "544", "851", "538", "529"]),
+            :audio_visual}}
+        ],
+        [
+          {"Track change: The next, B, train to, Boston College; is now boarding; on the, D, platform.",
+           "Track change: The next B train to Boston Coll is now boarding on the D platform."}
+        ]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, @park_st_sign)
+    end
+
     test "announces approaching" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :ashmont, arrival: 45, trip_id: "1")]
@@ -1352,11 +1392,18 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Southbound train", "due 5:00"})
+
+      expect_audios(
+        [{:canned, {"113", spaced(["866", "787", "864", "927", "8004", "9000"]), :audio}}],
+        [{"The first, Southbound, train; departs at 5:00.", nil}]
+      )
+
       expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
-        | current_time_fn: fn -> datetime(~T[04:00:00]) end
+        | current_time_fn: fn -> datetime(~T[04:00:00]) end,
+          tick_read: 0
       })
     end
 
@@ -1645,7 +1692,7 @@ defmodule Signs.RealtimeTest do
             :audio_visual}}
         ],
         [
-          {"Attention passengers: The next, Ashmont, train; is now approaching, with all new Red Line cars. Please stand back from the platform edge.",
+          {"Attention passengers: The next, Ashmont, train; is now approaching; with all new Red Line cars. Please stand back from the platform edge.",
            "Ashmont train is now approaching, with all new Red Line cars. Please stand back from the platform edge."}
         ]
       )
