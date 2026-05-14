@@ -512,10 +512,18 @@ defmodule PaEss.Utilities do
         :visual -> destination_to_sign_string(destination)
       end
 
-    if route_text do
-      "#{route_text} train to #{destination_text}"
-    else
-      "#{destination_text} train"
+    case {route_text, av} do
+      {nil, :audio} ->
+        "#{destination_text}, train"
+
+      {nil, :visual} ->
+        "#{destination_text} train"
+
+      {route_text, :audio} ->
+        "#{route_text}, train to, #{destination_text}"
+
+      {route_text, :visual} ->
+        "#{route_text} train to #{destination_text}"
     end
   end
 
@@ -1231,6 +1239,13 @@ defmodule PaEss.Utilities do
   def audio_message(items, av \\ :audio) do
     vars = Enum.map(items, &audio_take/1) |> pad_takes()
     {:canned, {take_message_id(vars), vars, av}}
+  end
+
+  @spec tts_sentence([String.t() | nil]) :: String.t()
+  def tts_sentence(phrases) do
+    Enum.reject(phrases, &is_nil/1)
+    |> Enum.join("; ")
+    |> then(&"#{&1}.")
   end
 
   @spec paginate_text(String.t(), integer()) :: Content.Message.pages()

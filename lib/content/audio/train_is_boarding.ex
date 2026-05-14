@@ -77,14 +77,17 @@ defmodule Content.Audio.TrainIsBoarding do
 
     defp tts_text(%Content.Audio.TrainIsBoarding{} = audio) do
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
-      track = if(audio.track_number, do: " on track #{audio.track_number}", else: ".")
+      track = if(audio.track_number, do: "on track #{audio.track_number}", else: nil)
 
       four_cars_boarding =
         if audio.four_cars_boarding?,
           do: PaEss.Utilities.four_cars_boarding_text(),
           else: ""
 
-      "The next #{train} is now boarding#{track}#{four_cars_boarding}"
+      main_sentence =
+        ["The next, #{train}", "is now boarding", track] |> PaEss.Utilities.tts_sentence()
+
+      "#{main_sentence}#{four_cars_boarding}"
     end
   end
 end

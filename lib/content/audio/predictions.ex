@@ -109,12 +109,15 @@ defmodule Content.Audio.Predictions do
       destination = Content.Utilities.destination_for_prediction(prediction)
       next_or_following = if(audio.next_or_following == :next, do: "next", else: "following")
       train = PaEss.Utilities.train_description(destination, prediction.route_id)
+      the_train = "The #{next_or_following}, #{train}"
 
       text =
         if PaEss.Utilities.prediction_stopped?(prediction, audio.terminal?) do
           num_stops_away = PaEss.Utilities.prediction_stops_away(prediction)
           stop_or_stops = if(num_stops_away == 1, do: "stop", else: "stops")
-          "The #{next_or_following} #{train} is stopped #{num_stops_away} #{stop_or_stops} away."
+
+          [the_train, "is stopped, #{num_stops_away}, #{stop_or_stops} away"]
+          |> PaEss.Utilities.tts_sentence()
         else
           track_number = Content.Utilities.stop_track_number(prediction.stop_id)
           {platform, platform_prefix?, platform_tbd} = platform_status(audio)
@@ -125,18 +128,18 @@ defmodule Content.Audio.Predictions do
             cond do
               minutes == :arriving -> "is now arriving"
               minutes == :boarding -> "is now boarding"
-              audio.terminal? -> "departs in #{minutes} #{min_or_mins}"
-              true -> "arrives in #{minutes} #{min_or_mins}"
+              audio.terminal? -> "departs in, #{minutes}, #{min_or_mins}"
+              true -> "arrives in, #{minutes}, #{min_or_mins}"
             end
 
           qualifier =
             cond do
-              track_number -> " on track #{track_number}"
-              platform -> " on the #{platform_string(platform)} platform"
-              true -> ""
+              track_number -> "on track #{track_number}"
+              platform -> "on the #{platform_string(platform)} platform"
+              true -> nil
             end
 
-          {prefix, suffix} = if(platform_prefix?, do: {qualifier, ""}, else: {"", qualifier})
+          {prefix, suffix} = if(platform_prefix?, do: {qualifier, nil}, else: {nil, qualifier})
 
           followup =
             case platform_tbd do
@@ -147,7 +150,8 @@ defmodule Content.Audio.Predictions do
 
           four_cars = if four_cars?(audio), do: PaEss.Utilities.four_cars_text(), else: ""
 
-          "The #{next_or_following} #{train}#{prefix} #{status}#{suffix}.#{followup}#{four_cars}"
+          main_sentence = [the_train, prefix, status, suffix] |> PaEss.Utilities.tts_sentence()
+          "#{main_sentence}#{followup}#{four_cars}"
         end
 
       {text, nil}

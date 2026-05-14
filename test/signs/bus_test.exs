@@ -183,8 +183,8 @@ defmodule Signs.BusTest do
         ],
         [
           {[
-             "The next route 14 bus to Wakefield Ave arrives in 2 minutes.",
-             "The following route 14 bus to Wakefield Ave arrives in 11 minutes."
+             "The next, route 14, bus to, Wakefield Ave; arrives in, 2, minutes.",
+             "The following, route 14, bus to, Wakefield Ave; arrives in, 11, minutes."
            ], nil}
         ]
       )
@@ -513,8 +513,8 @@ defmodule Signs.BusTest do
         ],
         [
           {[
-             "The next route 14 bus to Wakefield Ave arrives in 2 minutes.",
-             "The following route 14 bus to Wakefield Ave arrives in 11 minutes."
+             "The next, route 14, bus to, Wakefield Ave; arrives in, 2, minutes.",
+             "The following, route 14, bus to, Wakefield Ave; arrives in, 11, minutes."
            ], nil},
           {"The Chelsea Street bridge is raised. We expect this to last for at least 4 more minutes. SL3 buses may be delayed, detoured, or turned back.",
            "The Chelsea Street bridge is raised. We expect this to last for at least 4 more minutes. SL3 buses may be delayed, detoured, or turned back."},

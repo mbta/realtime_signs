@@ -25,18 +25,15 @@ defmodule Content.Audio.Passthrough do
     end
 
     def to_tts(%Content.Audio.Passthrough{} = audio) do
-      text = tts_text(audio)
+      train = PaEss.Utilities.train_description(audio.destination, nil)
+      train_visual = PaEss.Utilities.train_description(audio.destination, nil, :visual)
 
-      {text, text}
+      {"The next, #{train}; does not take passengers. Please stand back from the platform edge.",
+       "The next #{train_visual} does not take passengers. Please stand back from the platform edge."}
     end
 
     def to_logs(%Content.Audio.Passthrough{}) do
       []
-    end
-
-    defp tts_text(%Content.Audio.Passthrough{} = audio) do
-      train = PaEss.Utilities.train_description(audio.destination, nil)
-      "The next #{train} does not take passengers. Please stand back from the platform edge."
     end
   end
 end

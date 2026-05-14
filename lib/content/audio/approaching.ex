@@ -67,8 +67,8 @@ defmodule Content.Audio.Approaching do
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id, :visual)
       approaching = if audio.four_cars?, do: "now approaching", else: "is now approaching"
       crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
-      platform = platform_string(audio.platform)
-      new_cars = new_cars_string(audio.new_cars? and not audio.four_cars?)
+      platform = if(s = platform_string(audio.platform), do: " #{s}")
+      new_cars = if(s = new_cars_string(audio), do: ", #{s}")
 
       followup =
         if audio.four_cars?,
@@ -87,24 +87,30 @@ defmodule Content.Audio.Approaching do
       train = Utilities.train_description(audio.destination, audio.route_id)
       crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
       platform = platform_string(audio.platform)
-      new_cars = new_cars_string(audio.new_cars? and not audio.four_cars?)
+      new_cars = new_cars_string(audio)
 
       followup =
         if audio.four_cars?,
           do: PaEss.Utilities.four_cars_text(),
           else: " Please stand back from the platform edge."
 
-      "Attention passengers: The next #{train} is now approaching#{platform}#{new_cars}.#{followup}#{crowding}"
+      main_sentence =
+        ["Attention passengers: The next, #{train}", "is now approaching", platform, new_cars]
+        |> PaEss.Utilities.tts_sentence()
+
+      "#{main_sentence}#{followup}#{crowding}"
     end
 
     defp platform_token(:ashmont), do: :on_the_ashmont_platform
     defp platform_token(:braintree), do: :on_the_braintree_platform
 
-    defp platform_string(:ashmont), do: " on the Ashmont platform"
-    defp platform_string(:braintree), do: " on the Braintree platform"
-    defp platform_string(_), do: ""
+    defp platform_string(:ashmont), do: "on the Ashmont platform"
+    defp platform_string(:braintree), do: "on the Braintree platform"
+    defp platform_string(_), do: nil
 
-    defp new_cars_string(true), do: ", with all new Red Line cars"
-    defp new_cars_string(false), do: ""
+    defp new_cars_string(audio) when audio.new_cars? and not audio.four_cars?,
+      do: "with all new Red Line cars"
+
+    defp new_cars_string(_), do: nil
   end
 end

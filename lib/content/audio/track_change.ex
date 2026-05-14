@@ -44,6 +44,7 @@ defmodule Content.Audio.TrackChange do
 
     def to_tts(%Content.Audio.TrackChange{} = audio) do
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
+      train_visual = PaEss.Utilities.train_description(audio.destination, audio.route_id, :visual)
 
       platform =
         case audio.berth do
@@ -53,9 +54,9 @@ defmodule Content.Audio.TrackChange do
           "70199" -> "E"
         end
 
-      text = "Track change: The next #{train} is now boarding on the #{platform} platform"
-
-      {text, text}
+      {["Track change: The next, #{train}", "is now boarding", "on the, #{platform}, platform"]
+       |> PaEss.Utilities.tts_sentence(),
+       "Track change: The next #{train_visual} is now boarding on the #{platform} platform."}
     end
 
     def to_logs(%Content.Audio.TrackChange{}) do
