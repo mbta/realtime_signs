@@ -1,4 +1,6 @@
 defmodule Signs.Utilities.SignPredictionInfo do
+  @moduledoc false
+
   @enforce_keys [
     :predictions,
     :all_predictions,
