@@ -119,7 +119,9 @@ defmodule Signs.Realtime do
     {:reply, {sign, should_play?}, sign}
   end
 
-  def handle_info(:run_loop, sign) do
+  # TODO(now): Call out in review I will move this, it makes the diff easier in GH
+  @spec derive_sign_prediction_info(t()) :: Signs.Utilities.SignPredictionInfo.t()
+  defp derive_sign_prediction_info(sign) do
     sign_config = RealtimeSigns.config_engine().sign_config(sign.id, sign.default_mode)
     current_time = sign.current_time_fn.()
 
@@ -174,17 +176,32 @@ defmodule Signs.Realtime do
         &has_service_ended_for_source?(&1, current_time)
       )
 
+    %Signs.Utilities.SignPredictionInfo{
+      predictions: predictions,
+      all_predictions: all_predictions,
+      sign_config: sign_config,
+      current_time: current_time,
+      alert_status: alert_status,
+      first_scheduled_departures: first_scheduled_departures,
+      last_scheduled_departures: last_scheduled_departures,
+      recent_departures: recent_departures,
+      service_end_statuses_per_source: service_end_statuses_per_source
+    }
+  end
+
+  def handle_info(:run_loop, sign) do
+    # TODO(now): Call out in review there may be better abstraction/split here
+    sign_prediction_info =
+      %Signs.Utilities.SignPredictionInfo{
+        predictions: predictions,
+        all_predictions: all_predictions,
+        current_time: current_time
+      } = derive_sign_prediction_info(sign)
+
     messages =
       Utilities.Messages.get_messages(
-        predictions,
         sign,
-        sign_config,
-        current_time,
-        alert_status,
-        first_scheduled_departures,
-        last_scheduled_departures,
-        recent_departures,
-        service_end_statuses_per_source
+        sign_prediction_info
       )
 
     {new_top, new_bottom} = Utilities.Messages.render_messages(messages)

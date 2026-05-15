@@ -8,67 +8,36 @@ defmodule Signs.Utilities.Messages do
   @early_am_buffer -40
   @overnight_buffer 30
 
-  @spec get_messages(
-          Signs.Realtime.predictions(),
+  @type flattened_sign_prediction_info :: {
+          Signs.Utilities.SourceConfig.config(),
+          list(Signs.Realtime.predictions()),
           Signs.Realtime.t(),
-          Engine.Config.sign_config(),
+          Engine.Alerts.Fetcher.stop_status(),
           DateTime.t(),
-          Engine.Alerts.Fetcher.stop_status()
-          | {Engine.Alerts.Fetcher.stop_status(), Engine.Alerts.Fetcher.stop_status()},
-          DateTime.t() | {DateTime.t(), DateTime.t()},
-          DateTime.t() | {DateTime.t(), DateTime.t()},
-          DateTime.t() | {DateTime.t(), DateTime.t()},
-          boolean() | {boolean(), boolean()}
+          DateTime.t(),
+          DateTime.t(),
+          boolean(),
+          boolean()
+        }
+
+  @spec get_messages(
+          Signs.Realtime.t(),
+          Signs.Utilities.SignPredictionInfo.t()
         ) :: [Message.t()]
   def get_messages(
-        predictions,
         sign,
-        sign_config,
-        current_time,
-        alert_status,
-        first_scheduled_departures,
-        last_scheduled_departures,
-        most_recent_departure,
-        service_status
+        sign_prediction_info = %Signs.Utilities.SignPredictionInfo{
+          current_time: current_time,
+          sign_config: sign_config
+        }
       ) do
     config =
-      if match?(%{source_config: {_, _}}, sign) do
-        Enum.zip([
-          Tuple.to_list(sign.source_config),
-          Tuple.to_list(predictions),
-          Tuple.to_list(alert_status),
-          Tuple.to_list(first_scheduled_departures),
-          Tuple.to_list(last_scheduled_departures),
-          Tuple.to_list(most_recent_departure),
-          Tuple.to_list(service_status)
-        ])
-      else
-        [
-          {sign.source_config, predictions, alert_status, first_scheduled_departures,
-           last_scheduled_departures, most_recent_departure, service_status}
-        ]
-      end
-      |> Enum.map(fn {_config, _predictions, _alert_status, first_scheduled_departures,
-                      last_scheduled_departures, most_recent_departure,
-                      service_status} = sign_config ->
-        Tuple.append(
-          sign_config,
-          overnight_period?(
-            current_time,
-            first_scheduled_departures,
-            last_scheduled_departures,
-            most_recent_departure,
-            service_status
-          )
-        )
-      end)
+      flatten_sign_prediction_info(
+        sign_prediction_info,
+        sign
+      )
 
-    sign_in_overnight_period =
-      Enum.all?(config, fn {_config, _predictions, _alert_status, _first_scheduled_departures,
-                            _last_scheduled_departures, _most_recent_departure, _service_status,
-                            in_overnight_period} ->
-        in_overnight_period
-      end)
+    sign_in_overnight_period = in_overnight_period?(config)
 
     cond do
       match?({:static_text, {_, _}}, sign_config) ->
@@ -100,6 +69,64 @@ defmodule Signs.Utilities.Messages do
         end)
     end
     |> transform_messages()
+  end
+
+  @spec flatten_sign_prediction_info(
+          Signs.Utilities.SignPredictionInfo.t(),
+          Signs.Realtime.t()
+        ) ::
+          list(flattened_sign_prediction_info())
+  def flatten_sign_prediction_info(
+        %Signs.Utilities.SignPredictionInfo{
+          predictions: predictions,
+          current_time: current_time,
+          alert_status: alert_status,
+          first_scheduled_departures: first_scheduled_departures,
+          last_scheduled_departures: last_scheduled_departures,
+          recent_departures: recent_departures,
+          service_end_statuses_per_source: service_end_statuses_per_source
+        },
+        sign
+      ) do
+    if match?(%{source_config: {_, _}}, sign) do
+      Enum.zip([
+        Tuple.to_list(sign.source_config),
+        Tuple.to_list(predictions),
+        Tuple.to_list(alert_status),
+        Tuple.to_list(first_scheduled_departures),
+        Tuple.to_list(last_scheduled_departures),
+        Tuple.to_list(recent_departures),
+        Tuple.to_list(service_end_statuses_per_source)
+      ])
+    else
+      [
+        {sign.source_config, predictions, alert_status, first_scheduled_departures,
+         last_scheduled_departures, recent_departures, service_end_statuses_per_source}
+      ]
+    end
+    |> Enum.map(fn {_config, _predictions, _alert_status, first_scheduled_departures,
+                    last_scheduled_departures, most_recent_departure,
+                    service_status} = sign_config ->
+      Tuple.append(
+        sign_config,
+        overnight_period?(
+          current_time,
+          first_scheduled_departures,
+          last_scheduled_departures,
+          most_recent_departure,
+          service_status
+        )
+      )
+    end)
+  end
+
+  @spec in_overnight_period?(list(flattened_sign_prediction_info())) :: boolean()
+  def in_overnight_period?(config) do
+    Enum.all?(config, fn {_config, _predictions, _alert_status, _first_scheduled_departures,
+                          _last_scheduled_departures, _most_recent_departure, _service_status,
+                          in_overnight_period} ->
+      in_overnight_period
+    end)
   end
 
   @spec transform_messages([Message.t()]) :: [Message.t()]
