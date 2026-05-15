@@ -48,10 +48,14 @@ defmodule Engine.PaMessages do
     {:noreply, state}
   end
 
+  @spec select_pa_messages([PaMessages.PaMessage.t()], state()) ::
+          {[PaMessages.PaMessage.t()], state()}
   defp select_pa_messages(pa_messages, state) do
     now = DateTime.utc_now()
 
-    Enum.flat_map_reduce(pa_messages, state, fn message, state ->
+    pa_messages
+    |> Enum.reject(&is_overnight_and_non_emergency?/1)
+    |> Enum.flat_map_reduce(state, fn message, state ->
       last_sent = Map.get(state.pa_messages_last_sent, message.id, DateTime.from_unix!(0))
 
       if DateTime.diff(DateTime.utc_now(), last_sent, :millisecond) >= message.interval_in_ms do
@@ -60,6 +64,17 @@ defmodule Engine.PaMessages do
         {[], state}
       end
     end)
+  end
+
+  @spec is_overnight_and_non_emergency?(PaMessage.t()) :: boolean()
+  defp is_overnight_and_non_emergency?(pa_message) do
+    # emergencies will have a priority of 1 or less
+    Enum.all?(pa_message.sign_ids, &is_sign_in_overnight_period?(&1)) && pa_message.priority >= 2
+  end
+
+  @spec is_sign_in_overnight_period?(String.t()) :: boolean
+  defp is_sign_in_overnight_period?(sign_id) do
+    GenServer.call(:"Signs/#{sign_id}", {:overnight_status})
   end
 
   defp play_pa_messages(pa_messages) do

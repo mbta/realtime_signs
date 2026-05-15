@@ -119,6 +119,16 @@ defmodule Signs.Realtime do
     {:reply, {sign, should_play?}, sign}
   end
 
+  @spec handle_call({:overnight_status}, {pid(), term()}, t()) :: {:reply, boolean(), t()}
+  def handle_call({:overnight_status}, _from, sign) do
+    sign_in_overnight_period =
+      derive_sign_prediction_info(sign)
+      |> Signs.Utilities.Messages.flatten_sign_prediction_info(sign)
+      |> Signs.Utilities.Messages.in_overnight_period?()
+
+    {:reply, sign_in_overnight_period, sign}
+  end
+
   # TODO(now): Call out in review I will move this, it makes the diff easier in GH
   @spec derive_sign_prediction_info(t()) :: Signs.Utilities.SignPredictionInfo.t()
   defp derive_sign_prediction_info(sign) do
