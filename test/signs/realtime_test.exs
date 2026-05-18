@@ -2299,6 +2299,28 @@ defmodule Signs.RealtimeTest do
       assert {:reply, {_, false}, _} =
                Signs.Realtime.handle_call({:play_pa_message, pa_message}, nil, sign)
     end
+
+    test "Does not play if the sign is in overnight mode" do
+      expect(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn ["1"] ->
+        ~U[2026-05-17 08:30:00Z]
+      end)
+
+      expect(Engine.ScheduledHeadways.Mock, :get_last_scheduled_departure, fn ["1"] ->
+        ~U[2026-05-18 03:30:00Z]
+      end)
+
+      pa_message = %PaMessages.PaMessage{
+        id: 1,
+        visual_text: "A PA Message",
+        audio_text: "A PA Message",
+        interval_in_ms: 120_000
+      }
+
+      sign = %{@sign | current_time_fn: fn -> datetime(~D[2026-05-18], ~T[03:00:00]) end}
+
+      assert {:reply, {_, false}, _} =
+               Signs.Realtime.handle_call({:play_pa_message, pa_message}, nil, sign)
+    end
   end
 
   describe "Overnight Period" do
