@@ -116,17 +116,14 @@ defmodule Signs.Realtime do
 
   def handle_call({:play_pa_message, pa_message}, _from, sign) do
     {sign, should_play?} = Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign)
-    {:reply, {sign, should_play?}, sign}
-  end
 
-  @spec handle_call({:overnight_status}, {pid(), term()}, t()) :: {:reply, boolean(), t()}
-  def handle_call({:overnight_status}, _from, sign) do
-    sign_in_overnight_period =
+    sign_in_overnight_period? =
       derive_sign_context(sign)
       |> Signs.Utilities.Messages.flatten_sign_context(sign)
       |> Signs.Utilities.Messages.in_overnight_period?()
 
-    {:reply, sign_in_overnight_period, sign}
+    should_play? = should_play? && !sign_in_overnight_period?
+    {:reply, {sign, should_play?}, sign}
   end
 
   # TODO(now): Call out in review I will move this, it makes the diff easier in GH
