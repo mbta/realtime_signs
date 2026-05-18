@@ -136,7 +136,7 @@ defmodule PaEss.HttpUpdater do
           [
             MsgType: "AdHoc",
             uid: get_uid(state),
-            msg: PaEss.Utilities.replace_abbreviations(text),
+            msg: text,
             typ: audio_type(type),
             sta: "#{station}#{zone_bitmap(zones)}",
             pri: priority,

@@ -315,7 +315,12 @@ defmodule Signs.Bus do
     {_, {line1, line2}} = config
 
     messages =
-      [[line1, line2]]
+      [
+        [
+          PaEss.Utilities.validate_custom_string(line1, :top),
+          PaEss.Utilities.validate_custom_string(line2, :bottom)
+        ]
+      ]
       |> Enum.concat(
         bridge_message(
           bridge_status,
@@ -328,11 +333,13 @@ defmodule Signs.Bus do
       )
       |> paginate_pairs()
 
+    tts_text = PaEss.Utilities.custom_tts_text(line1, line2)
+
     audios =
-      [{:ad_hoc, {"#{line1} #{line2}", :audio}}]
+      [{:ad_hoc, {tts_text, :audio}}]
       |> Enum.concat(bridge_audio(bridge_status, bridge_enabled?, current_time, state))
 
-    tts_audios = [{"#{line1} #{line2}", nil}]
+    tts_audios = [{tts_text, nil}]
 
     {messages, audios, tts_audios}
   end

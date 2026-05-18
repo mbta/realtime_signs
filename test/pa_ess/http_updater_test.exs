@@ -114,24 +114,6 @@ defmodule PaEss.HttpUpdaterTest do
       assert log =~ "send_custom_audio"
     end
 
-    test "sends custom audio messages with replacements" do
-      state = make_state()
-
-      audio = {:ad_hoc, {"Custom OL Message", :audio}}
-
-      log =
-        capture_log(fn ->
-          assert {:ok, :sent} =
-                   PaEss.HttpUpdater.process(
-                     {:send_audio, [{"MCAP", ["n"]}, [audio], 5, 60, [[]]]},
-                     state
-                   )
-        end)
-
-      assert log =~ "send_custom_audio"
-      assert log =~ "Custom+Orange+Line+Message"
-    end
-
     test "can send two audio messages" do
       state = make_state(%{http_poster: FakePoster})
 
