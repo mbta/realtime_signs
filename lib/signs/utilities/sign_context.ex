@@ -1,4 +1,4 @@
-defmodule Signs.Utilities.SignPredictionInfo do
+defmodule Signs.Utilities.SignContext do
   @moduledoc false
 
   @enforce_keys [

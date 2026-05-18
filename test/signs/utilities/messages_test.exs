@@ -7,7 +7,7 @@ defmodule Signs.Utilities.MessagesTest do
   @midnight DateTime.new!(~D[2023-01-01], ~T[12:00:00], "America/New_York")
   def fake_time_fn, do: @midnight
 
-  describe "flatten_sign_prediction_info/2" do
+  describe "flatten_sign_context/2" do
     setup do
       stub(Engine.Config.Mock, :headway_config, fn _headway_group, _current_time -> nil end)
 
@@ -41,7 +41,7 @@ defmodule Signs.Utilities.MessagesTest do
           pa_message_plays: %{},
           last_message_log_time: @midnight
         },
-        sign_prediction_info: %Signs.Utilities.SignPredictionInfo{
+        sign_context: %Signs.Utilities.SignContext{
           predictions: [
             %Predictions.Prediction{
               stop_id: "1",
@@ -74,12 +74,12 @@ defmodule Signs.Utilities.MessagesTest do
 
     test "flattens prediction info for a single source configuration", %{
       sign: sign,
-      sign_prediction_info: sign_prediction_info
+      sign_context: sign_context
     } do
       flattened_prediction_info = [
         {
           sign.source_config,
-          sign_prediction_info.predictions,
+          sign_context.predictions,
           :none,
           nil,
           nil,
@@ -90,7 +90,7 @@ defmodule Signs.Utilities.MessagesTest do
       ]
 
       assert flattened_prediction_info ==
-               Signs.Utilities.Messages.flatten_sign_prediction_info(sign_prediction_info, sign)
+               Signs.Utilities.Messages.flatten_sign_context(sign_context, sign)
     end
   end
 
@@ -158,7 +158,7 @@ defmodule Signs.Utilities.MessagesTest do
           pa_message_plays: %{},
           last_message_log_time: @midnight
         },
-        sign_prediction_info: %Signs.Utilities.SignPredictionInfo{
+        sign_context: %Signs.Utilities.SignContext{
           predictions: [
             %Predictions.Prediction{
               stop_id: "1",
@@ -191,10 +191,10 @@ defmodule Signs.Utilities.MessagesTest do
 
     test "returns an empty message when sign is in the overnight period", %{
       sign: sign,
-      sign_prediction_info: sign_prediction_info
+      sign_context: sign_context
     } do
-      sign_prediction_info = %{
-        sign_prediction_info
+      sign_context = %{
+        sign_context
         | sign_config: {:static_text, {"This is line 1", "This is line 2"}},
           current_time: DateTime.shift(@midnight, hour: 2)
       }
@@ -202,66 +202,66 @@ defmodule Signs.Utilities.MessagesTest do
       assert [%Message.Empty{}] ==
                Signs.Utilities.Messages.get_messages(
                  sign,
-                 sign_prediction_info
+                 sign_context
                )
     end
 
     test "returns a custom message containing two lines of text", %{
       sign: sign,
-      sign_prediction_info: sign_prediction_info
+      sign_context: sign_context
     } do
-      sign_prediction_info = %{
-        sign_prediction_info
+      sign_context = %{
+        sign_context
         | sign_config: {:static_text, {"This is line 1", "This is line 2"}}
       }
 
       assert [%Message.Custom{top: "This is line 1", bottom: "This is line 2"}] ==
                Signs.Utilities.Messages.get_messages(
                  sign,
-                 sign_prediction_info
+                 sign_context
                )
     end
 
     test "returns an empty message when sign is off", %{
       sign: sign,
-      sign_prediction_info: sign_prediction_info
+      sign_context: sign_context
     } do
-      sign_prediction_info = %{
-        sign_prediction_info
+      sign_context = %{
+        sign_context
         | sign_config: :off
       }
 
       assert [%Message.Empty{}] ==
                Signs.Utilities.Messages.get_messages(
                  sign,
-                 sign_prediction_info
+                 sign_context
                )
     end
 
     test "returns a service ended message", %{
       sign: sign,
-      sign_prediction_info: sign_prediction_info
+      sign_context: sign_context
     } do
-      sign_prediction_info = %{
-        sign_prediction_info
+      sign_context = %{
+        sign_context
         | service_end_statuses_per_source: true
       }
 
       assert [%Message.ServiceEnded{destination: :southbound, route: "Red"}] =
                Signs.Utilities.Messages.get_messages(
                  sign,
-                 sign_prediction_info
+                 sign_context
                )
     end
 
     test "returns a first train message", %{
       sign: sign,
-      sign_prediction_info: sign_prediction_info
+      sign_context: sign_context
     } do
       now = DateTime.new!(~D[2023-01-01], ~T[04:05:00], "America/New_York")
 
-      sign_prediction_info = %{
-        sign_prediction_info
+      sign_context = %{
+        sign_context
         | current_time: now,
           first_scheduled_departures: DateTime.shift(now, hour: 1),
           last_scheduled_departures: DateTime.shift(now, hour: 10)
@@ -270,7 +270,7 @@ defmodule Signs.Utilities.MessagesTest do
       assert [%Message.FirstTrain{destination: :southbound}] =
                Signs.Utilities.Messages.get_messages(
                  sign,
-                 sign_prediction_info
+                 sign_context
                )
     end
   end

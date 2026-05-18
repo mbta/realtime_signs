@@ -8,7 +8,7 @@ defmodule Signs.Utilities.Messages do
   @early_am_buffer -40
   @overnight_buffer 30
 
-  @type flattened_sign_prediction_info :: {
+  @type flattened_sign_context :: {
           Signs.Utilities.SourceConfig.config(),
           list(Signs.Realtime.predictions()),
           Signs.Realtime.t(),
@@ -22,18 +22,18 @@ defmodule Signs.Utilities.Messages do
 
   @spec get_messages(
           Signs.Realtime.t(),
-          Signs.Utilities.SignPredictionInfo.t()
+          Signs.Utilities.SignContext.t()
         ) :: [Message.t()]
   def get_messages(
         sign,
-        sign_prediction_info = %Signs.Utilities.SignPredictionInfo{
+        sign_context = %Signs.Utilities.SignContext{
           current_time: current_time,
           sign_config: sign_config
         }
       ) do
     config =
-      flatten_sign_prediction_info(
-        sign_prediction_info,
+      flatten_sign_context(
+        sign_context,
         sign
       )
 
@@ -71,13 +71,13 @@ defmodule Signs.Utilities.Messages do
     |> transform_messages()
   end
 
-  @spec flatten_sign_prediction_info(
-          Signs.Utilities.SignPredictionInfo.t(),
+  @spec flatten_sign_context(
+          Signs.Utilities.SignContext.t(),
           Signs.Realtime.t()
         ) ::
-          list(flattened_sign_prediction_info())
-  def flatten_sign_prediction_info(
-        %Signs.Utilities.SignPredictionInfo{
+          list(flattened_sign_context())
+  def flatten_sign_context(
+        %Signs.Utilities.SignContext{
           predictions: predictions,
           current_time: current_time,
           alert_status: alert_status,
@@ -120,7 +120,7 @@ defmodule Signs.Utilities.Messages do
     end)
   end
 
-  @spec in_overnight_period?(list(flattened_sign_prediction_info())) :: boolean()
+  @spec in_overnight_period?(list(flattened_sign_context())) :: boolean()
   def in_overnight_period?(config) do
     Enum.all?(config, fn {_config, _predictions, _alert_status, _first_scheduled_departures,
                           _last_scheduled_departures, _most_recent_departure, _service_status,
