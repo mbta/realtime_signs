@@ -596,7 +596,7 @@ defmodule PaEss.Utilities do
   end
 
   @spec replace_abbreviations(String.t()) :: String.t()
-  def replace_abbreviations(text) when is_binary(text) do
+  defp replace_abbreviations(text) when is_binary(text) do
     Enum.reduce(
       @abbreviation_replacements,
       text,
