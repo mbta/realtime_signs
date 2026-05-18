@@ -1080,6 +1080,20 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
+    test "replaces abbreviations in custom messages" do
+      expect(Engine.Config.Mock, :sign_config, fn _, _ ->
+        {:static_text, {"No OL Svc", ""}}
+      end)
+
+      expect_messages({"No OL Svc", ""})
+
+      expect_audios([{:ad_hoc, {"No Orange Line Service", :audio}}], [
+        {"No Orange Line Service", nil}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, @sign)
+    end
+
     test "reads alerts" do
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :shuttles_closed_station end)
       expect_messages({"No Southbound svc", "Use shuttle bus"})

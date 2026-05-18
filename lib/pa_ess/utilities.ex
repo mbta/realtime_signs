@@ -596,7 +596,7 @@ defmodule PaEss.Utilities do
   end
 
   @spec replace_abbreviations(String.t()) :: String.t()
-  def replace_abbreviations(text) when is_binary(text) do
+  defp replace_abbreviations(text) when is_binary(text) do
     Enum.reduce(
       @abbreviation_replacements,
       text,
@@ -604,6 +604,21 @@ defmodule PaEss.Utilities do
         String.replace(text, abbr, replacement)
       end
     )
+  end
+
+  @invalid_custom_character ~r/[^a-zA-Z0-9,\/!@': ]/
+  @spec validate_custom_string(String.t(), :top | :bottom) :: String.t()
+  def validate_custom_string(string, line) do
+    string
+    |> String.replace(@invalid_custom_character, "")
+    |> String.slice(0, if(line == :top, do: 18, else: 24))
+  end
+
+  @spec custom_tts_text(String.t(), String.t()) :: String.t()
+  def custom_tts_text(top, bottom) do
+    "#{validate_custom_string(top, :top)} #{validate_custom_string(bottom, :bottom)}"
+    |> String.trim()
+    |> replace_abbreviations()
   end
 
   @headsign_abbreviation_mappings [

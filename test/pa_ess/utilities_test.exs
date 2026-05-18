@@ -46,24 +46,6 @@ defmodule Content.Audio.UtilitiesTest do
     assert destination_to_ad_hoc_string(:southbound) == "Southbound"
   end
 
-  describe "replace_abbreviations/1" do
-    test "replaces multiple times, including binary start and end" do
-      assert replace_abbreviations("RL and RL and OL") == "Red Line and Red Line and Orange Line"
-    end
-
-    test "does not replace when touching other letters" do
-      assert replace_abbreviations("BLAM!") == "BLAM!"
-    end
-
-    test "replaces when next to punctuation" do
-      assert replace_abbreviations("OL, OK") == "Orange Line, OK"
-    end
-
-    test "case insensitive replacement of 'SVC' with 'Service'" do
-      assert replace_abbreviations("SvC, OK") == "Service, OK"
-    end
-  end
-
   test "paginate_text" do
     assert [{"Attention passengers:", "the next Braintree train", 3}, {"is now arriving", "", 3}] =
              paginate_text("Attention passengers: the next Braintree train is now arriving", 24)
