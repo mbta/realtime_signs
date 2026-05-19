@@ -229,16 +229,12 @@ defmodule Signs.Utilities.Audio do
 
   @spec log_send_pa_message(PaMessages.PaMessage.t(), Signs.Realtime.t() | Signs.Bus.t()) :: :ok
   defp log_send_pa_message(pa_message, sign) do
-    Logger.info(
-      "pa_message: action=send id=#{pa_message.id} destination=#{sign.id} visual_text=#{pa_message.visual_text}"
-    )
+    Logger.info("pa_message: action=send id=#{pa_message.id} destination=#{sign.id}")
   end
 
   @spec log_skipped_pa_message(PaMessages.PaMessage.t(), Signs.Realtime.t() | Signs.Bus.t()) ::
           :ok
   defp log_skipped_pa_message(pa_message, sign) do
-    Logger.warning(
-      "pa_message: action=skipped id=#{pa_message.id} destination=#{sign.id} visual_text=#{pa_message.visual_text}"
-    )
+    Logger.warning("pa_message: action=skipped id=#{pa_message.id} destination=#{sign.id}")
   end
 end
