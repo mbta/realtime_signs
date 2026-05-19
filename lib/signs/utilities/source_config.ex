@@ -1,6 +1,6 @@
 defmodule Signs.Utilities.SourceConfig do
   @moduledoc """
-  Configuration for a sign's data sourcess, via JSON. Configuration of a sign looks like:
+  Configuration for a sign's data sources, via JSON. Configuration of a sign looks like:
 
   ## Sign (zone) config
 
@@ -45,7 +45,7 @@ defmodule Signs.Utilities.SourceConfig do
   object as defined below. For mezzanine signs, this will be a list of two of these objects,
   which will cause each line to display separately using the corresponding config.
 
-  * headway_group: This determines which headway group to look up when getting headyway time
+  * headway_group: This determines which headway group to look up when getting headway time
     ranges, and must match the values set by signs-ui. Most mezzanine signs show both directions
     of the same headway group, and so will have the same value for both configs. A notable
     exception is Ashmont, which handles both the Ashmont and Mattapan headway groups.

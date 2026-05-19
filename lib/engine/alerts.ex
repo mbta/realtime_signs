@@ -19,7 +19,7 @@ defmodule Engine.Alerts do
   @stops_table :alerts_by_stop
   @routes_table :alerts_by_route
 
-  # Platfrom stop IDs that don't receive Alerts
+  # Platform stop IDs that don't receive Alerts
   @platform_stop_ids MapSet.new([
                        "Alewife-01",
                        "Alewife-02",

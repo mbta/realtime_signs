@@ -199,6 +199,20 @@ defmodule Signs.Utilities.Audio do
     )
   end
 
+  @spec handle_pa_message_play(PaMessages.PaMessage.t(), Signs.Realtime.t(), boolean()) ::
+          {Signs.Realtime.t(), boolean()}
+  def handle_pa_message_play(pa_message, %Signs.Realtime{} = sign, true)
+      when pa_message.priority >= 2 do
+    log_skipped_pa_message(pa_message, sign)
+    {sign, false}
+  end
+
+  @spec handle_pa_message_play(PaMessages.PaMessage.t(), Signs.Realtime.t(), boolean()) ::
+          {Signs.Realtime.t(), boolean()}
+  def handle_pa_message_play(pa_message, sign, _overnight_mode) do
+    handle_pa_message_play(pa_message, sign)
+  end
+
   @spec handle_pa_message_play(PaMessages.PaMessage.t(), Signs.Realtime.t() | Signs.Bus.t()) ::
           {Signs.Realtime.t() | Signs.Bus.t(), boolean()}
   def handle_pa_message_play(pa_message, sign) do
@@ -206,11 +220,22 @@ defmodule Signs.Utilities.Audio do
     now = DateTime.utc_now()
 
     if !last_sent || DateTime.diff(now, last_sent, :millisecond) >= pa_message.interval_in_ms do
-      Logger.info("pa_message: action=send id=#{pa_message.id} destination=#{sign.id}")
+      log_send_pa_message(pa_message, sign)
       {update_in(sign.pa_message_plays, &Map.put(&1, pa_message.id, now)), true}
     else
-      Logger.warning("pa_message: action=skipped id=#{pa_message.id} destination=#{sign.id}")
+      log_skipped_pa_message(pa_message, sign)
       {sign, false}
     end
+  end
+
+  @spec log_send_pa_message(PaMessages.PaMessage.t(), Signs.Realtime.t() | Signs.Bus.t()) :: :ok
+  defp log_send_pa_message(pa_message, sign) do
+    Logger.info("pa_message: action=send id=#{pa_message.id} destination=#{sign.id}")
+  end
+
+  @spec log_skipped_pa_message(PaMessages.PaMessage.t(), Signs.Realtime.t() | Signs.Bus.t()) ::
+          :ok
+  defp log_skipped_pa_message(pa_message, sign) do
+    Logger.warning("pa_message: action=skipped id=#{pa_message.id} destination=#{sign.id}")
   end
 end

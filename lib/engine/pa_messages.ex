@@ -48,6 +48,8 @@ defmodule Engine.PaMessages do
     {:noreply, state}
   end
 
+  @spec select_pa_messages([PaMessages.PaMessage.t()], state()) ::
+          {[PaMessages.PaMessage.t()], state()}
   defp select_pa_messages(pa_messages, state) do
     now = DateTime.utc_now()
 
