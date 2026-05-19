@@ -10,7 +10,8 @@ defmodule AudioTest do
         id: 1,
         visual_text: "A PA Message",
         audio_text: "A PA Message",
-        interval_in_ms: 120_000
+        interval_in_ms: 120_000,
+        priority: 2
       }
 
       realtime_sign = %Signs.Realtime{
@@ -125,11 +126,21 @@ defmodule AudioTest do
       assert {_, false} = Signs.Utilities.Audio.handle_pa_message_play(pa_message, bus_sign)
     end
 
-    test "returns false for realtime sign in overnight mode", %{
+    test "returns false for realtime sign in overnight mode for non-emergency messages", %{
       pa_message: pa_message,
       realtime_sign: realtime_sign
     } do
       assert {_, false} =
+               Signs.Utilities.Audio.handle_pa_message_play(pa_message, realtime_sign, true)
+    end
+
+    test "returns true for realtime sign in overnight mode for emergency messages", %{
+      pa_message: pa_message,
+      realtime_sign: realtime_sign
+    } do
+      pa_message = %{pa_message | priority: 1}
+
+      assert {_, true} =
                Signs.Utilities.Audio.handle_pa_message_play(pa_message, realtime_sign, true)
     end
   end

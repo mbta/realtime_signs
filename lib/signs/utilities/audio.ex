@@ -201,14 +201,15 @@ defmodule Signs.Utilities.Audio do
 
   @spec handle_pa_message_play(PaMessages.PaMessage.t(), Signs.Realtime.t(), boolean()) ::
           {Signs.Realtime.t(), boolean()}
-  def handle_pa_message_play(pa_message, %Signs.Realtime{} = sign, true) do
+  def handle_pa_message_play(pa_message, %Signs.Realtime{} = sign, true)
+      when pa_message.priority >= 2 do
     log_skipped_pa_message(pa_message, sign)
     {sign, false}
   end
 
   @spec handle_pa_message_play(PaMessages.PaMessage.t(), Signs.Realtime.t(), boolean()) ::
           {Signs.Realtime.t(), boolean()}
-  def handle_pa_message_play(pa_message, sign, false) do
+  def handle_pa_message_play(pa_message, sign, _overnight_mode) do
     handle_pa_message_play(pa_message, sign)
   end
 
