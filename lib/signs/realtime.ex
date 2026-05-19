@@ -196,7 +196,6 @@ defmodule Signs.Realtime do
   end
 
   def handle_info(:run_loop, sign) do
-    # TODO(now): Call out in review there may be better abstraction/split here
     sign_context =
       %Signs.Utilities.SignContext{
         predictions: predictions,
