@@ -126,7 +126,6 @@ defmodule Signs.Realtime do
     {:reply, {sign, should_play?}, sign}
   end
 
-  # TODO(now): Call out in review I will move this, it makes the diff easier in GH
   @spec derive_sign_context(t()) :: Signs.Utilities.SignContext.t()
   defp derive_sign_context(sign) do
     sign_config = RealtimeSigns.config_engine().sign_config(sign.id, sign.default_mode)
