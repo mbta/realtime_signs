@@ -26,6 +26,7 @@ defmodule PaEss.Updater do
 
     visual = zip_pages(top, bottom) |> format_pages()
     tag = create_tag()
+    correlation_id = create_correlation_id()
     scu_migrated? = RealtimeSigns.config_engine().scu_migrated?(scu_id)
 
     log_meta = [
@@ -33,6 +34,7 @@ defmodule PaEss.Updater do
       current_config: log_config,
       visual: Jason.encode!(visual),
       tag: inspect(tag),
+      correlation_id: inspect(correlation_id),
       legacy: !scu_migrated?
     ]
 
@@ -44,7 +46,8 @@ defmodule PaEss.Updater do
            zones: ["#{pa_ess_loc}-#{text_zone}"],
            visual_data: visual,
            expiration: 180,
-           tag: tag
+           tag: tag,
+           correlation_id: correlation_id
          }, log_meta}
       )
     else
@@ -68,6 +71,7 @@ defmodule PaEss.Updater do
 
     log_data = fn {audio, visual}, sign, legacy? ->
       tag = create_tag()
+      correlation_id = create_correlation_id()
 
       {[
          audio:
@@ -82,9 +86,10 @@ defmodule PaEss.Updater do
            |> inspect(),
          sign_id: sign.id,
          tag: inspect(tag),
+         correlation_id: inspect(correlation_id),
          legacy: legacy?,
          visual: paginate(visual, sign) |> format_pages() |> Jason.encode!()
-       ], tag}
+       ], tag, correlation_id}
     end
 
     if migrated_signs != [] do
@@ -115,7 +120,7 @@ defmodule PaEss.Updater do
 
       Enum.each(migrated_signs, fn sign ->
         Enum.each(tts_items, fn {{audio, visual} = tts_audio, log_meta} ->
-          {logs, tag} = log_data.(tts_audio, sign, false)
+          {logs, tag, correlation_id} = log_data.(tts_audio, sign, false)
 
           PaEss.ScuQueue.enqueue_message(
             sign.scu_id,
@@ -126,7 +131,8 @@ defmodule PaEss.Updater do
                audio_data: Enum.map(audio, &format_audio/1),
                expiration: 30,
                priority: priority,
-               tag: tag
+               tag: tag,
+               correlation_id: correlation_id
              }, Keyword.merge(logs, log_meta)}
           )
         end)
@@ -137,7 +143,7 @@ defmodule PaEss.Updater do
       log_list =
         Enum.zip(tts_audios, log_metas)
         |> Enum.map(fn {tts_audio, log_meta} ->
-          {logs, _tag} = log_data.(tts_audio, sign, true)
+          {logs, _tag, _correlation_id} = log_data.(tts_audio, sign, true)
           Keyword.merge(logs, log_meta)
         end)
 
@@ -199,6 +205,11 @@ defmodule PaEss.Updater do
   end
 
   defp create_tag() do
+    :rand.bytes(16) |> Base.encode64(padding: false)
+  end
+
+  @spec create_correlation_id() :: String.t()
+  defp create_correlation_id() do
     :rand.bytes(16) |> Base.encode64(padding: false)
   end
 
