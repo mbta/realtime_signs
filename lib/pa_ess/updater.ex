@@ -208,6 +208,7 @@ defmodule PaEss.Updater do
     :rand.bytes(16) |> Base.encode64(padding: false)
   end
 
+  @spec create_correlation_id() :: String.t()
   defp create_correlation_id() do
     :rand.bytes(16) |> Base.encode64(padding: false)
   end
