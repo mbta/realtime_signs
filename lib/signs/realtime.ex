@@ -9,6 +9,7 @@ defmodule Signs.Realtime do
 
   alias Signs.Utilities
   alias Utilities.SourceConfig
+  alias Utilities.SignContext
 
   @announced_history_length 5
 
@@ -117,7 +118,6 @@ defmodule Signs.Realtime do
   def handle_call({:play_pa_message, pa_message}, _from, sign) do
     sign_in_overnight_period? =
       derive_sign_context(sign)
-      |> Signs.Utilities.Messages.flatten_sign_context(sign)
       |> Signs.Utilities.Messages.in_overnight_period?()
 
     {sign, should_play?} =
@@ -126,100 +126,64 @@ defmodule Signs.Realtime do
     {:reply, {sign, should_play?}, sign}
   end
 
-  @spec derive_sign_context(t()) :: Signs.Utilities.SignContext.t()
+  @spec derive_sign_context(t()) :: SignContext.t()
   defp derive_sign_context(sign) do
     sign_config = RealtimeSigns.config_engine().sign_config(sign.id, sign.default_mode)
     current_time = sign.current_time_fn.()
-
-    alert_status =
-      map_source_config(sign.source_config, fn config ->
-        stop_ids = SourceConfig.sign_stop_ids(config)
-        RealtimeSigns.alert_engine().min_stop_status(stop_ids)
-      end)
-
-    first_scheduled_departures =
-      map_source_config(sign.source_config, fn config ->
-        RealtimeSigns.headway_engine().get_first_scheduled_departure(
-          SourceConfig.sign_stop_ids(config)
-        )
-      end)
-
-    last_scheduled_departures =
-      map_source_config(sign.source_config, fn config ->
-        RealtimeSigns.headway_engine().get_last_scheduled_departure(
-          SourceConfig.sign_stop_ids(config)
-        )
-      end)
 
     prev_predictions_lookup =
       for prediction <- sign.prev_predictions, into: %{} do
         {prediction_key(prediction), prediction}
       end
 
-    recent_departures =
-      map_source_config(sign.source_config, fn config ->
-        SourceConfig.sign_stop_ids(config)
-        |> Stream.flat_map(&RealtimeSigns.last_trip_engine().get_recent_departures(&1))
-        |> Enum.max_by(fn {_, dt} -> dt end, DateTime, fn -> {nil, nil} end)
-        |> elem(1)
+    config_contexts =
+      if is_tuple(sign.source_config) do
+        Tuple.to_list(sign.source_config)
+      else
+        [sign.source_config]
+      end
+      |> Enum.map(fn config ->
+        stop_ids = SourceConfig.sign_stop_ids(config)
+
+        %SignContext.ConfigContext{
+          config: config,
+          predictions: fetch_predictions(config, prev_predictions_lookup),
+          alert_status: RealtimeSigns.alert_engine().min_stop_status(stop_ids),
+          headways:
+            Signs.Utilities.Headways.fetch_headways(config.headway_group, stop_ids, current_time),
+          first_scheduled_departure:
+            RealtimeSigns.headway_engine().get_first_scheduled_departure(stop_ids),
+          last_scheduled_departure:
+            RealtimeSigns.headway_engine().get_last_scheduled_departure(stop_ids),
+          most_recent_departure:
+            Stream.flat_map(stop_ids, &RealtimeSigns.last_trip_engine().get_recent_departures(&1))
+            |> Stream.map(&elem(&1, 1))
+            |> Enum.max(DateTime, fn -> nil end),
+          service_ended?: has_service_ended_for_source?(config, current_time)
+        }
       end)
 
-    {predictions, all_predictions} =
-      case sign.source_config do
-        {top, bottom} ->
-          top_predictions = fetch_predictions(top, prev_predictions_lookup)
-          bottom_predictions = fetch_predictions(bottom, prev_predictions_lookup)
-          {{top_predictions, bottom_predictions}, top_predictions ++ bottom_predictions}
-
-        config ->
-          predictions = fetch_predictions(config, prev_predictions_lookup)
-          {predictions, predictions}
-      end
-
-    service_end_statuses_per_source =
-      map_source_config(
-        sign.source_config,
-        &has_service_ended_for_source?(&1, current_time)
-      )
-
-    %Signs.Utilities.SignContext{
-      predictions: predictions,
-      all_predictions: all_predictions,
+    %SignContext{
       sign_config: sign_config,
       current_time: current_time,
-      alert_status: alert_status,
-      first_scheduled_departures: first_scheduled_departures,
-      last_scheduled_departures: last_scheduled_departures,
-      recent_departures: recent_departures,
-      service_end_statuses_per_source: service_end_statuses_per_source
+      config_contexts: config_contexts
     }
   end
 
   def handle_info(:run_loop, sign) do
-    sign_context =
-      %Signs.Utilities.SignContext{
-        predictions: predictions,
-        all_predictions: all_predictions,
-        current_time: current_time
-      } = derive_sign_context(sign)
-
-    messages =
-      Utilities.Messages.get_messages(
-        sign,
-        sign_context
-      )
-
+    sign_context = derive_sign_context(sign)
+    messages = Utilities.Messages.get_messages(sign, sign_context)
     {new_top, new_bottom} = Utilities.Messages.render_messages(messages)
 
     sign =
       sign
-      |> announce_passthrough_trains(predictions)
-      |> Utilities.Updater.update_sign(new_top, new_bottom, current_time)
+      |> announce_passthrough_trains(sign_context)
+      |> Utilities.Updater.update_sign(new_top, new_bottom, sign_context.current_time)
       |> Utilities.Reader.do_announcements(messages)
       |> Utilities.Reader.read_sign(messages)
       |> decrement_ticks()
       |> log_sign_messages(messages)
-      |> Map.put(:prev_predictions, all_predictions)
+      |> Map.put(:prev_predictions, Enum.flat_map(sign_context.config_contexts, & &1.predictions))
 
     Process.send_after(self(), :run_loop, 1000)
     {:noreply, sign}
@@ -292,9 +256,9 @@ defmodule Signs.Realtime do
     end
   end
 
-  @spec announce_passthrough_trains(Signs.Realtime.t(), predictions()) :: Signs.Realtime.t()
-  defp announce_passthrough_trains(sign, predictions) do
-    Utilities.Predictions.get_passthrough_train_audio(predictions, sign)
+  @spec announce_passthrough_trains(Signs.Realtime.t(), SignContext.t()) :: Signs.Realtime.t()
+  defp announce_passthrough_trains(sign, sign_context) do
+    Utilities.Predictions.get_passthrough_train_audio(sign_context)
     |> Enum.reduce(sign, fn audio, sign ->
       if audio.trip_id not in sign.announced_passthroughs do
         Signs.Utilities.Audio.send_audio([sign], [audio])
@@ -340,7 +304,4 @@ defmodule Signs.Realtime do
   def decrement_ticks(sign) do
     %{sign | tick_read: sign.tick_read - 1}
   end
-
-  defp map_source_config({top, bottom}, fun), do: {fun.(top), fun.(bottom)}
-  defp map_source_config(config, fun), do: fun.(config)
 end

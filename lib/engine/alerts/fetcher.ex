@@ -7,7 +7,8 @@ defmodule Engine.Alerts.Fetcher do
   @type stop_status ::
           :shuttles_closed_station
           | :shuttles_transfer_station
-          | :suspension
+          | :suspension_closed_station
+          | :suspension_transfer_station
           | :station_closure
           | :none
 

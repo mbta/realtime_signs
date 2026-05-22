@@ -8,36 +8,12 @@ defmodule Signs.Utilities.Messages do
   @early_am_buffer -40
   @overnight_buffer 30
 
-  @type flattened_sign_context :: {
-          Signs.Utilities.SourceConfig.config(),
-          list(Signs.Realtime.predictions()),
-          Signs.Realtime.t(),
-          Engine.Alerts.Fetcher.stop_status(),
-          DateTime.t(),
-          DateTime.t(),
-          DateTime.t(),
-          boolean(),
-          boolean()
-        }
+  alias Signs.Utilities.SignContext
+  alias SignContext.ConfigContext
 
-  @spec get_messages(
-          Signs.Realtime.t(),
-          Signs.Utilities.SignContext.t()
-        ) :: [Message.t()]
-  def get_messages(
-        sign,
-        sign_context = %Signs.Utilities.SignContext{
-          current_time: current_time,
-          sign_config: sign_config
-        }
-      ) do
-    config =
-      flatten_sign_context(
-        sign_context,
-        sign
-      )
-
-    sign_in_overnight_period = in_overnight_period?(config)
+  @spec get_messages(Signs.Realtime.t(), SignContext.t()) :: [Message.t()]
+  def get_messages(sign, %SignContext{sign_config: sign_config} = sign_context) do
+    sign_in_overnight_period = in_overnight_period?(sign_context)
 
     cond do
       match?({:static_text, {_, _}}, sign_config) ->
@@ -52,81 +28,21 @@ defmodule Signs.Utilities.Messages do
         [%Message.Empty{}]
 
       true ->
-        Enum.map(config, fn {config, predictions, alert_status, first_scheduled_departures,
-                             _last_scheduled_departures, _most_recent_departure, service_status,
-                             in_overnight_period} ->
-          filtered_predictions =
-            filter_predictions(predictions, config, current_time, first_scheduled_departures)
-
-          alert_status = filter_alert_status(alert_status, sign_config)
-
-          prediction_message(filtered_predictions, config, sign, predictions) ||
-            service_ended_message(service_status, config, sign_in_overnight_period) ||
-            alert_message(alert_status, sign, config, in_overnight_period) ||
-            Signs.Utilities.Headways.headway_message(config, current_time) ||
-            early_am_message(current_time, first_scheduled_departures, config) ||
+        Enum.map(sign_context.config_contexts, fn config_context ->
+          prediction_message(config_context, sign_context, sign) ||
+            service_ended_message(config_context, sign_context) ||
+            alert_message(config_context, sign_context, sign) ||
+            headway_message(config_context) ||
+            early_am_message(config_context, sign_context) ||
             %Message.Empty{}
         end)
     end
     |> transform_messages()
   end
 
-  @spec flatten_sign_context(
-          Signs.Utilities.SignContext.t(),
-          Signs.Realtime.t()
-        ) ::
-          list(flattened_sign_context())
-  def flatten_sign_context(
-        %Signs.Utilities.SignContext{
-          predictions: predictions,
-          current_time: current_time,
-          alert_status: alert_status,
-          first_scheduled_departures: first_scheduled_departures,
-          last_scheduled_departures: last_scheduled_departures,
-          recent_departures: recent_departures,
-          service_end_statuses_per_source: service_end_statuses_per_source
-        },
-        sign
-      ) do
-    if match?(%{source_config: {_, _}}, sign) do
-      Enum.zip([
-        Tuple.to_list(sign.source_config),
-        Tuple.to_list(predictions),
-        Tuple.to_list(alert_status),
-        Tuple.to_list(first_scheduled_departures),
-        Tuple.to_list(last_scheduled_departures),
-        Tuple.to_list(recent_departures),
-        Tuple.to_list(service_end_statuses_per_source)
-      ])
-    else
-      [
-        {sign.source_config, predictions, alert_status, first_scheduled_departures,
-         last_scheduled_departures, recent_departures, service_end_statuses_per_source}
-      ]
-    end
-    |> Enum.map(fn {_config, _predictions, _alert_status, first_scheduled_departures,
-                    last_scheduled_departures, most_recent_departure,
-                    service_status} = sign_config ->
-      Tuple.append(
-        sign_config,
-        overnight_period?(
-          current_time,
-          first_scheduled_departures,
-          last_scheduled_departures,
-          most_recent_departure,
-          service_status
-        )
-      )
-    end)
-  end
-
-  @spec in_overnight_period?(list(flattened_sign_context())) :: boolean()
-  def in_overnight_period?(config) do
-    Enum.all?(config, fn {_config, _predictions, _alert_status, _first_scheduled_departures,
-                          _last_scheduled_departures, _most_recent_departure, _service_status,
-                          in_overnight_period} ->
-      in_overnight_period
-    end)
+  @spec in_overnight_period?(SignContext.t()) :: boolean()
+  def in_overnight_period?(%SignContext{} = sign_context) do
+    Enum.all?(sign_context.config_contexts, &overnight_period?(&1, sign_context))
   end
 
   @spec transform_messages([Message.t()]) :: [Message.t()]
@@ -201,13 +117,12 @@ defmodule Signs.Utilities.Messages do
   defp filter_alert_status(:suspension_transfer_station, :temporary_terminal), do: :none
   defp filter_alert_status(alert_status, _), do: alert_status
 
-  @spec filter_predictions(
-          [Predictions.Prediction.t()],
-          Signs.Utilities.SourceConfig.config(),
-          DateTime.t(),
-          DateTime.t()
-        ) :: [Predictions.Prediction.t()]
-  defp filter_predictions(predictions, config, current_time, scheduled) do
+  @spec filter_predictions(ConfigContext.t(), SignContext.t()) ::
+          [Predictions.Prediction.t()]
+  defp filter_predictions(
+         %ConfigContext{predictions: predictions, config: config} = config_context,
+         %SignContext{} = sign_context
+       ) do
     predictions
     |> Enum.filter(fn p -> p.seconds_until_departure && p.schedule_relationship != :skipped end)
     |> Enum.sort_by(fn prediction ->
@@ -217,16 +132,20 @@ defmodule Signs.Utilities.Messages do
          true -> 1
        end, prediction.seconds_until_departure, prediction.seconds_until_arrival}
     end)
-    |> filter_early_am_predictions(current_time, scheduled)
+    |> filter_early_am_predictions(config_context, sign_context)
     |> get_unique_destination_predictions(Signs.Utilities.SourceConfig.single_route(config))
   end
 
-  defp filter_early_am_predictions(predictions, current_time, scheduled) do
+  defp filter_early_am_predictions(
+         predictions,
+         %ConfigContext{first_scheduled_departure: first_scheduled_departure},
+         %SignContext{current_time: current_time}
+       ) do
     cond do
-      !in_early_am?(current_time, scheduled) ->
+      !in_early_am?(current_time, first_scheduled_departure) ->
         predictions
 
-      before_early_am_threshold?(current_time, scheduled) ->
+      before_early_am_threshold?(current_time, first_scheduled_departure) ->
         # More than 40 minutes before the first scheduled trip, filter out all predictions.
         []
 
@@ -283,24 +202,26 @@ defmodule Signs.Utilities.Messages do
     Timex.before?(current_time, Timex.shift(scheduled, minutes: @early_am_buffer))
   end
 
-  @spec prediction_message(
-          [Predictions.Prediction.t()],
-          Signs.Utilities.SourceConfig.config(),
-          Signs.Realtime.t(),
-          [Predictions.Prediction.t()]
-        ) :: Message.t() | nil
-  defp prediction_message(predictions, %{terminal?: terminal?}, sign, all_predictions) do
-    if predictions != [] do
+  @spec prediction_message(ConfigContext.t(), SignContext.t(), Signs.Realtime.t()) ::
+          Message.t() | nil
+  defp prediction_message(
+         %ConfigContext{config: config, predictions: predictions} = config_context,
+         %SignContext{} = sign_context,
+         sign
+       ) do
+    filtered_predictions = filter_predictions(config_context, sign_context)
+
+    if filtered_predictions != [] do
       %Message.Predictions{
-        predictions: predictions,
-        terminal?: terminal?,
+        predictions: filtered_predictions,
+        terminal?: config.terminal?,
         special_sign:
           case sign do
             %{pa_ess_loc: "BBOW", text_zone: "e"} ->
               :bowdoin_eastbound
 
             %{pa_ess_loc: "RJFK", text_zone: "m"} ->
-              {:jfk_mezzanine, all_same_stop_id?(all_predictions)}
+              {:jfk_mezzanine, all_same_stop_id?(predictions)}
 
             _ ->
               nil
@@ -314,35 +235,37 @@ defmodule Signs.Utilities.Messages do
     length(Enum.uniq_by(all_predictions, & &1.stop_id)) == 1
   end
 
-  defp early_am_message(current_time, scheduled_time, config) do
-    if in_early_am?(current_time, scheduled_time) do
-      %Message.FirstTrain{destination: config.headway_destination, scheduled: scheduled_time}
+  defp early_am_message(
+         %ConfigContext{config: config, first_scheduled_departure: first_scheduled_departure},
+         %SignContext{current_time: current_time}
+       ) do
+    if in_early_am?(current_time, first_scheduled_departure) do
+      %Message.FirstTrain{
+        destination: config.headway_destination,
+        scheduled: first_scheduled_departure
+      }
     end
   end
 
-  @spec overnight_period?(
-          DateTime.t(),
-          DateTime.t(),
-          DateTime.t(),
-          DateTime.t(),
-          boolean()
-        ) :: boolean()
+  @spec overnight_period?(ConfigContext.t(), SignContext.t()) :: boolean()
   defp overnight_period?(
-         _current_time,
-         first_scheduled_departure,
-         last_scheduled_departure,
-         _most_recent_departure,
-         false
+         %ConfigContext{
+           first_scheduled_departure: first_scheduled_departure,
+           last_scheduled_departure: last_scheduled_departure,
+           service_ended?: false
+         },
+         _
        )
        when first_scheduled_departure == nil or last_scheduled_departure == nil,
        do: false
 
   defp overnight_period?(
-         current_time,
-         first_scheduled_departure,
-         last_scheduled_departure,
-         _most_recent_departure,
-         false
+         %ConfigContext{
+           first_scheduled_departure: first_scheduled_departure,
+           last_scheduled_departure: last_scheduled_departure,
+           service_ended?: false
+         },
+         %SignContext{current_time: current_time}
        ),
        do:
          calculate_overnight_period(
@@ -352,11 +275,12 @@ defmodule Signs.Utilities.Messages do
          )
 
   defp overnight_period?(
-         current_time,
-         first_scheduled_departure,
-         _last_scheduled_departure,
-         most_recent_departure,
-         true
+         %ConfigContext{
+           first_scheduled_departure: first_scheduled_departure,
+           most_recent_departure: most_recent_departure,
+           service_ended?: true
+         },
+         %SignContext{current_time: current_time}
        ) do
     calculate_overnight_period(
       most_recent_departure,
@@ -383,12 +307,20 @@ defmodule Signs.Utilities.Messages do
       before_early_am_threshold?(current_time, first_scheduled_departure)
   end
 
-  defp alert_message(alert_status, sign, config, false = _config_in_overnight_period) do
+  defp alert_message(
+         %ConfigContext{config: config, alert_status: alert_status} = config_context,
+         %SignContext{sign_config: sign_config} = sign_context,
+         sign
+       ) do
+    alert_status = filter_alert_status(alert_status, sign_config)
     route = Signs.Utilities.SourceConfig.single_route(config)
     transfer_alert? = alert_status in [:suspension_transfer_station, :shuttles_transfer_station]
     union_square? = sign.pa_ess_loc == "GUNS"
 
     cond do
+      overnight_period?(config_context, sign_context) ->
+        nil
+
       alert_status in [:shuttles_closed_station, :suspension_closed_station, :station_closure] or
           (union_square? and transfer_alert?) ->
         %Message.Alert{
@@ -407,13 +339,24 @@ defmodule Signs.Utilities.Messages do
     end
   end
 
-  defp alert_message(_, _, _, true = _config_in_overnight_period), do: nil
-
-  defp service_ended_message(true = _service_ended?, config, false = _sign_in_overnight_period) do
-    route = Signs.Utilities.SourceConfig.single_route(config)
-
-    %Message.ServiceEnded{destination: config.headway_destination, route: route}
+  defp headway_message(%ConfigContext{config: config, headways: headways}) do
+    if headways do
+      %Message.Headway{
+        destination: config.headway_destination,
+        range: {headways.range_low, headways.range_high},
+        route: Signs.Utilities.SourceConfig.single_route(config)
+      }
+    end
   end
 
-  defp service_ended_message(_, _, _), do: nil
+  defp service_ended_message(
+         %ConfigContext{config: config} = config_context,
+         %SignContext{} = sign_context
+       ) do
+    route = Signs.Utilities.SourceConfig.single_route(config)
+
+    if config_context.service_ended? and not in_overnight_period?(sign_context) do
+      %Message.ServiceEnded{destination: config.headway_destination, route: route}
+    end
+  end
 end

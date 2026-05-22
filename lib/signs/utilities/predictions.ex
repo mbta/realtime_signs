@@ -5,18 +5,12 @@ defmodule Signs.Utilities.Predictions do
   for the top and bottom lines.
   """
 
-  @spec get_passthrough_train_audio(Signs.Realtime.predictions(), Signs.Realtime.t()) ::
-          [Content.Audio.t()]
-  def get_passthrough_train_audio(predictions, sign) do
-    case {sign.source_config, predictions} do
-      {{top_config, bottom_config}, {top_predictions, bottom_predictions}} ->
-        [{top_config, top_predictions}, {bottom_config, bottom_predictions}]
+  alias Signs.Utilities.SignContext
 
-      {config, predictions} ->
-        [{config, predictions}]
-    end
-    |> Enum.flat_map(fn {config, predictions} ->
-      Enum.filter(predictions, fn prediction ->
+  @spec get_passthrough_train_audio(SignContext.t()) :: [Content.Audio.t()]
+  def get_passthrough_train_audio(%SignContext{} = sign_context) do
+    Enum.flat_map(sign_context.config_contexts, fn config_context ->
+      Enum.filter(config_context.predictions, fn prediction ->
         prediction.schedule_relationship == :skipped &&
           prediction.seconds_until_arrival &&
           prediction.seconds_until_arrival <=
@@ -26,7 +20,7 @@ defmodule Signs.Utilities.Predictions do
       |> Enum.flat_map(fn prediction ->
         [
           %Content.Audio.Passthrough{
-            destination: config.headway_destination,
+            destination: config_context.config.headway_destination,
             trip_id: prediction.trip_id,
             route_id: prediction.route_id
           }
