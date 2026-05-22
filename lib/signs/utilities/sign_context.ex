@@ -1,29 +1,37 @@
 defmodule Signs.Utilities.SignContext do
   @moduledoc false
 
-  @enforce_keys [
-    :predictions,
-    :all_predictions,
-    :sign_config,
-    :current_time,
-    :alert_status,
-    :first_scheduled_departures,
-    :last_scheduled_departures,
-    :recent_departures,
-    :service_end_statuses_per_source
-  ]
+  defmodule ConfigContext do
+    @enforce_keys [
+      :config,
+      :predictions,
+      :alert_status,
+      :headways,
+      :first_scheduled_departure,
+      :last_scheduled_departure,
+      :most_recent_departure,
+      :service_ended?
+    ]
+    defstruct @enforce_keys
+
+    @type t :: %__MODULE__{
+            config: Signs.Utilities.SourceConfig.config(),
+            predictions: [Predictions.Prediction.t()],
+            alert_status: Engine.Alerts.Fetcher.stop_status(),
+            headways: Engine.Config.Headway.t() | nil,
+            first_scheduled_departure: DateTime.t() | nil,
+            last_scheduled_departure: DateTime.t() | nil,
+            most_recent_departure: DateTime.t() | nil,
+            service_ended?: boolean()
+          }
+  end
+
+  @enforce_keys [:sign_config, :current_time, :config_contexts]
   defstruct @enforce_keys
 
-  @type single_or_tuple(t) :: t | {t, t}
   @type t :: %__MODULE__{
-          predictions: Signs.Realtime.predictions(),
-          all_predictions: list(Predictions.Prediction.t()),
           sign_config: Engine.Config.sign_config(),
           current_time: DateTime.t(),
-          alert_status: single_or_tuple(Engine.Alerts.Fetcher.stop_status()),
-          first_scheduled_departures: single_or_tuple(nil | DateTime.t()),
-          last_scheduled_departures: single_or_tuple(nil | DateTime.t()),
-          recent_departures: single_or_tuple(nil | DateTime.t()),
-          service_end_statuses_per_source: single_or_tuple(boolean())
+          config_contexts: [ConfigContext.t()]
         }
 end
