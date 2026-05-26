@@ -217,7 +217,7 @@ defmodule Signs.Bus do
         state
       end
     end)
-    |> Signs.Utilities.Audio.play_pa_messages(state, current_time)
+    |> Signs.Utilities.Audio.play_pa_messages(current_time)
     |> then(fn state ->
       if should_read?(current_time, state) do
         send_audio(audios, tts_audios, state)
