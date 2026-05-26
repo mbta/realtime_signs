@@ -1352,6 +1352,52 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, %{@jfk_mezzanine_sign | tick_read: 0})
     end
 
+    test "JFK mezzanine platform announces platform when arrival is imminent" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(destination: :ashmont, arrival: 120)]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [
+          prediction(destination: :alewife, arrival: 650, stop_id: "70086"),
+          prediction(destination: :alewife, arrival: 0, stop_id: "70096")
+        ]
+      end)
+
+      expect_messages(
+        {"Ashmont      2 min", [{"Alewife (B)    ARR", 6}, {"Alewife (Braintree plat)", 6}]}
+      )
+
+      expect_audios(
+        [
+          {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5002", "505"]), :audio}},
+          {:canned,
+           {"115",
+            [
+              "501",
+              "21000",
+              "4000",
+              "21000",
+              "864",
+              "21000",
+              "24055",
+              "21000",
+              "851",
+              "21000",
+              "4021",
+              "21000",
+              "529"
+            ], :audio}}
+        ],
+        [
+          {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
+          {"The next, Alewife, train; is now arriving; on the Braintree platform.", nil}
+        ]
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{@jfk_mezzanine_sign | tick_read: 0})
+    end
+
     test "JFK mezzanine shows platform when all predictions to Alewife use same platform" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [prediction(destination: :ashmont, arrival: 120)]

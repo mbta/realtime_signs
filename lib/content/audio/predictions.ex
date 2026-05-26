@@ -174,10 +174,10 @@ defmodule Content.Audio.Predictions do
         !platform ->
           {nil, false, nil}
 
-        jfk_mezzanine? and minutes > @announce_platform_later_mins ->
+        jfk_mezzanine? and is_integer(minutes) and minutes > @announce_platform_later_mins ->
           {nil, false, :later}
 
-        jfk_mezzanine? and minutes > @announce_platform_soon_mins ->
+        jfk_mezzanine? and is_integer(minutes) and minutes > @announce_platform_soon_mins ->
           {nil, false, :soon}
 
         minutes == 1 or (!jfk_mezzanine? and !jfk_mezzanine_single_platform?) ->
