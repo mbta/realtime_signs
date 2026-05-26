@@ -94,5 +94,6 @@ defmodule RealtimeSigns do
   def bus_prediction_engine, do: Application.fetch_env!(:realtime_signs, :bus_prediction_engine)
   def bus_stop_engine, do: Application.fetch_env!(:realtime_signs, :bus_stop_engine)
   def station_stop_engine, do: Application.fetch_env!(:realtime_signs, :station_stop_engine)
+  def pa_message_engine, do: Application.fetch_env!(:realtime_signs, :pa_message_engine)
   def sign_updater, do: Application.fetch_env!(:realtime_signs, :sign_updater)
 end

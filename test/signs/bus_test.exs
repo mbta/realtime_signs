@@ -21,7 +21,7 @@ defmodule Signs.BusTest do
     current_messages: {nil, nil},
     last_update: nil,
     last_read_time: Timex.shift(Timex.now(), minutes: -10),
-    pa_message_plays: %{}
+    pa_message_schedules: %{}
   }
 
   @headway_config_chelsea %Engine.Config.Headway{
@@ -150,6 +150,7 @@ defmodule Signs.BusTest do
       stub(Engine.Routes.Mock, :route_destination, fn "51", 0 -> "Reservoir Station" end)
       stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config_chelsea end)
       stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
+      stub(Engine.PaMessages.Mock, :for_sign, fn _ -> [] end)
 
       :ok
     end

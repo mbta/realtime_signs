@@ -45,7 +45,7 @@ defmodule Signs.RealtimeTest do
     last_update: @fake_time,
     tick_read: 1,
     read_period_seconds: 100,
-    pa_message_plays: %{},
+    pa_message_schedules: %{},
     last_message_log_time: @fake_time
   }
 
@@ -189,6 +189,7 @@ defmodule Signs.RealtimeTest do
       stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
       stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> false end)
       stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ -> %{} end)
+      stub(Engine.PaMessages.Mock, :for_sign, fn _ -> [] end)
 
       stub(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
         datetime(~T[05:00:00])
@@ -2077,6 +2078,8 @@ defmodule Signs.RealtimeTest do
         datetime(~D[2023-01-02], ~T[02:00:00])
       end)
 
+      stub(Engine.PaMessages.Mock, :for_sign, fn _ -> [] end)
+
       :ok
     end
 
@@ -2118,6 +2121,8 @@ defmodule Signs.RealtimeTest do
       stub(Engine.ScheduledHeadways.Mock, :get_last_scheduled_departure, fn _ ->
         datetime(~T[02:00:00])
       end)
+
+      stub(Engine.PaMessages.Mock, :for_sign, fn _ -> [] end)
 
       :ok
     end
@@ -2289,6 +2294,7 @@ defmodule Signs.RealtimeTest do
       stub(Engine.Alerts.Mock, :min_stop_status, fn _ -> :none end)
       stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
       stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
+      stub(Engine.ScheduledHeadways.Mock, :get_last_scheduled_departure, fn _ -> nil end)
       stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
       stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> false end)
       stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ -> %{} end)
@@ -2301,48 +2307,65 @@ defmodule Signs.RealtimeTest do
     end
 
     test "Plays message if no prior plays" do
-      expect(Engine.ScheduledHeadways.Mock, :get_last_scheduled_departure, fn ["1"] -> nil end)
+      expect(Engine.PaMessages.Mock, :for_sign, fn _ ->
+        [
+          %PaMessages.PaMessage{
+            id: 1,
+            visual_text: "A PA Message",
+            audio_text: "A PA Message",
+            interval_in_ms: 120_000
+          }
+        ]
+      end)
 
-      pa_message = %PaMessages.PaMessage{
-        id: 1,
-        visual_text: "A PA Message",
-        audio_text: "A PA Message"
-      }
+      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}], [
+        {"A PA Message", "A PA Message"}
+      ])
 
-      assert {:reply, {_, true}, _} =
-               Signs.Realtime.handle_call({:play_pa_message, pa_message}, nil, @sign)
+      {:noreply, %{pa_message_schedules: %{1 => new_time}}} =
+        Signs.Realtime.handle_info(:run_loop, @sign)
+
+      assert DateTime.add(@fake_time, 120) |> DateTime.compare(new_time) == :eq
     end
 
     test "Plays message if interval has passed" do
-      expect(Engine.ScheduledHeadways.Mock, :get_last_scheduled_departure, fn ["1"] -> nil end)
+      expect(Engine.PaMessages.Mock, :for_sign, fn _ ->
+        [
+          %PaMessages.PaMessage{
+            id: 1,
+            visual_text: "A PA Message",
+            audio_text: "A PA Message",
+            interval_in_ms: 120_000
+          }
+        ]
+      end)
 
-      pa_message = %PaMessages.PaMessage{
-        id: 1,
-        visual_text: "A PA Message",
-        audio_text: "A PA Message",
-        interval_in_ms: 120_000
-      }
+      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}], [
+        {"A PA Message", "A PA Message"}
+      ])
 
-      sign = %{@sign | pa_message_plays: %{1 => ~U[2024-06-10 12:00:00.000Z]}}
-
-      assert {:reply, {_, true}, _} =
-               Signs.Realtime.handle_call({:play_pa_message, pa_message}, nil, sign)
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | pa_message_schedules: %{1 => DateTime.add(@fake_time, -1)}
+      })
     end
 
     test "Does not play if less than interval has passed" do
-      expect(Engine.ScheduledHeadways.Mock, :get_last_scheduled_departure, fn ["1"] -> nil end)
+      expect(Engine.PaMessages.Mock, :for_sign, fn _ ->
+        [
+          %PaMessages.PaMessage{
+            id: 1,
+            visual_text: "A PA Message",
+            audio_text: "A PA Message",
+            interval_in_ms: 120_000
+          }
+        ]
+      end)
 
-      pa_message = %PaMessages.PaMessage{
-        id: 1,
-        visual_text: "A PA Message",
-        audio_text: "A PA Message",
-        interval_in_ms: 120_000
-      }
-
-      sign = %{@sign | pa_message_plays: %{1 => DateTime.utc_now()}}
-
-      assert {:reply, {_, false}, _} =
-               Signs.Realtime.handle_call({:play_pa_message, pa_message}, nil, sign)
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | pa_message_schedules: %{1 => DateTime.add(@fake_time, 1)}
+      })
     end
 
     test "Does not play if the sign is in overnight mode" do
@@ -2354,17 +2377,28 @@ defmodule Signs.RealtimeTest do
         ~U[2026-05-18 03:30:00Z]
       end)
 
-      pa_message = %PaMessages.PaMessage{
-        id: 1,
-        visual_text: "A PA Message",
-        audio_text: "A PA Message",
-        interval_in_ms: 120_000
-      }
+      expect(Engine.PaMessages.Mock, :for_sign, fn _ ->
+        [
+          %PaMessages.PaMessage{
+            id: 1,
+            visual_text: "A PA Message",
+            audio_text: "A PA Message",
+            interval_in_ms: 120_000,
+            priority: 2
+          }
+        ]
+      end)
 
-      sign = %{@sign | current_time_fn: fn -> datetime(~D[2026-05-18], ~T[03:00:00]) end}
+      now = datetime(~D[2026-05-18], ~T[03:00:00])
 
-      assert {:reply, {_, false}, _} =
-               Signs.Realtime.handle_call({:play_pa_message, pa_message}, nil, sign)
+      {:noreply, %{pa_message_schedules: %{1 => new_time}}} =
+        Signs.Realtime.handle_info(:run_loop, %{
+          @sign
+          | current_time_fn: fn -> now end,
+            last_update: now
+        })
+
+      assert DateTime.add(now, 120) |> DateTime.compare(new_time) == :eq
     end
   end
 
@@ -2386,6 +2420,8 @@ defmodule Signs.RealtimeTest do
       stub(Engine.ScheduledHeadways.Mock, :get_last_scheduled_departure, fn _ ->
         datetime(~D[2023-01-02], ~T[02:00:00])
       end)
+
+      stub(Engine.PaMessages.Mock, :for_sign, fn _ -> [] end)
 
       :ok
     end
