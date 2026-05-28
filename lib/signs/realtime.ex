@@ -162,14 +162,16 @@ defmodule Signs.Realtime do
     sign_context = derive_sign_context(sign)
     messages = Utilities.Messages.get_messages(sign, sign_context)
     {new_top, new_bottom} = Utilities.Messages.render_messages(messages)
-    sign_in_overnight_period? = Signs.Utilities.Messages.in_overnight_period?(sign_context)
 
     sign =
       sign
       |> announce_passthrough_trains(sign_context)
       |> Utilities.Updater.update_sign(new_top, new_bottom, sign_context.current_time)
       |> Utilities.Reader.do_announcements(messages)
-      |> Utilities.Audio.play_pa_messages(sign_context.current_time, sign_in_overnight_period?)
+      |> Utilities.Audio.play_pa_messages(sign_context.current_time,
+        overnight?: Signs.Utilities.Messages.in_overnight_period?(sign_context),
+        upcoming_announcement?: upcoming_announcement?(sign, sign_context)
+      )
       |> Utilities.Reader.read_sign(messages)
       |> decrement_ticks()
       |> log_sign_messages(messages)
@@ -182,6 +184,23 @@ defmodule Signs.Realtime do
   def handle_info(msg, state) do
     Logger.warning("Signs.Realtime unknown_message: #{inspect(msg)}")
     {:noreply, state}
+  end
+
+  defp upcoming_announcement?(sign, sign_context) do
+    {upcoming_announcements, _} =
+      update_in(
+        sign_context,
+        [Access.key!(:config_contexts), Access.all(), Access.key!(:predictions), Access.all()],
+        fn prediction ->
+          prediction
+          |> Map.update!(:seconds_until_arrival, &advance_30_seconds/1)
+          |> Map.update!(:seconds_until_departure, &advance_30_seconds/1)
+        end
+      )
+      |> then(&Utilities.Messages.get_messages(sign, &1))
+      |> then(&Utilities.Audio.get_announcements(sign, &1))
+
+    upcoming_announcements != [] or sign.tick_read < 30
   end
 
   defp has_service_ended_for_source?(source, current_time) do
@@ -294,4 +313,7 @@ defmodule Signs.Realtime do
   def decrement_ticks(sign) do
     %{sign | tick_read: sign.tick_read - 1}
   end
+
+  defp advance_30_seconds(nil), do: nil
+  defp advance_30_seconds(n), do: n - 30
 end

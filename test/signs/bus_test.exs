@@ -633,7 +633,8 @@ defmodule Signs.BusTest do
             id: 1,
             visual_text: "A PA Message",
             audio_text: "A PA Message",
-            interval_in_ms: 120_000
+            interval_in_ms: 120_000,
+            priority: 2
           }
         ]
       end)
@@ -646,6 +647,24 @@ defmodule Signs.BusTest do
 
       state = %{@sign_state | last_read_time: Timex.now()}
       Signs.Bus.handle_info(:run_loop, state)
+    end
+
+    test "defers PA message playback" do
+      expect(Engine.PaMessages.Mock, :for_sign, fn _ ->
+        [
+          %PaMessages.PaMessage{
+            id: 1,
+            visual_text: "A PA Message",
+            audio_text: "A PA Message",
+            interval_in_ms: 120_000,
+            priority: 2
+          }
+        ]
+      end)
+
+      expect_messages(["No bus service", ""])
+      expect_audios([{:canned, {"103", ["878"], :audio}}], [{"No bus service", nil}])
+      Signs.Bus.handle_info(:run_loop, @sign_state)
     end
 
     test "arriving prediction" do
