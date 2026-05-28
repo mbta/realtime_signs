@@ -1725,6 +1725,29 @@ defmodule Signs.RealtimeTest do
       })
     end
 
+    # Special case: Service runs extra late on June 13-14, so the early AM threshold is adjusted.
+    # This can be removed after the date has passed.
+    test "June 13-14 late service" do
+      date = ~D[2026-06-14]
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        [prediction(arrival: 180, destination: :ashmont)]
+      end)
+
+      expect(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
+        DateTime.new!(date, ~T[06:00:00], "America/New_York")
+      end)
+
+      expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
+
+      expect_messages({"Ashmont      3 min", ""})
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @sign
+        | current_time_fn: fn -> DateTime.new!(date, ~T[04:10:00], "America/New_York") end
+      })
+    end
+
     test "Identifies new Red Line Cars" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
