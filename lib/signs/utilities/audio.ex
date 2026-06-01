@@ -199,29 +199,21 @@ defmodule Signs.Utilities.Audio do
     )
   end
 
-  def play_pa_messages(sign, now, opts \\ []) do
+  def play_pa_messages(sign, now, overnight? \\ false) do
     RealtimeSigns.pa_message_engine().for_sign(sign.id)
     |> Enum.reduce(sign, fn pa_message, sign ->
       update_in(sign, [Access.key!(:pa_message_schedules), pa_message.id], fn next ->
         new_next = DateTime.add(now, pa_message.interval_in_ms, :millisecond)
 
-        cond do
-          # If the interval is changed to be shorter, bump the schedule up if needed
-          next && DateTime.before?(now, next) ->
-            earlier_datetime(next, new_next)
-
-          # Skip playback
-          (opts[:overnight?] && pa_message.priority > 1) ||
-              (opts[:upcoming_announcement?] && pa_message.priority > 2) ->
-            new_next
-
-          # Defer playback
-          opts[:upcoming_announcement?] && pa_message.priority > 1 ->
-            DateTime.add(now, 30)
-
-          true ->
+        if is_nil(next) or DateTime.after?(now, next) do
+          if not (overnight? and pa_message.priority > 1) do
             send_audio([sign], [pa_message])
-            new_next
+          end
+
+          new_next
+        else
+          # If the interval is changed to be shorter, bump the schedule up if needed
+          earlier_datetime(next, new_next)
         end
       end)
     end)

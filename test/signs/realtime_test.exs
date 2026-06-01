@@ -43,7 +43,7 @@ defmodule Signs.RealtimeTest do
     current_content_bottom: "Every 11 to 13 min",
     current_time_fn: &Signs.RealtimeTest.fake_time_fn/0,
     last_update: @fake_time,
-    tick_read: 100,
+    tick_read: 1,
     read_period_seconds: 100,
     pa_message_schedules: %{},
     last_message_log_time: @fake_time
@@ -216,8 +216,8 @@ defmodule Signs.RealtimeTest do
     end
 
     test "decrements ticks and doesn't send audio or text when sign is not expired" do
-      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 50})
-      assert sign.tick_read == 49
+      assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, @sign)
+      assert sign.tick_read == 0
     end
 
     test "refreshes content when expired" do
@@ -953,7 +953,7 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 45, destination: :forest_hills, trip_id: "1")]
       end)
 
-      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
+      expect(Engine.Locations.Mock, :for_vehicle, 1, fn _ ->
         location(crowding_confidence: :high)
       end)
 
@@ -977,7 +977,7 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 45, destination: :forest_hills)]
       end)
 
-      expect(Engine.Locations.Mock, :for_vehicle, 2, fn _ ->
+      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
         location(crowding_confidence: :low)
       end)
 
@@ -2468,31 +2468,6 @@ defmodule Signs.RealtimeTest do
         })
 
       assert DateTime.add(now, 120) |> DateTime.compare(new_time) == :eq
-    end
-
-    test "Defers PA messages when an upcoming announcement is likely" do
-      expect(Engine.PaMessages.Mock, :for_sign, fn _ ->
-        [
-          %PaMessages.PaMessage{
-            id: 1,
-            visual_text: "A PA Message",
-            audio_text: "A PA Message",
-            interval_in_ms: 120_000,
-            priority: 2
-          }
-        ]
-      end)
-
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(destination: :ashmont, arrival: 60)]
-      end)
-
-      expect_messages({"Ashmont      1 min", ""})
-
-      {:noreply, %{pa_message_schedules: %{1 => new_time}}} =
-        Signs.Realtime.handle_info(:run_loop, @sign)
-
-      assert DateTime.add(@fake_time, 30) |> DateTime.compare(new_time) == :eq
     end
   end
 
