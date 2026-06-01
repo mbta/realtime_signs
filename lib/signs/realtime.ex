@@ -42,7 +42,7 @@ defmodule Signs.Realtime do
                 prev_prediction_keys: nil,
                 prev_predictions: [],
                 uses_shuttles: true,
-                pa_message_schedules: %{}
+                pa_message_plays: %{}
               ]
 
   @type predictions ::
@@ -72,7 +72,7 @@ defmodule Signs.Realtime do
           announced_alert: boolean(),
           prev_predictions: [Predictions.Prediction.t()],
           uses_shuttles: boolean(),
-          pa_message_schedules: %{integer() => DateTime.t()},
+          pa_message_plays: %{integer() => DateTime.t()},
           last_message_log_time: DateTime.t()
         }
 
@@ -101,6 +101,7 @@ defmodule Signs.Realtime do
       read_period_seconds: 240,
       headway_stop_id: Map.get(config, "headway_stop_id"),
       uses_shuttles: Map.get(config, "uses_shuttles", true),
+      pa_message_plays: %{},
       last_message_log_time: current_time_fn.()
     }
 
@@ -112,6 +113,17 @@ defmodule Signs.Realtime do
     # the whole app, allowing some resilience against temporary external failures.
     Process.send_after(self(), :run_loop, 5000)
     {:ok, sign}
+  end
+
+  def handle_call({:play_pa_message, pa_message}, _from, sign) do
+    sign_in_overnight_period? =
+      derive_sign_context(sign)
+      |> Signs.Utilities.Messages.in_overnight_period?()
+
+    {sign, should_play?} =
+      Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign, sign_in_overnight_period?)
+
+    {:reply, {sign, should_play?}, sign}
   end
 
   @spec derive_sign_context(t()) :: SignContext.t()
@@ -162,14 +174,12 @@ defmodule Signs.Realtime do
     sign_context = derive_sign_context(sign)
     messages = Utilities.Messages.get_messages(sign, sign_context)
     {new_top, new_bottom} = Utilities.Messages.render_messages(messages)
-    sign_in_overnight_period? = Signs.Utilities.Messages.in_overnight_period?(sign_context)
 
     sign =
       sign
       |> announce_passthrough_trains(sign_context)
       |> Utilities.Updater.update_sign(new_top, new_bottom, sign_context.current_time)
       |> Utilities.Reader.do_announcements(messages)
-      |> Utilities.Audio.play_pa_messages(sign_context.current_time, sign_in_overnight_period?)
       |> Utilities.Reader.read_sign(messages)
       |> decrement_ticks()
       |> log_sign_messages(messages)

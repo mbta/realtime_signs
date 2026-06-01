@@ -21,7 +21,7 @@ defmodule Signs.BusTest do
     current_messages: {nil, nil},
     last_update: nil,
     last_read_time: Timex.shift(Timex.now(), minutes: -10),
-    pa_message_schedules: %{}
+    pa_message_plays: %{}
   }
 
   @headway_config_chelsea %Engine.Config.Headway{
@@ -150,7 +150,6 @@ defmodule Signs.BusTest do
       stub(Engine.Routes.Mock, :route_destination, fn "51", 0 -> "Reservoir Station" end)
       stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config_chelsea end)
       stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
-      stub(Engine.PaMessages.Mock, :for_sign, fn _ -> [] end)
 
       :ok
     end
@@ -623,28 +622,6 @@ defmodule Signs.BusTest do
         | configs: [%{sources: [%{stop_id: "stop1", route_id: "51", direction_id: 0}]}]
       }
 
-      Signs.Bus.handle_info(:run_loop, state)
-    end
-
-    test "PA message playback" do
-      expect(Engine.PaMessages.Mock, :for_sign, fn _ ->
-        [
-          %PaMessages.PaMessage{
-            id: 1,
-            visual_text: "A PA Message",
-            audio_text: "A PA Message",
-            interval_in_ms: 120_000
-          }
-        ]
-      end)
-
-      expect_messages(["No bus service", ""])
-
-      expect_audios([{:ad_hoc, {"A PA Message", :audio_visual}}], [
-        {"A PA Message", "A PA Message"}
-      ])
-
-      state = %{@sign_state | last_read_time: Timex.now()}
       Signs.Bus.handle_info(:run_loop, state)
     end
 
