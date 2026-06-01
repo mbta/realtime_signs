@@ -35,7 +35,7 @@ defmodule Signs.Utilities.MessagesTest do
           last_update: @midnight,
           tick_read: 1,
           read_period_seconds: 100,
-          pa_message_schedules: %{},
+          pa_message_plays: %{},
           last_message_log_time: @midnight
         },
         sign_context: %Signs.Utilities.SignContext{

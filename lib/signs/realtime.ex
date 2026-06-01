@@ -42,7 +42,7 @@ defmodule Signs.Realtime do
                 prev_prediction_keys: nil,
                 prev_predictions: [],
                 uses_shuttles: true,
-                pa_message_schedules: %{}
+                pa_message_plays: %{}
               ]
 
   @type predictions ::
@@ -72,7 +72,7 @@ defmodule Signs.Realtime do
           announced_alert: boolean(),
           prev_predictions: [Predictions.Prediction.t()],
           uses_shuttles: boolean(),
-          pa_message_schedules: %{integer() => DateTime.t()},
+          pa_message_plays: %{integer() => DateTime.t()},
           last_message_log_time: DateTime.t()
         }
 
@@ -101,6 +101,7 @@ defmodule Signs.Realtime do
       read_period_seconds: 240,
       headway_stop_id: Map.get(config, "headway_stop_id"),
       uses_shuttles: Map.get(config, "uses_shuttles", true),
+      pa_message_plays: %{},
       last_message_log_time: current_time_fn.()
     }
 
@@ -112,6 +113,17 @@ defmodule Signs.Realtime do
     # the whole app, allowing some resilience against temporary external failures.
     Process.send_after(self(), :run_loop, 5000)
     {:ok, sign}
+  end
+
+  def handle_call({:play_pa_message, pa_message}, _from, sign) do
+    sign_in_overnight_period? =
+      derive_sign_context(sign)
+      |> Signs.Utilities.Messages.in_overnight_period?()
+
+    {sign, should_play?} =
+      Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign, sign_in_overnight_period?)
+
+    {:reply, {sign, should_play?}, sign}
   end
 
   @spec derive_sign_context(t()) :: SignContext.t()
@@ -168,10 +180,6 @@ defmodule Signs.Realtime do
       |> announce_passthrough_trains(sign_context)
       |> Utilities.Updater.update_sign(new_top, new_bottom, sign_context.current_time)
       |> Utilities.Reader.do_announcements(messages)
-      |> Utilities.Audio.play_pa_messages(sign_context.current_time,
-        overnight?: Signs.Utilities.Messages.in_overnight_period?(sign_context),
-        upcoming_announcement?: upcoming_announcement?(sign, sign_context)
-      )
       |> Utilities.Reader.read_sign(messages)
       |> decrement_ticks()
       |> log_sign_messages(messages)
@@ -184,23 +192,6 @@ defmodule Signs.Realtime do
   def handle_info(msg, state) do
     Logger.warning("Signs.Realtime unknown_message: #{inspect(msg)}")
     {:noreply, state}
-  end
-
-  defp upcoming_announcement?(sign, sign_context) do
-    {upcoming_announcements, _} =
-      update_in(
-        sign_context,
-        [Access.key!(:config_contexts), Access.all(), Access.key!(:predictions), Access.all()],
-        fn prediction ->
-          prediction
-          |> Map.update!(:seconds_until_arrival, &advance_30_seconds/1)
-          |> Map.update!(:seconds_until_departure, &advance_30_seconds/1)
-        end
-      )
-      |> then(&Utilities.Messages.get_messages(sign, &1))
-      |> then(&Utilities.Audio.get_announcements(sign, &1))
-
-    upcoming_announcements != [] or sign.tick_read < 30
   end
 
   defp has_service_ended_for_source?(source, current_time) do
@@ -313,7 +304,4 @@ defmodule Signs.Realtime do
   def decrement_ticks(sign) do
     %{sign | tick_read: sign.tick_read - 1}
   end
-
-  defp advance_30_seconds(nil), do: nil
-  defp advance_30_seconds(n), do: n - 30
 end

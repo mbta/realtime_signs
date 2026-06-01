@@ -4,15 +4,11 @@ defmodule Engine.PaMessages do
 
   alias PaMessages.PaMessage
 
-  @minute_in_ms 1000 * 60
+  @type state :: %{
+          pa_messages_last_sent: %{non_neg_integer() => DateTime.t()}
+        }
 
-  @callback for_sign(String.t()) :: [PaMessage.t()]
-  def for_sign(sign_id, table \\ :pa_messages) do
-    case :ets.lookup(table, sign_id) do
-      [{^sign_id, pa_messages}] -> pa_messages
-      _ -> []
-    end
-  end
+  @minute_in_ms 1000 * 60
 
   def start_link([]) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -20,34 +16,71 @@ defmodule Engine.PaMessages do
 
   @impl true
   def init(_) do
-    :ets.new(:pa_messages, [:named_table, read_concurrency: true])
-    schedule_update(self())
-    {:ok, %{table: :pa_messages}}
+    # Add some delay to wait for sign processes to come up before sending PA messages
+    Process.send_after(self(), :update, 10000)
+    {:ok, %{pa_messages_last_sent: %{}}}
   end
 
   @impl true
   def handle_info(:update, state) do
     schedule_update(self())
 
-    case get_active_pa_messages() do
-      {:ok, pa_messages} ->
-        for pa_message <- pa_messages, sign_id <- pa_message.sign_ids do
-          {sign_id, pa_message}
-        end
-        |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
-        |> then(&Signs.Utilities.EtsUtils.write_ets(state.table, &1, []))
+    state =
+      case get_active_pa_messages() do
+        {:ok, pa_messages} ->
+          {selected_pa_messages, state} = select_pa_messages(pa_messages, state)
+          play_pa_messages(selected_pa_messages)
+          state
 
-      {:error, %HTTPoison.Response{status_code: status_code, body: body}} ->
-        Logger.error("pa_messages_response_error: status_code=#{status_code} body=#{body}")
+        {:error, %HTTPoison.Response{status_code: status_code, body: body}} ->
+          Logger.error("pa_messages_response_error: status_code=#{status_code} body=#{body}")
+          state
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.error("pa_messages_response_error: reason=#{reason}")
+        {:error, %HTTPoison.Error{reason: reason}} ->
+          Logger.error("pa_messages_response_error: reason=#{reason}")
+          state
 
-      {:error, error} ->
-        Logger.error("pa_messages_response_error: error=#{inspect(error)}")
-    end
+        {:error, error} ->
+          Logger.error("pa_messages_response_error: error=#{inspect(error)}")
+          state
+      end
 
     {:noreply, state}
+  end
+
+  @spec select_pa_messages([PaMessages.PaMessage.t()], state()) ::
+          {[PaMessages.PaMessage.t()], state()}
+  defp select_pa_messages(pa_messages, state) do
+    now = DateTime.utc_now()
+
+    Enum.flat_map_reduce(pa_messages, state, fn message, state ->
+      last_sent = Map.get(state.pa_messages_last_sent, message.id, DateTime.from_unix!(0))
+
+      if DateTime.diff(DateTime.utc_now(), last_sent, :millisecond) >= message.interval_in_ms do
+        {[message], put_in(state, [:pa_messages_last_sent, message.id], now)}
+      else
+        {[], state}
+      end
+    end)
+  end
+
+  defp play_pa_messages(pa_messages) do
+    Enum.each(pa_messages, fn message ->
+      for sign_id <- message.sign_ids,
+          {sign, should_play?} = GenServer.call(:"Signs/#{sign_id}", {:play_pa_message, message}),
+          should_play? do
+        sign
+      end
+      |> Enum.group_by(& &1.pa_ess_loc)
+      |> Enum.map(fn {_, [first | _] = signs} ->
+        %{
+          first
+          | audio_zones: Enum.flat_map(signs, & &1.audio_zones) |> Enum.uniq(),
+            id: Enum.map_join(signs, ",", & &1.id)
+        }
+      end)
+      |> Signs.Utilities.Audio.send_audio([message])
+    end)
   end
 
   defp get_active_pa_messages() do

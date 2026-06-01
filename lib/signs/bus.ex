@@ -32,7 +32,7 @@ defmodule Signs.Bus do
     :current_messages,
     :last_update,
     :last_read_time,
-    :pa_message_schedules
+    :pa_message_plays
   ]
   defstruct @enforce_keys ++ [default_mode: :off]
 
@@ -56,7 +56,7 @@ defmodule Signs.Bus do
           current_messages: tuple(),
           last_update: nil | DateTime.t(),
           last_read_time: DateTime.t(),
-          pa_message_schedules: %{integer() => DateTime.t()}
+          pa_message_plays: %{integer() => DateTime.t()}
         }
 
   def start_link(sign) do
@@ -79,7 +79,7 @@ defmodule Signs.Bus do
       current_messages: {nil, nil},
       last_update: nil,
       last_read_time: Timex.now(),
-      pa_message_schedules: %{}
+      pa_message_plays: %{}
     }
 
     GenServer.start_link(__MODULE__, state, name: :"Signs/#{state.id}")
@@ -115,6 +115,12 @@ defmodule Signs.Bus do
   @type content_values ::
           {messages :: [Content.Message.value()], audios :: [Content.Audio.value()],
            tts_audios :: [Content.Audio.tts_value()]}
+
+  @impl true
+  def handle_call({:play_pa_message, pa_message}, _from, sign) do
+    {sign, should_play?} = Signs.Utilities.Audio.handle_pa_message_play(pa_message, sign)
+    {:reply, {sign, should_play?}, sign}
+  end
 
   @impl true
   def handle_info(:run_loop, state) do
@@ -217,9 +223,6 @@ defmodule Signs.Bus do
         state
       end
     end)
-    |> Signs.Utilities.Audio.play_pa_messages(current_time,
-      upcoming_announcement?: should_read?(DateTime.add(current_time, 30), state)
-    )
     |> then(fn state ->
       if should_read?(current_time, state) do
         send_audio(audios, tts_audios, state)
