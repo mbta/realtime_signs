@@ -11,7 +11,13 @@ defmodule Fake.ExternalConfig.Local do
       nil,
       %{
         "signs" => %{
-          "some_custom_sign" => %{"line1" => "custom", "line2" => "", "expires" => nil}
+          "some_custom_sign" => %{
+            "mode" => "static_text",
+            "line1" => "custom",
+            "line2" => "",
+            "audio_text" => "custom",
+            "expires" => nil
+          }
         },
         "chelsea_bridge_announcements" => "off"
       }
@@ -39,8 +45,10 @@ defmodule Fake.ExternalConfig.Local do
          "chelsea_inbound" => %{"mode" => "auto"},
          "chelsea_outbound" => %{"mode" => "off"},
          "custom_text_test" => %{
+           "mode" => "static_text",
            "line1" => "Test message",
            "line2" => "Please ignore",
+           "audio_text" => "Test message Please ignore",
            "expires" => "2017-07-04T12:00:00Z"
          },
          "off_test" => %{"mode" => "off"},

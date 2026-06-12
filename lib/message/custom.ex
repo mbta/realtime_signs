@@ -1,10 +1,11 @@
 defmodule Message.Custom do
-  @enforce_keys [:top, :bottom]
+  @enforce_keys [:top, :bottom, :audio_text]
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
           top: String.t(),
-          bottom: String.t()
+          bottom: String.t(),
+          audio_text: String.t()
         }
 
   defimpl Message do
@@ -19,8 +20,8 @@ defmodule Message.Custom do
 
     def to_multi_line(%Message.Custom{} = message), do: to_full_page(message)
 
-    def to_audio(%Message.Custom{top: top, bottom: bottom}, _multiple?) do
-      [%Content.Audio.Custom{message: PaEss.Utilities.custom_tts_text(top, bottom)}]
+    def to_audio(%Message.Custom{top: top, bottom: bottom, audio_text: audio_text}, _multiple?) do
+      [%Content.Audio.Custom{top: top, bottom: bottom, audio_text: audio_text}]
     end
   end
 end

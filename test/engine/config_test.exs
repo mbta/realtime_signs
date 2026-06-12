@@ -19,7 +19,7 @@ defmodule Engine.ConfigTest do
         })
 
       assert Engine.Config.sign_config(state.table_name_signs, "custom_text_test", :off) ==
-               {:static_text, {"Test message", "Please ignore"}}
+               {:static_text, {"Test message", "Please ignore", "Test message Please ignore"}}
     end
 
     test "does not return custom text when it's expired" do
@@ -45,7 +45,7 @@ defmodule Engine.ConfigTest do
       initialize_test_state(%{table_name_signs: :test_new_format, current_version: "new_format"})
 
       assert Engine.Config.sign_config(:test_new_format, "some_custom_sign", :off) ==
-               {:static_text, {"custom", ""}}
+               {:static_text, {"custom", "", "custom"}}
     end
 
     test "handles a config with multi-sign headways" do
