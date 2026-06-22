@@ -16,19 +16,19 @@ jobs:
       ECS_SERVICE: realtime-signs-dev-green
     steps:
       - uses: actions/checkout@v6.0.3
-      - uses: mbta/actions/build-push-ecr@v2
+      - uses: mbta/actions/build-push-ecr@v2.18
         id: build-push
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           docker-repo: ${{ secrets.DOCKER_REPO }}
-      - uses: mbta/actions/deploy-ecs@v2
+      - uses: mbta/actions/deploy-ecs@v2.18
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           ecs-cluster: ${{ env.ECS_CLUSTER }}
           ecs-service: ${{ env.ECS_SERVICE }}
           docker-tag: ${{ steps.build-push.outputs.docker-tag }}
           launch-type: EXTERNAL
-      - uses: mbta/actions/notify-slack-deploy@v2
+      - uses: mbta/actions/notify-slack-deploy@v2.18
         if: ${{ !cancelled() }}
         with:
           webhook-url: ${{ secrets.SLACK_WEBHOOK }}
