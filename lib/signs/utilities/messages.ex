@@ -188,18 +188,9 @@ defmodule Signs.Utilities.Messages do
   defp in_early_am?(_, nil), do: false
 
   defp in_early_am?(current_time, scheduled) do
-    # Special case: Service runs extra late on June 13-14, so adjust the threshold.
-    # This can be removed after the date has passed.
-    early_am_start =
-      if DateTime.to_date(current_time) |> Date.compare(~D[2026-06-14]) == :eq do
-        ~T[05:00:00]
-      else
-        @early_am_start
-      end
-
     Timex.between?(
       DateTime.to_time(current_time),
-      early_am_start,
+      @early_am_start,
       DateTime.to_time(scheduled),
       inclusive: :start
     )
