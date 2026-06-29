@@ -17,7 +17,7 @@ jobs:
       ECS_SERVICE: realtime-signs-prod
 
     steps:
-      - uses: actions/checkout@v6.0.3
+      - uses: actions/checkout@v7.0.0
       - uses: mbta/actions/build-push-ecr@v2
         id: build-push
         with:
