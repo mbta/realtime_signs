@@ -5,20 +5,22 @@ defmodule Content.Audio.Custom do
 
   require Logger
 
-  @enforce_keys [:message]
+  @enforce_keys [:top, :bottom, :audio_text]
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
-          message: String.t()
+          top: String.t(),
+          bottom: String.t(),
+          audio_text: String.t()
         }
 
   defimpl Content.Audio do
-    def to_params(%Content.Audio.Custom{message: message}) do
-      {:ad_hoc, {message, :audio}}
+    def to_params(%Content.Audio.Custom{top: top, bottom: bottom}) do
+      {:ad_hoc, {PaEss.Utilities.custom_tts_text(top, bottom), :audio}}
     end
 
-    def to_tts(%Content.Audio.Custom{} = audio) do
-      {audio.message, nil}
+    def to_tts(%Content.Audio.Custom{audio_text: audio_text}) do
+      {audio_text, nil}
     end
 
     def to_logs(%Content.Audio.Custom{}) do

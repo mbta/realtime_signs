@@ -131,7 +131,7 @@ defmodule Signs.BusTest do
       stub(Engine.Config.Mock, :sign_config, fn
         "auto_sign", _default -> :auto
         "off_sign", _default -> :off
-        "static_sign", _default -> {:static_text, {"custom", "message"}}
+        "static_sign", _default -> {:static_text, {"custom", "message", "special message"}}
       end)
 
       stub(Engine.Config.Mock, :chelsea_bridge_config, fn -> :auto end)
@@ -277,7 +277,7 @@ defmodule Signs.BusTest do
 
     test "static mode" do
       expect_messages(["custom", "message"])
-      expect_audios([{:ad_hoc, {"custom message", :audio}}], [{"custom message", nil}])
+      expect_audios([{:ad_hoc, {"custom message", :audio}}], [{"special message", nil}])
 
       state = Map.merge(@sign_state, %{id: "static_sign"})
 

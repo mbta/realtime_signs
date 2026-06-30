@@ -16,12 +16,12 @@ defmodule Signs.Utilities.Messages do
     sign_in_overnight_period = in_overnight_period?(sign_context)
 
     cond do
-      match?({:static_text, {_, _}}, sign_config) ->
+      match?({:static_text, {_, _, _}}, sign_config) ->
         if sign_in_overnight_period do
           [%Message.Empty{}]
         else
-          {:static_text, {line1, line2}} = sign_config
-          [%Message.Custom{top: line1, bottom: line2}]
+          {:static_text, {line1, line2, audio_text}} = sign_config
+          [%Message.Custom{top: line1, bottom: line2, audio_text: audio_text}]
         end
 
       sign_config == :off ->

@@ -102,10 +102,16 @@ defmodule Signs.Utilities.MessagesTest do
     } do
       sign_context = %{
         sign_context
-        | sign_config: {:static_text, {"This is line 1", "This is line 2"}}
+        | sign_config: {:static_text, {"This is line 1", "This is line 2", "Audio"}}
       }
 
-      assert [%Message.Custom{top: "This is line 1", bottom: "This is line 2"}] ==
+      assert [
+               %Message.Custom{
+                 top: "This is line 1",
+                 bottom: "This is line 2",
+                 audio_text: "Audio"
+               }
+             ] ==
                Signs.Utilities.Messages.get_messages(
                  sign,
                  sign_context

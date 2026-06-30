@@ -332,7 +332,7 @@ defmodule Signs.RealtimeTest do
 
     test "when custom text is present, display it, overriding alerts" do
       expect(Engine.Config.Mock, :sign_config, fn _, _ ->
-        {:static_text, {"custom", "message"}}
+        {:static_text, {"custom", "message", "custom message"}}
       end)
 
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :suspension_closed_station end)
@@ -351,7 +351,7 @@ defmodule Signs.RealtimeTest do
 
     test "when sign has a default mode, uses that when the sign has no mode configured" do
       expect(Engine.Config.Mock, :sign_config, fn _, default -> default end)
-      sign = %{@sign | default_mode: {:static_text, {"default", "message"}}}
+      sign = %{@sign | default_mode: {:static_text, {"default", "message", "default message"}}}
 
       expect_messages({"default", "message"})
       expect_audios([{:ad_hoc, {"default message", :audio}}], [{"default message", nil}])
@@ -1054,28 +1054,28 @@ defmodule Signs.RealtimeTest do
 
     test "reads custom messages" do
       expect(Engine.Config.Mock, :sign_config, fn _, _ ->
-        {:static_text, {"custom", "message"}}
+        {:static_text, {"custom", "message", "special message"}}
       end)
 
       expect_messages({"custom", "message"})
-      expect_audios([{:ad_hoc, {"custom message", :audio}}], [{"custom message", nil}])
+      expect_audios([{:ad_hoc, {"custom message", :audio}}], [{"special message", nil}])
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
         | tick_read: 0,
-          announced_custom_text: "custom message"
+          announced_custom_text: "special message"
       })
     end
 
     test "invalid custom messages" do
       expect(Engine.Config.Mock, :sign_config, fn _, _ ->
-        {:static_text, {"bad^", "long long long long message"}}
+        {:static_text, {"bad^", "long long long long message", "audio message"}}
       end)
 
       expect_messages({"bad", "long long long long mess"})
 
       expect_audios([{:ad_hoc, {"bad long long long long mess", :audio}}], [
-        {"bad long long long long mess", nil}
+        {"audio message", nil}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
@@ -1083,13 +1083,13 @@ defmodule Signs.RealtimeTest do
 
     test "replaces abbreviations in custom messages" do
       expect(Engine.Config.Mock, :sign_config, fn _, _ ->
-        {:static_text, {"No OL Svc", ""}}
+        {:static_text, {"No OL Svc", "", "No OL Svc"}}
       end)
 
       expect_messages({"No OL Svc", ""})
 
       expect_audios([{:ad_hoc, {"No Orange Line Service", :audio}}], [
-        {"No Orange Line Service", nil}
+        {"No OL Svc", nil}
       ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
@@ -2495,7 +2495,7 @@ defmodule Signs.RealtimeTest do
 
     test "does not show custom text during overnight period" do
       expect(Engine.Config.Mock, :sign_config, fn _, _ ->
-        {:static_text, {"custom", "message"}}
+        {:static_text, {"custom", "message", "custom message"}}
       end)
 
       expect_messages({"", ""})
