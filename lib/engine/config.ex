@@ -18,7 +18,10 @@ defmodule Engine.Config do
         }
 
   @type sign_config ::
-          :auto | :off | :temporary_terminal | {:static_text, {String.t(), String.t()}}
+          :auto
+          | :off
+          | :temporary_terminal
+          | {:static_text, {String.t(), String.t(), String.t()}}
 
   @table_signs :config_engine_signs
   @table_headways :config_engine_headways
@@ -180,25 +183,19 @@ defmodule Engine.Config do
   end
 
   @spec parse_sign_config(map()) :: sign_config()
-  defp parse_sign_config(config_json) do
-    cond do
-      config_json["mode"] == "off" ->
-        :off
+  defp parse_sign_config(%{"mode" => "off"}), do: :off
+  defp parse_sign_config(%{"mode" => "auto"}), do: :auto
+  defp parse_sign_config(%{"mode" => "temporary_terminal"}), do: :temporary_terminal
 
-      config_json["mode"] == "static_text" or config_json["line1"] != nil or
-          config_json["line2"] != nil ->
-        {:static_text, {config_json["line1"], config_json["line2"]}}
-
-      config_json["mode"] == "auto" ->
-        :auto
-
-      config_json["mode"] == "temporary_terminal" ->
-        :temporary_terminal
-
-      true ->
-        nil
-    end
+  defp parse_sign_config(%{"mode" => "static_text"} = config) do
+    top = config["line1"]
+    bottom = config["line2"]
+    # Note: This conditional can be removed after all existing custom messages include this field.
+    audio_text = config["audio_text"] || PaEss.Utilities.custom_tts_text(top, bottom)
+    {:static_text, {top, bottom, audio_text}}
   end
+
+  defp parse_sign_config(_), do: nil
 
   defp schedule_update(pid, time \\ 1_000) do
     Process.send_after(pid, :update, time)

@@ -23,8 +23,8 @@ defmodule Signs.Utilities.Audio do
       %Message.Custom{} = message ->
         [audio] = Message.to_audio(message, length(messages) > 1)
 
-        if sign.announced_custom_text != audio.message do
-          {audios ++ [audio], %{sign | announced_custom_text: audio.message}}
+        if sign.announced_custom_text != audio.audio_text do
+          {audios ++ [audio], %{sign | announced_custom_text: audio.audio_text}}
         else
           {audios, sign}
         end
