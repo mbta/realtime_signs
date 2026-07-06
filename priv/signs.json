@@ -1535,7 +1535,7 @@
               "Orange"
             ],
             "direction_id": 1,
-            "announce_arriving": false,
+            "announce_arriving": true,
             "announce_boarding": false
           }
         ]
@@ -1551,7 +1551,7 @@
               "Orange"
             ],
             "direction_id": 0,
-            "announce_arriving": false,
+            "announce_arriving": true,
             "announce_boarding": false
           }
         ]
