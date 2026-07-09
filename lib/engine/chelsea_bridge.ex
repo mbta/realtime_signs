@@ -66,7 +66,7 @@ defmodule Engine.ChelseaBridge do
              {"Authorization", "Bearer #{token.value}"}
            ]),
          {:ok, %{"liftInProgress" => raised, "estimatedDurationInMinutes" => estimate}} <-
-           Jason.decode(body) do
+           JSON.decode(body) do
       :ets.insert(
         state.table,
         {
@@ -111,7 +111,7 @@ defmodule Engine.ChelseaBridge do
            http_poster.post("#{@base_api_url}#{@api_token_endpoint}", body, [
              {"Content-Type", "application/x-www-form-urlencoded"}
            ]),
-         {:ok, data} <- Jason.decode(body) do
+         {:ok, data} <- JSON.decode(body) do
       expiration =
         now
         # Give 60 second buffer on expiration time so we don't run into issues with trying expiring token

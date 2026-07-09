@@ -41,7 +41,7 @@ defmodule Engine.StationStops do
            params: %{"fields[stop]" => ""}
          ) do
       {:ok, %{status_code: 200, body: body, headers: headers}} ->
-        %{"data" => data} = Jason.decode!(body)
+        %{"data" => data} = JSON.decode!(body)
 
         for %{
               "id" => id,

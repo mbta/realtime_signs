@@ -7,7 +7,7 @@ defmodule RealtimeSigns.Mixfile do
     [
       app: :realtime_signs,
       version: @version,
-      elixir: "~> 1.17",
+      elixir: "~> 1.20",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: LcovEx],
@@ -47,7 +47,7 @@ defmodule RealtimeSigns.Mixfile do
       {:hackney, "== 1.25.0"},
       {:gen_stage, "~> 1.2"},
       {:httpoison, "~> 1.0"},
-      {:jason, "~> 1.4.0"},
+      {:logger_backends, "~> 1.0"},
       {:logger_splunk_backend, "~> 3.0"},
       {:mox, "~> 1.2.0", only: [:test]},
       {:recon, "~> 2.5"},

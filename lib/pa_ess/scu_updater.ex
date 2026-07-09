@@ -13,7 +13,7 @@ defmodule PaEss.ScuUpdater do
 
   @impl true
   def handle_events([{:message, scu_id, payload, logs}], _from, state) do
-    body = Jason.encode!(payload)
+    body = JSON.encode!(payload)
     log("play_message", logs)
 
     if send_to_scu(scu_id, "/message", body) == :ok do
@@ -24,7 +24,7 @@ defmodule PaEss.ScuUpdater do
   end
 
   def handle_events([{:background, scu_id, payload, logs}], _from, state) do
-    body = Jason.encode!(payload)
+    body = JSON.encode!(payload)
     log("set_background_message", logs)
 
     if send_to_scu(scu_id, "/background", body) == :ok do

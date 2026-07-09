@@ -53,7 +53,7 @@ config :ex_aws,
   access_key_id: [{:system, "SIGNS_S3_CONFIG_KEY"}, :instance_role],
   secret_access_key: [{:system, "SIGNS_S3_CONFIG_SECRET"}, :instance_role]
 
-config :logger, backends: [:console], utc_log: true
+config :logger, utc_log: true
 
 config :logger, :console,
   format: "$dateT$time [$level] node=$node $metadata$message\n",

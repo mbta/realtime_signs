@@ -6,8 +6,6 @@ defmodule Signs.Utilities.Updater do
   and the sign is configured to announce that fact, will send that audio request, too.
   """
 
-  require Logger
-
   @spec update_sign(
           Signs.Realtime.t(),
           Content.Message.value(),

@@ -61,8 +61,7 @@ defmodule Fake.HTTPoison do
         {:ok,
          %HTTPoison.Response{
            status_code: 200,
-           body:
-             Jason.encode!(%{"access_token" => "test_access_token", "expires_in" => 2_591_999})
+           body: JSON.encode!(%{"access_token" => "test_access_token", "expires_in" => 2_591_999})
          }}
     end
   end
@@ -119,7 +118,7 @@ defmodule Fake.HTTPoison do
           "timestamp" => 1_490_783_458
         }
       }
-      |> Jason.encode!()
+      |> JSON.encode!()
 
     {:ok,
      %HTTPoison.Response{
@@ -171,7 +170,7 @@ defmodule Fake.HTTPoison do
       }
     ]
 
-    {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(response)}}
+    {:ok, %HTTPoison.Response{status_code: 200, body: JSON.encode!(response)}}
   end
 
   def mock_response("https://screenplay-fake.mbtace.com/api/pa-messages/no-longer-active") do
@@ -196,7 +195,7 @@ defmodule Fake.HTTPoison do
       }
     ]
 
-    {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(response)}}
+    {:ok, %HTTPoison.Response{status_code: 200, body: JSON.encode!(response)}}
   end
 
   def mock_response("https://screenplay-fake.mbtace.com/api/pa-messages/changed-interval") do
@@ -241,7 +240,7 @@ defmodule Fake.HTTPoison do
       }
     ]
 
-    {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(response)}}
+    {:ok, %HTTPoison.Response{status_code: 200, body: JSON.encode!(response)}}
   end
 
   def mock_response("fake_trip_update2.json") do
@@ -285,7 +284,7 @@ defmodule Fake.HTTPoison do
           "timestamp" => 1_490_783_458
         }
       }
-      |> Jason.encode!()
+      |> JSON.encode!()
 
     {:ok,
      %HTTPoison.Response{
@@ -343,7 +342,7 @@ defmodule Fake.HTTPoison do
           "timestamp" => 1_490_783_458
         }
       }
-      |> Jason.encode!()
+      |> JSON.encode!()
 
     {:ok,
      %HTTPoison.Response{
@@ -393,7 +392,7 @@ defmodule Fake.HTTPoison do
           }
         ]
       }
-      |> Jason.encode!()
+      |> JSON.encode!()
 
     {:ok,
      %HTTPoison.Response{
@@ -448,7 +447,7 @@ defmodule Fake.HTTPoison do
           "timestamp" => 1_490_783_578
         }
       }
-      |> Jason.encode!()
+      |> JSON.encode!()
 
     {:ok,
      %HTTPoison.Response{
@@ -498,7 +497,7 @@ defmodule Fake.HTTPoison do
           }
         ]
       }
-      |> Jason.encode!()
+      |> JSON.encode!()
 
     {:ok,
      %HTTPoison.Response{
@@ -546,7 +545,7 @@ defmodule Fake.HTTPoison do
         "https://api-dev-green.mbtace.com/schedules?filter[stop]=valid_json&filter[direction_id]=0,1"
       ) do
     json = %{"data" => [%{"relationships" => "trip"}]}
-    encoded = Jason.encode!(json)
+    encoded = JSON.encode!(json)
     {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
   end
 
@@ -556,7 +555,7 @@ defmodule Fake.HTTPoison do
 
   def mock_response("https://api-dev-green.mbtace.com/schedules" <> _) do
     json = %{"data" => []}
-    encoded = Jason.encode!(json)
+    encoded = JSON.encode!(json)
     {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
   end
 
@@ -703,26 +702,26 @@ defmodule Fake.HTTPoison do
       ]
     }
 
-    {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(response)}}
+    {:ok, %HTTPoison.Response{status_code: 200, body: JSON.encode!(response)}}
   end
 
   def mock_response("https://api-dev-green.mbtace.com/predictions" <> _) do
-    {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(%{data: [], included: []})}}
+    {:ok, %HTTPoison.Response{status_code: 200, body: JSON.encode!(%{data: [], included: []})}}
   end
 
   def mock_response("https://api-dev-green.mbtace.com/routes" <> _) do
-    {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(%{data: []})}}
+    {:ok, %HTTPoison.Response{status_code: 200, body: JSON.encode!(%{data: []})}}
   end
 
   def mock_response("https://api-dev-green.mbtace.com/stops" <> _) do
-    {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(%{data: []})}}
+    {:ok, %HTTPoison.Response{status_code: 200, body: JSON.encode!(%{data: []})}}
   end
 
   def mock_response("https://www.chelseabridgesys.com/api/api/BridgeRealTime" <> _) do
     {:ok,
      %HTTPoison.Response{
        status_code: 200,
-       body: Jason.encode!(%{"liftInProgress" => false, "estimatedDurationInMinutes" => 0})
+       body: JSON.encode!(%{"liftInProgress" => false, "estimatedDurationInMinutes" => 0})
      }}
   end
 

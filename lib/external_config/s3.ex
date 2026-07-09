@@ -16,7 +16,7 @@ defmodule ExternalConfig.S3 do
         :unchanged
 
       {:ok, response} ->
-        body = Jason.decode!(response.body)
+        body = JSON.decode!(response.body)
 
         etag =
           response.headers
@@ -40,7 +40,7 @@ defmodule ExternalConfig.S3 do
     case s3_client.get_object(bucket, active_headend_path)
          |> aws_client.request() do
       {:ok, response} ->
-        body = Jason.decode!(response.body)
+        body = JSON.decode!(response.body)
         {:ok, body["active_headend_ip"]}
 
       error ->
@@ -57,7 +57,7 @@ defmodule ExternalConfig.S3 do
     case s3_client.put_object(
            bucket,
            active_headend_path,
-           Jason.encode!(%{active_headend_ip: ip})
+           JSON.encode!(%{active_headend_ip: ip})
          )
          |> aws_client.request() do
       {:ok, response} ->

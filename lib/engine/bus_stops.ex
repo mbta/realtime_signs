@@ -54,7 +54,7 @@ defmodule Engine.BusStops do
            }
          ) do
       {:ok, %{status_code: 200, body: body, headers: headers}} ->
-        %{"data" => data} = payload = Jason.decode!(body)
+        %{"data" => data} = payload = JSON.decode!(body)
         included = Map.get(payload, "included", [])
 
         child_to_parent =

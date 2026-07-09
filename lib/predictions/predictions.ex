@@ -1,6 +1,5 @@
 defmodule Predictions.Predictions do
   alias Predictions.Prediction
-  require Logger
 
   @excluded_prediction_types []
 

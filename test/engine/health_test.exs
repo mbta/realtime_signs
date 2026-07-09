@@ -2,7 +2,6 @@ defmodule Engine.HealthTest do
   use ExUnit.Case, async: true
   import ExUnit.CaptureLog
   import Mox
-  require Logger
 
   setup :verify_on_exit!
 

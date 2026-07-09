@@ -3,7 +3,6 @@ defmodule Content.Audio.Approaching do
   The next train to [destination] is now approaching
   """
 
-  require Logger
   alias PaEss.Utilities
 
   @enforce_keys [:destination]

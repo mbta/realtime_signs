@@ -41,7 +41,7 @@ defmodule Engine.Alerts.ApiFetcher do
              }
            ),
          %{status_code: 200, body: body} <- req,
-         {:ok, parsed} <- Jason.decode(body),
+         {:ok, parsed} <- JSON.decode(body),
          {:ok, data} <- Map.fetch(parsed, "data") do
       {:ok, data}
     else

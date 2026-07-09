@@ -24,7 +24,7 @@ if config_env() != :test do
     api_v3_url: System.get_env("API_V3_URL"),
     api_v3_key: System.get_env("API_V3_KEY"),
     scully_api_key: System.get_env("SCULLY_API_KEY"),
-    scu_ip_map: System.get_env("SCU_IP_MAP", "{}") |> Jason.decode!(),
+    scu_ip_map: System.get_env("SCU_IP_MAP", "{}") |> JSON.decode!(),
     chelsea_bridge_password: System.get_env("CHELSEA_BRIDGE_PASSWORD"),
     chelsea_bridge_username: System.get_env("CHELSEA_BRIDGE_USERNAME"),
     number_of_http_updaters:
@@ -83,9 +83,7 @@ end
 # For maintaining backwards compatibility with opstech3
 splunk_token = System.get_env("PROD_SIGNS_SPLUNK_TOKEN", "")
 
-if config_env() == :prod and splunk_token != "" do
-  config :logger, backends: [Logger.Backend.Splunk, :console]
-
+if splunk_token != "" do
   config :logger, :splunk,
     connector: Logger.Backend.Splunk.Output.Http,
     host: "https://http-inputs-mbta.splunkcloud.com/services/collector/event",

@@ -6,7 +6,6 @@ defmodule Engine.ScheduledHeadways do
   """
   use GenServer
   require Logger
-  require Signs.Utilities.SignsConfig
 
   @type state :: %{
           first_last_departures_ets_table: term(),
