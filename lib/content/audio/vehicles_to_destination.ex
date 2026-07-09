@@ -3,7 +3,6 @@ defmodule Content.Audio.VehiclesToDestination do
   Buses to Chelsea / S. Station arrive every [Number] to [Number] minutes
   """
 
-  require Logger
   alias PaEss.Utilities
 
   @enforce_keys [:destination, :headway_range]

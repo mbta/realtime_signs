@@ -100,7 +100,7 @@ defmodule Engine.PaMessages do
              recv_timeout: 2000
            ),
          %{status_code: 200, body: body} <- response,
-         {:ok, data} <- Jason.decode(body) do
+         {:ok, data} <- JSON.decode(body) do
       pa_messages =
         for %{
               "id" => pa_id,

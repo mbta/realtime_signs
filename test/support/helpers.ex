@@ -1,6 +1,4 @@
 defmodule Test.Support.Helpers do
-  require :httpd
-
   defmacro reassign_env(var) do
     quote do
       old_value = Application.get_env(:realtime_signs, unquote(var))

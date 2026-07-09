@@ -1,7 +1,5 @@
 import Config
 
-config :logger, backends: [:console]
-
 config :logger, :console, level: :info
 
 config :realtime_signs,

@@ -10,7 +10,7 @@ defmodule Signs.Utilities.SignsConfig do
     |> :code.priv_dir()
     |> Path.join("signs.json")
     |> File.read!()
-    |> Jason.decode!()
+    |> JSON.decode!()
   end
 
   @doc "Extracts every train stop_id from the signs.json configuration"

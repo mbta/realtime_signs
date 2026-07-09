@@ -114,7 +114,7 @@ defmodule Engine.Locations do
     try do
       locations =
         response
-        |> Jason.decode!()
+        |> JSON.decode!()
         |> Map.get("entity")
         |> Enum.reject(&(&1["vehicle"]["trip"]["schedule_relationship"] == "CANCELED"))
         |> Enum.map(&location_from_update/1)
@@ -122,11 +122,8 @@ defmodule Engine.Locations do
       {Map.new(locations, fn location -> {location.vehicle_id, location} end),
        Enum.group_by(locations, & &1.stop_id)}
     rescue
-      e in Jason.DecodeError ->
-        Logger.error(
-          "Engine.Locations json_decode_error: #{inspect(Jason.DecodeError.message(e))}"
-        )
-
+      e in JSON.DecodeError ->
+        Logger.error("Engine.Locations json_decode_error: #{inspect(Exception.message(e))}")
         {%{}, %{}}
     end
   end

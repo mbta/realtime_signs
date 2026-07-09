@@ -46,7 +46,7 @@ defmodule Engine.LocationsTest do
 
       assert updated_state == @state
 
-      assert :ets.tab2list(:test_vehicle_locations) == [
+      assert :ets.tab2list(:test_vehicle_locations) |> Enum.sort() == [
                {"vehicle_1", :none},
                {"vehicle_2", :none}
              ]

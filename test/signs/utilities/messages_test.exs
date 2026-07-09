@@ -1,8 +1,6 @@
 defmodule Signs.Utilities.MessagesTest do
   use ExUnit.Case
 
-  require Signs.Utilities.Messages
-
   @midnight DateTime.new!(~D[2023-01-01], ~T[12:00:00], "America/New_York")
   def fake_time_fn, do: @midnight
 

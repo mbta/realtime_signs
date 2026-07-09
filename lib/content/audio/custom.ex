@@ -3,8 +3,6 @@ defmodule Content.Audio.Custom do
   Reads custom text from the PIOs
   """
 
-  require Logger
-
   @enforce_keys [:top, :bottom, :audio_text]
   defstruct @enforce_keys
 

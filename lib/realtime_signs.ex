@@ -4,6 +4,8 @@ defmodule RealtimeSigns do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
+    LoggerBackends.add(Logger.Splunk.Backend)
+
     Logger.info(
       "Starting realtime_signs version #{inspect(Application.spec(:realtime_signs, :vsn))}"
     )

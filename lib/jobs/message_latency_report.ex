@@ -207,7 +207,7 @@ defmodule Jobs.MessageLatencyReport do
 
   defp get_id_from_filename(file_name) do
     [_date, id] =
-      file_name |> to_string |> String.upcase() |> String.trim(".CSV") |> String.split("/")
+      file_name |> to_string() |> String.upcase() |> String.trim(".CSV") |> String.split("/")
 
     id
   end

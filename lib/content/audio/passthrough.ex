@@ -3,8 +3,6 @@ defmodule Content.Audio.Passthrough do
   The next [line] train to [destination] does not take passengers
   """
 
-  require Logger
-
   @enforce_keys [:destination]
   defstruct @enforce_keys ++ [:trip_id, :route_id]
 

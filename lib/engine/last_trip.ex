@@ -1,6 +1,5 @@
 defmodule Engine.LastTrip do
   use GenServer
-  require Logger
 
   @recent_departures_table :recent_departures
   @last_trips_table :last_trips

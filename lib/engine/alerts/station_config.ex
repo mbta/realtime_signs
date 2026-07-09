@@ -26,7 +26,7 @@ defmodule Engine.Alerts.StationConfig do
       |> :code.priv_dir()
       |> Path.join("stops.json")
       |> File.read!()
-      |> Jason.decode!()
+      |> JSON.decode!()
 
     {segment_to_stops, segment_to_route_ids} =
       stops_data

@@ -3,8 +3,6 @@ defmodule Content.Audio.TrackChange do
   Track change: The next [line] train to [destination] is now boarding on [track]
   """
 
-  require Logger
-
   @enforce_keys [:destination, :berth, :route_id]
   defstruct @enforce_keys
 

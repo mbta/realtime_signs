@@ -3,7 +3,6 @@ defmodule Signs.Utilities.Headways do
   Given a sign with a SourceConfig, fetches headways and
   generates the top and bottom lines for the sign
   """
-  require Logger
 
   # Process headways for Silver Line differently b/c of its different config shape
   def headway_message_sl(headway_group, headway_destination, stop_ids, current_time) do

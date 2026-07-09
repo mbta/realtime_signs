@@ -3,7 +3,6 @@ defmodule Content.Audio.TrainIsBoarding do
   The next train to [destination] is now boarding.
   """
 
-  require Logger
   alias Content.Audio
 
   @enforce_keys [:destination, :route_id, :track_number]

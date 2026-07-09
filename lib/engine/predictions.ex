@@ -59,7 +59,7 @@ defmodule Engine.Predictions do
                timeout: 2000,
                recv_timeout: 2000
              ),
-           {:ok, parsed_json} <- Jason.decode(body) do
+           {:ok, parsed_json} <- JSON.decode(body) do
         {new_predictions, vehicles_running_revenue_trips} =
           Predictions.Predictions.get_all(parsed_json, current_time)
 

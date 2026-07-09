@@ -19,7 +19,7 @@ defmodule ExternalConfig.Local do
     if etag == current_version do
       :unchanged
     else
-      {etag, Jason.decode!(file)}
+      {etag, JSON.decode!(file)}
     end
   end
 

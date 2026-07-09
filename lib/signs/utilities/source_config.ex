@@ -87,8 +87,6 @@ defmodule Signs.Utilities.SourceConfig do
     it's a terminal or not.
   """
 
-  require Logger
-
   @enforce_keys [
     :stop_id,
     :direction_id,

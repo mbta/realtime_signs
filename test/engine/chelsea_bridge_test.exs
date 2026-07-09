@@ -9,7 +9,7 @@ defmodule Engine.ChelseaBridgeTest do
         "expires_in" => 3600
       }
 
-      fake_body = Jason.encode!(fake_response)
+      fake_body = JSON.encode!(fake_response)
 
       send(self(), {:post, q})
       {:ok, %HTTPoison.Response{status_code: 200, body: fake_body}}

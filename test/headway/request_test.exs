@@ -1,6 +1,6 @@
 defmodule Headway.RequestTest do
   use ExUnit.Case, async: true
-  require Logger
+
   import ExUnit.CaptureLog
   import Headway.Request
 

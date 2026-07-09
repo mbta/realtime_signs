@@ -39,7 +39,7 @@ defmodule Engine.Routes do
            params: %{"filter[type]" => "3"}
          ) do
       {:ok, %{status_code: 200, body: body, headers: headers}} ->
-        %{"data" => data} = Jason.decode!(body)
+        %{"data" => data} = JSON.decode!(body)
 
         for %{"id" => route_id, "attributes" => %{"direction_destinations" => destinations}} <-
               data,

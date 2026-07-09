@@ -31,7 +31,7 @@ defmodule PaEss.Updater do
     log_meta = [
       sign_id: id,
       current_config: log_config,
-      visual: Jason.encode!(visual),
+      visual: JSON.encode!(visual),
       correlation_id: inspect(correlation_id),
       legacy: !scu_migrated?
     ]
@@ -83,7 +83,7 @@ defmodule PaEss.Updater do
          sign_id: sign.id,
          correlation_id: inspect(correlation_id),
          legacy: legacy?,
-         visual: paginate(visual, sign) |> format_pages() |> Jason.encode!()
+         visual: paginate(visual, sign) |> format_pages() |> JSON.encode!()
        ], correlation_id}
     end
 
