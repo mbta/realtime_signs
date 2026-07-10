@@ -14,7 +14,7 @@ defmodule Headway.RequestTest do
 
       assert log =~ "Response returned with status code 500"
       assert log =~ "Could not load schedules"
-      assert log =~ "Bad URL"
+      assert log =~ "invalid_header"
     end
   end
 
@@ -26,15 +26,6 @@ defmodule Headway.RequestTest do
       assert build_request({["1"], ["7022"]}) ==
                "https://api-dev-green.mbtace.com/schedules?filter[stop]=7022&filter[direction_id]=1"
     end
-  end
-
-  test "Logs warning when json data cannot be parsed" do
-    log =
-      capture_log([level: :warning], fn ->
-        assert get_schedules(["parse_error"]) == []
-      end)
-
-    assert log =~ "Could not decode response for scheduled headways:"
   end
 
   test "parses valid json" do

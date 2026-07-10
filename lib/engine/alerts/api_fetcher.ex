@@ -29,23 +29,24 @@ defmodule Engine.Alerts.ApiFetcher do
     headers = api_key_headers(Application.get_env(:realtime_signs, :api_v3_key))
     http_client = Application.get_env(:realtime_signs, :http_client)
 
-    with {:ok, req} <-
-           http_client.get(
-             alerts_url,
-             headers,
-             timeout: 2000,
-             recv_timeout: 2000,
-             params: %{
-               "filter[route]" => Enum.join(route_ids, ","),
-               "filter[datetime]" => "NOW"
-             }
-           ),
-         %{status_code: 200, body: body} <- req,
-         {:ok, parsed} <- JSON.decode(body),
-         {:ok, data} <- Map.fetch(parsed, "data") do
-      {:ok, data}
-    else
-      err -> {:error, err}
+    case http_client.get(
+           alerts_url,
+           compressed: true,
+           headers: headers,
+           receive_timeout: 2000,
+           params: %{
+             "filter[route]" => Enum.join(route_ids, ","),
+             "filter[datetime]" => "NOW"
+           }
+         ) do
+      {:ok, %Req.Response{status: 200, body: %{"data" => data}}} ->
+        {:ok, data}
+
+      {:ok, response} ->
+        {:error, response}
+
+      error ->
+        error
     end
   end
 

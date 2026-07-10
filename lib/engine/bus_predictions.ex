@@ -36,12 +36,13 @@ defmodule Engine.BusPredictions do
 
     case http_client.get(
            api_url <> "/predictions",
-           Enum.concat(
-             if(last_modified, do: [{"if-modified-since", last_modified}], else: []),
-             if(api_key, do: [{"x-api-key", api_key}], else: [])
-           ),
-           timeout: 2000,
-           recv_timeout: 2000,
+           compressed: true,
+           headers:
+             Enum.concat(
+               if(last_modified, do: [if_modified_since: last_modified], else: []),
+               if(api_key, do: [x_api_key: api_key], else: [])
+             ),
+           receive_timeout: 2000,
            params: %{
              "include" => "trip,vehicle",
              "fields[prediction]" => "departure_time,direction_id",
@@ -50,9 +51,8 @@ defmodule Engine.BusPredictions do
              "filter[stop]" => Enum.join(all_bus_stop_ids, ",")
            }
          ) do
-      {:ok, %{status_code: 200, body: body, headers: headers}} ->
-        %{"data" => data} = payload = JSON.decode!(body)
-        included = Map.get(payload, "included", [])
+      {:ok, %Req.Response{status: 200, body: %{"data" => data} = response, headers: headers}} ->
+        included = Map.get(response, "included", [])
 
         vehicles_lookup =
           for %{
@@ -121,7 +121,7 @@ defmodule Engine.BusPredictions do
 
         {:noreply, %{state | last_modified: Map.new(headers)["last-modified"]}}
 
-      {:ok, %{status_code: 304}} ->
+      {:ok, %Req.Response{status: 304}} ->
         {:noreply, state}
 
       err ->

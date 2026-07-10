@@ -1,72 +1,20 @@
-defmodule Fake.HTTPoison do
-  def get(url, headers \\ [], options \\ []) do
-    if options[:stream_to] do
-      send(options[:stream_to], %HTTPoison.AsyncStatus{code: 200})
-      send(options[:stream_to], %HTTPoison.AsyncChunk{chunk: "lol"})
-      send(options[:stream_to], %HTTPoison.AsyncEnd{})
-    end
+defmodule Fake.Req do
+  def get(url, _options \\ []), do: mock_response(url)
 
-    {url, headers, options}
-    mock_response(url)
-  end
+  def post(_url, options \\ []) do
+    form = Keyword.fetch!(options, :form)
 
-  def post(_url, body, _headers \\ [], _params \\ []) do
-    cond do
-      body =~ "timeout" ->
-        {:error, %HTTPoison.Error{reason: :timeout}}
-
-      body =~ "bad_sign" ->
-        {:ok, %HTTPoison.Response{status_code: 404}}
-
-      body =~ "MsgType=SignContent&uid=" ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
-
-      body =~ "mid=133&var=5508%2C5512&typ=1&sta=SBOX010000&pri=5&tim=60" ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
-
-      body =~
-          ~r/MsgType=Canned&uid=[0-9]+&mid=133&var=5508%2C5512&typ=1&sta=SBOX010000&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
-
-      body =~
-          ~r/MsgType=Canned&uid=[0-9]+&mid=134&var=5508%2C5512&typ=1&sta=SBSQ100000&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
-
-      body =~ ~r/MsgType=Canned&uid=[0-9]+&mid=135&var=5510&typ=0&sta=SCHS000001&pri=5&tim=200/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
-
-      body =~
-          ~r/MsgType=Canned&uid=[0-9]+&mid=150&var=37008%2C37014&typ=1&sta=SBOX000010&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
-
-      body =~
-          ~r/MsgType=Canned&uid=[0-9]+&mid=90&var=4016%2C503%2C5004&typ=1&sta=MCED001000&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
-
-      body =~
-          ~r/MsgType=Canned&uid=[0-9]+&mid=103&var=90128&typ=0&sta=MCED000100&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
-
-      body =~ ~r/MsgType=Canned&uid=[0-9]+&mid=103&var=90129&typ=0&sta=MCAP001000&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
-
-      body =~ ~r/MsgType=AdHoc&uid=[0-9]+&msg=Custom\+Message&typ=1&sta=MCAP001000&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
-
-      body =~
-          ~r/MsgType=AdHoc&uid=[0-9]+&msg=Custom\+Orange\+Line\+Message&typ=1&sta=MCAP001000&pri=5&tim=60/ ->
-        {:ok, %HTTPoison.Response{status_code: 200}}
-
-      body =~ "grant_type" ->
+    case form do
+      %{"grant_type" => _} ->
         {:ok,
-         %HTTPoison.Response{
-           status_code: 200,
-           body: JSON.encode!(%{"access_token" => "test_access_token", "expires_in" => 2_591_999})
+         %Req.Response{
+           status: 200,
+           body: %{"access_token" => "test_access_token", "expires_in" => 2_591_999}
          }}
     end
   end
 
-  @spec mock_response(String.t()) :: {:ok, %HTTPoison.Response{}} | {:error, %HTTPoison.Error{}}
+  @spec mock_response(String.t()) :: {:ok, Req.Response.t()} | {:error, Exception.t()}
   def mock_response("https://fake_update/mbta-gtfs-s3/fake_trip_update.json") do
     feed_message =
       %{
@@ -118,13 +66,12 @@ defmodule Fake.HTTPoison do
           "timestamp" => 1_490_783_458
         }
       }
-      |> JSON.encode!()
 
     {:ok,
-     %HTTPoison.Response{
-       status_code: 200,
+     %Req.Response{
+       status: 200,
        body: feed_message,
-       headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:30:58 GMT"}]
+       headers: %{"last-modified" => ["Wed, 29 Mar 2017 10:30:58 GMT"]}
      }}
   end
 
@@ -170,7 +117,7 @@ defmodule Fake.HTTPoison do
       }
     ]
 
-    {:ok, %HTTPoison.Response{status_code: 200, body: JSON.encode!(response)}}
+    {:ok, %Req.Response{status: 200, body: response}}
   end
 
   def mock_response("https://screenplay-fake.mbtace.com/api/pa-messages/no-longer-active") do
@@ -195,7 +142,7 @@ defmodule Fake.HTTPoison do
       }
     ]
 
-    {:ok, %HTTPoison.Response{status_code: 200, body: JSON.encode!(response)}}
+    {:ok, %Req.Response{status: 200, body: response}}
   end
 
   def mock_response("https://screenplay-fake.mbtace.com/api/pa-messages/changed-interval") do
@@ -240,7 +187,7 @@ defmodule Fake.HTTPoison do
       }
     ]
 
-    {:ok, %HTTPoison.Response{status_code: 200, body: JSON.encode!(response)}}
+    {:ok, %Req.Response{status: 200, body: response}}
   end
 
   def mock_response("fake_trip_update2.json") do
@@ -284,13 +231,12 @@ defmodule Fake.HTTPoison do
           "timestamp" => 1_490_783_458
         }
       }
-      |> JSON.encode!()
 
     {:ok,
-     %HTTPoison.Response{
-       status_code: 200,
+     %Req.Response{
+       status: 200,
        body: feed_message,
-       headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:30:58 GMT"}]
+       headers: %{"last-modified" => ["Wed, 29 Mar 2017 10:30:58 GMT"]}
      }}
   end
 
@@ -342,13 +288,12 @@ defmodule Fake.HTTPoison do
           "timestamp" => 1_490_783_458
         }
       }
-      |> JSON.encode!()
 
     {:ok,
-     %HTTPoison.Response{
-       status_code: 200,
+     %Req.Response{
+       status: 200,
        body: feed_message,
-       headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:30:58 GMT"}]
+       headers: %{"last-modified" => ["Wed, 29 Mar 2017 10:30:58 GMT"]}
      }}
   end
 
@@ -392,13 +337,12 @@ defmodule Fake.HTTPoison do
           }
         ]
       }
-      |> JSON.encode!()
 
     {:ok,
-     %HTTPoison.Response{
-       status_code: 200,
+     %Req.Response{
+       status: 200,
        body: feed_message,
-       headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:30:58 GMT"}]
+       headers: %{"last-modified" => ["Wed, 29 Mar 2017 10:30:58 GMT"]}
      }}
   end
 
@@ -447,13 +391,12 @@ defmodule Fake.HTTPoison do
           "timestamp" => 1_490_783_578
         }
       }
-      |> JSON.encode!()
 
     {:ok,
-     %HTTPoison.Response{
-       status_code: 200,
+     %Req.Response{
+       status: 200,
        body: feed_message,
-       headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:32:58 GMT"}]
+       headers: %{"last-modified" => ["Wed, 29 Mar 2017 10:32:58 GMT"]}
      }}
   end
 
@@ -497,56 +440,51 @@ defmodule Fake.HTTPoison do
           }
         ]
       }
-      |> JSON.encode!()
 
     {:ok,
-     %HTTPoison.Response{
-       status_code: 200,
+     %Req.Response{
+       status: 200,
        body: feed_message,
-       headers: [{"Last-Modified", "Wed, 29 Mar 2017 10:32:58 GMT"}]
+       headers: %{"last-modified" => ["Wed, 29 Mar 2017 10:32:58 GMT"]}
      }}
   end
 
   def mock_response("trip_updates_304") do
-    {:ok, %HTTPoison.Response{status_code: 304}}
+    {:ok, %Req.Response{status: 304}}
   end
 
   def mock_response("vehicle_positions_304") do
-    {:ok, %HTTPoison.Response{status_code: 304}}
+    {:ok, %Req.Response{status: 304}}
   end
 
   def mock_response("trip_updates_error") do
-    {:error, %HTTPoison.Error{reason: :timeout}}
+    {:error, %Req.TransportError{reason: :timeout}}
   end
 
   def mock_response("vehicle_position_error") do
-    {:error, %HTTPoison.Error{reason: :timeout}}
+    {:error, %Req.TransportError{reason: :timeout}}
+  end
+
+  def mock_response("fake_vehicle_position.json") do
+    {:ok, %Req.Response{status: 200, body: %{"entity" => []}}}
   end
 
   def mock_response(
         "https://api-dev-green.mbtace.com/schedules?filter[stop]=500_error&filter[direction_id]=0,1"
       ) do
-    {:ok, %HTTPoison.Response{status_code: 500, body: ""}}
+    {:ok, %Req.Response{status: 500, body: ""}}
   end
 
   def mock_response(
         "https://api-dev-green.mbtace.com/schedules?filter[stop]=unknown_error&filter[direction_id]=0,1"
       ) do
-    {:error, %HTTPoison.Error{reason: "Bad URL"}}
-  end
-
-  def mock_response(
-        "https://api-dev-green.mbtace.com/schedules?filter[stop]=parse_error&filter[direction_id]=0,1"
-      ) do
-    {:ok, %HTTPoison.Response{status_code: 200, body: "BAD JSON"}}
+    {:error, %Req.HTTPError{reason: :invalid_header}}
   end
 
   def mock_response(
         "https://api-dev-green.mbtace.com/schedules?filter[stop]=valid_json&filter[direction_id]=0,1"
       ) do
-    json = %{"data" => [%{"relationships" => "trip"}]}
-    encoded = JSON.encode!(json)
-    {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
+    {:ok, %Req.Response{status: 200, body: %{"data" => [%{"relationships" => "trip"}]}}}
   end
 
   def mock_response("unknown") do
@@ -554,9 +492,7 @@ defmodule Fake.HTTPoison do
   end
 
   def mock_response("https://api-dev-green.mbtace.com/schedules" <> _) do
-    json = %{"data" => []}
-    encoded = JSON.encode!(json)
-    {:ok, %HTTPoison.Response{status_code: 200, body: encoded}}
+    {:ok, %Req.Response{status: 200, body: %{"data" => []}}}
   end
 
   def mock_response("https://api-dev-green.mbtace.com/alerts") do
@@ -702,30 +638,30 @@ defmodule Fake.HTTPoison do
       ]
     }
 
-    {:ok, %HTTPoison.Response{status_code: 200, body: JSON.encode!(response)}}
+    {:ok, %Req.Response{status: 200, body: response}}
   end
 
   def mock_response("https://api-dev-green.mbtace.com/predictions" <> _) do
-    {:ok, %HTTPoison.Response{status_code: 200, body: JSON.encode!(%{data: [], included: []})}}
+    {:ok, %Req.Response{status: 200, body: %{"data" => [], "included" => []}}}
   end
 
   def mock_response("https://api-dev-green.mbtace.com/routes" <> _) do
-    {:ok, %HTTPoison.Response{status_code: 200, body: JSON.encode!(%{data: []})}}
+    {:ok, %Req.Response{status: 200, body: %{"data" => []}}}
   end
 
   def mock_response("https://api-dev-green.mbtace.com/stops" <> _) do
-    {:ok, %HTTPoison.Response{status_code: 200, body: JSON.encode!(%{data: []})}}
+    {:ok, %Req.Response{status: 200, body: %{"data" => []}}}
   end
 
   def mock_response("https://www.chelseabridgesys.com/api/api/BridgeRealTime" <> _) do
     {:ok,
-     %HTTPoison.Response{
-       status_code: 200,
-       body: JSON.encode!(%{"liftInProgress" => false, "estimatedDurationInMinutes" => 0})
+     %Req.Response{
+       status: 200,
+       body: %{"liftInProgress" => false, "estimatedDurationInMinutes" => 0}
      }}
   end
 
   def mock_response(_) do
-    {:ok, %HTTPoison.Response{status_code: 200, body: ""}}
+    {:ok, %Req.Response{status: 200, body: ""}}
   end
 end

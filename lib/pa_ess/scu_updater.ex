@@ -13,22 +13,20 @@ defmodule PaEss.ScuUpdater do
 
   @impl true
   def handle_events([{:message, scu_id, payload, logs}], _from, state) do
-    body = JSON.encode!(payload)
     log("play_message", logs)
 
-    if send_to_scu(scu_id, "/message", body) == :ok do
-      send_to_signs_ui(scu_id, "/message", body)
+    if send_to_scu(scu_id, "/message", payload) == :ok do
+      send_to_signs_ui(scu_id, "/message", payload)
     end
 
     {:noreply, [], state}
   end
 
   def handle_events([{:background, scu_id, payload, logs}], _from, state) do
-    body = JSON.encode!(payload)
     log("set_background_message", logs)
 
-    if send_to_scu(scu_id, "/background", body) == :ok do
-      send_to_signs_ui(scu_id, "/background", body)
+    if send_to_scu(scu_id, "/background", payload) == :ok do
+      send_to_signs_ui(scu_id, "/background", payload)
     end
 
     {:noreply, [], state}
@@ -42,22 +40,20 @@ defmodule PaEss.ScuUpdater do
     address = scu_ip_map[scu_id] || scu_ip_map["*"]
 
     if address do
-      http_poster.post(
-        "http://#{address}#{path}",
-        body,
-        [{"Content-type", "application/json"}, {"x-api-key", scully_api_key}],
-        hackney: [pool: :arinc_pool]
+      http_poster.post("http://#{address}#{path}",
+        headers: [x_api_key: scully_api_key],
+        json: body
       )
       |> case do
-        {:ok, %HTTPoison.Response{status_code: status}} when status in 200..299 ->
+        {:ok, %Req.Response{status: status}} when status in 200..299 ->
           :ok
 
-        {:ok, %HTTPoison.Response{status_code: status}} ->
+        {:ok, %Req.Response{status: status}} ->
           Logger.warning("scu_error: status=#{inspect(status)} scu_id=#{inspect(scu_id)}")
           :error
 
-        {:error, %HTTPoison.Error{reason: reason}} ->
-          Logger.warning("scu_error: #{inspect(reason)} scu_id=#{inspect(scu_id)}")
+        {:error, error} ->
+          Logger.warning("scu_error: scu_id=#{inspect(scu_id)} #{inspect(error)}")
           :error
       end
     else
@@ -71,25 +67,19 @@ defmodule PaEss.ScuUpdater do
     sign_ui_api_key = Application.get_env(:realtime_signs, :sign_ui_api_key)
 
     if sign_ui_url do
-      http_poster.post(
-        "http://#{sign_ui_url}#{path}",
-        body,
-        [
-          {"Content-type", "application/json"},
-          {"x-api-key", sign_ui_api_key},
-          {"x-scu-id", scu_id}
-        ],
-        hackney: [pool: :arinc_pool]
+      http_poster.post("http://#{sign_ui_url}#{path}",
+        headers: [x_api_key: sign_ui_api_key, x_scu_id: scu_id],
+        json: body
       )
       |> case do
-        {:ok, %HTTPoison.Response{status_code: status}} when status in 200..299 ->
+        {:ok, %Req.Response{status: status}} when status in 200..299 ->
           nil
 
-        {:ok, %HTTPoison.Response{status_code: status}} ->
+        {:ok, %Req.Response{status: status}} ->
           Logger.warning("signs_ui_error: status=#{inspect(status)}")
 
-        {:error, %HTTPoison.Error{reason: reason}} ->
-          Logger.warning("signs_ui_error: #{inspect(reason)}")
+        {:error, error} ->
+          Logger.warning("signs_ui_error: #{inspect(error)}")
       end
     end
   end

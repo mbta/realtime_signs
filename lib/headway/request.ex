@@ -10,7 +10,11 @@ defmodule Headway.Request do
       Enum.group_by(station_ids, &directions_for_station_id/1)
       |> Enum.map(&build_request/1)
       |> Enum.map(
-        &http_client.get(&1, api_key_header(api_v3_key), timeout: 5000, recv_timeout: 5000)
+        &http_client.get(&1,
+          compressed: true,
+          headers: if(not is_nil(api_v3_key), do: [x_api_key: api_v3_key], else: []),
+          receive_timeout: 5000
+        )
       )
       |> Enum.map(&validate_and_parse_response/1)
 
@@ -29,44 +33,26 @@ defmodule Headway.Request do
     schedule_api_url <> "?filter[stop]=#{id_filter}&filter[direction_id]=#{direction_filter}"
   end
 
-  @spec validate_and_parse_response({atom, %HTTPoison.Response{}} | {atom, %HTTPoison.Error{}}) ::
-          [
-            map()
-          ]
-          | :error
-  defp validate_and_parse_response(response) do
-    case response do
-      {:ok, %HTTPoison.Response{status_code: status, body: body}}
+  @spec validate_and_parse_response({:ok, Req.Response.t()} | {:error, Exception.t()}) ::
+          [map()] | :error
+  defp validate_and_parse_response(result) do
+    case result do
+      {:ok, %Req.Response{status: status, body: %{"data" => data}}}
       when status >= 200 and status < 300 ->
-        parse_body(body)
+        data
 
-      {:ok, %HTTPoison.Response{status_code: status}} ->
+      {:ok, %Req.Response{status: status}} ->
         Logger.warning(
           "Could not load schedules. Response returned with status code #{inspect(status)}"
         )
 
         :error
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warning("Could not load schedules: #{inspect(reason)}")
+      {:error, error} ->
+        Logger.warning("Could not load schedules: #{inspect(error)}")
         :error
     end
   end
-
-  @spec parse_body(String.t()) :: [map()]
-  defp parse_body(body) do
-    case JSON.decode(body) do
-      {:ok, response} ->
-        Map.get(response, "data")
-
-      {:error, reason} ->
-        Logger.warning("Could not decode response for scheduled headways: #{inspect(reason)}")
-        []
-    end
-  end
-
-  defp api_key_header(nil), do: []
-  defp api_key_header(key), do: [{"x-api-key", key}]
 
   @spec directions_for_station_id(GTFS.station_id()) :: [String.t()]
   defp directions_for_station_id("70061"), do: ["0"]

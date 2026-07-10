@@ -32,12 +32,8 @@ defmodule Engine.PaMessages do
           play_pa_messages(selected_pa_messages)
           state
 
-        {:error, %HTTPoison.Response{status_code: status_code, body: body}} ->
-          Logger.error("pa_messages_response_error: status_code=#{status_code} body=#{body}")
-          state
-
-        {:error, %HTTPoison.Error{reason: reason}} ->
-          Logger.error("pa_messages_response_error: reason=#{reason}")
+        {:error, %Req.Response{status: status, body: body}} ->
+          Logger.error("pa_messages_response_error: status=#{status} body=#{body}")
           state
 
         {:error, error} ->
@@ -90,41 +86,39 @@ defmodule Engine.PaMessages do
 
     http_client = Application.get_env(:realtime_signs, :http_client)
 
-    with {:ok, response} <-
-           http_client.get(
-             active_pa_messages_url,
-             [
-               {"x-api-key", Application.get_env(:realtime_signs, :screenplay_api_key)}
-             ],
-             timeout: 2000,
-             recv_timeout: 2000
-           ),
-         %{status_code: 200, body: body} <- response,
-         {:ok, data} <- JSON.decode(body) do
-      pa_messages =
-        for %{
-              "id" => pa_id,
-              "visual_text" => visual_text,
-              "audio_text" => audio_text,
-              "audio_url" => audio_url,
-              "interval_in_minutes" => interval_in_minutes,
-              "priority" => priority,
-              "sign_ids" => sign_ids
-            } <- data do
-          %PaMessage{
-            id: pa_id,
-            visual_text: visual_text,
-            audio_text: audio_text,
-            audio_url: audio_url,
-            priority: priority,
-            sign_ids: sign_ids,
-            interval_in_ms: interval_in_minutes * @minute_in_ms
-          }
-        end
+    case http_client.get(
+           active_pa_messages_url,
+           headers: [x_api_key: Application.get_env(:realtime_signs, :screenplay_api_key)],
+           receive_timeout: 2000
+         ) do
+      {:ok, %Req.Response{status: 200, body: data}} ->
+        pa_messages =
+          for %{
+                "id" => pa_id,
+                "visual_text" => visual_text,
+                "audio_text" => audio_text,
+                "audio_url" => audio_url,
+                "interval_in_minutes" => interval_in_minutes,
+                "priority" => priority,
+                "sign_ids" => sign_ids
+              } <- data do
+            %PaMessage{
+              id: pa_id,
+              visual_text: visual_text,
+              audio_text: audio_text,
+              audio_url: audio_url,
+              priority: priority,
+              sign_ids: sign_ids,
+              interval_in_ms: interval_in_minutes * @minute_in_ms
+            }
+          end
 
-      {:ok, pa_messages}
-    else
-      error ->
+        {:ok, pa_messages}
+
+      {:ok, other} ->
+        {:error, other}
+
+      {:error, error} ->
         {:error, error}
     end
   end

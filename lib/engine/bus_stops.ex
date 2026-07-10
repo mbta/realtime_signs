@@ -41,21 +41,21 @@ defmodule Engine.BusStops do
 
     case http_client.get(
            api_url <> "/schedules",
-           Enum.concat(
-             if(last_modified, do: [{"if-modified-since", last_modified}], else: []),
-             if(api_key, do: [{"x-api-key", api_key}], else: [])
-           ),
-           timeout: 10000,
-           recv_timeout: 10000,
+           compressed: true,
+           headers:
+             Enum.concat(
+               if(last_modified, do: [if_modified_since: last_modified], else: []),
+               if(api_key, do: [x_api_key: api_key], else: [])
+             ),
+           receive_timeout: 10000,
            params: %{
              "filter[stop]" => Enum.join(all_bus_stop_ids, ","),
              "filter[route]" => Enum.join(bus_routes, ","),
              "include" => "stop"
            }
          ) do
-      {:ok, %{status_code: 200, body: body, headers: headers}} ->
-        %{"data" => data} = payload = JSON.decode!(body)
-        included = Map.get(payload, "included", [])
+      {:ok, %Req.Response{status: 200, body: %{"data" => data} = body, headers: headers}} ->
+        included = Map.get(body, "included", [])
 
         child_to_parent =
           for %{
@@ -91,7 +91,7 @@ defmodule Engine.BusStops do
 
         {:noreply, %{state | last_modified: Map.new(headers)["last-modified"]}}
 
-      {:ok, %{status_code: 304}} ->
+      {:ok, %Req.Response{status: 304}} ->
         {:noreply, state}
 
       err ->

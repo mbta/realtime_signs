@@ -23,8 +23,7 @@ defmodule RealtimeSigns do
 
     children =
       [
-        :hackney_pool.child_spec(:default, []),
-        :hackney_pool.child_spec(:arinc_pool, []),
+        {Finch, name: RealtimeSigns.Finch, pools: %{default: [start_pool_metrics?: true]}},
         Engine.Health,
         Engine.Config,
         Engine.Locations,
@@ -47,6 +46,8 @@ defmodule RealtimeSigns do
         [
           Signs.Supervisor
         ]
+
+    Req.default_options(finch: RealtimeSigns.Finch)
 
     opts = [strategy: :one_for_one, name: __MODULE__]
     Supervisor.start_link(children, opts)

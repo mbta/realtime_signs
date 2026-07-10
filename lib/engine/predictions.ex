@@ -52,30 +52,28 @@ defmodule Engine.Predictions do
     http_client = Application.get_env(:realtime_signs, :http_client)
 
     new_last_modified =
-      with {:ok, %HTTPoison.Response{body: body, status_code: 200, headers: headers}} <-
-             http_client.get(
-               Application.get_env(:realtime_signs, :trip_update_url),
-               if(last_modified, do: [{"If-Modified-Since", last_modified}], else: []),
-               timeout: 2000,
-               recv_timeout: 2000
-             ),
-           {:ok, parsed_json} <- JSON.decode(body) do
-        {new_predictions, vehicles_running_revenue_trips} =
-          Predictions.Predictions.get_all(parsed_json, current_time)
+      case http_client.get(
+             Application.get_env(:realtime_signs, :trip_update_url),
+             headers: if(last_modified, do: [if_modified_since: last_modified], else: []),
+             receive_timeout: 2000
+           ) do
+        {:ok, %Req.Response{body: json, status: 200, headers: headers}} ->
+          {new_predictions, vehicles_running_revenue_trips} =
+            Predictions.Predictions.get_all(json, current_time)
 
-        Predictions.LastTrip.get_last_trips(parsed_json)
-        |> Engine.LastTrip.update_last_trips()
+          Predictions.LastTrip.get_last_trips(json)
+          |> Engine.LastTrip.update_last_trips()
 
-        Predictions.LastTrip.get_recent_departures(parsed_json)
-        |> Engine.LastTrip.update_recent_departures()
+          Predictions.LastTrip.get_recent_departures(json)
+          |> Engine.LastTrip.update_recent_departures()
 
-        EtsUtils.write_ets(state.trip_updates_table, new_predictions, [])
+          EtsUtils.write_ets(state.trip_updates_table, new_predictions, [])
 
-        :ets.insert(state.revenue_vehicles_table, {:all, vehicles_running_revenue_trips})
+          :ets.insert(state.revenue_vehicles_table, {:all, vehicles_running_revenue_trips})
 
-        Enum.find_value(headers, fn {key, value} -> if(key == "Last-Modified", do: value) end)
-      else
-        {:ok, %HTTPoison.Response{status_code: 304}} ->
+          Enum.find_value(headers, fn {key, value} -> if(key == "Last-Modified", do: value) end)
+
+        {:ok, %Req.Response{status: 304}} ->
           last_modified
 
         {_, response} ->

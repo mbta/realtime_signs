@@ -30,17 +30,16 @@ defmodule Engine.Routes do
 
     case http_client.get(
            api_url <> "/routes",
-           Enum.concat(
-             if(last_modified, do: [{"if-modified-since", last_modified}], else: []),
-             if(api_key, do: [{"x-api-key", api_key}], else: [])
-           ),
-           timeout: 2000,
-           recv_timeout: 2000,
+           compressed: true,
+           headers:
+             Enum.concat(
+               if(last_modified, do: [if_modified_since: last_modified], else: []),
+               if(api_key, do: [x_api_key: api_key], else: [])
+             ),
+           receive_timeout: 2000,
            params: %{"filter[type]" => "3"}
          ) do
-      {:ok, %{status_code: 200, body: body, headers: headers}} ->
-        %{"data" => data} = JSON.decode!(body)
-
+      {:ok, %Req.Response{status: 200, body: %{"data" => data}, headers: headers}} ->
         for %{"id" => route_id, "attributes" => %{"direction_destinations" => destinations}} <-
               data,
             {destination, direction_id} <- Enum.with_index(destinations) do
@@ -50,7 +49,7 @@ defmodule Engine.Routes do
 
         {:noreply, %{state | last_modified: Map.new(headers)["last-modified"]}}
 
-      {:ok, %{status_code: 304}} ->
+      {:ok, %Req.Response{status: 304}} ->
         {:noreply, state}
 
       err ->
