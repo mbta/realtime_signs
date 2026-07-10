@@ -56,7 +56,6 @@ defmodule RealtimeSigns.Mixfile do
       {:quantum, "~> 3.0"},
       {:phoenix, "~> 1.8.7"},
       {:plug_cowboy, "~> 2.5"},
-      {:configparser_ex, "~> 4.0", only: [:prod]},
       {:remote_ip, "~> 1.2"}
     ]
   end
