@@ -42,7 +42,6 @@ config :realtime_signs,
   external_config_getter: ExternalConfig.Local,
   aws_client: ExAws,
   s3_client: ExAws.S3,
-  restart_fn: &Engine.Health.restart_noop/0,
   active_pa_messages_path: "/api/pa-messages/active"
 
 config :realtime_signs, RealtimeSignsWeb.Endpoint,
