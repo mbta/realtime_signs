@@ -77,55 +77,41 @@ defmodule Engine.Locations do
     {:noreply, %{state | last_modified_vehicle_positions: last_modified_vehicle_locations}}
   end
 
-  @spec download_data(String.t(), String.t() | nil) ::
-          {:ok, String.t(), String.t() | nil} | :error
+  @spec download_data(String.t(), String.t() | nil) :: {:ok, map(), String.t() | nil} | :error
   defp download_data(full_url, last_modified) do
     http_client = Application.get_env(:realtime_signs, :http_client)
 
     case http_client.get(
            full_url,
-           if last_modified do
-             [{"If-Modified-Since", last_modified}]
-           else
-             []
-           end,
-           timeout: 2000,
-           recv_timeout: 2000
+           headers: if(last_modified, do: [if_modified_since: last_modified], else: []),
+           receive_timeout: 2000
          ) do
-      {:ok, %HTTPoison.Response{body: body, status_code: status, headers: headers}}
+      {:ok, %Req.Response{body: body, status: status, headers: headers}}
       when status >= 200 and status < 300 ->
-        case Enum.find(headers, fn {header, _value} -> header == "Last-Modified" end) do
-          {"Last-Modified", last_modified} -> {:ok, body, last_modified}
+        case headers["last-modified"] do
+          [last_modified] -> {:ok, body, last_modified}
           _ -> {:ok, body, nil}
         end
 
-      {:ok, %HTTPoison.Response{}} ->
+      {:ok, %Req.Response{}} ->
         :error
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.warning("Could not fetch file from #{inspect(full_url)}: #{inspect(reason)}")
+      {:error, error} ->
+        Logger.warning("Could not fetch file from #{inspect(full_url)}: #{inspect(error)}")
         :error
     end
   end
 
-  @spec map_locations_data(String.t()) ::
+  @spec map_locations_data(map()) ::
           {%{String.t() => Locations.Location.t()}, %{String.t() => Locations.Location.t()}}
-  defp map_locations_data(response) do
-    try do
-      locations =
-        response
-        |> JSON.decode!()
-        |> Map.get("entity")
-        |> Enum.reject(&(&1["vehicle"]["trip"]["schedule_relationship"] == "CANCELED"))
-        |> Enum.map(&location_from_update/1)
+  defp map_locations_data(%{"entity" => entities}) do
+    locations =
+      entities
+      |> Enum.reject(&(&1["vehicle"]["trip"]["schedule_relationship"] == "CANCELED"))
+      |> Enum.map(&location_from_update/1)
 
-      {Map.new(locations, fn location -> {location.vehicle_id, location} end),
-       Enum.group_by(locations, & &1.stop_id)}
-    rescue
-      e in JSON.DecodeError ->
-        Logger.error("Engine.Locations json_decode_error: #{inspect(Exception.message(e))}")
-        {%{}, %{}}
-    end
+    {Map.new(locations, fn location -> {location.vehicle_id, location} end),
+     Enum.group_by(locations, & &1.stop_id)}
   end
 
   defp location_from_update(location) do

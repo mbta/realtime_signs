@@ -1,6 +1,5 @@
 ExUnit.start(capture_log: true)
 
-Mox.defmock(Engine.NetworkCheck.Mock, for: Engine.NetworkCheck)
 Mox.defmock(PaEss.Updater.Mock, for: PaEss.Updater)
 Mox.defmock(Engine.Config.Mock, for: Engine.Config)
 Mox.defmock(Engine.Alerts.Mock, for: Engine.Alerts)

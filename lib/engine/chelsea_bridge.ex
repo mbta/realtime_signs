@@ -61,25 +61,25 @@ defmodule Engine.ChelseaBridge do
         state.token
       end
 
-    with {:ok, %{status_code: 200, body: body}} <-
-           http_client.get("#{@base_api_url}#{@api_status_endpoint}", [
-             {"Authorization", "Bearer #{token.value}"}
-           ]),
-         {:ok, %{"liftInProgress" => raised, "estimatedDurationInMinutes" => estimate}} <-
-           JSON.decode(body) do
-      :ets.insert(
-        state.table,
-        {
-          :value,
-          %{
-            raised?: raised,
-            estimate: Timex.shift(now, minutes: estimate)
+    case http_client.get("#{@base_api_url}#{@api_status_endpoint}", auth: {:bearer, token.value}) do
+      {:ok,
+       %Req.Response{
+         status: 200,
+         body: %{"liftInProgress" => raised, "estimatedDurationInMinutes" => estimate}
+       }} ->
+        :ets.insert(
+          state.table,
+          {
+            :value,
+            %{
+              raised?: raised,
+              estimate: Timex.shift(now, minutes: estimate)
+            }
           }
-        }
-      )
+        )
 
-      {:noreply, %{state | token: token}}
-    else
+        {:noreply, %{state | token: token}}
+
       err ->
         Logger.error("Error getting bridge status: #{inspect(err)}")
         {:noreply, state}
@@ -99,29 +99,18 @@ defmodule Engine.ChelseaBridge do
     password = Application.get_env(:realtime_signs, :chelsea_bridge_password)
     http_poster = Application.get_env(:realtime_signs, :http_poster_mod)
 
-    # Encode as application/x-www-form-urlencoded
-    body =
-      URI.encode_query(%{
-        "grant_type" => "password",
-        "username" => username,
-        "password" => password
-      })
-
-    with {:ok, %{status_code: 200, body: body}} <-
-           http_poster.post("#{@base_api_url}#{@api_token_endpoint}", body, [
-             {"Content-Type", "application/x-www-form-urlencoded"}
-           ]),
-         {:ok, data} <- JSON.decode(body) do
-      expiration =
-        now
+    case http_poster.post("#{@base_api_url}#{@api_token_endpoint}",
+           form: %{
+             "grant_type" => "password",
+             "username" => username,
+             "password" => password
+           }
+         ) do
+      {:ok, %Req.Response{status: 200, body: %{"access_token" => token, "expires_in" => expires}}} ->
         # Give 60 second buffer on expiration time so we don't run into issues with trying expiring token
-        |> Timex.shift(seconds: Map.get(data, "expires_in") - 60)
+        expiration = Timex.shift(now, seconds: expires - 60)
+        %{value: token, expiration: expiration}
 
-      %{
-        value: Map.get(data, "access_token"),
-        expiration: expiration
-      }
-    else
       err ->
         Logger.error("Error getting bridge access_token: #{inspect(err)}")
         %{value: nil, expiration: nil}

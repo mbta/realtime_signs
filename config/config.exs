@@ -34,15 +34,14 @@ config :realtime_signs,
   bus_stop_engine: Engine.BusStops,
   station_stop_engine: Engine.StationStops,
   sign_updater: PaEss.Updater,
-  http_client: HTTPoison,
+  http_client: Req,
   posts_log_dir: "log/posts/",
   time_zone: "America/New_York",
-  http_poster_mod: HTTPoison,
+  http_poster_mod: Req,
   scheduled_headway_requester: Headway.Request,
   external_config_getter: ExternalConfig.Local,
   aws_client: ExAws,
   s3_client: ExAws.S3,
-  restart_fn: &Engine.Health.restart_noop/0,
   active_pa_messages_path: "/api/pa-messages/active"
 
 config :realtime_signs, RealtimeSignsWeb.Endpoint,
@@ -59,6 +58,8 @@ config :ehmon, :report_mf, {:ehmon, :info_report}
 # Have to use Timex's DB for now because Timex.parse can return times in
 # "Etc/UTC-4" time zone, which is invalid by IANA and TzData.TimeZoneDatabase
 config :elixir, :time_zone_database, Timex.Timezone.Database
+
+config :ex_aws, http_client: ExAws.Request.Req
 
 config :phoenix, :json_library, Jason
 

@@ -32,17 +32,16 @@ defmodule Engine.StationStops do
 
     case @http_client.get(
            api_url <> "/stops",
-           Enum.concat(
-             if(last_modified, do: [{"if-modified-since", last_modified}], else: []),
-             if(api_key, do: [{"x-api-key", api_key}], else: [])
-           ),
-           timeout: 10000,
-           recv_timeout: 10000,
+           compressed: true,
+           headers:
+             Enum.concat(
+               if(last_modified, do: [if_modified_since: last_modified], else: []),
+               if(api_key, do: [x_api_key: api_key], else: [])
+             ),
+           receive_timeout: 10000,
            params: %{"fields[stop]" => ""}
          ) do
-      {:ok, %{status_code: 200, body: body, headers: headers}} ->
-        %{"data" => data} = JSON.decode!(body)
-
+      {:ok, %Req.Response{status: 200, body: %{"data" => data}, headers: headers}} ->
         for %{
               "id" => id,
               "relationships" => %{"parent_station" => %{"data" => %{"id" => parent_id}}}
@@ -57,7 +56,7 @@ defmodule Engine.StationStops do
         schedule_update(@update_seconds)
         {:noreply, %{state | last_modified: Map.new(headers)["last-modified"]}}
 
-      {:ok, %{status_code: 304}} ->
+      {:ok, %Req.Response{status: 304}} ->
         schedule_update(@update_seconds)
         {:noreply, state}
 

@@ -22,16 +22,8 @@ defmodule RealtimeSigns.Mixfile do
 
   # Run "mix help compile.app" to learn about applications.
   def application do
-    apps = [:logger]
-
-    apps =
-      case Mix.env() do
-        :test -> [:inets | apps]
-        _ -> apps
-      end
-
     [
-      extra_applications: apps,
+      extra_applications: [:logger],
       mod: {RealtimeSigns, []}
     ]
   end
@@ -44,13 +36,12 @@ defmodule RealtimeSigns.Mixfile do
       {:ex_aws_s3, "~> 2.0"},
       {:ex_aws, "~> 2.0"},
       {:lcov_ex, "~> 0.2", only: [:dev, :test], runtime: false},
-      {:hackney, "== 1.25.0"},
       {:gen_stage, "~> 1.2"},
-      {:httpoison, "~> 1.0"},
       {:logger_backends, "~> 1.0"},
       {:logger_splunk_backend, "~> 3.0"},
       {:mox, "~> 1.2.0", only: [:test]},
       {:recon, "~> 2.5"},
+      {:req, "~> 0.6.0"},
       {:timex, "~> 3.1"},
       {:uuid, "~> 1.1", only: :test},
       {:quantum, "~> 3.0"},

@@ -24,7 +24,7 @@ defmodule RealtimeSigns.MessageLogJob do
     Logger.info("Fetching message logs for #{date}")
 
     case get_logs(date) do
-      {:ok, %{body: body}} ->
+      {:ok, %Req.Response{body: body}} ->
         store_logs(body, s3_bucket(), s3_folder(), date)
 
       {:error, reason} ->

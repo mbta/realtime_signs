@@ -3,16 +3,11 @@ defmodule Engine.ChelseaBridgeTest do
   import ExUnit.CaptureLog
 
   defmodule FakePoster do
-    def post(_, q, _) do
-      fake_response = %{
-        "access_token" => "fake_token",
-        "expires_in" => 3600
-      }
-
-      fake_body = JSON.encode!(fake_response)
-
+    def post(_, options \\ []) do
+      q = Keyword.fetch!(options, :form)
+      fake_response = %{"access_token" => "fake_token", "expires_in" => 3600}
       send(self(), {:post, q})
-      {:ok, %HTTPoison.Response{status_code: 200, body: fake_body}}
+      {:ok, %Req.Response{status: 200, body: fake_response}}
     end
   end
 
