@@ -189,7 +189,6 @@ defmodule Signs.Utilities.Audio do
   def send_audio(signs, audios) do
     RealtimeSigns.sign_updater().play_message(
       signs,
-      Enum.map(audios, &Content.Audio.to_params(&1)),
       Enum.map(audios, &Content.Audio.to_tts(&1)),
       case audios do
         [%PaMessages.PaMessage{priority: priority}] -> priority

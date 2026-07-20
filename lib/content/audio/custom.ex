@@ -13,10 +13,6 @@ defmodule Content.Audio.Custom do
         }
 
   defimpl Content.Audio do
-    def to_params(%Content.Audio.Custom{top: top, bottom: bottom}) do
-      {:ad_hoc, {PaEss.Utilities.custom_tts_text(top, bottom), :audio}}
-    end
-
     def to_tts(%Content.Audio.Custom{audio_text: audio_text}) do
       {audio_text, nil}
     end

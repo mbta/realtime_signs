@@ -39,12 +39,10 @@ defmodule RealtimeSigns do
         Engine.PaMessages,
         Engine.BusStops,
         Engine.StationStops,
-        MessageQueue,
         RealtimeSigns.Scheduler,
         RealtimeSignsWeb.Endpoint,
         HeadwayAnalysis.Supervisor
       ] ++
-        http_updater_children() ++
         scu_updater_children ++
         [
           Signs.Supervisor
@@ -61,10 +59,6 @@ defmodule RealtimeSigns do
     )
 
     Logger.info(
-      "environment_variable NUMBER_OF_HTTP_UPDATERS=#{inspect(Application.get_env(:realtime_signs, :number_of_http_updaters))}"
-    )
-
-    Logger.info(
       "environment_variable API_V3_URL=#{inspect(Application.get_env(:realtime_signs, :api_v3_url))}"
     )
 
@@ -75,14 +69,6 @@ defmodule RealtimeSigns do
     Logger.info(
       "environment_variable VEHICLE_POSITIONS_URL=#{inspect(Application.get_env(:realtime_signs, :vehicle_positions_url))}"
     )
-  end
-
-  def http_updater_children do
-    num_children = Application.get_env(:realtime_signs, :number_of_http_updaters)
-
-    for i <- 1..num_children do
-      Supervisor.child_spec({PaEss.HttpUpdater, i}, id: {PaEss.HttpUpdater, i})
-    end
   end
 
   def location_engine, do: Application.fetch_env!(:realtime_signs, :location_engine)

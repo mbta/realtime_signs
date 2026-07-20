@@ -233,13 +233,10 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_audios(
-        [{:canned, {"112", spaced(["501", "787", "920", "933", "21014", "925"]), :audio_visual}}],
-        [
-          {"The next, Southbound, train; does not take passengers. Please stand back from the platform edge.",
-           "The next Southbound train does not take passengers. Please stand back from the platform edge."}
-        ]
-      )
+      expect_audios([
+        {"The next, Southbound, train; does not take passengers. Please stand back from the platform edge.",
+         "The next Southbound train does not take passengers. Please stand back from the platform edge."}
+      ])
 
       assert {:noreply, sign} = Signs.Realtime.handle_info(:run_loop, @sign)
       assert sign.announced_passthroughs == ["123"]
@@ -253,13 +250,10 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_audios(
-        [{:canned, {"112", spaced(["501", "787", "920", "933", "21014", "925"]), :audio_visual}}],
-        [
-          {"The next, Southbound, train; does not take passengers. Please stand back from the platform edge.",
-           "The next Southbound train does not take passengers. Please stand back from the platform edge."}
-        ]
-      )
+      expect_audios([
+        {"The next, Southbound, train; does not take passengers. Please stand back from the platform edge.",
+         "The next Southbound train does not take passengers. Please stand back from the platform edge."}
+      ])
 
       assert {:noreply, sign} =
                Signs.Realtime.handle_info(:run_loop, %{@sign | scu_id: "SCOUSCU001"})
@@ -285,25 +279,15 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :alewife, passthrough: 30, trip_id: "124")]
       end)
 
-      expect_audios(
-        [
-          {:canned, {"112", spaced(["501", "787", "920", "933", "21014", "925"]), :audio_visual}}
-        ],
-        [
-          {"The next, Southbound, train; does not take passengers. Please stand back from the platform edge.",
-           "The next Southbound train does not take passengers. Please stand back from the platform edge."}
-        ]
-      )
+      expect_audios([
+        {"The next, Southbound, train; does not take passengers. Please stand back from the platform edge.",
+         "The next Southbound train does not take passengers. Please stand back from the platform edge."}
+      ])
 
-      expect_audios(
-        [
-          {:canned, {"112", spaced(["501", "892", "920", "933", "21014", "925"]), :audio_visual}}
-        ],
-        [
-          {"The next, Alewife, train; does not take passengers. Please stand back from the platform edge.",
-           "The next Alewife train does not take passengers. Please stand back from the platform edge."}
-        ]
-      )
+      expect_audios([
+        {"The next, Alewife, train; does not take passengers. Please stand back from the platform edge.",
+         "The next Alewife train does not take passengers. Please stand back from the platform edge."}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{
         @jfk_mezzanine_sign
@@ -317,15 +301,10 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :southbound, passthrough: 30)]
       end)
 
-      expect_audios(
-        [
-          {:canned, {"112", spaced(["501", "787", "920", "933", "21014", "925"]), :audio_visual}}
-        ],
-        [
-          {"The next, Southbound, train; does not take passengers. Please stand back from the platform edge.",
-           "The next Southbound train does not take passengers. Please stand back from the platform edge."}
-        ]
-      )
+      expect_audios([
+        {"The next, Southbound, train; does not take passengers. Please stand back from the platform edge.",
+         "The next Southbound train does not take passengers. Please stand back from the platform edge."}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
@@ -337,7 +316,7 @@ defmodule Signs.RealtimeTest do
 
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :suspension_closed_station end)
       expect_messages({"custom", "message"})
-      expect_audios([{:ad_hoc, {"custom message", :audio}}], [{"custom message", nil}])
+      expect_audios([{"custom message", nil}])
 
       assert {_, %{announced_custom_text: "custom message"}} =
                Signs.Realtime.handle_info(:run_loop, @sign)
@@ -354,7 +333,7 @@ defmodule Signs.RealtimeTest do
       sign = %{@sign | default_mode: {:static_text, {"default", "message", "default message"}}}
 
       expect_messages({"default", "message"})
-      expect_audios([{:ad_hoc, {"default message", :audio}}], [{"default message", nil}])
+      expect_audios([{"default message", nil}])
       Signs.Realtime.handle_info(:run_loop, sign)
     end
 
@@ -373,44 +352,28 @@ defmodule Signs.RealtimeTest do
     test "when sign is at a station closed by shuttles and there are no predictions, it says so" do
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :shuttles_closed_station end)
       expect_messages({"No Southbound svc", "Use shuttle bus"})
-
-      expect_audios([{:ad_hoc, {"No Southbound service. Use shuttle.", :audio}}], [
-        {"No Southbound service. Use shuttle.", nil}
-      ])
-
+      expect_audios([{"No Southbound service. Use shuttle.", nil}])
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "when sign is at a station closed and there are no predictions, but shuttles do not run at this station" do
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :shuttles_closed_station end)
       expect_messages({"No Southbound svc", ""})
-
-      expect_audios([{:ad_hoc, {"No Southbound service.", :audio}}], [
-        {"No Southbound service.", nil}
-      ])
-
+      expect_audios([{"No Southbound service.", nil}])
       Signs.Realtime.handle_info(:run_loop, %{@sign | uses_shuttles: false})
     end
 
     test "when sign is at a station closed due to suspension and there are no predictions, it says so" do
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :suspension_closed_station end)
       expect_messages({"No Southbound svc", ""})
-
-      expect_audios([{:ad_hoc, {"No Southbound service.", :audio}}], [
-        {"No Southbound service.", nil}
-      ])
-
+      expect_audios([{"No Southbound service.", nil}])
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "when sign is at a closed station and there are no predictions, it says so" do
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
       expect_messages({"No Southbound svc", ""})
-
-      expect_audios([{:ad_hoc, {"No Southbound service.", :audio}}], [
-        {"No Southbound service.", nil}
-      ])
-
+      expect_audios([{"No Southbound service.", nil}])
       assert {_, %{announced_alert: true}} = Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
@@ -418,11 +381,7 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
       expect_messages({"No Red Line", ""})
-
-      expect_audios([{:canned, {"107", spaced(["861", "3005", "863"]), :audio}}], [
-        {"There is no Red Line service at this station.", nil}
-      ])
-
+      expect_audios([{"There is no Red Line service at this station.", nil}])
       Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
     end
 
@@ -430,11 +389,7 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
       expect_messages({"No train service", ""})
-
-      expect_audios([{:canned, {"107", spaced(["861", "864", "863"]), :audio}}], [
-        {"There is no train service at this station.", nil}
-      ])
-
+      expect_audios([{"There is no train service at this station.", nil}])
       Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
     end
 
@@ -549,11 +504,7 @@ defmodule Signs.RealtimeTest do
         {[{"Mattapan   Stopped", 6}, {"Mattapan   8 stops", 6}, {"Mattapan      away", 6}], ""}
       )
 
-      expect_audios(
-        [{:canned, {"115", spaced(["501", "4100", "864", "533", "641", "5008", "534"]), :audio}}],
-        [{"The next, Mattapan, train; is stopped, 8, stops away.", nil}]
-      )
-
+      expect_audios([{"The next, Mattapan, train; is stopped, 8, stops away.", nil}])
       assert {_, %{announced_stalls: [{"1", 8}]}} = Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
@@ -587,14 +538,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Mattapan       BRD", ""})
-
-      expect_audios(
-        [
-          {:canned, {"109", ["501", "21000", "4100", "21000", "864", "21000", "544"], :audio}}
-        ],
-        [{"The next, Mattapan, train; is now boarding.", nil}]
-      )
-
+      expect_audios([{"The next, Mattapan, train; is now boarding.", nil}])
       Signs.Realtime.handle_info(:run_loop, @terminal_sign)
     end
 
@@ -633,12 +577,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Mattapan       BRD", "Mattapan     2 min"})
-
-      expect_audios(
-        [{:canned, {"109", spaced(["501", "4100", "864", "544"]), :audio}}],
-        [{"The next, Mattapan, train; is now boarding.", nil}]
-      )
-
+      expect_audios([{"The next, Mattapan, train; is now boarding.", nil}])
       assert {_, %{announced_boardings: ["1"]}} = Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
@@ -651,14 +590,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Clvlnd Cir     BRD", "Boston Coll  3 min"})
-
-      expect_audios(
-        [{:canned, {"111", spaced(["501", "537", "507", "4203", "544"]), :audio}}],
-        [
-          {"The next, C, train to, Cleveland Circle; is now boarding.", nil}
-        ]
-      )
-
+      expect_audios([{"The next, C, train to, Cleveland Circle; is now boarding.", nil}])
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
@@ -672,16 +604,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Clvlnd Cir     ARR", "Riverside      ARR"})
 
-      expect_audios(
-        [
-          {:canned,
-           {"114", spaced(["896", "903", "919", "904", "910", "21014", "925"]), :audio_visual}}
-        ],
-        [
-          {"Attention passengers: The next, C, train to, Cleveland Circle; is now approaching. Please stand back from the platform edge.",
-           "C train to Clvlnd Cir is now approaching. Please stand back from the platform edge."}
-        ]
-      )
+      expect_audios([
+        {"Attention passengers: The next, C, train to, Cleveland Circle; is now approaching. Please stand back from the platform edge.",
+         "C train to Clvlnd Cir is now approaching. Please stand back from the platform edge."}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
@@ -727,16 +653,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Riverside      BRD", "Boston Coll    BRD"})
 
-      expect_audios(
-        [
-          {:canned, {"111", spaced(["501", "538", "507", "4084", "544"]), :audio}},
-          {:canned, {"111", spaced(["501", "536", "507", "4202", "544"]), :audio}}
-        ],
-        [
-          {"The next, D, train to, Riverside; is now boarding.", nil},
-          {"The next, B, train to, Boston College; is now boarding.", nil}
-        ]
-      )
+      expect_audios([
+        {"The next, D, train to, Riverside; is now boarding.", nil},
+        {"The next, B, train to, Boston College; is now boarding.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
@@ -772,17 +692,11 @@ defmodule Signs.RealtimeTest do
         [prediction(arrival: 0, destination: :wonderland, stopped: 0)]
       end)
 
-      expect_audios(
-        [
-          {:canned, {"109", spaced(["501", "4044", "864", "544"]), :audio}},
-          {:canned, {"103", ["869"], :audio_visual}}
-        ],
-        [
-          {"The next, Wonderland, train; is now boarding.", nil},
-          {"Attention Passengers: To board the next train, please push the button on either side of the door.",
-           "Attention Passengers: To board the next train, please push the button on either side of the door."}
-        ]
-      )
+      expect_audios([
+        {"The next, Wonderland, train; is now boarding.", nil},
+        {"Attention Passengers: To board the next train, please push the button on either side of the door.",
+         "Attention Passengers: To board the next train, please push the button on either side of the door."}
+      ])
 
       expect_messages({"Wonderland     BRD", ""})
 
@@ -809,17 +723,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Boston Coll    BRD", ""})
 
-      expect_audios(
-        [
-          {:canned,
-           {"119", spaced(["540", "501", "536", "507", "4202", "544", "851", "538", "529"]),
-            :audio_visual}}
-        ],
-        [
-          {"Track change: The next, B, train to, Boston College; is now boarding; on the, D, platform.",
-           "Track change: The next B train to Boston Coll is now boarding on the D platform."}
-        ]
-      )
+      expect_audios([
+        {"Track change: The next, B, train to, Boston College; is now boarding; on the, D, platform.",
+         "Track change: The next B train to Boston Coll is now boarding on the D platform."}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, @park_st_sign)
     end
@@ -831,13 +738,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Ashmont      1 min", ""})
 
-      expect_audios(
-        [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
-        [
-          {"Attention passengers: The next, Ashmont, train; is now approaching. Please stand back from the platform edge.",
-           "Ashmont train is now approaching. Please stand back from the platform edge."}
-        ]
-      )
+      expect_audios([
+        {"Attention passengers: The next, Ashmont, train; is now approaching. Please stand back from the platform edge.",
+         "Ashmont train is now approaching. Please stand back from the platform edge."}
+      ])
 
       assert {_, %{announced_approachings: ["1"]}} = Signs.Realtime.handle_info(:run_loop, @sign)
     end
@@ -849,13 +753,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Ashmont      1 min", ""})
 
-      expect_audios(
-        [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
-        [
-          {"Attention passengers: The next, Ashmont, train; is now approaching. Please stand back from the platform edge.",
-           "Ashmont train is now approaching. Please stand back from the platform edge."}
-        ]
-      )
+      expect_audios([
+        {"Attention passengers: The next, Ashmont, train; is now approaching. Please stand back from the platform edge.",
+         "Ashmont train is now approaching. Please stand back from the platform edge."}
+      ])
 
       assert {_, %{announced_approachings: ["1"]}} =
                Signs.Realtime.handle_info(:run_loop, %{@sign | scu_id: "SCOUSCU001"})
@@ -877,16 +778,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Clvlnd Cir     ARR", ""})
 
-      expect_audios(
-        [
-          {:canned,
-           {"114", spaced(["896", "903", "919", "904", "910", "21014", "925"]), :audio_visual}}
-        ],
-        [
-          {"Attention passengers: The next, C, train to, Cleveland Circle; is now approaching. Please stand back from the platform edge.",
-           "C train to Clvlnd Cir is now approaching. Please stand back from the platform edge."}
-        ]
-      )
+      expect_audios([
+        {"Attention passengers: The next, C, train to, Cleveland Circle; is now approaching. Please stand back from the platform edge.",
+         "C train to Clvlnd Cir is now approaching. Please stand back from the platform edge."}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
@@ -910,12 +805,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Ashmont      2 min", "Ashmont      4 min"})
-
-      expect_audios(
-        [{:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5002", "505"]), :audio}}],
-        [{"The next, Ashmont, train; arrives in, 2, minutes.", nil}]
-      )
-
+      expect_audios([{"The next, Ashmont, train; arrives in, 2, minutes.", nil}])
       Signs.Realtime.handle_info(:run_loop, %{@sign | prev_prediction_keys: []})
     end
 
@@ -935,13 +825,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Ashmont      1 min", ""})
 
-      expect_audios(
-        [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
-        [
-          {"Attention passengers: The next, Ashmont, train; is now approaching. Please stand back from the platform edge.",
-           "Ashmont train is now approaching. Please stand back from the platform edge."}
-        ]
-      )
+      expect_audios([
+        {"Attention passengers: The next, Ashmont, train; is now approaching. Please stand back from the platform edge.",
+         "Ashmont train is now approaching. Please stand back from the platform edge."}
+      ])
 
       assert {_, %{tick_read: 119}} =
                Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 20})
@@ -958,13 +845,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Frst Hills   1 min", ""})
 
-      expect_audios(
-        [{:canned, {"112", spaced(["896", "907", "920", "910", "21014", "925"]), :audio_visual}}],
-        [
-          {"Attention passengers: The next, Forest Hills, train; is now approaching. Please stand back from the platform edge.",
-           "Frst Hills train is now approaching. Please stand back from the platform edge."}
-        ]
-      )
+      expect_audios([
+        {"Attention passengers: The next, Forest Hills, train; is now approaching. Please stand back from the platform edge.",
+         "Frst Hills train is now approaching. Please stand back from the platform edge."}
+      ])
 
       assert capture_log(fn ->
                Signs.Realtime.handle_info(:run_loop, @sign)
@@ -982,13 +866,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Frst Hills   1 min", ""})
 
-      expect_audios(
-        [{:canned, {"112", spaced(["896", "907", "920", "910", "21014", "925"]), :audio_visual}}],
-        [
-          {"Attention passengers: The next, Forest Hills, train; is now approaching. Please stand back from the platform edge.",
-           "Frst Hills train is now approaching. Please stand back from the platform edge."}
-        ]
-      )
+      expect_audios([
+        {"Attention passengers: The next, Forest Hills, train; is now approaching. Please stand back from the platform edge.",
+         "Frst Hills train is now approaching. Please stand back from the platform edge."}
+      ])
 
       assert capture_log(fn ->
                Signs.Realtime.handle_info(:run_loop, @sign)
@@ -1005,25 +886,16 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Ashmont      2 min", "Ashmont      4 min"})
 
-      expect_audios(
-        [
-          {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5002", "505"]), :audio}},
-          {:canned, {"115", spaced(["667", "4016", "864", "503", "504", "5004", "505"]), :audio}}
-        ],
-        [
-          {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
-          {"The following, Ashmont, train; arrives in, 4, minutes.", nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
+        {"The following, Ashmont, train; arrives in, 4, minutes.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
     end
 
     test "reads headways" do
-      expect_audios([{:canned, {"184", ["5511", "5513"], :audio}}], [
-        {"Southbound trains every 11 to 13 minutes.", nil}
-      ])
-
+      expect_audios([{"Southbound trains every 11 to 13 minutes.", nil}])
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
     end
 
@@ -1038,16 +910,10 @@ defmodule Signs.RealtimeTest do
         {"Ashmont      2 min", [{"Southbound  trains every", 6}, {"Southbound  11 to 13 min", 6}]}
       )
 
-      expect_audios(
-        [
-          {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5002", "505"]), :audio}},
-          {:canned, {"184", ["5511", "5513"], :audio}}
-        ],
-        [
-          {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
-          {"Southbound trains every 11 to 13 minutes.", nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
+        {"Southbound trains every 11 to 13 minutes.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@mezzanine_sign | tick_read: 0})
     end
@@ -1058,7 +924,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"custom", "message"})
-      expect_audios([{:ad_hoc, {"custom message", :audio}}], [{"special message", nil}])
+      expect_audios([{"special message", nil}])
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
@@ -1073,36 +939,14 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"bad", "long long long long mess"})
-
-      expect_audios([{:ad_hoc, {"bad long long long long mess", :audio}}], [
-        {"audio message", nil}
-      ])
-
-      Signs.Realtime.handle_info(:run_loop, @sign)
-    end
-
-    test "replaces abbreviations in custom messages" do
-      expect(Engine.Config.Mock, :sign_config, fn _, _ ->
-        {:static_text, {"No OL Svc", "", "No OL Svc"}}
-      end)
-
-      expect_messages({"No OL Svc", ""})
-
-      expect_audios([{:ad_hoc, {"No Orange Line Service", :audio}}], [
-        {"No OL Svc", nil}
-      ])
-
+      expect_audios([{"audio message", nil}])
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
 
     test "reads alerts" do
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :shuttles_closed_station end)
       expect_messages({"No Southbound svc", "Use shuttle bus"})
-
-      expect_audios([{:ad_hoc, {"No Southbound service. Use shuttle.", :audio}}], [
-        {"No Southbound service. Use shuttle.", nil}
-      ])
-
+      expect_audios([{"No Southbound service. Use shuttle.", nil}])
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_alert: true})
     end
 
@@ -1116,16 +960,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Ashmont      1 min", "Ashmont      2 min"})
 
-      expect_audios(
-        [
-          {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5001", "532"]), :audio}},
-          {:canned, {"115", spaced(["667", "4016", "864", "503", "504", "5002", "505"]), :audio}}
-        ],
-        [
-          {"The next, Ashmont, train; arrives in, 1, minute.", nil},
-          {"The following, Ashmont, train; arrives in, 2, minutes.", nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Ashmont, train; arrives in, 1, minute.", nil},
+        {"The following, Ashmont, train; arrives in, 2, minutes.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_approachings: ["1"]})
     end
@@ -1142,16 +980,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Ashmont        BRD", "Braintree    1 min"})
 
-      expect_audios(
-        [
-          {:canned, {"109", spaced(["501", "4016", "864", "544"]), :audio}},
-          {:canned, {"115", spaced(["501", "4021", "864", "503", "504", "5001", "532"]), :audio}}
-        ],
-        [
-          {"The next, Ashmont, train; is now boarding.", nil},
-          {"The next, Braintree, train; arrives in, 1, minute.", nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Ashmont, train; is now boarding.", nil},
+        {"The next, Braintree, train; arrives in, 1, minute.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
@@ -1170,16 +1002,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Ashmont        ARR", "Ashmont      2 min"})
 
-      expect_audios(
-        [
-          {:canned, {"109", spaced(["501", "4016", "864", "24055"]), :audio}},
-          {:canned, {"115", spaced(["667", "4016", "864", "503", "504", "5002", "505"]), :audio}}
-        ],
-        [
-          {"The next, Ashmont, train; is now arriving.", nil},
-          {"The following, Ashmont, train; arrives in, 2, minutes.", nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Ashmont, train; is now arriving.", nil},
+        {"The following, Ashmont, train; arrives in, 2, minutes.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
@@ -1199,16 +1025,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Ashmont      2 min", "Alewife        ARR"})
 
-      expect_audios(
-        [
-          {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5002", "505"]), :audio}},
-          {:canned, {"109", spaced(["501", "4000", "864", "24055"]), :audio}}
-        ],
-        [
-          {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
-          {"The next, Alewife, train; is now arriving.", nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
+        {"The next, Alewife, train; is now arriving.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@mezzanine_sign | tick_read: 0})
     end
@@ -1228,11 +1048,7 @@ defmodule Signs.RealtimeTest do
          [{"Ashmont    Stopped", 6}, {"Ashmont    4 stops", 6}, {"Ashmont       away", 6}]}
       )
 
-      expect_audios(
-        [{:canned, {"115", spaced(["501", "4016", "864", "533", "641", "5003", "534"]), :audio}}],
-        [{"The next, Ashmont, train; is stopped, 3, stops away.", nil}]
-      )
-
+      expect_audios([{"The next, Ashmont, train; is stopped, 3, stops away.", nil}])
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_stalls: ["1", "2"]})
     end
 
@@ -1250,11 +1066,7 @@ defmodule Signs.RealtimeTest do
          "Ashmont      2 min"}
       )
 
-      expect_audios(
-        [{:canned, {"115", spaced(["501", "4016", "864", "533", "641", "5003", "534"]), :audio}}],
-        [{"The next, Ashmont, train; is stopped, 3, stops away.", nil}]
-      )
-
+      expect_audios([{"The next, Ashmont, train; is stopped, 3, stops away.", nil}])
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_stalls: ["1"]})
     end
 
@@ -1270,19 +1082,10 @@ defmodule Signs.RealtimeTest do
          [{"Every 11 to 13 min", 6}, {"on Ashmont platform", 6}]}
       )
 
-      expect_audios(
-        [
-          {:canned, {"184", ["5511", "5513"], :audio}},
-          {:canned,
-           {"121",
-            spaced(["501", "4000", "864", "503", "504", "5004", "505", "851", "4016", "529"]),
-            :audio}}
-        ],
-        [
-          {"Southbound trains every 11 to 13 minutes.", nil},
-          {"The next, Alewife, train; arrives in, 4, minutes; on the Ashmont platform.", nil}
-        ]
-      )
+      expect_audios([
+        {"Southbound trains every 11 to 13 minutes.", nil},
+        {"The next, Alewife, train; arrives in, 4, minutes; on the Ashmont platform.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@jfk_mezzanine_sign | tick_read: 0})
     end
@@ -1304,18 +1107,11 @@ defmodule Signs.RealtimeTest do
         {"Ashmont      6 min", [{"Alewife      7 min", 6}, {"Alewife (Platform TBD)", 6}]}
       )
 
-      expect_audios(
-        [
-          {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5006", "505"]), :audio}},
-          {:canned,
-           {"117", spaced(["501", "4000", "864", "503", "504", "5007", "505", "849"]), :audio}}
-        ],
-        [
-          {"The next, Ashmont, train; arrives in, 6, minutes.", nil},
-          {"The next, Alewife, train; arrives in, 7, minutes. We will announce the platform for boarding soon.",
-           nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Ashmont, train; arrives in, 6, minutes.", nil},
+        {"The next, Alewife, train; arrives in, 7, minutes. We will announce the platform for boarding soon.",
+         nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@jfk_mezzanine_sign | tick_read: 0})
     end
@@ -1336,18 +1132,11 @@ defmodule Signs.RealtimeTest do
         {"Ashmont      2 min", [{"Alewife     11 min", 6}, {"Alewife (Platform TBD)", 6}]}
       )
 
-      expect_audios(
-        [
-          {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5002", "505"]), :audio}},
-          {:canned,
-           {"117", spaced(["501", "4000", "864", "503", "504", "5011", "505", "857"]), :audio}}
-        ],
-        [
-          {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
-          {"The next, Alewife, train; arrives in, 11, minutes. We will announce the platform for boarding when the train is closer.",
-           nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
+        {"The next, Alewife, train; arrives in, 11, minutes. We will announce the platform for boarding when the train is closer.",
+         nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@jfk_mezzanine_sign | tick_read: 0})
     end
@@ -1368,32 +1157,10 @@ defmodule Signs.RealtimeTest do
         {"Ashmont      2 min", [{"Alewife (B)    ARR", 6}, {"Alewife (Braintree plat)", 6}]}
       )
 
-      expect_audios(
-        [
-          {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5002", "505"]), :audio}},
-          {:canned,
-           {"115",
-            [
-              "501",
-              "21000",
-              "4000",
-              "21000",
-              "864",
-              "21000",
-              "24055",
-              "21000",
-              "851",
-              "21000",
-              "4021",
-              "21000",
-              "529"
-            ], :audio}}
-        ],
-        [
-          {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
-          {"The next, Alewife, train; is now arriving; on the Braintree platform.", nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
+        {"The next, Alewife, train; is now arriving; on the Braintree platform.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@jfk_mezzanine_sign | tick_read: 0})
     end
@@ -1417,19 +1184,10 @@ defmodule Signs.RealtimeTest do
         {"Ashmont      2 min", [{"Alewife (A)  6 min", 6}, {"Alewife (Ashmont plat)", 6}]}
       )
 
-      expect_audios(
-        [
-          {:canned, {"115", spaced(["501", "4016", "864", "503", "504", "5002", "505"]), :audio}},
-          {:canned,
-           {"121",
-            spaced(["501", "4000", "864", "503", "504", "5006", "505", "851", "4016", "529"]),
-            :audio}}
-        ],
-        [
-          {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
-          {"The next, Alewife, train; arrives in, 6, minutes; on the Ashmont platform.", nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
+        {"The next, Alewife, train; arrives in, 6, minutes; on the Ashmont platform.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@jfk_mezzanine_sign | tick_read: 0})
     end
@@ -1453,12 +1211,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Southbound train", "due 5:00"})
-
-      expect_audios(
-        [{:canned, {"113", spaced(["866", "787", "864", "927", "8004", "9000"]), :audio}}],
-        [{"The first, Southbound, train; departs at 5:00.", nil}]
-      )
-
+      expect_audios([{"The first, Southbound, train; departs at 5:00.", nil}])
       expect(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
 
       Signs.Realtime.handle_info(:run_loop, %{
@@ -1592,10 +1345,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Red line trains", "Every 9 to 13 min"})
-
-      expect_audios([{:ad_hoc, {"Red line trains every 9 to 13 minutes.", :audio}}], [
-        {"Red line trains every 9 to 13 minutes.", nil}
-      ])
+      expect_audios([{"Red line trains every 9 to 13 minutes.", nil}])
 
       Signs.Realtime.handle_info(:run_loop, %{
         @mezzanine_sign
@@ -1746,17 +1496,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Ashmont      1 min", ""})
 
-      expect_audios(
-        [
-          {:canned,
-           {"115", spaced(["896", "895", "920", "910", "21012", "893", "21014", "925"]),
-            :audio_visual}}
-        ],
-        [
-          {"Attention passengers: The next, Ashmont, train; is now approaching; with all new Red Line cars. Please stand back from the platform edge.",
-           "Ashmont train is now approaching, with all new Red Line cars. Please stand back from the platform edge."}
-        ]
-      )
+      expect_audios([
+        {"Attention passengers: The next, Ashmont, train; is now approaching; with all new Red Line cars. Please stand back from the platform edge.",
+         "Ashmont train is now approaching, with all new Red Line cars. Please stand back from the platform edge."}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
@@ -1783,13 +1526,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Ashmont      1 min", ""})
 
-      expect_audios(
-        [{:canned, {"112", spaced(["896", "895", "920", "910", "21014", "925"]), :audio_visual}}],
-        [
-          {"Attention passengers: The next, Ashmont, train; is now approaching. Please stand back from the platform edge.",
-           "Ashmont train is now approaching. Please stand back from the platform edge."}
-        ]
-      )
+      expect_audios([
+        {"Attention passengers: The next, Ashmont, train; is now approaching. Please stand back from the platform edge.",
+         "Ashmont train is now approaching. Please stand back from the platform edge."}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
@@ -1804,13 +1544,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Braintree    1 min", "4 cars     Move to front"})
 
-      expect_audios(
-        [{:canned, {"112", spaced(["923", "902", "920", "924", "21014", "922"]), :audio_visual}}],
-        [
-          {"Attention passengers: The next, Braintree, train; is now approaching. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
-           "Shorter 4 car Braintree train now approaching. Please move to front of the train to board."}
-        ]
-      )
+      expect_audios([
+        {"Attention passengers: The next, Braintree, train; is now approaching. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
+         "Shorter 4 car Braintree train now approaching. Please move to front of the train to board."}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
@@ -1825,16 +1562,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Braintree    2 min", "4 cars     Move to front"})
 
-      expect_audios(
-        [
-          {:canned,
-           {"117", spaced(["501", "4021", "864", "503", "504", "5002", "505", "922"]), :audio}}
-        ],
-        [
-          {"The next, Braintree, train; arrives in, 2, minutes. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
-           nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Braintree, train; arrives in, 2, minutes. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
+         nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
     end
@@ -1854,16 +1585,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Braintree    2 min", "Braintree    3 min"})
 
-      expect_audios(
-        [
-          {:canned, {"115", spaced(["501", "4021", "864", "502", "504", "5002", "505"]), :audio}},
-          {:canned, {"115", spaced(["667", "4021", "864", "502", "504", "5003", "505"]), :audio}}
-        ],
-        [
-          {"The next, Braintree, train; departs in, 2, minutes.", nil},
-          {"The following, Braintree, train; departs in, 3, minutes.", nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Braintree, train; departs in, 2, minutes.", nil},
+        {"The following, Braintree, train; departs in, 3, minutes.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@alewife_sign | tick_read: 0})
     end
@@ -1885,15 +1610,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Braintree      BRD", "Braintree    3 min"})
 
-      expect_audios(
-        [
-          {:canned, {"111", spaced(["501", "4021", "864", "544", "926"]), :audio}}
-        ],
-        [
-          {"The next, Braintree, train; is now boarding. It is a shorter 4-car train. You may have to move to a different part of the platform to board.",
-           nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Braintree, train; is now boarding. It is a shorter 4-car train. You may have to move to a different part of the platform to board.",
+         nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@alewife_sign | tick_read: 0})
     end
@@ -1912,16 +1632,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Alewife      2 min", "4 cars     Move to front"})
 
-      expect_audios(
-        [
-          {:canned,
-           {"117", spaced(["501", "4000", "864", "502", "504", "5002", "505", "922"]), :audio}}
-        ],
-        [
-          {"The next, Alewife, train; departs in, 2, minutes. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
-           nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Alewife, train; departs in, 2, minutes. It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge.",
+         nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@ashmont_sign | tick_read: 0})
     end
@@ -1937,16 +1651,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Braintree    2 min", "Alewife      7 min"})
 
-      expect_audios(
-        [
-          {:canned, {"115", spaced(["501", "4021", "864", "503", "504", "5002", "505"]), :audio}},
-          {:canned, {"115", spaced(["501", "4000", "864", "503", "504", "5007", "505"]), :audio}}
-        ],
-        [
-          {"The next, Braintree, train; arrives in, 2, minutes.", nil},
-          {"The next, Alewife, train; arrives in, 7, minutes.", nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Braintree, train; arrives in, 2, minutes.", nil},
+        {"The next, Alewife, train; arrives in, 7, minutes.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@mezzanine_sign | tick_read: 0})
     end
@@ -1960,10 +1668,7 @@ defmodule Signs.RealtimeTest do
         [{"Every 11 to 13 min", 6}, {"Use shuttle bus", 6}]
       })
 
-      expect_audios([{:ad_hoc, {"No Southbound service. Use shuttle.", :audio}}], [
-        {"No Southbound service. Use shuttle.", nil}
-      ])
-
+      expect_audios([{"No Southbound service. Use shuttle.", nil}])
       Signs.Realtime.handle_info(:run_loop, @multi_route_mezzanine_sign)
     end
 
@@ -1975,10 +1680,7 @@ defmodule Signs.RealtimeTest do
         {"Northbound  no svc", [{"Southbound  trains every", 6}, {"Southbound  11 to 13 min", 6}]}
       )
 
-      expect_audios([{:ad_hoc, {"No Northbound service.", :audio}}], [
-        {"No Northbound service.", nil}
-      ])
-
+      expect_audios([{"No Northbound service.", nil}])
       Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
     end
 
@@ -2009,10 +1711,7 @@ defmodule Signs.RealtimeTest do
         {"Alewife      4 min", [{"Northbound    no service", 6}, {"Northbound   use shuttle", 6}]}
       )
 
-      expect_audios([{:ad_hoc, {"No Northbound service. Use shuttle.", :audio}}], [
-        {"No Northbound service. Use shuttle.", nil}
-      ])
-
+      expect_audios([{"No Northbound service. Use shuttle.", nil}])
       Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
     end
 
@@ -2026,22 +1725,10 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Alewife      4 min", "Alewife      9 min"})
 
-      expect_audios(
-        [
-          {:canned,
-           {"121",
-            spaced(["501", "4000", "864", "851", "4016", "529", "503", "504", "5004", "505"]),
-            :audio}},
-          {:canned,
-           {"121",
-            spaced(["667", "4000", "864", "851", "4016", "529", "503", "504", "5009", "505"]),
-            :audio}}
-        ],
-        [
-          {"The next, Alewife, train; on the Ashmont platform; arrives in, 4, minutes.", nil},
-          {"The following, Alewife, train; on the Ashmont platform; arrives in, 9, minutes.", nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Alewife, train; on the Ashmont platform; arrives in, 4, minutes.", nil},
+        {"The following, Alewife, train; on the Ashmont platform; arrives in, 9, minutes.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
     end
@@ -2052,17 +1739,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({[{"Frst Hills   4 min", 6}, {"Frst Hills   Trk 1", 6}], ""})
-
-      expect_audios(
-        [
-          {:canned,
-           {"117", spaced(["501", "4043", "864", "503", "504", "5004", "505", "541"]), :audio}}
-        ],
-        [
-          {"The next, Forest Hills, train; arrives in, 4, minutes; on track 1.", nil}
-        ]
-      )
-
+      expect_audios([{"The next, Forest Hills, train; arrives in, 4, minutes; on track 1.", nil}])
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
     end
 
@@ -2080,14 +1757,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"Frst Hills     BRD", ""})
-
-      expect_audios(
-        [
-          {:canned, {"109", spaced(["501", "4043", "864", "544"]), :audio}}
-        ],
-        [{"The next, Forest Hills, train; is now boarding.", nil}]
-      )
-
+      expect_audios([{"The next, Forest Hills, train; is now boarding.", nil}])
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
     end
   end
@@ -2134,11 +1804,7 @@ defmodule Signs.RealtimeTest do
       }
 
       expect_messages({"No Southbound svc", "Use Routes 87, 91 or 109"})
-
-      expect_audios([{:ad_hoc, {"No Southbound service. Use Routes 87, 91, or 109", :audio}}], [
-        {"No Southbound service. Use Routes 87, 91, or 109", nil}
-      ])
-
+      expect_audios([{"No Southbound service. Use Routes 87, 91, or 109", nil}])
       Signs.Realtime.handle_info(:run_loop, sign)
     end
   end
@@ -2177,7 +1843,7 @@ defmodule Signs.RealtimeTest do
 
       expect_messages({"Service ended", "No Southbound trains"})
 
-      expect_audios([{:canned, {"107", spaced(["884", "787", "882"]), :audio}}], [
+      expect_audios([
         {"This platform is closed. Southbound service has ended for the night.", nil}
       ])
 
@@ -2186,10 +1852,7 @@ defmodule Signs.RealtimeTest do
 
     test "multi-route mezzanine sign, both sides closed" do
       expect_messages({"Station closed", "Service ended for night"})
-
-      expect_audios([{:canned, {"105", spaced(["864", "882"]), :audio}}], [
-        {"Train service has ended for the night.", nil}
-      ])
+      expect_audios([{"Train service has ended for the night.", nil}])
 
       Signs.Realtime.handle_info(:run_loop, %{
         @multi_route_mezzanine_sign
@@ -2206,11 +1869,7 @@ defmodule Signs.RealtimeTest do
       }
 
       expect_messages({"No Red Line", "Service ended for night"})
-
-      expect_audios([{:canned, {"105", spaced(["3005", "882"]), :audio}}], [
-        {"Red line service has ended for the night.", nil}
-      ])
-
+      expect_audios([{"Red line service has ended for the night.", nil}])
       Signs.Realtime.handle_info(:run_loop, sign)
     end
 
@@ -2243,16 +1902,10 @@ defmodule Signs.RealtimeTest do
          "Southbound     Svc ended"}
       )
 
-      expect_audios(
-        [
-          {:canned, {"115", spaced(["501", "4100", "864", "533", "641", "5008", "534"]), :audio}},
-          {:canned, {"105", spaced(["787", "882"]), :audio}}
-        ],
-        [
-          {"The next, Mattapan, train; is stopped, 8, stops away.", nil},
-          {"Southbound service has ended for the night.", nil}
-        ]
-      )
+      expect_audios([
+        {"The next, Mattapan, train; is stopped, 8, stops away.", nil},
+        {"Southbound service has ended for the night.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, sign)
     end
@@ -2284,19 +1937,10 @@ defmodule Signs.RealtimeTest do
         {"Southbound  No Svc", [{"Alewife (A)  4 min", 6}, {"Alewife (Ashmont plat)", 6}]}
       )
 
-      expect_audios(
-        [
-          {:canned, {"105", spaced(["787", "882"]), :audio}},
-          {:canned,
-           {"121",
-            spaced(["501", "4000", "864", "503", "504", "5004", "505", "851", "4016", "529"]),
-            :audio}}
-        ],
-        [
-          {"Southbound service has ended for the night.", nil},
-          {"The next, Alewife, train; arrives in, 4, minutes; on the Ashmont platform.", nil}
-        ]
-      )
+      expect_audios([
+        {"Southbound service has ended for the night.", nil},
+        {"The next, Alewife, train; arrives in, 4, minutes; on the Ashmont platform.", nil}
+      ])
 
       Signs.Realtime.handle_info(:run_loop, sign)
     end
@@ -2448,7 +2092,7 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
 
       expect_messages({"No Southbound svc", ""})
-      expect(PaEss.Updater.Mock, :play_message, 1, fn _, _, _, _, _ -> :ok end)
+      expect(PaEss.Updater.Mock, :play_message, 1, fn _, _, _, _ -> :ok end)
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
@@ -2460,7 +2104,7 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
 
       expect_messages({"No Southbound svc", ""})
-      expect(PaEss.Updater.Mock, :play_message, 1, fn _, _, _, _, _ -> :ok end)
+      expect(PaEss.Updater.Mock, :play_message, 1, fn _, _, _, _ -> :ok end)
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
@@ -2472,7 +2116,7 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :station_closure end)
 
       expect_messages({"Southbound trains", "Every 11 to 13 min"})
-      expect(PaEss.Updater.Mock, :play_message, 0, fn _, _, _, _, _ -> :ok end)
+      expect(PaEss.Updater.Mock, :play_message, 0, fn _, _, _, _ -> :ok end)
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
@@ -2499,7 +2143,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"", ""})
-      expect(PaEss.Updater.Mock, :play_message, 0, fn _, _, _, _, _ -> :ok end)
+      expect(PaEss.Updater.Mock, :play_message, 0, fn _, _, _, _ -> :ok end)
 
       Signs.Realtime.handle_info(:run_loop, %{
         @mezzanine_sign
@@ -2527,10 +2171,7 @@ defmodule Signs.RealtimeTest do
       end)
 
       expect_messages({"No Red Line", "Service ended for night"})
-
-      expect_audios([{:canned, {"105", spaced(["3005", "882"]), :audio}}], [
-        {"Red line service has ended for the night.", nil}
-      ])
+      expect_audios([{"Red line service has ended for the night.", nil}])
 
       Signs.Realtime.handle_info(:run_loop, %{
         @mezzanine_sign
@@ -2547,9 +2188,8 @@ defmodule Signs.RealtimeTest do
     end)
   end
 
-  defp expect_audios(audios, tts_audios) do
-    expect(PaEss.Updater.Mock, :play_message, fn _, list, tts_list, _, _ ->
-      assert audios == list
+  defp expect_audios(tts_audios) do
+    expect(PaEss.Updater.Mock, :play_message, fn _, tts_list, _, _ ->
       assert tts_audios == tts_list
       :ok
     end)
@@ -2679,8 +2319,6 @@ defmodule Signs.RealtimeTest do
 
   defp datetime(time), do: DateTime.new!(~D[2023-01-01], time, "America/New_York")
   defp datetime(date, time), do: DateTime.new!(date, time, "America/New_York")
-
-  defp spaced(list), do: PaEss.Utilities.pad_takes(list)
 
   defp make_carriage_details(list) do
     Enum.map(list, fn {vehicle_id, occupancy_percentage} ->

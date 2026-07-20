@@ -23,7 +23,7 @@ defmodule Engine.PaMessagesTest do
   end
 
   setup do
-    stub(PaEss.Updater.Mock, :play_message, fn [], _, _, _, _ -> nil end)
+    stub(PaEss.Updater.Mock, :play_message, fn [], _, _, _ -> nil end)
 
     Application.put_env(
       :realtime_signs,

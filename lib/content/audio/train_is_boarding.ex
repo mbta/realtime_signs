@@ -46,26 +46,6 @@ defmodule Content.Audio.TrainIsBoarding do
   end
 
   defimpl Content.Audio do
-    def to_params(audio) do
-      track =
-        case audio.track_number do
-          1 -> [:on_track_1]
-          2 -> [:on_track_2]
-          nil -> []
-        end
-
-      four_cars_boarding =
-        if audio.four_cars_boarding?,
-          do: [:four_car_train_boarding_message],
-          else: []
-
-      PaEss.Utilities.audio_message(
-        [:the_next] ++
-          PaEss.Utilities.train_description_tokens(audio.destination, audio.route_id) ++
-          [:is_now_boarding] ++ track ++ four_cars_boarding
-      )
-    end
-
     def to_tts(%Content.Audio.TrainIsBoarding{} = audio) do
       {tts_text(audio), nil}
     end

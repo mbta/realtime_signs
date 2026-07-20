@@ -10,26 +10,6 @@ defmodule Content.Audio.NoService do
         }
 
   defimpl Content.Audio do
-    def to_params(%Content.Audio.NoService{use_routes?: true} = audio) do
-      {:ad_hoc, {tts_text(audio), :audio}}
-    end
-
-    def to_params(%Content.Audio.NoService{
-          destination: nil,
-          route: route,
-          use_shuttle?: use_shuttle?
-        }) do
-      if use_shuttle? do
-        {:canned, {"199", [PaEss.Utilities.audio_take({:line, route})], :audio}}
-      else
-        PaEss.Utilities.audio_message([:there_is_no_, {:line, route}, :service_at_this_station])
-      end
-    end
-
-    def to_params(%Content.Audio.NoService{} = audio) do
-      {:ad_hoc, {tts_text(audio), :audio}}
-    end
-
     def to_tts(%Content.Audio.NoService{} = audio) do
       {tts_text(audio), nil}
     end

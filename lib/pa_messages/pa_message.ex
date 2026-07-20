@@ -18,14 +18,6 @@ defmodule PaMessages.PaMessage do
         }
 
   defimpl Content.Audio do
-    def to_params(%PaMessages.PaMessage{audio_url: audio_url}) when not is_nil(audio_url) do
-      nil
-    end
-
-    def to_params(%PaMessages.PaMessage{visual_text: visual_text}) do
-      {:ad_hoc, {visual_text, :audio_visual}}
-    end
-
     def to_tts(%PaMessages.PaMessage{visual_text: visual_text} = message) do
       audio =
         case message do

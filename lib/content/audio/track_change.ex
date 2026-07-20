@@ -20,26 +20,6 @@ defmodule Content.Audio.TrackChange do
   def park_track_change?(_prediction), do: false
 
   defimpl Content.Audio do
-    def to_params(%{route_id: route_id, berth: berth, destination: destination}) do
-      platform =
-        case berth do
-          "70196" -> :b
-          "70197" -> :c
-          "70198" -> :d
-          "70199" -> :e
-        end
-
-      PaEss.Utilities.audio_message(
-        [
-          :track_change,
-          :the_next
-        ] ++
-          PaEss.Utilities.train_description_tokens(destination, route_id) ++
-          [:is_now_boarding, :on_the, platform, :platform],
-        :audio_visual
-      )
-    end
-
     def to_tts(%Content.Audio.TrackChange{} = audio) do
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id)
       train_visual = PaEss.Utilities.train_description(audio.destination, audio.route_id, :visual)
