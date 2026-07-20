@@ -11,18 +11,6 @@ defmodule Content.Audio.ServiceEnded do
         }
 
   defimpl Content.Audio do
-    def to_params(%Content.Audio.ServiceEnded{location: :station, route: route}) do
-      Utilities.audio_message([{:line, route}, :service_ended])
-    end
-
-    def to_params(%Content.Audio.ServiceEnded{location: :platform, destination: destination}) do
-      Utilities.audio_message([:platform_closed, destination, :service_ended])
-    end
-
-    def to_params(%Content.Audio.ServiceEnded{location: :direction, destination: destination}) do
-      Utilities.audio_message([destination, :service_ended])
-    end
-
     def to_tts(%Content.Audio.ServiceEnded{} = audio) do
       {tts_text(audio), nil}
     end

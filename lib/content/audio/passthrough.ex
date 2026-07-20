@@ -13,15 +13,6 @@ defmodule Content.Audio.Passthrough do
         }
 
   defimpl Content.Audio do
-    def to_params(%Content.Audio.Passthrough{} = audio) do
-      train = PaEss.Utilities.train_description_tokens(audio.destination, nil, true)
-
-      PaEss.Utilities.audio_message(
-        [:the_next] ++ train ++ [:does_not_take_passengers, :., :stand_back_message],
-        :audio_visual
-      )
-    end
-
     def to_tts(%Content.Audio.Passthrough{} = audio) do
       train = PaEss.Utilities.train_description(audio.destination, nil)
       train_visual = PaEss.Utilities.train_description(audio.destination, nil, :visual)

@@ -3,34 +3,6 @@ defmodule Content.Audio.UtilitiesTest do
 
   import PaEss.Utilities
 
-  test "valid_range?" do
-    assert valid_range?(10, :english)
-    assert valid_range?(10, :spanish)
-    refute valid_range?(100, :english)
-    refute valid_range?(100, :spanish)
-  end
-
-  test "number_var/2" do
-    assert number_var(10, :english) == "5510"
-    assert number_var(10, :spanish) == "37010"
-    assert number_var(61, :english) == nil
-    assert number_var(21, :spanish) == nil
-  end
-
-  test "time_var/1" do
-    assert time_var(10) == "9110"
-  end
-
-  test "countdown_minutes_var/1" do
-    assert countdown_minutes_var(10) == "5010"
-  end
-
-  test "take_message_id/1" do
-    assert take_message_id(["1", "2", "3"]) == "105"
-    assert take_message_id(List.duplicate("1", 31)) == "220"
-    assert take_message_id(List.duplicate("1", 40)) == "230"
-  end
-
   test "headsign_to_destination/1" do
     assert headsign_to_destination("Alewife") == "place-alfcl"
     assert headsign_to_destination("Riverside") == "place-river"
@@ -53,11 +25,5 @@ defmodule Content.Audio.UtilitiesTest do
     assert [{"too-long", "word", 3}] = paginate_text(" too-long   word ", 5)
     assert [{"fits", "", 3}] = paginate_text("fits", 24)
     assert [] = paginate_text("")
-  end
-
-  test "pad_takes" do
-    assert ["1", "21000", "2", "21000", "3"] = pad_takes(["1", "2", "3"])
-    assert ["1", "21012", "21000", "2"] = pad_takes(["1", "21012", "2"])
-    assert ["1", "21000", "2", "21014"] = pad_takes(["1", "2", "21014"])
   end
 end

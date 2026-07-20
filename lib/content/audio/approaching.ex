@@ -41,26 +41,6 @@ defmodule Content.Audio.Approaching do
   end
 
   defimpl Content.Audio do
-    def to_params(%Content.Audio.Approaching{} = audio) do
-      prefix = if audio.four_cars?, do: [:shorter_4_car], else: [:attention_passengers_the_next]
-      train = PaEss.Utilities.train_description_tokens(audio.destination, audio.route_id, true)
-      approaching = if audio.four_cars?, do: [:now_approaching], else: [:is_now_approaching]
-      platform = if audio.platform, do: [platform_token(audio.platform)], else: []
-
-      new_cars =
-        if audio.new_cars? and not audio.four_cars?,
-          do: [:",", :with_all_new_red_line_cars],
-          else: []
-
-      followup = if audio.four_cars?, do: [:four_car_train_message], else: [:stand_back_message]
-
-      crowding =
-        if audio.crowding_description, do: [{:crowding, audio.crowding_description}], else: []
-
-      (prefix ++ train ++ approaching ++ platform ++ new_cars ++ [:.] ++ followup ++ crowding)
-      |> Utilities.audio_message(:audio_visual)
-    end
-
     def to_tts(%Content.Audio.Approaching{} = audio) do
       prefix = if audio.four_cars?, do: "Shorter 4 car ", else: ""
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id, :visual)
@@ -99,9 +79,6 @@ defmodule Content.Audio.Approaching do
 
       "#{main_sentence}#{followup}#{crowding}"
     end
-
-    defp platform_token(:ashmont), do: :on_the_ashmont_platform
-    defp platform_token(:braintree), do: :on_the_braintree_platform
 
     defp platform_string(:ashmont), do: "on the Ashmont platform"
     defp platform_string(:braintree), do: "on the Braintree platform"

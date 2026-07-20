@@ -54,57 +54,6 @@ defmodule Content.Audio.Predictions do
     @announce_platform_later_mins 9
     @announce_platform_soon_mins 5
 
-    def to_params(%Content.Audio.Predictions{prediction: prediction} = audio) do
-      destination = Content.Utilities.destination_for_prediction(prediction)
-
-      the_next_or_following =
-        if(audio.next_or_following == :next, do: :the_next, else: :the_following)
-
-      train = PaEss.Utilities.train_description_tokens(destination, prediction.route_id)
-
-      if PaEss.Utilities.prediction_stopped?(prediction, audio.terminal?) do
-        num_stops_away = PaEss.Utilities.prediction_stops_away(prediction)
-        stop_or_stops_away = if(num_stops_away == 1, do: :stop_away, else: :stops_away)
-
-        [the_next_or_following] ++
-          train ++ [:is, :stopped, {:number, num_stops_away}, stop_or_stops_away]
-      else
-        track_number = Content.Utilities.stop_track_number(prediction.stop_id)
-        {platform, platform_prefix?, platform_tbd} = platform_status(audio)
-        {minutes, _} = PaEss.Utilities.prediction_minutes(prediction, audio.terminal?)
-        min_or_mins = if(minutes == 1, do: :minute, else: :minutes)
-
-        status =
-          cond do
-            minutes == :arriving -> [:is_now_arriving]
-            minutes == :boarding -> [:is_now_boarding]
-            audio.terminal? -> [:departs, :in, {:number, minutes}, min_or_mins]
-            true -> [:arrives, :in, {:number, minutes}, min_or_mins]
-          end
-
-        qualifier =
-          cond do
-            track_number == 1 -> [:on_track_1]
-            track_number == 2 -> [:on_track_2]
-            platform -> [:on_the, platform, :platform]
-            true -> []
-          end
-
-        followup =
-          case platform_tbd do
-            :later -> [:will_announce_platform_later]
-            :soon -> [:will_announce_platform_soon]
-            _ -> []
-          end
-
-        {prefix, suffix} = if(platform_prefix?, do: {qualifier, []}, else: {[], qualifier})
-        four_cars = if four_cars?(audio), do: [:four_car_train_message], else: []
-
-        [the_next_or_following] ++ train ++ prefix ++ status ++ suffix ++ followup ++ four_cars
-      end
-      |> PaEss.Utilities.audio_message()
-    end
-
     def to_tts(%Content.Audio.Predictions{prediction: prediction} = audio) do
       destination = Content.Utilities.destination_for_prediction(prediction)
       next_or_following = if(audio.next_or_following == :next, do: "next", else: "following")

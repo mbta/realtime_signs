@@ -26,47 +26,37 @@ defmodule PaEss.Updater do
 
     visual = zip_pages(top, bottom) |> format_pages()
     correlation_id = create_correlation_id()
-    scu_migrated? = RealtimeSigns.config_engine().scu_migrated?(scu_id)
 
     log_meta = [
       sign_id: id,
       current_config: log_config,
       visual: JSON.encode!(visual),
-      correlation_id: inspect(correlation_id),
-      legacy: !scu_migrated?
+      correlation_id: inspect(correlation_id)
     ]
 
-    if scu_migrated? do
-      PaEss.ScuQueue.enqueue_message(
-        scu_id,
-        {:background, scu_id,
-         %{
-           zones: ["#{pa_ess_loc}-#{text_zone}"],
-           visual_data: visual,
-           expiration: 180,
-           correlation_id: correlation_id
-         }, log_meta}
-      )
-    else
-      MessageQueue.update_sign({pa_ess_loc, text_zone}, top, bottom, 180, :now, log_meta)
-    end
+    PaEss.ScuQueue.enqueue_message(
+      scu_id,
+      {:background, scu_id,
+       %{
+         zones: ["#{pa_ess_loc}-#{text_zone}"],
+         visual_data: visual,
+         expiration: 180,
+         correlation_id: correlation_id
+       }, log_meta}
+    )
   end
 
   @callback play_message(
               [Signs.Realtime.t() | Signs.Bus.t()],
-              [Content.Audio.value()],
               [Content.Audio.tts_value()],
               integer(),
               [keyword()]
             ) ::
               :ok
-  def play_message(signs, audios, tts_audios, priority, log_metas) do
-    {migrated_signs, legacy_signs} =
-      Enum.split_with(signs, &RealtimeSigns.config_engine().scu_migrated?(&1.scu_id))
-
+  def play_message(signs, tts_audios, priority, log_metas) do
     tts_audios = Enum.map(tts_audios, fn {audio, visual} -> {List.wrap(audio), visual} end)
 
-    log_data = fn {audio, visual}, sign, legacy? ->
+    log_data = fn {audio, visual}, sign ->
       correlation_id = create_correlation_id()
 
       {[
@@ -82,12 +72,11 @@ defmodule PaEss.Updater do
            |> inspect(),
          sign_id: sign.id,
          correlation_id: inspect(correlation_id),
-         legacy: legacy?,
          visual: paginate(visual, sign) |> format_pages() |> JSON.encode!()
        ], correlation_id}
     end
 
-    if migrated_signs != [] do
+    if signs != [] do
       tts_items =
         Enum.zip(tts_audios, log_metas)
         |> Enum.chunk_while(
@@ -113,9 +102,9 @@ defmodule PaEss.Updater do
           {{[:chime] ++ audio ++ [{:silence, 1000}], visual}, log_meta}
         end)
 
-      Enum.each(migrated_signs, fn sign ->
+      Enum.each(signs, fn sign ->
         Enum.each(tts_items, fn {{audio, visual} = tts_audio, log_meta} ->
-          {logs, correlation_id} = log_data.(tts_audio, sign, false)
+          {logs, correlation_id} = log_data.(tts_audio, sign)
 
           PaEss.ScuQueue.enqueue_message(
             sign.scu_id,
@@ -132,17 +121,6 @@ defmodule PaEss.Updater do
         end)
       end)
     end
-
-    Enum.each(legacy_signs, fn sign ->
-      log_list =
-        Enum.zip(tts_audios, log_metas)
-        |> Enum.map(fn {tts_audio, log_meta} ->
-          {logs, _correlation_id} = log_data.(tts_audio, sign, true)
-          Keyword.merge(logs, log_meta)
-        end)
-
-      MessageQueue.send_audio({sign.pa_ess_loc, sign.audio_zones}, audios, 5, 60, log_list)
-    end)
   end
 
   defp paginate(nil, _sign), do: nil
