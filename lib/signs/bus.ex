@@ -957,7 +957,7 @@ defmodule Signs.Bus do
     buses =
       case {destination, route} do
         {destination, "Silver"} ->
-          "#{PaEss.Utilities.destination_to_ad_hoc_string(destination)} buses"
+          "#{PaEss.Utilities.destination_to_tts_string(destination)} buses"
 
         {_, _} ->
           "Buses"
