@@ -35,7 +35,7 @@ defmodule Content.Audio.VehiclesToDestination do
             "#{route} line trains"
 
           {destination, _} ->
-            destination_text = PaEss.Utilities.destination_to_ad_hoc_string(destination)
+            destination_text = PaEss.Utilities.destination_to_tts_string(destination)
             "#{destination_text} trains"
         end
 

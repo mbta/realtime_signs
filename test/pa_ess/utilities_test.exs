@@ -13,9 +13,9 @@ defmodule Content.Audio.UtilitiesTest do
     assert destination_to_sign_string(:southbound) == "Southbound"
   end
 
-  test "destination_to_ad_hoc_string/1" do
-    assert destination_to_ad_hoc_string("place-hsmnl") == "Heath Street"
-    assert destination_to_ad_hoc_string(:southbound) == "Southbound"
+  test "destination_to_tts_string/1" do
+    assert destination_to_tts_string("place-hsmnl") == "Heath Street"
+    assert destination_to_tts_string(:southbound) == "Southbound"
   end
 
   test "paginate_text" do
