@@ -5,6 +5,8 @@ defmodule Message.Predictions do
   @type t :: %__MODULE__{
           predictions: [Predictions.Prediction.t()],
           terminal?: boolean(),
+          # For JFK platform, track if Alewife-bound trains are using a single platform,
+          # indicated by `true`.
           special_sign: {:jfk_mezzanine, true | false} | :bowdoin_eastbound | nil
         }
 
@@ -102,10 +104,10 @@ defmodule Message.Predictions do
         track_number = Content.Utilities.stop_track_number(prediction.stop_id)
 
         cond do
-          match?({:jfk_mezzanine, _}, special_sign) and destination == "place-alfcl" ->
+          match?({:jfk_mezzanine, _}, special_sign) and prediction.direction_id == 1 ->
             platform_name = Content.Utilities.stop_platform_name(prediction.stop_id)
 
-            # {_, false} in special_sign indicates both stop_ids for Alewife-bound trains are active
+            # {_, false} in special_sign indicates both stop_ids for northbound trains are active.
             # In this case, predicted platform is still subject to change when it's 5+ minutes away
             {headsign_message, platform_message} =
               if is_integer(minutes) and minutes > 5 and special_sign == {:jfk_mezzanine, false} do

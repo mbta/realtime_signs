@@ -168,6 +168,7 @@ defmodule Signs.RealtimeTest do
       "shawmut" -> "place-smmnl"
       "braintree" -> "place-brntn"
       "mattapan" -> "place-matt"
+      "park_st" -> "place-pktrm"
       "boston_college" -> "place-lake"
       "cleveland_circle" -> "place-clmnl"
       "riverside" -> "place-river"
@@ -1187,6 +1188,27 @@ defmodule Signs.RealtimeTest do
       expect_audios([
         {"The next, Ashmont, train; arrives in, 2, minutes.", nil},
         {"The next, Alewife, train; arrives in, 6, minutes; on the Ashmont platform.", nil}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, %{@jfk_mezzanine_sign | tick_read: 0})
+    end
+
+    test "JFK mezzanine shows platform for temporary terminal" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+        # At Ashmont, heading to temporary terminal Park St
+        [prediction(destination: :park_street, arrival: 240, stop_id: "70086")]
+      end)
+
+      expect_messages(
+        {[{"Southbound trains", 6}, {"Park St      4 min", 6}],
+         [{"Every 11 to 13 min", 6}, {"on Ashmont platform", 6}]}
+      )
+
+      expect_audios([
+        {"Southbound trains every 11 to 13 minutes.", nil},
+        {"The next, Park Street, train; arrives in, 4, minutes; on the Ashmont platform.", nil}
       ])
 
       Signs.Realtime.handle_info(:run_loop, %{@jfk_mezzanine_sign | tick_read: 0})
@@ -2213,6 +2235,9 @@ defmodule Signs.RealtimeTest do
 
           :southbound ->
             [route_id: "Red", direction_id: 0, destination_stop_id: "southbound"]
+
+          :park_street ->
+            [route_id: "Red", direction_id: 1, destination_stop_id: "park_st"]
 
           :mattapan ->
             [route_id: "Mattapan", direction_id: 0, destination_stop_id: "mattapan"]
