@@ -84,12 +84,15 @@ defmodule Signs.Realtime do
       DateTime.utc_now() |> DateTime.shift_zone!(time_zone)
     end
 
+    pa_ess_loc = Map.fetch!(config, "pa_ess_loc")
+
     sign = %__MODULE__{
       id: Map.fetch!(config, "id"),
-      pa_ess_loc: Map.fetch!(config, "pa_ess_loc"),
+      pa_ess_loc: pa_ess_loc,
       scu_id: Map.fetch!(config, "scu_id"),
-      text_zone: Map.fetch!(config, "text_zone"),
-      audio_zones: Map.fetch!(config, "audio_zones"),
+      text_zone: config |> Map.fetch!("text_zone") |> then(&"#{pa_ess_loc}-#{&1}"),
+      audio_zones:
+        config |> Map.fetch!("audio_zones") |> Enum.map(&"#{pa_ess_loc}-#{&1}") |> Enum.uniq(),
       source_config: source_config,
       default_mode:
         config |> Map.get("default_mode") |> then(&if(&1 == "auto", do: :auto, else: :off)),

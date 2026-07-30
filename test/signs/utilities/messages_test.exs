@@ -19,8 +19,8 @@ defmodule Signs.Utilities.MessagesTest do
           id: "sign_id",
           pa_ess_loc: "TEST",
           scu_id: "TESTSCU001",
-          text_zone: "x",
-          audio_zones: ["x"],
+          text_zone: "TEST-x",
+          audio_zones: ["TEST-x"],
           source_config: %{
             terminal?: false,
             sources: [source_config],

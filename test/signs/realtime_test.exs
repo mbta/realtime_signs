@@ -31,8 +31,8 @@ defmodule Signs.RealtimeTest do
     id: "sign_id",
     pa_ess_loc: "TEST",
     scu_id: "TESTSCU001",
-    text_zone: "x",
-    audio_zones: ["x"],
+    text_zone: "TEST-x",
+    audio_zones: ["TEST-x"],
     source_config: %{
       terminal?: false,
       sources: [@src],
@@ -92,7 +92,7 @@ defmodule Signs.RealtimeTest do
   @jfk_mezzanine_sign %{
     @sign
     | pa_ess_loc: "RJFK",
-      text_zone: "m",
+      text_zone: "RJFK-m",
       source_config: {
         %{
           sources: [@src],
@@ -704,7 +704,7 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
         | pa_ess_loc: "BBOW",
-          text_zone: "e",
+          text_zone: "BBOW-e",
           source_config: %{@sign.source_config | sources: [%{@src | direction_id: 1}]}
       })
     end
@@ -1822,7 +1822,7 @@ defmodule Signs.RealtimeTest do
       sign = %{
         @sign
         | pa_ess_loc: "GUNS",
-          text_zone: "x"
+          text_zone: "GUNS-x"
       }
 
       expect_messages({"No Southbound svc", "Use Routes 87, 91 or 109"})
