@@ -15,6 +15,7 @@ defmodule PaEss.ScuUpdater do
   def handle_events([{:message, scu_id, payload, logs}], _from, state) do
     body = JSON.encode!(payload)
     log("play_message", logs)
+    Logger.info("play_message_payload" <> body)
 
     if send_to_scu(scu_id, "/message", body) == :ok do
       send_to_signs_ui(scu_id, "/message", body)
