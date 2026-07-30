@@ -71,7 +71,7 @@ defmodule Engine.PaMessages do
           should_play? do
         sign
       end
-      |> Enum.group_by(& &1.pa_ess_loc)
+      |> Enum.group_by(& &1.scu_id)
       |> Enum.map(fn {_, [first | _] = signs} ->
         %{
           first
