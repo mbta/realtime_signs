@@ -217,10 +217,10 @@ defmodule Signs.Utilities.Messages do
         terminal?: config.terminal?,
         special_sign:
           case sign do
-            %{pa_ess_loc: "BBOW", text_zone: "e"} ->
+            %{pa_ess_loc: "BBOW", text_zone: "BBOW-e"} ->
               :bowdoin_eastbound
 
-            %{pa_ess_loc: "RJFK", text_zone: "m"} ->
+            %{pa_ess_loc: "RJFK", text_zone: "RJFK-m"} ->
               {:jfk_mezzanine, all_same_stop_id?(predictions)}
 
             _ ->

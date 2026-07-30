@@ -10,7 +10,6 @@ defmodule PaEss.Updater do
         %{
           id: id,
           scu_id: scu_id,
-          pa_ess_loc: pa_ess_loc,
           text_zone: text_zone,
           default_mode: default_mode
         },
@@ -38,7 +37,7 @@ defmodule PaEss.Updater do
       scu_id,
       {:background, scu_id,
        %{
-         zones: ["#{pa_ess_loc}-#{text_zone}"],
+         zones: [text_zone],
          visual_data: visual,
          expiration: 180,
          correlation_id: correlation_id
@@ -110,7 +109,7 @@ defmodule PaEss.Updater do
             sign.scu_id,
             {:message, sign.scu_id,
              %{
-               zones: Enum.map(sign.audio_zones, &"#{sign.pa_ess_loc}-#{&1}"),
+               zones: sign.audio_zones,
                visual_data: paginate(visual, sign) |> format_pages(),
                audio_data: Enum.map(audio, &format_audio/1),
                expiration: 30,

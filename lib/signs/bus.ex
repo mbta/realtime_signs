@@ -55,12 +55,15 @@ defmodule Signs.Bus do
         }
 
   def start_link(sign) do
+    pa_ess_loc = Map.fetch!(sign, "pa_ess_loc")
+
     state = %__MODULE__{
       id: Map.fetch!(sign, "id"),
-      pa_ess_loc: Map.fetch!(sign, "pa_ess_loc"),
+      pa_ess_loc: pa_ess_loc,
       scu_id: Map.fetch!(sign, "scu_id"),
-      text_zone: Map.fetch!(sign, "text_zone"),
-      audio_zones: Map.fetch!(sign, "audio_zones"),
+      text_zone: sign |> Map.fetch!("text_zone") |> then(&"#{pa_ess_loc}-#{&1}"),
+      audio_zones:
+        sign |> Map.fetch!("audio_zones") |> Enum.map(&"#{pa_ess_loc}-#{&1}") |> Enum.uniq(),
       max_minutes: Map.fetch!(sign, "max_minutes"),
       configs: parse_configs(sign["configs"]),
       top_configs: parse_configs(sign["top_configs"]),

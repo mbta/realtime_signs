@@ -18,8 +18,8 @@ defmodule AudioTest do
         id: "sign_id",
         pa_ess_loc: "TEST",
         scu_id: "TESTSCU001",
-        text_zone: "x",
-        audio_zones: ["x"],
+        text_zone: "TEST-x",
+        audio_zones: ["TEST-x"],
         source_config: %{
           terminal?: false,
           sources: [
@@ -48,8 +48,8 @@ defmodule AudioTest do
         id: "auto_sign",
         pa_ess_loc: "ABCD",
         scu_id: "ABCDSCU001",
-        text_zone: "m",
-        audio_zones: ["m"],
+        text_zone: "ABCD-m",
+        audio_zones: ["ABCD-m"],
         max_minutes: 60,
         configs: nil,
         top_configs: nil,
