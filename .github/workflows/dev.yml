@@ -5,20 +5,28 @@ on:
   push:
     branches: [main]
 
+permissions: {}
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
-      contents: read  
+      contents: read # Needed to check out the repository
+      id-token: write # Needed to authenticate against AWS
     environment: dev-linux
     concurrency: dev-linux
     env:
       ECS_CLUSTER: linux-staging
       ECS_SERVICE: realtime-signs-dev
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: mbta/actions/build-push-ecr@788f8e264e9ebb1b76b927c89e6466d5a162be80 # v2.24
         id: build-push
         with:
