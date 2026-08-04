@@ -45,6 +45,7 @@ config :realtime_signs,
   active_pa_messages_path: "/api/pa-messages/active"
 
 config :realtime_signs, RealtimeSignsWeb.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
   secret_key_base: "local_secret_key_base_at_least_64_bytes_________________________________"
 
 config :logger, utc_log: true
