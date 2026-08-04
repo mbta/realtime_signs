@@ -31,6 +31,7 @@ defmodule RealtimeSigns.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:bandit, "~> 1.12"},
       {:dialyxir, "~> 1.4.3", only: [:dev, :test], runtime: false},
       {:ehmon, git: "https://github.com/mbta/ehmon.git"},
       {:ex_aws_s3, "~> 2.0"},
@@ -46,7 +47,6 @@ defmodule RealtimeSigns.Mixfile do
       {:uuid, "~> 1.1", only: :test},
       {:quantum, "~> 3.0"},
       {:phoenix, "~> 1.8.7"},
-      {:plug_cowboy, "~> 2.5"},
       {:remote_ip, "~> 1.2"}
     ]
   end
