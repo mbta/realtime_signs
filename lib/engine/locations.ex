@@ -64,7 +64,7 @@ defmodule Engine.Locations do
 
     last_modified_vehicle_locations =
       case download_data(full_url, state.last_modified_vehicle_positions) do
-        {:ok, body, new_last_modified} ->
+        {:ok, body, new_last_modified} when is_map(body) ->
           {locations_by_vehicle, locations_by_stop} = map_locations_data(body)
           EtsUtils.write_ets(state.vehicle_locations_table, locations_by_vehicle, :none)
           EtsUtils.write_ets(state.stop_locations_table, locations_by_stop, [])
