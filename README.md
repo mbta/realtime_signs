@@ -32,6 +32,7 @@ The application needs several environment variables to access external services.
 
 Realtime Signs runs on on-prem servers. Deployments are managed with ECS Anywhere, which allows us to manage RTS deployments on those on-prem servers. Deployments are initiated through the following GitHub Actions:
 
+- [Deploy to Dev Blue](/.github/workflows/dev-blue.yml)
 - [Deploy to Dev Green](/.github/workflows/dev-green.yml)
 - [Deploy to Dev](/.github/workflows/dev.yml)
 - [Deploy to Prod](/.github/workflows/prod.yml)
