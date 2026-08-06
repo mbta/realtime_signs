@@ -57,7 +57,7 @@ defmodule Engine.Predictions do
              headers: if(last_modified, do: [if_modified_since: last_modified], else: []),
              receive_timeout: 2000
            ) do
-        {:ok, %Req.Response{body: json, status: 200, headers: headers}} ->
+        {:ok, %Req.Response{body: json, status: 200, headers: headers}} when is_map(json) ->
           {new_predictions, vehicles_running_revenue_trips} =
             Predictions.Predictions.get_all(json, current_time)
 
