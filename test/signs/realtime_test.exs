@@ -936,7 +936,7 @@ defmodule Signs.RealtimeTest do
 
     test "invalid custom messages" do
       expect(Engine.Config.Mock, :sign_config, fn _, _ ->
-        {:static_text, {"bad^", "long long long long message", "audio message"}}
+        {:static_text, {"bad", "long long long long message", "audio message"}}
       end)
 
       expect_messages({"bad", "long long long long mess"})

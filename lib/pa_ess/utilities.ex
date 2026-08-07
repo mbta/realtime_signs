@@ -370,12 +370,9 @@ defmodule PaEss.Utilities do
     " It is a shorter 4-car train. You may have to move to a different part of the platform to board."
   end
 
-  @invalid_custom_character ~r/[^a-zA-Z0-9,\/!@': ]/
   @spec validate_custom_string(String.t(), :top | :bottom) :: String.t()
   def validate_custom_string(string, line) do
-    string
-    |> String.replace(@invalid_custom_character, "")
-    |> String.slice(0, if(line == :top, do: 18, else: 24))
+    String.slice(string, 0, if(line == :top, do: 18, else: 24))
   end
 
   @headsign_abbreviation_mappings [
