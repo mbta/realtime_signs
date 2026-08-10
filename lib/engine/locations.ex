@@ -87,11 +87,18 @@ defmodule Engine.Locations do
            receive_timeout: 2000
          ) do
       {:ok, %Req.Response{body: body, status: status, headers: headers}}
-      when status >= 200 and status < 300 ->
+      when status >= 200 and status < 300 and is_map(body) ->
         case headers["last-modified"] do
           [last_modified] -> {:ok, body, last_modified}
           _ -> {:ok, body, nil}
         end
+
+      {:ok, %Req.Response{body: body}} when not is_map(body) ->
+        Logger.warning(
+          "Received a non-JSON body response from #{inspect(full_url)}: #{inspect(body)}}"
+        )
+
+        :error
 
       {:ok, %Req.Response{}} ->
         :error
