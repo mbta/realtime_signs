@@ -38,8 +38,6 @@ defmodule RealtimeSigns.Mixfile do
       {:ex_aws, "~> 2.0"},
       {:lcov_ex, "~> 0.2", only: [:dev, :test], runtime: false},
       {:gen_stage, "~> 1.2"},
-      {:logger_backends, "~> 1.0"},
-      {:logger_splunk_backend, "~> 3.0"},
       {:mox, "~> 1.2.0", only: [:test]},
       {:recon, "~> 2.5"},
       {:req, "~> 0.6.0"},
