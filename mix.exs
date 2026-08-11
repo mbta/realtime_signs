@@ -40,7 +40,7 @@ defmodule RealtimeSigns.Mixfile do
       {:gen_stage, "~> 1.2"},
       {:mox, "~> 1.2.0", only: [:test]},
       {:recon, "~> 2.5"},
-      {:req, "~> 0.6.0"},
+      {:req, "~> 0.7.2"},
       {:timex, "~> 3.1"},
       {:uuid, "~> 1.1", only: :test},
       {:quantum, "~> 3.0"},
