@@ -11,6 +11,17 @@ defmodule Engine.ChelseaBridgeTest do
     end
   end
 
+  defmodule ErrorPoster do
+    def post(_, _options \\ []), do: {:error, :token_request_failed}
+  end
+
+  defmodule SpyHttpClient do
+    def get(url, _options \\ []) do
+      send(self(), {:bridge_status_get_called, url})
+      {:error, :should_not_be_called}
+    end
+  end
+
   describe "GenServer initialization" do
     test "GenServer starts up successfully" do
       {:ok, pid} =
@@ -70,6 +81,23 @@ defmodule Engine.ChelseaBridgeTest do
 
       assert token.value == "fake_token"
       assert DateTime.compare(token.expiration, now) == :gt
+    end
+  end
+
+  describe "handle_info/2" do
+    test "skips bridge status request when token fetch fails" do
+      table = :ets.new(:bridge_status_skip_test, [:named_table])
+      now = DateTime.utc_now()
+
+      Application.put_env(:realtime_signs, :http_client, SpyHttpClient)
+      Application.put_env(:realtime_signs, :chelsea_bridge_username, "username")
+      Application.put_env(:realtime_signs, :chelsea_bridge_password, "password")
+      Application.put_env(:realtime_signs, :http_poster_mod, ErrorPoster)
+
+      state = %{table: table, token: %{value: nil, expiration: now}}
+
+      assert {:noreply, ^state} = Engine.ChelseaBridge.handle_info(:update, state)
+      refute_receive {:bridge_status_get_called, _}
     end
   end
 end

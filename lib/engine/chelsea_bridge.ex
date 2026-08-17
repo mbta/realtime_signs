@@ -51,7 +51,6 @@ defmodule Engine.ChelseaBridge do
 
   def handle_info(:update, state) do
     Process.send_after(self(), :update, 60_000)
-    http_client = Application.get_env(:realtime_signs, :http_client)
     now = Timex.now()
 
     token =
@@ -61,7 +60,24 @@ defmodule Engine.ChelseaBridge do
         state.token
       end
 
-    case http_client.get("#{@base_api_url}#{@api_status_endpoint}", auth: {:bearer, token.value}) do
+    if token.value == nil do
+      Logger.error("Bridge access_token unavailable; skipping bridge status update")
+      {:noreply, state}
+    else
+      update_bridge_status(state, token.value, now)
+    end
+  end
+
+  def handle_info(msg, state) do
+    Logger.warning("Engine.ChelseaBridge unknown_message: #{inspect(msg)}")
+    {:noreply, state}
+  end
+
+  @spec update_bridge_status(state(), String.t(), DateTime.t()) :: {:noreply, state()}
+  defp update_bridge_status(state, token, now) do
+    http_client = Application.get_env(:realtime_signs, :http_client)
+
+    case http_client.get("#{@base_api_url}#{@api_status_endpoint}", auth: {:bearer, token}) do
       {:ok,
        %Req.Response{
          status: 200,
@@ -84,11 +100,6 @@ defmodule Engine.ChelseaBridge do
         Logger.error("Error getting bridge status: #{inspect(err)}")
         {:noreply, state}
     end
-  end
-
-  def handle_info(msg, state) do
-    Logger.warning("Engine.ChelseaBridge unknown_message: #{inspect(msg)}")
-    {:noreply, state}
   end
 
   @spec update_api_token(DateTime.t()) :: token
