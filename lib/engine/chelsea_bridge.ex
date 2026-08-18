@@ -64,7 +64,7 @@ defmodule Engine.ChelseaBridge do
       Logger.error("Bridge access_token unavailable; skipping bridge status update")
       {:noreply, state}
     else
-      update_bridge_status(state, token.value, now)
+      update_bridge_status(state, token, now)
     end
   end
 
@@ -73,11 +73,11 @@ defmodule Engine.ChelseaBridge do
     {:noreply, state}
   end
 
-  @spec update_bridge_status(state(), String.t(), DateTime.t()) :: {:noreply, state()}
+  @spec update_bridge_status(state(), token(), DateTime.t()) :: {:noreply, state()}
   defp update_bridge_status(state, token, now) do
     http_client = Application.get_env(:realtime_signs, :http_client)
 
-    case http_client.get("#{@base_api_url}#{@api_status_endpoint}", auth: {:bearer, token}) do
+    case http_client.get("#{@base_api_url}#{@api_status_endpoint}", auth: {:bearer, token.value}) do
       {:ok,
        %Req.Response{
          status: 200,
