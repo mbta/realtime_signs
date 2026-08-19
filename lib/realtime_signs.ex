@@ -45,7 +45,7 @@ defmodule RealtimeSigns do
           Signs.Supervisor
         ]
 
-    Req.default_options(finch: RealtimeSigns.Finch)
+    Req.default_options(finch: [name: RealtimeSigns.Finch])
 
     opts = [strategy: :one_for_one, name: __MODULE__]
     Supervisor.start_link(children, opts)
