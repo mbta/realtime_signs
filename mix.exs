@@ -38,7 +38,7 @@ defmodule RealtimeSigns.Mixfile do
       {:ex_aws, "~> 2.0"},
       {:lcov_ex, "~> 0.2", only: [:dev, :test], runtime: false},
       {:gen_stage, "~> 1.2"},
-      {:mox, "~> 1.2.0", only: [:test]},
+      {:mox, "~> 1.3.0", only: [:test]},
       {:recon, "~> 2.5"},
       {:req, "~> 0.7.3"},
       {:timex, "~> 3.1"},
