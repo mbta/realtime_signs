@@ -42,8 +42,7 @@ defmodule PaEss.ScuUpdater do
     if address do
       http_poster.post("http://#{address}#{path}",
         headers: [x_api_key: scully_api_key],
-        json: body,
-        receive_timeout: 2000
+        json: body
       )
       |> case do
         {:ok, %Req.Response{status: status}} when status in 200..299 ->
