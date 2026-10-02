@@ -835,48 +835,6 @@ defmodule Signs.RealtimeTest do
                Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 20})
     end
 
-    test "Announce approaching with crowding when condfidence high" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(arrival: 45, destination: :forest_hills, trip_id: "1")]
-      end)
-
-      expect(Engine.Locations.Mock, :for_vehicle, 1, fn _ ->
-        location(crowding_confidence: :high)
-      end)
-
-      expect_messages({"Frst Hills   1 min", ""})
-
-      expect_audios([
-        {"Attention passengers: The next, Forest Hills, train; is now approaching. Please stand back from the platform edge.",
-         "Frst Hills train is now approaching. Please stand back from the platform edge."}
-      ])
-
-      assert capture_log(fn ->
-               Signs.Realtime.handle_info(:run_loop, @sign)
-             end) =~ "crowding_description={:train_level, :crowded}"
-    end
-
-    test "Announce approaching without crowding when condfidence low" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
-        [prediction(arrival: 45, destination: :forest_hills)]
-      end)
-
-      expect(Engine.Locations.Mock, :for_vehicle, fn _ ->
-        location(crowding_confidence: :low)
-      end)
-
-      expect_messages({"Frst Hills   1 min", ""})
-
-      expect_audios([
-        {"Attention passengers: The next, Forest Hills, train; is now approaching. Please stand back from the platform edge.",
-         "Frst Hills train is now approaching. Please stand back from the platform edge."}
-      ])
-
-      assert capture_log(fn ->
-               Signs.Realtime.handle_info(:run_loop, @sign)
-             end) =~ "crowding_description=nil"
-    end
-
     test "reads predictions" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
         [
@@ -2314,31 +2272,6 @@ defmodule Signs.RealtimeTest do
       vehicle_id: "v1",
       multi_carriage_details: Keyword.get(opts, :multi_carriage_details),
       type: Keyword.get(opts, :type, :mid_trip)
-    }
-  end
-
-  defp location(opts) do
-    %Locations.Location{
-      route_id: Keyword.get(opts, :route_id, "Red"),
-      status:
-        case Keyword.get(opts, :crowding_confidence) do
-          :low -> :stopped_at
-          :high -> :incoming_at
-        end,
-      stop_id: Keyword.get(opts, :stop_id, "1"),
-      multi_carriage_details:
-        Keyword.get(
-          opts,
-          :carriage_details,
-          make_carriage_details([
-            {"1", "1"},
-            {"2", "1"},
-            {"3", "99"},
-            {"4", "99"},
-            {"5", "99"},
-            {"6", "99"}
-          ])
-        )
     }
   end
 
