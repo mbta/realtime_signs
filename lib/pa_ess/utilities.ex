@@ -351,17 +351,6 @@ defmodule PaEss.Utilities do
     end
   end
 
-  def crowding_text(crowding_description) do
-    case crowding_description do
-      {:front, _} -> " The front of the train has more space."
-      {:back, _} -> " The back of the train has more space."
-      {:middle, _} -> " The middle of the train has more space."
-      {:front_and_back, _} -> " The front and back of the train have more space."
-      {:train_level, :crowded} -> " The train is crowded."
-      _ -> ""
-    end
-  end
-
   def four_cars_text() do
     " It is a shorter 4-car train. Move toward the front of the train to board, and stand back from the platform edge."
   end

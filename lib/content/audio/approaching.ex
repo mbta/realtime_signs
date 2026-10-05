@@ -6,15 +6,7 @@ defmodule Content.Audio.Approaching do
   alias PaEss.Utilities
 
   @enforce_keys [:destination]
-  defstruct @enforce_keys ++
-              [
-                :trip_id,
-                :platform,
-                :route_id,
-                new_cars?: false,
-                four_cars?: false,
-                crowding_description: nil
-              ]
+  defstruct @enforce_keys ++ [:trip_id, :platform, :route_id, new_cars?: false, four_cars?: false]
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
@@ -22,11 +14,10 @@ defmodule Content.Audio.Approaching do
           platform: Content.platform() | nil,
           route_id: String.t() | nil,
           new_cars?: boolean(),
-          four_cars?: boolean(),
-          crowding_description: {atom(), atom()} | nil
+          four_cars?: boolean()
         }
 
-  def new(%Predictions.Prediction{} = prediction, crowding_description, new_cars?) do
+  def new(%Predictions.Prediction{} = prediction, new_cars?) do
     [
       %__MODULE__{
         destination: Content.Utilities.destination_for_prediction(prediction),
@@ -34,8 +25,7 @@ defmodule Content.Audio.Approaching do
         platform: Content.Utilities.stop_platform(prediction.stop_id),
         route_id: prediction.route_id,
         new_cars?: new_cars?,
-        four_cars?: PaEss.Utilities.prediction_four_cars?(prediction),
-        crowding_description: crowding_description
+        four_cars?: PaEss.Utilities.prediction_four_cars?(prediction)
       }
     ]
   end
@@ -45,7 +35,6 @@ defmodule Content.Audio.Approaching do
       prefix = if audio.four_cars?, do: "Shorter 4 car ", else: ""
       train = PaEss.Utilities.train_description(audio.destination, audio.route_id, :visual)
       approaching = if audio.four_cars?, do: "now approaching", else: "is now approaching"
-      crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
       platform = if(s = platform_string(audio.platform), do: " #{s}")
       new_cars = if(s = new_cars_string(audio), do: ", #{s}")
 
@@ -54,8 +43,7 @@ defmodule Content.Audio.Approaching do
           do: " Please move to front of the train to board.",
           else: " Please stand back from the platform edge."
 
-      {tts_text(audio),
-       "#{prefix}#{train} #{approaching}#{platform}#{new_cars}.#{followup}#{crowding}"}
+      {tts_text(audio), "#{prefix}#{train} #{approaching}#{platform}#{new_cars}.#{followup}"}
     end
 
     def to_logs(%Content.Audio.Approaching{}) do
@@ -64,7 +52,6 @@ defmodule Content.Audio.Approaching do
 
     defp tts_text(%Content.Audio.Approaching{} = audio) do
       train = Utilities.train_description(audio.destination, audio.route_id)
-      crowding = PaEss.Utilities.crowding_text(audio.crowding_description)
       platform = platform_string(audio.platform)
       new_cars = new_cars_string(audio)
 
@@ -77,7 +64,7 @@ defmodule Content.Audio.Approaching do
         ["Attention passengers: The next, #{train}", "is now approaching", platform, new_cars]
         |> PaEss.Utilities.tts_sentence()
 
-      "#{main_sentence}#{followup}#{crowding}"
+      "#{main_sentence}#{followup}"
     end
 
     defp platform_string(:ashmont), do: "on the Ashmont platform"

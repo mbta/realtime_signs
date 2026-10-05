@@ -72,10 +72,9 @@ defmodule Signs.Utilities.Audio do
             PaEss.Utilities.prediction_approaching?(prediction, message.terminal?) &&
               prediction.trip_id not in sign.announced_approachings &&
                 announce_arriving?(sign, prediction) ->
-              crowding = Signs.Utilities.Crowding.crowding_description(prediction, sign)
               new_cars? = PaEss.Utilities.prediction_new_cars?(prediction)
 
-              {Audio.Approaching.new(prediction, crowding, new_cars?),
+              {Audio.Approaching.new(prediction, new_cars?),
                sign
                |> update_in(
                  [Access.key!(:announced_approachings)],
@@ -117,8 +116,6 @@ defmodule Signs.Utilities.Audio do
         end)
       end)
 
-    log_crowding(new_audios, sign.id)
-
     sign = %{
       sign
       | prev_prediction_keys:
@@ -128,13 +125,6 @@ defmodule Signs.Utilities.Audio do
             prediction_key(prediction)
           end
     }
-
-    # Disable crowding messages for now
-    new_audios =
-      Enum.map(new_audios, fn
-        %Audio.Approaching{} = audio -> %{audio | crowding_description: nil}
-        audio -> audio
-      end)
 
     {audios ++ new_audios, sign}
   end
@@ -167,22 +157,6 @@ defmodule Signs.Utilities.Audio do
       nil -> false
       source -> source.announce_boarding?
     end
-  end
-
-  defp log_crowding(new_audios, sign_id) do
-    Enum.each(new_audios, fn
-      %Audio.Approaching{
-        trip_id: trip_id,
-        crowding_description: crowding_description,
-        route_id: "Orange"
-      } ->
-        Logger.info(
-          "crowding_log: announcement_type=approaching trip_id=#{trip_id} sign_id=#{sign_id} crowding_description=#{inspect(crowding_description)}"
-        )
-
-      _ ->
-        nil
-    end)
   end
 
   @spec send_audio([Signs.Realtime.t() | Signs.Bus.t()], [Content.Audio.t()]) :: :ok
