@@ -10,19 +10,22 @@ defmodule HeadwayAnalysis.Server do
   @enforce_keys [:sign_id, :headway_group, :stop_ids, :vehicle_trips]
   defstruct @enforce_keys
 
-  def start_link(config) do
-    GenServer.start_link(__MODULE__, config, name: :"HeadwayAnalysis/#{config["id"]}")
+  def start_link(sign) do
+    GenServer.start_link(__MODULE__, sign, name: :"HeadwayAnalysis/#{sign["id"]}")
   end
 
   @impl true
-  def init(config) do
+  def init(sign) do
     schedule_update(self())
 
     {:ok,
      %__MODULE__{
-       sign_id: config["id"],
-       headway_group: config["source_config"]["headway_group"],
-       stop_ids: Enum.map(config["source_config"]["sources"], & &1["stop_id"]),
+       sign_id: sign["id"],
+       headway_group: hd(sign["configs"])["headway_group"],
+       stop_ids:
+         for config <- sign["configs"], source <- config["sources"], uniq: true do
+           source["stop_id"]
+         end,
        vehicle_trips: %{}
      }}
   end

@@ -20,20 +20,23 @@ defmodule AudioTest do
         scu_id: "TESTSCU001",
         text_zone: "TEST-x",
         audio_zones: ["TEST-x"],
-        source_config: %{
-          terminal?: false,
-          sources: [
-            %Signs.Utilities.SourceConfig{
-              stop_id: "1",
-              direction_id: 0,
-              routes: ["Red"],
-              announce_arriving?: true,
-              announce_boarding?: false
-            }
-          ],
-          headway_group: "headway_group",
-          headway_destination: :southbound
-        },
+        configs: [
+          %Signs.Config{
+            terminal?: false,
+            sources: [
+              %Signs.Config.Source{
+                stop_id: "1",
+                direction_id: 0,
+                route_id: "Red"
+              }
+            ],
+            announce_arriving?: true,
+            announce_boarding?: false,
+            headway_group: "headway_group",
+            headway_destination: :southbound,
+            destination: :southbound
+          }
+        ],
         current_content_top: "Southbound trains",
         current_content_bottom: "Every 11 to 13 min",
         current_time_fn: &Signs.RealtimeTest.fake_time_fn/0,

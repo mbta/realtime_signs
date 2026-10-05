@@ -1,14 +1,12 @@
 defmodule Signs.Realtime do
   @moduledoc """
-  A two-line sign that displays realtime countdown information from one or more sources. See
-  Signs.Utilities.SourceConfig for information on the JSON format.
+  A two-line sign that displays realtime countdown information from one or more sources.
   """
 
   use GenServer
   require Logger
 
   alias Signs.Utilities
-  alias Utilities.SourceConfig
   alias Utilities.SignContext
 
   @announced_history_length 5
@@ -19,7 +17,7 @@ defmodule Signs.Realtime do
     :scu_id,
     :text_zone,
     :audio_zones,
-    :source_config,
+    :configs,
     :current_content_top,
     :current_content_bottom,
     :last_update,
@@ -30,7 +28,6 @@ defmodule Signs.Realtime do
 
   defstruct @enforce_keys ++
               [
-                :headway_stop_id,
                 :current_time_fn,
                 announced_approachings: [],
                 announced_passthroughs: [],
@@ -55,7 +52,7 @@ defmodule Signs.Realtime do
           scu_id: String.t(),
           text_zone: String.t(),
           audio_zones: [String.t()],
-          source_config: SourceConfig.config() | {SourceConfig.config(), SourceConfig.config()},
+          configs: [Signs.Config.t()],
           default_mode: Engine.Config.sign_config(),
           current_content_top: Content.Message.value(),
           current_content_bottom: Content.Message.value(),
@@ -77,8 +74,6 @@ defmodule Signs.Realtime do
         }
 
   def start_link(%{"type" => "realtime"} = config) do
-    source_config = config |> Map.fetch!("source_config") |> SourceConfig.parse!()
-
     current_time_fn = fn ->
       time_zone = Application.fetch_env!(:realtime_signs, :time_zone)
       DateTime.utc_now() |> DateTime.shift_zone!(time_zone)
@@ -93,7 +88,7 @@ defmodule Signs.Realtime do
       text_zone: config |> Map.fetch!("text_zone") |> then(&"#{pa_ess_loc}-#{&1}"),
       audio_zones:
         config |> Map.fetch!("audio_zones") |> Enum.map(&"#{pa_ess_loc}-#{&1}") |> Enum.uniq(),
-      source_config: source_config,
+      configs: config |> Map.fetch!("configs") |> Enum.map(&Signs.Config.parse!/1),
       default_mode:
         config |> Map.get("default_mode") |> then(&if(&1 == "auto", do: :auto, else: :off)),
       current_content_top: "",
@@ -102,7 +97,6 @@ defmodule Signs.Realtime do
       last_update: nil,
       tick_read: 240 + Map.fetch!(config, "read_loop_offset"),
       read_period_seconds: 240,
-      headway_stop_id: Map.get(config, "headway_stop_id"),
       uses_shuttles: Map.get(config, "uses_shuttles", true),
       pa_message_plays: %{},
       last_message_log_time: current_time_fn.()
@@ -140,13 +134,9 @@ defmodule Signs.Realtime do
       end
 
     config_contexts =
-      if is_tuple(sign.source_config) do
-        Tuple.to_list(sign.source_config)
-      else
-        [sign.source_config]
-      end
+      combine_configs(sign.configs)
       |> Enum.map(fn config ->
-        stop_ids = SourceConfig.sign_stop_ids(config)
+        stop_ids = Enum.map(config.sources, & &1.stop_id)
 
         %SignContext.ConfigContext{
           config: config,
@@ -197,9 +187,9 @@ defmodule Signs.Realtime do
     {:noreply, state}
   end
 
-  defp has_service_ended_for_source?(source, current_time) do
+  defp has_service_ended_for_source?(config, current_time) do
     num_last_trips =
-      SourceConfig.sign_stop_ids(source)
+      Enum.map(config.sources, & &1.stop_id)
       |> Stream.flat_map(&RealtimeSigns.last_trip_engine().get_recent_departures(&1))
       |> Enum.count(fn {trip_id, departure_time} ->
         trip_departed?(departure_time, current_time) and
@@ -207,7 +197,7 @@ defmodule Signs.Realtime do
       end)
 
     # Red line trunk should wait for two last trips, one for each branch
-    threshold = if(source.headway_group == "red_trunk", do: 2, else: 1)
+    threshold = if(config.headway_group == "red_trunk", do: 2, else: 1)
     num_last_trips >= threshold
   end
 
@@ -223,7 +213,11 @@ defmodule Signs.Realtime do
   defp fetch_predictions(%{sources: sources} = config, prev_predictions_lookup) do
     for source <- sources,
         prediction <-
-          RealtimeSigns.prediction_engine().for_stop(source.stop_id, source.direction_id) do
+          RealtimeSigns.prediction_engine().for_stop(
+            source.stop_id,
+            source.route_id,
+            source.direction_id
+          ) do
       prev = prev_predictions_lookup[prediction_key(prediction)]
 
       prediction
@@ -276,8 +270,6 @@ defmodule Signs.Realtime do
   end
 
   # This is some temporary logging to assist with headway accuracy analysis
-  defp log_sign_messages(%{source_config: {_, _}} = sign, _messages), do: sign
-
   defp log_sign_messages(sign, messages) do
     now = sign.current_time_fn.()
 
@@ -306,5 +298,15 @@ defmodule Signs.Realtime do
   @spec decrement_ticks(Signs.Realtime.t()) :: Signs.Realtime.t()
   def decrement_ticks(sign) do
     %{sign | tick_read: sign.tick_read - 1}
+  end
+
+  # This is a temporary transformation to preserve existing behavior during the signs.json
+  # refactor. GL trunk signs have been split into multiple configs with the same headway
+  # group, so recombine them back into one for now.
+  defp combine_configs(configs) do
+    Enum.group_by(configs, &{&1.headway_group, &1.headway_destination})
+    |> Enum.map(fn {_, configs} ->
+      %{hd(configs) | sources: Enum.map(configs, & &1.sources) |> Enum.concat()}
+    end)
   end
 end

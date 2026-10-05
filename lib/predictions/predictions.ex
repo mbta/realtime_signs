@@ -5,7 +5,7 @@ defmodule Predictions.Predictions do
 
   @spec get_all(map(), DateTime.t()) ::
           {%{
-             optional({String.t(), integer()}) => [Prediction.t()]
+             optional({String.t(), String.t(), integer()}) => [Prediction.t()]
            }, MapSet.t(String.t())}
   def get_all(feed_message, current_time) do
     predictions =
@@ -21,7 +21,7 @@ defmodule Predictions.Predictions do
       |> MapSet.new()
 
     {Enum.group_by(predictions, fn prediction ->
-       {prediction.stop_id, prediction.direction_id}
+       {prediction.stop_id, prediction.route_id, prediction.direction_id}
      end), vehicles_running_revenue_trips}
   end
 

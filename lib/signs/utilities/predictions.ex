@@ -1,10 +1,4 @@
 defmodule Signs.Utilities.Predictions do
-  @moduledoc """
-  Given a sign with a SourceConfig, fetches all relevant predictions and
-  combines and sorts them, eventually returning the two relevent messages
-  for the top and bottom lines.
-  """
-
   alias Signs.Utilities.SignContext
 
   @spec get_passthrough_train_audio(SignContext.t()) :: [Content.Audio.t()]
