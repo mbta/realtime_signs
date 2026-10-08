@@ -152,7 +152,7 @@ defmodule Signs.Realtime do
             Stream.flat_map(stop_ids, &RealtimeSigns.last_trip_engine().get_recent_departures(&1))
             |> Stream.map(&elem(&1, 1))
             |> Enum.max(DateTime, fn -> nil end),
-          service_ended?: has_service_ended_for_source?(config, current_time)
+          service_ended?: has_service_ended?(config, current_time)
         }
       end)
 
@@ -187,7 +187,7 @@ defmodule Signs.Realtime do
     {:noreply, state}
   end
 
-  defp has_service_ended_for_source?(config, current_time) do
+  defp has_service_ended?(config, current_time) do
     num_last_trips =
       Enum.map(config.sources, & &1.stop_id)
       |> Stream.flat_map(&RealtimeSigns.last_trip_engine().get_recent_departures(&1))

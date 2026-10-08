@@ -5,7 +5,8 @@ defmodule Predictions.Predictions do
 
   @spec get_all(map(), DateTime.t()) ::
           {%{
-             optional({String.t(), String.t(), integer()}) => [Prediction.t()]
+             optional({stop_id :: String.t(), route_id :: String.t(), direction_id :: integer()}) =>
+               [Prediction.t()]
            }, MapSet.t(String.t())}
   def get_all(feed_message, current_time) do
     predictions =
