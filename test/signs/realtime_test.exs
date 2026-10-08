@@ -5,20 +5,16 @@ defmodule Signs.RealtimeTest do
 
   @headway_config %Engine.Config.Headway{headway_id: "id", range_low: 11, range_high: 13}
 
-  @src %Signs.Utilities.SourceConfig{
+  @src %Signs.Config.Source{
     stop_id: "1",
     direction_id: 0,
-    routes: ["Red"],
-    announce_arriving?: true,
-    announce_boarding?: false
+    route_id: "Red"
   }
 
-  @src_2 %Signs.Utilities.SourceConfig{
+  @src_2 %Signs.Config.Source{
     stop_id: "2",
     direction_id: 0,
-    routes: ["Red"],
-    announce_arriving?: true,
-    announce_boarding?: false
+    route_id: "Red"
   }
 
   @fake_time DateTime.new!(~D[2023-01-01], ~T[12:00:00], "America/New_York")
@@ -33,12 +29,17 @@ defmodule Signs.RealtimeTest do
     scu_id: "TESTSCU001",
     text_zone: "TEST-x",
     audio_zones: ["TEST-x"],
-    source_config: %{
-      terminal?: false,
-      sources: [@src],
-      headway_group: "headway_group",
-      headway_destination: :southbound
-    },
+    configs: [
+      %Signs.Config{
+        terminal?: false,
+        sources: [@src],
+        headway_group: "headway_group",
+        headway_destination: :southbound,
+        destination: :southbound,
+        announce_arriving?: true,
+        announce_boarding?: false
+      }
+    ],
     current_content_top: "Southbound trains",
     current_content_bottom: "Every 11 to 13 min",
     current_time_fn: &Signs.RealtimeTest.fake_time_fn/0,
@@ -51,40 +52,52 @@ defmodule Signs.RealtimeTest do
 
   @mezzanine_sign %{
     @sign
-    | source_config: {
-        %{
+    | configs: [
+        %Signs.Config{
           sources: [@src],
           headway_group: "group",
           headway_destination: :northbound,
-          terminal?: false
+          destination: :northbound,
+          terminal?: false,
+          announce_arriving?: false,
+          announce_boarding?: false
         },
-        %{
+        %Signs.Config{
           sources: [@src_2],
           headway_group: "group",
           headway_destination: :southbound,
-          terminal?: false
+          destination: :southbound,
+          terminal?: false,
+          announce_arriving?: false,
+          announce_boarding?: false
         }
-      },
+      ],
       current_content_top: "Red line trains",
       current_content_bottom: "Every 11 to 13 min"
   }
 
   @multi_route_mezzanine_sign %{
     @sign
-    | source_config: {
-        %{
-          sources: [%{@src | routes: ["Orange"]}],
+    | configs: [
+        %Signs.Config{
+          sources: [%{@src | route_id: "Orange"}],
           headway_group: "group",
           headway_destination: :northbound,
-          terminal?: false
+          destination: :northbound,
+          terminal?: false,
+          announce_arriving?: false,
+          announce_boarding?: false
         },
-        %{
+        %Signs.Config{
           sources: [@src_2],
           headway_group: "group",
           headway_destination: :southbound,
-          terminal?: false
+          destination: :southbound,
+          terminal?: false,
+          announce_arriving?: true,
+          announce_boarding?: false
         }
-      },
+      ],
       current_content_top: "Trains",
       current_content_bottom: "Every 11 to 13 min"
   }
@@ -93,70 +106,104 @@ defmodule Signs.RealtimeTest do
     @sign
     | pa_ess_loc: "RJFK",
       text_zone: "RJFK-m",
-      source_config: {
-        %{
+      configs: [
+        %Signs.Config{
           sources: [@src],
           headway_group: "group",
           headway_destination: :southbound,
-          terminal?: false
+          destination: :southbound,
+          terminal?: false,
+          announce_arriving?: false,
+          announce_boarding?: false
         },
-        %{
+        %Signs.Config{
           sources: [%{@src | stop_id: "70086", direction_id: 1}],
           headway_group: "group",
           headway_destination: "place-alfcl",
-          terminal?: false
+          destination: "place-alfcl",
+          terminal?: false,
+          announce_arriving?: false,
+          announce_boarding?: false
         }
-      }
+      ]
   }
 
   @terminal_sign %{
     @sign
-    | source_config: %{
-        @sign.source_config
-        | terminal?: true,
-          sources: [
-            %{@src | announce_arriving?: false, announce_boarding?: true}
-          ]
-      }
+    | configs: [
+        %{
+          Enum.at(@sign.configs, 0)
+          | terminal?: true,
+            announce_arriving?: false,
+            announce_boarding?: true
+        }
+      ]
   }
 
   @alewife_sign %{
     @terminal_sign
-    | source_config: %{
-        @sign.source_config
-        | terminal?: true,
-          sources: [
-            %{@src | announce_arriving?: false, announce_boarding?: true, stop_id: "70061"}
-          ]
-      }
+    | configs: [
+        %{
+          Enum.at(@sign.configs, 0)
+          | terminal?: true,
+            sources: [%{@src | stop_id: "70061"}],
+            announce_arriving?: false,
+            announce_boarding?: true
+        }
+      ]
   }
 
   @ashmont_sign %{
     @sign
-    | source_config: %{
-        headway_group: "group",
-        headway_destination: "place-alfcl",
-        terminal?: true,
-        sources: [
-          %{
-            stop_id: "70094",
-            direction_id: 1,
-            announce_arriving?: false,
-            announce_boarding?: true,
-            routes: ["Red"]
-          }
-        ]
-      }
+    | configs: [
+        %Signs.Config{
+          headway_group: "group",
+          headway_destination: "place-alfcl",
+          destination: "place-alfcl",
+          terminal?: true,
+          sources: [
+            %Signs.Config.Source{
+              stop_id: "70094",
+              direction_id: 1,
+              route_id: "Red"
+            }
+          ],
+          announce_arriving?: false,
+          announce_boarding?: true
+        }
+      ]
   }
 
   @park_st_sign %{
     @sign
-    | source_config: %{
-        @sign.source_config
-        | sources: [
-            %{@src | announce_arriving?: false, announce_boarding?: true, stop_id: "70198"}
-          ]
-      }
+    | configs: [
+        %{
+          Enum.at(@sign.configs, 0)
+          | sources: [%{@src | stop_id: "70198"}],
+            announce_arriving?: false,
+            announce_boarding?: true
+        }
+      ]
+  }
+
+  @gl_config %Signs.Config{
+    headway_group: "green_trunk",
+    headway_destination: :eastbound,
+    destination: :eastbound,
+    terminal?: false,
+    sources: [],
+    announce_arriving?: true,
+    announce_boarding?: false
+  }
+
+  @gl_trunk_sign %{
+    @sign
+    | configs: [
+        %{@gl_config | destination: "place-gover", sources: [%{@src | route_id: "Green-B"}]},
+        %{@gl_config | destination: "place-gover", sources: [%{@src | route_id: "Green-C"}]},
+        %{@gl_config | destination: "place-unsqu", sources: [%{@src | route_id: "Green-D"}]},
+        %{@gl_config | destination: "place-mdftf", sources: [%{@src | route_id: "Green-E"}]}
+      ]
   }
 
   setup :verify_on_exit!
@@ -171,6 +218,8 @@ defmodule Signs.RealtimeTest do
       "park_st" -> "place-pktrm"
       "boston_college" -> "place-lake"
       "cleveland_circle" -> "place-clmnl"
+      "government_center" -> "place-gover"
+      "union_square" -> "place-unsqu"
       "riverside" -> "place-river"
       "wonderland" -> "place-wondl"
       "forest_hills" -> "place-forhl"
@@ -184,7 +233,7 @@ defmodule Signs.RealtimeTest do
       stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
       stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
       stub(Engine.Alerts.Mock, :min_stop_status, fn _ -> :none end)
-      stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      stub(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
       stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
       stub(Engine.ScheduledHeadways.Mock, :get_last_scheduled_departure, fn _ -> nil end)
       stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
@@ -227,7 +276,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "announces train passing through station" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :riverside, passthrough: 30, trip_id: "123"),
           prediction(destination: :riverside, passthrough: 30, trip_id: "124")
@@ -244,7 +293,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "announces train passing through station on short sign" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :riverside, passthrough: 30, trip_id: "123"),
           prediction(destination: :riverside, passthrough: 30, trip_id: "124")
@@ -263,7 +312,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "does not announce train passing through when arrival is above threshold" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :riverside, passthrough: 31, trip_id: "123")]
       end)
 
@@ -272,11 +321,11 @@ defmodule Signs.RealtimeTest do
     end
 
     test "announces passthrough trains for mezzanine signs" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :braintree, passthrough: 30, trip_id: "123")]
       end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :alewife, passthrough: 30, trip_id: "124")]
       end)
 
@@ -298,7 +347,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "announces passthrough audio for 'Southbound' headsign" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :southbound, passthrough: 30)]
       end)
 
@@ -397,7 +446,7 @@ defmodule Signs.RealtimeTest do
     test "predictions take precedence over alerts" do
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :suspension_closed_station end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :ashmont, arrival: 120)]
       end)
 
@@ -406,7 +455,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "when there are predictions, puts predictions on the sign" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :ashmont, arrival: 120),
           prediction(destination: :ashmont, arrival: 240),
@@ -419,7 +468,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "ignores predictions with no departure time or skipped schedule_relationship" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :alewife, seconds_until_departure: nil),
           prediction(destination: :alewife, arrival: 90, schedule_relationship: :skipped)
@@ -469,11 +518,11 @@ defmodule Signs.RealtimeTest do
     end
 
     test "when given two source lists, returns earliest result from each" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :ashmont, arrival: 130)]
       end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :alewife, arrival: 10),
           prediction(destination: :alewife, arrival: 70)
@@ -485,7 +534,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "sorts by arrival or departure depending on which is present" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :alewife, arrival: 240),
           prediction(destination: :alewife, seconds_until_departure: 480)
@@ -497,7 +546,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "When the train is stopped a long time away, but not quite max time, shows stopped" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :mattapan, arrival: 1100, stopped: 8, trip_id: "1")]
       end)
 
@@ -510,7 +559,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "When the train is stopped a long time away from a terminal, shows max time instead of stopped" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(
             destination: :mattapan,
@@ -526,7 +575,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "When the train is stopped at the terminal and departing in <= 60 seconds, shows BRD" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(
             destination: :mattapan,
@@ -544,7 +593,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "When the train is stopped at the terminal and departing in more than 60 seconds, shows mins to departure" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(
             destination: :mattapan,
@@ -561,7 +610,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "When the train is stopped a long time away, shows max time instead of stopped" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :mattapan, arrival: 3700, stopped: 8)]
       end)
 
@@ -570,7 +619,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "only the first prediction in a source list can be BRD" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :mattapan, arrival: 0, stopped: 0, trip_id: "1"),
           prediction(destination: :mattapan, arrival: 100)
@@ -583,7 +632,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "Sorts boarding status to the top" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :boston_college, arrival: 200),
           prediction(destination: :cleveland_circle, arrival: 250, stopped: 0)
@@ -596,7 +645,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "allows ARR on second line" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :cleveland_circle, arrival: 15, stop_id: "1"),
           prediction(destination: :riverside, arrival: 16, stop_id: "1")
@@ -614,7 +663,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "doesn't sort 0 stops away to first for terminals when another departure is sooner" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :boston_college, seconds_until_departure: 250),
           prediction(destination: :cleveland_circle, seconds_until_departure: 300, stops_away: 0)
@@ -626,7 +675,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "Correctly orders BRD predictions between trains mid-trip and those starting their trip" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(
             destination: :riverside,
@@ -663,7 +712,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "prefers showing distinct destinations when present" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :ashmont, arrival: 120),
           prediction(destination: :ashmont, arrival: 500),
@@ -676,7 +725,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "does not promote non-canonical destinations" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :ashmont, arrival: 120),
           prediction(destination: :ashmont, arrival: 500),
@@ -689,7 +738,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "reads special boarding button announcement at Bowdoin" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(arrival: 0, destination: :wonderland, stopped: 0)]
       end)
 
@@ -705,12 +754,12 @@ defmodule Signs.RealtimeTest do
         @sign
         | pa_ess_loc: "BBOW",
           text_zone: "BBOW-e",
-          source_config: %{@sign.source_config | sources: [%{@src | direction_id: 1}]}
+          configs: [%{Enum.at(@sign.configs, 0) | sources: [%{@src | direction_id: 1}]}]
       })
     end
 
     test "Park St track change announcement" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(
             seconds_until_departure: 15,
@@ -733,7 +782,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "announces approaching" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :ashmont, arrival: 45, trip_id: "1")]
       end)
 
@@ -748,7 +797,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "announces approaching on short signs" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :ashmont, arrival: 45, trip_id: "1")]
       end)
 
@@ -764,7 +813,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "doesn't announce approaching if already announced previously" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :alewife, arrival: 45, trip_id: "1")]
       end)
 
@@ -773,7 +822,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "announces approaching for Green Line" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :cleveland_circle, arrival: 30)]
       end)
 
@@ -788,7 +837,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "does not announce approaching for Green Line when >30 secs away" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :cleveland_circle, arrival: 31)]
       end)
 
@@ -798,7 +847,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "announces next prediction if we weren't showing any before" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :ashmont, arrival: 120),
           prediction(destination: :ashmont, arrival: 240)
@@ -811,7 +860,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "doesn't announce ordinary predictions if we had some last time" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :ashmont, arrival: 120)]
       end)
 
@@ -820,7 +869,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "announcements delay upcoming readouts" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :ashmont, arrival: 45, trip_id: "1")]
       end)
 
@@ -836,7 +885,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "reads predictions" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :ashmont, arrival: 120),
           prediction(destination: :ashmont, arrival: 240)
@@ -859,11 +908,11 @@ defmodule Signs.RealtimeTest do
     end
 
     test "reads mixed predictions and headways" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :ashmont, arrival: 130)]
       end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
       expect_messages(
         {"Ashmont      2 min", [{"Southbound  trains every", 6}, {"Southbound  11 to 13 min", 6}]}
@@ -910,7 +959,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "reads approaching as 1 min" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :ashmont, arrival: 45, trip_id: "1"),
           prediction(destination: :ashmont, arrival: 130)
@@ -930,7 +979,7 @@ defmodule Signs.RealtimeTest do
     test "reads approaching as 1 minute when on the bottom line and a different headsign" do
       # Note: This should be the default behavior for reading approaching trains, rather than a
       # special case.
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :ashmont, arrival: 0, stopped: 0, trip_id: "1"),
           prediction(destination: :braintree, arrival: 45, trip_id: "2")
@@ -952,7 +1001,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "reads both lines when the top line is arriving and heavy rail" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :ashmont, arrival: 15, trip_id: "1"),
           prediction(destination: :ashmont, arrival: 120)
@@ -974,11 +1023,11 @@ defmodule Signs.RealtimeTest do
     end
 
     test "reads both lines when the bottom line is arriving on a multi_source sign for heavy rail" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :ashmont, arrival: 120)]
       end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :alewife, arrival: 15, trip_id: "1")]
       end)
 
@@ -995,7 +1044,7 @@ defmodule Signs.RealtimeTest do
     test "doesn't read stopped message for following trains" do
       # Note: This behavior exists because we didn't have recorded audio to cover this case at the
       # time, but we should fix this so it works the same as other readouts.
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :ashmont, arrival: 120, stopped: 3, trip_id: "1"),
           prediction(destination: :ashmont, arrival: 130, stopped: 4, trip_id: "2")
@@ -1013,7 +1062,7 @@ defmodule Signs.RealtimeTest do
 
     test "doesn't read predictions after stopped message" do
       # Note: This should be changed to read both messages, so it's consistent with other cases.
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :ashmont, arrival: 120, stopped: 3, trip_id: "1"),
           prediction(destination: :ashmont, arrival: 130)
@@ -1030,9 +1079,9 @@ defmodule Signs.RealtimeTest do
     end
 
     test "JFK mezzanine special case" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
       end)
 
@@ -1050,11 +1099,11 @@ defmodule Signs.RealtimeTest do
     end
 
     test "JFK mezzanine platform TBD soon" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :ashmont, arrival: 380)]
       end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :alewife, arrival: 440, stop_id: "70086"),
           prediction(destination: :alewife, arrival: 650, stop_id: "70096"),
@@ -1076,11 +1125,11 @@ defmodule Signs.RealtimeTest do
     end
 
     test "JFK mezzanine platform TBD later" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :ashmont, arrival: 120)]
       end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :alewife, arrival: 650, stop_id: "70086"),
           prediction(destination: :alewife, arrival: 1000, stop_id: "70096")
@@ -1101,14 +1150,14 @@ defmodule Signs.RealtimeTest do
     end
 
     test "JFK mezzanine platform announces platform when arrival is imminent" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :ashmont, arrival: 120)]
       end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :alewife, arrival: 650, stop_id: "70086"),
-          prediction(destination: :alewife, arrival: 0, stop_id: "70096")
+          prediction(destination: :alewife, arrival: 0, stop_id: "70096", trip_id: "1")
         ]
       end)
 
@@ -1125,11 +1174,11 @@ defmodule Signs.RealtimeTest do
     end
 
     test "JFK mezzanine shows platform when all predictions to Alewife use same platform" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :ashmont, arrival: 120)]
       end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :alewife, arrival: 380, stop_id: "70086"),
           prediction(destination: :alewife, arrival: 650, stop_id: "70086"),
@@ -1152,9 +1201,9 @@ defmodule Signs.RealtimeTest do
     end
 
     test "JFK mezzanine shows platform for temporary terminal" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         # At Ashmont, heading to temporary terminal Park St
         [prediction(destination: :park_street, arrival: 240, stop_id: "70086")]
       end)
@@ -1173,7 +1222,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "prevents showing predictions that count up by 1" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(arrival: 180, destination: :ashmont)]
       end)
 
@@ -1186,7 +1235,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "When sign in full am suppression, show timestamp" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(arrival: 180, destination: :ashmont)]
       end)
 
@@ -1202,7 +1251,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "When sign in partial am suppression shows mid-trip and terminal predictions but filters out reverse predictions" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :ashmont, arrival: 120, type: :reverse),
           prediction(destination: :ashmont, arrival: 240, type: :terminal)
@@ -1241,7 +1290,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "When sign in partial am suppression, filters stopped predictions based on prediction type" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :ashmont, arrival: 120, stopped: 2, type: :reverse),
           prediction(
@@ -1266,11 +1315,11 @@ defmodule Signs.RealtimeTest do
     end
 
     test "mezzanine sign, full am suppression" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(arrival: 180, destination: :ashmont)]
       end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
       expect(Engine.ScheduledHeadways.Mock, :display_headways?, 2, fn _, _, _ -> false end)
 
       expect_messages(
@@ -1284,11 +1333,11 @@ defmodule Signs.RealtimeTest do
     end
 
     test "mezzanine sign, one line in full am suppression, one line in partial am suppression defaulting to headways" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(arrival: 180, destination: :ashmont, type: :reverse)]
       end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
       expect(Engine.ScheduledHeadways.Mock, :get_first_scheduled_departure, fn _ ->
         datetime(~T[05:30:00])
@@ -1314,11 +1363,11 @@ defmodule Signs.RealtimeTest do
     end
 
     test "mezzanine sign, early am, both lines in partial am suppression defaulting to headways" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(arrival: 180, destination: :ashmont, type: :reverse)]
       end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
       expect(Engine.Config.Mock, :headway_config, 2, fn _, _ ->
         %{@headway_config | range_low: 9}
@@ -1335,9 +1384,9 @@ defmodule Signs.RealtimeTest do
     end
 
     test "mezzanine sign, early am, one line showing prediction, one line default to paging headway" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(arrival: 180, destination: :ashmont)]
       end)
 
@@ -1352,9 +1401,9 @@ defmodule Signs.RealtimeTest do
     end
 
     test "mezzanine sign, early am, one line showing prediction, one line showing timestamp" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(arrival: 180, destination: :ashmont)]
       end)
 
@@ -1369,9 +1418,9 @@ defmodule Signs.RealtimeTest do
     end
 
     test "JFK mezzanine, early am, southbound on timestamp and Alewife on platform prediction" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
       end)
 
@@ -1389,9 +1438,9 @@ defmodule Signs.RealtimeTest do
     end
 
     test "JFK mezzanine, early am, southbound on headways and Alewife on platform prediction" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
       end)
 
@@ -1407,9 +1456,9 @@ defmodule Signs.RealtimeTest do
     end
 
     test "JFK mezzanine, early am, filtered platform prediction and headways returns full page headways" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(
             destination: :alewife,
@@ -1429,9 +1478,9 @@ defmodule Signs.RealtimeTest do
     end
 
     test "JFK mezzanine, early am, valid platform prediction and non suppressed headway gets passed through" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
       end)
 
@@ -1455,7 +1504,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "Identifies new Red Line Cars" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(
             destination: :ashmont,
@@ -1485,7 +1534,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "Identifies old Red Line Cars" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(
             destination: :ashmont,
@@ -1515,7 +1564,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "announces four-car trains" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :braintree, arrival: 45, four_cars?: true),
           prediction(destination: :ashmont, arrival: 180)
@@ -1533,7 +1582,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "shows four-car messages" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :braintree, arrival: 130, four_cars?: true),
           prediction(destination: :ashmont, arrival: 180)
@@ -1551,7 +1600,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "doesn't show four-car messages at terminals when not boarding" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(
             stop_id: "70061",
@@ -1574,7 +1623,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "announces special four car train boarding message at Braintree/Alewife" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(
             stop_id: "70061",
@@ -1599,7 +1648,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "shows four-car messages at Ashmont northbound terminal specifically" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(
             stop_id: "70094",
@@ -1621,11 +1670,11 @@ defmodule Signs.RealtimeTest do
     end
 
     test "doesn't show four-car messages at mezzanines" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :braintree, seconds_until_departure: 130, four_cars?: true)]
       end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :alewife, seconds_until_departure: 430, four_cars?: true)]
       end)
 
@@ -1681,9 +1730,9 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :shuttles_closed_station end)
       expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :none end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :alewife, arrival: 240)]
       end)
 
@@ -1696,7 +1745,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "JFK platform" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(destination: :alewife, stop_id: "70086", arrival: 240),
           prediction(destination: :alewife, stop_id: "70086", arrival: 540)
@@ -1714,7 +1763,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "track numbers" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :forest_hills, stop_id: "Oak Grove-01", arrival: 240)]
       end)
 
@@ -1724,7 +1773,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "When train is stopped at a non-terminal and we are very close to the departure time, show BRD regardless of stopped_at_predicted_stop" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [
           prediction(
             destination: :forest_hills,
@@ -1739,6 +1788,27 @@ defmodule Signs.RealtimeTest do
       expect_messages({"Frst Hills     BRD", ""})
       expect_audios([{"The next, Forest Hills, train; is now boarding.", nil}])
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
+    end
+
+    test "green line trunk" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
+        [prediction(destination: :government_center, arrival: 240)]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
+        [prediction(destination: :government_center, arrival: 700)]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
+        [prediction(destination: :union_square, arrival: 440)]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
+        [prediction(destination: :medford_tufts, arrival: 540)]
+      end)
+
+      expect_messages({"Gov't Ctr    4 min", "Union Sq     7 min"})
+      Signs.Realtime.handle_info(:run_loop, @gl_trunk_sign)
     end
   end
 
@@ -1761,7 +1831,7 @@ defmodule Signs.RealtimeTest do
       stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
       stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> false end)
       stub(Engine.Alerts.Mock, :min_stop_status, fn _ -> :shuttles_transfer_station end)
-      stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      stub(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
       stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> false end)
       stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ -> %{} end)
 
@@ -1793,7 +1863,7 @@ defmodule Signs.RealtimeTest do
     setup do
       stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
       stub(Engine.Alerts.Mock, :min_stop_status, fn _ -> :none end)
-      stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      stub(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
       stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> true end)
 
       stub(Engine.LastTrip.Mock, :get_recent_departures, fn _ ->
@@ -1861,11 +1931,11 @@ defmodule Signs.RealtimeTest do
           current_time_fn: &fake_midnight_fn/0
       }
 
-      expect(Engine.Predictions.Mock, :for_stop, fn "1", 0 ->
+      expect(Engine.Predictions.Mock, :for_stop, fn "1", _, 0 ->
         [prediction(destination: :mattapan, arrival: 1100, stopped: 8, trip_id: "a")]
       end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn "2", 0 ->
+      expect(Engine.Predictions.Mock, :for_stop, fn "2", _, 0 ->
         []
       end)
 
@@ -1897,11 +1967,11 @@ defmodule Signs.RealtimeTest do
           current_time_fn: &fake_midnight_fn/0
       }
 
-      expect(Engine.Predictions.Mock, :for_stop, fn "1", 0 ->
+      expect(Engine.Predictions.Mock, :for_stop, fn "1", _, 0 ->
         []
       end)
 
-      expect(Engine.Predictions.Mock, :for_stop, fn "70086", 1 ->
+      expect(Engine.Predictions.Mock, :for_stop, fn "70086", _, 1 ->
         [prediction(destination: :alewife, arrival: 240, stop_id: "70086")]
       end)
 
@@ -1930,7 +2000,7 @@ defmodule Signs.RealtimeTest do
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
-        | source_config: %{@sign.source_config | headway_group: "red_trunk"}
+        | configs: [%{Enum.at(@sign.configs, 0) | headway_group: "red_trunk"}]
       })
     end
 
@@ -1946,7 +2016,7 @@ defmodule Signs.RealtimeTest do
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
-        | source_config: %{@sign.source_config | headway_group: "red_trunk"},
+        | configs: [%{Enum.at(@sign.configs, 0) | headway_group: "red_trunk"}],
           current_time_fn: &fake_midnight_fn/0
       })
     end
@@ -1957,7 +2027,7 @@ defmodule Signs.RealtimeTest do
       stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
       stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
       stub(Engine.Alerts.Mock, :min_stop_status, fn _ -> :none end)
-      stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      stub(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
       stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
       stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
       stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> false end)
@@ -2043,7 +2113,7 @@ defmodule Signs.RealtimeTest do
       stub(Engine.Config.Mock, :sign_config, fn _, _ -> :auto end)
       stub(Engine.Config.Mock, :headway_config, fn _, _ -> @headway_config end)
       stub(Engine.Alerts.Mock, :min_stop_status, fn _ -> :none end)
-      stub(Engine.Predictions.Mock, :for_stop, fn _, _ -> [] end)
+      stub(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
       stub(Engine.ScheduledHeadways.Mock, :display_headways?, fn _, _, _ -> true end)
       stub(Engine.Locations.Mock, :for_vehicle, fn _ -> nil end)
       stub(Engine.LastTrip.Mock, :is_last_trip?, fn _ -> false end)
@@ -2105,7 +2175,7 @@ defmodule Signs.RealtimeTest do
     end
 
     test "still shows predictions if they exist during overnight period" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _ ->
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(arrival: 180, destination: :ashmont)]
       end)
 
@@ -2206,8 +2276,17 @@ defmodule Signs.RealtimeTest do
           :cleveland_circle ->
             [route_id: "Green-C", direction_id: 0, destination_stop_id: "cleveland_circle"]
 
+          :government_center ->
+            [route_id: "Green-C", direction_id: 1, destination_stop_id: "government_center"]
+
           :riverside ->
             [route_id: "Green-D", direction_id: 0, destination_stop_id: "riverside"]
+
+          :union_square ->
+            [route_id: "Green-D", direction_id: 1, destination_stop_id: "union_square"]
+
+          :medford_tufts ->
+            [route_id: "Green-E", direction_id: 1, destination_stop_id: "medford_tufts"]
 
           :wonderland ->
             [route_id: "Blue", direction_id: 1, destination_stop_id: "wonderland"]

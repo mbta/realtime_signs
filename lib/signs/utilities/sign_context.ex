@@ -15,7 +15,7 @@ defmodule Signs.Utilities.SignContext do
     defstruct @enforce_keys
 
     @type t :: %__MODULE__{
-            config: Signs.Utilities.SourceConfig.config(),
+            config: Signs.Config.t(),
             predictions: [Predictions.Prediction.t()],
             alert_status: Engine.Alerts.Fetcher.stop_status(),
             headways: Engine.Config.Headway.t() | nil,

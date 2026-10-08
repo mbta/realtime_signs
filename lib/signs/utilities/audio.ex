@@ -4,7 +4,6 @@ defmodule Signs.Utilities.Audio do
   """
 
   alias Content.Audio
-  alias Signs.Utilities.SourceConfig
   require Logger
 
   @announced_history_length 5
@@ -62,8 +61,8 @@ defmodule Signs.Utilities.Audio do
             # prediction went straight to boarding, announce boarding instead.
             minutes == :boarding &&
               prediction.trip_id not in sign.announced_boardings &&
-                (announce_boarding?(sign, prediction) ||
-                   (announce_arriving?(sign, prediction) &&
+                (message.announce_boarding? ||
+                   (message.announce_arriving? &&
                       prediction.trip_id not in sign.announced_approachings)) ->
               {Audio.TrainIsBoarding.new(prediction, message.special_sign),
                update_in(sign.announced_boardings, &cache_value(&1, prediction.trip_id))}
@@ -71,7 +70,7 @@ defmodule Signs.Utilities.Audio do
             # Announce approaching if configured to
             PaEss.Utilities.prediction_approaching?(prediction, message.terminal?) &&
               prediction.trip_id not in sign.announced_approachings &&
-                announce_arriving?(sign, prediction) ->
+                message.announce_arriving? ->
               new_cars? = PaEss.Utilities.prediction_new_cars?(prediction)
 
               {Audio.Approaching.new(prediction, new_cars?),
@@ -138,26 +137,6 @@ defmodule Signs.Utilities.Audio do
   end
 
   defp cache_value(list, value), do: [value | list] |> Enum.take(@announced_history_length)
-
-  defp announce_arriving?(
-         %Signs.Realtime{source_config: source_config},
-         %Predictions.Prediction{stop_id: stop_id, direction_id: direction_id}
-       ) do
-    case SourceConfig.get_source_by_stop_and_direction(source_config, stop_id, direction_id) do
-      nil -> false
-      source -> source.announce_arriving?
-    end
-  end
-
-  defp announce_boarding?(
-         %Signs.Realtime{source_config: source_config},
-         %Predictions.Prediction{stop_id: stop_id, direction_id: direction_id}
-       ) do
-    case SourceConfig.get_source_by_stop_and_direction(source_config, stop_id, direction_id) do
-      nil -> false
-      source -> source.announce_boarding?
-    end
-  end
 
   @spec send_audio([Signs.Realtime.t() | Signs.Bus.t()], [Content.Audio.t()]) :: :ok
   def send_audio(signs, audios) do
