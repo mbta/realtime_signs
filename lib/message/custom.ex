@@ -18,8 +18,6 @@ defmodule Message.Custom do
        PaEss.Utilities.validate_custom_string(bottom, :bottom)}
     end
 
-    def to_multi_line(%Message.Custom{} = message), do: to_full_page(message)
-
     def to_audio(%Message.Custom{top: top, bottom: bottom, audio_text: audio_text}, _multiple?) do
       [%Content.Audio.Custom{top: top, bottom: bottom, audio_text: audio_text}]
     end

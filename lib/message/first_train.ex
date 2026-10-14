@@ -20,8 +20,6 @@ defmodule Message.FirstTrain do
       {"#{headsign} train", "due #{Content.Utilities.render_datetime_as_time(scheduled)}"}
     end
 
-    def to_multi_line(%Message.FirstTrain{} = message), do: to_full_page(message)
-
     def to_audio(%Message.FirstTrain{} = message, _multiple?) do
       [
         %Content.Audio.FirstTrainScheduled{
