@@ -69,7 +69,7 @@ defmodule Predictions.PredictionsTest do
 
     test "finds predictions for one trip" do
       expected = %{
-        {"70261", 0} => [
+        {"70261", "Mattapan", 0} => [
           %Predictions.Prediction{
             stop_id: "70261",
             seconds_until_arrival: 180,
@@ -83,7 +83,7 @@ defmodule Predictions.PredictionsTest do
             type: :mid_trip
           }
         ],
-        {"70263", 0} => [
+        {"70263", "Mattapan", 0} => [
           %Predictions.Prediction{
             stop_id: "70263",
             seconds_until_departure: 120,
@@ -246,7 +246,7 @@ defmodule Predictions.PredictionsTest do
       }
 
       expected = %{
-        {"70261", 0} => [
+        {"70261", "Mattapan", 0} => [
           %Predictions.Prediction{
             stop_id: "70261",
             seconds_until_arrival: 180,
@@ -260,7 +260,7 @@ defmodule Predictions.PredictionsTest do
             type: :mid_trip
           }
         ],
-        {"70263", 0} => [
+        {"70263", "Mattapan", 0} => [
           %Predictions.Prediction{
             stop_id: "70263",
             seconds_until_arrival: 120,
@@ -274,7 +274,7 @@ defmodule Predictions.PredictionsTest do
             type: :mid_trip
           }
         ],
-        {"70038", 1} => [
+        {"70038", "Blue", 1} => [
           %Predictions.Prediction{
             stop_id: "70038",
             seconds_until_arrival: 200,
@@ -288,7 +288,7 @@ defmodule Predictions.PredictionsTest do
             type: :mid_trip
           }
         ],
-        {"70060", 1} => [
+        {"70060", "Blue", 1} => [
           %Predictions.Prediction{
             stop_id: "70060",
             seconds_until_arrival: 400,
@@ -357,7 +357,7 @@ defmodule Predictions.PredictionsTest do
       }
 
       assert {%{
-                {"70263", 0} => [
+                {"70263", "Mattapan", 0} => [
                   %Predictions.Prediction{
                     stop_id: "70263",
                     seconds_until_arrival: 0,

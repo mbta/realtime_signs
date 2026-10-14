@@ -21,10 +21,10 @@ defmodule Engine.Predictions do
   end
 
   @doc "The upcoming predicted times a vehicle will be at this stop"
-  @callback for_stop(String.t(), 0 | 1) :: [Predictions.Prediction.t()]
-  def for_stop(predictions_table_id \\ :trip_updates, gtfs_stop_id, direction_id) do
-    case :ets.lookup(predictions_table_id, {gtfs_stop_id, direction_id}) do
-      [{{^gtfs_stop_id, ^direction_id}, predictions}] -> predictions
+  @callback for_stop(String.t(), String.t(), 0 | 1) :: [Predictions.Prediction.t()]
+  def for_stop(predictions_table_id \\ :trip_updates, stop_id, route_id, direction_id) do
+    case :ets.lookup(predictions_table_id, {stop_id, route_id, direction_id}) do
+      [{{^stop_id, ^route_id, ^direction_id}, predictions}] -> predictions
       _ -> []
     end
   end

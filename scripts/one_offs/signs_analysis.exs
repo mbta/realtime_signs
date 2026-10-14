@@ -7,11 +7,10 @@ signs =
 case System.argv() do
   # Configs that have atypical announcement settings
   ["announcements"] ->
-    for %{source_config: source_config} <- signs,
-        config <- List.wrap(source_config),
-        [announce_arriving?] = Enum.map(config.sources, & &1.announce_arriving) |> Enum.uniq(),
-        [announce_boarding?] = Enum.map(config.sources, & &1.announce_boarding) |> Enum.uniq(),
-        announce_arriving? == config.terminal or announce_boarding? != config.terminal do
+    for %{type: "realtime", configs: configs} <- signs,
+        config <- configs,
+        config.announce_arriving == config.terminal or
+          config.announce_boarding != config.terminal do
       config
     end
     |> IO.inspect(limit: :infinity)

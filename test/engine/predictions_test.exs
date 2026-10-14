@@ -53,8 +53,8 @@ defmodule Engine.PredictionsTest do
         :ets.new(:test_revenue_vehicles, [:named_table, read_concurrency: true])
 
       :ets.insert(predictions_table, [
-        {{"stop_to_remove", 0}, true},
-        {{"stop_to_update", 0}, true}
+        {{"stop_to_remove", "Red", 0}, true},
+        {{"stop_to_update", "Mattapan", 0}, true}
       ])
 
       existing_state = %Engine.Predictions{
@@ -65,10 +65,12 @@ defmodule Engine.PredictionsTest do
       handle_info(:update, existing_state)
 
       assert :ets.info(predictions_table)[:size] == 2
-      [{{"stop_to_remove", 0}, []}] = :ets.lookup(predictions_table, {"stop_to_remove", 0})
 
-      [{{"stop_to_update", 0}, [%Predictions.Prediction{}]}] =
-        :ets.lookup(predictions_table, {"stop_to_update", 0})
+      [{{"stop_to_remove", "Red", 0}, []}] =
+        :ets.lookup(predictions_table, {"stop_to_remove", "Red", 0})
+
+      [{{"stop_to_update", "Mattapan", 0}, [%Predictions.Prediction{}]}] =
+        :ets.lookup(predictions_table, {"stop_to_update", "Mattapan", 0})
     end
 
     test "logs a warning on any message but :update" do
@@ -92,12 +94,16 @@ defmodule Engine.PredictionsTest do
         route_id: "Blue"
       }
 
-      prediction_map = %{{"stop_1", 1} => [prediction], {"overwritten_stop", 1} => []}
+      prediction_map = %{
+        {"stop_1", "Blue", 1} => [prediction],
+        {"overwritten_stop", "Blue", 1} => []
+      }
+
       table_id = :ets.new(:predictions_engine_test, [:set, :protected, read_concurrency: true])
       :ets.insert(table_id, Enum.into(prediction_map, []))
-      assert for_stop(table_id, "stop_1", 1) == [prediction]
-      assert for_stop(table_id, "overwritten_stop", 1) == []
-      assert for_stop(table_id, "no_entry", 0) == []
+      assert for_stop(table_id, "stop_1", "Blue", 1) == [prediction]
+      assert for_stop(table_id, "overwritten_stop", "Blue", 1) == []
+      assert for_stop(table_id, "no_entry", "Blue", 0) == []
     end
   end
 end

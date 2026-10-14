@@ -66,15 +66,14 @@ rows =
             end
         }
       end
-      |> Enum.group_by(&{&1.stop_id, &1.direction_id})
+      |> Enum.group_by(&{&1.stop_id, &1.route_id, &1.direction_id})
 
     ["#{h}:#{m}"] ++
       Enum.map(sign_ids, fn sign_id ->
-        %{source_config: %{sources: sources}} = Map.fetch!(signs_lookup, sign_id)
-
-        Enum.flat_map(sources, fn source ->
-          Map.get(predictions_lookup, {source.stop_id, source.direction_id}, [])
-          |> Enum.filter(&(source.routes == nil or &1.route_id in source.routes))
+        Map.fetch!(signs_lookup, sign_id).configs
+        |> Enum.flat_map(& &1.sources)
+        |> Enum.flat_map(fn source ->
+          Map.get(predictions_lookup, {source.stop_id, source.route_id, source.direction_id}, [])
         end)
         |> case do
           [] ->

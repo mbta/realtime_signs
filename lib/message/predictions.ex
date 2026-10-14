@@ -1,10 +1,18 @@
 defmodule Message.Predictions do
-  @enforce_keys [:predictions, :terminal?, :special_sign]
+  @enforce_keys [
+    :predictions,
+    :terminal?,
+    :announce_arriving?,
+    :announce_boarding?,
+    :special_sign
+  ]
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
           predictions: [Predictions.Prediction.t()],
           terminal?: boolean(),
+          announce_arriving?: boolean(),
+          announce_boarding?: boolean(),
           # For JFK platform, track if Alewife-bound trains are using a single platform,
           # indicated by `true`.
           special_sign: {:jfk_mezzanine, true | false} | :bowdoin_eastbound | nil

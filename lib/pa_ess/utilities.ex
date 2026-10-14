@@ -20,6 +20,7 @@ defmodule PaEss.Utilities do
   def headsign_to_destination("Bowdoin"), do: "place-bomnl"
   def headsign_to_destination("Braintree"), do: "place-brntn"
   def headsign_to_destination("Chelsea"), do: "place-chels"
+  def headsign_to_destination("Cleveland Circle"), do: "place-clmnl"
   def headsign_to_destination("Eastbound"), do: :eastbound
   def headsign_to_destination("Forest Hills"), do: "place-forhl"
   def headsign_to_destination("Government Center"), do: "place-gover"

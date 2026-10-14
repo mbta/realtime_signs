@@ -8,10 +8,11 @@ Enum.map(signs, fn sign ->
   text =
     case sign do
       %{type: "realtime"} = sign ->
-        List.wrap(sign.source_config)
-        |> Enum.map_join(", ", fn config ->
+        Enum.group_by(sign.configs, &{&1.headway_group, &1.headway_direction_name})
+        |> Enum.map_join(", ", fn {{_, headway_direction_name}, configs} ->
           line =
-            Enum.flat_map(config.sources, & &1.routes)
+            Enum.flat_map(configs, & &1.sources)
+            |> Enum.map(& &1.route_id)
             |> Enum.uniq()
             |> case do
               ["Green-" <> branch] -> "Green #{branch}"
@@ -19,7 +20,7 @@ Enum.map(signs, fn sign ->
               routes -> "Green #{Enum.map_join(routes, "/", fn "Green-" <> b -> b end)}"
             end
 
-          "#{line} to #{config.headway_direction_name}"
+          "#{line} to #{headway_direction_name}"
         end)
 
       %{id: "Silver_Line" <> _} = sign ->

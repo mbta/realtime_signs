@@ -6,10 +6,12 @@ defmodule Signs.Utilities.MessagesTest do
 
   describe "get_messages/2" do
     setup do
-      source_config = %Signs.Utilities.SourceConfig{
-        stop_id: "1",
-        direction_id: 0,
-        routes: ["Red"],
+      config = %Signs.Config{
+        terminal?: false,
+        sources: [%Signs.Config.Source{stop_id: "1", direction_id: 0, route_id: "Red"}],
+        headway_group: "headway_group",
+        headway_destination: :southbound,
+        destination: :southbound,
         announce_arriving?: true,
         announce_boarding?: false
       }
@@ -21,12 +23,7 @@ defmodule Signs.Utilities.MessagesTest do
           scu_id: "TESTSCU001",
           text_zone: "TEST-x",
           audio_zones: ["TEST-x"],
-          source_config: %{
-            terminal?: false,
-            sources: [source_config],
-            headway_group: "headway_group",
-            headway_destination: :southbound
-          },
+          configs: [config],
           current_content_top: "Southbound trains",
           current_content_bottom: "Every 11 to 13 min",
           current_time_fn: &Signs.Utilities.MessagesTest.fake_time_fn/0,
@@ -41,12 +38,7 @@ defmodule Signs.Utilities.MessagesTest do
           current_time: @midnight,
           config_contexts: [
             %Signs.Utilities.SignContext.ConfigContext{
-              config: %{
-                terminal?: false,
-                sources: [source_config],
-                headway_group: "headway_group",
-                headway_destination: :southbound
-              },
+              config: config,
               predictions: [
                 %Predictions.Prediction{
                   stop_id: "1",

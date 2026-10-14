@@ -133,7 +133,7 @@ defmodule Signs.Utilities.Messages do
        end, prediction.seconds_until_departure, prediction.seconds_until_arrival}
     end)
     |> filter_early_am_predictions(config_context, sign_context)
-    |> get_unique_destination_predictions(Signs.Utilities.SourceConfig.single_route(config))
+    |> get_unique_destination_predictions(single_route(config))
   end
 
   defp filter_early_am_predictions(
@@ -215,6 +215,8 @@ defmodule Signs.Utilities.Messages do
       %Message.Predictions{
         predictions: filtered_predictions,
         terminal?: config.terminal?,
+        announce_arriving?: config.announce_arriving?,
+        announce_boarding?: config.announce_boarding?,
         special_sign:
           case sign do
             %{pa_ess_loc: "BBOW", text_zone: "BBOW-e"} ->
@@ -313,7 +315,7 @@ defmodule Signs.Utilities.Messages do
          sign
        ) do
     alert_status = filter_alert_status(alert_status, sign_config)
-    route = Signs.Utilities.SourceConfig.single_route(config)
+    route = single_route(config)
     transfer_alert? = alert_status in [:suspension_transfer_station, :shuttles_transfer_station]
     union_square? = sign.pa_ess_loc == "GUNS"
 
@@ -344,7 +346,7 @@ defmodule Signs.Utilities.Messages do
       %Message.Headway{
         destination: config.headway_destination,
         range: {headways.range_low, headways.range_high},
-        route: Signs.Utilities.SourceConfig.single_route(config)
+        route: single_route(config)
       }
     end
   end
@@ -353,10 +355,19 @@ defmodule Signs.Utilities.Messages do
          %ConfigContext{config: config} = config_context,
          %SignContext{} = sign_context
        ) do
-    route = Signs.Utilities.SourceConfig.single_route(config)
+    route = single_route(config)
 
     if config_context.service_ended? and not in_overnight_period?(sign_context) do
       %Message.ServiceEnded{destination: config.headway_destination, route: route}
+    end
+  end
+
+  defp single_route(config) do
+    Enum.map(config.sources, fn source -> String.split(source.route_id, "-") |> List.first() end)
+    |> Enum.uniq()
+    |> case do
+      [single] -> single
+      _ -> nil
     end
   end
 end
