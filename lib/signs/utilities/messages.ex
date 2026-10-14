@@ -82,7 +82,7 @@ defmodule Signs.Utilities.Messages do
 
   @spec render_messages([Message.t()]) :: {Content.Message.value(), Content.Message.value()}
   def render_messages([single]) do
-    Message.to_multi_line(single)
+    Message.to_full_page(single)
   end
 
   def render_messages([top, bottom]) do

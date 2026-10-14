@@ -18,11 +18,7 @@ defmodule Message.Alert do
 
     def to_single_line(%Message.Alert{} = message, :long) when use_shuttle?(message) do
       headsign = PaEss.Utilities.destination_to_sign_string(message.destination)
-
-      [
-        {Content.Utilities.width_padded_string(headsign, "no service", @width), 6},
-        {Content.Utilities.width_padded_string(headsign, "use shuttle", @width), 6}
-      ]
+      Content.Utilities.width_padded_string(headsign, "use shuttle", @width)
     end
 
     def to_single_line(%Message.Alert{} = message, :short) when use_shuttle?(message), do: nil
@@ -54,8 +50,6 @@ defmodule Message.Alert do
 
       {top, bottom}
     end
-
-    def to_multi_line(%Message.Alert{} = message), do: to_full_page(message)
 
     def to_audio(%Message.Alert{} = message, _multiple?) do
       [

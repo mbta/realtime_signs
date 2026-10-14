@@ -38,8 +38,6 @@ defmodule Message.Headway do
       {top, "Every #{x} to #{y} min"}
     end
 
-    def to_multi_line(%Message.Headway{} = message), do: to_full_page(message)
-
     def to_audio(%Message.Headway{} = message, _multiple?) do
       [
         %Content.Audio.VehiclesToDestination{

@@ -12,8 +12,6 @@ defmodule Message.Empty do
       {"", ""}
     end
 
-    def to_multi_line(%Message.Empty{} = message), do: to_full_page(message)
-
     def to_audio(%Message.Empty{}, _multiple?) do
       []
     end

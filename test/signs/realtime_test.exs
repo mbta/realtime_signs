@@ -550,10 +550,7 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :mattapan, arrival: 1100, stopped: 8, trip_id: "1")]
       end)
 
-      expect_messages(
-        {[{"Mattapan   Stopped", 6}, {"Mattapan   8 stops", 6}, {"Mattapan      away", 6}], ""}
-      )
-
+      expect_messages({"Mattapan", "Stopped 8 stops away"})
       expect_audios([{"The next, Mattapan, train; is stopped, 8, stops away.", nil}])
       assert {_, %{announced_stalls: [{"1", 8}]}} = Signs.Realtime.handle_info(:run_loop, @sign)
     end
@@ -1041,43 +1038,6 @@ defmodule Signs.RealtimeTest do
       Signs.Realtime.handle_info(:run_loop, %{@mezzanine_sign | tick_read: 0})
     end
 
-    test "doesn't read stopped message for following trains" do
-      # Note: This behavior exists because we didn't have recorded audio to cover this case at the
-      # time, but we should fix this so it works the same as other readouts.
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
-        [
-          prediction(destination: :ashmont, arrival: 120, stopped: 3, trip_id: "1"),
-          prediction(destination: :ashmont, arrival: 130, stopped: 4, trip_id: "2")
-        ]
-      end)
-
-      expect_messages(
-        {[{"Ashmont    Stopped", 6}, {"Ashmont    3 stops", 6}, {"Ashmont       away", 6}],
-         [{"Ashmont    Stopped", 6}, {"Ashmont    4 stops", 6}, {"Ashmont       away", 6}]}
-      )
-
-      expect_audios([{"The next, Ashmont, train; is stopped, 3, stops away.", nil}])
-      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_stalls: ["1", "2"]})
-    end
-
-    test "doesn't read predictions after stopped message" do
-      # Note: This should be changed to read both messages, so it's consistent with other cases.
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
-        [
-          prediction(destination: :ashmont, arrival: 120, stopped: 3, trip_id: "1"),
-          prediction(destination: :ashmont, arrival: 130)
-        ]
-      end)
-
-      expect_messages(
-        {[{"Ashmont    Stopped", 6}, {"Ashmont    3 stops", 6}, {"Ashmont       away", 6}],
-         "Ashmont      2 min"}
-      )
-
-      expect_audios([{"The next, Ashmont, train; is stopped, 3, stops away.", nil}])
-      Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0, announced_stalls: ["1"]})
-    end
-
     test "JFK mezzanine special case" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
@@ -1303,9 +1263,7 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_messages(
-        {[{"Ashmont    Stopped", 6}, {"Ashmont    3 stops", 6}, {"Ashmont       away", 6}], ""}
-      )
+      expect_messages({"Ashmont", "Stopped 3 stops away"})
 
       Signs.Realtime.handle_info(:run_loop, %{
         @sign
@@ -1736,10 +1694,7 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :alewife, arrival: 240)]
       end)
 
-      expect_messages(
-        {"Alewife      4 min", [{"Northbound    no service", 6}, {"Northbound   use shuttle", 6}]}
-      )
-
+      expect_messages({"Alewife      4 min", "Northbound   use shuttle"})
       expect_audios([{"No Northbound service. Use shuttle.", nil}])
       Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
     end
@@ -1764,10 +1719,13 @@ defmodule Signs.RealtimeTest do
 
     test "track numbers" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
-        [prediction(destination: :forest_hills, stop_id: "Oak Grove-01", arrival: 240)]
+        [
+          prediction(destination: :forest_hills, stop_id: "Oak Grove-01", arrival: 240),
+          prediction(destination: :forest_hills, stop_id: "Oak Grove-01", arrival: 400)
+        ]
       end)
 
-      expect_messages({[{"Frst Hills   4 min", 6}, {"Frst Hills   Trk 1", 6}], ""})
+      expect_messages({"Frst Hills   4 min", "On track 1"})
       expect_audios([{"The next, Forest Hills, train; arrives in, 4, minutes; on track 1.", nil}])
       Signs.Realtime.handle_info(:run_loop, %{@sign | tick_read: 0})
     end
@@ -1946,11 +1904,7 @@ defmodule Signs.RealtimeTest do
 
       expect(Engine.LastTrip.Mock, :is_last_trip?, fn "a" -> false end)
       expect(Engine.LastTrip.Mock, :is_last_trip?, fn "b" -> true end)
-
-      expect_messages(
-        {[{"Mattapan   Stopped", 6}, {"Mattapan   8 stops", 6}, {"Mattapan      away", 6}],
-         "Southbound     Svc ended"}
-      )
+      expect_messages({"Southbound  No Svc", "Mattapan    8 stops away"})
 
       expect_audios([
         {"The next, Mattapan, train; is stopped, 8, stops away.", nil},
