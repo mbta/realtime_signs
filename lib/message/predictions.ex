@@ -19,66 +19,101 @@ defmodule Message.Predictions do
         }
 
   defimpl Message do
-    @width 18
-
-    def to_single_line(%Message.Predictions{predictions: [top | _]} = message, :long) do
-      prediction_message(top, message.terminal?, message.special_sign)
-    end
-
-    def to_single_line(%Message.Predictions{}, :short), do: nil
-
-    def to_full_page(
-          %Message.Predictions{predictions: [top | _], special_sign: {:jfk_mezzanine, _}} =
-            message
-        ) do
-      {minutes, _} = PaEss.Utilities.prediction_minutes(top, message.terminal?)
-      platform_name = Content.Utilities.stop_platform_name(top.stop_id)
-
-      {prediction_message(top, message.terminal?, nil),
-       if(is_integer(minutes) and minutes > 5,
-         do: "platform TBD",
-         else: "on #{platform_name} platform"
-       )}
-    end
-
-    # Show 4-car messages at non-terminal Red Line stops with the exception of Ashmont
-    def to_multi_line(
+    def to_single_line(
           %Message.Predictions{
-            predictions: [%{route_id: "Red", multi_carriage_details: [_, _, _, _]} = top | _]
-          } = message
-        )
-        when top.stop_id == "70094" or not message.terminal? do
-      {prediction_message(top, message.terminal?, nil),
-       Content.Utilities.width_padded_string("4 cars", "Move to front", 24)}
+            predictions: [first | _],
+            terminal?: terminal?,
+            special_sign: special_sign
+          },
+          line_size
+        ) do
+      destination = Content.Utilities.destination_for_prediction(first)
+      headsign = PaEss.Utilities.destination_to_sign_string(destination)
+
+      stopped? = PaEss.Utilities.prediction_stopped?(first, terminal?)
+      jfk_nb? = match?({:jfk_mezzanine, _}, special_sign) and first.direction_id == 1
+
+      cond do
+        stopped? and line_size == :short ->
+          nil
+
+        stopped? and line_size == :long ->
+          Content.Utilities.width_padded_string(headsign, stops_away(first), 24)
+
+        jfk_nb? and line_size == :short ->
+          nil
+
+        jfk_nb? and line_size == :long ->
+          duration = duration(first, terminal?)
+
+          {headsign_message, platform_message} =
+            case platform(first, terminal?, special_sign) do
+              :tbd -> {headsign, " (Platform TBD)"}
+              platform -> {"#{headsign} (#{String.slice(platform, 0..0)})", " (#{platform} plat)"}
+            end
+
+          [
+            {Content.Utilities.width_padded_string(headsign_message, duration, 18), 6},
+            {headsign <> platform_message, 6}
+          ]
+
+        true ->
+          prediction_message(first, terminal?)
+      end
     end
 
-    def to_multi_line(%Message.Predictions{predictions: [top]} = message) do
-      {prediction_message(top, message.terminal?, message.special_sign), ""}
+    def to_full_page(%Message.Predictions{
+          predictions: [first | rest],
+          terminal?: terminal?,
+          special_sign: special_sign
+        }) do
+      if PaEss.Utilities.prediction_stopped?(first, terminal?) do
+        destination = Content.Utilities.destination_for_prediction(first)
+        headsign = PaEss.Utilities.destination_to_sign_string(destination)
+        {headsign, "Stopped #{stops_away(first)}"}
+      else
+        track = Content.Utilities.stop_track_number(first.stop_id)
+        platform = platform(first, terminal?, special_sign)
+        four_cars? = four_cars?(first, terminal?)
+
+        second_line =
+          cond do
+            is_integer(track) -> "On track #{track}"
+            platform == :tbd -> "platform TBD"
+            is_binary(platform) -> "on #{platform} platform"
+            four_cars? -> Content.Utilities.width_padded_string("4 cars", "Move to front", 24)
+            rest != [] -> prediction_message(hd(rest), terminal?)
+            true -> ""
+          end
+
+        {prediction_message(first, terminal?), second_line}
+      end
     end
 
-    def to_multi_line(%Message.Predictions{predictions: [top, bottom]} = message) do
-      {prediction_message(top, message.terminal?, message.special_sign),
-       prediction_message(bottom, message.terminal?, message.special_sign)}
-    end
-
-    def to_audio(%Message.Predictions{} = message, multiple?) do
+    def to_audio(
+          %Message.Predictions{
+            predictions: [first | _] = predictions,
+            terminal?: terminal?,
+            special_sign: special_sign
+          },
+          multiple?
+        ) do
       same_destination? =
-        Enum.map(message.predictions, &Content.Utilities.destination_for_prediction(&1))
+        Enum.map(predictions, &Content.Utilities.destination_for_prediction(&1))
         |> Enum.uniq()
         |> length() == 1
 
-      four_cars? =
-        hd(message.predictions) |> PaEss.Utilities.prediction_four_cars?() and !multiple? and
-          (!message.terminal? or hd(message.predictions) |> PaEss.Utilities.prediction_ashmont?())
+      four_cars? = four_cars?(first, terminal?)
+      track = Content.Utilities.stop_track_number(first.stop_id)
 
-      Enum.take(message.predictions, if(multiple? or four_cars?, do: 1, else: 2))
+      Enum.take(predictions, if(multiple? or four_cars? or !!track, do: 1, else: 2))
       |> Enum.zip(if(same_destination?, do: [:next, :following], else: [:next, :next]))
       |> Enum.with_index()
       |> Enum.map(fn {{prediction, next_or_following}, index} ->
         %Content.Audio.Predictions{
           prediction: prediction,
-          special_sign: message.special_sign,
-          terminal?: message.terminal?,
+          special_sign: special_sign,
+          terminal?: terminal?,
           multiple_messages?: multiple?,
           next_or_following: next_or_following,
           is_first?: index == 0
@@ -86,59 +121,46 @@ defmodule Message.Predictions do
       end)
     end
 
-    defp prediction_message(prediction, terminal?, special_sign) do
+    defp prediction_message(prediction, terminal?) do
       destination = Content.Utilities.destination_for_prediction(prediction)
       headsign = PaEss.Utilities.destination_to_sign_string(destination)
+      duration = duration(prediction, terminal?)
+      Content.Utilities.width_padded_string(headsign, duration, 18)
+    end
 
-      if PaEss.Utilities.prediction_stopped?(prediction, terminal?) do
-        num = PaEss.Utilities.prediction_stops_away(prediction)
-        stops = if(num == 1, do: "stop", else: "stops")
+    defp stops_away(prediction) do
+      num = PaEss.Utilities.prediction_stops_away(prediction)
+      stops = if(num == 1, do: "stop", else: "stops")
+      "#{num} #{stops} away"
+    end
 
-        [
-          {Content.Utilities.width_padded_string(headsign, "Stopped", @width), 6},
-          {Content.Utilities.width_padded_string(headsign, "#{num} #{stops}", @width), 6},
-          {Content.Utilities.width_padded_string(headsign, "away", @width), 6}
-        ]
-      else
-        {minutes, approximate?} = PaEss.Utilities.prediction_minutes(prediction, terminal?)
+    defp duration(prediction, terminal?) do
+      {minutes, approximate?} = PaEss.Utilities.prediction_minutes(prediction, terminal?)
 
-        duration =
-          case minutes do
-            :boarding -> "BRD"
-            :arriving -> "ARR"
-            n -> "#{n}#{if approximate?, do: "+", else: ""} min"
-          end
-
-        track_number = Content.Utilities.stop_track_number(prediction.stop_id)
-
-        cond do
-          match?({:jfk_mezzanine, _}, special_sign) and prediction.direction_id == 1 ->
-            platform_name = Content.Utilities.stop_platform_name(prediction.stop_id)
-
-            # {_, false} in special_sign indicates both stop_ids for northbound trains are active.
-            # In this case, predicted platform is still subject to change when it's 5+ minutes away
-            {headsign_message, platform_message} =
-              if is_integer(minutes) and minutes > 5 and special_sign == {:jfk_mezzanine, false} do
-                {headsign, " (Platform TBD)"}
-              else
-                {"#{headsign} (#{String.slice(platform_name, 0..0)})", " (#{platform_name} plat)"}
-              end
-
-            [
-              {Content.Utilities.width_padded_string(headsign_message, duration, @width), 6},
-              {headsign <> platform_message, 6}
-            ]
-
-          track_number ->
-            [
-              {Content.Utilities.width_padded_string(headsign, duration, @width), 6},
-              {Content.Utilities.width_padded_string(headsign, "Trk #{track_number}", @width), 6}
-            ]
-
-          true ->
-            Content.Utilities.width_padded_string(headsign, duration, @width)
-        end
+      case minutes do
+        :boarding -> "BRD"
+        :arriving -> "ARR"
+        n -> "#{n}#{if approximate?, do: "+", else: ""} min"
       end
+    end
+
+    # At the JFK mezzanine, only show the platform if the train is within 5 minutes of arriving,
+    # unless all predictions are for the same platform (meaning the other branch is not running)
+    defp platform(prediction, terminal?, {:jfk_mezzanine, all_same_stop_id?}) do
+      {minutes, _} = PaEss.Utilities.prediction_minutes(prediction, terminal?)
+
+      if is_integer(minutes) and minutes > 5 and not all_same_stop_id? do
+        :tbd
+      else
+        Content.Utilities.stop_platform_name(prediction.stop_id)
+      end
+    end
+
+    defp platform(_prediction, _terminal?, _), do: nil
+
+    defp four_cars?(prediction, terminal?) do
+      PaEss.Utilities.prediction_four_cars?(prediction) and
+        (not terminal? or PaEss.Utilities.prediction_ashmont?(prediction))
     end
   end
 end

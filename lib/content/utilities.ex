@@ -66,8 +66,10 @@ defmodule Content.Utilities do
   def stop_platform("70096"), do: :braintree
   def stop_platform(_), do: nil
 
+  @spec stop_platform_name(String.t()) :: String.t() | nil
   def stop_platform_name("70086"), do: "Ashmont"
   def stop_platform_name("70096"), do: "Braintree"
+  def stop_platform_name(_), do: nil
 
   @spec route_branch_letter(String.t() | nil) :: green_line_branch() | nil
   def route_branch_letter("Green-B"), do: :b

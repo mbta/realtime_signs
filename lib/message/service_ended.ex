@@ -27,8 +27,6 @@ defmodule Message.ServiceEnded do
       {"Service ended", "No #{headsign} trains"}
     end
 
-    def to_multi_line(%Message.ServiceEnded{} = message), do: to_full_page(message)
-
     def to_audio(%Message.ServiceEnded{} = message, multiple?) do
       [
         %Content.Audio.ServiceEnded{
