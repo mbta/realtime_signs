@@ -1,6 +1,6 @@
 defprotocol Message do
   @doc "render a single line of content"
-  @spec to_single_line(Message.t(), :long | :short) :: Content.Message.value()
+  @spec to_single_line(Message.t(), :long | :short) :: Content.Message.value() | nil
   def to_single_line(message, variant)
 
   @doc "render two lines of content"

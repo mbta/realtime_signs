@@ -1,10 +1,10 @@
 defmodule Message.ServiceEnded do
-  @enforce_keys [:route, :destination]
+  @enforce_keys [:line, :destination]
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
           destination: PaEss.destination() | nil,
-          route: String.t() | nil
+          line: String.t() | nil
         }
 
   defimpl Message do
@@ -18,8 +18,8 @@ defmodule Message.ServiceEnded do
       Content.Utilities.width_padded_string(headsign, "No Svc", 18)
     end
 
-    def to_full_page(%Message.ServiceEnded{destination: nil, route: route}) do
-      {if(route, do: "No #{route} Line", else: "Station closed"), "Service ended for night"}
+    def to_full_page(%Message.ServiceEnded{destination: nil, line: line}) do
+      {if(line, do: "No #{line} Line", else: "Station closed"), "Service ended for night"}
     end
 
     def to_full_page(%Message.ServiceEnded{destination: destination}) do
@@ -31,7 +31,7 @@ defmodule Message.ServiceEnded do
       [
         %Content.Audio.ServiceEnded{
           destination: message.destination,
-          route: message.route,
+          line: message.line,
           location:
             case {message.destination, multiple?} do
               {nil, _} -> :station

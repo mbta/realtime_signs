@@ -1,7 +1,10 @@
 defmodule Signs.Utilities.Reader do
   @spec read_sign(Signs.Realtime.t(), [Message.t()]) :: Signs.Realtime.t()
   def read_sign(%{tick_read: 0} = sign, messages) do
-    audios = Enum.flat_map(messages, &Message.to_audio(&1, length(messages) > 1))
+    audios =
+      Enum.flat_map(messages, fn list ->
+        Enum.flat_map(list, &Message.to_audio(&1, length(messages) > 1))
+      end)
 
     if audios != [] do
       Signs.Utilities.Audio.send_audio([sign], audios)

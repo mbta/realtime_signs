@@ -37,147 +37,158 @@ defmodule PaEss.Utilities do
   def headsign_to_destination("Westbound"), do: :westbound
   def headsign_to_destination("Wonderland"), do: "place-wondl"
 
+  @destination_abbreviations %{
+    :eastbound => ["Eastbound"],
+    :inbound => ["Inbound"],
+    :northbound => ["Northbound"],
+    :outbound => ["Outbound"],
+    :silver_line => ["SL Outbound"],
+    :southbound => ["Southbound"],
+    :westbound => ["Westbound"],
+    "place-alfcl" => ["Alewife"],
+    "place-alsgr" => ["Allston St", "AllstonSt"],
+    "place-amory" => ["Amory St"],
+    "place-andrw" => ["Andrew"],
+    "place-aport" => ["Airport"],
+    "place-aqucl" => ["Aquarium"],
+    "place-armnl" => ["Arlington"],
+    "place-asmnl" => ["Ashmont"],
+    "place-astao" => ["Assembly"],
+    "place-babck" => ["Babcock St", "Babcock"],
+    "place-balsq" => ["Ball Sq"],
+    "place-bbsta" => ["Back Bay"],
+    "place-bckhl" => ["Back o'Hill", "BackHill"],
+    "place-bcnfd" => ["B'consfield", "Beacnsfld"],
+    "place-bcnwa" => ["Wshngtn Sq", "Wash Sq"],
+    "place-bland" => ["Blandford"],
+    "place-bmmnl" => ["Beachmont"],
+    "place-bndhl" => ["Brandon Hll", "BrandonHl"],
+    "place-bomnl" => ["Bowdoin"],
+    "place-boyls" => ["Boylston"],
+    "place-brdwy" => ["Broadway"],
+    "place-brico" => ["Packards Cn", "Packards"],
+    "place-brkhl" => ["B'kline Hls", "BklineHil"],
+    "place-brmnl" => ["Brigham Cir", "Brigham"],
+    "place-brntn" => ["Braintree"],
+    "place-bucen" => ["BU Central", "BU Centr."],
+    "place-buest" => ["BU East"],
+    "place-butlr" => ["Butler"],
+    "place-bvmnl" => ["B'kline Vil", "BklineVil"],
+    "place-capst" => ["Capen St"],
+    "place-ccmnl" => ["Com College"],
+    "place-cedgr" => ["Cedar Grv"],
+    "place-cenav" => ["Central Ave"],
+    "place-chels" => ["Chelsea"],
+    "place-chhil" => ["Chestnut Hl", "Chestnut"],
+    "place-chill" => ["Chestnut Hl", "Chestnut"],
+    "place-chmnl" => ["Charles/MGH"],
+    "place-chncl" => ["Chinatown"],
+    "place-chswk" => ["Chiswick Rd", "Chiswick"],
+    "place-clmnl" => ["Clvlnd Cir", "Clvld Cir"],
+    "place-cntsq" => ["Central"],
+    "place-coecl" => ["Copley"],
+    "place-cool" => ["Coolidge Cn", "Coolidge"],
+    "place-davis" => ["Davis"],
+    "place-denrd" => ["Dean Rd"],
+    "place-dwnxg" => ["Downt'n Xng"],
+    "place-eliot" => ["Eliot"],
+    "place-engav" => ["Englew'd Av", "Englwd Av"],
+    "place-esomr" => ["E Somervlle", "ESomville"],
+    "place-fbkst" => ["Fairbanks", "Englwd Av"],
+    "place-fenwd" => ["Fenwood Rd", "Fenwood"],
+    "place-fenwy" => ["Fenway"],
+    "place-fldcr" => ["Fields Cnr"],
+    "place-forhl" => ["Frst Hills"],
+    "place-gilmn" => ["Gilman Sq"],
+    "place-gover" => ["Gov't Ctr"],
+    "place-grigg" => ["Griggs St"],
+    "place-grnst" => ["Green St"],
+    "place-haecl" => ["Haymarket"],
+    "place-harsq" => ["Harvard"],
+    "place-harvd" => ["Harvard Ave", "Harvard"],
+    "place-hsmnl" => ["Heath St"],
+    "place-hwsst" => ["Hawes St"],
+    "place-hymnl" => ["Hynes"],
+    "place-jaksn" => ["Jackson Sq"],
+    "place-jfk" => ["JFK/UMass"],
+    "place-kencl" => ["Kenmore"],
+    "place-knncl" => ["Kendall/MIT"],
+    "place-kntst" => ["Kent St"],
+    "place-lake" => ["Boston Coll", "BostonCol"],
+    "place-lech" => ["Lechmere"],
+    "place-lngmd" => ["Lngwd Med"],
+    "place-longw" => ["Longwood"],
+    "place-masta" => ["Mass Ave"],
+    "place-matt" => ["Mattapan"],
+    "place-mdftf" => ["Medfd/Tufts", "Med/Tufts"],
+    "place-mfa" => ["MFA"],
+    "place-mgngl" => ["Magoun Sq"],
+    "place-miltt" => ["Milton"],
+    "place-mispk" => ["Mission Pk", "MissionPk"],
+    "place-mlmnl" => ["Malden Ctr"],
+    "place-mvbcl" => ["Maverick"],
+    "place-newtn" => ["Newton Hlnd", "NwtnHlnds"],
+    "place-newto" => ["Newton Ctr", "NewtnCtr"],
+    "place-north" => ["North Sta"],
+    "place-nqncy" => ["N Quincy"],
+    "place-nuniv" => ["Northeast'n", "NE Univ"],
+    "place-ogmnl" => ["Oak Grove"],
+    "place-orhte" => ["Orient Hts"],
+    "place-pktrm" => ["Park St"],
+    "place-portr" => ["Porter"],
+    "place-prmnl" => ["Prudential", "Prudent'l"],
+    "place-qamnl" => ["Quincy Adms"],
+    "place-qnctr" => ["Quincy Ctr"],
+    "place-rbmnl" => ["Revere Bch"],
+    "place-rcmnl" => ["Roxbury Xng"],
+    "place-river" => ["Riverside"],
+    "place-rsmnl" => ["Reservoir"],
+    "place-rugg" => ["Ruggles"],
+    "place-rvrwy" => ["Riverway"],
+    "place-sbmnl" => ["Stony Brook"],
+    "place-sdmnl" => ["Suffolk Dns"],
+    "place-shmnl" => ["Savin Hill"],
+    "place-smary" => ["St. Mary's", "StMary's"],
+    "place-smmnl" => ["Shawmut"],
+    "place-sougr" => ["South St"],
+    "place-spmnl" => ["Science Pk", "SciencePk"],
+    "place-sstat" => ["South Sta"],
+    "place-state" => ["State"],
+    "place-sthld" => ["Sutherland", "Suth'land"],
+    "place-stpul" => ["St. Paul St", "St Paul"],
+    "place-sull" => ["Sullivan Sq"],
+    "place-sumav" => ["Summit Ave", "Summit Av"],
+    "place-symcl" => ["Symphony"],
+    "place-tapst" => ["Tappan St"],
+    "place-tumnl" => ["Tufts Med"],
+    "place-unsqu" => ["Union Sq"],
+    "place-valrd" => ["Valley Rd"],
+    "place-waban" => ["Waban"],
+    "place-wascm" => ["Wshngtn St", "Wash St"],
+    "place-welln" => ["Wellington"],
+    "place-wimnl" => ["Wood Island"],
+    "place-wlsta" => ["Wollaston"],
+    "place-wondl" => ["Wonderland"],
+    "place-woodl" => ["Woodland"],
+    "place-wrnst" => ["Warren St"]
+  }
+
   @doc """
   Used to translate a PaEss.destination to a string to post to countdown clocks
   """
   @spec destination_to_sign_string(PaEss.destination()) :: String.t()
-  def destination_to_sign_string(:eastbound), do: "Eastbound"
-  def destination_to_sign_string(:inbound), do: "Inbound"
-  def destination_to_sign_string(:northbound), do: "Northbound"
-  def destination_to_sign_string(:outbound), do: "Outbound"
-  def destination_to_sign_string(:silver_line), do: "SL Outbound"
-  def destination_to_sign_string(:southbound), do: "Southbound"
-  def destination_to_sign_string(:westbound), do: "Westbound"
-  def destination_to_sign_string("place-alfcl"), do: "Alewife"
-  def destination_to_sign_string("place-alsgr"), do: "Allston St"
-  def destination_to_sign_string("place-amory"), do: "Amory St"
-  def destination_to_sign_string("place-andrw"), do: "Andrew"
-  def destination_to_sign_string("place-aport"), do: "Airport"
-  def destination_to_sign_string("place-aqucl"), do: "Aquarium"
-  def destination_to_sign_string("place-armnl"), do: "Arlington"
-  def destination_to_sign_string("place-asmnl"), do: "Ashmont"
-  def destination_to_sign_string("place-astao"), do: "Assembly"
-  def destination_to_sign_string("place-babck"), do: "Babcock St"
-  def destination_to_sign_string("place-balsq"), do: "Ball Sq"
-  def destination_to_sign_string("place-bbsta"), do: "Back Bay"
-  def destination_to_sign_string("place-bckhl"), do: "Back o'Hill"
-  def destination_to_sign_string("place-bcnfd"), do: "B'consfield"
-  def destination_to_sign_string("place-bcnwa"), do: "Washington"
-  def destination_to_sign_string("place-bland"), do: "Blandford"
-  def destination_to_sign_string("place-bmmnl"), do: "Beachmont"
-  def destination_to_sign_string("place-bndhl"), do: "Brandon Hll"
-  def destination_to_sign_string("place-bomnl"), do: "Bowdoin"
-  def destination_to_sign_string("place-boyls"), do: "Boylston"
-  def destination_to_sign_string("place-brdwy"), do: "Broadway"
-  def destination_to_sign_string("place-brico"), do: "Packards Cn"
-  def destination_to_sign_string("place-brkhl"), do: "B'kline Hls"
-  def destination_to_sign_string("place-brmnl"), do: "Brigham Cir"
-  def destination_to_sign_string("place-brntn"), do: "Braintree"
-  def destination_to_sign_string("place-bucen"), do: "BU Central"
-  def destination_to_sign_string("place-buest"), do: "BU East"
-  def destination_to_sign_string("place-butlr"), do: "Butler"
-  def destination_to_sign_string("place-bvmnl"), do: "B'kline Vil"
-  def destination_to_sign_string("place-capst"), do: "Capen St"
-  def destination_to_sign_string("place-ccmnl"), do: "Com College"
-  def destination_to_sign_string("place-cedgr"), do: "Cedar Grv"
-  def destination_to_sign_string("place-cenav"), do: "Central Ave"
-  def destination_to_sign_string("place-chels"), do: "Chelsea"
-  def destination_to_sign_string("place-chhil"), do: "Chestnut Hl"
-  def destination_to_sign_string("place-chill"), do: "Chestnut Hl"
-  def destination_to_sign_string("place-chmnl"), do: "Charles/MGH"
-  def destination_to_sign_string("place-chncl"), do: "Chinatown"
-  def destination_to_sign_string("place-chswk"), do: "Chiswick Rd"
-  def destination_to_sign_string("place-clmnl"), do: "Clvlnd Cir"
-  def destination_to_sign_string("place-cntsq"), do: "Central"
-  def destination_to_sign_string("place-coecl"), do: "Copley"
-  def destination_to_sign_string("place-cool"), do: "Coolidge Cn"
-  def destination_to_sign_string("place-davis"), do: "Davis"
-  def destination_to_sign_string("place-denrd"), do: "Dean Rd"
-  def destination_to_sign_string("place-dwnxg"), do: "Downt'n Xng"
-  def destination_to_sign_string("place-eliot"), do: "Eliot"
-  def destination_to_sign_string("place-engav"), do: "Englew'd Av"
-  def destination_to_sign_string("place-esomr"), do: "E Somervlle"
-  def destination_to_sign_string("place-fbkst"), do: "Fairbanks"
-  def destination_to_sign_string("place-fenwd"), do: "Fenwood Rd"
-  def destination_to_sign_string("place-fenwy"), do: "Fenway"
-  def destination_to_sign_string("place-fldcr"), do: "Fields Cnr"
-  def destination_to_sign_string("place-forhl"), do: "Frst Hills"
-  def destination_to_sign_string("place-gilmn"), do: "Gilman Sq"
-  def destination_to_sign_string("place-gover"), do: "Gov't Ctr"
-  def destination_to_sign_string("place-grigg"), do: "Griggs St"
-  def destination_to_sign_string("place-grnst"), do: "Green St"
-  def destination_to_sign_string("place-haecl"), do: "Haymarket"
-  def destination_to_sign_string("place-harsq"), do: "Harvard"
-  def destination_to_sign_string("place-harvd"), do: "Harvard Ave"
-  def destination_to_sign_string("place-hsmnl"), do: "Heath St"
-  def destination_to_sign_string("place-hwsst"), do: "Hawes St"
-  def destination_to_sign_string("place-hymnl"), do: "Hynes"
-  def destination_to_sign_string("place-jaksn"), do: "Jackson Sq"
-  def destination_to_sign_string("place-jfk"), do: "JFK/UMass"
-  def destination_to_sign_string("place-kencl"), do: "Kenmore"
-  def destination_to_sign_string("place-knncl"), do: "Kendall/MIT"
-  def destination_to_sign_string("place-kntst"), do: "Kent St"
-  def destination_to_sign_string("place-lake"), do: "Boston Coll"
-  def destination_to_sign_string("place-lech"), do: "Lechmere"
-  def destination_to_sign_string("place-lngmd"), do: "Lngwd Med"
-  def destination_to_sign_string("place-longw"), do: "Longwood"
-  def destination_to_sign_string("place-masta"), do: "Mass Ave"
-  def destination_to_sign_string("place-matt"), do: "Mattapan"
-  def destination_to_sign_string("place-mdftf"), do: "Medfd/Tufts"
-  def destination_to_sign_string("place-mfa"), do: "MFA"
-  def destination_to_sign_string("place-mgngl"), do: "Magoun Sq"
-  def destination_to_sign_string("place-miltt"), do: "Milton"
-  def destination_to_sign_string("place-mispk"), do: "Mission Pk"
-  def destination_to_sign_string("place-mlmnl"), do: "Malden Ctr"
-  def destination_to_sign_string("place-mvbcl"), do: "Maverick"
-  def destination_to_sign_string("place-newtn"), do: "Newton Hlnd"
-  def destination_to_sign_string("place-newto"), do: "Newton Ctr"
-  def destination_to_sign_string("place-north"), do: "North Sta"
-  def destination_to_sign_string("place-nqncy"), do: "N Quincy"
-  def destination_to_sign_string("place-nuniv"), do: "Northeast'n"
-  def destination_to_sign_string("place-ogmnl"), do: "Oak Grove"
-  def destination_to_sign_string("place-orhte"), do: "Orient Hts"
-  def destination_to_sign_string("place-pktrm"), do: "Park St"
-  def destination_to_sign_string("place-portr"), do: "Porter"
-  def destination_to_sign_string("place-prmnl"), do: "Prudential"
-  def destination_to_sign_string("place-qamnl"), do: "Quincy Adms"
-  def destination_to_sign_string("place-qnctr"), do: "Quincy Ctr"
-  def destination_to_sign_string("place-rbmnl"), do: "Revere Bch"
-  def destination_to_sign_string("place-rcmnl"), do: "Roxbury Xng"
-  def destination_to_sign_string("place-river"), do: "Riverside"
-  def destination_to_sign_string("place-rsmnl"), do: "Reservoir"
-  def destination_to_sign_string("place-rugg"), do: "Ruggles"
-  def destination_to_sign_string("place-rvrwy"), do: "Riverway"
-  def destination_to_sign_string("place-sbmnl"), do: "Stony Brook"
-  def destination_to_sign_string("place-sdmnl"), do: "Suffolk Dns"
-  def destination_to_sign_string("place-shmnl"), do: "Savin Hill"
-  def destination_to_sign_string("place-smary"), do: "St. Mary's"
-  def destination_to_sign_string("place-smmnl"), do: "Shawmut"
-  def destination_to_sign_string("place-sougr"), do: "South St"
-  def destination_to_sign_string("place-spmnl"), do: "Science Pk"
-  def destination_to_sign_string("place-sstat"), do: "South Sta"
-  def destination_to_sign_string("place-state"), do: "State"
-  def destination_to_sign_string("place-sthld"), do: "Sutherland"
-  def destination_to_sign_string("place-stpul"), do: "St. Paul St"
-  def destination_to_sign_string("place-sull"), do: "Sullivan Sq"
-  def destination_to_sign_string("place-sumav"), do: "Summit Ave"
-  def destination_to_sign_string("place-symcl"), do: "Symphony"
-  def destination_to_sign_string("place-tapst"), do: "Tappan St"
-  def destination_to_sign_string("place-tumnl"), do: "Tufts Med"
-  def destination_to_sign_string("place-unsqu"), do: "Union Sq"
-  def destination_to_sign_string("place-valrd"), do: "Valley Rd"
-  def destination_to_sign_string("place-waban"), do: "Waban"
-  def destination_to_sign_string("place-wascm"), do: "Washington"
-  def destination_to_sign_string("place-welln"), do: "Wellington"
-  def destination_to_sign_string("place-wimnl"), do: "Wood Island"
-  def destination_to_sign_string("place-wlsta"), do: "Wollaston"
-  def destination_to_sign_string("place-wondl"), do: "Wonderland"
-  def destination_to_sign_string("place-woodl"), do: "Woodland"
-  def destination_to_sign_string("place-wrnst"), do: "Warren St"
+  def destination_to_sign_string(destination, route_id \\ nil) do
+    case Map.fetch(@destination_abbreviations, destination) do
+      {:ok, abbreviations} ->
+        case route_id do
+          "Green-" <> branch -> "#{branch}-#{Enum.find(abbreviations, &(String.length(&1) <= 9))}"
+          _ -> hd(abbreviations)
+        end
 
-  def destination_to_sign_string(destination) do
-    Logger.error("Unknown destination: #{inspect(destination)}")
-    ""
+      :error ->
+        Logger.error("Unknown destination: #{inspect(destination)}")
+        ""
+    end
   end
 
   @spec destination_to_tts_string(PaEss.destination()) :: String.t()

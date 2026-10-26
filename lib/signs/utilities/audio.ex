@@ -8,9 +8,11 @@ defmodule Signs.Utilities.Audio do
 
   @announced_history_length 5
 
-  @spec get_announcements(Signs.Realtime.t(), [Message.t()]) ::
+  @spec get_announcements(Signs.Realtime.t(), [[Message.t()]]) ::
           {[Content.Audio.t()], Signs.Realtime.t()}
   def get_announcements(sign, messages) do
+    messages = List.flatten(messages)
+
     {[], sign}
     |> get_custom_announcements(messages)
     |> get_alert_announcements(messages)

@@ -28,7 +28,7 @@ defmodule Message.Predictions do
           line_size
         ) do
       destination = Content.Utilities.destination_for_prediction(first)
-      headsign = PaEss.Utilities.destination_to_sign_string(destination)
+      headsign = PaEss.Utilities.destination_to_sign_string(destination, first.route_id)
 
       stopped? = PaEss.Utilities.prediction_stopped?(first, terminal?)
       jfk_nb? = match?({:jfk_mezzanine, _}, special_sign) and first.direction_id == 1
@@ -69,7 +69,7 @@ defmodule Message.Predictions do
         }) do
       if PaEss.Utilities.prediction_stopped?(first, terminal?) do
         destination = Content.Utilities.destination_for_prediction(first)
-        headsign = PaEss.Utilities.destination_to_sign_string(destination)
+        headsign = PaEss.Utilities.destination_to_sign_string(destination, first.route_id)
         {headsign, "Stopped #{stops_away(first)}"}
       else
         track = Content.Utilities.stop_track_number(first.stop_id)
@@ -123,7 +123,7 @@ defmodule Message.Predictions do
 
     defp prediction_message(prediction, terminal?) do
       destination = Content.Utilities.destination_for_prediction(prediction)
-      headsign = PaEss.Utilities.destination_to_sign_string(destination)
+      headsign = PaEss.Utilities.destination_to_sign_string(destination, prediction.route_id)
       duration = duration(prediction, terminal?)
       Content.Utilities.width_padded_string(headsign, duration, 18)
     end

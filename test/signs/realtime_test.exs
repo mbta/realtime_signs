@@ -221,6 +221,7 @@ defmodule Signs.RealtimeTest do
       "government_center" -> "place-gover"
       "union_square" -> "place-unsqu"
       "riverside" -> "place-river"
+      "medford_tufts" -> "place-mdftf"
       "wonderland" -> "place-wondl"
       "forest_hills" -> "place-forhl"
     end)
@@ -636,7 +637,7 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_messages({"Clvlnd Cir     BRD", "Boston Coll  3 min"})
+      expect_messages({"C-Clvld Cir    BRD", "B-BostonCol  3 min"})
       expect_audios([{"The next, C, train to, Cleveland Circle; is now boarding.", nil}])
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
@@ -649,7 +650,7 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_messages({"Clvlnd Cir     ARR", "Riverside      ARR"})
+      expect_messages({"C-Clvld Cir    ARR", "D-Riverside    ARR"})
 
       expect_audios([
         {"Attention passengers: The next, C, train to, Cleveland Circle; is now approaching. Please stand back from the platform edge.",
@@ -667,7 +668,7 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_messages({"Boston Coll  4 min", "Clvlnd Cir   5 min"})
+      expect_messages({"B-BostonCol  4 min", "C-Clvld Cir  5 min"})
       Signs.Realtime.handle_info(:run_loop, @terminal_sign)
     end
 
@@ -698,7 +699,7 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_messages({"Riverside      BRD", "Boston Coll    BRD"})
+      expect_messages({"D-Riverside    BRD", "B-BostonCol    BRD"})
 
       expect_audios([
         {"The next, D, train to, Riverside; is now boarding.", nil},
@@ -768,7 +769,7 @@ defmodule Signs.RealtimeTest do
         ]
       end)
 
-      expect_messages({"Boston Coll    BRD", ""})
+      expect_messages({"B-BostonCol    BRD", ""})
 
       expect_audios([
         {"Track change: The next, B, train to, Boston College; is now boarding; on the, D, platform.",
@@ -823,7 +824,7 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :cleveland_circle, arrival: 30)]
       end)
 
-      expect_messages({"Clvlnd Cir     ARR", ""})
+      expect_messages({"C-Clvld Cir    ARR", ""})
 
       expect_audios([
         {"Attention passengers: The next, C, train to, Cleveland Circle; is now approaching. Please stand back from the platform edge.",
@@ -838,7 +839,7 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :cleveland_circle, arrival: 31)]
       end)
 
-      expect_messages({"Clvlnd Cir   1 min", ""})
+      expect_messages({"C-Clvld Cir  1 min", ""})
 
       Signs.Realtime.handle_info(:run_loop, @sign)
     end
@@ -1749,12 +1750,10 @@ defmodule Signs.RealtimeTest do
     end
 
     test "green line trunk" do
-      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
-        [prediction(destination: :government_center, arrival: 240)]
-      end)
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
-        [prediction(destination: :government_center, arrival: 700)]
+        [prediction(destination: :government_center_c, arrival: 700)]
       end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
@@ -1765,8 +1764,54 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :medford_tufts, arrival: 540)]
       end)
 
-      expect_messages({"Gov't Ctr    4 min", "Union Sq     7 min"})
-      Signs.Realtime.handle_info(:run_loop, @gl_trunk_sign)
+      expect(Engine.Alerts.Mock, :min_stop_status, fn _ -> :suspension_closed_station end)
+      expect(Engine.Alerts.Mock, :min_stop_status, 3, fn _ -> :none end)
+
+      expect_messages(
+        {"D-Union Sq   7 min",
+         [{"E-Med/Tufts  9 min", 6}, {"C-Gov't Ctr 12 min", 6}, {"B-Gov't Ctr   no service", 6}]}
+      )
+
+      expect_audios([
+        {"The next, D, train to, Union Square; arrives in, 7, minutes.", nil},
+        {"The next, E, train to, Medford/Tufts; arrives in, 9, minutes.", nil},
+        {"The next, C, train to, Government Center; arrives in, 12, minutes.", nil},
+        {"No, B, branch service to, Government Center.", nil}
+      ])
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @gl_trunk_sign
+        | tick_read: 0,
+          announced_alert: true
+      })
+    end
+
+    test "green line trunk, full page fallback" do
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
+        [prediction(destination: :government_center_b, arrival: 240, stopped: 2, trip_id: "b")]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
+        [prediction(destination: :government_center_c, arrival: 700, stopped: 5, trip_id: "c")]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
+        [prediction(destination: :union_square, arrival: 440)]
+      end)
+
+      expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
+        [prediction(destination: :medford_tufts, arrival: 540)]
+      end)
+
+      expect_messages(
+        {[{"B-Gov't Ctr", 6}, {"D-Union Sq   7 min", 6}, {"C-Gov't Ctr", 6}],
+         [{"Stopped 2 stops away", 6}, {"E-Med/Tufts  9 min", 6}, {"Stopped 5 stops away", 6}]}
+      )
+
+      Signs.Realtime.handle_info(:run_loop, %{
+        @gl_trunk_sign
+        | announced_stalls: [{"b", 2}, {"c", 5}]
+      })
     end
   end
 
@@ -2230,7 +2275,10 @@ defmodule Signs.RealtimeTest do
           :cleveland_circle ->
             [route_id: "Green-C", direction_id: 0, destination_stop_id: "cleveland_circle"]
 
-          :government_center ->
+          :government_center_b ->
+            [route_id: "Green-B", direction_id: 1, destination_stop_id: "government_center"]
+
+          :government_center_c ->
             [route_id: "Green-C", direction_id: 1, destination_stop_id: "government_center"]
 
           :riverside ->

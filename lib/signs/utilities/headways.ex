@@ -9,7 +9,7 @@ defmodule Signs.Utilities.Headways do
         %Message.Headway{
           destination: headway_destination,
           range: {headways.range_low, headways.range_high},
-          route: "Silver"
+          line: "Silver"
         }
     end
   end
