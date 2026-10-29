@@ -32,6 +32,10 @@ defmodule RealtimeSigns.Mixfile do
   defp deps do
     [
       {:bandit, "~> 1.12"},
+      # `certifi` is transitively required by `ex_aws` -> `hackney`. Override it in response to
+      # the eMudhra CA compromise. If/when either of the two dependencies are upgraded to use
+      # `certifi@2.18.0+`, we can remove this.
+      {:certifi, "2.18.0", override: true},
       {:dialyxir, "~> 1.4.3", only: [:dev, :test], runtime: false},
       {:ehmon, git: "https://github.com/mbta/ehmon.git"},
       {:ex_aws_s3, "~> 2.0"},
