@@ -27,19 +27,8 @@ defmodule Message.ServiceEnded do
       {"Service ended", "No #{headsign} trains"}
     end
 
-    def to_audio(%Message.ServiceEnded{} = message, multiple?) do
-      [
-        %Content.Audio.ServiceEnded{
-          destination: message.destination,
-          line: message.line,
-          location:
-            case {message.destination, multiple?} do
-              {nil, _} -> :station
-              {_, true} -> :direction
-              {_, false} -> :platform
-            end
-        }
-      ]
+    def to_audio(%Message.ServiceEnded{} = message, _multiple?) do
+      [%Content.Audio.ServiceEnded{destination: message.destination, line: message.line}]
     end
   end
 end

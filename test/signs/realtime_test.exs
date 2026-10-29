@@ -1753,7 +1753,10 @@ defmodule Signs.RealtimeTest do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ -> [] end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
-        [prediction(destination: :government_center_c, arrival: 700)]
+        [
+          prediction(destination: :government_center_c, arrival: 700),
+          prediction(destination: :government_center_c, arrival: 900)
+        ]
       end)
 
       expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
@@ -1885,22 +1888,6 @@ defmodule Signs.RealtimeTest do
       end)
 
       :ok
-    end
-
-    test "Platform is closed" do
-      sign = %{
-        @sign
-        | tick_read: 0,
-          current_time_fn: &fake_midnight_fn/0
-      }
-
-      expect_messages({"Service ended", "No Southbound trains"})
-
-      expect_audios([
-        {"This platform is closed. Southbound service has ended for the night.", nil}
-      ])
-
-      Signs.Realtime.handle_info(:run_loop, sign)
     end
 
     test "multi-route mezzanine sign, both sides closed" do

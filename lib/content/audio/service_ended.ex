@@ -1,13 +1,11 @@
 defmodule Content.Audio.ServiceEnded do
   alias PaEss.Utilities
-  @enforce_keys [:location]
-  defstruct @enforce_keys ++ [:destination, :line]
+  @enforce_keys [:destination, :line]
+  defstruct @enforce_keys
 
-  @type location :: :platform | :station | :direction
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
-          line: String.t() | nil,
-          location: location()
+          line: String.t() | nil
         }
 
   defimpl Content.Audio do
@@ -19,17 +17,12 @@ defmodule Content.Audio.ServiceEnded do
       []
     end
 
-    defp tts_text(%Content.Audio.ServiceEnded{location: :station, line: line}) do
+    defp tts_text(%Content.Audio.ServiceEnded{destination: nil, line: line}) do
       line = if(line, do: "#{line} line", else: "Train")
       "#{line} service has ended for the night."
     end
 
-    defp tts_text(%Content.Audio.ServiceEnded{location: :platform, destination: destination}) do
-      destination_string = Utilities.destination_to_tts_string(destination)
-      "This platform is closed. #{destination_string} service has ended for the night."
-    end
-
-    defp tts_text(%Content.Audio.ServiceEnded{location: :direction, destination: destination}) do
+    defp tts_text(%Content.Audio.ServiceEnded{destination: destination}) do
       destination_string = Utilities.destination_to_tts_string(destination)
       "#{destination_string} service has ended for the night."
     end
