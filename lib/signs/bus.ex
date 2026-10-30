@@ -536,7 +536,7 @@ defmodule Signs.Bus do
     {:headway,
      %Message.Headway{
        destination: :silver_line,
-       route: "Silver",
+       line: "Silver",
        range: range
      }, :long}
   end
@@ -953,12 +953,12 @@ defmodule Signs.Bus do
           %Message.Headway{
             range: {range_low, range_high},
             destination: destination,
-            route: route
+            line: line
           }, _length},
          _
        ) do
     buses =
-      case {destination, route} do
+      case {destination, line} do
         {destination, "Silver"} ->
           "#{PaEss.Utilities.destination_to_tts_string(destination)} buses"
 
@@ -1021,7 +1021,7 @@ defmodule Signs.Bus do
   end
 
   # Copied from Message.Headway, but due to how bus.ex handles pagination we pass regular strings here
-  def headway_message(%Message.Headway{destination: nil, range: range, route: "Silver"}, length) do
+  def headway_message(%Message.Headway{destination: nil, range: range, line: "Silver"}, length) do
     create_headway_message("Silver Line", range, length)
   end
 
@@ -1029,7 +1029,7 @@ defmodule Signs.Bus do
   # For Silver Line headways on short signs, we will show
   # `Outbound    Every`, `Outbound  10 to 12m`
   def headway_message(
-        %Message.Headway{destination: :silver_line, range: range, route: "Silver"},
+        %Message.Headway{destination: :silver_line, range: range, line: "Silver"},
         :short
       ) do
     headsign = PaEss.Utilities.destination_to_sign_string(:outbound)
@@ -1038,7 +1038,7 @@ defmodule Signs.Bus do
   end
 
   def headway_message(
-        %Message.Headway{destination: destination, range: range, route: "Silver"},
+        %Message.Headway{destination: destination, range: range, line: "Silver"},
         length
       ) do
     headsign = PaEss.Utilities.destination_to_sign_string(destination)
@@ -1063,10 +1063,10 @@ defmodule Signs.Bus do
   def long_headway_message(%Message.Headway{
         destination: destination,
         range: {x, y},
-        route: route
+        line: line
       }) do
     top =
-      case {destination, route} do
+      case {destination, line} do
         {nil, "Silver"} ->
           "Silver Line buses"
 

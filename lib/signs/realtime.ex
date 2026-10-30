@@ -133,17 +133,33 @@ defmodule Signs.Realtime do
         {prediction_key(prediction), prediction}
       end
 
-    config_contexts =
-      combine_configs(sign.configs)
-      |> Enum.map(fn config ->
-        stop_ids = Enum.map(config.sources, & &1.stop_id)
+    group_order =
+      Enum.map(sign.configs, &{&1.headway_group, &1.headway_destination}) |> Enum.uniq()
 
-        %SignContext.ConfigContext{
-          config: config,
-          predictions: fetch_predictions(config, prev_predictions_lookup),
-          alert_status: RealtimeSigns.alert_engine().min_stop_status(stop_ids),
+    config_group_contexts =
+      Enum.group_by(sign.configs, &{&1.headway_group, &1.headway_destination})
+      |> Enum.sort_by(fn {key, _} -> Enum.find_index(group_order, &(&1 == key)) end)
+      |> Enum.map(fn {{headway_group, headway_destination}, configs} ->
+        stop_ids =
+          for(config <- configs, source <- config.sources, uniq: true, do: source.stop_id)
+
+        config_contexts =
+          Enum.map(configs, fn config ->
+            stop_ids = for(source <- config.sources, uniq: true, do: source.stop_id)
+
+            %SignContext.ConfigContext{
+              config: config,
+              predictions: fetch_predictions(config, prev_predictions_lookup),
+              alert_status: RealtimeSigns.alert_engine().min_stop_status(stop_ids)
+            }
+          end)
+
+        %SignContext.ConfigGroupContext{
+          headway_group: headway_group,
+          headway_destination: headway_destination,
+          config_contexts: config_contexts,
           headways:
-            Signs.Utilities.Headways.fetch_headways(config.headway_group, stop_ids, current_time),
+            Signs.Utilities.Headways.fetch_headways(headway_group, stop_ids, current_time),
           first_scheduled_departure:
             RealtimeSigns.headway_engine().get_first_scheduled_departure(stop_ids),
           last_scheduled_departure:
@@ -152,14 +168,14 @@ defmodule Signs.Realtime do
             Stream.flat_map(stop_ids, &RealtimeSigns.last_trip_engine().get_recent_departures(&1))
             |> Stream.map(&elem(&1, 1))
             |> Enum.max(DateTime, fn -> nil end),
-          service_ended?: has_service_ended?(config, current_time)
+          service_ended?: has_service_ended?(headway_group, stop_ids, current_time)
         }
       end)
 
     %SignContext{
       sign_config: sign_config,
       current_time: current_time,
-      config_contexts: config_contexts
+      config_group_contexts: config_group_contexts
     }
   end
 
@@ -176,7 +192,14 @@ defmodule Signs.Realtime do
       |> Utilities.Reader.read_sign(messages)
       |> decrement_ticks()
       |> log_sign_messages(messages)
-      |> Map.put(:prev_predictions, Enum.flat_map(sign_context.config_contexts, & &1.predictions))
+      |> Map.put(
+        :prev_predictions,
+        for config_group_context <- sign_context.config_group_contexts,
+            config_context <- config_group_context.config_contexts,
+            prediction <- config_context.predictions do
+          prediction
+        end
+      )
 
     Process.send_after(self(), :run_loop, 1000)
     {:noreply, sign}
@@ -187,17 +210,16 @@ defmodule Signs.Realtime do
     {:noreply, state}
   end
 
-  defp has_service_ended?(config, current_time) do
+  defp has_service_ended?(headway_group, stop_ids, current_time) do
     num_last_trips =
-      Enum.map(config.sources, & &1.stop_id)
-      |> Stream.flat_map(&RealtimeSigns.last_trip_engine().get_recent_departures(&1))
+      Stream.flat_map(stop_ids, &RealtimeSigns.last_trip_engine().get_recent_departures(&1))
       |> Enum.count(fn {trip_id, departure_time} ->
         trip_departed?(departure_time, current_time) and
           RealtimeSigns.last_trip_engine().is_last_trip?(trip_id)
       end)
 
     # Red line trunk should wait for two last trips, one for each branch
-    threshold = if(config.headway_group == "red_trunk", do: 2, else: 1)
+    threshold = if(headway_group == "red_trunk", do: 2, else: 1)
     num_last_trips >= threshold
   end
 
@@ -277,12 +299,12 @@ defmodule Signs.Realtime do
       Enum.each(messages, fn
         %Message.Headway{} = message ->
           Logger.info(
-            "sign_headway_message: sign_id=#{inspect(sign.id)} destination=#{message.destination |> to_string() |> inspect()} route=#{inspect(message.route)}"
+            "sign_headway_message: sign_id=#{inspect(sign.id)} destination=#{message.destination |> to_string() |> inspect()} route=#{inspect(message.line)}"
           )
 
         %Message.Alert{} = message ->
           Logger.info(
-            "sign_alert_message: sign_id=#{inspect(sign.id)} destination=#{message.destination |> to_string() |> inspect()} route=#{inspect(message.route)}"
+            "sign_alert_message: sign_id=#{inspect(sign.id)} destination=#{message.destination |> to_string() |> inspect()} route=#{inspect(message.line)}"
           )
 
         _ ->
@@ -298,15 +320,5 @@ defmodule Signs.Realtime do
   @spec decrement_ticks(Signs.Realtime.t()) :: Signs.Realtime.t()
   def decrement_ticks(sign) do
     %{sign | tick_read: sign.tick_read - 1}
-  end
-
-  # This is a temporary transformation to preserve existing behavior during the signs.json
-  # refactor. GL trunk signs have been split into multiple configs with the same headway
-  # group, so recombine them back into one for now.
-  defp combine_configs(configs) do
-    Enum.group_by(configs, &{&1.headway_group, &1.headway_destination})
-    |> Enum.map(fn {_, configs} ->
-      %{hd(configs) | sources: Enum.map(configs, & &1.sources) |> Enum.concat()}
-    end)
   end
 end

@@ -1,11 +1,11 @@
 defmodule Message.Headway do
-  @enforce_keys [:route, :destination, :range]
+  @enforce_keys [:line, :destination, :range]
   defstruct @enforce_keys
 
   @type t :: %__MODULE__{
           destination: PaEss.destination() | nil,
           range: {non_neg_integer(), non_neg_integer()},
-          route: String.t() | nil
+          line: String.t() | nil
         }
 
   defimpl Message do
@@ -26,12 +26,12 @@ defmodule Message.Headway do
 
     def to_single_line(%Message.Headway{}, :short), do: nil
 
-    def to_full_page(%Message.Headway{destination: destination, range: {x, y}, route: route}) do
+    def to_full_page(%Message.Headway{destination: destination, range: {x, y}, line: line}) do
       top =
-        case {destination, route} do
+        case {destination, line} do
           {nil, nil} -> "Trains"
           {nil, "Mattapan"} -> "Mattapan trains"
-          {nil, route} -> "#{route} line trains"
+          {nil, line} -> "#{line} line trains"
           {destination, _} -> "#{PaEss.Utilities.destination_to_sign_string(destination)} trains"
         end
 
@@ -42,7 +42,7 @@ defmodule Message.Headway do
       [
         %Content.Audio.VehiclesToDestination{
           destination: message.destination,
-          route: message.route,
+          line: message.line,
           headway_range: message.range
         }
       ]
