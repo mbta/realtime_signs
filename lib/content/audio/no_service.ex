@@ -1,10 +1,11 @@
 defmodule Content.Audio.NoService do
-  @enforce_keys [:destination, :route, :use_shuttle?]
+  @enforce_keys [:destination, :route_id, :line, :use_shuttle?]
   defstruct @enforce_keys ++ [use_routes?: false]
 
   @type t :: %__MODULE__{
           destination: PaEss.destination(),
-          route: String.t() | nil,
+          route_id: String.t() | nil,
+          line: String.t() | nil,
           use_shuttle?: boolean(),
           use_routes?: boolean()
         }
@@ -19,7 +20,8 @@ defmodule Content.Audio.NoService do
     end
 
     defp tts_text(%Content.Audio.NoService{
-           route: route,
+           route_id: route_id,
+           line: line,
            destination: destination,
            use_shuttle?: use_shuttle?,
            use_routes?: use_routes?
@@ -34,9 +36,13 @@ defmodule Content.Audio.NoService do
 
       if destination do
         destination_text = PaEss.Utilities.destination_to_tts_string(destination)
-        "No #{destination_text} service.#{suffix}"
+
+        case route_id do
+          "Green-" <> branch -> "No, #{branch}, branch service to, #{destination_text}."
+          _ -> "No #{destination_text} service.#{suffix}"
+        end
       else
-        line = if(route, do: "#{route} Line", else: "train")
+        line = if(line, do: "#{line} Line", else: "train")
         "There is no #{line} service at this station.#{suffix}"
       end
     end

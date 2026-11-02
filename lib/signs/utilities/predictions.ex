@@ -3,22 +3,22 @@ defmodule Signs.Utilities.Predictions do
 
   @spec get_passthrough_train_audio(SignContext.t()) :: [Content.Audio.t()]
   def get_passthrough_train_audio(%SignContext{} = sign_context) do
-    Enum.flat_map(sign_context.config_contexts, fn config_context ->
-      Enum.filter(config_context.predictions, fn prediction ->
-        prediction.schedule_relationship == :skipped &&
-          prediction.seconds_until_arrival &&
-          prediction.seconds_until_arrival <=
-            secs_to_announce_passthrough(prediction.route_id)
-      end)
-      |> Enum.sort_by(fn prediction -> prediction.seconds_until_arrival end)
-      |> Enum.flat_map(fn prediction ->
-        [
+    Enum.flat_map(sign_context.config_group_contexts, fn config_group_context ->
+      Enum.flat_map(config_group_context.config_contexts, fn config_context ->
+        Enum.filter(config_context.predictions, fn prediction ->
+          prediction.schedule_relationship == :skipped &&
+            prediction.seconds_until_arrival &&
+            prediction.seconds_until_arrival <=
+              secs_to_announce_passthrough(prediction.route_id)
+        end)
+        |> Enum.sort_by(fn prediction -> prediction.seconds_until_arrival end)
+        |> Enum.map(fn prediction ->
           %Content.Audio.Passthrough{
             destination: config_context.config.headway_destination,
             trip_id: prediction.trip_id,
             route_id: prediction.route_id
           }
-        ]
+        end)
       end)
       |> Enum.take(1)
     end)

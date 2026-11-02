@@ -36,33 +36,39 @@ defmodule Signs.Utilities.MessagesTest do
         sign_context: %Signs.Utilities.SignContext{
           sign_config: :auto,
           current_time: @midnight,
-          config_contexts: [
-            %Signs.Utilities.SignContext.ConfigContext{
-              config: config,
-              predictions: [
-                %Predictions.Prediction{
-                  stop_id: "1",
-                  seconds_until_arrival: nil,
-                  seconds_until_departure: nil,
-                  direction_id: 0,
-                  schedule_relationship: nil,
-                  route_id: "route_id",
-                  trip_id: "123",
-                  destination_stop_id: "destination_stop_id",
-                  stopped_at_predicted_stop?: false,
-                  boarding_status: nil,
-                  revenue_trip?: true,
-                  vehicle_id: "v1",
-                  multi_carriage_details: nil,
-                  type: :mid_trip
-                }
-              ],
-              alert_status: :none,
+          config_group_contexts: [
+            %Signs.Utilities.SignContext.ConfigGroupContext{
+              headway_group: "headway_group",
+              headway_destination: :southbound,
               headways: nil,
               first_scheduled_departure: DateTime.shift(@midnight, hour: -1),
               last_scheduled_departure: DateTime.shift(@midnight, hour: 1),
               most_recent_departure: @midnight,
-              service_ended?: false
+              service_ended?: false,
+              config_contexts: [
+                %Signs.Utilities.SignContext.ConfigContext{
+                  config: config,
+                  predictions: [
+                    %Predictions.Prediction{
+                      stop_id: "1",
+                      seconds_until_arrival: nil,
+                      seconds_until_departure: nil,
+                      direction_id: 0,
+                      schedule_relationship: nil,
+                      route_id: "route_id",
+                      trip_id: "123",
+                      destination_stop_id: "destination_stop_id",
+                      stopped_at_predicted_stop?: false,
+                      boarding_status: nil,
+                      revenue_trip?: true,
+                      vehicle_id: "v1",
+                      multi_carriage_details: nil,
+                      type: :mid_trip
+                    }
+                  ],
+                  alert_status: :none
+                }
+              ]
             }
           ]
         }
@@ -79,7 +85,7 @@ defmodule Signs.Utilities.MessagesTest do
           current_time: DateTime.shift(@midnight, hour: 2)
       }
 
-      assert [%Message.Empty{}] ==
+      assert [[%Message.Empty{}]] ==
                Signs.Utilities.Messages.get_messages(
                  sign,
                  sign_context
@@ -96,11 +102,13 @@ defmodule Signs.Utilities.MessagesTest do
       }
 
       assert [
-               %Message.Custom{
-                 top: "This is line 1",
-                 bottom: "This is line 2",
-                 audio_text: "Audio"
-               }
+               [
+                 %Message.Custom{
+                   top: "This is line 1",
+                   bottom: "This is line 2",
+                   audio_text: "Audio"
+                 }
+               ]
              ] ==
                Signs.Utilities.Messages.get_messages(
                  sign,
@@ -117,7 +125,7 @@ defmodule Signs.Utilities.MessagesTest do
         | sign_config: :off
       }
 
-      assert [%Message.Empty{}] ==
+      assert [[%Message.Empty{}]] ==
                Signs.Utilities.Messages.get_messages(
                  sign,
                  sign_context
@@ -131,11 +139,11 @@ defmodule Signs.Utilities.MessagesTest do
       sign_context =
         put_in(
           sign_context,
-          [Access.key!(:config_contexts), Access.at(0), Access.key!(:service_ended?)],
+          [Access.key!(:config_group_contexts), Access.at(0), Access.key!(:service_ended?)],
           true
         )
 
-      assert [%Message.ServiceEnded{destination: :southbound, route: "Red"}] =
+      assert [[%Message.ServiceEnded{destination: :southbound, line: "Red"}]] =
                Signs.Utilities.Messages.get_messages(
                  sign,
                  sign_context
@@ -151,7 +159,7 @@ defmodule Signs.Utilities.MessagesTest do
       sign_context =
         %{sign_context | current_time: now}
         |> update_in(
-          [Access.key!(:config_contexts), Access.at(0)],
+          [Access.key!(:config_group_contexts), Access.at(0)],
           &%{
             &1
             | first_scheduled_departure: DateTime.shift(now, hour: 1),
@@ -159,7 +167,7 @@ defmodule Signs.Utilities.MessagesTest do
           }
         )
 
-      assert [%Message.FirstTrain{destination: :southbound}] =
+      assert [[%Message.FirstTrain{destination: :southbound}]] =
                Signs.Utilities.Messages.get_messages(
                  sign,
                  sign_context

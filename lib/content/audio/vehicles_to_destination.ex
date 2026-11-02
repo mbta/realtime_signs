@@ -4,12 +4,12 @@ defmodule Content.Audio.VehiclesToDestination do
   """
 
   @enforce_keys [:destination, :headway_range]
-  defstruct @enforce_keys ++ [:route]
+  defstruct @enforce_keys ++ [:line]
 
   @type t :: %__MODULE__{
           destination: PaEss.destination() | nil,
           headway_range: {non_neg_integer(), non_neg_integer()},
-          route: String.t() | nil
+          line: String.t() | nil
         }
 
   defimpl Content.Audio do
@@ -24,15 +24,15 @@ defmodule Content.Audio.VehiclesToDestination do
     defp tts_text(%Content.Audio.VehiclesToDestination{
            headway_range: {range_low, range_high},
            destination: destination,
-           route: route
+           line: line
          }) do
       trains =
-        case {destination, route} do
+        case {destination, line} do
           {nil, nil} ->
             "Trains"
 
-          {nil, route} ->
-            "#{route} line trains"
+          {nil, line} ->
+            "#{line} line trains"
 
           {destination, _} ->
             destination_text = PaEss.Utilities.destination_to_tts_string(destination)
