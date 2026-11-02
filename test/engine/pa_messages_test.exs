@@ -6,6 +6,10 @@ defmodule Engine.PaMessagesTest do
     pa_messages_last_sent: %{}
   }
 
+  defp stub_pa_messages(token) do
+    Application.put_env(:realtime_signs, :active_pa_messages_path, "/api/pa-messages/#{token}")
+  end
+
   setup_all do
     screenplay_base_url = Application.get_env(:realtime_signs, :screenplay_base_url)
     active_pa_messages_path = Application.get_env(:realtime_signs, :active_pa_messages_path)
@@ -24,12 +28,7 @@ defmodule Engine.PaMessagesTest do
 
   setup do
     stub(PaEss.Updater.Mock, :play_message, fn [], _, _, _ -> nil end)
-
-    Application.put_env(
-      :realtime_signs,
-      :active_pa_messages_path,
-      "/api/pa-messages/active"
-    )
+    stub_pa_messages("active")
   end
 
   describe "handle_info/2" do
@@ -64,11 +63,7 @@ defmodule Engine.PaMessagesTest do
       assert 4 in pa_ids
       assert 5 in pa_ids
 
-      Application.put_env(
-        :realtime_signs,
-        :active_pa_messages_path,
-        "/api/pa-messages/no-longer-active"
-      )
+      stub_pa_messages("no-longer-active")
 
       {:noreply, state} = Engine.PaMessages.handle_info(:update, @state)
       pa_ids = Map.keys(state.pa_messages_last_sent)
@@ -81,14 +76,28 @@ defmodule Engine.PaMessagesTest do
       last_play = DateTime.utc_now() |> DateTime.add(-2, :minute)
       state = %{pa_messages_last_sent: %{5 => last_play}}
 
-      Application.put_env(
-        :realtime_signs,
-        :active_pa_messages_path,
-        "/api/pa-messages/changed-interval"
-      )
+      stub_pa_messages("changed-interval")
 
       {:noreply, state} = Engine.PaMessages.handle_info(:update, state)
       refute last_play == Map.get(state.pa_messages_last_sent, 5)
+    end
+
+    test "Prioritizes all emergency messages" do
+      stub_pa_messages("priority-high")
+      {:noreply, state} = Engine.PaMessages.handle_info(:update, @state)
+      assert [1, 2] == Map.keys(state.pa_messages_last_sent) |> Enum.sort()
+    end
+
+    test "Plays one disruption announcement" do
+      stub_pa_messages("priority-mid")
+      {:noreply, state} = Engine.PaMessages.handle_info(:update, @state)
+      assert [3] == Map.keys(state.pa_messages_last_sent) |> Enum.sort()
+    end
+
+    test "Plays all PSA messages" do
+      stub_pa_messages("priority-low")
+      {:noreply, state} = Engine.PaMessages.handle_info(:update, @state)
+      assert [6, 7] == Map.keys(state.pa_messages_last_sent) |> Enum.sort()
     end
   end
 end

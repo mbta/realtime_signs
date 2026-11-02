@@ -49,7 +49,18 @@ defmodule Engine.PaMessages do
   defp select_pa_messages(pa_messages, state) do
     now = DateTime.utc_now()
 
-    Enum.flat_map_reduce(pa_messages, state, fn message, state ->
+    # Choose highest priority message(s). Play all emergency messages, otherwise a single
+    # disruption message, or finally all PSAs.
+    Enum.sort_by(pa_messages, fn message ->
+      {message.priority, -DateTime.to_unix(message.inserted_at)}
+    end)
+    |> Enum.chunk_by(fn
+      %PaMessage{priority: 1} -> :emergency
+      %PaMessage{} = message when message.priority in [3, 4] -> message.id
+      %PaMessage{priority: 5} -> :psa
+    end)
+    |> List.first([])
+    |> Enum.flat_map_reduce(state, fn message, state ->
       last_sent = Map.get(state.pa_messages_last_sent, message.id, DateTime.from_unix!(0))
 
       if DateTime.diff(DateTime.utc_now(), last_sent, :millisecond) >= message.interval_in_ms do
@@ -95,6 +106,7 @@ defmodule Engine.PaMessages do
         pa_messages =
           for %{
                 "id" => pa_id,
+                "inserted_at" => inserted_at,
                 "visual_text" => visual_text,
                 "audio_text" => audio_text,
                 "audio_url" => audio_url,
@@ -102,8 +114,11 @@ defmodule Engine.PaMessages do
                 "priority" => priority,
                 "sign_ids" => sign_ids
               } <- data do
+            {:ok, inserted_at, 0} = DateTime.from_iso8601(inserted_at)
+
             %PaMessage{
               id: pa_id,
+              inserted_at: inserted_at,
               visual_text: visual_text,
               audio_text: audio_text,
               audio_url: audio_url,
