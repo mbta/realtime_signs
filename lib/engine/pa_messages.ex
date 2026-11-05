@@ -28,9 +28,7 @@ defmodule Engine.PaMessages do
     state =
       case get_active_pa_messages() do
         {:ok, pa_messages} ->
-          {selected_pa_messages, state} = select_pa_messages(pa_messages, state)
-          play_pa_messages(selected_pa_messages)
-          state
+          play_pa_messages(pa_messages, state)
 
         {:error, %Req.Response{status: status, body: body}} ->
           Logger.error("pa_messages_response_error: status=#{status} body=#{body}")
@@ -44,37 +42,43 @@ defmodule Engine.PaMessages do
     {:noreply, state}
   end
 
-  @spec select_pa_messages([PaMessages.PaMessage.t()], state()) ::
-          {[PaMessages.PaMessage.t()], state()}
-  defp select_pa_messages(pa_messages, state) do
+  @spec play_pa_messages([PaMessages.PaMessage.t()], state()) :: state()
+  defp play_pa_messages(pa_messages, state) do
     now = DateTime.utc_now()
 
-    # Choose highest priority message(s). Play all emergency messages, otherwise a single
-    # disruption message, or finally all PSAs.
-    Enum.sort_by(pa_messages, fn message ->
-      {message.priority, -DateTime.to_unix(message.inserted_at)}
-    end)
-    |> Enum.chunk_by(fn
-      %PaMessage{priority: 1} -> :emergency
-      %PaMessage{} = message when message.priority in [3, 4] -> message.id
-      %PaMessage{priority: 5} -> :psa
-    end)
-    |> List.first([])
-    |> Enum.flat_map_reduce(state, fn message, state ->
-      last_sent = Map.get(state.pa_messages_last_sent, message.id, DateTime.from_unix!(0))
-
-      if DateTime.diff(DateTime.utc_now(), last_sent, :millisecond) >= message.interval_in_ms do
-        {[message], put_in(state, [:pa_messages_last_sent, message.id], now)}
-      else
-        {[], state}
+    # Choose highest priority message(s) on a per-sign basis. Play all emergency messages,
+    # otherwise a single disruption message, or finally all PSAs.
+    {play_now, state} =
+      for message <- pa_messages, sign_id <- message.sign_ids do
+        {sign_id, message}
       end
-    end)
-  end
+      |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
+      |> Enum.flat_map(fn {sign_id, messages} ->
+        Enum.sort_by(messages, &message_sort_key/1)
+        |> Enum.chunk_by(fn
+          %PaMessage{priority: 1} -> :emergency
+          %PaMessage{} = message when message.priority in [3, 4] -> message.id
+          %PaMessage{priority: 5} -> :psa
+        end)
+        |> List.first([])
+        |> Enum.map(&{sign_id, &1})
+      end)
+      |> Enum.group_by(&elem(&1, 1), &elem(&1, 0))
+      |> Enum.sort_by(fn {message, _} -> message_sort_key(message) end)
+      |> Enum.flat_map_reduce(state, fn {message, sign_ids}, state ->
+        last_sent = Map.get(state.pa_messages_last_sent, message.id, DateTime.from_unix!(0))
 
-  defp play_pa_messages(pa_messages) do
-    Enum.each(pa_messages, fn message ->
-      for sign_id <- message.sign_ids,
-          {sign, should_play?} = GenServer.call(:"Signs/#{sign_id}", {:play_pa_message, message}),
+        if DateTime.diff(DateTime.utc_now(), last_sent, :millisecond) >= message.interval_in_ms do
+          {[{message, sign_ids}], put_in(state, [:pa_messages_last_sent, message.id], now)}
+        else
+          {[], state}
+        end
+      end)
+
+    Enum.each(play_now, fn {message, sign_ids} ->
+      for sign_id <- sign_ids,
+          {sign, should_play?} =
+            RealtimeSigns.pa_message_engine().play_pa_message(sign_id, message),
           should_play? do
         sign
       end
@@ -88,6 +92,16 @@ defmodule Engine.PaMessages do
       end)
       |> Signs.Utilities.Audio.send_audio([message])
     end)
+
+    state
+  end
+
+  defp message_sort_key(message), do: {message.priority, -DateTime.to_unix(message.inserted_at)}
+
+  @callback play_pa_message(String.t(), PaMessage.t()) ::
+              {Signs.Realtime.t() | Signs.Bus.t(), boolean()}
+  def play_pa_message(sign_id, message) do
+    GenServer.call(:"Signs/#{sign_id}", {:play_pa_message, message})
   end
 
   defp get_active_pa_messages() do

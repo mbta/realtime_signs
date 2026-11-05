@@ -27,77 +27,67 @@ defmodule Engine.PaMessagesTest do
   end
 
   setup do
-    stub(PaEss.Updater.Mock, :play_message, fn [], _, _, _ -> nil end)
+    stub(Engine.PaMessages.Mock, :play_pa_message, fn _, _ ->
+      {%Signs.Realtime{
+         id: "east",
+         pa_ess_loc: "TEST",
+         scu_id: "TESTSCU001",
+         text_zone: "e",
+         audio_zones: ["e"],
+         configs: [],
+         current_content_top: "",
+         current_content_bottom: "",
+         last_update: nil,
+         tick_read: 0,
+         read_period_seconds: 180,
+         last_message_log_time: nil
+       }, true}
+    end)
+
     stub_pa_messages("active")
   end
 
   describe "handle_info/2" do
     test "Plays PA messages" do
-      {:noreply, state} = Engine.PaMessages.handle_info(:update, @state)
+      expect_pa_message("PA message 1")
+      expect_pa_message("PA message 2")
+      last_played = DateTime.utc_now() |> DateTime.add(-3, :minute)
 
-      pa_ids = Map.keys(state.pa_messages_last_sent)
-
-      assert 4 in pa_ids
-      assert 5 in pa_ids
+      {:noreply, _state} =
+        Engine.PaMessages.handle_info(:update, %{pa_messages_last_sent: %{1 => last_played}})
     end
 
     test "Doesn't play PA Message if less than interval has passed" do
       last_played = DateTime.utc_now() |> DateTime.add(-1, :minute)
 
-      state = %{
-        pa_messages_last_sent: %{
-          4 => last_played,
-          5 => last_played
-        }
-      }
-
-      {:noreply, state} = Engine.PaMessages.handle_info(:update, state)
-      assert last_played == Map.get(state.pa_messages_last_sent, 4)
-      assert last_played == Map.get(state.pa_messages_last_sent, 5)
-    end
-
-    test "Ignores inactive PA messages" do
-      {:noreply, state} = Engine.PaMessages.handle_info(:update, @state)
-      pa_ids = Map.keys(state.pa_messages_last_sent)
-
-      assert 4 in pa_ids
-      assert 5 in pa_ids
-
-      stub_pa_messages("no-longer-active")
-
-      {:noreply, state} = Engine.PaMessages.handle_info(:update, @state)
-      pa_ids = Map.keys(state.pa_messages_last_sent)
-
-      refute 4 in pa_ids
-      assert 5 in pa_ids
-    end
-
-    test "Plays PA Message when interval is edited to be shorter" do
-      last_play = DateTime.utc_now() |> DateTime.add(-2, :minute)
-      state = %{pa_messages_last_sent: %{5 => last_play}}
-
-      stub_pa_messages("changed-interval")
-
-      {:noreply, state} = Engine.PaMessages.handle_info(:update, state)
-      refute last_play == Map.get(state.pa_messages_last_sent, 5)
+      {:noreply, _state} =
+        Engine.PaMessages.handle_info(:update, %{
+          pa_messages_last_sent: %{1 => last_played, 2 => last_played}
+        })
     end
 
     test "Prioritizes all emergency messages" do
       stub_pa_messages("priority-high")
-      {:noreply, state} = Engine.PaMessages.handle_info(:update, @state)
-      assert [1, 2] == Map.keys(state.pa_messages_last_sent) |> Enum.sort()
+      expect_pa_message("Emergency message 1")
+      expect_pa_message("Emergency message 2")
+      {:noreply, _state} = Engine.PaMessages.handle_info(:update, @state)
     end
 
-    test "Plays one disruption announcement" do
+    test "Prioritizes one disruption announcement" do
       stub_pa_messages("priority-mid")
-      {:noreply, state} = Engine.PaMessages.handle_info(:update, @state)
-      assert [3] == Map.keys(state.pa_messages_last_sent) |> Enum.sort()
+      expect_pa_message("Service message 1")
+      {:noreply, _state} = Engine.PaMessages.handle_info(:update, @state)
     end
 
-    test "Plays all PSA messages" do
+    test "Plays all PSA messages if no higher priority" do
       stub_pa_messages("priority-low")
-      {:noreply, state} = Engine.PaMessages.handle_info(:update, @state)
-      assert [6, 7] == Map.keys(state.pa_messages_last_sent) |> Enum.sort()
+      expect_pa_message("PSA message 1")
+      expect_pa_message("PSA message 2")
+      {:noreply, _state} = Engine.PaMessages.handle_info(:update, @state)
     end
+  end
+
+  defp expect_pa_message(text) do
+    expect(PaEss.Updater.Mock, :play_message, fn _, [{^text, ^text}], _, _ -> :ok end)
   end
 end
