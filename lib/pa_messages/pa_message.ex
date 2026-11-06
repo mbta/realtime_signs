@@ -1,5 +1,6 @@
 defmodule PaMessages.PaMessage do
   defstruct id: nil,
+            inserted_at: nil,
             visual_text: nil,
             audio_text: nil,
             audio_url: nil,
@@ -9,6 +10,7 @@ defmodule PaMessages.PaMessage do
 
   @type t :: %__MODULE__{
           id: integer(),
+          inserted_at: DateTime.t(),
           visual_text: String.t(),
           audio_text: String.t(),
           audio_url: String.t(),

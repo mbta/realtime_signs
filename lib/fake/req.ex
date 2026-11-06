@@ -14,6 +14,54 @@ defmodule Fake.Req do
     end
   end
 
+  defp pa_message(id, text, fields) do
+    Map.merge(
+      %{
+        "alert_id" => nil,
+        "audio_text" => text,
+        "audio_url" => nil,
+        "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
+        "end_time" => "2033-12-05T23:53:23Z",
+        "id" => id,
+        "inserted_at" => "2024-06-03T18:33:31Z",
+        "interval_in_minutes" => 2,
+        "message_type" => nil,
+        "paused" => nil,
+        "priority" => 1,
+        "saved" => nil,
+        "sign_ids" => ["east"],
+        "start_time" => "2024-06-03T18:33:23Z",
+        "updated_at" => "2024-06-03T18:33:31Z",
+        "visual_text" => text
+      },
+      fields
+    )
+  end
+
+  defp priority_messages() do
+    [
+      pa_message(5, "Service message 3", %{"priority" => 4}),
+      pa_message(2, "Emergency message 2", %{
+        "priority" => 1,
+        "inserted_at" => "2024-06-02T18:33:31Z"
+      }),
+      pa_message(4, "Service message 2", %{
+        "priority" => 3,
+        "inserted_at" => "2024-06-02T18:33:31Z"
+      }),
+      pa_message(6, "PSA message 1", %{"priority" => 5}),
+      pa_message(3, "Service message 1", %{
+        "priority" => 3,
+        "inserted_at" => "2024-06-05T18:33:31Z"
+      }),
+      pa_message(7, "PSA message 2", %{"priority" => 5}),
+      pa_message(1, "Emergency message 1", %{
+        "priority" => 1,
+        "inserted_at" => "2024-06-05T18:33:31Z"
+      })
+    ]
+  end
+
   @spec mock_response(String.t()) :: {:ok, Req.Response.t()} | {:error, Exception.t()}
   def mock_response("https://fake_update/mbta-gtfs-s3/fake_trip_update.json") do
     feed_message =
@@ -77,116 +125,24 @@ defmodule Fake.Req do
 
   def mock_response("https://screenplay-fake.mbtace.com/api/pa-messages/active") do
     response = [
-      %{
-        "alert_id" => nil,
-        "audio_text" =>
-          "This is an example of a PA message that will be played at an MBTA station",
-        "audio_url" => nil,
-        "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
-        "end_time" => "2033-12-05T23:53:23Z",
-        "id" => 4,
-        "inserted_at" => "2024-06-03T18:33:31Z",
-        "interval_in_minutes" => 2,
-        "message_type" => nil,
-        "paused" => nil,
-        "priority" => 1,
-        "saved" => nil,
-        "sign_ids" => [],
-        "start_time" => "2024-06-03T18:33:23Z",
-        "updated_at" => "2024-06-03T18:33:31Z",
-        "visual_text" =>
-          "This is an example of a PA message that will be played at an MBTA station"
-      },
-      %{
-        "alert_id" => nil,
-        "audio_text" => "This is another PA message that will play at MBTA stations",
-        "audio_url" => nil,
-        "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
-        "end_time" => "2027-08-05T05:41:10Z",
-        "id" => 5,
-        "inserted_at" => "2024-06-03T19:54:40Z",
-        "interval_in_minutes" => 3,
-        "message_type" => nil,
-        "paused" => nil,
-        "priority" => 1,
-        "saved" => nil,
-        "sign_ids" => [],
-        "start_time" => "2024-06-03T19:54:30Z",
-        "updated_at" => "2024-06-03T19:54:40Z",
-        "visual_text" => "This is another PA message that will play at MBTA stations"
-      }
+      pa_message(1, "PA message 1", %{"inserted_at" => "2024-06-05T18:33:31Z"}),
+      pa_message(2, "PA message 2", %{"inserted_at" => "2024-06-02T18:33:31Z"})
     ]
 
     {:ok, %Req.Response{status: 200, body: response}}
   end
 
-  def mock_response("https://screenplay-fake.mbtace.com/api/pa-messages/no-longer-active") do
-    response = [
-      %{
-        "alert_id" => nil,
-        "audio_text" => "This is another PA message that will play at MBTA stations",
-        "audio_url" => nil,
-        "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
-        "end_time" => "2027-08-05T05:41:10Z",
-        "id" => 5,
-        "inserted_at" => "2024-06-03T19:54:40Z",
-        "interval_in_minutes" => 2,
-        "message_type" => nil,
-        "paused" => nil,
-        "priority" => 1,
-        "saved" => nil,
-        "sign_ids" => [],
-        "start_time" => "2024-06-03T19:54:30Z",
-        "updated_at" => "2024-06-03T19:54:40Z",
-        "visual_text" => "This is another PA message that will play at MBTA stations"
-      }
-    ]
+  def mock_response("https://screenplay-fake.mbtace.com/api/pa-messages/priority-high") do
+    {:ok, %Req.Response{status: 200, body: priority_messages()}}
+  end
 
+  def mock_response("https://screenplay-fake.mbtace.com/api/pa-messages/priority-mid") do
+    response = Enum.filter(priority_messages(), &(&1["priority"] >= 3))
     {:ok, %Req.Response{status: 200, body: response}}
   end
 
-  def mock_response("https://screenplay-fake.mbtace.com/api/pa-messages/changed-interval") do
-    response = [
-      %{
-        "alert_id" => nil,
-        "audio_text" =>
-          "This is an example of a PA message that will be played at an MBTA station",
-        "audio_url" => nil,
-        "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
-        "end_time" => "2033-12-05T23:53:23Z",
-        "id" => 4,
-        "inserted_at" => "2024-06-03T18:33:31Z",
-        "interval_in_minutes" => 1,
-        "message_type" => nil,
-        "paused" => nil,
-        "priority" => 1,
-        "saved" => nil,
-        "sign_ids" => [],
-        "start_time" => "2024-06-03T18:33:23Z",
-        "updated_at" => "2024-06-03T18:33:31Z",
-        "visual_text" =>
-          "This is an example of a PA message that will be played at an MBTA station"
-      },
-      %{
-        "alert_id" => nil,
-        "audio_text" => "This is another PA message that will play at MBTA stations",
-        "audio_url" => nil,
-        "days_of_week" => [1, 2, 3, 4, 5, 6, 7],
-        "end_time" => "2027-08-05T05:41:10Z",
-        "id" => 5,
-        "inserted_at" => "2024-06-03T19:54:40Z",
-        "interval_in_minutes" => 1,
-        "message_type" => nil,
-        "paused" => nil,
-        "priority" => 1,
-        "saved" => nil,
-        "sign_ids" => [],
-        "start_time" => "2024-06-03T19:54:30Z",
-        "updated_at" => "2024-06-03T19:54:40Z",
-        "visual_text" => "This is another PA message that will play at MBTA stations"
-      }
-    ]
-
+  def mock_response("https://screenplay-fake.mbtace.com/api/pa-messages/priority-low") do
+    response = Enum.filter(priority_messages(), &(&1["priority"] >= 5))
     {:ok, %Req.Response{status: 200, body: response}}
   end
 
