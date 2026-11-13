@@ -171,6 +171,7 @@ defmodule PaEss.Updater do
     update_in(visual.pages, fn pages ->
       Enum.with_index(pages, 1)
       |> Enum.map(fn {page, index} ->
+        # Note: This only applies to 24-character signs. Short signs will ignore the parameter
         if num_pages > 1 and String.length(page.bottom) < 24 - num_pages do
           Map.put(page, :indicator, "#{index}/#{num_pages}")
         else
