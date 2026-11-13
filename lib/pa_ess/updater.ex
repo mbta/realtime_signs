@@ -23,7 +23,7 @@ defmodule PaEss.Updater do
         _ -> nil
       end
 
-    visual = zip_pages(top, bottom) |> format_pages()
+    visual = zip_pages(top, bottom) |> format_pages() |> add_indicators()
     correlation_id = create_correlation_id()
 
     log_meta = [
@@ -163,6 +163,22 @@ defmodule PaEss.Updater do
           %{top: top, bottom: bottom, duration: duration}
         end)
     }
+  end
+
+  defp add_indicators(visual) do
+    num_pages = length(visual.pages)
+
+    update_in(visual.pages, fn pages ->
+      Enum.with_index(pages, 1)
+      |> Enum.map(fn {page, index} ->
+        # Note: This only applies to 24-character signs. Short signs will ignore the parameter
+        if num_pages > 1 and String.length(page.bottom) < 24 - num_pages do
+          Map.put(page, :indicator, "#{index}/#{num_pages}")
+        else
+          page
+        end
+      end)
+    end)
   end
 
   defp format_audio(:chime), do: %{type: "chime"}
