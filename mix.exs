@@ -45,7 +45,7 @@ defmodule RealtimeSigns.Mixfile do
       {:mox, "~> 1.3.2", only: [:test]},
       {:recon, "~> 2.5"},
       {:req, "~> 0.7.3"},
-      {:timex, "~> 3.1"},
+      {:timex, "~> 4.0"},
       {:uuid, "~> 1.1", only: :test},
       {:quantum, "~> 3.0"},
       {:phoenix, "~> 1.8.7"},
