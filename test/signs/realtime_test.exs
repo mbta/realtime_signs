@@ -321,7 +321,7 @@ defmodule Signs.RealtimeTest do
       assert sign.announced_passthroughs == []
     end
 
-    test "announces passthrough trains for mezzanine signs" do
+    test "does not announce passthrough trains for mezzanine signs" do
       expect(Engine.Predictions.Mock, :for_stop, fn _, _, _ ->
         [prediction(destination: :braintree, passthrough: 30, trip_id: "123")]
       end)
@@ -330,21 +330,7 @@ defmodule Signs.RealtimeTest do
         [prediction(destination: :alewife, passthrough: 30, trip_id: "124")]
       end)
 
-      expect_audios([
-        {"The next, Southbound, train; does not take passengers. Please stand back from the platform edge.",
-         "The next Southbound train does not take passengers. Please stand back from the platform edge."}
-      ])
-
-      expect_audios([
-        {"The next, Alewife, train; does not take passengers. Please stand back from the platform edge.",
-         "The next Alewife train does not take passengers. Please stand back from the platform edge."}
-      ])
-
-      Signs.Realtime.handle_info(:run_loop, %{
-        @jfk_mezzanine_sign
-        | current_content_top: "Red line trains",
-          current_content_bottom: "Every 11 to 13 min"
-      })
+      Signs.Realtime.handle_info(:run_loop, @mezzanine_sign)
     end
 
     test "announces passthrough audio for 'Southbound' headsign" do
