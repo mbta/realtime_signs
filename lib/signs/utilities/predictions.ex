@@ -6,7 +6,8 @@ defmodule Signs.Utilities.Predictions do
     Enum.flat_map(sign_context.config_group_contexts, fn config_group_context ->
       Enum.flat_map(config_group_context.config_contexts, fn config_context ->
         Enum.filter(config_context.predictions, fn prediction ->
-          prediction.schedule_relationship == :skipped &&
+          config_context.config.announce_arriving? &&
+            prediction.schedule_relationship == :skipped &&
             prediction.seconds_until_arrival &&
             prediction.seconds_until_arrival <=
               secs_to_announce_passthrough(prediction.route_id)
